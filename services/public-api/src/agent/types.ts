@@ -1,7 +1,7 @@
 // Regional public-information agent (brief §13). PUBLIC DATA ONLY: inputs are allowlisted source IDs and
 // region IDs. There is no parameter through which household data could enter.
 
-export type ClaimType = "phone" | "url" | "date" | "ugc" | "summary";
+export type ClaimType = "phone" | "url" | "date" | "ugc";
 
 export interface PublicClaim {
   id: string;
@@ -13,7 +13,7 @@ export interface PublicClaim {
   jurisdiction: string | null;
   retrievedAt: string;
   sourceIssuedAt?: string;
-  uncertainty: "verbatimExtracted" | "modelSummarizedVerbatimChecked";
+  uncertainty: "verbatimExtracted" | "modelProposedVerbatimChecked";
   /** Never auto-promoted. A person must review before anything becomes trusted content. */
   reviewState: "needsReview";
   generatedBy: "deterministic" | "model";

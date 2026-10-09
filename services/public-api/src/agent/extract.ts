@@ -1,6 +1,10 @@
 // Deterministic extraction of checkable facts. No model involved; every value is a verbatim substring.
 import { createHash } from "node:crypto";
 import type { ClaimType, FetchedSource, PublicClaim } from "./types";
+import { isPublicHTTPSURL } from "./publicURL";
+
+export const PHONE_RE = /^(?:1[-. ])?(?:\(\d{3}\) ?|\d{3}[-.])\d{3}[-.]\d{4}$/;
+export const DATE_RE = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:\d{2})?)?|(?:January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, \d{4}|\d{1,2}\/\d{1,2}\/\d{4})$/;
 
 const PATTERNS: Array<[ClaimType, RegExp]> = [
   // US numbers: 877-541-7905, (817) 598-0969, 1-800-621-3362, 940.567.2259
@@ -18,6 +22,7 @@ export function extractClaims(src: FetchedSource, context: { regionID: string | 
   for (const [claimType, re] of PATTERNS) {
     for (const m of src.text.matchAll(re)) {
       const value = m[0].replace(/[.,;:]+$/, "");
+      if (claimType === "url" && !isPublicHTTPSURL(value)) continue; // no internal/IP/odd-port links
       const id = claimID(src.sourceID, claimType, value);
       if (out.has(id)) continue;
       out.set(id, { id, claimType, value, sourceID: src.sourceID, regionID: context.regionID, jurisdiction: context.jurisdiction,

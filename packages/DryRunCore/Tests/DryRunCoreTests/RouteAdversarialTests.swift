@@ -3,7 +3,7 @@ import Testing
 @testable import DryRunCore
 
 // Adversarial probes of the spatial lane (written by Agent A, reviewer; see docs/lanes/review-routing.md).
-// Confirmed defects are wrapped in `withKnownIssue` so they are recorded without failing the suite.
+// Probes from Agent A's routing review. All confirmed defects were fixed by Agent B; probes are now regressions.
 
 private let f = "fl-0"
 private func rect(_ x0: Double, _ y0: Double, _ x1: Double, _ y1: Double) -> [Vec2] { [Vec2(x0, y0), Vec2(x1, y0), Vec2(x1, y1), Vec2(x0, y1)] }

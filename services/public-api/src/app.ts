@@ -125,7 +125,9 @@ export function createApp(deps: AppDeps) {
     const statewide = packs.find((p) => p.packID === "tx-statewide");
     const brief = buildRegionBrief(entry.info, entry.pack, statewide, alertCache.get(entry.info.id, now.getTime()),
       await flood.context(entry.info.id), now);
-    c.header("Cache-Control", "public, max-age=300");
+    // Never cache a brief past the earliest expiry of an alert it reports as current.
+    const ttl = brief.validUntil ? Math.floor((Date.parse(brief.validUntil) - now.getTime()) / 1000) : 300;
+    c.header("Cache-Control", ttl > 0 ? `public, max-age=${Math.min(ttl, 300)}` : "no-store");
     return c.json(brief);
   });
 

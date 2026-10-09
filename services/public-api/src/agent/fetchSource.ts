@@ -2,6 +2,7 @@
 // source manifest, and fetches with: https only, host allowlist, manual redirect handling restricted to the
 // same host, one deadline covering headers + body, a byte cap, and text-only extraction.
 import type { FetchedSource } from "./types";
+import { isPublicHTTPSURL, normHost } from "./publicURL";
 
 export const MAX_SOURCE_BYTES = 1_500_000;
 export const MAX_TEXT_CHARS = 200_000;
@@ -19,9 +20,9 @@ export class SourceAllowlist {
     for (const s of sources) {
       let u: URL;
       try { u = new URL(s.url); } catch { continue; }
-      if (u.protocol !== "https:" || u.username || u.password || u.port) continue;
+      if (!isPublicHTTPSURL(u)) continue; // https, port 443, no userinfo, no IP/internal/single-label hosts
       this.byID.set(s.id, u);
-      this.hosts.add(u.hostname);
+      this.hosts.add(normHost(u.hostname));
     }
   }
   resolve(sourceID: string): URL {
@@ -36,7 +37,10 @@ export class SourceAllowlist {
 export function htmlToText(html: string): string {
   return html
     .replace(/<!--[\s\S]*?-->/g, " ")
-    .replace(/<(script|style|noscript|template|svg)[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<(script|style|noscript|template|svg)\b[\s\S]*?<\/\1\s*>/gi, " ")
+    .replace(/<(script|style|noscript|template|svg)\b[\s\S]*$/i, " ") // unterminated: drop to end of document
+    // Hidden elements (non-nested best effort): hidden attr, aria-hidden="true", display:none.
+    .replace(/<(\w+)\b[^>]*(?:\shidden(?:\s|=|>)|aria-hidden\s*=\s*["']?true|display\s*:\s*none)[^>]*>[\s\S]*?<\/\1\s*>/gi, " ")
     .replace(/<br\s*\/?>|<\/(p|div|li|h[1-6]|tr)>/gi, "\n")
     .replace(/<[^>]*>/g, " ")
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
@@ -65,7 +69,7 @@ async function readCapped(res: Response, max: number): Promise<string> {
 
 export async function fetchOfficialSource(sourceID: string, allow: SourceAllowlist, deps: FetchDeps): Promise<FetchedSource> {
   let url = allow.resolve(sourceID);
-  const originHost = url.hostname;
+  const origin = url.origin;
   const ctrl = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   const deadline = new Promise<never>((_, reject) => {
@@ -73,7 +77,8 @@ export async function fetchOfficialSource(sourceID: string, allow: SourceAllowli
   });
   const work = (async () => {
     for (let hop = 0; hop <= 2; hop++) {
-      if (url.protocol !== "https:" || !allow.hosts.has(url.hostname) || url.hostname !== originHost) {
+      // Every hop: same full origin (scheme+host+port), public https, no userinfo.
+      if (!isPublicHTTPSURL(url) || url.origin !== origin || !allow.hosts.has(normHost(url.hostname))) {
         throw new SourceFetchError("redirect or URL outside allowlist");
       }
       let res: Response;
@@ -90,12 +95,12 @@ export async function fetchOfficialSource(sourceID: string, allow: SourceAllowli
         continue;
       }
       if (!res.ok) throw new SourceFetchError(`status ${res.status}`);
-      const type = res.headers.get("content-type") ?? "";
-      if (!/^text\/(html|plain)/i.test(type)) throw new SourceFetchError("not a text page");
+      const mediaType = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+      if (mediaType !== "text/html" && mediaType !== "text/plain") throw new SourceFetchError("not a text page");
       const len = Number(res.headers.get("content-length") ?? "0");
       if (len > MAX_SOURCE_BYTES) throw new SourceFetchError("response too large");
       const raw = await readCapped(res, MAX_SOURCE_BYTES);
-      const full = /html/i.test(type) ? htmlToText(raw) : raw;
+      const full = mediaType === "text/html" ? htmlToText(raw) : raw;
       return { sourceID, url: url.href, retrievedAt: deps.now().toISOString(),
                text: full.slice(0, MAX_TEXT_CHARS), truncated: full.length > MAX_TEXT_CHARS };
     }

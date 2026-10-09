@@ -10,7 +10,7 @@ Date: 2026-10-09.
 |---|---|
 | `scripts/swift.sh packages/DryRunCore test` | **133 tests in 20 suites passed**, 0 known issues |
 | `scripts/swift.sh packages/DryRunVault test` | **31 tests in 5 suites passed** (Linux: swift-crypto backend) |
-| `cd services/public-api && pnpm test` | **47 tests in 3 files passed** |
+| `cd services/public-api && pnpm test` | **68 tests in 4 files passed** (includes 10 regional-agent security probes) |
 | `cd services/public-api && pnpm typecheck` | clean (`tsc --noEmit`) |
 | `swiftc -parse` on every file in `apps/ios` | parses (syntax only; **not a compile**) |
 | `python3 -c "import yaml; yaml.safe_load(open('apps/ios/project.yml'))"` | valid YAML (not run through XcodeGen) |
@@ -62,7 +62,7 @@ yet) · PARTIAL · BLOCKED.
 | Alert freshness (expired, stale, demo, and cancelled never shown as current) | TESTED_CORE | PublicDataTests, vitest |
 | Public API (no household endpoints, allowlisted IDs, rejects queries/bodies, NWS adapter) | TESTED_CORE (vitest, recorded fixture) | **Not deployed; NWS live call not exercised in tests** |
 | FEMA NFHL | PARTIAL | Labeled fixture behind adapter; live integration not built |
-| Regional agent (public-only; typed claims; template brief) | TESTED_CORE (vitest) | No model provider; not scheduled; claims not shown in app |
+| Regional agent (public-only; typed verbatim claims; template brief) | TESTED_CORE (vitest) | Adversarially reviewed; 9 findings fixed. No model provider; not scheduled; claims not shown in app; DNS-rebinding protection relies on the Workers runtime |
 | Region directory | PARTIAL | Statewide pack; 2 verifiedPartial, 6 oemOnly, 5 notStarted of 13 counties; all `needsReview` |
 | ES/VI translations | PARTIAL | Complete drafts, placeholder/number parity tested, drift guard; **no human language review** |
 | SwiftUI app shell (tabs, onboarding, rehearsal, debrief, comparison, plan, help, settings) | IMPLEMENTED (authored, parse-checked, reviewed) | **Never compiled** |

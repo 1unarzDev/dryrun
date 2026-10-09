@@ -10,7 +10,7 @@ AI-authored (Claude, acting as Agent C) on 2026-10-09. Nothing here is student-a
 | `PublicPackStore` known-good public cache | TESTED_CORE | same run |
 | `PublicDataPolicy` (alert freshness, activation display, region allowlist, `PublicQueryBuilder`) | TESTED_CORE | `scripts/swift.sh packages/DryRunCore test --filter PublicData` → 11 tests pass |
 | Swift ⇄ TS contract fixtures (`content/regions/*.json`, `services/public-api/test/fixtures/contract-alerts.json`) | TESTED_CORE both sides | `PublicDataContractTests` (Swift) + `api.test.ts` (Vitest) |
-| `services/public-api` Hono Worker | TESTED_CORE (Node/Vitest), typecheck clean, `wrangler deploy --dry-run` bundles (875 KiB) | `cd services/public-api && pnpm test` → 47 tests pass (api, locales + drift, agent); `pnpm typecheck` |
+| `services/public-api` Hono Worker | TESTED_CORE (Node/Vitest), typecheck clean, `wrangler deploy --dry-run` bundles (875 KiB) | `cd services/public-api && pnpm test` → 68 tests pass (api, locales + drift, agent, agent-adversarial); `pnpm typecheck` |
 | NWS alerts adapter | IMPLEMENTED + tested against a **recorded** real response (2026-10-09T18:59Z) and synthetic variants; never called live from tests | `test/fixtures/nws-alerts-tx-recorded.json` |
 | FEMA NFHL adapter | PARTIAL — interface + labelled `fixture` provider only. Live NFHL lookup **not implemented**; endpoint not verified | `src/fema.ts` |
 | Deployment | NOT DONE (not authorised). `wrangler.toml` has no secrets; set a real `NWS_USER_AGENT` contact first | |
@@ -145,3 +145,24 @@ Fetched each county's official site on 2026-10-09; contacts added only when quot
   office, alert sign-up (only if the official page mentions it), alert status (`unavailable` when not fetched or
   >30 min old), flood-map status (fixture), site activation (`unknown` unless structured evidence), statewide lines.
 - Not done: no scheduled job runs the agent; claims are not persisted or surfaced in the app; no live provider.
+
+### Fixes from Agent A's adversarial review (docs/lanes/review-regional-agent.md)
+All 10 `it.fails` probes in `test/agent-adversarial.test.ts` now pass as normal tests (renamed `FIXED:`).
+1. Free-text model summaries are **removed** in this build. A model may only propose `phone|url|date` values.
+2. Each model value must match its type's exact ASCII format (`PHONE_RE`, `DATE_RE`, public-https URL) AND be
+   verbatim in the cited fetched source. Status text cannot be smuggled in as a "phone"; lookalike characters fail the format.
+3. `src/agent/publicURL.ts` is the single public-URL rule: https only, default port, no userinfo. It rejects IPv4/IPv6
+   literals, single-label hosts, `localhost`, and `.localhost/.local/.internal/.lan/.home.arpa/.corp/.intranet`.
+   Hosts are normalised (lower-case, trailing dot stripped). The allowlist uses it.
+4. Every redirect hop must keep the same full origin (scheme+host+port) and pass the public-URL rule.
+5. Deterministic URL extraction applies the same rule.
+6. Trailing-dot hosts are normalised before checks.
+7. `htmlToText` drops unterminated `<script>/<style>/…` to the end of the document. It also drops non-nested hidden
+   elements (`hidden`, `aria-hidden="true"`, `display:none`); this is best-effort, not a real parser.
+8. Content-type: exact media type `text/html` or `text/plain` (parameters allowed).
+9. Brief: `alertEnrollment` is `officialEnrollmentListed` only for an explicit `alertEnrollment` resource with a URL.
+   None is curated yet, so every county currently reports `unknown`. Pack-level `expiresAt` is respected: `pack.expired`,
+   and an expired pack never yields `siteActivation: confirmed`. `validUntil` is the earliest current-alert end, and
+   the route's `Cache-Control` never outlives it (`no-store` once passed).
+Residual (unchanged): DNS rebinding/internal resolution depends on the runtime; a verbatim phone/URL planted in a
+genuine official page is still accepted as an unreviewed claim.

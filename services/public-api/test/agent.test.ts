@@ -142,7 +142,7 @@ describe("GET /v1/regions/:regionID/brief", () => {
     const b = await r.json() as any;
     expect(b.generatedBy).toBe("template");
     expect(b.emergencyOffice.phone).toBe("254-965-1326");
-    expect(b.alertEnrollment.status).toBe("officialPageMentionsSignUp");
+    expect(b.alertEnrollment.status).toBe("unknown"); // no explicit enrollment resource curated yet
     expect(b.officialAlerts.status).toBe("unavailable");
     expect(b.floodMap.classification).toBe("fixture");
     expect(b.siteActivation.status).toBe("unknown");
@@ -160,5 +160,47 @@ describe("GET /v1/regions/:regionID/brief", () => {
     expect((await app.request(`/v1/regions/48143/brief?address=${CANARY}`)).status).toBe(400);
     expect((await app.request("/v1/regions/48143/brief", { method: "POST", body: JSON.stringify({ alias: CANARY }) })).status).toBe(405);
     expect((await app.request(`/v1/regions/${CANARY}/brief`)).status).toBe(404);
+  });
+});
+
+describe("brief freshness (review-regional-agent.md #9 follow-ups)", () => {
+  const packs = (bundle.regionPacks as any[]);
+  const loadPack = () => structuredClone(packs.find((p) => p.packID === "tx-25-counties"));
+  const flood = { regionID: "48143", classification: "fixture" as const, coverage: "unknown" as const, mapStatus: "unknown" as const, mapDate: null, note: "n", sourceIDs: ["S18"] };
+  const site = { id: "r-site", name: "Site", publisher: "x", serviceType: "warmingCenter", jurisdiction: "x", regionIDs: ["48143"], contact: {},
+    summary: "s", activation: "active", sourceIDs: ["S41"], checkedAt: "2026-10-09", expiresAt: "2026-10-10T00:00:00Z", reviewState: "needsReview", classification: "curated" };
+
+  it("an expired pack never yields a confirmed site, even if the resource itself is unexpired", async () => {
+    const { buildRegionBrief } = await import("../src/agent/brief");
+    const pack = loadPack();
+    pack.resources.push(site);
+    const info = pack.regions.find((r: any) => r.id === "48143");
+    expect(buildRegionBrief(info, pack, undefined, undefined, flood, now()).siteActivation.status).toBe("confirmed");
+    pack.expiresAt = "2026-10-01T00:00:00Z";
+    const b = buildRegionBrief(info, pack, undefined, undefined, flood, now());
+    expect(b.pack.expired).toBe(true);
+    expect(b.siteActivation.status).toBe("unknown");
+  });
+
+  it("validUntil is the earliest current-alert end, and the route never caches past it", async () => {
+    const { buildRegionBrief } = await import("../src/agent/brief");
+    const pack = loadPack();
+    const info = pack.regions.find((r: any) => r.id === "48143");
+    const a = (id: string, expires: string) => ({ id, event: "Warning", description: "d", severity: "Severe", areaDesc: "Erath", affectedZones: ["TXZ130"],
+      sent: "2026-10-09T18:00:00Z", expires, fetchedAt: "2026-10-09T18:59:00Z", sourceURL: "https://api.weather.gov/x", classification: "live" });
+    const env = { schemaVersion: 1, regionID: "48143", fetchedAt: "2026-10-09T18:59:00Z", status: "ok",
+      alerts: [a("a1", "2026-10-09T19:01:30Z"), a("a2", "2026-10-09T23:00:00Z")] };
+    const b = buildRegionBrief(info, pack, undefined, env as any, flood, now());
+    expect(b.officialAlerts.status).toBe("current");
+    expect(b.validUntil).toBe("2026-10-09T19:01:30.000Z");
+
+    // Route: prime the alert cache through the alerts endpoint, then check the brief's Cache-Control.
+    const nwsBody = { features: env.alerts.map((x) => ({ id: `https://api.weather.gov/alerts/${x.id}`, properties: { ...x, status: "Actual",
+      messageType: "Alert", geocode: { UGC: ["TXZ130"] }, expires: x.expires } })) };
+    const app = createApp({ bundle, nws: { fetch: (async () => new Response(JSON.stringify(nwsBody),
+      { status: 200, headers: { "cache-control": "max-age=300" } })) as unknown as typeof fetch, userAgent: "t", timeoutMs: 500, now } });
+    expect((await app.request("/v1/regions/48143/alerts")).status).toBe(200);
+    const r = await app.request("/v1/regions/48143/brief");
+    expect(r.headers.get("cache-control")).toBe("public, max-age=90");
   });
 });
