@@ -101,8 +101,9 @@ public enum PlanBuilder {
         var i = 1
         while b.localizer.has("plan.scenario.\(id).immediate.\(i)", in: "en") {
             let key = "plan.scenario.\(id).immediate.\(i)"
-            let text = b.localizer.text(key).text.lowercased()
-            let style: PlanLineStyle = (text.contains("never") || text.contains("do not") || text.contains("don't")) ? .prohibition : .normal
+            // Classify from the source-language text so a prohibition keeps its emphasis in every locale.
+            let source = b.localizer.with(locale: b.localizer.sourceLocale).text(key).text.lowercased()
+            let style: PlanLineStyle = (source.contains("never") || source.contains("do not") || source.contains("don't")) ? .prohibition : .normal
             immediate.append(b.line(key, style: style, sources: sources))
             i += 1
         }

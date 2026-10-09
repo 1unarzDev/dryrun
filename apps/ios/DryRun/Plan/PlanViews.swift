@@ -14,7 +14,7 @@ struct PlanTabView: View {
         @Bindable var model = model
         let l = model.localizer
         List {
-            Section("Language") {
+            Section(l("common.plan.language")) {
                 Picker("Plan language", selection: $model.locale) {
                     ForEach(languages, id: \.code) { lang in
                         Text(lang.label).tag(lang.code)
@@ -24,14 +24,14 @@ struct PlanTabView: View {
                     Label(l("common.draftTranslation"), systemImage: "character.bubble").foregroundStyle(Theme.caution)
                 }
             }
-            Section("Scenario pages") {
+            Section(l("common.plan.scenarioPages")) {
                 ForEach(RehearseTabView.scenarioIDs, id: \.self) { id in
                     Toggle(l("common.scenario.\(id)"), isOn: Binding(
                         get: { selected.contains(id) },
                         set: { if $0 { selected.insert(id) } else { selected.remove(id) } }))
                 }
-                Toggle("Include private care-plan notes", isOn: $includePrivateNotes)
-                Button("Generate plan", systemImage: "doc.badge.gearshape") {
+                Toggle(l("common.plan.includePrivate"), isOn: $includePrivateNotes)
+                Button(l("common.plan.generate"), systemImage: "doc.badge.gearshape") {
                     Task { await model.generatePlan(scenarioIDs: Array(selected), includePrivateNotes: includePrivateNotes) }
                 }
                 .disabled(selected.isEmpty || model.isWorking)
@@ -39,17 +39,17 @@ struct PlanTabView: View {
             if let plan = model.savedPlan {
                 Section {
                     if model.planIsStale {
-                        Label("Your household, home, or language changed since this plan was made. Generate it again.",
+                        Label(l("common.plan.stale"),
                               systemImage: "exclamationmark.arrow.circlepath")
                             .foregroundStyle(Theme.caution)
                     }
-                    NavigationLink("View saved plan (\(plan.pages.count) pages)") { PlanDocumentView(doc: plan) }
+                    NavigationLink(l("common.plan.viewSaved", ["count": "\(plan.pages.count)"])) { PlanDocumentView(doc: plan) }
                     Button(l("common.action.share") + " / " + l("common.action.print"), systemImage: "square.and.arrow.up") {
                         let output = PlanPDFRenderer().render(plan)
                         do {
                             exportURL = try TemporaryExports.write(output.data, name: "DryRun-plan-\(plan.locale).pdf")
                             TemporaryExports.hasActiveExport = true
-                            exportNote = output.continuedPageIDs.isEmpty ? nil : "Some pages continue onto a second sheet so text stays readable."
+                            exportNote = output.continuedPageIDs.isEmpty ? nil : l("common.plan.continued")
                             showPreview = true
                         } catch {
                             model.lastError = String(describing: error)
@@ -60,8 +60,8 @@ struct PlanTabView: View {
                 }
             }
             if let h = model.household {
-                Section("Preparations") {
-                    if h.completedPreparations.isEmpty { Text("None marked completed yet. Tried changes are not counted as done.") }
+                Section(l("common.plan.preparations")) {
+                    if h.completedPreparations.isEmpty { Text(l("common.plan.noneCompleted")) }
                     ForEach(h.completedPreparations, id: \.actionID) { p in
                         Label(l("action.\(p.actionID).title"), systemImage: "checkmark.circle.fill")
                     }

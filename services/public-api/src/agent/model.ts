@@ -41,6 +41,14 @@ export function buildModelPrompt(sources: FetchedSource[]): string {
 
 const norm = (s: string) => s.replace(/\s+/g, " ").trim();
 const INSTRUCTION_LIKE = /\b(should|must|never|always|do not|don't|evacuate|boil|shelter in|call 911)\b/i;
+// Site status needs structured, dated source evidence (PublicDataPolicy); prose can never assert it.
+const ACTIVATION_LIKE = /\b(open|opened|opening|closed|activated|active|available now|accepting)\b/i;
+function isPublicHTTPS(v: string): boolean {
+  try {
+    const u = new URL(v);
+    return u.protocol === "https:" && !u.username && !u.port && !/^(\d+\.){3}\d+$|^\[|localhost$|\.local$|\.internal$/i.test(u.hostname);
+  } catch { return false; }
+}
 
 /** Accepts a proposal only if it cites a fetched source and its value (or quote) is verbatim in that source. */
 export function validateModelProposals(proposals: unknown, sources: FetchedSource[], ctx: { regionID: string | null; jurisdiction: string | null }): { accepted: PublicClaim[]; rejected: number } {
@@ -54,7 +62,8 @@ export function validateModelProposals(proposals: unknown, sources: FetchedSourc
     if (!src || !types.includes(p.claimType) || typeof p.value !== "string" || p.value.length === 0 || p.value.length > 500) { rejected++; continue; }
     const evidence = p.claimType === "summary" ? p.quote : p.value;
     if (typeof evidence !== "string" || !norm(src.text).includes(norm(evidence))) { rejected++; continue; }
-    if (p.claimType === "summary" && INSTRUCTION_LIKE.test(p.value)) { rejected++; continue; } // no generated safety advice
+    if (p.claimType === "summary" && (INSTRUCTION_LIKE.test(p.value) || ACTIVATION_LIKE.test(p.value))) { rejected++; continue; } // no generated safety advice or site status
+    if (p.claimType === "url" && !isPublicHTTPS(p.value)) { rejected++; continue; }
     accepted.push({ id: claimID(src.sourceID, p.claimType, p.value), claimType: p.claimType, value: p.value, sourceID: src.sourceID,
       regionID: ctx.regionID, jurisdiction: ctx.jurisdiction, retrievedAt: src.retrievedAt,
       uncertainty: "modelSummarizedVerbatimChecked", reviewState: "needsReview", generatedBy: "model" });

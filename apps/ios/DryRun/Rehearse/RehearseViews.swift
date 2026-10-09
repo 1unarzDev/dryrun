@@ -17,7 +17,7 @@ struct RehearseTabView: View {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
                 }
             }
-            Section("Choose a scenario") {
+            Section(l("common.chooseScenario")) {
                 ForEach(Self.scenarioIDs, id: \.self) { id in
                     NavigationLink {
                         RehearsalView(scenarioID: id)
@@ -94,7 +94,7 @@ struct RehearsalView: View {
                 Task { await model.startRehearsal(scenarioID: scenarioID, variants: session.result.input.variants) }
             }
             Spacer()
-            Button("Debrief", systemImage: "list.bullet.clipboard") { showDebrief = true }
+            Button(l("common.debrief"), systemImage: "list.bullet.clipboard") { showDebrief = true }
                 .buttonStyle(.borderedProminent)
                 .disabled(!session.isFinished)
         }
@@ -184,13 +184,13 @@ struct EventCard: View {
                 Text(String(format: "+%dh %02dm", event.simMinute / 60, event.simMinute % 60))
                     .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
                 if event.severity != .info {
-                    Text(event.severity == .critical ? "Critical" : "Caution")
+                    Text(event.severity == .critical ? l("common.critical") : l("common.caution"))
                         .font(.caption.weight(.semibold)).foregroundStyle(Theme.color(for: event.severity))
                 }
             }
             Text(l(event.titleKey, event.templateValues)).font(.body.weight(.semibold))
             if let detail = event.detailKey { Text(l(detail, event.templateValues)).font(.callout) }
-            DisclosureGroup("Why did this happen?", isExpanded: $expanded) {
+            DisclosureGroup(l("common.whyHappened"), isExpanded: $expanded) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Rule: \(event.evidence.ruleID)")
                     if !event.evidence.factIDs.isEmpty { Text("Household facts: \(event.evidence.factIDs.joined(separator: ", "))") }
@@ -218,7 +218,7 @@ struct DecisionCard: View {
     var body: some View {
         let l = model.localizer
         VStack(alignment: .leading, spacing: 10) {
-            Label("Decision", systemImage: "arrow.triangle.branch").font(.caption.weight(.semibold))
+            Label(l("common.decision"), systemImage: "arrow.triangle.branch").font(.caption.weight(.semibold))
             Text(l(decision.promptKey)).font(.headline)
             ForEach(decision.options) { option in
                 Button { onChoose(option.id) } label: {
@@ -239,16 +239,16 @@ struct RouteSummaryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Practice routes under these assumptions").font(.headline)
+            Text(model.localizer("common.practiceRoutes")).font(.headline)
             if let home = model.home {
                 ForEach(Array(routes.enumerated()), id: \.offset) { _, route in
                     let start = home.space(route.request.startSpaceID)?.label ?? route.request.startSpaceID
                     if let p = route.primary {
                         Text("From \(start): \(p.spaceSequence.compactMap { home.space($0)?.label }.joined(separator: " → ")) → outside")
                         switch route.alternativeStatus {
-                        case .independent: Text("Independent second way out available.").foregroundStyle(.secondary)
-                        case .sharesChokepoint: Text("Second way out shares a chokepoint; not independent.").foregroundStyle(Theme.caution)
-                        case .none: Text("No independent second way out.").foregroundStyle(Theme.caution)
+                        case .independent: Text(model.localizer("common.route.independent")).foregroundStyle(.secondary)
+                        case .sharesChokepoint: Text(model.localizer("common.route.shared")).foregroundStyle(Theme.caution)
+                        case .none: Text(model.localizer("common.route.none")).foregroundStyle(Theme.caution)
                         }
                     } else {
                         Text("From \(start): no verified route (\(model.localizer("plan.route.reason.\((route.noRouteReason ?? .incompleteConnectivity).rawValue)")))")
@@ -276,7 +276,7 @@ struct DebriefView: View {
         let l = model.localizer
         List {
             if let result = model.rehearsal?.result {
-                Section("Your choices") {
+                Section(l("common.yourChoices")) {
                     ForEach(result.decisions) { d in
                         if let chosen = result.input.choices[d.id], let option = d.options.first(where: { $0.id == chosen }) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -287,14 +287,14 @@ struct DebriefView: View {
                         }
                     }
                 }
-                Section("Top preparations") {
+                Section(l("common.topPreparations")) {
                     ForEach(result.recommendations.prefix(showAll ? result.recommendations.count : 3)) { rec in
                         NavigationLink { RecommendationDetailView(recommendation: rec) } label: {
                             RecommendationRow(recommendation: rec)
                         }
                     }
                     if result.recommendations.count > 3 {
-                        Button(showAll ? "Show top 3" : "Show all \(result.recommendations.count)") { showAll.toggle() }
+                        Button(showAll ? l("common.showTop3") : l("common.showAll", ["count": "\(result.recommendations.count)"])) { showAll.toggle() }
                     }
                 }
                 if !result.unknowns.isEmpty {
@@ -304,8 +304,8 @@ struct DebriefView: View {
                 }
             }
         }
-        .navigationTitle("Debrief")
-        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        .navigationTitle(l("common.debrief"))
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } } }
     }
 }
 
@@ -369,15 +369,15 @@ struct RecommendationDetailView: View {
                         Task { await model.tryChange(intervention); showComparison = true }
                     }
                 }
-                Button(completed ? "Completed" : l("common.action.markDone"), systemImage: completed ? "checkmark.circle.fill" : "checkmark.circle") {
+                Button(completed ? l("common.completed") : l("common.action.markDone"), systemImage: completed ? "checkmark.circle.fill" : "checkmark.circle") {
                     Task { await model.markPreparationCompleted(r.actionID) }
                 }
                 .disabled(completed)
             } footer: {
-                Text("\"Try this change\" replays the same exercise with only this change. It does not change your household. \"Mark preparation completed\" records that you actually did it.")
+                Text(l("common.tryVsDone"))
             }
         }
-        .navigationTitle("Preparation")
+        .navigationTitle(l("common.preparation"))
         .sheet(isPresented: $showComparison) { NavigationStack { ComparisonView() } }
         .task {
             explanation = await ExplanationService.explain(templateText: l(r.whyKey, r.templateValues), recommendation: r, locale: model.locale)
@@ -394,13 +394,13 @@ struct ComparisonView: View {
         List {
             if let c = model.comparison {
                 Section {
-                    Text("Same scenario, same timing, same household — with one change: \(l("action.\(c.intervention.actionID).title"))")
+                    Text(l("common.sameScenarioOneChange", ["change": l("action.\(c.intervention.actionID).title")]))
                         .font(.callout)
                 }
-                Section("What changed") {
+                Section(l("common.whatChanged")) {
                     if c.diff.serviceChanges.isEmpty && c.diff.resolvedRequirements.isEmpty && c.diff.resourceChanges.isEmpty
                         && c.diff.addedEventIDs.isEmpty && c.diff.removedEventIDs.isEmpty {
-                        Text("No difference in this model. The change may still matter in ways this exercise does not model.")
+                        Text(l("common.noDifference"))
                     }
                     ForEach(c.diff.serviceChanges.keys.sorted(), id: \.self) { id in
                         let states = c.diff.serviceChanges[id] ?? []
@@ -414,10 +414,10 @@ struct ComparisonView: View {
                             Text("\(ServiceNames.name(id)): \(q[0].amount.map(PlanFormatting.number) ?? "unknown") → \(q[1].amount.map(PlanFormatting.number) ?? "unknown") \(q[1].unit)")
                         }
                     }
-                    ForEach(c.diff.resolvedRequirements, id: \.self) { Label("Resolved: \(UnknownNames.describe($0))", systemImage: "checkmark") }
-                    ForEach(c.diff.newRequirements, id: \.self) { Label("New gap: \(UnknownNames.describe($0))", systemImage: "exclamationmark.triangle") }
+                    ForEach(c.diff.resolvedRequirements, id: \.self) { Label(l("common.resolved", ["item": UnknownNames.describe($0)]), systemImage: "checkmark") }
+                    ForEach(c.diff.newRequirements, id: \.self) { Label(l("common.newGap", ["item": UnknownNames.describe($0)]), systemImage: "exclamationmark.triangle") }
                 }
-                Section("Events") {
+                Section(l("common.events")) {
                     ForEach(c.diff.removedEventIDs, id: \.self) { id in
                         if let e = c.baseline.events.first(where: { $0.id == id }) { Label(l(e.titleKey, e.templateValues), systemImage: "minus.circle") }
                     }
@@ -429,7 +429,7 @@ struct ComparisonView: View {
                 ProgressView()
             }
         }
-        .navigationTitle("Before and after")
-        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        .navigationTitle(l("common.beforeAfter"))
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } } }
     }
 }

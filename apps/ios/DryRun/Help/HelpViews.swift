@@ -15,7 +15,7 @@ struct HelpTabView: View {
         let region = model.content?.region(regionID)
         List {
             Section {
-                Label("In danger now? Call 911.", systemImage: "phone.fill").font(.headline)
+                Label(l("common.help.call911"), systemImage: "phone.fill").font(.headline)
                 if !model.capabilities.isOnline {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
                 }
@@ -33,14 +33,14 @@ struct HelpTabView: View {
                 }
             }
             Section {
-                Button(showMap ? "Hide map" : "Show map", systemImage: "map") { showMap.toggle() }
+                Button(showMap ? l("common.help.hideMap") : l("common.help.showMap"), systemImage: "map") { showMap.toggle() }
                 if showMap {
                     DirectoryMapView(resources: resources)
                         .frame(height: 300)
                         .listRowInsets(EdgeInsets())
                 }
             } footer: {
-                Text("Map tiles need a connection. A place on the map is not an open shelter unless an official source says it is activated.")
+                Text(l("common.help.mapFooter"))
             }
         }
         .navigationTitle(l("common.tab.help"))

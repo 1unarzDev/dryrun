@@ -174,4 +174,21 @@ struct PlanBuilderTests {
         #expect(shelter.contains { $0.contains("not safe shelter") })
         #expect(!shelter.contains { $0.contains("Shelter spot: Closet") })
     }
+
+    @Test("Prohibitions keep their emphasis in every locale (styled from the source text, not translated words)")
+    func prohibitionsAcrossLocales() throws {
+        let lib = try ContentLibrary.load(from: LeadTestSupport.contentRoot)
+        let home = Self.tinyHome()
+        func prohibitionKeys(_ locale: String) -> Set<String> {
+            let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: home,
+                                        results: PlanBuilder.scenarioOrder.map { Self.fakeResult($0, household: SampleHouseholds.oak, home: home) },
+                                        localizer: lib.localizer(for: locale), resources: [], contentVersion: "x",
+                                        generatedAt: LeadTestSupport.fixedDate)
+            return Set(doc.pages.flatMap(\.sections).flatMap(\.lines).filter { $0.style == .prohibition }.map(\.key))
+        }
+        let en = prohibitionKeys("en")
+        #expect(en.contains("plan.scenario.home-fire.immediate.1"))
+        #expect(prohibitionKeys("es") == en)
+        #expect(prohibitionKeys("vi") == en)
+    }
 }

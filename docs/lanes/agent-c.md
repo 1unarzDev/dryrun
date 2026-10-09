@@ -10,7 +10,7 @@ AI-authored (Claude, acting as Agent C) on 2026-10-09. Nothing here is student-a
 | `PublicPackStore` known-good public cache | TESTED_CORE | same run |
 | `PublicDataPolicy` (alert freshness, activation display, region allowlist, `PublicQueryBuilder`) | TESTED_CORE | `scripts/swift.sh packages/DryRunCore test --filter PublicData` → 11 tests pass |
 | Swift ⇄ TS contract fixtures (`content/regions/*.json`, `services/public-api/test/fixtures/contract-alerts.json`) | TESTED_CORE both sides | `PublicDataContractTests` (Swift) + `api.test.ts` (Vitest) |
-| `services/public-api` Hono Worker | TESTED_CORE (Node/Vitest), typecheck clean, `wrangler deploy --dry-run` bundles (875 KiB) | `cd services/public-api && pnpm test` → 32 tests pass (api 24 + locales 8); `pnpm typecheck` |
+| `services/public-api` Hono Worker | TESTED_CORE (Node/Vitest), typecheck clean, `wrangler deploy --dry-run` bundles (875 KiB) | `cd services/public-api && pnpm test` → 47 tests pass (api, locales + drift, agent); `pnpm typecheck` |
 | NWS alerts adapter | IMPLEMENTED + tested against a **recorded** real response (2026-10-09T18:59Z) and synthetic variants; never called live from tests | `test/fixtures/nws-alerts-tx-recorded.json` |
 | FEMA NFHL adapter | PARTIAL — interface + labelled `fixture` provider only. Live NFHL lookup **not implemented**; endpoint not verified | `src/fema.ts` |
 | Deployment | NOT DONE (not authorised). `wrangler.toml` has no secrets; set a real `NWS_USER_AGENT` contact first | |
@@ -107,3 +107,41 @@ Not mine / not done: H1–H5 (app files), M5 (print/share lifecycle, app), L4–
 3. Remaining 11 counties' OEM/utility/water contacts; Tarrant OEM needs a working official URL.
 4. Device tests: Keychain lock (`errSecInteractionNotAllowed`), file protection class, backup exclusion.
 5. Human language review for every es/vi string before release.
+
+
+## Follow-up (2026-10-09, after integration)
+
+### County coverage
+Fetched each county's official site on 2026-10-09; contacts added only when quoted from the official page.
+- `oemOnly` (OEM phone from official county page): Comanche 48093 (S44), Jack 48237 (S45, office street address not
+  on page), Palo Pinto 48363 (S46; county pages list different coordinator numbers, cited page used), Parker 48367
+  (S47), Somervell 48425 (S48), Young 48503 (S49).
+- Still `notStarted` with a note on what was tried: Johnson (official page HTTP 403 to automated fetch), Tarrant
+  (404), Eastland (no county OEM contact page found; alert portal exists), Stephens (no county OEM page found; only
+  news/city pages), Callahan (no OEM page found).
+- Search-engine summaries were used only to find URLs, never as evidence.
+
+### Translation drift guard
+- `content/locales/translation-baseline.json`: per locale/domain/key, sha256 (16 hex) of the English each translation
+  was made from. Recorded when English common/plan/help had not changed since the first commit (checked in git).
+- `services/public-api/scripts/record-translation-baseline.mjs es vi` adds hashes only for keys with no baseline;
+  `--accept domain:key ...` re-hashes after a re-translation. Existing hashes are never silently refreshed.
+- `test/locales.test.ts` fails listing `domain:key (English changed | no baseline)`.
+- New Agent A keys (hallway smoke, helper-blocked, stored-water choices, helper-reach plan) translated es/vi (draft).
+
+### Regional public-information agent (`services/public-api/src/agent/`) — IMPLEMENTED, TESTED_CORE (Vitest)
+- `fetchSource.ts`: the only network tool. Input is a source ID from `content/sources` (never a URL); https only,
+  host allowlist, manual redirects limited to the same host (max 2), one deadline over headers+body, 1.5 MB streamed
+  byte cap, text/html|plain only, scripts/styles/attributes stripped.
+- `extract.ts`: deterministic phone/URL/date/UGC extraction → `PublicClaim` (`verbatimExtracted`, `needsReview`).
+- `model.ts`: `ModelProvider` interface; default `UnavailableProvider` (no credentials approved, none embedded).
+  Prompt puts constant instructions first and source text in `<source>` data blocks (fake tags neutralised). The
+  model gets no tools. Proposals are accepted only if they cite a fetched source and the value/quote is verbatim;
+  summaries that read as instructions or as site open/closed status are rejected; URL claims must be public https.
+  Accepted model claims stay `needsReview`. Known limit: verbatim injected text (e.g. a phone number planted in a
+  page) can still pass as an unreviewed claim — human review is the control.
+- `run.ts`: code (not the model) chooses which sources to fetch (max 20 IDs).
+- `brief.ts` + `GET /v1/regions/{id}/brief`: template brief from pack + already-cached alerts + flood adapter:
+  office, alert sign-up (only if the official page mentions it), alert status (`unavailable` when not fetched or
+  >30 min old), flood-map status (fixture), site activation (`unknown` unless structured evidence), statewide lines.
+- Not done: no scheduled job runs the agent; claims are not persisted or surfaced in the app; no live provider.
