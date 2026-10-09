@@ -297,9 +297,11 @@ struct DebriefView: View {
                         NavigationLink { RecommendationDetailView(recommendation: rec) } label: {
                             RecommendationRow(recommendation: rec)
                         }
+                        .accessibilityIdentifier("recommendation.\(rec.actionID)")
                     }
                     if result.recommendations.count > 3 {
                         Button(showAll ? l("common.showTop3") : l("common.showAll", ["count": "\(result.recommendations.count)"])) { showAll.toggle() }
+                            .accessibilityIdentifier("debrief.showAll")
                     }
                 }
                 if !result.unknowns.isEmpty {
@@ -338,6 +340,7 @@ struct RecommendationDetailView: View {
     @Environment(AppModel.self) private var model
     let recommendation: Recommendation
     @State private var showComparison = false
+    @State private var tryFailed = false
     @State private var explanation: String?
 
     var body: some View {
@@ -371,7 +374,18 @@ struct RecommendationDetailView: View {
             Section {
                 if let intervention = r.tryIntervention {
                     Button(l("common.action.tryChange"), systemImage: "arrow.triangle.2.circlepath") {
-                        Task { await model.tryChange(intervention); showComparison = true }
+                        Task {
+                            await model.tryChange(intervention)
+                            // Only open the sheet for a comparison that was actually produced.
+                            tryFailed = model.comparison == nil
+                            showComparison = model.comparison != nil
+                        }
+                    }
+                    .accessibilityIdentifier("recommendation.tryChange")
+                    if tryFailed {
+                        // Shown here because the app-wide error alert cannot appear over this sheet.
+                        Text("Dry Run could not run that comparison. Your household was not changed.")
+                            .font(.footnote).foregroundStyle(Theme.caution)
                     }
                 }
                 Button(completed ? l("common.completed") : l("common.action.markDone"), systemImage: completed ? "checkmark.circle.fill" : "checkmark.circle") {
@@ -399,12 +413,12 @@ struct ComparisonView: View {
         List {
             if let c = model.comparison {
                 Section {
-                    Text(l("common.sameScenarioOneChange", ["change": l("action.\(c.intervention.actionID).title")]))
+                    Text(l("common.sameScenarioOneChange", ["change": model.actionTitle(c.intervention.actionID)]))
                         .font(.callout)
                 }
                 Section(l("common.whatChanged")) {
-                    if c.diff.serviceChanges.isEmpty && c.diff.resolvedRequirements.isEmpty && c.diff.resourceChanges.isEmpty
-                        && c.diff.addedEventIDs.isEmpty && c.diff.removedEventIDs.isEmpty {
+                    if c.diff.serviceChanges.isEmpty && c.diff.resolvedRequirements.isEmpty && c.diff.newRequirements.isEmpty
+                        && c.diff.resourceChanges.isEmpty && c.diff.addedEventIDs.isEmpty && c.diff.removedEventIDs.isEmpty {
                         Text(l("common.noDifference"))
                     }
                     ForEach(c.diff.serviceChanges.keys.sorted(), id: \.self) { id in

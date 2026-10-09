@@ -66,6 +66,8 @@ struct PlanPDFRenderer {
 
     // MARK: - Blocks
 
+    /// Main-actor isolated like the renderer: nested types do not inherit the enclosing type's isolation.
+    @MainActor
     struct Block {
         var attributed: NSAttributedString
         var spacingAfter: CGFloat

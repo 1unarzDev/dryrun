@@ -45,7 +45,7 @@ final class PrivacyShield {
             guard window == nil, let scene = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene }).first else { return }
             let w = UIWindow(windowScene: scene)
-            w.windowLevel = .alert + 1
+            w.windowLevel = UIWindow.Level(rawValue: UIWindow.Level.alert.rawValue + 1)
             w.rootViewController = UIHostingController(rootView: PrivacyCover())
             w.isHidden = false
             window = w

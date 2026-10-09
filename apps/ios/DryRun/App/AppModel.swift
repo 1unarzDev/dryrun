@@ -30,7 +30,10 @@ final class AppModel {
     var rehearsal: RehearsalCursor?
     var comparison: RehearsalComparison?
     var lastError: String?
-    var isWorking = false
+    /// Requests in flight (rehearsal runs, comparisons, plan builds). A count, not a flag, so one request finishing
+    /// cannot hide another that is still running, and a superseded request cannot leave the spinner on.
+    private var workInFlight = 0
+    var isWorking: Bool { workInFlight > 0 }
     let capabilities = CapabilityService()
     let store: PrivateDataStore
     /// Public-only client (region ID in, public data out). Backed by an atomic known-good cache.
@@ -256,6 +259,32 @@ final class AppModel {
         await persist()
     }
 
+    /// Language pickers call this. The choice is stored with the household so it survives a relaunch (startup reads
+    /// `preferredLocale`). Language is not a simulation input, so this does not bump the revision or discard the
+    /// rehearsal on screen; a saved plan in another language is reported stale by `planIsStale`.
+    func selectLocale(_ newLocale: String) async {
+        guard newLocale != locale else { return }
+        locale = newLocale
+        guard var h = household, h.preferredLocale != newLocale else { return }
+        h.preferredLocale = newLocale
+        h.updatedAt = Date()
+        household = h
+        await persist()
+    }
+
+    /// Title of a preparation where no `Recommendation` is at hand (before/after sheet, completed list). Action titles
+    /// have placeholders such as {device}; the values come from the rehearsal on screen when it has that action.
+    func actionTitle(_ actionID: String) -> String {
+        let fromComparison = comparison?.baseline.recommendations.first(where: { $0.actionID == actionID })
+        let fromRehearsal = rehearsal?.result.recommendations.first(where: { $0.actionID == actionID })
+        if let rec = fromComparison ?? fromRehearsal {
+            return localizer(rec.titleKey, rec.templateValues)
+        }
+        // No values available: never show a raw {placeholder} to the user.
+        return localizer("action.\(actionID).title")
+            .replacingOccurrences(of: "\\{[A-Za-z0-9_]+\\}", with: "…", options: .regularExpression)
+    }
+
     // MARK: - Rehearsal
 
     func startRehearsal(scenarioID: String, variants: [String] = []) async {
@@ -278,8 +307,8 @@ final class AppModel {
     private func run(_ input: RehearsalInput, resetCursor: Bool) async {
         guard let engine, let key = currentKey else { return }
         let ticket = runGate.begin(for: key)
-        isWorking = true
-        defer { if runGate.shouldApply(ticket, current: currentKey) { isWorking = false } }
+        workInFlight += 1
+        defer { workInFlight -= 1 }
         do {
             let result = try await Task.detached(priority: .userInitiated) { try engine.run(input) }.value
             // A late result from an older run, or one computed for an older household/home, never overwrites newer state.
@@ -297,10 +326,12 @@ final class AppModel {
 
     /// "Try this change": runs a simulation COPY with one intervention. The household is not modified.
     func tryChange(_ intervention: Intervention) async {
+        // Clear the previous comparison first: if this one fails, the sheet must not show the old change as the new one.
+        comparison = nil
         guard let engine, let baseline = rehearsal?.result.input, let key = currentKey else { return }
         let ticket = runGate.begin(for: key)
-        isWorking = true
-        defer { if runGate.shouldApply(ticket, current: currentKey) { isWorking = false } }
+        workInFlight += 1
+        defer { workInFlight -= 1 }
         do {
             let result = try await Task.detached(priority: .userInitiated) { try engine.compare(baseline, applying: intervention) }.value
             guard runGate.shouldApply(ticket, current: currentKey) else { return }
@@ -325,8 +356,8 @@ final class AppModel {
             return RehearsalInput(household: household, home: home, scenarioID: id, scenarioVersion: s.version,
                                   contentVersion: content.contentVersion, seed: 1)
         }
-        isWorking = true
-        defer { isWorking = false }
+        workInFlight += 1
+        defer { workInFlight -= 1 }
         do {
             let doc = try await Task.detached(priority: .userInitiated) {
                 let results = try inputs.map { try engine.run($0) }
