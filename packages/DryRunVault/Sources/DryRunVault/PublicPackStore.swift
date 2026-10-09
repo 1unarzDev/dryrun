@@ -7,6 +7,8 @@ public enum PublicPackError: Error, Sendable, Equatable {
     case unsupportedSchema(Int)
     case invalid(String)
     case writeFailed(String)
+    /// The response is for a different region than the one requested (server/CDN mix-up).
+    case regionMismatch(expected: String, found: String)
 }
 
 /// Known-good cache of PUBLIC packs (not encrypted; contains no household data).
@@ -21,31 +23,39 @@ public actor PublicPackStore {
 
     public init(directory: URL) { self.directory = directory }
 
-    private func packURL(_ id: String) -> URL { directory.appendingPathComponent("pack-\(id).json") }
+    /// Known-good packs are keyed by the region the app ASKED for, so offline lookup needs only the region ID.
+    private func packURL(_ regionID: String) -> URL { directory.appendingPathComponent("pack-region-\(regionID).json") }
     private func alertsURL(_ id: String) -> URL { directory.appendingPathComponent("alerts-\(id).json") }
 
+    /// Validates a pack fetched for `expectedRegionID` and makes it the known-good copy for that region.
     @discardableResult
-    public func updatePack(_ data: Data) throws(PublicPackError) -> RegionPack {
+    public func updatePack(_ data: Data, expectedRegionID: String) throws(PublicPackError) -> RegionPack {
+        guard PublicDataPolicy.isAllowedRegionID(expectedRegionID) else { throw .invalid("expected regionID") }
         guard data.count <= Self.maxPackBytes else { throw .tooLarge(data.count) }
         let pack: RegionPack
         do { pack = try DryRunJSON.decoder().decode(RegionPack.self, from: data) } catch { throw .malformed("\(error)") }
         try Self.validate(pack)
-        try write(pack, to: packURL(pack.packID))
+        guard pack.regions.contains(where: { $0.id == expectedRegionID }) else {
+            throw .regionMismatch(expected: expectedRegionID, found: pack.regions.map(\.id).joined(separator: ","))
+        }
+        try write(pack, to: packURL(expectedRegionID))
         return pack
     }
 
-    public func knownGoodPack(id: String) -> RegionPack? {
-        guard Self.isSafeID(id), let d = FileManager.default.contents(atPath: packURL(id).path) else { return nil }
+    public func knownGoodPack(regionID: String) -> RegionPack? {
+        guard PublicDataPolicy.isAllowedRegionID(regionID),
+              let d = FileManager.default.contents(atPath: packURL(regionID).path) else { return nil }
         return try? DryRunJSON.decoder().decode(RegionPack.self, from: d)
     }
 
     @discardableResult
-    public func updateAlerts(_ data: Data) throws(PublicPackError) -> AlertsEnvelope {
+    public func updateAlerts(_ data: Data, expectedRegionID: String) throws(PublicPackError) -> AlertsEnvelope {
         guard data.count <= Self.maxAlertBytes else { throw .tooLarge(data.count) }
         let env: AlertsEnvelope
         do { env = try DryRunJSON.decoder().decode(AlertsEnvelope.self, from: data) } catch { throw .malformed("\(error)") }
         guard env.schemaVersion == Self.supportedSchemaVersion else { throw .unsupportedSchema(env.schemaVersion) }
         guard PublicDataPolicy.isAllowedRegionID(env.regionID) else { throw .invalid("regionID") }
+        guard env.regionID == expectedRegionID else { throw .regionMismatch(expected: expectedRegionID, found: env.regionID) }
         for a in env.alerts where !Self.isHTTPS(a.sourceURL) { throw .invalid("alert source URL must be https") }
         try write(env, to: alertsURL(env.regionID))
         return env

@@ -45,7 +45,8 @@ struct PublicDataPolicyTests {
     @Test func expiredAlertNeverCurrentEvenIfCached() throws {
         let later = PublicDataPolicy.parseDate("2026-10-09T21:00:00Z")!
         #expect(PublicDataPolicy.freshness(of: try alert(), now: later) == .expired)
-        // `ends` takes precedence over a later `expires`.
+        // The earlier of `ends` and `expires` wins, in either order.
+        #expect(PublicDataPolicy.freshness(of: try alert(expires: "2026-10-09T19:05:00Z", ends: "2026-10-10T00:00:00Z"), now: now) == .expired)
         #expect(PublicDataPolicy.freshness(of: try alert(expires: "2026-10-10T00:00:00Z", ends: "2026-10-09T19:05:00Z"), now: now) == .expired)
     }
 

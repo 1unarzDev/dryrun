@@ -87,9 +87,13 @@ public enum VaultError: Error, Sendable, Equatable {
     /// A vault file exists but its key is gone (e.g. restored to a new phone). Data is not readable;
     /// the file is preserved and onboarding must not pretend this is a fresh start.
     case keyLost(preservedVault: URL)
-    /// Ciphertext or header failed authentication/parsing. The original is preserved for recovery.
-    case corrupted(recoveryCopy: URL, reason: String)
-    case keyMismatch(expected: String, found: String)
+    /// Ciphertext or header failed authentication/parsing. The original stays in place; `recoveryCopy` is
+    /// non-nil only if an additional copy was actually written to recovery/.
+    case corrupted(recoveryCopy: URL?, reason: String)
+    /// The vault was sealed with a different key than the one in the key store. Original kept (and copied).
+    case keyMismatch(expected: String, found: String, recoveryCopy: URL?)
+    /// The key is available (device unlocked) but the vault file could not be read (permissions, I/O).
+    case readFailed(String)
     case migrationFailed(fromVersion: Int, reason: String)
     case unsupportedNewerVersion(Int)
     case fileProtectionFailed(String)

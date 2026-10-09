@@ -193,6 +193,47 @@ describe("NWS alerts adapter", () => {
     }
   });
 
+  it("drops Cancel messages and messages superseded by an Update", () => {
+    const cancel = nwsBodyFor(["TXZ130"], { messageType: "Cancel" });
+    expect(normalizeNWS(cancel, ["TXZ130"], "t")).toHaveLength(0);
+    const original = nwsBodyFor(["TXZ130"], { id: "urn:oid:orig", messageType: "Alert" }).features[0];
+    const update = nwsBodyFor(["TXZ130"], { id: "urn:oid:upd", messageType: "Update",
+      references: [{ identifier: "urn:oid:orig", sender: "w-nws.webmaster@noaa.gov", sent: "2026-10-09T18:00:00-05:00" }] }).features[0];
+    const out = normalizeNWS({ features: [original, update] }, ["TXZ130"], "t");
+    expect(out.map((a) => a.id)).toEqual(["urn:oid:upd"]);
+    // A Cancel that references a warning removes the warning AND is itself not shown.
+    const cancelRef = nwsBodyFor(["TXZ130"], { id: "urn:oid:cx", messageType: "Cancel", references: [{ identifier: "urn:oid:orig" }] }).features[0];
+    expect(normalizeNWS({ features: [original, cancelRef] }, ["TXZ130"], "t")).toHaveLength(0);
+  });
+
+  it("drops messages with missing status", () => {
+    const body = nwsBodyFor(["TXZ130"]);
+    delete (body.features[0] as any).properties.status;
+    expect(normalizeNWS(body, ["TXZ130"], "t")).toHaveLength(0);
+  });
+
+  it("timeout covers a body that never finishes", async () => {
+    const stalledBody = async () => new Response(new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode("{\"features\":[")); } }),
+      { status: 200 });
+    const { app } = makeApp(stalledBody as unknown as typeof fetch);
+    const started = Date.now();
+    const r = await app.request("/v1/regions/48143/alerts");
+    expect(r.status).toBe(503);
+    expect(Date.now() - started).toBeLessThan(2000);
+  });
+
+  it("streamed body without content-length is capped by bytes", async () => {
+    let pulled = 0;
+    const chunk = new Uint8Array(256 * 1024).fill(0x20);
+    const huge = async () => new Response(new ReadableStream({
+      pull(c) { pulled += chunk.byteLength; if (pulled > 8_000_000) c.close(); else c.enqueue(chunk); },
+    }), { status: 200 });
+    const { app } = makeApp(huge as unknown as typeof fetch);
+    const r = await app.request("/v1/regions/48143/alerts");
+    expect(r.status).toBe(503);
+    expect(pulled).toBeLessThan(3_000_000); // stopped soon after the 2 MB cap, not fully buffered
+  });
+
   it("times out a hanging upstream", async () => {
     const hang = (_: unknown, init?: RequestInit) => new Promise<Response>((_, reject) => {
       init?.signal?.addEventListener("abort", () => reject(new Error("aborted")));

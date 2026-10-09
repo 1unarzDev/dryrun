@@ -19,7 +19,14 @@ public struct VaultFileProtection: FileProtectionApplying {
         let attrs = try FileManager.default.attributesOfItem(atPath: url.path)
         let protection = attrs[.protectionKey] as? FileProtectionType
         let excluded = try url.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup ?? false
+        #if targetEnvironment(simulator)
+        // The simulator does not implement Data Protection; only backup exclusion is checkable there.
+        // Device verification of the protection class is tracked in docs/VERIFICATION.md.
+        _ = protection
+        return excluded
+        #else
         return protection == .complete && excluded
+        #endif
     }
 }
 

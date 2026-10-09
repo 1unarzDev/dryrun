@@ -6,17 +6,17 @@ AI-authored (Claude, acting as Agent C) on 2026-10-09. Nothing here is student-a
 
 | Item | Status | Evidence |
 |---|---|---|
-| `packages/DryRunVault` encrypted vault (AES-GCM, authenticated header, atomic write, recovery copy, migrations, delete-all) | TESTED_CORE (Linux, swift-crypto) | `DRYRUN_SCRATCH=c scripts/swift.sh packages/DryRunVault test` → 21 tests, 3 suites, pass |
+| `packages/DryRunVault` encrypted vault (AES-GCM, authenticated header, atomic write, recovery copy, migrations, delete-all) | TESTED_CORE (Linux, swift-crypto) | `DRYRUN_SCRATCH=c scripts/swift.sh packages/DryRunVault test` → 31 tests, 5 suites, pass |
 | `PublicPackStore` known-good public cache | TESTED_CORE | same run |
 | `PublicDataPolicy` (alert freshness, activation display, region allowlist, `PublicQueryBuilder`) | TESTED_CORE | `scripts/swift.sh packages/DryRunCore test --filter PublicData` → 11 tests pass |
 | Swift ⇄ TS contract fixtures (`content/regions/*.json`, `services/public-api/test/fixtures/contract-alerts.json`) | TESTED_CORE both sides | `PublicDataContractTests` (Swift) + `api.test.ts` (Vitest) |
-| `services/public-api` Hono Worker | TESTED_CORE (Node/Vitest), typecheck clean, `wrangler deploy --dry-run` bundles (875 KiB) | `cd services/public-api && pnpm test` → 28 tests pass; `pnpm typecheck` |
+| `services/public-api` Hono Worker | TESTED_CORE (Node/Vitest), typecheck clean, `wrangler deploy --dry-run` bundles (875 KiB) | `cd services/public-api && pnpm test` → 32 tests pass (api 24 + locales 8); `pnpm typecheck` |
 | NWS alerts adapter | IMPLEMENTED + tested against a **recorded** real response (2026-10-09T18:59Z) and synthetic variants; never called live from tests | `test/fixtures/nws-alerts-tx-recorded.json` |
 | FEMA NFHL adapter | PARTIAL — interface + labelled `fixture` provider only. Live NFHL lookup **not implemented**; endpoint not verified | `src/fema.ts` |
 | Deployment | NOT DONE (not authorised). `wrangler.toml` has no secrets; set a real `NWS_USER_AGENT` contact first | |
 | iOS `KeychainVaultKeyStore`, `VaultFileProtection`, `PublicAPIClient` | AUTHORED, `swiftc -parse` only. Not compiled (no iOS SDK). Keychain/data-protection behaviour needs a device | `apps/ios/DryRun/Services/` |
 | Locale packs es/vi for `common`, `plan`, `help` | DRAFT translations (AI). Manifest marks them `draft`. Integrity test checks placeholders/numbers/phones | `test/locales.test.ts` |
-| es/vi `scenarios`, `actions` | see "Locales" below | |
+| es/vi `scenarios` (315 keys), `actions` (76 keys) | DRAFT translations, complete against final English; placeholder sets identical (checked in Vitest and by the lead's `PlanBuilderTests`) | |
 
 ## Vault design (what to review)
 
@@ -74,12 +74,31 @@ or stale alerts substituted. Packs are unsigned (manifest says so).
 
 - `content/locales/manifest.json` uses the lead's shape. English is marked `draft` too: AI-authored safety text with
   no human safety-content review yet.
-- es/vi: `common`, `plan`, `help` drafted. Kept "6,500 feet", phone numbers, and `Option N` digits identical to
+- es/vi: all five domains drafted. Kept "6,500 feet", phone numbers, and `Option N` digits identical to
   English (the integrity test compares digit sequences); Vietnamese keeps English terms in parentheses where
   official names matter (e.g. "manufactured home", "tornado warning", "Option 4").
 - Translation notes for reviewers: "Dé la vuelta, no se ahogue" mirrors NWS's Spanish "Turn Around Don't Drown"
   wording only approximately — check against NWS Spanish material. Vietnamese heat-stroke wording
   ("say nắng nặng (sốc nhiệt)") needs medical-language review.
+
+## Review fixes applied (docs/lanes/review-privacy.md)
+
+| Finding | Fix | Test |
+|---|---|---|
+| M1 unreadable file → "locked" | new `VaultError.readFailed`; key store alone decides "locked" | `unreadableFileWithKeyIsNotLocked` (chmod 000) |
+| M2 save over unreadable vault | `save(_:overwriteUnreadable:)` opens the existing vault first; corrupt/other-key vault is never replaced unless explicit (and then a recovery copy is kept first). `keyMismatch` now carries a recovery copy | `saveRefusesToOverwriteVaultSealedWithAnotherKey`, `saveRefusesToOverwriteCorruptVaultUnlessExplicit` |
+| M3 recovery copy claims / duplicates | copy named by SHA-256 of bytes (one per distinct file); `recoveryCopy: URL?` is nil unless the copy exists | `repeatedLoadsOfCorruptVaultKeepOneRecoveryCopy`, `recoveryCopyIsNotClaimedWhenItCouldNotBeWritten` |
+| M4 unprotected export left behind | `AtomicFile.write(removeOnVerificationFailure:)` used for exports | `exportFailingVerificationIsRemoved` |
+| M6 wrong-county data | `updatePack/updateAlerts(_:expectedRegionID:)` reject mismatches; cache kept | `alertsForWrongCountyRejectedAndCacheKept` |
+| M7 pack cache key | known-good packs keyed by requested region: `knownGoodPack(regionID:)` | `packMustContainRequestedRegionAndIsFoundByRegionOffline` |
+| M8 NWS Cancel/Update | drop `messageType == "Cancel"`, drop messages referenced by another message, drop missing/non-`Actual` status | Vitest "drops Cancel messages…" |
+| M9 body timeout / streamed cap | single deadline covers fetch + body; body read via reader with running byte count | Vitest "timeout covers a body…", "streamed body … capped by bytes" |
+| L1 temp file protection / fsync | Darwin: temp created with `.complete`; `FileHandle.synchronize()` before rename | (device-only for protection class) |
+| L2 orphaned temp files | `deleteAll` removes the whole `private/` tree | `deleteAllRemovesOrphanedTempFiles` |
+| L3 prefix check | path-component comparison in `removeExport` | `removeExportIgnoresSiblingDirectories` |
+| L7 `ends ?? expires` | earlier of `ends` and `expires` | `expiredAlertNeverCurrentEvenIfCached` |
+
+Not mine / not done: H1–H5 (app files), M5 (print/share lifecycle, app), L4–L6/L8/L9 (app).
 
 ## Gaps / next
 

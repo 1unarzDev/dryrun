@@ -33,6 +33,7 @@ const NWSFeature = z.object({
     ends: z.string().nullable().optional(),
     status: z.string().optional(),
     messageType: z.string().optional(),
+    references: z.array(z.object({ identifier: z.string() }).passthrough()).optional(),
   }).passthrough(),
 }).passthrough();
 
@@ -57,15 +58,18 @@ export function normalizeNWS(body: unknown, regionUGC: string[], fetchedAt: stri
   const coll = NWSCollection.safeParse(body);
   if (!coll.success) throw new UpstreamError("malformed NWS collection");
   const wanted = new Set(regionUGC);
+  const features = coll.data.features.map((raw) => NWSFeature.safeParse(raw)).filter((f) => f.success).map((f) => f.data);
+  // An Update or Cancel names the messages it replaces; those replaced messages are no longer current.
+  const superseded = new Set(features.flatMap((f) => (f.properties.references ?? []).map((r) => r.identifier)));
   const out: PublicAlertT[] = [];
-  for (const raw of coll.data.features) {
-    const f = NWSFeature.safeParse(raw);
-    if (!f.success) continue; // skip a malformed feature rather than inventing fields
-    const p = f.data.properties;
-    if (p.status && p.status !== "Actual") continue; // exercises/tests are never live warnings
+  for (const f of features) {
+    const p = f.properties;
+    if (p.status !== "Actual") continue; // exercises/tests/drafts (or missing status) are never live warnings
+    if (p.messageType === "Cancel") continue; // a cancellation must never display as the warning it cancels
+    if (superseded.has(p.id)) continue;
     const zones = p.geocode.UGC.filter((z) => UGC.test(z));
     if (!zones.some((z) => wanted.has(z))) continue;
-    const sourceURL = f.data.id.startsWith(`${NWS_ORIGIN}/`) ? f.data.id : `${NWS_ORIGIN}/alerts/${encodeURIComponent(p.id)}`;
+    const sourceURL = f.id.startsWith(`${NWS_ORIGIN}/`) ? f.id : `${NWS_ORIGIN}/alerts/${encodeURIComponent(p.id)}`;
     out.push({
       id: p.id,
       event: p.event,
@@ -93,28 +97,62 @@ function parseMaxAge(cacheControl: string | null): number {
   return Math.min(Math.max(v, 30), 300); // floor protects NWS, ceiling keeps warnings timely
 }
 
+/** Reads the body with a running BYTE count, aborting past `max` without buffering the rest. */
+async function readCapped(res: Response, max: number, ctrl: AbortController): Promise<string> {
+  if (!res.body) return "";
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > max) {
+      ctrl.abort();
+      await reader.cancel().catch(() => {});
+      throw new UpstreamError("NWS response too large");
+    }
+    chunks.push(value);
+  }
+  const all = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) { all.set(c, off); off += c.byteLength; }
+  return new TextDecoder().decode(all);
+}
+
+function withTimeout<T>(p: Promise<T>, ms: number, ctrl: AbortController): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => { ctrl.abort(); reject(new UpstreamError("NWS timeout")); }, ms);
+  });
+  return Promise.race([p, timeout]).finally(() => clearTimeout(timer));
+}
+
 export async function fetchNWSAlerts(ugcIDs: string[], deps: NWSDeps): Promise<NWSResult> {
   const url = buildAlertsURL(ugcIDs);
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), deps.timeoutMs);
-  let res: Response;
-  try {
-    res = await deps.fetch(url, {
-      headers: { "User-Agent": deps.userAgent, Accept: "application/geo+json" },
-      signal: ctrl.signal,
-      redirect: "error",
-    });
-  } catch {
-    throw new UpstreamError("NWS unreachable");
-  } finally {
-    clearTimeout(timer);
-  }
-  if (!res.ok) throw new UpstreamError(`NWS status ${res.status}`);
-  const len = Number(res.headers.get("content-length") ?? "0");
-  if (len > MAX_NWS_BYTES) throw new UpstreamError("NWS response too large");
-  const text = await res.text();
-  if (text.length > MAX_NWS_BYTES) throw new UpstreamError("NWS response too large");
+  // One deadline covers connection, headers, AND the body read.
+  const { text, cacheControl } = await withTimeout((async () => {
+    let res: Response;
+    try {
+      res = await deps.fetch(url, {
+        headers: { "User-Agent": deps.userAgent, Accept: "application/geo+json" },
+        signal: ctrl.signal,
+        redirect: "error",
+      });
+    } catch {
+      throw new UpstreamError("NWS unreachable");
+    }
+    if (!res.ok) throw new UpstreamError(`NWS status ${res.status}`);
+    const len = Number(res.headers.get("content-length") ?? "0");
+    if (len > MAX_NWS_BYTES) throw new UpstreamError("NWS response too large");
+    try {
+      return { text: await readCapped(res, MAX_NWS_BYTES, ctrl), cacheControl: res.headers.get("cache-control") };
+    } catch (e) {
+      throw e instanceof UpstreamError ? e : new UpstreamError("NWS body read failed");
+    }
+  })(), deps.timeoutMs, ctrl);
   let body: unknown;
   try { body = JSON.parse(text); } catch { throw new UpstreamError("NWS response not JSON"); }
-  return { alerts: normalizeNWS(body, ugcIDs, deps.now().toISOString()), maxAgeSeconds: parseMaxAge(res.headers.get("cache-control")) };
+  return { alerts: normalizeNWS(body, ugcIDs, deps.now().toISOString()), maxAgeSeconds: parseMaxAge(cacheControl) };
 }

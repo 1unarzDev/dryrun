@@ -35,7 +35,8 @@ public enum PublicDataPolicy {
 
     public static func freshness(of alert: PublicAlert, now: Date) -> AlertFreshness {
         if alert.classification != .live { return .demo }
-        let end = parseDate(alert.ends) ?? parseDate(alert.expires)
+        // Use the EARLIER of `ends` and `expires`: past either, the message is no longer current.
+        let end = [parseDate(alert.ends), parseDate(alert.expires)].compactMap { $0 }.min()
         guard let end, let fetched = parseDate(alert.fetchedAt) else { return .unknown }
         if now >= end { return .expired }
         if now.timeIntervalSince(fetched) > alertStaleAfter { return .stale }

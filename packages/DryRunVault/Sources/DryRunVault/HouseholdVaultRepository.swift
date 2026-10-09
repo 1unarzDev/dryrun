@@ -49,17 +49,31 @@ public actor HouseholdVaultRepository {
             case .other(let m): throw .writeFailed("key store: \(m)")
             }
         }
-        guard let bytes = fm.contents(atPath: locations.vaultFile.path) else {
-            throw .keyUnavailableWhileLocked // protected file unreadable while locked
-        }
+        // The key store already proved the device is unlocked, so an unreadable file is an I/O or
+        // permissions problem, not "locked".
+        let bytes = try readVaultBytes()
         let (header, json) = try open(bytes, key: key)
         return try migrateAndDecode(json, from: header.payloadSchemaVersion)
     }
 
     // MARK: Save
 
-    public func save(_ payload: VaultPayload) throws(VaultError) {
+    /// Saves the payload. If a vault already exists, it must open with the current key first; a vault that
+    /// cannot be read, is corrupt, or was sealed with another key is never silently replaced. Only an explicit
+    /// start-over (`overwriteUnreadable: true`) may replace it, and a recovery copy is kept first.
+    public func save(_ payload: VaultPayload, overwriteUnreadable: Bool = false) throws(VaultError) {
         let key = try keyForWriting()
+        if FileManager.default.fileExists(atPath: locations.vaultFile.path) {
+            do {
+                let existing = try readVaultBytes()
+                _ = try open(existing, key: key)
+            } catch {
+                guard overwriteUnreadable else { throw error }
+                if let bytes = FileManager.default.contents(atPath: locations.vaultFile.path) {
+                    _ = preserveRecoveryCopy(bytes)
+                }
+            }
+        }
         var payload = payload
         payload.schemaVersion = currentSchemaVersion
         payload.savedAt = now()
@@ -105,13 +119,15 @@ public actor HouseholdVaultRepository {
     /// The only plaintext private file the app writes, created for explicit preview/share/print.
     public func makeExportFile(named name: String, data: Data) throws(VaultError) -> URL {
         let url = locations.exportsDir.appendingPathComponent(safeName(name))
-        do { try AtomicFile.write(data, to: url, protection: protection) }
+        do { try AtomicFile.write(data, to: url, protection: protection, removeOnVerificationFailure: true) }
         catch let e as VaultError { throw e } catch { throw .writeFailed("\(error)") }
         return url
     }
 
     public func removeExport(_ url: URL) {
-        guard url.standardizedFileURL.path.hasPrefix(locations.exportsDir.standardizedFileURL.path) else { return }
+        let dir = locations.exportsDir.standardizedFileURL.pathComponents
+        let target = url.standardizedFileURL.pathComponents
+        guard target.count > dir.count, Array(target.prefix(dir.count)) == dir else { return }
         try? FileManager.default.removeItem(at: url)
     }
 
@@ -122,13 +138,13 @@ public actor HouseholdVaultRepository {
 
     // MARK: Delete all
 
-    /// Purges the vault, recovery copies, derived caches, plaintext exports, and the key.
-    /// Public downloaded packs are kept. Copies the user already shared cannot be revoked.
+    /// Purges the whole private tree (vault, crash-orphaned temp files, recovery copies, derived caches,
+    /// plaintext exports) and the key. Public downloaded packs live in a sibling directory and are kept.
+    /// Copies the user already shared cannot be revoked.
     public func deleteAll() throws(VaultError) {
         let fm = FileManager.default
-        for url in [locations.vaultFile, locations.recoveryDir, locations.derivedDir, locations.exportsDir]
-            where fm.fileExists(atPath: url.path) {
-            do { try fm.removeItem(at: url) } catch { throw .writeFailed("delete \(url.lastPathComponent): \(error)") }
+        if fm.fileExists(atPath: locations.privateRoot.path) {
+            do { try fm.removeItem(at: locations.privateRoot) } catch { throw .writeFailed("delete private data: \(error)") }
         }
         do { try keyStore.deleteKey() } catch { throw .writeFailed("delete key: \(error)") }
     }
@@ -179,7 +195,7 @@ public actor HouseholdVaultRepository {
     private func open(_ bytes: Data, key: VaultKeyMaterial, preserveOnFailure: Bool = true) throws(VaultError)
         -> (VaultEnvelopeHeader, Data) {
         func fail(_ reason: String) -> VaultError {
-            .corrupted(recoveryCopy: preserveOnFailure ? preserveRecoveryCopy(bytes) : locations.vaultFile, reason: reason)
+            .corrupted(recoveryCopy: preserveOnFailure ? preserveRecoveryCopy(bytes) : nil, reason: reason)
         }
         guard bytes.count > 4 else { throw fail("truncated") }
         let len = bytes.prefix(4).reduce(UInt32(0)) { ($0 << 8) | UInt32($1) }
@@ -191,7 +207,10 @@ public actor HouseholdVaultRepository {
         guard header.formatVersion <= VaultEnvelopeHeader.currentFormatVersion else {
             throw .unsupportedNewerVersion(header.formatVersion)
         }
-        guard header.keyID == key.keyID else { throw .keyMismatch(expected: key.keyID, found: header.keyID) }
+        guard header.keyID == key.keyID else {
+            throw .keyMismatch(expected: key.keyID, found: header.keyID,
+                               recoveryCopy: preserveOnFailure ? preserveRecoveryCopy(bytes) : nil)
+        }
         do {
             let box = try AES.GCM.SealedBox(combined: boxBytes)
             let plain = try AES.GCM.open(box, using: key.symmetricKey, authenticating: headerBytes)
@@ -216,11 +235,17 @@ public actor HouseholdVaultRepository {
         }
     }
 
-    /// Copies (never moves) the unreadable original into recovery/ so a later fix can retry.
-    private func preserveRecoveryCopy(_ bytes: Data) -> URL {
-        let stamp = Int(now().timeIntervalSince1970)
-        let url = locations.recoveryDir.appendingPathComponent("household-\(stamp)-\(UUID().uuidString.prefix(8)).vault")
-        try? AtomicFile.write(bytes, to: url, protection: protection)
-        return url
+    /// Copies (never moves) the unreadable original into recovery/ so a later fix can retry. Named by content
+    /// hash, so retries on the same bytes reuse one copy. Returns nil unless the copy really exists.
+    private func preserveRecoveryCopy(_ bytes: Data) -> URL? {
+        let digest = SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined().prefix(24)
+        let url = locations.recoveryDir.appendingPathComponent("household-\(digest).vault")
+        if FileManager.default.fileExists(atPath: url.path) { return url }
+        do { try AtomicFile.write(bytes, to: url, protection: protection) } catch { return nil }
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    private func readVaultBytes() throws(VaultError) -> Data {
+        do { return try Data(contentsOf: locations.vaultFile) } catch { throw .readFailed("\(error)") }
     }
 }

@@ -87,7 +87,7 @@ struct VaultTests {
             _ = try await f.repo.load()
             Issue.record("tampered vault loaded")
         } catch {
-            guard case .corrupted(let recovery, _) = error else { Issue.record("wrong error \(error)"); return }
+            guard case .corrupted(let recovery?, _) = error else { Issue.record("wrong error \(error)"); return }
             #expect(FileManager.default.fileExists(atPath: recovery.path))
             #expect(try Data(contentsOf: recovery) == bytes)
         }
@@ -239,4 +239,123 @@ struct VaultTests {
         // After delete-all, a fresh start is legitimate.
         #expect(try await f.repo.load() == nil)
     }
+}
+
+@Suite("Vault review fixes (docs/lanes/review-privacy.md)")
+struct VaultReviewFixTests {
+    @Test func unreadableFileWithKeyIsNotLocked() async throws {
+        guard getuid() != 0 else { return } // root ignores permissions
+        let f = Fixture()
+        let url = VaultLocations(root: f.root).vaultFile
+        try await f.repo.save(canaryPayload())
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: url.path)
+        defer { try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path) }
+        do {
+            _ = try await f.repo.load()
+            Issue.record("unreadable vault loaded")
+        } catch {
+            #expect(error != .keyUnavailableWhileLocked)
+            guard case .readFailed = error else { Issue.record("expected readFailed, got \(error)"); return }
+        }
+    }
+
+    @Test func saveRefusesToOverwriteVaultSealedWithAnotherKey() async throws {
+        let f = Fixture()
+        let url = VaultLocations(root: f.root).vaultFile
+        try await f.repo.save(canaryPayload())
+        let before = try Data(contentsOf: url)
+        let otherKeys = InMemoryVaultKeyStore(key: VaultKeyMaterial.generate())
+        let repoB = HouseholdVaultRepository(locations: VaultLocations(root: f.root), keyStore: otherKeys, protection: f.protection)
+        do {
+            try await repoB.save(VaultPayload())
+            Issue.record("overwrote a vault sealed with another key")
+        } catch {
+            guard case .keyMismatch(_, _, let copy?) = error else { Issue.record("wrong error \(error)"); return }
+            #expect(try Data(contentsOf: copy) == before)
+        }
+        #expect(try Data(contentsOf: url) == before)
+    }
+
+    @Test func saveRefusesToOverwriteCorruptVaultUnlessExplicit() async throws {
+        let f = Fixture()
+        let url = VaultLocations(root: f.root).vaultFile
+        try await f.repo.save(canaryPayload())
+        var bytes = try Data(contentsOf: url)
+        bytes[bytes.count - 3] ^= 0x01
+        try bytes.write(to: url)
+        await #expect(throws: VaultError.self) { try await f.repo.save(VaultPayload()) }
+        #expect(try Data(contentsOf: url) == bytes)
+        // Explicit start-over keeps a recovery copy, then replaces.
+        try await f.repo.save(VaultPayload(), overwriteUnreadable: true)
+        #expect(try await f.repo.load()?.household == nil)
+        let recovery = try FileManager.default.contentsOfDirectory(at: VaultLocations(root: f.root).recoveryDir, includingPropertiesForKeys: nil)
+        #expect(recovery.count == 1)
+        #expect(try Data(contentsOf: recovery[0]) == bytes)
+    }
+
+    @Test func repeatedLoadsOfCorruptVaultKeepOneRecoveryCopy() async throws {
+        let f = Fixture()
+        let loc = VaultLocations(root: f.root)
+        try await f.repo.save(canaryPayload())
+        var bytes = try Data(contentsOf: loc.vaultFile)
+        bytes[bytes.count - 1] ^= 0x01
+        try bytes.write(to: loc.vaultFile)
+        for _ in 0 ..< 3 { _ = try? await f.repo.load() }
+        let recovery = try FileManager.default.contentsOfDirectory(at: loc.recoveryDir, includingPropertiesForKeys: nil)
+        #expect(recovery.count == 1)
+    }
+
+    @Test func recoveryCopyIsNotClaimedWhenItCouldNotBeWritten() async throws {
+        let f = Fixture()
+        let loc = VaultLocations(root: f.root)
+        try await f.repo.save(canaryPayload())
+        var bytes = try Data(contentsOf: loc.vaultFile)
+        bytes[bytes.count - 1] ^= 0x01
+        try bytes.write(to: loc.vaultFile)
+        // Make recovery/ impossible to create: a regular file in its place.
+        try Data("x".utf8).write(to: loc.recoveryDir)
+        do {
+            _ = try await f.repo.load()
+            Issue.record("corrupt vault loaded")
+        } catch {
+            guard case .corrupted(let copy, _) = error else { Issue.record("wrong error \(error)"); return }
+            #expect(copy == nil)
+        }
+        #expect(try Data(contentsOf: loc.vaultFile) == bytes)
+    }
+
+    @Test func exportFailingVerificationIsRemoved() async throws {
+        let f = Fixture()
+        let failing = VerifyFailingProtection()
+        let repo = HouseholdVaultRepository(locations: VaultLocations(root: f.root), keyStore: f.keys, protection: failing)
+        await #expect(throws: VaultError.self) { _ = try await repo.makeExportFile(named: "plan.pdf", data: Data("%PDF \(canary)".utf8)) }
+        #expect(allFileBytes(under: f.root).allSatisfy { !contains($0.1, canary) })
+    }
+
+    @Test func removeExportIgnoresSiblingDirectories() async throws {
+        let f = Fixture()
+        let loc = VaultLocations(root: f.root)
+        let sibling = loc.privateRoot.appendingPathComponent("exports-other", isDirectory: true)
+        try FileManager.default.createDirectory(at: sibling, withIntermediateDirectories: true)
+        let file = sibling.appendingPathComponent("keep.txt")
+        try Data("keep".utf8).write(to: file)
+        await f.repo.removeExport(file)
+        #expect(FileManager.default.fileExists(atPath: file.path))
+    }
+
+    @Test func deleteAllRemovesOrphanedTempFiles() async throws {
+        let f = Fixture()
+        let loc = VaultLocations(root: f.root)
+        try await f.repo.save(canaryPayload())
+        let orphan = loc.privateRoot.appendingPathComponent(".household.vault.\(UUID().uuidString).tmp")
+        try Data("ciphertext".utf8).write(to: orphan)
+        try await f.repo.deleteAll()
+        #expect(!FileManager.default.fileExists(atPath: orphan.path))
+    }
+}
+
+/// Protects nothing and reports unprotected: simulates verification failure after rename.
+final class VerifyFailingProtection: FileProtectionApplying, @unchecked Sendable {
+    func protect(_ url: URL) throws {}
+    func isProtected(_ url: URL) throws -> Bool { false }
 }

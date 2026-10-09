@@ -33,6 +33,12 @@ struct RootView: View {
             }
         }
         .tint(Theme.accent)
+        .alert("Something went wrong", isPresented: Binding(get: { model.lastError != nil }, set: { if !$0 { model.lastError = nil } })) {
+            Button("OK", role: .cancel) { model.lastError = nil }
+        } message: {
+            // Generic on purpose: raw errors can contain file paths or key identifiers.
+            Text("Dry Run could not finish that step. Your saved household data was not changed.")
+        }
     }
 
     private var tabs: some View {

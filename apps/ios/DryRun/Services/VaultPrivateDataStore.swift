@@ -18,8 +18,10 @@ struct VaultPrivateDataStore: PrivateDataStore {
 
     func load() async -> PrivateLoadResult {
         do {
-            guard let payload = try await repository.load(), let household = payload.household, let home = payload.home else {
-                return .empty
+            guard let payload = try await repository.load() else { return .empty }
+            guard let household = payload.household, let home = payload.home else {
+                // A vault file existed but is incomplete: never treat as a fresh start that the next save would overwrite.
+                return .needsRecovery("The saved data is incomplete. It was kept unchanged.")
             }
             let plan = payload.retainedPlans.max { $0.generatedAt < $1.generatedAt }
                 .flatMap { try? DryRunJSON.decoder().decode(PlanDocument.self, from: $0.document) }
@@ -31,7 +33,7 @@ struct VaultPrivateDataStore: PrivateDataStore {
             case .keyLost:
                 return .needsRecovery("The encryption key for this data is not on this device.")
             case .corrupted(_, let reason):
-                return .needsRecovery("The stored file failed its integrity check (\(reason)). A recovery copy was kept.")
+                return .needsRecovery("The stored file failed its integrity check (\(reason)). The original file was kept.")
             case .migrationFailed(let from, let reason):
                 return .needsRecovery("Could not upgrade data from version \(from): \(reason). The original was kept.")
             case .unsupportedNewerVersion(let v):

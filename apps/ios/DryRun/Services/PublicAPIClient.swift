@@ -44,13 +44,13 @@ public actor PublicAPIClient {
     }
 
     /// Fetches and validates a region pack; on any failure the previous known-good pack stays in use.
-    public func refreshRegionPack(regionID: String, cachedPackID: String) async -> (RegionPack?, Freshness) {
+    public func refreshRegionPack(regionID: String) async -> (RegionPack?, Freshness) {
         do {
             let data = try await get(.regionPack(regionID: regionID), maxBytes: PublicPackStore.maxPackBytes)
-            let pack = try await store.updatePack(data)
+            let pack = try await store.updatePack(data, expectedRegionID: regionID)
             return (pack, .updated)
         } catch {
-            let cached = await store.knownGoodPack(id: cachedPackID)
+            let cached = await store.knownGoodPack(regionID: regionID)
             return (cached, cached == nil ? .unavailable : .cached(generatedAt: cached?.generatedAt))
         }
     }
@@ -60,7 +60,8 @@ public actor PublicAPIClient {
     public func refreshAlerts(regionID: String) async -> (AlertsEnvelope?, Freshness) {
         do {
             let data = try await get(.regionAlerts(regionID: regionID), maxBytes: PublicPackStore.maxAlertBytes)
-            let env = try await store.updateAlerts(data)
+            // Rejects an envelope for a different county than the one requested.
+            let env = try await store.updateAlerts(data, expectedRegionID: regionID)
             return (env, .updated)
         } catch {
             let cached = await store.cachedAlerts(regionID: regionID)
