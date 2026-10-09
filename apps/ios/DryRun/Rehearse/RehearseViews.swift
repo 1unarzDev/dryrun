@@ -155,7 +155,10 @@ enum ServiceNames {
         "svc.wellPump": "Well pump", "svc.water.supply": "Water supply", "svc.water.safety": "Water safety",
         "svc.wifi": "Home Wi-Fi", "svc.cellular": "Cell service", "svc.handset": "Phone battery", "svc.roads": "Roads",
         "svc.transport": "Transport", "res.water.stored": "Stored water", "res.handset.charge": "Phone charge",
-        "res.food.days": "Food",
+        "res.food.days": "Food", "svc.power.home": "Home power", "svc.alerts": "Warnings received",
+        "svc.destination": "Place to go", "svc.relocated": "Relocated", "svc.water.municipal": "City water supply",
+        "svc.water.utilitySafety": "Utility water safety", "svc.water.wellSafety": "Well water safety",
+        "svc.wellPump.mechanical": "Well pump (equipment)", "svc.internet": "Internet",
     ]
     static func name(_ id: String) -> String {
         if let n = names[id] { return n }

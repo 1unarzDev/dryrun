@@ -143,36 +143,60 @@ struct DirectoryMapView: View {
     }
 }
 
-/// Official alerts. Only current, non-demo alerts are presented as current; offline shows dated context.
+/// Official alerts. Current alerts are shown as current. Alerts still in effect but fetched a while ago (stale) are
+/// shown with their dates, never dropped — an old tornado warning must not turn into "no alerts". Expired, cancelled,
+/// and demo alerts are never shown as current. Offline shows the cached, dated envelope.
 struct AlertsSection: View {
     @Environment(AppModel.self) private var model
     let regionID: String
     @State private var envelope: AlertsEnvelope?
-    @State private var failed = false
+    @State private var freshness: PublicAPIClient.Freshness?
 
     var body: some View {
         Section("Official alerts (National Weather Service)") {
-            if let envelope {
-                let current = PublicDataPolicy.currentOfficialAlerts(envelope.alerts, now: Date())
-                if current.isEmpty {
-                    Text("No current alerts in the last update (\(envelope.fetchedAt)).").font(.callout)
+            if let envelope, envelope.regionID == regionID {
+                let now = Date()
+                let current = PublicDataPolicy.currentOfficialAlerts(envelope.alerts, now: now)
+                let stale = envelope.alerts.filter { PublicDataPolicy.freshness(of: $0, now: now) == .stale }
+                if case .cached(let date) = freshness {
+                    Label("Offline. Showing alerts saved \(date ?? envelope.fetchedAt).", systemImage: "clock.arrow.circlepath")
+                        .font(.footnote)
                 }
-                ForEach(current) { alert in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(alert.event).font(.headline)
-                        if let headline = alert.headline { Text(headline).font(.callout) }
-                        Text("Issued \(alert.sent) · expires \(alert.expires ?? "unknown") · fetched \(alert.fetchedAt)")
-                            .font(.caption).foregroundStyle(.secondary)
+                ForEach(current) { AlertRow(alert: $0, isStale: false) }
+                ForEach(stale) { AlertRow(alert: $0, isStale: true) }
+                if current.isEmpty && stale.isEmpty {
+                    if freshness == .updated {
+                        Text("No alerts in effect as of \(envelope.fetchedAt).").font(.callout)
+                    } else {
+                        Text("Current alert status is unknown. Check local media or weather.gov.").font(.callout)
                     }
                 }
-            } else if failed || !model.capabilities.isOnline {
-                Text("Current conditions are unavailable right now.").font(.callout)
             } else {
-                ProgressView()
+                Text("Current conditions are unavailable right now. Rehearsals and your saved plan still work.").font(.callout)
             }
         }
         .task(id: regionID) {
-            do { envelope = try await PublicAPIClient.shared.alerts(regionID: regionID) } catch { failed = true }
+            let (env, fresh) = await model.publicClient.refreshAlerts(regionID: regionID)
+            // Never show data for a different county than the one requested.
+            envelope = env?.regionID == regionID ? env : nil
+            freshness = fresh
         }
+    }
+}
+
+private struct AlertRow: View {
+    let alert: PublicAlert
+    let isStale: Bool
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(alert.event).font(.headline)
+            if isStale {
+                Text("May be out of date — last updated \(alert.fetchedAt). Check for newer information.")
+                    .font(.caption.weight(.semibold)).foregroundStyle(Theme.caution)
+            }
+            if let headline = alert.headline { Text(headline).font(.callout) }
+            Text("Issued \(alert.sent) · expires \(alert.expires ?? "unknown")").font(.caption).foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .combine)
     }
 }

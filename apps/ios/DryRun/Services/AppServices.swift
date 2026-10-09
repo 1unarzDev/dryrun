@@ -55,15 +55,29 @@ enum TemporaryExports {
         FileManager.default.temporaryDirectory.appendingPathComponent("dryrun-exports", isDirectory: true)
     }
 
+    /// Set while a preview/share/print may still read the file.
+    @MainActor static var hasActiveExport = false
+
     static func write(_ data: Data, name: String) throws -> URL {
         let fm = FileManager.default
         try fm.createDirectory(at: directory, withIntermediateDirectories: true,
                                attributes: [.protectionKey: FileProtectionType.complete])
         var url = directory.appendingPathComponent(name)
         try data.write(to: url, options: [.atomic, .completeFileProtection])
-        var values = URLResourceValues()
-        values.isExcludedFromBackup = true
-        try url.setResourceValues(values)
+        do {
+            var values = URLResourceValues()
+            values.isExcludedFromBackup = true
+            try url.setResourceValues(values)
+            #if !targetEnvironment(simulator)
+            // The simulator does not implement Data Protection; verify on devices only (see VERIFICATION.md).
+            let protection = try fm.attributesOfItem(atPath: url.path)[.protectionKey] as? FileProtectionType
+            guard protection == .complete else { throw CocoaError(.fileWriteNoPermission) }
+            #endif
+        } catch {
+            // Never leave an unprotected plaintext plan behind.
+            try? fm.removeItem(at: url)
+            throw error
+        }
         return url
     }
 

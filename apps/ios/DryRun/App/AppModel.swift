@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import DryRunCore
+import DryRunVault
 
 /// Application state. Heavy work (simulation, routing, plan building) runs off the main actor;
 /// every async result carries a run ID + revision key and is dropped if a newer request superseded it.
@@ -32,6 +33,8 @@ final class AppModel {
     var isWorking = false
     let capabilities = CapabilityService()
     let store: PrivateDataStore
+    /// Public-only client (region ID in, public data out). Backed by an atomic known-good cache.
+    let publicClient: PublicAPIClient = AppModel.makePublicClient()
 
     private var runGate = LatestRequestGate()
     private var planGate = LatestRequestGate()
@@ -49,6 +52,15 @@ final class AppModel {
 
     var localizer: Localizer {
         content?.localizer(for: locale) ?? Localizer(locale: "en", tables: [:], manifest: nil)
+    }
+
+    /// No deployed backend by default: `DryRunPublicAPIBaseURL` is absent from Info.plist, so the client
+    /// serves cached/bundled data only. Setting it is a deliberate deployment decision (see BACKLOG).
+    static func makePublicClient() -> PublicAPIClient {
+        let base = (Bundle.main.object(forInfoDictionaryKey: "DryRunPublicAPIBaseURL") as? String).flatMap(URL.init(string:))
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("DryRun/public", isDirectory: true)
+        return PublicAPIClient(baseURL: base, store: PublicPackStore(directory: dir))
     }
 
     // MARK: - Startup

@@ -52,6 +52,7 @@
   "action.act.water.store-3day.effect": "Trong lần chạy lại, nước dự trữ đạt mục tiêu dự trữ 3 ngày.",
   "action.act.water.store-3day.title": "Dự trữ {target} gallon nước",
   "action.act.water.store-3day.why": "Mục tiêu dự trữ của CDC cho {people} người trong 3 ngày là {target} gallon. Lượng nước dự trữ đã xác nhận: {stored}.",
+  "action.act.water.store-3day.why.unknown": "Mục tiêu dự trữ của CDC cho {people} người trong 3 ngày là {target} gallon. Chưa xác nhận gia đình đã dự trữ bao nhiêu nước.",
   "action.act.water.well-test-after-flood.title": "Lên kế hoạch xét nghiệm giếng sau lũ",
   "action.act.water.well-test-after-flood.why": "Nước lũ có thể làm ô nhiễm giếng riêng. Hãy liên lạc sở y tế địa phương về việc xét nghiệm.",
   "effort.high": "Chi phí cao hơn",

@@ -16,12 +16,39 @@ struct DryRunApp: App {
         WindowGroup {
             RootView()
                 .environment(model)
-                .task { await model.start() }
-                // App-switcher snapshots should not show household details.
-                .overlay { if scenePhase != .active { PrivacyCover() } }
-                .onChange(of: scenePhase) { _, phase in
-                    if phase == .background { TemporaryExports.purgeAll() }
+                .task {
+                    TemporaryExports.purgeAll() // leftovers from a previous run
+                    await model.start()
                 }
+                .onChange(of: scenePhase) { _, phase in
+                    // App-switcher snapshots must not show household details, including inside sheets and covers,
+                    // so the shield is a separate window above everything rather than a root-view overlay.
+                    PrivacyShield.shared.set(visible: phase != .active)
+                    // Do not purge while a share/print may still be reading the file; it is purged on dismissal.
+                    if phase == .background && !TemporaryExports.hasActiveExport { TemporaryExports.purgeAll() }
+                }
+        }
+    }
+}
+
+/// Window-level cover shown while the app is inactive/backgrounded.
+@MainActor
+final class PrivacyShield {
+    static let shared = PrivacyShield()
+    private var window: UIWindow?
+
+    func set(visible: Bool) {
+        if visible {
+            guard window == nil, let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene }).first else { return }
+            let w = UIWindow(windowScene: scene)
+            w.windowLevel = .alert + 1
+            w.rootViewController = UIHostingController(rootView: PrivacyCover())
+            w.isHidden = false
+            window = w
+        } else {
+            window?.isHidden = true
+            window = nil
         }
     }
 }

@@ -12,7 +12,7 @@ struct VaultPrivateDataStore: PrivateDataStore {
             .appendingPathComponent("DryRun", isDirectory: true)
         let repo = HouseholdVaultRepository(locations: VaultLocations(root: support),
                                             keyStore: KeychainVaultKeyStore(),
-                                            protection: IOSFileProtection())
+                                            protection: VaultFileProtection())
         return VaultPrivateDataStore(repository: repo)
     }
 

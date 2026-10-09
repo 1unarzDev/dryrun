@@ -48,6 +48,7 @@ struct PlanTabView: View {
                         let output = PlanPDFRenderer().render(plan)
                         do {
                             exportURL = try TemporaryExports.write(output.data, name: "DryRun-plan-\(plan.locale).pdf")
+                            TemporaryExports.hasActiveExport = true
                             exportNote = output.continuedPageIDs.isEmpty ? nil : "Some pages continue onto a second sheet so text stays readable."
                             showPreview = true
                         } catch {
@@ -68,7 +69,11 @@ struct PlanTabView: View {
             }
         }
         .navigationTitle(l("common.tab.plan"))
-        .sheet(isPresented: $showPreview, onDismiss: { TemporaryExports.purgeAll(); exportURL = nil }) {
+        .sheet(isPresented: $showPreview, onDismiss: {
+            TemporaryExports.hasActiveExport = false
+            TemporaryExports.purgeAll()
+            exportURL = nil
+        }) {
             if let exportURL { PDFPreviewSheet(url: exportURL, note: exportNote) }
         }
     }
