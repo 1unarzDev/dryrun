@@ -171,11 +171,15 @@ public enum PlanBuilder {
         let phoneTypes: Set<ResourceServiceType> = [.assistanceLine, .emergencyManagement, .electricUtility, .waterProvider, .assistanceRegistry]
         for r in resources where phoneTypes.contains(r.serviceType) {
             guard let phone = r.contact.phone else { continue }
-            if let note = r.contact.phoneNote {
-                lines.append(b.line("plan.help.lineNote", ["name": r.name, "phone": phone, "note": note], style: .contact, sources: r.sourceIDs))
-            } else {
-                lines.append(b.line("plan.help.line", ["name": r.name, "phone": phone], style: .contact, sources: r.sourceIDs))
+            var line = r.contact.phoneNote.map {
+                b.line("plan.help.lineNote", ["name": r.name, "phone": phone, "note": $0], style: .contact, sources: r.sourceIDs)
+            } ?? b.line("plan.help.line", ["name": r.name, "phone": phone], style: .contact, sources: r.sourceIDs)
+            // Public pack names/notes are English source data; label them as English in other locales.
+            if b.localizer.locale != "en" {
+                line.isFallback = true
+                b.usedFallback = true
             }
+            lines.append(line)
         }
         return lines
     }

@@ -360,7 +360,7 @@ struct RunState {
         if svc == Svc.heat && ambient == "hot" { return false }
         if svc == Svc.cooling && ambient == "cold" { return false }
         if state == .degraded || (previous == .degraded && state == .operational) {
-            return svc == Svc.cooling || svc == Svc.transport || svc == Svc.homePower || svc == Svc.waterSafety || svc.hasPrefix("svc.device.")
+            return svc == Svc.cooling || svc == Svc.transport || svc == Svc.alerts || svc == Svc.homePower || svc == Svc.waterSafety || svc.hasPrefix("svc.device.")
         }
         return true
     }
@@ -371,6 +371,7 @@ struct RunState {
         case Svc.cooling: return ["S21"]
         case Svc.wellPump, Svc.waterSupply, Svc.waterSafety: return ["S24", "S26"]
         case Svc.transport: return ["S23"]
+        case Svc.alerts: return ["S17", "S22"]
         default: return svc.hasPrefix("svc.device.") ? ["S25"] : []
         }
     }

@@ -162,6 +162,13 @@ public struct DependencyModel: Sendable {
         nodes.append(DependencyNode(id: Svc.wifi, requirement: .all([router, .service(Svc.internet)]),
                                     factIDs: ["communications.routerOnBackup"], ruleID: "rule.dependency.wifi"))
 
+        // Official alert reception: a charged handset with cellular or Wi-Fi, OR a confirmed battery/crank radio.
+        nodes.append(DependencyNode(id: Svc.alerts,
+                                    requirement: .any([.all([.service(Svc.handset), .any([.service(Svc.cellular), .service(Svc.wifi)])]),
+                                                       .fact(h.communications.batteryOrCrankRadio.confirmedValue == true ? true : false)]),
+                                    factIDs: ["communications.handsetRuntimeHours", "communications.batteryOrCrankRadio"],
+                                    ruleID: "rule.dependency.alerts"))
+
         // Essential equipment: power from grid/home circuits OR an allocated, confirmed compatible backup.
         for eq in h.equipment.sorted(by: { $0.id < $1.id }) {
             let req: Requirement
@@ -224,6 +231,7 @@ public enum Svc {
     public static let waterSupply = "svc.water.supply"
     public static let waterSafety = "svc.water.safety"
     public static let wifi = "svc.wifi"
+    public static let alerts = "svc.alerts"
     public static let transport = "svc.transport"
     public static let destination = "svc.destination"
     public static func device(_ id: String) -> String { "svc.device.\(id)" }

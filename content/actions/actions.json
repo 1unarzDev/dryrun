@@ -1,0 +1,370 @@
+{
+  "actions" : [
+    {
+      "effort" : "moderate",
+      "feasibilityNotes" : [
+        "feasibility.manufacturer-guidance"
+      ],
+      "id" : "act.backup.confirm-medical-backup",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood"
+      ],
+      "simulates" : "Marks a backup the household owns (or a hypothetical one) as confirmed compatible with the device.",
+      "sourceIDs" : [
+        "S25"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.care-team"
+      ],
+      "id" : "act.medical.continuity-plan",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood"
+      ],
+      "sourceIDs" : [
+        "S25"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.manufacturer-guidance"
+      ],
+      "id" : "act.medical.document-runtime",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood"
+      ],
+      "sourceIDs" : [
+        "S25"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+        "feasibility.ask-pharmacist"
+      ],
+      "id" : "act.refrigeration.cooler-plan",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood"
+      ],
+      "simulates" : "Adds a confirmed cooler and ice packs (partial substitute only).",
+      "sourceIDs" : [
+        "S20",
+        "S25"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.confirm-host"
+      ],
+      "id" : "act.relocation.arrange",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "flash-flood",
+        "home-fire",
+        "tornado"
+      ],
+      "simulates" : "Adds an agreed destination with confirmed conditions and agreed transport.",
+      "sourceIDs" : [
+        "S20",
+        "S21"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.assist.assign-helper",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood",
+        "home-fire",
+        "water-outage"
+      ],
+      "simulates" : "Assigns an adult household member as helper.",
+      "sourceIDs" : [
+        "S19",
+        "S22"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.not-safe-room"
+      ],
+      "id" : "act.tornado.choose-shelter",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "tornado"
+      ],
+      "simulates" : "Marks an interior lowest-floor room as the chosen shelter location (not an engineered safe room).",
+      "sourceIDs" : [
+        "S22"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.confirm-host"
+      ],
+      "id" : "act.tornado.sturdy-building-plan",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "tornado"
+      ],
+      "simulates" : "Adds an agreed sturdy destination and transport to use when a watch is issued.",
+      "sourceIDs" : [
+        "S22"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.landlord-for-repairs"
+      ],
+      "id" : "act.fire.verify-second-exit",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "home-fire"
+      ],
+      "sourceIDs" : [
+        "S19"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.fire.meeting-point",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "home-fire"
+      ],
+      "sourceIDs" : [
+        "S19"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+        "feasibility.landlord-for-repairs"
+      ],
+      "id" : "act.fire.smoke-alarms",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "home-fire"
+      ],
+      "sourceIDs" : [
+        "S19"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.fire.practice-drill",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "home-fire"
+      ],
+      "sourceIDs" : [
+        "S19"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.landlord-or-technician"
+      ],
+      "id" : "act.heat.ask-blower",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss"
+      ],
+      "sourceIDs" : [
+        "S20"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+        "feasibility.limited-storage"
+      ],
+      "id" : "act.water.store-3day",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "water-outage",
+        "flash-flood",
+        "tornado"
+      ],
+      "simulates" : "Sets stored water to the 3-day storage target (1 gal/person/day).",
+      "sourceIDs" : [
+        "S26"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.water.save-utility-contact",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "water-outage",
+        "flash-flood"
+      ],
+      "sourceIDs" : [
+        "S24"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.water.well-test-after-flood",
+      "renterFriendly" : false,
+      "scenarioIDs" : [
+        "flash-flood"
+      ],
+      "sourceIDs" : [
+        "S24"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.comms.power-bank",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood"
+      ],
+      "simulates" : "Adds two full phone recharges from charged power banks.",
+      "sourceIDs" : [
+        "S20"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.comms.weather-radio",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "tornado",
+        "flash-flood",
+        "freeze-power-loss"
+      ],
+      "simulates" : "Adds a confirmed battery or hand-crank weather radio.",
+      "sourceIDs" : [
+        "S22",
+        "S20"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.alerts.enroll-local",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood",
+        "home-fire",
+        "water-outage"
+      ],
+      "sourceIDs" : [
+        "S17",
+        "S27"
+      ]
+    },
+    {
+      "effort" : "low",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.pets.carrier-plan",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "flash-flood",
+        "home-fire",
+        "tornado"
+      ],
+      "sourceIDs" : [
+        "S19",
+        "S20"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+        "feasibility.generator-20ft"
+      ],
+      "id" : "act.generator.outdoor-placement",
+      "renterFriendly" : false,
+      "scenarioIDs" : [
+        "freeze-power-loss",
+        "heat-grid-strain",
+        "tornado",
+        "flash-flood"
+      ],
+      "sourceIDs" : [
+        "S20"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
+      "id" : "act.flood.higher-ground-plan",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "flash-flood"
+      ],
+      "sourceIDs" : [
+        "S23"
+      ]
+    }
+  ],
+  "schemaVersion" : 1
+}

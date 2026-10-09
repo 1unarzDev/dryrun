@@ -283,9 +283,8 @@ extension RunState {
             requireSticky("req.shelter", cause: cause)
         }
         if input.variants.contains("night") {
-            let phone = services[Svc.handset] == .operational && services[Svc.cellular] == .operational
             let radio = household.communications.batteryOrCrankRadio.confirmedValue == true
-            if phone || radio {
+            if services[Svc.alerts] == .operational {
                 emit("evt.tornado.night-alert-received", title: "scenario.tornado.night-alert-received",
                      values: ["via": radio ? "radio" : "phone"], severity: .info, rule: "rule.tornado.night-alerting",
                      facts: ["communications.batteryOrCrankRadio", "communications.handsetRuntimeHours"], causedBy: cause, sources: ["S22"])
