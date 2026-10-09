@@ -38,20 +38,38 @@ final class ScreenshotTourUITests: XCTestCase {
         ]
     }
 
+    /// Polls on the main run loop. Used instead of predicate expectations so nothing main-actor isolated is captured
+    /// by a @Sendable block (the test target builds in Swift 6 mode).
+    private func wait(upTo seconds: TimeInterval, until condition: () -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(seconds)
+        while !condition() {
+            if Date() >= deadline { return false }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        return true
+    }
+
+    /// A comma-separated filter from the environment. Unset, empty, or only separators all mean "no filter": an
+    /// empty value must not turn into an empty list that matches nothing.
     private func env(_ key: String) -> [String]? {
-        ProcessInfo.processInfo.environment[key].map { $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } }
+        guard let raw = ProcessInfo.processInfo.environment[key] else { return nil }
+        let items = raw.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        return items.isEmpty ? nil : items
     }
 
     func testScreenshotTour() {
         let locales = env("TOUR_LOCALES") ?? ["en", "es", "vi"]
         let filters = env("TOUR_SCREENS")
+        var captured = 0
         for locale in locales {
             let household = Self.households[locale] ?? "hh-oak"
             for screen in Self.screens(household: household) {
                 if let filters, !filters.contains(where: { screen.name.contains($0) }) { continue }
                 capture(screen, locale: locale)
+                captured += 1
             }
         }
+        XCTAssertGreaterThan(captured, 0, "no screen matched TOUR_LOCALES/TOUR_SCREENS; nothing was captured")
     }
 
     private func capture(_ screen: Screen, locale: String) {
@@ -61,8 +79,19 @@ final class ScreenshotTourUITests: XCTestCase {
         // Let async content load and the rehearsal/plan finish.
         _ = app.navigationBars.firstMatch.waitForExistence(timeout: 15)
         if let id = screen.tap {
-            let element = app.descendants(matching: .any)[id]
-            if element.waitForExistence(timeout: 15) {
+            let element = app.descendants(matching: .any).matching(identifier: id).firstMatch
+            // Rows of a lazy list are not in the accessibility tree until scrolled near, so scroll before giving up.
+            var found = element.waitForExistence(timeout: 15)
+            for _ in 0..<4 where !found {
+                app.swipeUp()
+                found = element.waitForExistence(timeout: 2)
+            }
+            if found {
+                // The debrief button exists from the first frame but is disabled until the demo has stepped the
+                // rehearsal to its end; tapping it earlier does nothing and the screenshot would show the wrong screen.
+                if !wait(upTo: 20, until: { element.isEnabled }) {
+                    XCTFail("\(locale)-\(screen.name): element \(id) never became enabled")
+                }
                 if !element.isHittable { app.swipeUp() }
                 element.tap()
             } else {

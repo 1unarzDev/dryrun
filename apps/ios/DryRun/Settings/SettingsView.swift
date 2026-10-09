@@ -7,11 +7,12 @@ struct SettingsView: View {
     @State private var confirmDelete = false
 
     var body: some View {
-        @Bindable var model = model
         NavigationStack {
             List {
                 Section("Language") {
-                    Picker("Language", selection: $model.locale) {
+                    // Through selectLocale so the choice is saved with the household and survives a relaunch.
+                    Picker("Language", selection: Binding(get: { model.locale },
+                                                          set: { new in Task { await model.selectLocale(new) } })) {
                         Text("English").tag("en"); Text("Español").tag("es"); Text("Tiếng Việt").tag("vi")
                     }
                     Text("Spanish and Vietnamese text is a draft translation awaiting language review, and is labeled wherever it appears.")

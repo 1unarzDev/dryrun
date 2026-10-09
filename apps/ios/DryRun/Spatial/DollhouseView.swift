@@ -63,10 +63,12 @@ enum DollhouseBuilder {
     static func build(home: HomeModel, routes: [RoutePath], floorID: String?) -> Entity {
         let root = Entity()
         let floors = home.floors.filter { floorID == nil || $0.id == floorID }
-        let elev = Dictionary(uniqueKeysWithValues: home.floors.map { ($0.id, Float($0.elevationMeters)) })
+        // uniquingKeysWith, not uniqueKeysWithValues: a duplicate floor ID is a reportable data problem
+        // (HomeValidator), not a reason to crash the 3D view.
+        let elev = Dictionary(home.floors.map { ($0.id, Float($0.elevationMeters)) }, uniquingKeysWith: { first, _ in first })
         // Each floor's coordinates are placed in the shared frame with its rigid Floor.toCommon transform,
         // so storeys, stairs, and routes line up even when floors are rotated/offset relative to each other.
-        let toCommon = Dictionary(uniqueKeysWithValues: home.floors.map { ($0.id, $0.toCommon) })
+        let toCommon = Dictionary(home.floors.map { ($0.id, $0.toCommon) }, uniquingKeysWith: { first, _ in first })
 
         // Centre the model at the origin (in the common frame).
         let pts = home.spaces.filter { s in floors.contains { $0.id == s.floorID } }
@@ -116,7 +118,17 @@ enum DollhouseBuilder {
                 }
             }
         }
-        return root
+        // Frame the model for the default camera. Built at true scale around the origin, a 12 m home would surround
+        // the camera and be seen edge-on. Scale it to about 1.5 m across and tilt its top toward the viewer; orbit
+        // controls then start from a readable three-quarter view. Display only: no coordinates are read back from this.
+        let spanX = Float((pts.map(\.x).max() ?? 0) - (pts.map(\.x).min() ?? 0))
+        let spanY = Float((pts.map(\.y).max() ?? 0) - (pts.map(\.y).min() ?? 0))
+        let extent = max(spanX, spanY, 1)
+        root.scale = SIMD3<Float>(repeating: 1.5 / extent)
+        root.orientation = simd_quatf(angle: .pi / 5, axis: SIMD3<Float>(1, 0, 0))
+        let framed = Entity()
+        framed.addChild(root)
+        return framed
     }
 
     /// Box spanning a segment on the floor plane.

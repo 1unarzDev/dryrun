@@ -14,7 +14,7 @@ on:
         description: "Screenshot locales"
         default: "en,es,vi"
       runner:
-        description: "macOS runner label (needs Xcode 16+; Xcode 26 for Foundation Models)"
+        description: "macOS runner label (needs Xcode 16.3+; Xcode 26 for Foundation Models)"
         default: macos-15
       xcode:
         description: "Optional Xcode app name, e.g. Xcode_16.4 (empty = runner default)"

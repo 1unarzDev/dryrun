@@ -12,11 +12,12 @@ struct PlanTabView: View {
     @State private var exportNote: String?
 
     var body: some View {
-        @Bindable var model = model
         let l = model.localizer
         List {
             Section(l("common.plan.language")) {
-                Picker("Plan language", selection: $model.locale) {
+                // Through selectLocale so the choice is saved with the household and survives a relaunch.
+                Picker("Plan language", selection: Binding(get: { model.locale },
+                                                           set: { new in Task { await model.selectLocale(new) } })) {
                     ForEach(languages, id: \.code) { lang in
                         Text(lang.label).tag(lang.code)
                     }
@@ -66,7 +67,7 @@ struct PlanTabView: View {
                 Section(l("common.plan.preparations")) {
                     if h.completedPreparations.isEmpty { Text(l("common.plan.noneCompleted")) }
                     ForEach(h.completedPreparations, id: \.actionID) { p in
-                        Label(l("action.\(p.actionID).title"), systemImage: "checkmark.circle.fill")
+                        Label(model.actionTitle(p.actionID), systemImage: "checkmark.circle.fill")
                     }
                 }
             }

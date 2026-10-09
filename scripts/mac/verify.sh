@@ -42,23 +42,30 @@ fi
 if ! step xcodegen ensure_project; then
   skip_step app-build "project generation failed"; NO_UI=1
 else
-  SIM="$(pick_simulator 2>"$OUT/logs/simulator.log")" || { warn "no simulator"; NO_UI=1; }
-  if [ -n "${SIM:-}" ]; then
-    echo "simulator: $(xcrun simctl list devices | grep "$SIM" | sed -E 's/\(([0-9A-F]{8})-[^)]*\)/(\1…)/' | xargs)" >>"$OUT/environment.md"
+  SIM="$(pick_simulator 2>"$OUT/logs/simulator.log")" || SIM=""
+  if [ -n "$SIM" ]; then
+    echo "simulator: $(xcrun simctl list devices | grep "$SIM" | sed -E 's/\(([0-9A-F]{8})-[^)]*\)/(\1...)/' | xargs)" >>"$OUT/environment.md"
     boot_simulator "$SIM"
-    if ! step app-build xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" \
-        -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" "$SIM_SIGNING"; then
-      NO_UI=1
-    fi
-    # Compiler diagnostics in one place (errors first), deduplicated.
-    grep -E ' error: ' "$OUT/logs/app-build.log" | sort -u >"$OUT/compile-errors.txt" || true
-    grep -E ' warning: ' "$OUT/logs/app-build.log" | sort -u >"$OUT/compile-warnings.txt" || true
+    BUILD_DEST="platform=iOS Simulator,id=$SIM"
+  else
+    # Still compile, so the run reports build errors even on a Mac with no simulator runtime installed.
+    warn "no iPhone simulator found (see logs/simulator.log); compiling only, UI steps will be skipped"
+    BUILD_DEST="generic/platform=iOS Simulator"
   fi
+  if ! step app-build xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" \
+      -destination "$BUILD_DEST" -derivedDataPath "$DERIVED" "$SIM_SIGNING"; then
+    NO_UI=1
+  fi
+  [ -n "$SIM" ] || NO_UI=1
+  # Build diagnostics in one place, deduplicated: compiler, linker, and package-resolution errors.
+  build_diagnostics "$OUT/logs/app-build.log" "$OUT/compile-errors.txt"
+  grep -E ' warning: ' "$OUT/logs/app-build.log" | sort -u >"$OUT/compile-warnings.txt" || true
 fi
 
 # 4. UI journeys, screenshot tour, plan PDFs
 if [ "$NO_UI" = 1 ]; then
-  skip_step ui-journeys "build failed or disabled"; skip_step screenshot-tour "build failed or disabled"; skip_step plan-pdfs "build failed or disabled"
+  skip_step ui-journeys "build failed, no simulator, or disabled"; skip_step screenshot-tour "build failed, no simulator, or disabled"
+  skip_step plan-pdfs "build failed, no simulator, or disabled"
 else
   step ui-journeys xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
     -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
@@ -72,6 +79,7 @@ else
       -scheme "$SCHEME" -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
       -only-testing:DryRunUITests/ScreenshotTourUITests -resultBundlePath "$OUT/tour.xcresult"
     export_attachments "$OUT/tour.xcresult" "$OUT/screenshots" >>"$OUT/logs/screenshot-tour.log" 2>&1 || true
+    redact_file "$OUT/logs/screenshot-tour.log"
     step plan-pdfs "$(dirname "$0")/plan-pdfs.sh" "$SIM" "$OUT/pdfs"
   fi
 fi
@@ -85,8 +93,12 @@ fi
   tail -n +2 "$STEPS" | awk -F'\t' '{printf "| %s | %s | %s |\n", $1, $2, $3}'
   echo
   if [ -s "$OUT/compile-errors.txt" ]; then
-    echo "## Compile errors ($(wc -l <"$OUT/compile-errors.txt" | xargs) unique, first 40)"
+    echo "## Build errors ($(wc -l <"$OUT/compile-errors.txt" | xargs) unique lines, first 40)"
     echo '```'; head -40 "$OUT/compile-errors.txt"; echo '```'
+  elif grep -q "^app-build	FAIL" "$STEPS"; then
+    # The build failed without a line the filter recognises: show the end of the log rather than nothing.
+    echo "## Build failed (last 40 log lines)"
+    echo '```'; tail -40 "$OUT/logs/app-build.log"; echo '```'
   fi
   [ -f "$OUT/compile-warnings.txt" ] && echo "Compile warnings: $(wc -l <"$OUT/compile-warnings.txt" | xargs) unique (see compile-warnings.txt)"
   [ -d "$OUT/screenshots" ] && echo "Screenshots: $(find "$OUT/screenshots" -name '*.png' | wc -l | xargs)"
@@ -94,9 +106,12 @@ fi
   echo
   echo "Environment: see environment.md. Logs: logs/. Result bundles: *.xcresult (open in Xcode)."
 } >"$OUT/SUMMARY.md"
-for f in "$OUT"/*.txt "$OUT"/*.json; do redact_file "$f"; done
+for f in "$OUT"/*.txt "$OUT"/*.json "$OUT"/*.md "$OUT"/logs/*.log; do redact_file "$f"; done
 
 TARBALL="$(make_bundle)"
 cat "$OUT/SUMMARY.md"
 echo
 echo "Bundle: ${TARBALL#"$ROOT"/}  ← send this file"
+# A failing step never stops the run, but automation (the GitHub workflow) should not report success for it.
+if [ -n "${CI:-}" ] && grep -q "	FAIL	" "$STEPS"; then exit 1; fi
+exit 0

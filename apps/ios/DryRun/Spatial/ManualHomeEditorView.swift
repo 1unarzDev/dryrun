@@ -182,6 +182,8 @@ struct ManualHomeEditorView: View {
     }
 
     private func addDoor() {
+        // Both pickers list every room; a door from a room to itself is not a connection.
+        guard doorTo != doorFrom else { message = "Choose two different rooms."; return }
         let width = Double(doorWidthText.replacingOccurrences(of: ",", with: "."))
         do {
             try ManualLayout.addPortal(to: &draft, kind: doorKind, from: doorFrom,

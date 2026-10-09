@@ -52,11 +52,18 @@ final class RoomCaptureController: NSObject, ObservableObject, RoomCaptureViewDe
         phase = .idle
     }
 
+    var hasFailed: Bool {
+        if case .failed = phase { return true }
+        return false
+    }
+
     nonisolated func captureView(shouldPresent roomDataForProcessing: CapturedRoomData, error: Error?) -> Bool { true }
 
     nonisolated func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         Task { @MainActor in
             if let error {
+                // The session has ended. Forget "next room" so a later result is not mistaken for a continuation.
+                self.wantsAnotherRoom = false
                 self.phase = .failed(error.localizedDescription)
                 return
             }
@@ -153,13 +160,26 @@ struct RoomScanFlowView: View {
 
     private var controls: some View {
         HStack {
-            Button("Next room") { controller.finishRoomAndContinue() }
-                .buttonStyle(.bordered)
-            Spacer()
-            Text("\(controller.rooms.count) room\(controller.rooms.count == 1 ? "" : "s") saved").font(.footnote)
-            Spacer()
-            Button("Done") { controller.finishScan() }
-                .buttonStyle(.borderedProminent)
+            if controller.hasFailed {
+                // The capture session ended with an error, so "Next room" and "Done" would wait for a result that
+                // never comes. Offer a retry, and the rooms already saved if there are any.
+                Button("Scan this room again") { controller.start() }
+                    .buttonStyle(.bordered)
+                Spacer()
+                Text("\(controller.rooms.count) room\(controller.rooms.count == 1 ? "" : "s") saved").font(.footnote)
+                Spacer()
+                Button("Use saved rooms") { Task { await buildResult() } }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(controller.rooms.isEmpty)
+            } else {
+                Button("Next room") { controller.finishRoomAndContinue() }
+                    .buttonStyle(.bordered)
+                Spacer()
+                Text("\(controller.rooms.count) room\(controller.rooms.count == 1 ? "" : "s") saved").font(.footnote)
+                Spacer()
+                Button("Done") { controller.finishScan() }
+                    .buttonStyle(.borderedProminent)
+            }
         }
         .disabled(controller.phase == .processing)
         .padding()

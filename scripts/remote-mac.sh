@@ -24,9 +24,13 @@ rsync -az --delete -e "ssh $SSH_OPTS" \
 echo "==> Running scripts/mac/$CMD.sh on the Mac"
 QUOTED_ARGS=""
 for a in "$@"; do QUOTED_ARGS="$QUOTED_ARGS $(printf '%q' "$a")"; done
-# Login shell so Homebrew (xcodegen, pnpm) is on PATH.
+# Device commands need the signing team and bundle ID from this shell; they are not inherited over SSH.
+REMOTE_ENV=""
+[ -n "${DEVELOPMENT_TEAM:-}" ] && REMOTE_ENV="$REMOTE_ENV DEVELOPMENT_TEAM=$(printf '%q' "$DEVELOPMENT_TEAM")"
+[ -n "${BUNDLE_ID:-}" ] && REMOTE_ENV="$REMOTE_ENV BUNDLE_ID=$(printf '%q' "$BUNDLE_ID")"
+# Homebrew (xcodegen, pnpm) is added to PATH by scripts/mac/lib.sh, because bash does not read ~/.zprofile.
 # shellcheck disable=SC2086
-ssh -t $SSH_OPTS "$HOST" "bash -lc 'cd $REMOTE_DIR && scripts/mac/$CMD.sh$QUOTED_ARGS'" || echo "(remote script reported failures; fetching artifacts anyway)"
+ssh -t $SSH_OPTS "$HOST" "bash -lc 'cd $REMOTE_DIR && env$REMOTE_ENV scripts/mac/$CMD.sh$QUOTED_ARGS'" || echo "(remote script reported failures; fetching artifacts anyway)"
 
 echo "==> Fetching artifacts"
 mkdir -p "$ROOT/artifacts"

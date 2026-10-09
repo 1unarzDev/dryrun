@@ -14,6 +14,8 @@ struct HomeTabView: View {
     @State private var scanning = false
     @State private var editingHousehold = false
     @State private var confirming: HomeModel?
+    /// A finished scan waiting for the scan cover to finish dismissing before the confirmation sheet is presented.
+    @State private var pendingProposal: HomeModel?
 
     enum Mode: String, CaseIterable, Identifiable {
         case plan2D = "2D plan", dollhouse = "3D", rooms = "Room list"
@@ -106,11 +108,17 @@ struct HomeTabView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $scanning) {
+        .fullScreenCover(isPresented: $scanning, onDismiss: {
+            // A scan is only a proposal: go straight into the confirmation pass before it is saved. Presented from
+            // onDismiss because SwiftUI can drop a sheet requested while the cover is still dismissing.
+            if let proposed = pendingProposal {
+                pendingProposal = nil
+                confirming = proposed
+            }
+        }) {
             RoomScanFlowView { proposed in
+                pendingProposal = proposed
                 scanning = false
-                // A scan is only a proposal: go straight into the confirmation pass before it is saved.
-                if let proposed { confirming = proposed }
             }
         }
         .navigationDestination(isPresented: $editingHousehold) { HouseholdSetupView(mode: .edit) }

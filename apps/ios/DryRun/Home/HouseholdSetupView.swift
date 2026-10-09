@@ -226,6 +226,8 @@ struct HouseholdSetupView: View {
             } else {
                 let d = draft
                 await model.updateHousehold { $0 = d }
+                // The language chosen here is the app's language; without this it only changed after a relaunch.
+                model.locale = d.preferredLocale
             }
             dismiss()
         }
@@ -272,7 +274,15 @@ struct NumberEvidenceRow: View {
             .keyboardType(.decimalPad)
             .onAppear { text = value.value.map { String($0) } ?? "" }
             .onChange(of: text) { _, new in
-                value = Double(new).map { .confirmed($0, unit: unit, verifiedAt: Date()) } ?? .unknown
+                // Accept a decimal comma (Spanish and Vietnamese keyboards), and only store a real edit: filling the
+                // field on appear must not re-stamp an existing value as confirmed just now.
+                let parsed = Double(new.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: "."))
+                guard parsed != value.value else { return }
+                if let parsed {
+                    value = EvidenceValue<Double>.confirmed(parsed, unit: unit, verifiedAt: Date())
+                } else {
+                    value = EvidenceValue<Double>.unknown
+                }
             }
             .accessibilityLabel("\(title). Leave empty if not sure.")
     }

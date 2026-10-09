@@ -9,3 +9,6 @@ DerivedData/
 .build-mac/
 artifacts/
 apps/ios/DryRun.xcodeproj/
+# Written by XcodeGen from project.yml
+apps/ios/DryRun/Resources/Info.plist
+apps/ios/DryRun/Resources/DryRun.entitlements

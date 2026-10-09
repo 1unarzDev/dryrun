@@ -1,7 +1,8 @@
 # macOS verification guide
 
-This takes about 30–45 minutes on a first run, most of it Xcode building. You need a Mac with **Xcode 16 or later**;
-Xcode 26 is needed to also compile the optional Foundation Models code. Everything uses fictional data.
+This takes about 30–45 minutes on a first run, most of it Xcode building. You need a Mac with **Xcode 16.3 or later**
+(the vault package resolves swift-crypto 4.5.2, whose manifest needs Swift 6.1); Xcode 26 is needed to also compile the
+optional Foundation Models code. Everything uses fictional data.
 
 ## 1. One-time setup (5 min)
 
@@ -58,7 +59,8 @@ What the bundle does *not* contain:
 - device names, full device IDs, signing identity names, hostname, or account name (home paths become `~`)
 - real household data
 
-The `.xcresult` bundles are kept so you can also open them in Xcode.
+The `.xcresult` bundles stay in the `artifacts/mac-<timestamp>/` folder so you can open them in Xcode. They are left
+out of the `.tar.gz`, because they record full paths, the Mac, and device names and IDs and cannot be redacted.
 
 ## Working without being at the Mac
 
@@ -76,7 +78,7 @@ The `.xcresult` bundles are kept so you can also open them in Xcode.
 | Screenshot tour, fast loop | `scripts/mac/screens.sh --locales en --screens fire,plan --open` |
 | Same tour on a connected iPhone | `DEVELOPMENT_TEAM=<TeamID> BUNDLE_ID=com.<you>.dryrun scripts/mac/screens.sh --device <udid>` |
 | Install and open on the phone in a given state | `DEVELOPMENT_TEAM=… BUNDLE_ID=… scripts/mac/device.sh -- -demoHousehold hh-oak -demoScenario home-fire -demoStep end` |
-| List phones | `scripts/mac/device.sh --list` |
+| List phones (prints the UDID that `--device` expects) | `scripts/mac/device.sh --list` |
 | Live canvas | Open `apps/ios/DryRun.xcodeproj`, then `App/Previews.swift` (9 previews; change `locale:` to `es`/`vi`) |
 | Environment only | `scripts/mac/doctor.sh` |
 

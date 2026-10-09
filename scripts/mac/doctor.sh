@@ -20,6 +20,16 @@ report() {
   echo "- Xcode: $(xcodebuild -version 2>/dev/null | tr '\n' ' ')"
   echo "- iOS SDK: $(xcrun --sdk iphoneos --show-sdk-version 2>/dev/null || echo missing) · Simulator SDK: $(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || echo missing)"
   echo "- Swift: $(swift --version 2>/dev/null | head -1)"
+  # swift-crypto 4.5.2 (a DryRunVault dependency, resolved on every platform) has a Swift 6.1 manifest.
+  local swift_mm
+  swift_mm="$(swift --version 2>/dev/null | sed -nE 's/.*Swift version ([0-9]+)\.([0-9]+).*/\1 \2/p' | head -1)"
+  if [ -n "$swift_mm" ]; then
+    # shellcheck disable=SC2086
+    set -- $swift_mm
+    if [ "$1" -lt 6 ] || { [ "$1" -eq 6 ] && [ "$2" -lt 1 ]; }; then
+      echo "- **Swift $1.$2 is too old: the packages need Swift 6.1 or later (Xcode 16.3+).**"
+    fi
+  fi
   echo "- XcodeGen: $(xcodegen --version 2>/dev/null || echo 'missing — brew install xcodegen')"
   echo "- Node: $(node --version 2>/dev/null || echo missing) · pnpm: $(pnpm --version 2>/dev/null || echo missing)"
   echo "- Valid code-signing identities: $(security find-identity -v -p codesigning 2>/dev/null | tail -1 | awk '{print $1}') (names not recorded)"
@@ -29,7 +39,7 @@ report() {
   xcrun simctl list runtimes 2>/dev/null | grep -E '^iOS' | sed 's/^/- /'
   echo
   echo "## Available iPhone simulators (first 12)"
-  xcrun simctl list devices available 2>/dev/null | grep -E '^\s+iPhone' | head -12 \
+  xcrun simctl list devices available 2>/dev/null | grep -E '^[[:space:]]+iPhone' | head -12 \
     | sed -E 's/\(([0-9A-F]{8})-[0-9A-F-]+\)/(\1…)/' | sed 's/^ */- /'
   echo
   echo "## Connected physical devices (names redacted)"
@@ -48,7 +58,7 @@ for d in devices:
     props = d.get("deviceProperties", {})
     ident = d.get("identifier", "")
     print(f"- {hw.get('marketingName', hw.get('productType', '?'))} · {hw.get('platform', '?')} {props.get('osVersionNumber', '?')}"
-          f" · id …{ident[-4:]} · paired={d.get('connectionProperties', {}).get('pairingState', '?')}"
+          f" · id ...{ident[-4:]} · paired={d.get('connectionProperties', {}).get('pairingState', '?')}"
           f" · developerMode={props.get('developerModeStatus', '?')}")
 PY
   else
