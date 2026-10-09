@@ -50,7 +50,7 @@ extension RunState {
         case RuleID.checkpoint: checkpoint(e, cause: id)
         case RuleID.recoveryPowerRestored: recoveryNotes(cause: id)
         case RuleID.fireIgnition: fireIgnition(cause: id)
-        case RuleID.fireBlockPrimary: fireBlock(mode: e.params["mode"] ?? "usualExitRoom", cause: id)
+        case RuleID.fireBlockPrimary: fireBlock(e: e, cause: id)
         case RuleID.tornadoWarning: tornadoWarning(cause: id)
         case RuleID.recoveryDisplacement: displacement(cause: id)
         case RuleID.floodWarning: floodWarning(cause: id)
@@ -128,13 +128,24 @@ extension RunState {
             emit("evt.\(scenario.id).displacement.ready", title: "scenario.common.displacement.ready", severity: .info,
                  rule: "rule.recovery.displacement", facts: ["transport", "transport.destinations"], causedBy: cause, sources: ["S29"])
         } else {
-            let reason = t != .operational ? (household.transport.hasVehicle ? "transportUnconfirmed" : "noVehicle") : "noConfirmedDestination"
+            let reason = relocationGapReason()
             emit("evt.\(scenario.id).displacement.gap", title: "scenario.common.displacement.gap", values: ["reason": reason],
                  severity: .caution, rule: "rule.recovery.displacement", facts: ["transport.vehicles", "transport.alternatives", "transport.destinations"],
                  causedBy: cause, sources: ["S29"])
             requireSticky("req.relocation", cause: cause)
             flags.insert("relocation.gap.\(reason)")
         }
+    }
+
+    /// Why relocation cannot be completed in the model. Order: roads, vehicle, agreed transport, destination.
+    func relocationGapReason() -> String {
+        if services[Svc.roads] != .operational { return "roadsClosed" }
+        if services[Svc.transport] != .operational {
+            if !household.transport.hasVehicle { return "noVehicle" }
+            if household.people.contains(where: { $0.needs.contains(.usesWheelchair) }) { return "vehicleNotAccessible" }
+            return "transportUnconfirmed"
+        }
+        return "noConfirmedDestination"
     }
 
     // MARK: Fire (immediate exercise; practice routes under authored assumptions)
@@ -178,32 +189,43 @@ extension RunState {
         if !household.pets.isEmpty { flags.insert("fire.pets") }
     }
 
-    mutating func fireBlock(mode: String, cause: String) {
+    /// Applies authored blockage. `originKind` blocks every space of that kind (the authored fire origin);
+    /// `mode == "currentRoutes"` additionally blocks the exits of everyone's current practice route.
+    /// If the home has no space of `originKind`, the origin falls back to the exit room of the first person's usual route.
+    mutating func fireBlock(e: AuthoredEvent, cause: String) {
         var blockedSpaces = Set<String>(), blockedPortals = Set<String>()
-        for (_, r) in currentRoutes.sorted(by: { $0.key < $1.key }) {
-            guard let p = r.primary else { continue }
-            blockedPortals.insert(p.exitPortalID)
-            if mode == "usualExitRoom", let last = p.spaceSequence.last { blockedSpaces.insert(last) }
-        }
-        // Keep previously authored exclusions cumulative.
         for (_, r) in currentRoutes {
             blockedSpaces.formUnion(r.request.exclusions.blockedSpaceIDs)
             blockedPortals.formUnion(r.request.exclusions.blockedPortalIDs)
         }
+        if let kindRaw = e.params["originKind"], let kind = SpaceKind(rawValue: kindRaw) {
+            let origin = home.spaces.filter { $0.kind == kind }.map(\.id)
+            if origin.isEmpty, let first = household.people.sorted(by: { $0.id < $1.id }).compactMap({ currentRoutes[$0.id]?.primary }).first,
+               let last = first.spaceSequence.last {
+                blockedSpaces.insert(last)
+            } else {
+                blockedSpaces.formUnion(origin)
+            }
+        }
+        if e.params["mode"] == "currentRoutes" {
+            for (_, r) in currentRoutes { if let p = r.primary { blockedPortals.insert(p.exitPortalID) } }
+        }
         let ex = ScenarioExclusions(blockedSpaceIDs: blockedSpaces.sorted(), blockedPortalIDs: blockedPortals.sorted())
         for p in household.people.sorted(by: { $0.id < $1.id }) {
-            // A person whose start room is now blocked would already be in the fire room; the exercise keeps
-            // their start but never routes others back in to fetch them (no re-entry).
+            let previous = currentRoutes[p.id]?.primary
+            // A person who starts in a blocked room keeps that start; nobody is ever routed back in (no re-entry).
             var exP = ex
             exP.blockedSpaceIDs.removeAll { $0 == startSpace(for: p) }
             let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: exP), in: home)
             currentRoutes[p.id] = r
             routes.append(r)
             if let path = r.primary {
-                emit("evt.home-fire.route.alternative.\(p.id)", title: "scenario.home-fire.route.alternative",
+                let changed = previous?.exitPortalID != path.exitPortalID || previous?.spaceSequence != path.spaceSequence
+                emit("evt.home-fire.route.\(changed ? "alternative" : "still-clear").\(p.id)",
+                     title: changed ? "scenario.home-fire.route.alternative" : "scenario.home-fire.route.still-clear",
                      values: ["person": p.alias, "exit": path.exitPortalID, "independence": r.alternativeStatus.rawValue],
-                     severity: .info, rule: "rule.fire.route", facts: ["person.\(p.id)", "home.portal.\(path.exitPortalID)"],
-                     causedBy: cause, sources: ["S19"])
+                     severity: changed ? .caution : .info, rule: "rule.fire.route",
+                     facts: ["person.\(p.id)", "home.portal.\(path.exitPortalID)"], causedBy: cause, sources: ["S19"])
                 resolveSticky("req.egress.\(p.id)")
             } else {
                 emit("evt.home-fire.route.none.\(p.id)", title: "scenario.home-fire.route.none",
@@ -212,7 +234,7 @@ extension RunState {
                 requireSticky("req.egress.\(p.id)", cause: cause)
                 flags.insert("fire.noRoute")
             }
-            if r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
+            if r.primary != nil, r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
         }
     }
 
@@ -316,7 +338,7 @@ extension RunState {
         decisions.append(DecisionPoint(id: c.id, simMinute: minute, promptKey: c.promptKey, options: c.options.map {
             DecisionPoint.Option(id: $0.id, labelKey: $0.labelKey, feedbackKey: $0.feedbackKey, isRecommended: !$0.unsafe && feasible($0.effect))
         }))
-        let id = emit("evt.\(scenario.id).choice.\(c.id)", title: opt.labelKey, detail: opt.feedbackKey, values: ["option": opt.id],
+        let id = emit("evt.\(c.id)", title: opt.labelKey, detail: opt.feedbackKey, values: ["option": opt.id],
                       severity: opt.unsafe ? .critical : .info, rule: "rule.choice.\(opt.effect)", facts: [], causedBy: nil,
                       sources: c.sourceIDs, priority: 100)
         if opt.unsafe {
@@ -333,9 +355,7 @@ extension RunState {
                 emit("evt.\(scenario.id).relocation.done", title: "scenario.common.relocation.done", severity: .info,
                      rule: "rule.relocation", facts: ["transport", "transport.destinations"], causedBy: id, sources: c.sourceIDs)
             } else {
-                let t = services[Svc.transport] ?? .unknown
-                let reason = t != .operational ? (household.transport.hasVehicle ? (t == .unknown ? "transportUnconfirmed" : "roadsOrVehicle") : "noVehicle")
-                    : "noConfirmedDestination"
+                let reason = relocationGapReason()
                 emit("evt.\(scenario.id).relocation.blocked", title: "scenario.common.relocation.blocked", values: ["reason": reason],
                      severity: .critical, rule: "rule.relocation", facts: ["transport.vehicles", "transport.alternatives", "transport.destinations"],
                      causedBy: id, sources: c.sourceIDs)

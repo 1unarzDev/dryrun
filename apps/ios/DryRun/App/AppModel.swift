@@ -26,15 +26,22 @@ final class AppModel {
     var home: HomeModel?
     var locale: String = "en" { didSet { if locale != oldValue { invalidatePlans() } } }
     var savedPlan: PlanDocument?
-    var rehearsal: RehearsalSession?
+    var rehearsal: RehearsalCursor?
     var comparison: RehearsalComparison?
     var lastError: String?
     var isWorking = false
     let capabilities = CapabilityService()
     let store: PrivateDataStore
 
-    private var latestRunID = 0
-    private var latestPlanID = 0
+    private var runGate = LatestRequestGate()
+    private var planGate = LatestRequestGate()
+
+    /// Identity of the current household/home/content. Results computed for anything else are discarded.
+    var currentKey: RevisionKey? {
+        guard let household, let home, let content else { return nil }
+        return RevisionKey(householdID: household.id, householdRevision: household.revision, homeID: home.id,
+                           homeRevision: home.revision, contentVersion: content.contentVersion, algorithmVersion: "app/1")
+    }
 
     init(store: PrivateDataStore) {
         self.store = store
@@ -111,11 +118,15 @@ final class AppModel {
     }
 
     /// "Mark preparation completed": changes the REAL household state, only on explicit user action.
+    /// A completion is a record of real-world action, not a simulation input (the engine never reads it), so it does
+    /// not bump the revision or discard the rehearsal on screen. Facts the preparation changed (e.g. a confirmed
+    /// backup) are edited through the household setup, which does invalidate derived results.
     func markPreparationCompleted(_ actionID: String) async {
-        await updateHousehold { h in
-            guard !h.completedPreparations.contains(where: { $0.actionID == actionID }) else { return }
-            h.completedPreparations.append(CompletedPreparation(actionID: actionID, completedAt: Date()))
-        }
+        guard var h = household, !h.completedPreparations.contains(where: { $0.actionID == actionID }) else { return }
+        h.completedPreparations.append(CompletedPreparation(actionID: actionID, completedAt: Date()))
+        h.updatedAt = Date()
+        household = h
+        await persist()
     }
 
     // MARK: - Rehearsal
@@ -138,55 +149,47 @@ final class AppModel {
     }
 
     private func run(_ input: RehearsalInput, resetCursor: Bool) async {
-        guard let engine else { return }
-        latestRunID += 1
-        let runID = latestRunID
+        guard let engine, let key = currentKey else { return }
+        let ticket = runGate.begin(for: key)
         isWorking = true
-        defer { if runID == latestRunID { isWorking = false } }
+        defer { if runGate.shouldApply(ticket, current: currentKey) { isWorking = false } }
         do {
             let result = try await Task.detached(priority: .userInitiated) { try engine.run(input) }.value
             // A late result from an older run, or one computed for an older household/home, never overwrites newer state.
-            guard runID == latestRunID, isCurrent(result.input) else { return }
+            guard runGate.shouldApply(ticket, current: currentKey) else { return }
             if resetCursor || rehearsal == nil {
-                rehearsal = RehearsalSession(result: result)
+                rehearsal = RehearsalCursor(result: result)
             } else {
                 rehearsal?.replace(result: result)
             }
         } catch {
-            guard runID == latestRunID else { return }
+            guard runGate.shouldApply(ticket, current: currentKey) else { return }
             lastError = String(describing: error)
         }
     }
 
     /// "Try this change": runs a simulation COPY with one intervention. The household is not modified.
     func tryChange(_ intervention: Intervention) async {
-        guard let engine, let baseline = rehearsal?.result.input else { return }
-        latestRunID += 1
-        let runID = latestRunID
+        guard let engine, let baseline = rehearsal?.result.input, let key = currentKey else { return }
+        let ticket = runGate.begin(for: key)
         isWorking = true
-        defer { if runID == latestRunID { isWorking = false } }
+        defer { if runGate.shouldApply(ticket, current: currentKey) { isWorking = false } }
         do {
             let result = try await Task.detached(priority: .userInitiated) { try engine.compare(baseline, applying: intervention) }.value
-            guard runID == latestRunID, isCurrent(result.baseline.input) else { return }
+            guard runGate.shouldApply(ticket, current: currentKey) else { return }
             comparison = result
         } catch {
-            guard runID == latestRunID else { return }
+            guard runGate.shouldApply(ticket, current: currentKey) else { return }
             lastError = String(describing: error)
         }
-    }
-
-    private func isCurrent(_ input: RehearsalInput) -> Bool {
-        input.household.id == household?.id && input.household.revision == household?.revision
-            && input.home.id == home?.id && input.home.revision == home?.revision
     }
 
     // MARK: - Plans
 
     /// Builds a plan for the selected scenarios by running each deterministically, then saves it in the vault.
     func generatePlan(scenarioIDs: [String], includePrivateNotes: Bool) async {
-        guard let household, let home, let content, let scenarios, let engine else { return }
-        latestPlanID += 1
-        let planID = latestPlanID
+        guard let household, let home, let content, let scenarios, let engine, let key = currentKey else { return }
+        let ticket = planGate.begin(for: key)
         let locale = self.locale
         let localizer = content.localizer(for: locale)
         let resources = content.resources(forRegion: household.regionID)
@@ -196,7 +199,7 @@ final class AppModel {
                                   contentVersion: content.contentVersion, seed: 1)
         }
         isWorking = true
-        defer { if planID == latestPlanID { isWorking = false } }
+        defer { isWorking = false }
         do {
             let doc = try await Task.detached(priority: .userInitiated) {
                 let results = try inputs.map { try engine.run($0) }
@@ -204,9 +207,8 @@ final class AppModel {
                                          resources: resources, contentVersion: content.contentVersion, generatedAt: Date(),
                                          options: .init(includePrivateNotes: includePrivateNotes))
             }.value
-            guard planID == latestPlanID, !doc.isStale(household: self.household ?? household, home: self.home ?? home,
-                                                       contentVersion: content.contentVersion), doc.locale == self.locale
-            else { return }
+            // Language or household changed while building: drop this plan rather than save a mismatched one.
+            guard planGate.shouldApply(ticket, current: currentKey), doc.locale == self.locale else { return }
             savedPlan = doc
             await persist()
         } catch {
@@ -223,10 +225,10 @@ final class AppModel {
         // Routes, rehearsal results, and comparisons are tied to revisions; drop them so nothing stale is shown.
         rehearsal = nil
         comparison = nil
-        latestRunID += 1
+        runGate.invalidate()
     }
 
-    private func invalidatePlans() { latestPlanID += 1 }
+    private func invalidatePlans() { planGate.invalidate() }
 
     // MARK: - Persistence
 
@@ -245,49 +247,10 @@ final class AppModel {
             try await store.deleteAll()
             TemporaryExports.purgeAll()
             household = nil; home = nil; savedPlan = nil; rehearsal = nil; comparison = nil
-            latestRunID += 1; latestPlanID += 1
+            runGate.invalidate(); planGate.invalidate()
             phase = .onboarding
         } catch {
             lastError = String(describing: error)
         }
-    }
-}
-
-/// Cursor over a deterministic result. The simulated clock is a teaching control, not a game timer.
-struct RehearsalSession: Equatable {
-    private(set) var result: RehearsalResult
-    /// Number of events revealed so far.
-    var revealed: Int = 0
-
-    init(result: RehearsalResult) { self.result = result }
-
-    mutating func replace(result: RehearsalResult) {
-        self.result = result
-        revealed = min(revealed, result.events.count)
-    }
-
-    var visibleEvents: ArraySlice<SimulationEvent> { result.events.prefix(revealed) }
-    var currentMinute: Int { revealed == 0 ? 0 : result.events[revealed - 1].simMinute }
-    var isFinished: Bool { revealed >= result.events.count && pendingDecision == nil }
-
-    /// The first unanswered decision whose time has been reached (or is next).
-    var pendingDecision: DecisionPoint? {
-        let nextMinute = revealed < result.events.count ? result.events[revealed].simMinute : Int.max
-        return result.decisions
-            .filter { result.input.choices[$0.id] == nil && $0.simMinute <= nextMinute }
-            .min { ($0.simMinute, $0.id) < ($1.simMinute, $1.id) }
-    }
-
-    mutating func advance() {
-        guard pendingDecision == nil, revealed < result.events.count else { return }
-        revealed += 1
-    }
-
-    mutating func revealAll() {
-        while pendingDecision == nil && revealed < result.events.count { revealed += 1 }
-    }
-
-    var snapshotAtCursor: SimulationSnapshot? {
-        result.snapshots.last { $0.simMinute <= currentMinute } ?? result.snapshots.first
     }
 }

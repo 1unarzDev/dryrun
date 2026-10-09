@@ -186,12 +186,14 @@ struct RunState {
     // MARK: Time and resources
 
     var tapWaterUsable: Bool {
-        let supplyOK = services[Svc.waterSupply] == .operational
+        // Reduced pressure (degraded) still delivers water; only unavailable/unknown supply forces storage use.
+        let supplyOK = services[Svc.waterSupply] == .operational || services[Svc.waterSupply] == .degraded
         let safety = services[Svc.waterSafety] ?? .unknown
         return supplyOK && (safety == .operational || (safety == .degraded && boilingTapWater))
     }
 
-    var homePowerUp: Bool { services[Svc.homePower] == .operational }
+    /// Home circuits deliver power (grid strain = degraded still powers loads; only outages stop them).
+    var homePowerUp: Bool { services[Svc.homePower] == .operational || services[Svc.homePower] == .degraded }
 
     /// Water drawn from storage per minute: CDC storage-planning baseline of 1 gal/person/day [S26],
     /// an exercise assumption, not a prescribed drinking volume. Pets' extra needs are not modelled (unknown).
@@ -307,7 +309,7 @@ struct RunState {
             for node in model.nodes where node.id != Svc.destination {
                 let old = services[node.id] ?? .unknown
                 let new = merged[node.id] ?? .unknown
-                guard old != new else { continue }
+                guard old != new, Self.isReportable(node.id, state: new, previous: old, ambient: scenario.ambient) else { continue }
                 emitServiceChange(node: node, state: new, trigger: trigger)
             }
             // Running on backup is a distinct, explained state (not just "operational").
@@ -350,6 +352,17 @@ struct RunState {
         emit("evt.\(scenario.id).\(node.id).\(state.rawValue)", title: "service.\(key).\(state.rawValue)", values: values,
              severity: severity, rule: node.ruleID, facts: facts, causedBy: trigger, sources: Self.sources(for: node.id),
              changes: [node.id: state])
+    }
+
+    /// Keeps the timeline readable: every state is still in snapshots, but heating changes are not narrated
+    /// in a heat wave (and vice versa), and "degraded" is narrated only where it changes what the household can do.
+    static func isReportable(_ svc: String, state: ServiceState, previous: ServiceState, ambient: String) -> Bool {
+        if svc == Svc.heat && ambient == "hot" { return false }
+        if svc == Svc.cooling && ambient == "cold" { return false }
+        if state == .degraded || (previous == .degraded && state == .operational) {
+            return svc == Svc.cooling || svc == Svc.transport || svc == Svc.homePower || svc == Svc.waterSafety || svc.hasPrefix("svc.device.")
+        }
+        return true
     }
 
     static func sources(for svc: String) -> [String] {

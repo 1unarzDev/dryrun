@@ -75,7 +75,7 @@ struct RehearsalView: View {
         .sheet(isPresented: $showDebrief) { NavigationStack { DebriefView() } }
     }
 
-    private func clock(_ session: RehearsalSession) -> some View {
+    private func clock(_ session: RehearsalCursor) -> some View {
         let minute = session.currentMinute
         let text = String(format: "+%dh %02dm", minute / 60, minute % 60)
         return Label(model.localizer("common.simClock", ["time": text]), systemImage: "clock")
@@ -83,7 +83,7 @@ struct RehearsalView: View {
             .accessibilityLabel("Exercise time \(minute / 60) hours \(minute % 60) minutes after the scenario starts")
     }
 
-    private func controls(_ session: RehearsalSession) -> some View {
+    private func controls(_ session: RehearsalCursor) -> some View {
         let l = model.localizer
         return HStack {
             Button(l("common.action.advance"), systemImage: "forward.frame") {

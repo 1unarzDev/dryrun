@@ -51,8 +51,9 @@ struct HomeTabView: View {
                 let issues = HomeValidator.validate(home)
                 Section("Still to confirm (\(issues.count))") {
                     if issues.isEmpty { Text("Nothing outstanding in the home model.") }
-                    ForEach(Array(issues.enumerated()), id: \.offset) { _, issue in
-                        Text(String(describing: issue)).font(.callout)
+                    ForEach(issues) { issue in
+                        Label(issue.message, systemImage: issue.severity == .blocking ? "exclamationmark.octagon" : "questionmark.circle")
+                            .font(.callout)
                     }
                 }
                 Section("Change the home") {

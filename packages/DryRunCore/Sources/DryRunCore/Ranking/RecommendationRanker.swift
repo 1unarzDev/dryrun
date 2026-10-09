@@ -15,14 +15,15 @@ public enum ActionRules {
         let scen = s.scenario.id
 
         func add(_ id: String, tier: PriorityTier, facts: [String], causes reqs: [String] = [], values: [String: String] = [:],
-                 tryParams: [String: String]? = nil, unconfirmed: [String] = [], status: EvidenceStatus = .needsVerification) {
+                 tryParams: [String: String]? = nil, unconfirmed: [String] = [], status: EvidenceStatus = .needsVerification,
+                 whySuffix: String? = nil) {
             guard let def = catalog.action(id) else { return }
             let causeIDs = reqs.flatMap { s.causes[$0] ?? [] }
             var notes = def.feasibilityNotes
             if h.housing.tenancy == .renter, !def.renterFriendly { notes.append("feasibility.renter-permission") }
             if h.supplies.limitedBudget, def.effort == .moderate || def.effort == .high { notes.append("feasibility.budget") }
             out.append(Recommendation(
-                actionID: id, tier: tier, titleKey: "action.\(id).title", whyKey: "action.\(id).why", templateValues: values,
+                actionID: id, tier: tier, titleKey: "action.\(id).title", whyKey: "action.\(id).why" + (whySuffix.map { ".\($0)" } ?? ""), templateValues: values,
                 matchedFactIDs: facts, causeEventIDs: Array(Set(causeIDs)).sorted(), scenarioIDs: def.scenarioIDs,
                 tryIntervention: def.simulates != nil ? Intervention(actionID: id, parameters: tryParams ?? [:]) : nil,
                 modeledEffectKey: def.simulates != nil ? "action.\(id).effect" : nil, effort: def.effort,
@@ -66,7 +67,7 @@ public enum ActionRules {
             add("act.relocation.arrange", tier: isVulnerable(h) ? .unmetEssentialRequirement : .scenarioSupplyOrContinuityGap,
                 facts: facts, causes: ["req.relocation", "req.heat", "req.cooling"],
                 values: ["reason": reason, "vehicle": h.transport.hasVehicle ? "yes" : "no"],
-                unconfirmed: ["transport.destinations.conditions"])
+                unconfirmed: ["transport.destinations.conditions"], whySuffix: reason)
         }
 
         // Assistance.

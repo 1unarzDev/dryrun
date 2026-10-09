@@ -48,18 +48,18 @@
       ]
     },
     {
-      "id": "evt.home-fire.primary-blocked",
+      "id": "evt.home-fire.fire-origin",
       "minute": 1,
       "priority": 0,
       "phaseID": "escape",
       "rule": "rule.fire.block-primary",
-      "titleKey": "scenario.home-fire.event.primary-blocked",
+      "titleKey": "scenario.home-fire.event.fire-origin",
       "severity": "critical",
       "sourceIDs": [
         "S19"
       ],
       "params": {
-        "mode": "usualExitRoom"
+        "originKind": "kitchen"
       }
     },
     {
