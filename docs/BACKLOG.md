@@ -35,6 +35,15 @@ Each item: acceptance condition · dependencies. "P0" blocks a credible demo; "P
 13. **FEMA NFHL live adapter** (map date, effective/preliminary status, missing coverage) — currently fixture only
     unless `docs/lanes/agent-c.md` says otherwise.
 
+20. **Basement walkout and split-level exits:** a per-door "this opens to ground outside" confirmation, replacing the
+    level-0 rule.
+21. **Same-room exits:** two exits from the start room count as independent. The UI should say "both exits are in
+    this room".
+22. **Explicit style markers on safety lines** (prohibition/caveat) in content, replacing English keyword detection.
+23. **Regional agent:** schedule runs, store claims for human review, and surface reviewed claims in the Help tab.
+24. **Helper "assigned" line ordering:** it currently appears before a later "helper blocked" event in the fire timeline.
+25. **Vault-backed derived cache:** use `storeDerived`/`loadDerived` for rehearsal results keyed by RevisionKey.
+
 ## P2 — quality and reach
 
 14. Design pass (owner-directed): typography, spacing, dollhouse styling, scenario art direction (restrained).

@@ -16,6 +16,9 @@ implementation work must be added and documented (see `STUDENT_IMPLEMENTATION.md
 | Agent B (spatial) | Claude Opus 5.5 (forked sub-agent) | Geometry, sample homes, home validator, egress planner, route cache, scan import, iOS RoomPlan/2D/3D/editor views, spatial tests |
 | Agent C (privacy & public data) | Claude Opus 5.5 (forked sub-agent) | DryRunVault package, public-data policy, source manifest, region packs, backend (Hono/Zod/Vitest), ES/VI draft translations, iOS Keychain/file-protection/public-API adapters, privacy tests |
 
+Each lane was also adversarially reviewed by a different agent (see `docs/lanes/review-*.md`). Those reviews found
+real defects, which were fixed and turned into regression tests.
+
 A human (the owner) wrote the product/engineering brief that defined requirements. The agents made the routine
 engineering decisions recorded in `DECISIONS.md` and `docs/lanes/*.md`.
 

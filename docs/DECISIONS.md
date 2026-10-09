@@ -47,4 +47,29 @@ Each entry: decision → reason → consequence. Material deviations from the br
 12. **No backend deployment.** Wrangler config is included without secrets; deployment is not authorized/provisioned.
     The app works fully offline from bundled content.
 
+13. **"Mark preparation completed" is a record, not a model input.** The engine never reads it, so it does not bump
+    the household revision or discard the on-screen rehearsal. Facts a preparation changes (for example, a confirmed
+    backup) are edited through household setup, which does invalidate results.
+
+14. **One definition of "ground floor"**: `level == 0` and elevation within tolerance, shared by the planner and the
+    confirmation pass. Basement walkout exits are therefore never walking exits yet (BACKLOG).
+
+15. **Prohibition styling comes from the source-language text**, so translated prohibitions keep their emphasis.
+    An explicit per-key style marker would be more robust (BACKLOG).
+
+16. **The draft-translation banner is bilingual**: the localized text plus the exact English phrase
+    "Draft translation - language review pending".
+
+17. **Adversarial cross-lane reviews.** Each lane was reviewed by an agent that did not write it:
+    - privacy: B reviewed C and the lead
+    - routing: A reviewed B
+    - lead core: A
+    - lead iOS: B
+    - regional agent: A
+
+    Findings and fixes are in `docs/lanes/review-*.md`.
+
+18. **The regional agent ships with `UnavailableProvider`.** No model credentials are approved. The template brief
+    is the working path, and model output can never be promoted to reviewed content automatically.
+
 Lane-specific decisions are recorded in `docs/lanes/agent-a.md`, `agent-b.md`, `agent-c.md`.

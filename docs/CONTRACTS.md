@@ -82,6 +82,15 @@ public protocol VaultKeyStore; public protocol FileProtectionApplying
 public actor PublicPackStore  // atomic known-good cache for region packs
 ```
 
+## Additive changes made during the build
+
+- `RouteResult.homeFingerprint` (optional; Agent B) — `isCurrent(for:)` compares content, not only revision.
+- Extra service IDs (Agent A): `svc.power.home`, `svc.alerts`, `svc.destination`, `svc.relocated`,
+  `svc.water.{municipal,utilitySafety,wellSafety}`, `svc.wellPump.mechanical`, `svc.internet`.
+- Choice events are `evt.<choicePointID>`; the rehearsal cursor relies on this.
+- `Sources/DryRunCore/Session/` (lead): `RehearsalCursor`, `LatestRequestGate`, `CapabilityPlan`, `HomeConfirmation`.
+- `VaultError` gained `readFailed` and `keyMismatch(…, recoveryCopy:)`; `corrupted.recoveryCopy` is optional (Agent C).
+
 ## Fixture IDs
 
 - Sample home `home-sample-ranch` (single floor, two exterior exits: front door from living room, back door from kitchen).
