@@ -20,8 +20,8 @@ Each item: acceptance condition · dependencies. "P0" blocks a credible demo; "P
 5. **RoomPlan capture on device.** Accept: single-session multi-room scan on a LiDAR iPhone produces a proposed
    HomeModel with correct relative room placement; confirmation pass required before routes; unsupported devices
    see the manual path. Physical scan results recorded (TESTED_DEVICE). · Depends on: LiDAR iPhone.
-6. **Confirmation pass UI after a scan** (label rooms, confirm doors/exits/stairs, meeting point, markers,
-   "needs measurement") as a guided flow rather than the general editor.
+6. **Confirmation pass on device.** The guided flow (`HomeConfirmationView` over the tested `HomeConfirmation` logic) is
+   built. Accept: after a real scan, every opening is answered or left unknown; routes appear only for confirmed exits.
 7. **PDF verification.** Accept: rendered EN/ES/VI PDFs for all sample households have no clipped text, correct
    Vietnamese diacritics, searchable text, and continuation pages reported (never shrunk below 11 pt).
 8. **Move remaining hard-coded UI chrome strings into the locale packs / String Catalog** with plural rules;
@@ -35,20 +35,20 @@ Each item: acceptance condition · dependencies. "P0" blocks a credible demo; "P
 13. **FEMA NFHL live adapter** (map date, effective/preliminary status, missing coverage) — currently fixture only
     unless `docs/lanes/agent-c.md` says otherwise.
 
-20. **Basement walkout and split-level exits:** a per-door "this opens to ground outside" confirmation, replacing the
+14. **Basement walkout and split-level exits:** a per-door "this opens to ground outside" confirmation, replacing the
     level-0 rule.
-21. **Same-room exits:** two exits from the start room count as independent. The UI should say "both exits are in
+15. **Same-room exits:** two exits from the start room count as independent. The UI should say "both exits are in
     this room".
-22. **Explicit style markers on safety lines** (prohibition/caveat) in content, replacing English keyword detection.
-23. **Regional agent:** schedule runs, store claims for human review, and surface reviewed claims in the Help tab.
-24. **Helper "assigned" line ordering:** it currently appears before a later "helper blocked" event in the fire timeline.
-25. **Vault-backed derived cache:** use `storeDerived`/`loadDerived` for rehearsal results keyed by RevisionKey.
+16. **Explicit style markers on safety lines** (prohibition/caveat) in content, replacing English keyword detection.
+17. **Regional agent:** schedule runs, store claims for human review, and surface reviewed claims in the Help tab.
+18. **Helper "assigned" line ordering:** it currently appears before a later "helper blocked" event in the fire timeline.
+19. **Vault-backed derived cache:** use `storeDerived`/`loadDerived` for rehearsal results keyed by RevisionKey.
 
 ## P2 — quality and reach
 
-14. Design pass (owner-directed): typography, spacing, dollhouse styling, scenario art direction (restrained).
-15. Performance on device: measure dollhouse frame pacing and simulation latency on the oldest supported iPhone.
-16. Accessibility audit with VoiceOver, Switch Control, Reduce Motion/Transparency, contrast checks.
-17. Optional on-device explanations: evaluate prose quality and validator false-accept rate on iOS 26 hardware.
-18. Encrypted, user-controlled export/recovery-key design (no server-held keys).
-19. Additional scenario variants (night fire, apartment common-stair fire, multi-day heat with intermittent grid).
+20. Design pass (owner-directed): typography, spacing, dollhouse styling, scenario art direction (restrained).
+21. Performance on device: measure dollhouse frame pacing and simulation latency on the oldest supported iPhone.
+22. Accessibility audit with VoiceOver, Switch Control, Reduce Motion/Transparency, contrast checks.
+23. Optional on-device explanations: evaluate prose quality and validator false-accept rate on iOS 26 hardware.
+24. Encrypted, user-controlled export/recovery-key design (no server-held keys).
+25. Additional scenario variants (night fire, apartment common-stair fire, multi-day heat with intermittent grid).
