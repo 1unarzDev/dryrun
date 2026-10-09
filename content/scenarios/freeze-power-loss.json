@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "id": "freeze-power-loss",
+  "version": "1.0.0",
+  "hazard": "freezePowerLoss",
+  "titleKey": "scenario.freeze-power-loss.title",
+  "summaryKey": "scenario.freeze-power-loss.summary",
+  "startingConditionsKey": "scenario.freeze-power-loss.starting",
+  "fictional": true,
+  "reviewStatus": "draft",
+  "durationMinutes": 4320,
+  "ambient": "cold",
+  "phases": [
+    {
+      "id": "onset",
+      "startMinute": 0,
+      "titleKey": "scenario.freeze-power-loss.phase.onset",
+      "kind": "progression"
+    },
+    {
+      "id": "outage",
+      "startMinute": 180,
+      "titleKey": "scenario.freeze-power-loss.phase.outage",
+      "kind": "progression"
+    },
+    {
+      "id": "recovery",
+      "startMinute": 2940,
+      "titleKey": "scenario.freeze-power-loss.phase.recovery",
+      "kind": "recovery"
+    }
+  ],
+  "variants": [
+    {
+      "id": "extended-outage",
+      "labelKey": "scenario.freeze-power-loss.variant.extended-outage"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt.freeze-power-loss.cold-arrives",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "onset",
+      "rule": "rule.note",
+      "titleKey": "scenario.freeze-power-loss.event.cold-arrives",
+      "severity": "caution",
+      "sourceIDs": [
+        "S20"
+      ]
+    },
+    {
+      "id": "evt.freeze-power-loss.grid-loss",
+      "minute": 180,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.freeze-power-loss.event.grid-loss",
+      "severity": "critical",
+      "sourceIDs": [
+        "S20"
+      ],
+      "params": {
+        "service": "svc.grid",
+        "state": "unavailable"
+      }
+    },
+    {
+      "id": "evt.freeze-power-loss.checkpoint-24h",
+      "minute": 1440,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.freeze-power-loss.event.checkpoint-24h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.freeze-power-loss.cell-degraded",
+      "minute": 1500,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.freeze-power-loss.event.cell-degraded",
+      "severity": "caution",
+      "sourceIDs": [
+        "S20"
+      ],
+      "params": {
+        "service": "svc.cellular",
+        "state": "degraded"
+      }
+    },
+    {
+      "id": "evt.freeze-power-loss.checkpoint-48h",
+      "minute": 2880,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.freeze-power-loss.event.checkpoint-48h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.freeze-power-loss.power-restored",
+      "minute": 2940,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.power-restored",
+      "titleKey": "scenario.freeze-power-loss.event.power-restored",
+      "severity": "info",
+      "sourceIDs": [
+        "S20",
+        "S25"
+      ],
+      "when": [
+        "!variant:extended-outage"
+      ]
+    },
+    {
+      "id": "evt.freeze-power-loss.cell-restored",
+      "minute": 2950,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.freeze-power-loss.event.cell-restored",
+      "severity": "info",
+      "sourceIDs": [],
+      "params": {
+        "service": "svc.cellular",
+        "state": "operational"
+      },
+      "when": [
+        "!variant:extended-outage"
+      ]
+    },
+    {
+      "id": "evt.freeze-power-loss.pipes-check",
+      "minute": 2960,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.note",
+      "titleKey": "scenario.freeze-power-loss.event.pipes-check",
+      "severity": "caution",
+      "sourceIDs": [
+        "S20"
+      ],
+      "when": [
+        "!variant:extended-outage"
+      ]
+    },
+    {
+      "id": "evt.freeze-power-loss.checkpoint-72h",
+      "minute": 4320,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.freeze-power-loss.event.checkpoint-72h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    }
+  ],
+  "choicePoints": [
+    {
+      "id": "choice.freeze-power-loss.keep-warm",
+      "minute": 240,
+      "phaseID": "outage",
+      "promptKey": "scenario.freeze-power-loss.choice.keep-warm.prompt",
+      "defaultOptionID": "layer-up",
+      "options": [
+        {
+          "id": "relocate",
+          "labelKey": "scenario.freeze-power-loss.choice.keep-warm.relocate",
+          "feedbackKey": "scenario.freeze-power-loss.choice.keep-warm.relocate.feedback",
+          "effect": "relocate",
+          "unsafe": false
+        },
+        {
+          "id": "layer-up",
+          "labelKey": "scenario.freeze-power-loss.choice.keep-warm.layer-up",
+          "feedbackKey": "scenario.freeze-power-loss.choice.keep-warm.layer-up.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        },
+        {
+          "id": "oven",
+          "labelKey": "scenario.freeze-power-loss.choice.keep-warm.oven",
+          "feedbackKey": "scenario.freeze-power-loss.choice.keep-warm.oven.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        },
+        {
+          "id": "generator-indoors",
+          "labelKey": "scenario.freeze-power-loss.choice.keep-warm.generator-indoors",
+          "feedbackKey": "scenario.freeze-power-loss.choice.keep-warm.generator-indoors.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S20"
+      ]
+    },
+    {
+      "id": "choice.freeze-power-loss.day-two",
+      "minute": 1560,
+      "phaseID": "outage",
+      "promptKey": "scenario.freeze-power-loss.choice.day-two.prompt",
+      "defaultOptionID": "stay",
+      "options": [
+        {
+          "id": "relocate",
+          "labelKey": "scenario.freeze-power-loss.choice.day-two.relocate",
+          "feedbackKey": "scenario.freeze-power-loss.choice.day-two.relocate.feedback",
+          "effect": "relocate",
+          "unsafe": false
+        },
+        {
+          "id": "stay",
+          "labelKey": "scenario.freeze-power-loss.choice.day-two.stay",
+          "feedbackKey": "scenario.freeze-power-loss.choice.day-two.stay.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S20"
+      ]
+    }
+  ],
+  "ruleIDs": [
+    "rule.external.set",
+    "rule.checkpoint",
+    "rule.recovery.power-restored",
+    "rule.note"
+  ],
+  "sourceIDs": [
+    "S20",
+    "S25",
+    "S26"
+  ],
+  "debrief": {
+    "pointKeys": [
+      "scenario.freeze-power-loss.debrief.1",
+      "scenario.freeze-power-loss.debrief.2",
+      "scenario.freeze-power-loss.debrief.3",
+      "scenario.freeze-power-loss.debrief.4"
+    ],
+    "sourceIDs": [
+      "S20",
+      "S25",
+      "S26"
+    ]
+  }
+}

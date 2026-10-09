@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "id": "heat-grid-strain",
+  "version": "1.0.0",
+  "hazard": "heatGridStrain",
+  "titleKey": "scenario.heat-grid-strain.title",
+  "summaryKey": "scenario.heat-grid-strain.summary",
+  "startingConditionsKey": "scenario.heat-grid-strain.starting",
+  "fictional": true,
+  "reviewStatus": "draft",
+  "durationMinutes": 4320,
+  "ambient": "hot",
+  "phases": [
+    {
+      "id": "strain",
+      "startMinute": 0,
+      "titleKey": "scenario.heat-grid-strain.phase.strain",
+      "kind": "progression"
+    },
+    {
+      "id": "outage",
+      "startMinute": 1500,
+      "titleKey": "scenario.heat-grid-strain.phase.outage",
+      "kind": "progression"
+    },
+    {
+      "id": "recovery",
+      "startMinute": 1740,
+      "titleKey": "scenario.heat-grid-strain.phase.recovery",
+      "kind": "recovery"
+    }
+  ],
+  "variants": [
+    {
+      "id": "no-rotating-outage",
+      "labelKey": "scenario.heat-grid-strain.variant.no-rotating-outage"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt.heat-grid-strain.heat-advisory",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "strain",
+      "rule": "rule.note",
+      "titleKey": "scenario.heat-grid-strain.event.heat-advisory",
+      "severity": "caution",
+      "sourceIDs": [
+        "S21"
+      ]
+    },
+    {
+      "id": "evt.heat-grid-strain.grid-strain",
+      "minute": 60,
+      "priority": 0,
+      "phaseID": "strain",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.heat-grid-strain.event.grid-strain",
+      "severity": "caution",
+      "sourceIDs": [
+        "S21"
+      ],
+      "params": {
+        "service": "svc.grid",
+        "state": "degraded"
+      }
+    },
+    {
+      "id": "evt.heat-grid-strain.checkpoint-24h",
+      "minute": 1440,
+      "priority": 0,
+      "phaseID": "strain",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.heat-grid-strain.event.checkpoint-24h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.heat-grid-strain.rotating-outage",
+      "minute": 1500,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.heat-grid-strain.event.rotating-outage",
+      "severity": "critical",
+      "sourceIDs": [
+        "S20",
+        "S21"
+      ],
+      "params": {
+        "service": "svc.grid",
+        "state": "unavailable"
+      },
+      "when": [
+        "!variant:no-rotating-outage"
+      ]
+    },
+    {
+      "id": "evt.heat-grid-strain.power-restored",
+      "minute": 1740,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.power-restored",
+      "titleKey": "scenario.heat-grid-strain.event.power-restored",
+      "severity": "info",
+      "sourceIDs": [
+        "S20",
+        "S25"
+      ],
+      "when": [
+        "!variant:no-rotating-outage"
+      ]
+    },
+    {
+      "id": "evt.heat-grid-strain.strain-eases",
+      "minute": 2880,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.heat-grid-strain.event.strain-eases",
+      "severity": "info",
+      "sourceIDs": [],
+      "params": {
+        "service": "svc.grid",
+        "state": "operational"
+      }
+    },
+    {
+      "id": "evt.heat-grid-strain.checkpoint-72h",
+      "minute": 4320,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.heat-grid-strain.event.checkpoint-72h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    }
+  ],
+  "choicePoints": [
+    {
+      "id": "choice.heat-grid-strain.hottest-hours",
+      "minute": 600,
+      "phaseID": "strain",
+      "promptKey": "scenario.heat-grid-strain.choice.hottest-hours.prompt",
+      "defaultOptionID": "stay-cool",
+      "options": [
+        {
+          "id": "relocate",
+          "labelKey": "scenario.heat-grid-strain.choice.hottest-hours.relocate",
+          "feedbackKey": "scenario.heat-grid-strain.choice.hottest-hours.relocate.feedback",
+          "effect": "relocate",
+          "unsafe": false
+        },
+        {
+          "id": "stay-cool",
+          "labelKey": "scenario.heat-grid-strain.choice.hottest-hours.stay-cool",
+          "feedbackKey": "scenario.heat-grid-strain.choice.hottest-hours.stay-cool.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        },
+        {
+          "id": "fan-only",
+          "labelKey": "scenario.heat-grid-strain.choice.hottest-hours.fan-only",
+          "feedbackKey": "scenario.heat-grid-strain.choice.hottest-hours.fan-only.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S21"
+      ]
+    },
+    {
+      "id": "choice.heat-grid-strain.during-outage",
+      "minute": 1560,
+      "phaseID": "outage",
+      "promptKey": "scenario.heat-grid-strain.choice.during-outage.prompt",
+      "defaultOptionID": "stay",
+      "options": [
+        {
+          "id": "relocate",
+          "labelKey": "scenario.heat-grid-strain.choice.during-outage.relocate",
+          "feedbackKey": "scenario.heat-grid-strain.choice.during-outage.relocate.feedback",
+          "effect": "relocate",
+          "unsafe": false
+        },
+        {
+          "id": "stay",
+          "labelKey": "scenario.heat-grid-strain.choice.during-outage.stay",
+          "feedbackKey": "scenario.heat-grid-strain.choice.during-outage.stay.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S21"
+      ],
+      "when": [
+        "!variant:no-rotating-outage"
+      ]
+    }
+  ],
+  "ruleIDs": [
+    "rule.external.set",
+    "rule.checkpoint",
+    "rule.recovery.power-restored",
+    "rule.note"
+  ],
+  "sourceIDs": [
+    "S20",
+    "S21",
+    "S25"
+  ],
+  "debrief": {
+    "pointKeys": [
+      "scenario.heat-grid-strain.debrief.1",
+      "scenario.heat-grid-strain.debrief.2",
+      "scenario.heat-grid-strain.debrief.3",
+      "scenario.heat-grid-strain.debrief.4"
+    ],
+    "sourceIDs": [
+      "S20",
+      "S21",
+      "S25"
+    ]
+  }
+}

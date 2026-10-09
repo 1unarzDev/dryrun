@@ -1,0 +1,1000 @@
+{
+  "annotations" : [
+    {
+      "floorID" : "fl-upper",
+      "id" : "an-smoke-landing",
+      "kind" : "smokeAlarm",
+      "label" : "Smoke alarm",
+      "position" : {
+        "x" : 5,
+        "y" : 6.7
+      },
+      "spaceID" : "sp-landing",
+      "verification" : "verified"
+    },
+    {
+      "floorID" : "fl-ground",
+      "id" : "an-smoke-hall",
+      "kind" : "smokeAlarm",
+      "label" : "Smoke alarm",
+      "position" : {
+        "x" : 5,
+        "y" : 6.7
+      },
+      "spaceID" : "sp-hall",
+      "verification" : "verified"
+    },
+    {
+      "floorID" : "fl-ground",
+      "id" : "an-meeting",
+      "kind" : "outsideMeetingPoint",
+      "label" : "Neighbor's oak tree (fictional)",
+      "position" : {
+        "x" : 2.45,
+        "y" : -7
+      },
+      "verification" : "verified"
+    }
+  ],
+  "completeness" : "complete",
+  "connectors" : [
+    {
+      "fromPoint" : {
+        "x" : 8.8,
+        "y" : 6.8
+      },
+      "fromSpaceID" : "sp-landing",
+      "id" : "cn-stairs",
+      "kind" : "stairs",
+      "toPoint" : {
+        "x" : 8.8,
+        "y" : 6.8
+      },
+      "toSpaceID" : "sp-hall",
+      "verification" : "verified"
+    }
+  ],
+  "floors" : [
+    {
+      "elevationMeters" : 0,
+      "id" : "fl-ground",
+      "label" : "Ground floor",
+      "level" : 0,
+      "toCommon" : {
+        "rotationRadians" : 0,
+        "translation" : {
+          "x" : 0,
+          "y" : 0
+        }
+      }
+    },
+    {
+      "elevationMeters" : 2.8,
+      "id" : "fl-upper",
+      "label" : "Upstairs",
+      "level" : 1,
+      "toCommon" : {
+        "rotationRadians" : 0,
+        "translation" : {
+          "x" : 0,
+          "y" : 0
+        }
+      }
+    }
+  ],
+  "frame" : {
+    "handedness" : "right",
+    "sourceUpAxis" : "y",
+    "units" : "meters"
+  },
+  "id" : "home-sample-twostory",
+  "isFictional" : true,
+  "label" : "Sample two-storey home (fictional)",
+  "obstacles" : [
+
+  ],
+  "portals" : [
+    {
+      "a" : {
+        "x" : 2,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 2.9,
+        "y" : 0
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-ground",
+      "id" : "pt-front",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-living"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 3
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 3.9
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.86
+      },
+      "floorID" : "fl-ground",
+      "id" : "pt-back",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-kitchen"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 6,
+        "y" : 1
+      },
+      "b" : {
+        "x" : 6,
+        "y" : 2.2
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 1.2
+      },
+      "floorID" : "fl-ground",
+      "id" : "pt-living-kitchen",
+      "kind" : "opening",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-living"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-kitchen"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 1.5,
+        "y" : 5.5
+      },
+      "b" : {
+        "x" : 2.4,
+        "y" : 5.5
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-ground",
+      "id" : "pt-living-hall",
+      "kind" : "opening",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-living"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-hall"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 7,
+        "y" : 5.5
+      },
+      "b" : {
+        "x" : 7.9,
+        "y" : 5.5
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.86
+      },
+      "floorID" : "fl-ground",
+      "id" : "pt-kitchen-hall",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-kitchen"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-hall"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 2,
+        "y" : 5.5
+      },
+      "b" : {
+        "x" : 2.85,
+        "y" : 5.5
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.85
+      },
+      "floorID" : "fl-upper",
+      "id" : "pt-bed1-landing",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-bed1"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-landing"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 7,
+        "y" : 5.5
+      },
+      "b" : {
+        "x" : 7.85,
+        "y" : 5.5
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.85
+      },
+      "floorID" : "fl-upper",
+      "id" : "pt-bed2-landing",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-bed2"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-landing"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 2,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 3,
+        "y" : 0
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-upper",
+      "id" : "pt-win-up-bed1",
+      "kind" : "window",
+      "note" : "Upstairs window: confirmed operable, still not a walking exit",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-bed1"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : false
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 7,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 8,
+        "y" : 0
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-upper",
+      "id" : "pt-win-up-bed2",
+      "kind" : "window",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-bed2"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : false
+      },
+      "verification" : "verified"
+    }
+  ],
+  "revision" : 1,
+  "schemaVersion" : 1,
+  "source" : "sample",
+  "spaces" : [
+    {
+      "floorID" : "fl-ground",
+      "id" : "sp-living",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "livingRoom",
+      "label" : "Living room",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 0,
+          "y" : 0
+        },
+        {
+          "x" : 6,
+          "y" : 0
+        },
+        {
+          "x" : 6,
+          "y" : 5.5
+        },
+        {
+          "x" : 0,
+          "y" : 5.5
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-ground",
+      "id" : "sp-kitchen",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "kitchen",
+      "label" : "Kitchen",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 6,
+          "y" : 0
+        },
+        {
+          "x" : 10,
+          "y" : 0
+        },
+        {
+          "x" : 10,
+          "y" : 5.5
+        },
+        {
+          "x" : 6,
+          "y" : 5.5
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-ground",
+      "id" : "sp-hall",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "hallway",
+      "label" : "Front hall and stairs",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 0,
+          "y" : 5.5
+        },
+        {
+          "x" : 10,
+          "y" : 5.5
+        },
+        {
+          "x" : 10,
+          "y" : 8
+        },
+        {
+          "x" : 0,
+          "y" : 8
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-upper",
+      "id" : "sp-bed1",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "bedroom",
+      "label" : "Main bedroom",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 0,
+          "y" : 0
+        },
+        {
+          "x" : 5,
+          "y" : 0
+        },
+        {
+          "x" : 5,
+          "y" : 5.5
+        },
+        {
+          "x" : 0,
+          "y" : 5.5
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-upper",
+      "id" : "sp-bed2",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "bedroom",
+      "label" : "Second bedroom",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 5,
+          "y" : 0
+        },
+        {
+          "x" : 10,
+          "y" : 0
+        },
+        {
+          "x" : 10,
+          "y" : 5.5
+        },
+        {
+          "x" : 5,
+          "y" : 5.5
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-upper",
+      "id" : "sp-landing",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "hallway",
+      "label" : "Upstairs landing",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 0,
+          "y" : 5.5
+        },
+        {
+          "x" : 10,
+          "y" : 5.5
+        },
+        {
+          "x" : 10,
+          "y" : 8
+        },
+        {
+          "x" : 0,
+          "y" : 8
+        }
+      ]
+    }
+  ],
+  "walls" : [
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "floorID" : "fl-ground",
+      "id" : "w-g-ext-s",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 8
+      },
+      "floorID" : "fl-ground",
+      "id" : "w-g-ext-e",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 8
+      },
+      "b" : {
+        "x" : 0,
+        "y" : 8
+      },
+      "floorID" : "fl-ground",
+      "id" : "w-g-ext-n",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 8
+      },
+      "b" : {
+        "x" : 0,
+        "y" : 0
+      },
+      "floorID" : "fl-ground",
+      "id" : "w-g-ext-w",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "floorID" : "fl-upper",
+      "id" : "w-u-ext-s",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 8
+      },
+      "floorID" : "fl-upper",
+      "id" : "w-u-ext-e",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 8
+      },
+      "b" : {
+        "x" : 0,
+        "y" : 8
+      },
+      "floorID" : "fl-upper",
+      "id" : "w-u-ext-n",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 8
+      },
+      "b" : {
+        "x" : 0,
+        "y" : 0
+      },
+      "floorID" : "fl-upper",
+      "id" : "w-u-ext-w",
+      "thicknessMeters" : 0.2
+    },
+    {
+      "a" : {
+        "x" : 6,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 6,
+        "y" : 5.5
+      },
+      "floorID" : "fl-ground",
+      "id" : "w-g-mid",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 5.5
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 5.5
+      },
+      "floorID" : "fl-ground",
+      "id" : "w-g-hall",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 5,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 5,
+        "y" : 5.5
+      },
+      "floorID" : "fl-upper",
+      "id" : "w-u-mid",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 5.5
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 5.5
+      },
+      "floorID" : "fl-upper",
+      "id" : "w-u-hall",
+      "thicknessMeters" : 0.12
+    }
+  ]
+}

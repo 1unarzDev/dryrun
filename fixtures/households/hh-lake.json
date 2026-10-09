@@ -1,0 +1,285 @@
+{
+  "backupPower" : [
+
+  ],
+  "communications" : {
+    "batteryOrCrankRadio" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "handsetCount" : 2,
+    "handsetRuntimeHours" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "scenarioAssumption",
+      "sourceIDs" : [
+
+      ],
+      "status" : "assumed",
+      "unit" : "h",
+      "value" : 18
+    },
+    "powerBankCharges" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "routerOnBackup" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "userConfirmed",
+      "sourceIDs" : [
+
+      ],
+      "status" : "confirmed",
+      "value" : false
+    }
+  },
+  "completedPreparations" : [
+
+  ],
+  "contacts" : [
+    {
+      "alias" : "Neighbor in 2B (fictional)",
+      "id" : "ct-lake-1",
+      "phone" : "817-555-0117",
+      "role" : "neighborHelper"
+    }
+  ],
+  "displayName" : "Lake household (fictional)",
+  "equipment" : [
+    {
+      "compatibleBackupIDs" : [
+
+      ],
+      "documentedBackupRuntimeHours" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "id" : "eq-insulin",
+      "isEssential" : true,
+      "label" : "Refrigerated medication",
+      "needsRefrigeration" : true,
+      "personID" : "p-lake-1",
+      "powerWatts" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "purpose" : "refrigeratedMedication"
+    }
+  ],
+  "housing" : {
+    "cooling" : "centralAC",
+    "floorCount" : 1,
+    "heatingFuel" : "electric",
+    "heatingNeedsElectricity" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "userConfirmed",
+      "sourceIDs" : [
+
+      ],
+      "status" : "confirmed",
+      "value" : true
+    },
+    "homeType" : "apartment",
+    "sanitation" : "sewer",
+    "tenancy" : "renter",
+    "waterSource" : "municipal",
+    "wellPressureTankGallons" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "wellPumpElectric" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    }
+  },
+  "id" : "hh-lake",
+  "isFictional" : true,
+  "people" : [
+    {
+      "ageBand" : "olderAdult",
+      "alias" : "Bà (Grandma)",
+      "communicationNotes" : "Prefers Vietnamese",
+      "helperPersonID" : "p-lake-2",
+      "id" : "p-lake-1",
+      "needs" : [
+        "heatSensitive",
+        "limitedMobility"
+      ],
+      "sleepingSpaceID" : "sp-bed1"
+    },
+    {
+      "ageBand" : "adult",
+      "alias" : "Adult son",
+      "id" : "p-lake-2",
+      "needs" : [
+
+      ],
+      "sleepingSpaceID" : "sp-bed2"
+    }
+  ],
+  "pets" : [
+    {
+      "carrierAvailable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "count" : 1,
+      "id" : "pet-lake-cat",
+      "kind" : "cat"
+    }
+  ],
+  "preferredLocale" : "vi",
+  "regionID" : "48439",
+  "revision" : 1,
+  "schemaVersion" : 1,
+  "supplies" : {
+    "coolerAndIcePacks" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "fireExtinguisher" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "firstAidKit" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "flashlights" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "userConfirmed",
+      "sourceIDs" : [
+
+      ],
+      "status" : "confirmed",
+      "value" : 1
+    },
+    "limitedBudget" : true,
+    "limitedStorageSpace" : true,
+    "shelfStableFoodDays" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "unknown",
+      "sourceIDs" : [
+
+      ],
+      "status" : "unknown"
+    },
+    "storedWaterGallons" : {
+      "inputIDs" : [
+
+      ],
+      "origin" : "userConfirmed",
+      "sourceIDs" : [
+
+      ],
+      "status" : "confirmed",
+      "unit" : "gal",
+      "value" : 2
+    }
+  },
+  "transport" : {
+    "alternatives" : [
+      {
+        "agreed" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "unknown",
+          "sourceIDs" : [
+
+          ],
+          "status" : "unknown"
+        },
+        "id" : "ta-lake-bus",
+        "kind" : "publicTransit",
+        "wheelchairAccessible" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "unknown",
+          "sourceIDs" : [
+
+          ],
+          "status" : "unknown"
+        }
+      }
+    ],
+    "destinations" : [
+
+    ],
+    "vehicles" : [
+
+    ]
+  },
+  "updatedAt" : "2026-10-01T12:00:00Z"
+}

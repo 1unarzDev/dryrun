@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "id": "tornado",
+  "version": "1.0.0",
+  "hazard": "tornado",
+  "titleKey": "scenario.tornado.title",
+  "summaryKey": "scenario.tornado.summary",
+  "startingConditionsKey": "scenario.tornado.starting",
+  "fictional": true,
+  "reviewStatus": "draft",
+  "durationMinutes": 4320,
+  "ambient": "none",
+  "phases": [
+    {
+      "id": "watch",
+      "startMinute": 0,
+      "titleKey": "scenario.tornado.phase.watch",
+      "kind": "progression"
+    },
+    {
+      "id": "warning",
+      "startMinute": 60,
+      "titleKey": "scenario.tornado.phase.warning",
+      "kind": "immediate"
+    },
+    {
+      "id": "recovery",
+      "startMinute": 120,
+      "titleKey": "scenario.tornado.phase.recovery",
+      "kind": "recovery"
+    }
+  ],
+  "variants": [
+    {
+      "id": "night",
+      "labelKey": "scenario.tornado.variant.night"
+    },
+    {
+      "id": "home-damaged",
+      "labelKey": "scenario.tornado.variant.home-damaged"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt.tornado.watch",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "watch",
+      "rule": "rule.note",
+      "titleKey": "scenario.tornado.event.watch",
+      "severity": "caution",
+      "sourceIDs": [
+        "S22"
+      ]
+    },
+    {
+      "id": "evt.tornado.warning",
+      "minute": 60,
+      "priority": 0,
+      "phaseID": "warning",
+      "rule": "rule.tornado.warning",
+      "titleKey": "scenario.tornado.event.warning",
+      "severity": "critical",
+      "sourceIDs": [
+        "S22"
+      ]
+    },
+    {
+      "id": "evt.tornado.passed",
+      "minute": 120,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.note",
+      "titleKey": "scenario.tornado.event.passed",
+      "severity": "info",
+      "sourceIDs": [
+        "S22"
+      ]
+    },
+    {
+      "id": "evt.tornado.grid-down",
+      "minute": 121,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.tornado.event.grid-down",
+      "severity": "caution",
+      "sourceIDs": [
+        "S20"
+      ],
+      "params": {
+        "service": "svc.grid",
+        "state": "unavailable"
+      }
+    },
+    {
+      "id": "evt.tornado.debris-roads",
+      "minute": 122,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.tornado.event.debris-roads",
+      "severity": "caution",
+      "sourceIDs": [
+        "S22"
+      ],
+      "params": {
+        "service": "svc.roads",
+        "state": "degraded"
+      }
+    },
+    {
+      "id": "evt.tornado.displacement",
+      "minute": 180,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.displacement",
+      "titleKey": "scenario.tornado.event.displacement",
+      "severity": "caution",
+      "sourceIDs": [
+        "S29"
+      ],
+      "when": [
+        "variant:home-damaged"
+      ]
+    },
+    {
+      "id": "evt.tornado.checkpoint-24h",
+      "minute": 1440,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.tornado.event.checkpoint-24h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.tornado.roads-cleared",
+      "minute": 2000,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.tornado.event.roads-cleared",
+      "severity": "info",
+      "sourceIDs": [],
+      "params": {
+        "service": "svc.roads",
+        "state": "operational"
+      }
+    },
+    {
+      "id": "evt.tornado.power-restored",
+      "minute": 2880,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.power-restored",
+      "titleKey": "scenario.tornado.event.power-restored",
+      "severity": "info",
+      "sourceIDs": [
+        "S20"
+      ]
+    }
+  ],
+  "choicePoints": [
+    {
+      "id": "choice.tornado.watch",
+      "minute": 10,
+      "phaseID": "watch",
+      "promptKey": "scenario.tornado.choice.watch.prompt",
+      "defaultOptionID": "prepare",
+      "options": [
+        {
+          "id": "prepare",
+          "labelKey": "scenario.tornado.choice.watch.prepare",
+          "feedbackKey": "scenario.tornado.choice.watch.prepare.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        },
+        {
+          "id": "leave-for-sturdy",
+          "labelKey": "scenario.tornado.choice.watch.leave-for-sturdy",
+          "feedbackKey": "scenario.tornado.choice.watch.leave-for-sturdy.feedback",
+          "effect": "leaveEarly",
+          "unsafe": false
+        },
+        {
+          "id": "wait",
+          "labelKey": "scenario.tornado.choice.watch.wait",
+          "feedbackKey": "scenario.tornado.choice.watch.wait.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S22"
+      ]
+    },
+    {
+      "id": "choice.tornado.warning",
+      "minute": 61,
+      "phaseID": "warning",
+      "promptKey": "scenario.tornado.choice.warning.prompt",
+      "defaultOptionID": "go-to-shelter",
+      "options": [
+        {
+          "id": "go-to-shelter",
+          "labelKey": "scenario.tornado.choice.warning.go-to-shelter",
+          "feedbackKey": "scenario.tornado.choice.warning.go-to-shelter.feedback",
+          "effect": "goToShelter",
+          "unsafe": false
+        },
+        {
+          "id": "drive-to-distant-shelter",
+          "labelKey": "scenario.tornado.choice.warning.drive-to-distant-shelter",
+          "feedbackKey": "scenario.tornado.choice.warning.drive-to-distant-shelter.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        },
+        {
+          "id": "stay-in-bedroom",
+          "labelKey": "scenario.tornado.choice.warning.stay-in-bedroom",
+          "feedbackKey": "scenario.tornado.choice.warning.stay-in-bedroom.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        },
+        {
+          "id": "go-outside",
+          "labelKey": "scenario.tornado.choice.warning.go-outside",
+          "feedbackKey": "scenario.tornado.choice.warning.go-outside.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S22"
+      ]
+    }
+  ],
+  "ruleIDs": [
+    "rule.note",
+    "rule.tornado.warning",
+    "rule.external.set",
+    "rule.recovery.displacement",
+    "rule.checkpoint",
+    "rule.recovery.power-restored"
+  ],
+  "sourceIDs": [
+    "S20",
+    "S22",
+    "S29"
+  ],
+  "debrief": {
+    "pointKeys": [
+      "scenario.tornado.debrief.1",
+      "scenario.tornado.debrief.2",
+      "scenario.tornado.debrief.3",
+      "scenario.tornado.debrief.4"
+    ],
+    "sourceIDs": [
+      "S20",
+      "S22",
+      "S29"
+    ]
+  }
+}

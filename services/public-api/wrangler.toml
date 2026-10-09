@@ -1,0 +1,9 @@
+# Dry Run public API (public data only). No secrets in this file.
+# Deployment is NOT performed by the initial build; see README in this directory.
+name = "dryrun-public-api"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# NWS requires an identifying User-Agent with contact info. Set a real contact before deploying.
+NWS_USER_AGENT = "DryRun-public-api/0.1 (contact: replace-before-deploy@example.invalid)"

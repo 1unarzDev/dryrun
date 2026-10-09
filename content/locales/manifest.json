@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sourceLocale": "en",
+  "locales": [
+    {
+      "code": "en",
+      "name": "English",
+      "nativeName": "English",
+      "domains": { "common": "draft", "plan": "draft", "help": "draft", "scenarios": "draft", "actions": "draft" },
+      "note": "Authored source language. Marked draft: no human safety-content review has happened yet (AI-assisted authoring, 2026-10-09)."
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "nativeName": "Español",
+      "domains": { "common": "missing", "plan": "missing", "help": "missing", "scenarios": "missing", "actions": "missing" },
+      "note": "Draft translation - language review pending. AI-assisted; must not be released as dependable safety guidance until reviewed by a qualified Spanish reviewer."
+    },
+    {
+      "code": "vi",
+      "name": "Vietnamese",
+      "nativeName": "Tiếng Việt",
+      "domains": { "common": "missing", "plan": "missing", "help": "missing", "scenarios": "missing", "actions": "missing" },
+      "note": "Draft translation - language review pending. AI-assisted; must not be released as dependable safety guidance until reviewed by a qualified Vietnamese reviewer."
+    }
+  ]
+}

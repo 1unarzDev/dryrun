@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "2026.10.0",
+  "packID": "tx-statewide",
+  "generatedAt": "2026-10-09T19:00:00Z",
+  "expiresAt": "2027-01-09T00:00:00Z",
+  "classification": "curated",
+  "regions": [
+    {
+      "id": "tx-statewide",
+      "name": "Texas (statewide)",
+      "kind": "state",
+      "nwsZoneIDs": [],
+      "nwsCountyIDs": [],
+      "coverage": "statewideOnly",
+      "coverageNote": "Statewide help lines only. County-specific contacts are in the tx-25-counties pack.",
+      "inTX25": "n/a"
+    }
+  ],
+  "resources": [
+    {
+      "contact": {
+        "phone": "877-541-7905",
+        "phoneNote": "Dial 2-1-1 or 877-541-7905 and select your language. Option 1: services in your area. Option 4 (via 2-1-1): STEAR registration. Menu options as listed on the official page on 2026-10-09; may change.",
+        "url": "https://www.211texas.org/contact-2-1-1/"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-tx-211",
+      "name": "2-1-1 Texas",
+      "publisher": "Texas Health and Human Services (2-1-1 Texas)",
+      "serviceType": "assistanceLine",
+      "jurisdiction": "Texas",
+      "regionIDs": [
+        "tx-statewide"
+      ],
+      "summary": "Information about local services, including disaster-related help.",
+      "sourceIDs": [
+        "S27"
+      ]
+    },
+    {
+      "contact": {
+        "phone": "2-1-1",
+        "phoneNote": "Dial 2-1-1 (or 877-541-7905), select language, then Option 4. Online registration at stear.texas.gov.",
+        "url": "https://stear.texas.gov/"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-tx-stear",
+      "name": "State of Texas Emergency Assistance Registry (STEAR)",
+      "publisher": "Texas Division of Emergency Management",
+      "serviceType": "assistanceRegistry",
+      "jurisdiction": "Texas",
+      "regionIDs": [
+        "tx-statewide"
+      ],
+      "summary": "Voluntary, external registration. Information is shared with local emergency planners, responders, and participating local governments. Registering does NOT guarantee that you will receive a specific service or assistance during an emergency. Dry Run never registers you or sends your household profile.",
+      "sourceIDs": [
+        "S28"
+      ]
+    },
+    {
+      "contact": {
+        "url": "https://www.tdem.texas.gov/response/state-of-texas-emergency-assistance-registry"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-tx-tdem",
+      "name": "Texas Division of Emergency Management",
+      "publisher": "Texas Division of Emergency Management",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Texas",
+      "regionIDs": [
+        "tx-statewide"
+      ],
+      "summary": "State emergency management agency; administers STEAR.",
+      "sourceIDs": [
+        "S28"
+      ]
+    },
+    {
+      "contact": {
+        "phone": "1-800-621-3362",
+        "phoneNote": "FEMA application line as listed by USAGov on 2026-10-09.",
+        "url": "https://www.usa.gov/disaster-assistance"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-us-fema-ia",
+      "name": "FEMA disaster assistance (DisasterAssistance.gov)",
+      "publisher": "USAGov / FEMA",
+      "serviceType": "disasterAssistance",
+      "jurisdiction": "United States",
+      "regionIDs": [
+        "tx-statewide"
+      ],
+      "summary": "FEMA financial assistance requires living in a presidentially declared disaster area, and not everyone qualifies for every program. Many fires and outages are not declared disasters; state agencies and other organizations may help instead.",
+      "sourceIDs": [
+        "S29"
+      ]
+    },
+    {
+      "contact": {
+        "url": "https://www.weather.gov/"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-us-nws",
+      "name": "National Weather Service",
+      "publisher": "NOAA National Weather Service",
+      "serviceType": "other",
+      "jurisdiction": "United States",
+      "regionIDs": [
+        "tx-statewide"
+      ],
+      "summary": "Official watches, warnings, and forecasts. Dry Run shows NWS alert text unchanged when online.",
+      "sourceIDs": [
+        "S17"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "S17",
+      "publisher": "National Weather Service",
+      "title": "API web service documentation",
+      "url": "https://www.weather.gov/documentation/services-web-api",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S27",
+      "publisher": "2-1-1 Texas",
+      "title": "Contact 2-1-1",
+      "url": "https://www.211texas.org/contact-2-1-1/",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S28",
+      "publisher": "Texas Division of Emergency Management",
+      "title": "State of Texas Emergency Assistance Registry",
+      "url": "https://www.tdem.texas.gov/response/state-of-texas-emergency-assistance-registry",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S29",
+      "publisher": "USAGov",
+      "title": "Disaster assistance",
+      "url": "https://www.usa.gov/disaster-assistance",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    }
+  ]
+}

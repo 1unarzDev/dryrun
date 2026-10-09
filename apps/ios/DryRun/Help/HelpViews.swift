@@ -1,0 +1,178 @@
+import SwiftUI
+import MapKit
+import DryRunCore
+
+/// Official directory. Works offline from the bundled/cached pack; the map is optional and needs tiles.
+/// Phone and website actions always require a tap. Nothing auto-calls, and nothing private is sent.
+struct HelpTabView: View {
+    @Environment(AppModel.self) private var model
+    @State private var showMap = false
+
+    var body: some View {
+        let l = model.localizer
+        let regionID = model.household?.regionID ?? "tx-statewide"
+        let resources = model.content?.resources(forRegion: regionID) ?? []
+        let region = model.content?.region(regionID)
+        List {
+            Section {
+                Label("In danger now? Call 911.", systemImage: "phone.fill").font(.headline)
+                if !model.capabilities.isOnline {
+                    Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
+                }
+            }
+            AlertsSection(regionID: regionID)
+            if let region {
+                Section {
+                    Text("\(region.name): \(coverageText(region.coverage))").font(.footnote)
+                    if let note = region.coverageNote { Text(note).font(.footnote).foregroundStyle(.secondary) }
+                }
+            }
+            ForEach(groups(resources), id: \.0) { type, items in
+                Section(typeName(type)) {
+                    ForEach(items) { ResourceRow(resource: $0) }
+                }
+            }
+            Section {
+                Button(showMap ? "Hide map" : "Show map", systemImage: "map") { showMap.toggle() }
+                if showMap {
+                    DirectoryMapView(resources: resources)
+                        .frame(height: 300)
+                        .listRowInsets(EdgeInsets())
+                }
+            } footer: {
+                Text("Map tiles need a connection. A place on the map is not an open shelter unless an official source says it is activated.")
+            }
+        }
+        .navigationTitle(l("common.tab.help"))
+    }
+
+    private func groups(_ resources: [PublicResource]) -> [(ResourceServiceType, [PublicResource])] {
+        let order = ResourceServiceType.allCases
+        return Dictionary(grouping: resources, by: \.serviceType)
+            .sorted { (order.firstIndex(of: $0.key) ?? 0) < (order.firstIndex(of: $1.key) ?? 0) }
+            .map { ($0.key, $0.value.sorted { $0.name < $1.name }) }
+    }
+
+    private func coverageText(_ c: CoverageStatus) -> String {
+        switch c {
+        case .verifiedPartial: "some local resources verified"
+        case .oemOnly: "emergency management office only"
+        case .statewideOnly: "statewide resources only"
+        case .notStarted: "local resources not yet verified; statewide resources shown"
+        }
+    }
+
+    private func typeName(_ t: ResourceServiceType) -> String {
+        switch t {
+        case .emergencyManagement: "Emergency management"
+        case .publicHealth: "Public health"
+        case .waterProvider: "Water"
+        case .electricUtility: "Electricity"
+        case .transportation: "Transportation"
+        case .assistanceLine: "Help lines"
+        case .assistanceRegistry: "Assistance registry (opt-in)"
+        case .disasterAssistance: "Disaster assistance"
+        case .warmingCenter: "Warming sites"
+        case .coolingCenter: "Cooling sites"
+        case .shelter: "Shelters"
+        case .alertEnrollment: "Alert sign-up"
+        case .other: "Other"
+        }
+    }
+}
+
+struct ResourceRow: View {
+    let resource: PublicResource
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(resource.name).font(.body.weight(.semibold))
+            Text(resource.summary).font(.callout)
+            if let phone = resource.contact.phone {
+                // Phone numbers are always shown as text so they remain useful offline and in print.
+                HStack {
+                    Text(phone).font(.callout.monospacedDigit()).textSelection(.enabled)
+                    if let note = resource.contact.phoneNote { Text(note).font(.caption).foregroundStyle(.secondary) }
+                    Spacer()
+                    if let url = URL(string: "tel:\(phone.filter { $0.isNumber })") {
+                        Link(destination: url) { Label("Call", systemImage: "phone") }
+                            .buttonStyle(.bordered)
+                            .accessibilityHint("Opens the phone app. Dry Run never calls automatically.")
+                    }
+                }
+            }
+            if let site = resource.contact.url, let url = URL(string: site) {
+                Link(destination: url) { Label("Official website", systemImage: "safari") }.font(.callout)
+            }
+            let display = PublicDataPolicy.activationDisplay(for: resource, now: Date())
+            if display != .notApplicable {
+                Text(activationText(display)).font(.caption.weight(.semibold))
+            }
+            HStack(spacing: 8) {
+                Text("\(resource.publisher)")
+                Text("Checked \(resource.checkedAt)")
+                if resource.reviewState != .reviewed { Text("Needs review").foregroundStyle(Theme.caution) }
+                if resource.classification == .demo || resource.classification == .fixture { Text("Demo data").foregroundStyle(Theme.critical) }
+            }
+            .font(.caption).foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 4)
+    }
+
+    /// Only unexpired source evidence can say a site is open; unknown is never shown as open or closed.
+    private func activationText(_ d: PublicDataPolicy.ActivationDisplay) -> String {
+        switch d {
+        case .confirmedActive: "Activated (per official source)"
+        case .confirmedInactive: "Not currently activated (per official source)"
+        case .unconfirmed: "Activation not confirmed — check the official source before going"
+        case .notApplicable: ""
+        }
+    }
+}
+
+struct DirectoryMapView: View {
+    let resources: [PublicResource]
+    var body: some View {
+        Map {
+            ForEach(resources.filter { $0.latitude != nil && $0.longitude != nil }) { r in
+                Marker(r.name, systemImage: "building.2", coordinate: CLLocationCoordinate2D(latitude: r.latitude!, longitude: r.longitude!))
+            }
+        }
+        .mapStyle(.standard(pointsOfInterest: .excludingAll))
+        .accessibilityLabel("Map of listed offices. The same places are listed above as text.")
+    }
+}
+
+/// Official alerts. Only current, non-demo alerts are presented as current; offline shows dated context.
+struct AlertsSection: View {
+    @Environment(AppModel.self) private var model
+    let regionID: String
+    @State private var envelope: AlertsEnvelope?
+    @State private var failed = false
+
+    var body: some View {
+        Section("Official alerts (National Weather Service)") {
+            if let envelope {
+                let current = PublicDataPolicy.currentOfficialAlerts(envelope.alerts, now: Date())
+                if current.isEmpty {
+                    Text("No current alerts in the last update (\(envelope.fetchedAt)).").font(.callout)
+                }
+                ForEach(current) { alert in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(alert.event).font(.headline)
+                        if let headline = alert.headline { Text(headline).font(.callout) }
+                        Text("Issued \(alert.sent) · expires \(alert.expires ?? "unknown") · fetched \(alert.fetchedAt)")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            } else if failed || !model.capabilities.isOnline {
+                Text("Current conditions are unavailable right now.").font(.callout)
+            } else {
+                ProgressView()
+            }
+        }
+        .task(id: regionID) {
+            do { envelope = try await PublicAPIClient.shared.alerts(regionID: regionID) } catch { failed = true }
+        }
+    }
+}
