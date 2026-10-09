@@ -46,6 +46,34 @@ final class CapabilityService {
         locationStatus = CLLocationManager().authorizationStatus
         explanationModel = ExplanationService.availability()
     }
+
+    /// Pure, tested mapping (DryRunCore.CapabilityPlan) from independent device facts to offered flows.
+    var plan: CapabilityPlan {
+        CapabilityPlan.make(CapabilitySnapshot(
+            roomCaptureSupported: roomCaptureSupported,
+            camera: Self.permission(camera: cameraStatus),
+            location: Self.permission(location: locationStatus),
+            online: isOnline,
+            explanationModelAvailable: explanationModel == .available))
+    }
+
+    static func permission(camera s: AVAuthorizationStatus) -> PermissionState {
+        switch s {
+        case .authorized: .authorized
+        case .denied: .denied
+        case .restricted: .restricted
+        default: .notDetermined
+        }
+    }
+
+    static func permission(location s: CLAuthorizationStatus) -> PermissionState {
+        switch s {
+        case .authorizedAlways, .authorizedWhenInUse: .authorized
+        case .denied: .denied
+        case .restricted: .restricted
+        default: .notDetermined
+        }
+    }
 }
 
 /// Plaintext PDF exports exist only for an explicit preview/share/print, carry complete file protection,

@@ -115,17 +115,20 @@ public enum ScanImport {
             let spaceID = "sp-scan-\(ri + 1)"
             // Room outline: the floor surface polygon, transformed and projected.
             var outline: [Vec2] = []
+            var hullFallback = false
             if let floor = room.surfaces.first(where: { $0.category == .floor }), floor.polygonCorners.count >= 3 {
                 outline = floor.polygonCorners.map { RigidTransform3D.projectToFloor(floor.transform.apply($0)) }
             } else {
                 let pts = room.surfaces.filter { $0.category == .wall }.flatMap { endpoints($0) }
                 outline = convexHull(pts)
+                hullFallback = true
+                incomplete = true
                 notes.append("Room \(ri + 1): no floor outline; using the outline of its walls. Needs measurement.")
             }
             if Geometry.signedArea(outline) < 0 { outline.reverse() }
             let lowConfidence = room.surfaces.contains { $0.confidence == .low }
             spaces.append(Space(id: spaceID, floorID: fid, label: "Room \(ri + 1)", kind: .other, polygon: outline,
-                                labelConfirmed: false, needsMeasurement: lowConfidence || outline.count < 3))
+                                labelConfirmed: false, needsMeasurement: hullFallback || lowConfidence || outline.count < 3))
             for w in room.surfaces where w.category == .wall {
                 let e = endpoints(w)
                 walls.append(WallSegment(id: "w-\(w.id)", floorID: fid, a: e[0], b: e[1], thicknessMeters: max(0.05, w.dimensions.z)))

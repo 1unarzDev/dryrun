@@ -48,6 +48,8 @@ public struct ActionCatalog: Codable, Sendable, Hashable {
                          feasibilityNotes: ["feasibility.confirm-host"]),
         ActionDefinition(id: "act.fire.verify-second-exit", effort: .noCost, sourceIDs: ["S19"], scenarioIDs: ["home-fire"],
                          simulates: nil, renterFriendly: true, feasibilityNotes: ["feasibility.landlord-for-repairs"]),
+        ActionDefinition(id: "act.fire.helper-reach-plan", effort: .noCost, sourceIDs: ["S19"], scenarioIDs: ["home-fire"],
+                         simulates: nil, renterFriendly: true, feasibilityNotes: []),
         ActionDefinition(id: "act.fire.meeting-point", effort: .noCost, sourceIDs: ["S19"], scenarioIDs: ["home-fire"],
                          simulates: nil, renterFriendly: true, feasibilityNotes: []),
         ActionDefinition(id: "act.fire.smoke-alarms", effort: .low, sourceIDs: ["S19"], scenarioIDs: ["home-fire"],

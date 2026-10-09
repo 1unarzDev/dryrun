@@ -88,12 +88,10 @@ public enum HomeValidator {
                     guard let s = spaces[sid] else {
                         out.append(HomeIssue(kind: .portalSpaceMissing, severity: .blocking, elementID: p.id, message: "Opening refers to a missing room.")); continue
                     }
-                    let onBoundary = Geometry.distanceToBoundary(s.polygon, p.a) <= tolerance.boundaryContactMeters
-                        && Geometry.distanceToBoundary(s.polygon, p.b) <= tolerance.boundaryContactMeters
-                        && s.floorID == p.floorID
-                    if !onBoundary {
+                    if (s.floorID != p.floorID || !PortalAttachment.check(p, in: home, tolerance: tolerance).attached)
+                        && !out.contains(where: { $0.kind == .portalNotOnSharedBoundary && $0.elementID == p.id }) {
                         out.append(HomeIssue(kind: .portalNotOnSharedBoundary, severity: .blocking, elementID: p.id,
-                                             message: "This opening is not on the wall of \(s.label); it is not treated as a connection."))
+                                             message: "This opening is not on a wall of \(s.label); it is not treated as a connection."))
                     }
                 case .exterior: break
                 }

@@ -77,7 +77,7 @@ struct RankingTests {
             for c in s.choicePoints { need(c.promptKey); c.options.forEach { need($0.labelKey); need($0.feedbackKey) } }
         }
         let variantSets: [String: [[String]]] = [
-            "home-fire": [[], ["second-exit-blocked"]], "water-outage": [[], ["do-not-drink"], ["do-not-use", "with-power-loss"]],
+            "home-fire": [[], ["second-exit-blocked"], ["hallway-smoke"]], "water-outage": [[], ["do-not-drink"], ["do-not-use", "with-power-loss"]],
             "tornado": [[], ["night", "home-damaged"]], "flash-flood": [[], ["home-flooded"]],
         ]
         for h in SampleHouseholds.all {
@@ -130,7 +130,7 @@ struct RenderedEnglishTests {
         var problems: [String] = []
         for h in SampleHouseholds.all {
             for s in SimFixtures.scenarioIDs {
-                for v in [[], ["second-exit-blocked"], ["do-not-drink", "with-power-loss"], ["night", "home-damaged"]] {
+                for v in [[], ["second-exit-blocked"], ["hallway-smoke"], ["do-not-drink", "with-power-loss"], ["do-not-use"], ["night", "home-damaged"]] {
                     let r = try SimFixtures.run(h, s, variants: v)
                     var texts: [String] = []
                     for e in r.events {

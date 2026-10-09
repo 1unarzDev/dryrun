@@ -13,6 +13,8 @@
   "action.act.comms.weather-radio.effect": "Trong lần chạy lại, gia đình có radio thời tiết để nhận cảnh báo.",
   "action.act.comms.weather-radio.title": "Mua radio thời tiết chạy pin hoặc quay tay",
   "action.act.comms.weather-radio.why": "Radio nhận được cảnh báo khi không có điện, không có Wi-Fi, hoặc điện thoại hết pin.",
+  "action.act.fire.helper-reach-plan.title": "Lên kế hoạch cho {person} phòng khi {helper} không đến được",
+  "action.act.fire.helper-reach-plan.why": "Trong buổi diễn tập này {helper} không thể đến chỗ {person} mà không đi qua khu vực bị chặn. Hãy lên lối thoát thứ hai từ phòng của {person}, cân nhắc phòng ngủ gần người giúp hoặc gần lối ra hơn, và đảm bảo có thể nghe thấy máy báo khói ở đó. Người giúp không bao giờ quay lại vào ngôi nhà đang cháy.",
   "action.act.fire.meeting-point.title": "Chọn điểm hẹn bên ngoài",
   "action.act.fire.meeting-point.why": "Chưa xác nhận điểm hẹn bên ngoài. Hãy chọn một chỗ cố định cách ngôi nhà một khoảng an toàn.",
   "action.act.fire.practice-drill.title": "Luyện tập kế hoạch thoát hiểm hai lần mỗi năm",

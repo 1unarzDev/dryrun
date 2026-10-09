@@ -161,6 +161,20 @@
       "feasibilityNotes" : [
 
       ],
+      "id" : "act.fire.helper-reach-plan",
+      "renterFriendly" : true,
+      "scenarioIDs" : [
+        "home-fire"
+      ],
+      "sourceIDs" : [
+        "S19"
+      ]
+    },
+    {
+      "effort" : "noCost",
+      "feasibilityNotes" : [
+
+      ],
       "id" : "act.fire.meeting-point",
       "renterFriendly" : true,
       "scenarioIDs" : [

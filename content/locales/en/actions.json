@@ -13,6 +13,8 @@
   "action.act.comms.weather-radio.effect": "In the replay, the household has a weather radio for alerts.",
   "action.act.comms.weather-radio.title": "Get a battery or hand-crank weather radio",
   "action.act.comms.weather-radio.why": "A radio receives warnings without power, Wi-Fi, or a charged phone.",
+  "action.act.fire.helper-reach-plan.title": "Plan for {person} in case {helper} cannot reach them",
+  "action.act.fire.helper-reach-plan.why": "In this rehearsal {helper} could not reach {person} without going through a blocked area. Plan a second way out of {person}'s room, consider a sleeping room closer to the helper or an exit, and make sure a smoke alarm can be heard there. Helpers never go back into a burning home.",
   "action.act.fire.meeting-point.title": "Pick an outside meeting point",
   "action.act.fire.meeting-point.why": "No outside meeting point is confirmed. Choose a fixed spot a safe distance from the home.",
   "action.act.fire.practice-drill.title": "Practice your escape plan twice a year",

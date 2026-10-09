@@ -17,6 +17,12 @@ public struct GeometryTolerance: Sendable, Hashable {
     public var scanDuplicatePortalMeters: Double = 0.30
     /// Floors at or below this elevation (and level 0) count as ground for exits.
     public var groundElevationMeters: Double = 1.0
+    /// Thinnest gap between two room outlines that can be a real wall when no explicit wall says otherwise.
+    /// A framed interior wall with finish is ~0.114 m (2x4 stud 0.089 m + 2 x 0.0127 m drywall). Narrower
+    /// gaps are unexplained near-touching outlines and never connect.
+    public var minimumWallThicknessMeters: Double = 0.10
+    /// Thickest gap accepted as a wall when no explicit wall gives its thickness.
+    public var maximumWallThicknessMeters: Double = 0.45
 
     public init() {}
     public static let standard = GeometryTolerance()
@@ -81,6 +87,17 @@ public enum Geometry {
         guard len2 > 0 else { return p.distance(to: a) }
         let t = max(0, min(1, dot(p - a, ab) / len2))
         return p.distance(to: a + ab * t)
+    }
+
+    public static func closestPointOnSegment(_ p: Vec2, _ a: Vec2, _ b: Vec2) -> Vec2 {
+        let ab = b - a
+        let len2 = dot(ab, ab)
+        guard len2 > 0 else { return a }
+        return a + ab * max(0, min(1, dot(p - a, ab) / len2))
+    }
+
+    public static func closestPointOnBoundary(_ poly: [Vec2], _ p: Vec2) -> Vec2? {
+        edges(poly).map { closestPointOnSegment(p, $0.0, $0.1) }.min { $0.distance(to: p) < $1.distance(to: p) }
     }
 
     public static func distanceToBoundary(_ poly: [Vec2], _ p: Vec2) -> Double {

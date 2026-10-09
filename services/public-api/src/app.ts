@@ -7,6 +7,7 @@ import { AlertsEnvelope, RegionPack, type AlertsEnvelopeT, type RegionPackT, typ
 import { fetchNWSAlerts, UpstreamError, type NWSDeps } from "./nws";
 import { FixtureFloodHazardProvider, type FloodHazardProvider } from "./fema";
 import { TTLCache } from "./cache";
+import { buildRegionBrief } from "./agent/brief";
 
 export interface ContentBundle {
   contentManifest: { contentVersion: string; [k: string]: unknown };
@@ -114,6 +115,18 @@ export function createApp(deps: AppDeps) {
     const entry = regionIndex.get(c.req.param("regionID"));
     if (!entry) return c.json({ error: "unknown_region" }, 404);
     return c.json(await flood.context(entry.info.id));
+  });
+
+  // Template brief from curated pack + already-cached alerts + flood adapter. No model, no upstream fetch.
+  app.get("/v1/regions/:regionID/brief", async (c) => {
+    const entry = regionIndex.get(c.req.param("regionID"));
+    if (!entry) return c.json({ error: "unknown_region" }, 404);
+    const now = deps.nws.now();
+    const statewide = packs.find((p) => p.packID === "tx-statewide");
+    const brief = buildRegionBrief(entry.info, entry.pack, statewide, alertCache.get(entry.info.id, now.getTime()),
+      await flood.context(entry.info.id), now);
+    c.header("Cache-Control", "public, max-age=300");
+    return c.json(brief);
   });
 
   app.get("/v1/content/:version/:locale", (c) => {

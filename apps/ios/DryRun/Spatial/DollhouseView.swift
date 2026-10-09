@@ -19,9 +19,13 @@ struct DollhouseView: View {
         self.floorID = floorID
     }
 
-    /// Rebuild only when the inputs change, never per frame.
+    /// Rebuild only when the inputs change, never per frame. Includes the home's CONTENT fingerprint (an edit without
+    /// a revision bump still rebuilds) and every canonical route point (two routes with equal length/exit differ).
     private var sceneKey: String {
-        "\(home.id)#\(home.revision)#\(floorID ?? "all")#\(routes.map { "\($0.exitPortalID):\($0.lengthMeters)" }.joined(separator: ","))"
+        let routePoints = routes.map { r in
+            r.legs.map { leg in "\(leg.floorID):" + leg.points.map { "\($0.x),\($0.y)" }.joined(separator: ";") }.joined(separator: "|")
+        }.joined(separator: "#")
+        return "\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)"
     }
 
     var body: some View {
@@ -60,13 +64,18 @@ enum DollhouseBuilder {
         let root = Entity()
         let floors = home.floors.filter { floorID == nil || $0.id == floorID }
         let elev = Dictionary(uniqueKeysWithValues: home.floors.map { ($0.id, Float($0.elevationMeters)) })
+        // Each floor's coordinates are placed in the shared frame with its rigid Floor.toCommon transform,
+        // so storeys, stairs, and routes line up even when floors are rotated/offset relative to each other.
+        let toCommon = Dictionary(uniqueKeysWithValues: home.floors.map { ($0.id, $0.toCommon) })
 
-        // Centre the model at the origin.
-        let pts = home.spaces.filter { s in floors.contains { $0.id == s.floorID } }.flatMap(\.polygon)
+        // Centre the model at the origin (in the common frame).
+        let pts = home.spaces.filter { s in floors.contains { $0.id == s.floorID } }
+            .flatMap { s in s.polygon.map { (toCommon[s.floorID] ?? .identity).apply($0) } }
         let cx = Float(((pts.map(\.x).min() ?? 0) + (pts.map(\.x).max() ?? 0)) / 2)
         let cy = Float(((pts.map(\.y).min() ?? 0) + (pts.map(\.y).max() ?? 0)) / 2)
         func p3(_ v: Vec2, _ fid: String, lift: Float = 0) -> SIMD3<Float> {
-            SIMD3(Float(v.x) - cx, (elev[fid] ?? 0) + lift, -(Float(v.y) - cy))
+            let w = (toCommon[fid] ?? .identity).apply(v)
+            return SIMD3(Float(w.x) - cx, (elev[fid] ?? 0) + lift, -(Float(w.y) - cy))
         }
 
         let floorMat = SimpleMaterial(color: .init(white: 0.92, alpha: 1), isMetallic: false)

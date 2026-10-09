@@ -101,19 +101,15 @@ struct RouteAdversarialTests {
         #expect(planner.plan(RouteRequest(startSpaceID: "sp-r", mobility: .wheelchair), in: h2).primary == nil)
     }
 
-    @Test("DEFECT: scan-observed (unconfirmed) operability/step-free values satisfy hard requirements")
+    @Test("Scan-observed (unconfirmed) operability/step-free values never satisfy hard requirements (was a defect; fixed)")
     func scannedValuesTreatedAsConfirmed() {
         let room = Space(id: "sp-r", floorID: f, label: "R", kind: .bedroom, polygon: rect(0, 0, 4, 4))
         // Household verified the portal's existence/destination, but operability is only a scan observation.
         let win = home([room], [door("pt-win", Vec2(1, 0), Vec2(2, 0), .space("sp-r"), .exterior, kind: .window,
                                      operable: .scanned(true))])
-        withKnownIssue("EgressPlanner.swift:296 uses operable.value, not confirmedValue") {
-            #expect(planner.plan(RouteRequest(startSpaceID: "sp-r"), in: win).primary == nil)
-        }
+        #expect(planner.plan(RouteRequest(startSpaceID: "sp-r"), in: win).primary == nil)
         let d = home([room], [door("pt", Vec2(4, 1), Vec2(4, 2), .space("sp-r"), .exterior, stepFree: .scanned(true))])
-        withKnownIssue("EgressPlanner.swift:303-304 uses stepFree.value, not confirmedValue") {
-            #expect(planner.plan(RouteRequest(startSpaceID: "sp-r", mobility: .wheelchair), in: d).primary == nil)
-        }
+        #expect(planner.plan(RouteRequest(startSpaceID: "sp-r", mobility: .wheelchair), in: d).primary == nil)
     }
 
     @Test("Near-touching rooms (9 cm gap, no explicit walls) do not become adjacent through a portal in the gap")
@@ -124,9 +120,7 @@ struct RouteAdversarialTests {
             door("pt-gap", Vec2(4.045, 1), Vec2(4.045, 1.9), .space("sp-a"), .space("sp-b")),
             door("pt-exit", Vec2(8, 1), Vec2(8, 1.9), .space("sp-b"), .exterior),
         ])
-        withKnownIssue("boundaryContactMeters 0.05 accepts a portal floating in a 9 cm gap when the home has no explicit walls") {
-            #expect(planner.plan(RouteRequest(startSpaceID: "sp-a"), in: h).primary == nil)
-        }
+        #expect(planner.plan(RouteRequest(startSpaceID: "sp-a"), in: h).primary == nil)
     }
 
     @Test("Scanned home with realistic wall thickness can route once the household verifies its doors")
@@ -138,9 +132,7 @@ struct RouteAdversarialTests {
             door("pt-mid", Vec2(4.075, 1), Vec2(4.075, 1.9), .space("sp-a"), .space("sp-b")),
             door("pt-exit", Vec2(8, 1), Vec2(8, 1.9), .space("sp-b"), .exterior),
         ])
-        withKnownIssue("A door centred in a 15 cm wall sits 7.5 cm from each room outline (> 5 cm contact tolerance): verified scans lose connectivity") {
-            #expect(planner.plan(RouteRequest(startSpaceID: "sp-a"), in: h).primary != nil)
-        }
+        #expect(planner.plan(RouteRequest(startSpaceID: "sp-a"), in: h).primary != nil)
     }
 
     @Test("Two routes through the same hallway to different exits are not advertised as independent")
@@ -180,9 +172,7 @@ struct RouteAdversarialTests {
         if let i = h.portals.firstIndex(where: { $0.id == "pt-back" }) { h.portals[i].verification = .rejected }
         let after = cache.route(req, in: h)
         #expect(after.primary?.exitPortalID != "pt-back")
-        withKnownIssue("RouteCache.swift:58 isCurrent(for:) compares revision only; a stale result passes after an un-bumped edit") {
-            #expect(!before.isCurrent(for: h))
-        }
+        #expect(!before.isCurrent(for: h))
     }
 
     @Test("Deterministic under ties and input permutation")
@@ -220,9 +210,7 @@ struct RouteAdversarialTests {
         #expect(h.spaces.allSatisfy { !$0.labelConfirmed })
         #expect(h.portals.allSatisfy { !$0.clearWidthMeters.isConfirmed })
         #expect(planner.plan(RouteRequest(startSpaceID: h.spaces[0].id), in: h).primary == nil)
-        withKnownIssue("ScanImport.swift:121-128: convex-hull fallback for a wall-only room is not marked needsMeasurement; an L-shape becomes a rectangle") {
-            #expect(h.spaces[0].needsMeasurement)
-        }
+        #expect(h.spaces[0].needsMeasurement)
         #expect(throws: ScanImportError.self) {
             _ = try ScanImport.importCapture(ScanCapture(rooms: [ScanRoom(id: "a", surfaces: surfaces), ScanRoom(id: "b", surfaces: surfaces)],
                                                          sharedCoordinateFrame: false), homeID: "x")

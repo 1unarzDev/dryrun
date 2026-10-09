@@ -32,6 +32,10 @@
     {
       "id": "night",
       "labelKey": "scenario.home-fire.variant.night"
+    },
+    {
+      "id": "hallway-smoke",
+      "labelKey": "scenario.home-fire.variant.hallway-smoke"
     }
   ],
   "events": [
@@ -78,6 +82,24 @@
       },
       "when": [
         "variant:second-exit-blocked"
+      ]
+    },
+    {
+      "id": "evt.home-fire.hallway-smoke",
+      "minute": 2,
+      "priority": 1,
+      "phaseID": "escape",
+      "rule": "rule.fire.block-primary",
+      "titleKey": "scenario.home-fire.event.hallway-smoke",
+      "severity": "critical",
+      "sourceIDs": [
+        "S19"
+      ],
+      "params": {
+        "originKind": "hallway"
+      },
+      "when": [
+        "variant:hallway-smoke"
       ]
     },
     {

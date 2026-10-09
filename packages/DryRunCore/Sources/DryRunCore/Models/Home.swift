@@ -322,13 +322,15 @@ public struct RouteResult: Codable, Sendable, Hashable {
     public var exclusions: [RouteExclusion]
     public var homeID: String
     public var homeRevision: Int
+    /// Content fingerprint of the home this was computed from (HomeFingerprint.of). nil = unknown → never current.
+    public var homeFingerprint: String?
     public var algorithmVersion: String
     public init(request: RouteRequest, primary: RoutePath?, alternative: RoutePath?, alternativeStatus: AlternativeStatus,
                 sharedChokepoints: [String] = [], noRouteReason: NoRouteReason?, exclusions: [RouteExclusion],
-                homeID: String, homeRevision: Int, algorithmVersion: String = RouteResult.algorithmVersion) {
+                homeID: String, homeRevision: Int, homeFingerprint: String? = nil, algorithmVersion: String = RouteResult.algorithmVersion) {
         self.request = request; self.primary = primary; self.alternative = alternative; self.alternativeStatus = alternativeStatus
         self.sharedChokepoints = sharedChokepoints; self.noRouteReason = noRouteReason; self.exclusions = exclusions
-        self.homeID = homeID; self.homeRevision = homeRevision; self.algorithmVersion = algorithmVersion
+        self.homeID = homeID; self.homeRevision = homeRevision; self.homeFingerprint = homeFingerprint; self.algorithmVersion = algorithmVersion
     }
 }
 

@@ -8,6 +8,7 @@ struct HomeTabView: View {
     @State private var editing = false
     @State private var scanning = false
     @State private var editingHousehold = false
+    @State private var confirming: HomeModel?
 
     enum Mode: String, CaseIterable, Identifiable {
         case plan2D = "2D plan", dollhouse = "3D", rooms = "Room list"
@@ -57,10 +58,20 @@ struct HomeTabView: View {
                     }
                 }
                 Section("Change the home") {
+                    let pending = HomeConfirmation.steps(for: home).count
+                    if pending > 0 {
+                        Button("Confirm rooms, doors, and exits (\(pending))", systemImage: "checklist") { confirming = home }
+                    }
                     Button("Edit rooms, doors, and markers", systemImage: "square.and.pencil") { editing = true }
-                    if model.capabilities.roomCaptureSupported {
+                    switch model.capabilities.plan.scan {
+                    case .available:
                         Button("Scan with RoomPlan", systemImage: "camera.viewfinder") { scanning = true }
-                    } else {
+                    case .cameraDenied:
+                        Label("Camera access is off for Dry Run. Turn it on in Settings to scan, or edit the layout by hand.",
+                              systemImage: "camera.badge.ellipsis")
+                            .font(.footnote)
+                        if let url = URL(string: UIApplication.openSettingsURLString) { Link("Open Settings", destination: url) }
+                    case .unsupportedDevice:
                         Label("Room scanning needs an iPhone with LiDAR. Manual layout works on every device.", systemImage: "info.circle")
                             .font(.footnote)
                     }
@@ -92,11 +103,20 @@ struct HomeTabView: View {
         }
         .fullScreenCover(isPresented: $scanning) {
             RoomScanFlowView { proposed in
-                if let proposed { Task { await model.updateHome(proposed) } }
                 scanning = false
+                // A scan is only a proposal: go straight into the confirmation pass before it is saved.
+                if let proposed { confirming = proposed }
             }
         }
         .navigationDestination(isPresented: $editingHousehold) { HouseholdSetupView(mode: .edit) }
+        .sheet(item: $confirming) { draft in
+            NavigationStack {
+                HomeConfirmationView(home: draft) { confirmed in
+                    Task { await model.updateHome(confirmed) }
+                    confirming = nil
+                }
+            }
+        }
     }
 
     private func tri(_ v: EvidenceValue<Bool>) -> String {

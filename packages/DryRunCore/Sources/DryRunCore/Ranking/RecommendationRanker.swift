@@ -87,6 +87,13 @@ public enum ActionRules {
                 causes: ["req.assistance.\(p.id)"], values: ["person": p.alias])
         }
 
+        for p in h.people where s.unmetEver.contains("req.assistance.reach.\(p.id)") {
+            let helper = h.people.first { $0.id == p.helperPersonID }?.alias ?? ""
+            add("act.fire.helper-reach-plan", tier: .unmetEssentialRequirement,
+                facts: ["person.\(p.id).helperPersonID", "person.\(p.id).sleepingSpaceID"],
+                causes: ["req.assistance.reach.\(p.id)"], values: ["person": p.alias, "helper": helper])
+        }
+
         // Tornado.
         if s.unmetEver.contains("req.shelter") {
             add("act.tornado.choose-shelter", tier: .unmetEssentialRequirement, facts: ["home.spaces"], causes: ["req.shelter"])

@@ -342,6 +342,66 @@
       "reviewState": "needsReview",
       "category": "publicData",
       "scopeNote": "UGC IDs used for alert association."
+    },
+    {
+      "id": "S44",
+      "publisher": "Comanche County",
+      "title": "Emergency Management",
+      "url": "https://www.comanchecountytx.gov/217/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S45",
+      "publisher": "Jack County",
+      "title": "Emergency Management",
+      "url": "https://www.jackcounty.texas.gov/emergency-management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S46",
+      "publisher": "Palo Pinto County",
+      "title": "Emergency Management",
+      "url": "https://www.co.palo-pinto.tx.us/page/HazardMitigation",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S47",
+      "publisher": "Parker County",
+      "title": "Emergency Management",
+      "url": "https://www.parkercountytx.gov/119/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S48",
+      "publisher": "Somervell County",
+      "title": "Emergency Management",
+      "url": "https://www.somervell.co/162/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S49",
+      "publisher": "Young County",
+      "title": "Emergency Management",
+      "url": "https://www.co.young.tx.us/page/young.EOC",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
     }
   ]
 }

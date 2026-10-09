@@ -70,3 +70,17 @@ Placeholders changed in `es/scenarios.json` keys: `scenario.common.displacement.
 - Handset model is a single household-level runtime assumption, not per-person phones.
 - Tornado shelter check does not route inside the home (by design: no distant travel); multi-floor shelter access for step-free users is not checked yet.
 - `seed` is carried and preserved but no authored randomness uses it yet.
+
+## Follow-up round (lead request)
+
+- **Fire helper reachability**: after each authored blockage, `helperReachCheck` (HazardRules) checks, room by room, whether each
+  assigned helper can reach the person they help using only verified, operable, non-window connections and verified stairs, and never
+  through a blocked room. If not, it emits `evt.home-fire.assist.helper-blocked.<person>` (critical) and records unmet requirement
+  `req.assistance.reach.<person>`, which raises the tier-1 no-cost card `act.fire.helper-reach-plan`. No text tells a helper to go in.
+  New variant `hallway-smoke` (ranch: Parent A cannot reach Kid). Tested in `helperReach`.
+- **Water outage second decision** `choice.water-outage.stored-water` (minute 1500): prioritise drinking/cooking (default),
+  use stored water for everything (draws at 2× the planning rate), or wash hands with tap water (recommended only under a boil-water
+  advisory with supply; under do-not-use it is not recommended and choosing it emits `tap-hygiene.not-allowed`). Every pack now has
+  ≥2 decisions. Tested in `storedWaterDecision`: across do-not-drink/do-not-use × power loss, no recommended option ever boils, and
+  choosing to boil leaves stored water and unmet requirements no better than using stored water.
+- Full package: `113 tests in 18 suites passed with 6 known issues` (the 6 are the routing-review probes routed to Agent B).

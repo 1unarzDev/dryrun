@@ -199,24 +199,76 @@ struct RouteTests {
 
     @Test func nearTouchingRoomsDoNotBecomeAdjacent() {
         let f = "fl-1"
-        // Two rooms 0.25 m apart (double wall). A door drawn on room A's wall claims to join B.
+        func gapHome(_ bx: Double, door: Double, walls: [WallSegment] = []) -> HomeModel {
+            HomeModel(
+                id: "home-test-gap", label: "gap", source: .manual,
+                floors: [Floor(id: f, level: 0, label: "G")],
+                spaces: [Space(id: "sp-a", floorID: f, label: "A", kind: .other, polygon: SampleHomes.rect(0, 0, 4, 4)),
+                         Space(id: "sp-b", floorID: f, label: "B", kind: .other, polygon: SampleHomes.rect(bx, 0, 8, 4))],
+                walls: walls,
+                portals: [
+                    Portal(id: "pt-ab", floorID: f, kind: .door, a: Vec2(door, 1), b: Vec2(door, 1.9), sideA: .space("sp-a"), sideB: .space("sp-b"),
+                           clearWidthMeters: .confirmed(0.9), operable: .confirmed(true), stepFree: .confirmed(true), verification: .verified),
+                    Portal(id: "pt-bx", floorID: f, kind: .door, a: Vec2(8, 1), b: Vec2(8, 1.9), sideA: .space("sp-b"), sideB: .exterior,
+                           clearWidthMeters: .confirmed(0.9), operable: .confirmed(true), stepFree: .confirmed(true), verification: .verified),
+                ])
+        }
+        // 6 cm unexplained gap: wider than contact, thinner than any framed wall -> never adjacent.
+        let near = gapHome(4.06, door: 4.03)
+        #expect(HomeValidator.validate(near).filter { $0.kind == .portalNotOnSharedBoundary && $0.elementID == "pt-ab" }.count == 1)
+        let r = plan(near, from: "sp-a")
+        #expect(r.primary == nil)
+        #expect(r.exclusions.contains { $0.elementID == "pt-ab" && $0.reason.hasPrefix("invalidGeometry") })
+
+        // Explicit 0.12 m wall but outlines 0.25 m apart: farther apart than the wall is thick -> not adjacent.
+        let thin = gapHome(4.25, door: 4.125, walls: [WallSegment(id: "w-mid", floorID: f, a: Vec2(4.125, 0), b: Vec2(4.125, 4), thicknessMeters: 0.12)])
+        #expect(plan(thin, from: "sp-a").primary == nil)
+        // Same outlines with a wall that really is 0.25 m thick -> adjacent, and the drawn path passes the audit.
+        let thick = gapHome(4.25, door: 4.125, walls: [WallSegment(id: "w-mid", floorID: f, a: Vec2(4.125, 0), b: Vec2(4.125, 4), thicknessMeters: 0.25)])
+        let ok = plan(thick, from: "sp-a", mobility: .wheelchair)
+        #expect(ok.primary?.exitPortalID == "pt-bx")
+        assertClean(ok, thick)
+    }
+
+    @Test func thickScannedWallsRouteWithCleanGeometryOnceConfirmed() {
+        // Outlines at inner wall faces 0.15 m apart, no explicit walls (RoomPlan-like); door centred in the wall.
+        let f = "fl-1"
         let home = HomeModel(
-            id: "home-test-gap", label: "gap", source: .manual,
+            id: "home-test-thick", label: "thick", source: .roomPlanScan,
             floors: [Floor(id: f, level: 0, label: "G")],
             spaces: [Space(id: "sp-a", floorID: f, label: "A", kind: .other, polygon: SampleHomes.rect(0, 0, 4, 4)),
-                     Space(id: "sp-b", floorID: f, label: "B", kind: .other, polygon: SampleHomes.rect(4.25, 0, 8, 4))],
-            walls: [],
+                     Space(id: "sp-b", floorID: f, label: "B", kind: .other, polygon: SampleHomes.rect(4.15, 0, 8, 4))],
             portals: [
-                Portal(id: "pt-ab", floorID: f, kind: .door, a: Vec2(4, 1), b: Vec2(4, 1.9), sideA: .space("sp-a"), sideB: .space("sp-b"),
+                Portal(id: "pt-ab", floorID: f, kind: .door, a: Vec2(4.075, 1), b: Vec2(4.075, 1.9), sideA: .space("sp-a"), sideB: .space("sp-b"),
                        clearWidthMeters: .confirmed(0.9), operable: .confirmed(true), stepFree: .confirmed(true), verification: .verified),
                 Portal(id: "pt-bx", floorID: f, kind: .door, a: Vec2(8, 1), b: Vec2(8, 1.9), sideA: .space("sp-b"), sideB: .exterior,
                        clearWidthMeters: .confirmed(0.9), operable: .confirmed(true), stepFree: .confirmed(true), verification: .verified),
             ])
-        let issues = HomeValidator.validate(home)
-        #expect(issues.contains { $0.kind == .portalNotOnSharedBoundary && $0.elementID == "pt-ab" })
-        let r = plan(home, from: "sp-a")
-        #expect(r.primary == nil)
-        #expect(r.exclusions.contains { $0.elementID == "pt-ab" && $0.reason.hasPrefix("invalidGeometry") })
+        #expect(!HomeValidator.validate(home).contains { $0.kind == .portalNotOnSharedBoundary })
+        for mobility in [MobilityProfile.walking, .wheelchair] {
+            let r = plan(home, from: "sp-a", mobility: mobility)
+            #expect(r.primary?.exitPortalID == "pt-bx")
+            assertClean(r, home)
+        }
+    }
+
+    @Test func fingerprintDistinguishesNaNHomesAndIsCurrentChecksContent() {
+        var a = SampleHomes.ranch, b = SampleHomes.ranch
+        a.spaces[0].polygon[0] = Vec2(.nan, 0)
+        b.spaces[1].polygon[0] = Vec2(.nan, 0)
+        #expect(HomeFingerprint.of(a) != HomeFingerprint.of(b))
+        #expect(HomeFingerprint.of(a) != HomeFingerprint.of(SampleHomes.ranch))
+        #expect(HomeFingerprint.of(SampleHomes.ranch) == HomeFingerprint.of(SampleHomes.ranch))
+
+        let home = SampleHomes.ranch
+        let r = plan(home, from: "sp-living")
+        #expect(r.isCurrent(for: home))
+        var edited = home
+        edited.portals[0].note = "changed without a revision bump"
+        #expect(!r.isCurrent(for: edited))
+        var legacy = r
+        legacy.homeFingerprint = nil
+        #expect(!legacy.isCurrent(for: home), "results without a fingerprint are never current")
     }
 
     @Test func editingDoorVerificationInvalidatesCachedRoute() {
@@ -244,6 +296,7 @@ struct RouteTests {
         #expect(sneaky.revision == home.revision)
         let stale = cache.route(req, in: sneaky)
         #expect(stale.primary == nil)
+        #expect(!after.isCurrent(for: sneaky), "isCurrent compares content, not just revision")
     }
 
     @Test func planningIsDeterministic() {

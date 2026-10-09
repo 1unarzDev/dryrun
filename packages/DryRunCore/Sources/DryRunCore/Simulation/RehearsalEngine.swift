@@ -95,6 +95,8 @@ struct RunState {
     var advisory: WaterAdvisory?
     var relocated = false
     var boilingTapWater = false
+    /// 1 = drinking/cooking planning baseline; 2 = stored water also used for hygiene (authored choice).
+    var waterDrawMultiplier = 1.0
 
     // Resources (nil = unknown; never invented)
     var storedWater: Double?
@@ -206,7 +208,7 @@ struct RunState {
     /// an exercise assumption, not a prescribed drinking volume. Pets' extra needs are not modelled (unknown).
     var waterDrawPerMinute: Double {
         guard !tapWaterUsable, !relocated else { return 0 }
-        return Double(household.people.count) / 1440.0
+        return Double(household.people.count) * waterDrawMultiplier / 1440.0
     }
 
     var handsetDrawPerMinute: Double { (homePowerUp || relocated) ? 0 : 1.0 / 60.0 }

@@ -309,13 +309,47 @@
         "S24",
         "S26"
       ]
+    },
+    {
+      "id": "choice.water-outage.stored-water",
+      "minute": 1500,
+      "phaseID": "advisory",
+      "promptKey": "scenario.water-outage.choice.stored-water.prompt",
+      "defaultOptionID": "prioritize",
+      "options": [
+        {
+          "id": "prioritize",
+          "labelKey": "scenario.water-outage.choice.stored-water.prioritize",
+          "feedbackKey": "scenario.water-outage.choice.stored-water.prioritize.feedback",
+          "effect": "prioritizeStored",
+          "unsafe": false
+        },
+        {
+          "id": "use-for-everything",
+          "labelKey": "scenario.water-outage.choice.stored-water.use-for-everything",
+          "feedbackKey": "scenario.water-outage.choice.stored-water.use-for-everything.feedback",
+          "effect": "useStoredForAll",
+          "unsafe": false
+        },
+        {
+          "id": "tap-for-handwashing",
+          "labelKey": "scenario.water-outage.choice.stored-water.tap-for-handwashing",
+          "feedbackKey": "scenario.water-outage.choice.stored-water.tap-for-handwashing.feedback",
+          "effect": "tapForHygiene",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S24",
+        "S26"
+      ]
     }
   ],
   "ruleIDs": [
-    "rule.water.advisory",
-    "rule.external.set",
     "rule.checkpoint",
-    "rule.recovery.power-restored"
+    "rule.external.set",
+    "rule.recovery.power-restored",
+    "rule.water.advisory"
   ],
   "sourceIDs": [
     "S20",

@@ -245,6 +245,50 @@ extension RunState {
             }
             if r.primary != nil, r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
         }
+        helperReachCheck(blockedSpaces: blockedSpaces, blockedPortals: blockedPortals, cause: cause)
+    }
+
+    /// Can each assigned helper reach the person they help without entering an authored blocked space?
+    /// Conservative room-level reachability over VERIFIED, operable, non-window interior connections and verified
+    /// stairs; a helper is never sent into a blocked room (no entry into the fire area, no re-entry).
+    /// If unreachable, the plan must not rely on that helper: we say so instead of "assigned".
+    mutating func helperReachCheck(blockedSpaces: Set<String>, blockedPortals: Set<String>, cause: String) {
+        for p in household.people.sorted(by: { $0.id < $1.id }) {
+            guard let hid = p.helperPersonID, let helper = household.people.first(where: { $0.id == hid }),
+                  !flags.contains("fire.helperBlocked.\(p.id)") else { continue }
+            let from = startSpace(for: helper), to = startSpace(for: p)
+            if Self.reachable(from: from, to: to, home: home, blockedSpaces: blockedSpaces, blockedPortals: blockedPortals) { continue }
+            flags.insert("fire.helperBlocked.\(p.id)")
+            emit("evt.home-fire.assist.helper-blocked.\(p.id)", title: "scenario.common.assist.helper-blocked",
+                 detail: "scenario.common.assist.helper-blocked.options",
+                 values: ["person": p.alias, "helper": helper.alias], severity: .critical, rule: "rule.fire.helper-reach",
+                 facts: ["person.\(p.id).helperPersonID", "person.\(p.id).sleepingSpaceID", "person.\(hid).sleepingSpaceID"],
+                 causedBy: cause, sources: ["S19"])
+            requireSticky("req.assistance.reach.\(p.id)", cause: cause)
+        }
+    }
+
+    static func reachable(from: String, to: String, home: HomeModel, blockedSpaces: Set<String>, blockedPortals: Set<String>) -> Bool {
+        if from == to { return true }
+        if blockedSpaces.contains(to) { return false }
+        var adj: [String: Set<String>] = [:]
+        for pt in home.portals where pt.verification == .verified && pt.kind != .window && !blockedPortals.contains(pt.id) {
+            guard case .space(let a) = pt.sideA, case .space(let b) = pt.sideB else { continue }
+            if pt.kind != .opening && pt.operable.confirmedValue != true { continue }
+            adj[a, default: []].insert(b); adj[b, default: []].insert(a)
+        }
+        for c in home.connectors where c.verification == .verified && c.kind != .elevator {
+            adj[c.fromSpaceID, default: []].insert(c.toSpaceID); adj[c.toSpaceID, default: []].insert(c.fromSpaceID)
+        }
+        var seen: Set<String> = [from], queue = [from]
+        while !queue.isEmpty {
+            let cur = queue.removeFirst()
+            for n in (adj[cur] ?? []).sorted() where !seen.contains(n) && !blockedSpaces.contains(n) {
+                if n == to { return true }
+                seen.insert(n); queue.append(n)
+            }
+        }
+        return false
     }
 
     mutating func assistanceCheck(cause: String, rule: String, sources: [String]) {
@@ -334,6 +378,10 @@ extension RunState {
             return household.housing.homeType != .manufacturedHome && shelterSpace != nil
         case "useStoredWater":
             return (storedWater ?? 0) > 0
+        case "tapForHygiene":
+            // Follow the utility's advisory. Under a boil-water advisory, utilities commonly allow handwashing
+            // with soap and tap water; under do-not-use (or unknown quality) tap water is not used at all.
+            return advisory == .boilWater && services[Svc.waterSupply] != .unavailable
         default: return true
         }
     }
@@ -383,6 +431,19 @@ extension RunState {
             }
         case "goToShelter":
             if !feasible("goToShelter") { flags.insert("tornado.shelterNotAdequate") }
+        case "prioritizeStored":
+            waterDrawMultiplier = 1
+        case "useStoredForAll":
+            // Exercise assumption: using stored drinking water for flushing/washing too doubles the draw.
+            waterDrawMultiplier = 2
+            flags.insert("water.storedUsedForAll")
+        case "tapForHygiene":
+            if !feasible("tapForHygiene") {
+                emit("evt.\(scenario.id).tap-hygiene.not-allowed", title: "scenario.water-outage.tap-hygiene.not-allowed",
+                     detail: advisory.map { "advisory.\($0.rawValue)" }, severity: .critical, rule: "rule.water.advisory-scope",
+                     facts: ["housing.waterSource"], causedBy: id, sources: ["S24"])
+                flags.insert("water.tapHygieneAgainstAdvisory")
+            }
         default: break
         }
         try reevaluate(trigger: id, emit: true)

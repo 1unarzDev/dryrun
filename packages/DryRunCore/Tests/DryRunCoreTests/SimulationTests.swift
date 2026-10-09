@@ -21,7 +21,7 @@ struct SimulationTests {
         #expect(lib.scenarios.map(\.id).sorted() == SimFixtures.scenarioIDs.sorted())
         for s in lib.scenarios {
             #expect(s.fictional)
-            #expect(!s.choicePoints.isEmpty, "\(s.id) needs at least one decision")
+            #expect(s.choicePoints.count >= 2, "\(s.id) needs a few meaningful decisions")
             #expect(!s.sourceIDs.isEmpty)
             #expect(s.choicePoints.allSatisfy { cp in cp.options.contains { $0.unsafe } || cp.options.count >= 2 })
         }
@@ -282,6 +282,66 @@ struct SimulationTests {
         // Unsafe fire options are never recommended.
         let d = try #require(r.decisions.first { $0.id == "choice.home-fire.first-move" })
         #expect(d.options.filter(\.isRecommended).map(\.id) == ["get-out"])
+    }
+
+    @Test("Fire: a helper who cannot reach the person they help is not counted on, and is never sent in")
+    func helperReach() throws {
+        // Default: kitchen origin; Parent A (main bedroom) can still reach Kid (kid's bedroom) through the hallway.
+        let ok = try SimFixtures.run(SampleHouseholds.oak, "home-fire")
+        #expect(!ok.events.contains { $0.id.hasPrefix("evt.home-fire.assist.helper-blocked") })
+        // Smoke in the hallway: the only way between the two bedrooms is blocked.
+        let r = try SimFixtures.run(SampleHouseholds.oak, "home-fire", variants: ["hallway-smoke"])
+        let e = try #require(r.events.first { $0.id == "evt.home-fire.assist.helper-blocked.p-oak-3" })
+        #expect(e.templateValues["helper"] == "Parent A" && e.severity == .critical)
+        #expect(e.evidence.causedByEventIDs == ["evt.home-fire.hallway-smoke"])
+        #expect(everUnmet(r).contains("req.assistance.reach.p-oak-3"))
+        let rec = try #require(r.recommendations.first { $0.actionID == "act.fire.helper-reach-plan" })
+        #expect(rec.tier == .unmetEssentialRequirement && rec.tryIntervention == nil)
+        // Nobody is routed through the smoke-filled hallway, and going back in is never recommended.
+        for route in r.routes where route.request.exclusions.blockedSpaceIDs.contains("sp-hall") {
+            #expect(route.primary.map { !$0.spaceSequence.dropFirst().contains("sp-hall") } ?? true)
+        }
+        #expect(r.decisions.flatMap(\.options).filter { $0.id == "go-back-in" }.allSatisfy { !$0.isRecommended })
+        // Reachability never passes through a blocked room, even when it is the only connection.
+        #expect(!RunState.reachable(from: "sp-bed1", to: "sp-bed2", home: SimFixtures.home, blockedSpaces: ["sp-hall"], blockedPortals: []))
+        #expect(RunState.reachable(from: "sp-bed1", to: "sp-bed2", home: SimFixtures.home, blockedSpaces: ["sp-kitchen"], blockedPortals: []))
+        #expect(!RunState.reachable(from: "sp-bed1", to: "sp-kitchen", home: SimFixtures.home, blockedSpaces: ["sp-kitchen"], blockedPortals: []))
+    }
+
+    @Test("Water outage: stored-water use decision; chemical advisories never reward boiling or tap use")
+    func storedWaterDecision() throws {
+        let key = "choice.water-outage.stored-water"
+        // Using stored drinking water for everything runs it out sooner than prioritising.
+        let prioritize = try SimFixtures.run(SampleHouseholds.oak, "water-outage")
+        let everything = try SimFixtures.run(SampleHouseholds.oak, "water-outage", choices: [key: "use-for-everything"])
+        let tA = prioritize.events.first { $0.id == "evt.water-outage.res.water-depleted" }?.simMinute ?? .max
+        let tB = everything.events.first { $0.id == "evt.water-outage.res.water-depleted" }?.simMinute ?? .max
+        #expect(tB < tA)
+
+        for v in ["do-not-drink", "do-not-use"] {
+            for choices in [[:], ["choice.water-outage.drinking-water": "boil-tap"], [key: "tap-for-handwashing"]] as [[String: String]] {
+                let r = try SimFixtures.run(SampleHouseholds.lake, "water-outage", choices: choices, variants: [v, "with-power-loss"])
+                let lib = try #require(SimFixtures.library.scenario("water-outage"))
+                for d in r.decisions {
+                    let cp = try #require(lib.choicePoints.first { $0.id == d.id })
+                    for o in d.options where o.isRecommended {
+                        let effect = cp.options.first { $0.id == o.id }!.effect
+                        #expect(effect != "boilTapWater", "\(v): boiling recommended in \(d.id)")
+                        if v == "do-not-use" { #expect(effect != "tapForHygiene") }
+                    }
+                }
+            }
+            // Choosing to boil is not rewarded: stored water ends exactly as if stored water were used.
+            let stored = try SimFixtures.run(SampleHouseholds.lake, "water-outage", variants: [v])
+            let boil = try SimFixtures.run(SampleHouseholds.lake, "water-outage", choices: ["choice.water-outage.drinking-water": "boil-tap"], variants: [v])
+            #expect(stored.snapshots.last?.resources["res.water.stored"] == boil.snapshots.last?.resources["res.water.stored"])
+            #expect(Set(stored.snapshots.flatMap(\.unmetRequirements)).isSubset(of: Set(boil.snapshots.flatMap(\.unmetRequirements))))
+        }
+        let dnu = try SimFixtures.run(SampleHouseholds.lake, "water-outage", choices: [key: "tap-for-handwashing"], variants: ["do-not-use"])
+        #expect(dnu.events.contains { $0.id == "evt.water-outage.tap-hygiene.not-allowed" && $0.severity == .critical })
+        let boilAdv = try SimFixtures.run(SampleHouseholds.lake, "water-outage", choices: [key: "tap-for-handwashing"])
+        #expect(!boilAdv.events.contains { $0.id == "evt.water-outage.tap-hygiene.not-allowed" })
+        #expect(boilAdv.decisions.first { $0.id == key }?.options.first { $0.id == "tap-for-handwashing" }?.isRecommended == true)
     }
 
     @Test("Tornado: manufactured home, preselected shelter, night alerting, no distant travel during a warning")

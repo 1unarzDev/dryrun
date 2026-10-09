@@ -17,9 +17,10 @@ public struct EgressPlanner: EgressPlanning {
 
     public func plan(_ request: RouteRequest, in home: HomeModel) -> RouteResult {
         let graph = Graph(home: home, request: request, tol: tolerance, extraBlockedSpaces: [], extraBlockedPortals: [], extraBlockedConnectors: [])
+        let fingerprint = HomeFingerprint.of(home)
         func fail(_ reason: NoRouteReason) -> RouteResult {
             RouteResult(request: request, primary: nil, alternative: nil, alternativeStatus: .none, noRouteReason: reason,
-                        exclusions: graph.exclusions, homeID: home.id, homeRevision: home.revision)
+                        exclusions: graph.exclusions, homeID: home.id, homeRevision: home.revision, homeFingerprint: fingerprint)
         }
         guard let startSpace = home.space(request.startSpaceID) else { return fail(.unknownStartSpace) }
         if request.exclusions.blockedSpaceIDs.contains(startSpace.id) { return fail(.blockedByScenario) }
@@ -53,7 +54,7 @@ public struct EgressPlanner: EgressPlanning {
         }
         return RouteResult(request: request, primary: primary, alternative: alternative, alternativeStatus: status,
                            sharedChokepoints: shared, noRouteReason: nil, exclusions: graph.exclusions,
-                           homeID: home.id, homeRevision: home.revision)
+                           homeID: home.id, homeRevision: home.revision, homeFingerprint: fingerprint)
     }
 
     /// Typed explanation by relaxing one constraint family at a time. Never fabricates a connection.
@@ -147,23 +148,28 @@ struct Graph {
                 }
                 continue
             }
+            // One shared attachment rule (shared edge, or a plausible wall between outlines). Near-touching
+            // outlines never become adjacent; doors centred in thick scanned walls do.
+            let attachment = PortalAttachment.check(portal, in: home, tolerance: tol)
+            guard attachment.attached else {
+                exclusions.append(RouteExclusion(elementID: portal.id, reason: "invalidGeometry: \(attachment.reason ?? "not on its room boundary")"))
+                continue
+            }
             let n = Geometry.normalized(Vec2(-(portal.b.y - portal.a.y), portal.b.x - portal.a.x))
             let c = portal.center
-            let p1 = c + n * tol.portalApproachMeters, p2 = c - n * tol.portalApproachMeters
+            let wallHalf = (PortalAttachment.underlyingWall(portal, in: home, tolerance: tol)?.thicknessMeters ?? 0) / 2
 
-            func sideNode(_ dest: PortalDestination) -> (spaceID: String, point: Vec2)? {
+            /// Approach point inside the space, offset past the wall band so the clearance envelope holds.
+            func sideNode(_ dest: PortalDestination) -> (spaceID: String, point: Vec2, inward: Vec2)? {
                 guard case .space(let sid) = dest, let s = usable(sid), s.floorID == portal.floorID else { return nil }
-                // The opening must lie on this space's boundary; near-touching rooms never become adjacent.
-                guard Geometry.distanceToBoundary(s.polygon, portal.a) <= tol.boundaryContactMeters,
-                      Geometry.distanceToBoundary(s.polygon, portal.b) <= tol.boundaryContactMeters else { return nil }
-                if Geometry.contains(s.polygon, p1) { return (sid, p1) }
-                if Geometry.contains(s.polygon, p2) { return (sid, p2) }
+                let d = (attachment.centerOffset[sid] ?? 0) + tol.portalApproachMeters
+                for dir in [n, n * -1] where Geometry.contains(s.polygon, c + dir * d) { return (sid, c + dir * d, dir) }
                 return nil
             }
 
             switch (portal.sideA, portal.sideB) {
             case (.space, .space):
-                guard let a = sideNode(portal.sideA), let b = sideNode(portal.sideB), a.point != b.point else {
+                guard let a = sideNode(portal.sideA), let b = sideNode(portal.sideB), a.inward != b.inward else {
                     let blockedSide = [portal.sideA, portal.sideB].contains { if case .space(let s) = $0 { return blockedSpaces.contains(s) }; return false }
                     if !blockedSide { exclusions.append(RouteExclusion(elementID: portal.id, reason: "invalidGeometry: portal does not sit between its two spaces")) }
                     continue
@@ -185,7 +191,7 @@ struct Graph {
                     if case .space(let s) = inside, blockedSpaces.contains(s) { continue }
                     exclusions.append(RouteExclusion(elementID: portal.id, reason: "invalidGeometry: exit is not on its space boundary")); continue
                 }
-                let outside = a.point == p1 ? p2 : p1
+                let outside = c - a.inward * (tol.portalApproachMeters + wallHalf)
                 if home.spaces.contains(where: { $0.floorID == portal.floorID && Geometry.contains($0.polygon, outside) }) {
                     exclusions.append(RouteExclusion(elementID: portal.id, reason: "invalidGeometry: 'exterior' side lies inside another space")); continue
                 }
@@ -293,15 +299,15 @@ struct Graph {
         }
         if p.kind == .window {
             if request.mobility.requiresStepFree { return "incompatibleMobility: window exit" }
-            if p.operable.value != true { return "windowOperabilityUnconfirmed" }
+            if p.operable.confirmedValue != true { return "windowOperabilityUnconfirmed" }
         }
         if p.kind != .opening {
-            if p.operable.value == false { return "inoperable" }
-            if p.operable.value == nil { return "operabilityUnconfirmed" }
+            if p.operable.value == false { return "inoperable" }            // even an unconfirmed "no" rules it out
+            if p.operable.confirmedValue == nil { return "operabilityUnconfirmed" } // scan-observed never satisfies it
         }
         if request.mobility.requiresStepFree {
             if p.stepFree.value == false { return "incompatibleMobility: threshold step" }
-            if p.stepFree.value == nil { return "incompatibleMobility: step-free threshold unconfirmed" }
+            if p.stepFree.confirmedValue == nil { return "incompatibleMobility: step-free threshold unconfirmed" }
         }
         if let w = p.clearWidthMeters.value, w + 1e-9 < request.mobility.minimumClearWidthMeters {
             // Even an unconfirmed (scanned) narrow width is enough to rule an opening out.
@@ -488,22 +494,24 @@ public enum RouteGeometryAudit {
         var out: [String] = []
         let used = Set(path.portalSequence)
         for leg in path.legs {
-            let spans = home.portals.filter { used.contains($0.id) && $0.floorID == leg.floorID }.map { p -> (Vec2, Vec2) in
+            let spans = home.portals.filter { used.contains($0.id) && $0.floorID == leg.floorID }.map { p -> (Vec2, Vec2, Double) in
                 let d = Geometry.normalized(p.b - p.a)
-                return (p.a + d * tolerance.portalSpanMarginMeters, p.b - d * tolerance.portalSpanMarginMeters)
+                // Band half-width: how far the portal sits from the outlines it joins (0 for a shared edge).
+                let band = PortalAttachment.check(p, in: home, tolerance: tolerance).centerOffset.values.max() ?? 0
+                return (p.a + d * tolerance.portalSpanMarginMeters, p.b - d * tolerance.portalSpanMarginMeters, band + 1e-6)
             }
             for (p, q) in zip(leg.points, leg.points.dropFirst()) {
                 for w in home.walls where w.floorID == leg.floorID {
                     if Geometry.collinearOverlap(p, q, w.a, w.b) { out.append("segment runs along wall \(w.id)") }
                     if let x = Geometry.intersection(p, q, w.a, w.b),
-                       !spans.contains(where: { Geometry.distancePointSegment(x, $0.0, $0.1) <= 1e-6 }) {
+                       !spans.contains(where: { Geometry.distancePointSegment(x, $0.0, $0.1) <= $0.2 }) {
                         out.append("segment crosses wall \(w.id) at (\(x.x), \(x.y))")
                     }
                 }
                 for s in home.spaces where s.floorID == leg.floorID {
                     for (a, b) in Geometry.edges(s.polygon) {
                         if let x = Geometry.intersection(p, q, a, b),
-                           !spans.contains(where: { Geometry.distancePointSegment(x, $0.0, $0.1) <= 1e-6 }) {
+                           !spans.contains(where: { Geometry.distancePointSegment(x, $0.0, $0.1) <= $0.2 }) {
                             out.append("segment crosses boundary of \(s.id) at (\(x.x), \(x.y))")
                         }
                     }

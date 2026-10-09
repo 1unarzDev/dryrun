@@ -6,10 +6,20 @@ public enum HomeFingerprint {
     public static func of(_ home: HomeModel) -> String {
         let enc = JSONEncoder()
         enc.outputFormatting = [.sortedKeys]
-        let data = (try? enc.encode(home)) ?? Data()
-        var h: UInt64 = 0xcbf2_9ce4_8422_2325
-        for b in data { h ^= UInt64(b); h = h &* 0x0000_0100_0000_01b3 }
-        return String(h, radix: 16)
+        // NaN/inf must not make encoding fail (which would give every such home the same fingerprint).
+        enc.nonConformingFloatEncodingStrategy = .convertToString(positiveInfinity: "+inf", negativeInfinity: "-inf", nan: "nan")
+        let data: Data
+        do { data = try enc.encode(home) } catch {
+            // Unreachable for current types; still never collapse to a constant.
+            data = Data(String(reflecting: home).utf8)
+        }
+        // Two independent FNV-1a 64 lanes (different offset bases) → 128-bit hex fingerprint.
+        var h1: UInt64 = 0xcbf2_9ce4_8422_2325, h2: UInt64 = 0x6c62_272e_07bb_0142
+        for b in data {
+            h1 ^= UInt64(b); h1 = h1 &* 0x0000_0100_0000_01b3
+            h2 = (h2 ^ UInt64(b &+ 0x5f)) &* 0x0000_0100_0000_01b3
+        }
+        return String(h1, radix: 16) + String(h2, radix: 16)
     }
 }
 
@@ -54,9 +64,12 @@ public final class RouteCache: @unchecked Sendable {
 }
 
 extension RouteResult {
-    /// True only if this result was computed for this exact home revision and algorithm.
+    /// True only if this result was computed for this exact home CONTENT (fingerprint), revision, and algorithm.
+    /// A result without a fingerprint (older data) is never current.
     public func isCurrent(for home: HomeModel) -> Bool {
-        homeID == home.id && homeRevision == home.revision && algorithmVersion == RouteResult.algorithmVersion
+        guard let homeFingerprint else { return false }
+        return homeID == home.id && homeRevision == home.revision && algorithmVersion == RouteResult.algorithmVersion
+            && homeFingerprint == HomeFingerprint.of(home)
     }
 }
 
