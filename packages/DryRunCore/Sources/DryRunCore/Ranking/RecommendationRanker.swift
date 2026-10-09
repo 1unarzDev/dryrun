@@ -9,6 +9,17 @@ public enum ActionRules {
         } || h.equipment.contains { $0.isEssential }
     }
 
+    /// Trying a relocation preparation also uses it: the replay takes the first applicable, safe relocation option.
+    static func relocationChoice(_ s: RunSummary) -> [String: String] {
+        for cp in s.scenario.choicePoints.sorted(by: { ($0.minute, $0.id) < ($1.minute, $1.id) })
+        where Applicability.holds(cp.when, household: s.household, home: s.home, variants: s.variants) {
+            if let o = cp.options.first(where: { !$0.unsafe && ($0.effect == "relocate" || $0.effect == "leaveEarly") }) {
+                return [cp.id: o.id]
+            }
+        }
+        return [:]
+    }
+
     public static func evaluate(_ s: RunSummary, catalog: ActionCatalog) -> [Recommendation] {
         var out: [Recommendation] = []
         let h = s.household
@@ -66,7 +77,7 @@ public enum ActionRules {
             let reason = s.scenario.ambient == "hot" ? "cooling" : (s.scenario.ambient == "cold" ? "heat" : "displacement")
             add("act.relocation.arrange", tier: isVulnerable(h) ? .unmetEssentialRequirement : .scenarioSupplyOrContinuityGap,
                 facts: facts, causes: ["req.relocation", "req.heat", "req.cooling"],
-                values: ["reason": reason, "vehicle": h.transport.hasVehicle ? "yes" : "no"],
+                values: ["context": reason, "vehicle": h.transport.hasVehicle ? "yes" : "no"], tryParams: relocationChoice(s),
                 unconfirmed: ["transport.destinations.conditions"], whySuffix: reason)
         }
 
@@ -82,7 +93,7 @@ public enum ActionRules {
         }
         if s.unmetEver.contains("req.shelter.sturdyBuilding") {
             add("act.tornado.sturdy-building-plan", tier: .unmetEssentialRequirement, facts: ["housing.homeType"],
-                causes: ["req.shelter.sturdyBuilding"])
+                causes: ["req.shelter.sturdyBuilding"], tryParams: relocationChoice(s))
         }
         if s.unmetEver.contains("req.alerts.night") {
             add("act.comms.weather-radio", tier: .unmetEssentialRequirement, facts: ["communications.batteryOrCrankRadio"],
@@ -116,7 +127,8 @@ public enum ActionRules {
             add("act.water.store-3day", tier: .scenarioSupplyOrContinuityGap, facts: ["supplies.storedWaterGallons", "people"],
                 causes: ["req.water"], values: ["target": Fmt.num(target), "stored": Fmt.opt(h.supplies.storedWaterGallons.confirmedValue),
                                                  "people": String(h.people.count)],
-                unconfirmed: h.pets.isEmpty ? [] : ["pets.waterNeeds"])
+                unconfirmed: h.pets.isEmpty ? [] : ["pets.waterNeeds"],
+                whySuffix: h.supplies.storedWaterGallons.isConfirmed ? nil : "unknown")
         }
         if scen == "water-outage" || s.flags.contains(where: { $0.hasPrefix("advisory.") }) {
             add("act.water.save-utility-contact", tier: .multiScenarioPreparation, facts: ["housing.waterSource"])

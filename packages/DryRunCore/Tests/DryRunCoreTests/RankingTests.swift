@@ -102,3 +102,53 @@ struct RankingTests {
         #expect(missing.sorted() == [])
     }
 }
+
+@Suite("Rendered English")
+struct RenderedEnglishTests {
+    static func load() throws -> [String: String] {
+        let root = SimFixtures.repoRoot.appendingPathComponent("content/locales/en")
+        var en: [String: String] = [:]
+        for f in ["scenarios.json", "actions.json"] {
+            en.merge(try JSONDecoder().decode([String: String].self, from: Data(contentsOf: root.appendingPathComponent(f)))) { a, _ in a }
+        }
+        return en
+    }
+
+    static func render(_ template: String, _ values: [String: String]) -> String {
+        var out = template
+        for (k, v) in values { out = out.replacingOccurrences(of: "{\(k)}", with: v) }
+        return out
+    }
+
+    @Test("No raw IDs, enum codes, or unfilled placeholders reach rendered text")
+    func noLeaks() throws {
+        let en = try Self.load()
+        let codeTokens = Set(NoRouteReason.allCases.map(\.rawValue) + ["noCompatibleBackup", "noConfirmedDestination", "noVehicle",
+            "transportUnconfirmed", "vehicleNotAccessible", "roadsClosed", "notRemedyForAdvisory", "noHeatSource", "sharesChokepoint",
+            "independent", "boilWater", "doNotDrink", "doNotUse", "quantityUnavailable", "unknownQuality", "setupUnconfirmed"])
+        let idPattern = try Regex(#"\b(pt|sp|eq|bk|hh|p|an|ob|fl|ta|dest|veh|ct|pet)-[a-z0-9-]+\b"#)
+        var problems: [String] = []
+        for h in SampleHouseholds.all {
+            for s in SimFixtures.scenarioIDs {
+                for v in [[], ["second-exit-blocked"], ["do-not-drink", "with-power-loss"], ["night", "home-damaged"]] {
+                    let r = try SimFixtures.run(h, s, variants: v)
+                    var texts: [String] = []
+                    for e in r.events {
+                        texts.append(Self.render(en[e.titleKey] ?? "", e.templateValues))
+                        if let d = e.detailKey { texts.append(Self.render(en[d] ?? "", e.templateValues)) }
+                    }
+                    for c in r.recommendations {
+                        texts.append(Self.render(en[c.titleKey] ?? "", c.templateValues))
+                        texts.append(Self.render(en[c.whyKey] ?? "", c.templateValues))
+                    }
+                    for t in texts {
+                        if t.contains("{") || t.contains("}") { problems.append("placeholder: \(t)") }
+                        if t.contains(idPattern) { problems.append("id: \(t)") }
+                        for tok in codeTokens where t.contains(tok) { problems.append("code \(tok): \(t)") }
+                    }
+                }
+            }
+        }
+        #expect(Array(Set(problems)).sorted() == [])
+    }
+}

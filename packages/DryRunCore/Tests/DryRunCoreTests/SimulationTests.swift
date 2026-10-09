@@ -267,7 +267,7 @@ struct SimulationTests {
     @Test("Fire: blocked usual route finds a modelled alternative; both blocked gives a typed no-route")
     func fireRoutes() throws {
         let r = try SimFixtures.run(SampleHouseholds.oak, "home-fire")
-        #expect(r.events.contains { $0.id == "evt.home-fire.route.alternative.p-oak-3" && $0.templateValues["exit"] == "pt-front" })
+        #expect(r.events.contains { $0.id == "evt.home-fire.route.alternative.p-oak-3" && $0.templateValues["exitPortalID"] == "pt-front" && $0.templateValues["exitRoom"] == "Living room" })
         #expect(!everUnmet(r).contains { $0.hasPrefix("req.egress") })
         // Every route request after the origin event excludes the kitchen and never starts a re-entry.
         let blockedRuns = r.routes.filter { !$0.request.exclusions.blockedSpaceIDs.isEmpty }

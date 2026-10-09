@@ -69,7 +69,8 @@ extension RunState {
     mutating func checkpoint(_ e: AuthoredEvent, cause: String) {
         let people = household.people.count
         let target = Double(people) * 3.0
-        emit("evt.\(scenario.id).checkpoint.water-target", title: "scenario.common.checkpoint.water-target",
+        emit("evt.\(scenario.id).checkpoint.water-target",
+             title: initialStoredWater == nil ? "scenario.common.checkpoint.water-target-unknown" : "scenario.common.checkpoint.water-target",
              values: ["people": String(people), "target": Fmt.num(target), "stored": Fmt.opt(storedWater),
                       "initial": Fmt.opt(initialStoredWater)],
              severity: (initialStoredWater ?? 0) < target ? .caution : .info, rule: "rule.resource.water-storage-target",
@@ -155,6 +156,13 @@ extension RunState {
         return home.spaces.first { $0.kind == .livingRoom }?.id ?? home.spaces.first?.id ?? "unknown"
     }
 
+    /// Human label for an exit: the room it leaves from (household-entered label), never the raw portal ID.
+    func exitRoomLabel(_ portalID: String) -> String {
+        guard let pt = home.portal(portalID) else { return "" }
+        for side in [pt.sideA, pt.sideB] { if case .space(let sid) = side, let sp = home.space(sid) { return sp.label } }
+        return pt.note ?? ""
+    }
+
     func mobility(for p: Person) -> MobilityProfile { p.requiresStepFreeRoute ? .wheelchair : .walking }
 
     mutating func fireIgnition(cause: String) {
@@ -223,7 +231,8 @@ extension RunState {
                 let changed = previous?.exitPortalID != path.exitPortalID || previous?.spaceSequence != path.spaceSequence
                 emit("evt.home-fire.route.\(changed ? "alternative" : "still-clear").\(p.id)",
                      title: changed ? "scenario.home-fire.route.alternative" : "scenario.home-fire.route.still-clear",
-                     values: ["person": p.alias, "exit": path.exitPortalID, "independence": r.alternativeStatus.rawValue],
+                     values: ["person": p.alias, "exitRoom": exitRoomLabel(path.exitPortalID), "exitPortalID": path.exitPortalID,
+                              "independence": r.alternativeStatus.rawValue],
                      severity: changed ? .caution : .info, rule: "rule.fire.route",
                      facts: ["person.\(p.id)", "home.portal.\(path.exitPortalID)"], causedBy: cause, sources: ["S19"])
                 resolveSticky("req.egress.\(p.id)")
@@ -286,7 +295,8 @@ extension RunState {
             let radio = household.communications.batteryOrCrankRadio.confirmedValue == true
             if services[Svc.alerts] == .operational {
                 emit("evt.tornado.night-alert-received", title: "scenario.tornado.night-alert-received",
-                     values: ["via": radio ? "radio" : "phone"], severity: .info, rule: "rule.tornado.night-alerting",
+                     detail: radio ? "scenario.tornado.night-alert-via.radio" : "scenario.tornado.night-alert-via.phone",
+                     severity: .info, rule: "rule.tornado.night-alerting",
                      facts: ["communications.batteryOrCrankRadio", "communications.handsetRuntimeHours"], causedBy: cause, sources: ["S22"])
             } else {
                 emit("evt.tornado.night-alert-uncertain", title: "scenario.tornado.night-alert-uncertain", severity: .critical,
@@ -330,7 +340,8 @@ extension RunState {
 
     mutating func choose(_ c: ChoicePoint) throws {
         phaseID = c.phaseID
-        let chosenID = input.choices[c.id] ?? c.defaultOptionID
+        // A tried preparation that includes using it (e.g. relocation) overrides the choice in the replay only.
+        let chosenID = interventionChoices[c.id] ?? input.choices[c.id] ?? c.defaultOptionID
         guard let opt = c.options.first(where: { $0.id == chosenID }) else {
             throw RehearsalError.invalidChoice(choiceID: c.id, optionID: chosenID)
         }

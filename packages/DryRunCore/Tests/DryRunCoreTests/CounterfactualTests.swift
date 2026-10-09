@@ -99,3 +99,25 @@ struct CounterfactualTests {
         }
     }
 }
+
+@Suite("Counterfactual relocation")
+struct CounterfactualRelocationTests {
+    @Test("Trying an arranged relocation takes the relocation branch in the replay only")
+    func relocationBranch() throws {
+        let input = SimFixtures.input(SampleHouseholds.oak, "freeze-power-loss")
+        let base = try SimFixtures.engine.run(input)
+        let rec = try #require(base.recommendations.first { $0.actionID == "act.relocation.arrange" })
+        #expect(rec.tryIntervention?.parameters["choice.freeze-power-loss.keep-warm"] == "relocate")
+        let cmp = try SimFixtures.engine.compare(input, applying: rec.tryIntervention!)
+        #expect(cmp.diff.addedEventIDs.contains("evt.freeze-power-loss.relocation.done"))
+        #expect(cmp.diff.removedEventIDs.contains("evt.freeze-power-loss.res.water-depleted"))
+        #expect(cmp.diff.resolvedRequirements.contains("req.water"))
+        #expect(cmp.baseline.events.first { $0.id == "evt.choice.freeze-power-loss.keep-warm" }?.templateValues["option"] == "layer-up")
+        #expect(input.choices.isEmpty)
+
+        let lake = SimFixtures.input(SampleHouseholds.lake, "heat-grid-strain")
+        let lakeRec = try #require(try SimFixtures.engine.run(lake).recommendations.first { $0.actionID == "act.relocation.arrange" })
+        let lakeCmp = try SimFixtures.engine.compare(lake, applying: lakeRec.tryIntervention!)
+        #expect(lakeCmp.diff.addedEventIDs.contains("evt.heat-grid-strain.relocation.done"))
+    }
+}

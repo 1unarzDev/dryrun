@@ -69,6 +69,7 @@ public struct RunSummary: Sendable {
     public var causes: [String: [String]]
     public var finalServices: [String: ServiceState]
     public var everUnavailable: Set<String>
+    public var variants: [String]
 }
 
 struct ScheduledItem {
@@ -122,6 +123,8 @@ struct RunState {
     var currentRoutes: [String: RouteResult] = [:]
     var onBackup: Set<String> = []
     var phaseID: String
+    /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
+    let interventionChoices: [String: String]
 
     init(scenario: ScenarioDefinition, input: RehearsalInput, household: HouseholdProfile, home: HomeModel, planner: EgressPlanning) {
         self.scenario = scenario; self.input = input; self.household = household; self.home = home; self.planner = planner
@@ -136,6 +139,9 @@ struct RunState {
         self.fullHandsetHours = c.handsetRuntimeHours.value
         self.powerBankCharges = c.powerBankCharges.confirmedValue
         self.phaseID = scenario.phases.first?.id ?? "main"
+        var overrides: [String: String] = [:]
+        for i in input.interventions { for (k, v) in i.parameters where k.hasPrefix("choice.") { overrides[k] = v } }
+        self.interventionChoices = overrides
     }
 
     // MARK: Execution
@@ -180,7 +186,8 @@ struct RunState {
 
     func summary() -> RunSummary {
         RunSummary(scenario: scenario, household: household, home: home, unmetEver: unmetEver, unknowns: unknowns,
-                   flags: flags, causes: causes, finalServices: services, everUnavailable: everUnavailable)
+                   flags: flags, causes: causes, finalServices: services, everUnavailable: everUnavailable,
+                   variants: input.variants)
     }
 
     // MARK: Time and resources
@@ -450,6 +457,13 @@ struct RunState {
     mutating func emit(_ baseID: String, title: String, detail: String? = nil, values: [String: String] = [:], severity: EventSeverity,
                        rule: String, facts: [String] = [], causedBy: String?, sources: [String], changes: [String: ServiceState] = [:],
                        priority: Int = 0) -> String {
+        // Machine codes in template values are never spliced into prose: they are surfaced as localized detail keys.
+        var detail = detail
+        if detail == nil {
+            if let r = values["reason"] { detail = "reason.\(r)" }
+            else if let i = values["independence"] { detail = "independence.\(i)" }
+            else if let a = values["advisory"] { detail = "advisory.\(a)" }
+        }
         let n = idCounts[baseID, default: 0] + 1
         idCounts[baseID] = n
         let id = n == 1 ? baseID : "\(baseID).\(n)"
