@@ -71,6 +71,8 @@ yet) · PARTIAL · BLOCKED.
 | Optional on-device explanations (FoundationModels, iOS 26, gated, validator) | IMPLEMENTED | **Never run**; template fallback is the tested path |
 | UI test journeys | IMPLEMENTED | **Never run** |
 | Privacy shield, temp-export lifecycle, generic error alert | IMPLEMENTED | Device behavior unverified |
+| Demo launch modes, SwiftUI previews, screenshot-tour UI test | IMPLEMENTED | Parse-checked only; never run |
+| macOS tooling (`scripts/mac/*`, `scripts/remote-mac.sh`, `.github/workflows/ios-verify.yml`) | IMPLEMENTED | ShellCheck-clean and `bash -n`; YAML valid; **never executed on macOS** — first run may need small fixes (`xcresulttool` flags vary by Xcode version) |
 
 ## Pending hardware and human verification (not done; do not claim)
 

@@ -6,3 +6,6 @@ node_modules/
 DerivedData/
 .DS_Store
 /tmp/
+.build-mac/
+artifacts/
+apps/ios/DryRun.xcodeproj/

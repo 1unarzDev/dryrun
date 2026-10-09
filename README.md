@@ -43,7 +43,12 @@ Airplane mode: everything above still works. Alerts say current conditions are u
 ## Fictional data only
 Every household, home, and phone number (555-01xx) in `fixtures/` and `content/` is fictional.
 
+## On a Mac
+See `docs/MACOS_VERIFICATION.md`. `scripts/mac/verify.sh` produces one bundle to send back. For UI work, see
+`docs/FRONTEND_HANDOFF.md`, `scripts/mac/screens.sh`, and `scripts/mac/device.sh`. From Linux, an external Mac can
+be driven with `scripts/remote-mac.sh`.
+
 ## Docs
-`docs/ARCHITECTURE.md` · `docs/DECISIONS.md` · `docs/VERIFICATION.md` · `docs/SAFETY_AND_CONTENT.md` ·
+`docs/FRONTEND_HANDOFF.md` · `docs/MACOS_VERIFICATION.md` · `docs/DEVICE_CHECKLIST.md` · `docs/ARCHITECTURE.md` · `docs/DECISIONS.md` · `docs/VERIFICATION.md` · `docs/SAFETY_AND_CONTENT.md` ·
 `docs/AI_ASSISTANCE.md` · `docs/STUDENT_IMPLEMENTATION.md` · `docs/REVIEW.md` · `docs/BACKLOG.md` · `docs/CONTRACTS.md`
 · lane reports and adversarial reviews in `docs/lanes/`.

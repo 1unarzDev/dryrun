@@ -89,7 +89,115 @@ final class AppModel {
             return
         }
         await loadPrivateData()
+        await applyDemoLaunch(DemoLaunch.current)
     }
+
+    // MARK: - Demo / screenshot mode (fictional data, in-memory store only)
+
+    func applyDemoLaunch(_ d: DemoLaunch) async {
+        if let l = d.locale { locale = l }
+        guard d.isActive, let sample = SampleHouseholds.all.first(where: { $0.id == d.householdID }) else { return }
+        await useSampleHousehold(sample)
+        if let l = d.locale { locale = l }
+        if !d.planScenarios.isEmpty { await generatePlan(scenarioIDs: d.planScenarios, includePrivateNotes: false) }
+        #if DEBUG
+        if d.writePlanPDFs { await writeDemoPlanArtifacts() }
+        #endif
+    }
+
+    /// Advances the open rehearsal for screenshots. `.end` answers each decision with its recommended option.
+    func demoAdvance(_ step: DemoLaunch.Step) async {
+        switch step {
+        case .start:
+            return
+        case .decision:
+            rehearsal?.advanceUntilDecisionOrEnd()
+        case .end:
+            for _ in 0..<12 {
+                rehearsal?.advanceUntilDecisionOrEnd()
+                guard let decision = rehearsal?.pendingDecision else { break }
+                let option = decision.options.first(where: \.isRecommended) ?? decision.options[0]
+                await choose(option: option.id, at: decision.id)
+            }
+            rehearsal?.advanceUntilDecisionOrEnd()
+        }
+    }
+
+    #if DEBUG
+    /// Writes EN/ES/VI plan PDFs and PlanDocument JSON for the demo household to Documents/demo-plans,
+    /// then a DONE marker. Verification tooling copies them out of the simulator container.
+    func writeDemoPlanArtifacts() async {
+        guard let household else { return }
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("demo-plans", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let original = locale
+        var report: [String] = []
+        for l in ["en", "es", "vi"] {
+            locale = l
+            await generatePlan(scenarioIDs: DemoLaunch.allScenarios, includePrivateNotes: false)
+            guard let plan = savedPlan, plan.locale == l else { report.append("\(l): plan not generated"); continue }
+            let output = PlanPDFRenderer().render(plan)
+            let base = "plan-\(household.id)-\(l)"
+            try? output.data.write(to: dir.appendingPathComponent("\(base).pdf"))
+            try? DryRunJSON.encoder().encode(plan).write(to: dir.appendingPathComponent("\(base).json"))
+            let issues = PlanValidator.validate(plan, household: household)
+            report.append("\(l): pages=\(output.pageCount) continued=\(output.continuedPageIDs.joined(separator: ",")) issues=\(issues.map(\.description))")
+        }
+        locale = original
+        try? report.joined(separator: "\n").write(to: dir.appendingPathComponent("DONE-\(household.id).txt"), atomically: true, encoding: .utf8)
+    }
+    #endif
+
+    #if DEBUG
+    /// Synchronous, fully offline model for SwiftUI previews (fictional household, in-memory store).
+    static func preview(householdID: String = "hh-oak", locale: String? = nil,
+                        scenarioID: String? = nil, step: DemoLaunch.Step = .end, planScenarios: [String] = []) -> AppModel {
+        let model = AppModel(store: InMemoryPrivateDataStore())
+        guard let root = try? ContentLocator.contentRoot(),
+              let content = try? ContentLibrary.load(from: root),
+              let scenarios = try? ScenarioLibrary.load(from: root.appendingPathComponent("scenarios")),
+              let household = SampleHouseholds.all.first(where: { $0.id == householdID }) else {
+            model.phase = .contentFailed("Preview content unavailable")
+            return model
+        }
+        let engine = RehearsalEngine(library: scenarios, planner: EgressPlanner())
+        model.content = content
+        model.scenarios = scenarios
+        model.engine = engine
+        model.household = household
+        model.home = SampleHomes.ranch
+        model.locale = locale ?? household.preferredLocale
+        model.phase = .ready
+        func input(_ id: String) -> RehearsalInput? {
+            guard let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }
+            return RehearsalInput(household: household, home: SampleHomes.ranch, scenarioID: id, scenarioVersion: s.version,
+                                  contentVersion: content.contentVersion, seed: 1)
+        }
+        if let scenarioID, var i = input(scenarioID), var result = try? engine.run(i) {
+            var cursor = RehearsalCursor(result: result)
+            if step != .start {
+                cursor.advanceUntilDecisionOrEnd()
+                while step == .end, let d = cursor.pendingDecision {
+                    i.choices[d.id] = (d.options.first(where: \.isRecommended) ?? d.options[0]).id
+                    guard let next = try? engine.run(i) else { break }
+                    result = next
+                    cursor.replace(result: result)
+                    cursor.advanceUntilDecisionOrEnd()
+                }
+            }
+            model.rehearsal = cursor
+        }
+        if !planScenarios.isEmpty {
+            let results = planScenarios.compactMap(input).compactMap { try? engine.run($0) }
+            model.savedPlan = PlanBuilder.build(household: household, home: SampleHomes.ranch, results: results,
+                                                localizer: content.localizer(for: model.locale),
+                                                resources: content.resources(forRegion: household.regionID),
+                                                contentVersion: content.contentVersion, generatedAt: Date())
+        }
+        return model
+    }
+    #endif
 
     func loadPrivateData() async {
         switch await store.load() {

@@ -4,7 +4,11 @@ import DryRunCore
 
 struct HomeTabView: View {
     @Environment(AppModel.self) private var model
-    @State private var mode = Mode.plan2D
+    @State private var mode: Mode = switch DemoLaunch.current.homeMode {
+    case "3d": .dollhouse
+    case "rooms": .rooms
+    default: .plan2D
+    }
     @State private var floorID: String?
     @State private var editing = false
     @State private var scanning = false

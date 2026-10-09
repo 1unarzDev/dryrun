@@ -19,16 +19,16 @@ struct RehearseTabView: View {
             }
             Section(l("common.chooseScenario")) {
                 ForEach(Self.scenarioIDs, id: \.self) { id in
-                    NavigationLink {
-                        RehearsalView(scenarioID: id)
-                    } label: {
+                    NavigationLink(value: id) {
                         Label(l("common.scenario.\(id)"), systemImage: Self.symbols[id] ?? "exclamationmark.triangle")
                             .padding(.vertical, 6)
                     }
+                    .accessibilityIdentifier("scenario.\(id)")
                 }
             }
         }
         .navigationTitle(l("common.tab.rehearse"))
+        .navigationDestination(for: String.self) { RehearsalView(scenarioID: $0) }
     }
 }
 
@@ -70,6 +70,8 @@ struct RehearsalView: View {
         .task {
             if model.rehearsal?.result.input.scenarioID != scenarioID {
                 await model.startRehearsal(scenarioID: scenarioID)
+                let demo = DemoLaunch.current
+                if demo.scenarioID == scenarioID { await model.demoAdvance(demo.step) }
             }
         }
         .sheet(isPresented: $showDebrief) { NavigationStack { DebriefView() } }
@@ -89,12 +91,14 @@ struct RehearsalView: View {
             Button(l("common.action.advance"), systemImage: "forward.frame") {
                 model.rehearsal?.advance()
             }
+            .accessibilityIdentifier("rehearsal.next")
             .disabled(session.pendingDecision != nil || session.revealed >= session.result.events.count)
             Button(l("common.action.replay"), systemImage: "arrow.counterclockwise") {
                 Task { await model.startRehearsal(scenarioID: scenarioID, variants: session.result.input.variants) }
             }
             Spacer()
             Button(l("common.debrief"), systemImage: "list.bullet.clipboard") { showDebrief = true }
+                .accessibilityIdentifier("rehearsal.debrief")
                 .buttonStyle(.borderedProminent)
                 .disabled(!session.isFinished)
         }
@@ -225,6 +229,7 @@ struct DecisionCard: View {
                     Text(l(option.labelKey)).frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityIdentifier("decision.option.\(option.id)")
             }
         }
         .padding()

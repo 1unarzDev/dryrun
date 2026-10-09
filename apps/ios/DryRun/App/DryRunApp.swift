@@ -8,8 +8,10 @@ struct DryRunApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        let isUITest = ProcessInfo.processInfo.arguments.contains("-uiTestingInMemory")
-        let store: PrivateDataStore = isUITest ? InMemoryPrivateDataStore() : VaultPrivateDataStore.makeDefault()
+        let demo = DemoLaunch.current
+        // Demo/UI-test launches never touch the real vault.
+        let store: PrivateDataStore = demo.usesInMemoryStore ? InMemoryPrivateDataStore() : VaultPrivateDataStore.makeDefault()
+        if demo.disableAnimations { UIView.setAnimationsEnabled(false) }
         _model = State(initialValue: AppModel(store: store))
     }
 

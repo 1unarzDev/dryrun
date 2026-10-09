@@ -36,6 +36,7 @@ struct PlanTabView: View {
                     Task { await model.generatePlan(scenarioIDs: Array(selected), includePrivateNotes: includePrivateNotes) }
                 }
                 .disabled(selected.isEmpty || model.isWorking)
+                .accessibilityIdentifier("plan.generate")
             }
             if let plan = model.savedPlan {
                 Section {
@@ -45,6 +46,7 @@ struct PlanTabView: View {
                             .foregroundStyle(Theme.caution)
                     }
                     NavigationLink(l("common.plan.viewSaved", ["count": "\(plan.pages.count)"])) { PlanDocumentView(doc: plan) }
+                        .accessibilityIdentifier("plan.viewSaved")
                     Button(l("common.action.share") + " / " + l("common.action.print"), systemImage: "square.and.arrow.up") {
                         let output = PlanPDFRenderer().render(plan)
                         do {

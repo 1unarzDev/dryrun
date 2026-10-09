@@ -29,6 +29,7 @@ struct OnboardingView: View {
                         }
                         .buttonStyle(.plain)
                         .accessibilityHint("Loads a made-up household and sample home")
+                        .accessibilityIdentifier("onboarding.sample.\(sample.id)")
                     }
 
                     Button {
