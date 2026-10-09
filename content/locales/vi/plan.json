@@ -99,5 +99,8 @@
   "plan.scenario.tornado.sources": "S22",
   "plan.scenario.flash-flood.sources": "S23, S18",
   "plan.scenario.home-fire.sources": "S19",
-  "plan.scenario.water-outage.sources": "S24, S26"
+  "plan.scenario.water-outage.sources": "S24, S26",
+  "plan.route.outside": "ra ngoài",
+  "plan.route.unknownRoom": "một phòng chưa xác nhận",
+  "plan.route.door": "cửa giữa {a} và {b}"
 }

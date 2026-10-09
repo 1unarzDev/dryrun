@@ -37,12 +37,19 @@ public enum PlanBuilder {
             contentVersion: contentVersion, generatedAt: generatedAt, reviewedAt: options.reviewedAt,
             scenarioIDs: results.map(\.input.scenarioID), includesPrivateNotes: options.includePrivateNotes,
             pages: pages,
-            draftTranslationBanner: anyDraft ? l.text("plan.draftBanner").text : nil,
+            draftTranslationBanner: anyDraft ? draftBanner(l) : nil,
             fallbackNote: anyFallback ? l.text("plan.fallbackNote").text : nil,
             contentReviewBanner: l.text("plan.contentDraftBanner").text,
             footer: l.text("plan.footer.practice").text,
             sourceIDs: Array(Set(b.sourceIDs)).sorted()
         )
+    }
+
+    /// Localized banner plus the exact English wording, so any reader (and reviewers) can see the draft state.
+    static func draftBanner(_ l: Localizer) -> String {
+        let english = l.with(locale: l.sourceLocale).text("plan.draftBanner").text
+        let local = l.text("plan.draftBanner").text
+        return local == english ? english : "\(local) / \(english)"
     }
 
     static let scenarioOrder = ["home-fire", "tornado", "flash-flood", "freeze-power-loss", "heat-grid-strain", "water-outage"]
@@ -114,7 +121,7 @@ public enum PlanBuilder {
             if id == "tornado" {
                 if h.housing.homeType == .manufacturedHome {
                     homePlan.append(b.line("plan.shelter.manufactured", style: .prohibition, sources: ["S22"]))
-                } else if let shelter = home.annotations.first(where: { $0.kind == .tornadoShelterCandidate }) {
+                } else if let shelter = verifiedShelter(home) {
                     let label = shelter.spaceID.flatMap { home.space($0)?.label } ?? shelter.label
                     homePlan.append(b.line("plan.shelter.line", ["label": label], sources: ["S22"]))
                     homePlan.append(b.line("plan.shelter.notCertified", style: .caveat))
@@ -159,6 +166,17 @@ public enum PlanBuilder {
     }
 
     // MARK: - Shared sections
+
+    /// Only a household-verified shelter spot in a space on the lowest floor is printed.
+    static func verifiedShelter(_ home: HomeModel) -> Annotation? {
+        let lowest = home.floors.map(\.level).min()
+        return home.annotations.filter { $0.kind == .tornadoShelterCandidate && $0.verification == .verified }
+            .sorted { $0.id < $1.id }
+            .first { a in
+                guard let sid = a.spaceID, let space = home.space(sid) else { return false }
+                return home.floors.first { $0.id == space.floorID }?.level == lowest
+            }
+    }
 
     private static func meetingLine(_ b: Builder, _ home: HomeModel) -> PlanLine {
         if let m = home.meetingPoint, m.verification == .verified {
@@ -223,42 +241,64 @@ public enum PlanBuilder {
 
     private static func waterLines(_ b: Builder, _ h: HouseholdProfile) -> [PlanLine] {
         let target = WaterTarget.storageTargetGallons(people: h.people.count, days: 3)
-        let stored = h.supplies.storedWaterGallons.value.map { b.l("plan.water.storedGallons", ["gallons": formatNumber($0)]) }
+        let stored = h.supplies.storedWaterGallons.confirmedValue.map { b.l("plan.water.storedGallons", ["gallons": formatNumber($0)]) }
             ?? b.l("plan.water.storedUnknown")
         var lines = [b.line("plan.water.target", ["people": "\(h.people.count)", "targetGallons": formatNumber(target), "storedGallons": stored], sources: ["S26"])]
         if !h.pets.isEmpty { lines.append(b.line("plan.water.pets", sources: ["S26"])) }
         return lines
     }
 
+    /// Usual (no exercise blockage) practice routes, one line per person so different mobility needs are never merged.
     private static func routeLines(_ b: Builder, _ routes: [RouteResult], _ home: HomeModel, _ h: HouseholdProfile) -> [PlanLine] {
         var lines: [PlanLine] = []
-        var seenStarts = Set<String>()
-        for route in routes where seenStarts.insert(route.request.startSpaceID).inserted {
-            let start = home.space(route.request.startSpaceID)?.label ?? route.request.startSpaceID
+        var seen = Set<String>()
+        let usual = routes.filter { $0.request.exclusions == .none }
+        for route in usual {
+            let dedupe = "\(route.request.personID ?? "-")|\(route.request.startSpaceID)|\(route.request.mobility.requiresStepFree)"
+            guard seen.insert(dedupe).inserted else { continue }
+            let start = home.space(route.request.startSpaceID)?.label ?? b.l("plan.route.unknownRoom")
+            let person = route.request.personID.flatMap { id in h.people.first { $0.id == id }?.alias }
+            let who = person.map { "\($0) — \(start)" } ?? start
             if let primary = route.primary {
-                lines.append(b.line("plan.route.from", ["start": start, "steps": steps(primary, home)], sources: ["S19"]))
+                lines.append(b.line("plan.route.from", ["start": who, "steps": steps(b, primary, home)], sources: ["S19"]))
                 switch route.alternativeStatus {
                 case .independent:
                     if let alt = route.alternative {
-                        lines.append(b.line("plan.route.alt", ["start": start, "steps": steps(alt, home)], sources: ["S19"]))
+                        lines.append(b.line("plan.route.alt", ["start": who, "steps": steps(b, alt, home)], sources: ["S19"]))
                     }
                 case .sharesChokepoint:
-                    let choke = route.sharedChokepoints.compactMap { home.space($0)?.label }.first ?? route.sharedChokepoints.first ?? "?"
-                    lines.append(b.line("plan.route.altShared", ["start": start, "chokepoint": choke], style: .caveat))
+                    let choke = route.sharedChokepoints.first.map { elementLabel(b, $0, home) } ?? b.l("plan.route.unknownRoom")
+                    lines.append(b.line("plan.route.altShared", ["start": who, "chokepoint": choke], style: .caveat))
                 case .none:
-                    lines.append(b.line("plan.route.altNone", ["start": start], style: .caveat))
+                    lines.append(b.line("plan.route.altNone", ["start": who], style: .caveat))
                 }
             } else {
                 let reason = b.l("plan.route.reason.\((route.noRouteReason ?? .incompleteConnectivity).rawValue)")
-                lines.append(b.line("plan.route.none", ["start": start, "reason": reason], style: .caveat))
+                lines.append(b.line("plan.route.none", ["start": who, "reason": reason], style: .caveat))
             }
         }
         return lines
     }
 
-    private static func steps(_ path: RoutePath, _ home: HomeModel) -> String {
-        (path.spaceSequence.map { home.space($0)?.label ?? $0 } + ["⟶ outside"]).joined(separator: " → ")
-            .replacingOccurrences(of: "→ ⟶", with: "→")
+    /// Human label for a space or portal ID; never prints a raw identifier.
+    static func elementLabel(_ b: Builder, _ id: String, _ home: HomeModel) -> String {
+        if let s = home.space(id) { return s.label }
+        if let p = home.portal(id) {
+            func name(_ d: PortalDestination) -> String {
+                switch d {
+                case .space(let sid): home.space(sid)?.label ?? b.l("plan.route.unknownRoom")
+                case .exterior: b.l("plan.route.outside")
+                case .commonArea, .unknown: b.l("plan.route.unknownRoom")
+                }
+            }
+            return b.l("plan.route.door", ["a": name(p.sideA), "b": name(p.sideB)])
+        }
+        return b.l("plan.route.unknownRoom")
+    }
+
+    private static func steps(_ b: Builder, _ path: RoutePath, _ home: HomeModel) -> String {
+        (path.spaceSequence.map { home.space($0)?.label ?? b.l("plan.route.unknownRoom") } + [b.l("plan.route.outside")])
+            .joined(separator: " → ")
     }
 
     static func formatNumber(_ v: Double) -> String {
@@ -294,7 +334,8 @@ public enum PlanBuilder {
             let t = track(localizer.text(key, values))
             sourceIDs.append(contentsOf: sources)
             return PlanLine(text: t.text, style: style, key: key, resolvedLocale: t.resolvedLocale,
-                            isFallback: t.isFallback, isDraftTranslation: t.needsDraftLabel, sourceIDs: sources)
+                            isFallback: t.isFallback, isDraftTranslation: t.needsDraftLabel, sourceIDs: sources,
+                            unfilledPlaceholders: t.unfilledPlaceholders)
         }
 
         func section(_ id: String, _ headingKey: String, _ lines: [PlanLine], critical: Bool) -> PlanSection {

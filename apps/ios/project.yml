@@ -25,6 +25,7 @@ targets:
       - path: DryRun
         excludes:
           - "Resources/Info.plist"
+          - "Resources/DryRun.entitlements"
       - path: ../../content
         type: folder
         buildPhase: resources
@@ -32,6 +33,9 @@ targets:
       - package: DryRunCore
       - package: DryRunVault
       - sdk: RoomPlan.framework
+        weak: true
+      # iOS 26+ only; weak-linked so the iOS 18 deployment target launches without it.
+      - sdk: FoundationModels.framework
         weak: true
     info:
       path: DryRun/Resources/Info.plist
@@ -46,6 +50,7 @@ targets:
         CFBundleLocalizations: [en, es, vi]
         CFBundleDevelopmentRegion: en
         ITSAppUsesNonExemptEncryption: false
+        UIRequiredDeviceCapabilities: [arm64]
     entitlements:
       path: DryRun/Resources/DryRun.entitlements
       properties:
@@ -54,13 +59,16 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.example.dryrun.app
         TARGETED_DEVICE_FAMILY: "1"
-        INFOPLIST_KEY_UIRequiredDeviceCapabilities: arm64
   DryRunUITests:
     type: bundle.ui-testing
     platform: iOS
     sources: [DryRunUITests]
     dependencies:
       - target: DryRun
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: DryRun
 schemes:
   DryRun:
     build:

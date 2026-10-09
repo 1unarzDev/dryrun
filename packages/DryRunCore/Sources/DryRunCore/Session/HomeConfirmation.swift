@@ -81,10 +81,11 @@ public enum HomeConfirmation {
             if let width { h.portals[i].clearWidthMeters = .confirmed(width, unit: "m", verifiedAt: date) }
         case .markPortalExterior(let id, let operable, let stepFree):
             guard let i = portalIndex(id) else { return home }
-            let floorLevel = h.floors.first { $0.id == h.portals[i].floorID }?.level ?? 0
-            let lowest = h.floors.map(\.level).min() ?? 0
-            // Upper-floor openings are never walking exits.
-            guard floorLevel == lowest else { return home }
+            // Windows never become walking exits through the generic door answer.
+            guard h.portals[i].kind != .window else { return home }
+            // One shared definition of "ground" with the planner; upper floors and basements are not walking exits here.
+            guard let floor = h.floors.first(where: { $0.id == h.portals[i].floorID }),
+                  Graph.isGround(floor, .standard) else { return home }
             if h.portals[i].sideA == .unknown { h.portals[i].sideA = .exterior }
             else if h.portals[i].sideB == .unknown { h.portals[i].sideB = .exterior }
             guard h.portals[i].leadsToExterior else { return home }
@@ -106,6 +107,9 @@ public enum HomeConfirmation {
             h.annotations.append(Annotation(id: "an-meeting", kind: .outsideMeetingPoint, label: trimmed, verification: .verified))
         case .shelterSpot(let spaceID, let interior):
             guard let i = h.spaces.firstIndex(where: { $0.id == spaceID }) else { return home }
+            // Shelter spots must be on the lowest floor.
+            let lowest = h.floors.map(\.level).min()
+            guard h.floors.first(where: { $0.id == h.spaces[i].floorID })?.level == lowest else { return home }
             h.spaces[i].interiorNoWindowsConfirmed = .confirmed(interior, verifiedAt: date)
             h.annotations.removeAll { $0.kind == .tornadoShelterCandidate }
             if interior {

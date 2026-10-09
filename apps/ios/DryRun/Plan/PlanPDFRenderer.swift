@@ -4,6 +4,9 @@ import DryRunCore
 /// Renders a validated PlanDocument as real text (searchable, Unicode via Core Text/UIKit).
 /// Never screenshots a scroll view. Text is never shrunk below the minimum; content that does not fit
 /// flows to a continuation page that is clearly marked, rather than being clipped.
+/// Main-actor isolated: it is only called from a button action, and this keeps UIKit drawing APIs
+/// legal regardless of how a given SDK annotates them.
+@MainActor
 struct PlanPDFRenderer {
     static let pageSize = CGSize(width: 612, height: 792) // US Letter, points
     static let margin: CGFloat = 48

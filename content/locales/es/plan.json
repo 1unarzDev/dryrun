@@ -99,5 +99,8 @@
   "plan.scenario.tornado.sources": "S22",
   "plan.scenario.flash-flood.sources": "S23, S18",
   "plan.scenario.home-fire.sources": "S19",
-  "plan.scenario.water-outage.sources": "S24, S26"
+  "plan.scenario.water-outage.sources": "S24, S26",
+  "plan.route.outside": "afuera",
+  "plan.route.unknownRoom": "un cuarto sin confirmar",
+  "plan.route.door": "la puerta entre {a} y {b}"
 }

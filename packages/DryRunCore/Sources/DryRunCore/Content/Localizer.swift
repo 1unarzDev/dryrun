@@ -30,6 +30,8 @@ public struct LocalizedText: Sendable, Hashable {
     public var reviewState: TranslationReviewState
     /// Key absent in every locale (a content bug; tests assert none are emitted).
     public var isMissing: Bool
+    /// Template placeholders that had no value (a content/code bug, distinct from braces in user-entered values).
+    public var unfilledPlaceholders: [String] = []
     public var isFallback: Bool { resolvedLocale != requestedLocale }
     /// Must the viewer/PDF show "Draft translation - language review pending"?
     public var needsDraftLabel: Bool { resolvedLocale != "en" && reviewState != .reviewed }
@@ -60,7 +62,8 @@ public struct Localizer: Sendable {
             for domain in domains.keys.sorted() {
                 if let raw = domains[domain]?[key] {
                     return LocalizedText(key: key, text: Self.fill(raw, values), requestedLocale: locale,
-                                         resolvedLocale: candidate, reviewState: reviewState(candidate, domain), isMissing: false)
+                                         resolvedLocale: candidate, reviewState: reviewState(candidate, domain), isMissing: false,
+                                         unfilledPlaceholders: Self.placeholders(in: raw).subtracting(values.keys).sorted())
                 }
             }
         }
@@ -85,11 +88,24 @@ public struct Localizer: Sendable {
         Set(tables[locale]?.values.flatMap { $0.keys } ?? [])
     }
 
-    /// Replaces `{name}` placeholders. Unknown placeholders are left visible rather than dropped.
+    /// Replaces `{name}` placeholders in a single left-to-right pass, so substituted values (which may contain braces)
+    /// are never re-expanded. Unknown placeholders are left visible rather than dropped.
     public static func fill(_ template: String, _ values: [String: String]) -> String {
         guard !values.isEmpty, template.contains("{") else { return template }
-        var out = template
-        for (k, v) in values { out = out.replacingOccurrences(of: "{\(k)}", with: v) }
+        var out = ""
+        var i = template.startIndex
+        while i < template.endIndex {
+            if template[i] == "{", let close = template[i...].firstIndex(of: "}") {
+                let name = String(template[template.index(after: i)..<close])
+                if let v = values[name], !name.contains("{") {
+                    out += v
+                    i = template.index(after: close)
+                    continue
+                }
+            }
+            out.append(template[i])
+            i = template.index(after: i)
+        }
         return out
     }
 

@@ -131,6 +131,9 @@ public enum HomeValidator {
                                  message: home.completenessNote ?? "Parts of this home are not modelled."))
         }
         let rank: [HomeIssueSeverity: Int] = [.blocking: 0, .needsConfirmation: 1, .info: 2]
+        // One issue per (kind, element): `HomeIssue.id` must be unique for SwiftUI lists.
+        var seenIssues = Set<String>()
+        out = out.filter { seenIssues.insert($0.id).inserted }
         return out.sorted { (rank[$0.severity]!, $0.kind.rawValue, $0.elementID) < (rank[$1.severity]!, $1.kind.rawValue, $1.elementID) }
     }
 }

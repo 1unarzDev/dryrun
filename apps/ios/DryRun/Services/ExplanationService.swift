@@ -21,6 +21,8 @@ enum ExplanationService {
                 return .available
             case .unavailable(let reason):
                 return .unavailable(reason: String(describing: reason))
+            @unknown default:
+                return .unavailable(reason: "Unknown availability state")
             }
         }
         return .unavailable(reason: "Requires a newer iOS version")

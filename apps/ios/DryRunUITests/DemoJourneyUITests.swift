@@ -2,6 +2,8 @@ import XCTest
 
 /// End-to-end journeys for a simulator. AUTHORED ONLY in the first build (no macOS host was available);
 /// see docs/VERIFICATION.md. Uses an in-memory store so no vault/key state leaks between runs.
+/// XCUIApplication/XCUIElement are main-actor isolated in current SDKs; Swift 6 mode requires this.
+@MainActor
 final class DemoJourneyUITests: XCTestCase {
     private func launch() -> XCUIApplication {
         let app = XCUIApplication()
@@ -43,9 +45,11 @@ final class DemoJourneyUITests: XCTestCase {
 
     func testVietnamesePlanShowsDraftLabel() {
         let app = launch()
+        // The Lake household's preferred language is Vietnamese, so the UI and its draft label are Vietnamese
+        // (content/locales/vi: common.plan.generate, common.draftTranslation).
         app.buttons["Lake household (fictional)"].firstMatch.tap()
         app.tabBars.buttons.element(boundBy: 2).tap()
-        app.buttons["Generate plan"].firstMatch.tap()
-        XCTAssertTrue(app.staticTexts["Draft translation - language review pending"].waitForExistence(timeout: 10))
+        app.buttons["Tạo kế hoạch"].firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["Bản dịch nháp - đang chờ duyệt ngôn ngữ"].firstMatch.waitForExistence(timeout: 10))
     }
 }

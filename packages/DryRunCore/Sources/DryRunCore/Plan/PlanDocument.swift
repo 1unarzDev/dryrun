@@ -17,6 +17,8 @@ public struct PlanLine: Codable, Sendable, Hashable {
     public var isFallback: Bool
     public var isDraftTranslation: Bool
     public var sourceIDs: [String]
+    /// Template placeholders left without values (never braces typed by the household).
+    public var unfilledPlaceholders: [String] = []
 }
 
 public struct PlanSection: Codable, Sendable, Hashable, Identifiable {
@@ -107,7 +109,7 @@ public enum PlanValidator {
         }
         for line in lines {
             if line.text == line.key { issues.append(.unresolvedKey(line.key)) }
-            if !Localizer.placeholders(in: line.text).isEmpty { issues.append(.unfilledPlaceholder(line.text)) }
+            if !line.unfilledPlaceholders.isEmpty { issues.append(.unfilledPlaceholder(line.text)) }
         }
         if lines.contains(where: \.isDraftTranslation) && doc.draftTranslationBanner == nil { issues.append(.draftWithoutBanner) }
         if lines.contains(where: \.isFallback) && doc.fallbackNote == nil { issues.append(.fallbackWithoutNote) }

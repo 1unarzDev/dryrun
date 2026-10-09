@@ -19,11 +19,17 @@ public struct RehearsalCursor: Sendable, Equatable {
     public var currentMinute: Int { revealed == 0 ? 0 : result.events[revealed - 1].simMinute }
     public var isFinished: Bool { revealed >= result.events.count && pendingDecision == nil }
 
-    /// The earliest unanswered decision at or before the next event's time.
+    /// The earliest unanswered decision that the cursor has reached: the next event is that decision's own choice event
+    /// (`evt.<decisionID>`), or lies after the decision's time. Same-minute events that precede the choice event in the
+    /// engine's order (e.g. the smoke alarm) are revealed first.
     public var pendingDecision: DecisionPoint? {
-        let nextMinute = revealed < result.events.count ? result.events[revealed].simMinute : Int.max
+        let next = revealed < result.events.count ? result.events[revealed] : nil
         return result.decisions
-            .filter { result.input.choices[$0.id] == nil && $0.simMinute <= nextMinute }
+            .filter { d in
+                guard result.input.choices[d.id] == nil else { return false }
+                guard let next else { return true }
+                return next.id == "evt.\(d.id)" || next.simMinute > d.simMinute
+            }
             .min { ($0.simMinute, $0.id) < ($1.simMinute, $1.id) }
     }
 

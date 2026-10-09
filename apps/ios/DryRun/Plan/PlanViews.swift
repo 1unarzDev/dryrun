@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import PDFKit
 import DryRunCore
 
@@ -180,6 +181,6 @@ enum Printing {
         info.jobName = "Dry Run plan"
         controller.printInfo = info
         controller.printingItem = url
-        controller.present(animated: true)
+        controller.present(animated: true, completionHandler: nil)
     }
 }

@@ -16,7 +16,6 @@
   "plan.section.unconfirmed": "Still unconfirmed",
   "plan.section.dates": "Plan dates",
   "plan.section.sources": "Sources",
-
   "plan.person.line": "{alias} — {needs}",
   "plan.person.noNeeds": "no assistance needs recorded",
   "plan.person.helper": "{helper} helps {alias}",
@@ -45,7 +44,6 @@
   "plan.water.storedUnknown": "unknown",
   "plan.water.storedGallons": "{gallons} gallons",
   "plan.water.pets": "Add extra water for pets.",
-
   "plan.route.from": "From {start}: {steps}.",
   "plan.route.alt": "If blocked, second way out from {start}: {steps}.",
   "plan.route.altShared": "The second way out from {start} shares {chokepoint} with the first, so it is not an independent exit.",
@@ -63,7 +61,6 @@
   "plan.shelter.notCertified": "This is a household-chosen spot, not an engineered safe room.",
   "plan.shelter.missing": "No shelter spot is chosen yet.",
   "plan.shelter.manufactured": "Manufactured homes are not safe shelter in a tornado. Decide in advance which sturdy building you will go to, and leave early when officials advise.",
-
   "plan.dates.line": "Plan generated {generated}. Household information revision {householdRevision}; home revision {homeRevision}; content version {contentVersion}.",
   "plan.dates.reviewed": "Last reviewed by the household: {reviewed}.",
   "plan.dates.notReviewed": "Not yet reviewed by the household.",
@@ -72,7 +69,6 @@
   "plan.fallbackNote": "Some lines are shown in English because a translation is not available yet.",
   "plan.footer.practice": "Dry Run practice plan. Rehearsals are exercises under stated assumptions; they do not verify how a real emergency will go.",
   "plan.moreDetails": "More details continue on the next page.",
-
   "plan.scenario.freeze-power-loss.immediate.1": "If an essential device loses power, follow its care plan and the backup you arranged. In an emergency, call 911.",
   "plan.scenario.freeze-power-loss.immediate.2": "Never use an oven, stove, grill, or camp heater to heat your home.",
   "plan.scenario.freeze-power-loss.immediate.3": "Use a generator only outdoors, at least 20 feet from windows, doors, and vents. Never run one in a home or garage.",
@@ -98,11 +94,13 @@
   "plan.scenario.water-outage.immediate.2": "Boil water advisory: use bottled or stored water, or bring tap water to a rolling boil for 1 minute (3 minutes above 6,500 feet), as your utility advises.",
   "plan.scenario.water-outage.immediate.3": "Do not drink advisory: do not drink the tap water and do not boil it. Boiling does not remove chemicals.",
   "plan.scenario.water-outage.immediate.4": "Do not use advisory: do not use tap water for any purpose. Use stored or bottled water.",
-
   "plan.scenario.freeze-power-loss.sources": "S20, S25, S26",
   "plan.scenario.heat-grid-strain.sources": "S21",
   "plan.scenario.tornado.sources": "S22",
   "plan.scenario.flash-flood.sources": "S23, S18",
   "plan.scenario.home-fire.sources": "S19",
-  "plan.scenario.water-outage.sources": "S24, S26"
+  "plan.scenario.water-outage.sources": "S24, S26",
+  "plan.route.outside": "outside",
+  "plan.route.unknownRoom": "an unconfirmed room",
+  "plan.route.door": "the door between {a} and {b}"
 }

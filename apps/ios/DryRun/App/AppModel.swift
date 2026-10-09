@@ -63,6 +63,13 @@ final class AppModel {
         return PublicAPIClient(baseURL: base, store: PublicPackStore(directory: dir))
     }
 
+    /// Plans also depend on the selected language: a late English plan must not land after switching to Vietnamese.
+    var planKey: RevisionKey? {
+        guard var key = currentKey else { return nil }
+        key.algorithmVersion = "plan/\(PlanDocument.schemaVersion)/\(locale)"
+        return key
+    }
+
     // MARK: - Startup
 
     func start() async {
@@ -200,7 +207,7 @@ final class AppModel {
 
     /// Builds a plan for the selected scenarios by running each deterministically, then saves it in the vault.
     func generatePlan(scenarioIDs: [String], includePrivateNotes: Bool) async {
-        guard let household, let home, let content, let scenarios, let engine, let key = currentKey else { return }
+        guard let household, let home, let content, let scenarios, let engine, let key = planKey else { return }
         let ticket = planGate.begin(for: key)
         let locale = self.locale
         let localizer = content.localizer(for: locale)
@@ -220,7 +227,7 @@ final class AppModel {
                                          options: .init(includePrivateNotes: includePrivateNotes))
             }.value
             // Language or household changed while building: drop this plan rather than save a mismatched one.
-            guard planGate.shouldApply(ticket, current: currentKey), doc.locale == self.locale else { return }
+            guard planGate.shouldApply(ticket, current: planKey) else { return }
             savedPlan = doc
             await persist()
         } catch {

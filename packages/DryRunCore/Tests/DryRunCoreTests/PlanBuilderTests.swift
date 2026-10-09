@@ -74,7 +74,8 @@ struct PlanBuilderTests {
         let doc = PlanBuilder.build(household: SampleHouseholds.lake, home: Self.tinyHome(), results: [], localizer: l,
                                     resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
         #expect(doc.pages[0].title == "Thông tin thiết yếu của gia đình")
-        #expect(doc.draftTranslationBanner == l.text("plan.draftBanner").text)
+        #expect(doc.draftTranslationBanner?.contains("Draft translation - language review pending") == true,
+                "the exact English draft phrase is always visible alongside the localized banner")
         #expect(PlanValidator.validate(doc, household: SampleHouseholds.lake).isEmpty)
     }
 
