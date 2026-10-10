@@ -4,6 +4,8 @@
 set -u
 # shellcheck source=scripts/mac/lib.sh
 . "$(dirname "$0")/lib.sh"
+# Report on the Xcode the other scripts would use, even if xcode-select still points at the Command Line Tools.
+select_xcode
 
 report() {
   echo "# Dry Run macOS environment"
@@ -16,7 +18,7 @@ report() {
   echo "- Free disk (repo volume): $(df -h "$ROOT" | awk 'NR==2 {print $4}')"
   echo
   echo "## Toolchain"
-  echo "- xcode-select: $(xcode-select -p 2>/dev/null | sed "s#$HOME#~#")"
+  echo "- xcode-select: $(xcode-select -p 2>/dev/null | sed "s#$HOME#~#")${DEVELOPER_DIR:+ (using DEVELOPER_DIR=${DEVELOPER_DIR/#$HOME/~})}"
   echo "- Xcode: $(xcodebuild -version 2>/dev/null | tr '\n' ' ')"
   echo "- iOS SDK: $(xcrun --sdk iphoneos --show-sdk-version 2>/dev/null || echo missing) · Simulator SDK: $(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null || echo missing)"
   echo "- Swift: $(swift --version 2>/dev/null | head -1)"
@@ -33,7 +35,10 @@ report() {
   echo "- XcodeGen: $(xcodegen --version 2>/dev/null || echo 'missing — brew install xcodegen')"
   echo "- Node: $(node --version 2>/dev/null || echo missing) · pnpm: $(pnpm --version 2>/dev/null || echo missing)"
   echo "- Valid code-signing identities: $(security find-identity -v -p codesigning 2>/dev/null | tail -1 | awk '{print $1}') (names not recorded)"
-  echo "- FoundationModels framework in SDK: $([ -d "$(xcrun --sdk iphoneos --show-sdk-path 2>/dev/null)/System/Library/Frameworks/FoundationModels.framework" ] && echo yes || echo no)"
+  # Without an iOS SDK the path is empty, and the test would look at the host's own /System/Library/Frameworks.
+  local ios_sdk
+  ios_sdk="$(xcrun --sdk iphoneos --show-sdk-path 2>/dev/null)"
+  echo "- FoundationModels framework in SDK: $([ -n "$ios_sdk" ] && [ -d "$ios_sdk/System/Library/Frameworks/FoundationModels.framework" ] && echo yes || echo no)"
   echo
   echo "## iOS simulator runtimes"
   xcrun simctl list runtimes 2>/dev/null | grep -E '^iOS' | sed 's/^/- /'

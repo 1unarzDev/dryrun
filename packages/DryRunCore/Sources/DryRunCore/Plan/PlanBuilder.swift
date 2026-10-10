@@ -7,10 +7,15 @@ public enum PlanBuilder {
         public var includePrivateNotes: Bool
         public var maxPreparationsPerScenario: Int
         public var reviewedAt: Date?
-        public init(includePrivateNotes: Bool = false, maxPreparationsPerScenario: Int = 3, reviewedAt: Date? = nil) {
+        /// Calendar days in the plan ("generated", "reviewed") are the household's local days. Defaults to UTC so a
+        /// build stays deterministic; the app passes the device's time zone.
+        public var timeZone: TimeZone
+        public init(includePrivateNotes: Bool = false, maxPreparationsPerScenario: Int = 3, reviewedAt: Date? = nil,
+                    timeZone: TimeZone = TimeZone(identifier: "UTC")!) {
             self.includePrivateNotes = includePrivateNotes
             self.maxPreparationsPerScenario = maxPreparationsPerScenario
             self.reviewedAt = reviewedAt
+            self.timeZone = timeZone
         }
     }
 
@@ -89,10 +94,10 @@ public enum PlanBuilder {
         sections.append(b.section("water", "plan.section.water", waterLines(b, h), critical: false))
 
         var dates = [b.line("plan.dates.line", [
-            "generated": isoDay(generatedAt), "householdRevision": "\(h.revision)",
+            "generated": isoDay(generatedAt, options.timeZone), "householdRevision": "\(h.revision)",
             "homeRevision": "\(home.revision)", "contentVersion": contentVersion,
         ])]
-        dates.append(options.reviewedAt.map { b.line("plan.dates.reviewed", ["reviewed": isoDay($0)]) } ?? b.line("plan.dates.notReviewed"))
+        dates.append(options.reviewedAt.map { b.line("plan.dates.reviewed", ["reviewed": isoDay($0, options.timeZone)]) } ?? b.line("plan.dates.notReviewed"))
         sections.append(b.section("dates", "plan.section.dates", dates, critical: false))
 
         return PlanPage(id: "essentials", kind: .essentials, title: b.l("plan.title.essentials"), sections: sections)
@@ -305,9 +310,10 @@ public enum PlanBuilder {
         v == v.rounded() ? String(Int(v)) : String(format: "%.1f", v)
     }
 
-    static func isoDay(_ d: Date) -> String {
+    static func isoDay(_ d: Date, _ timeZone: TimeZone) -> String {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withFullDate]
+        f.timeZone = timeZone
         return f.string(from: d)
     }
 

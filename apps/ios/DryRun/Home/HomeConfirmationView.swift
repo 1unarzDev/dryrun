@@ -57,7 +57,7 @@ struct HomeConfirmationView: View {
         case .labelSpace:
             Section {
                 TextField("Room name", text: $labelText)
-                Picker("Room type", selection: $labelKind) { ForEach(SpaceKind.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Room type", selection: $labelKind) { ForEach(SpaceKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
                 Button("Save name") { answer(.labelSpace(spaceID: step.elementID, label: labelText.isEmpty ? "Room" : labelText, kind: labelKind), for: step) }
                 Button("Room needs measuring") { answer(.needsMeasurement(spaceID: step.elementID), for: step) }
             }

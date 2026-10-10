@@ -57,6 +57,21 @@ struct PlanBuilderTests {
         #expect(water.contains("storage target"))
     }
 
+    @Test("Plan dates are the household's local calendar day, not the UTC day")
+    func planDatesUseLocalDay() throws {
+        let l = try Self.localizer("en")
+        // 2026-10-10 03:00 UTC is still the evening of 2026-10-09 in Texas (UTC-5 in October).
+        let instant = ISO8601DateFormatter().date(from: "2026-10-10T03:00:00Z")!
+        func generatedLine(_ tz: TimeZone?) -> String {
+            let options = tz.map { PlanBuilder.Options(timeZone: $0) } ?? PlanBuilder.Options()
+            let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: Self.tinyHome(), results: [], localizer: l,
+                                        resources: [], contentVersion: "x", generatedAt: instant, options: options)
+            return doc.pages[0].sections.flatMap(\.lines).map(\.text).first { $0.contains("generated") } ?? ""
+        }
+        #expect(generatedLine(TimeZone(identifier: "America/Chicago")!).contains("2026-10-09"))
+        #expect(generatedLine(nil).contains("2026-10-10"), "the default stays UTC so builds are deterministic")
+    }
+
     @Test("Missing translation falls back to English visibly and the document carries the fallback note")
     func visibleFallback() throws {
         let partial = ["vi": ["plan": ["plan.title.essentials": "Thông tin thiết yếu của gia đình"]]]

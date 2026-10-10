@@ -128,7 +128,7 @@ struct ServiceStateGrid: View {
                 let state = snapshot.services[id] ?? .unknown
                 HStack {
                     Image(systemName: Theme.symbol(for: state)).foregroundStyle(Theme.color(for: state))
-                    Text(ServiceNames.name(id))
+                    Text(ServiceNames.name(id, household: model.household))
                     Spacer()
                     Text(l("common.status.\(state.rawValue)")).foregroundStyle(.secondary)
                 }
@@ -139,7 +139,7 @@ struct ServiceStateGrid: View {
                 let q = snapshot.resources[id]!
                 HStack {
                     Image(systemName: "shippingbox")
-                    Text(ServiceNames.name(id))
+                    Text(ServiceNames.name(id, household: model.household))
                     Spacer()
                     Text(q.amount.map { "\(PlanFormatting.number($0)) \(q.unit)" } ?? l("common.status.unknown"))
                         .foregroundStyle(.secondary)
@@ -159,16 +159,34 @@ enum ServiceNames {
         "svc.wellPump": "Well pump", "svc.water.supply": "Water supply", "svc.water.safety": "Water safety",
         "svc.wifi": "Home Wi-Fi", "svc.cellular": "Cell service", "svc.handset": "Phone battery", "svc.roads": "Roads",
         "svc.transport": "Transport", "res.water.stored": "Stored water", "res.handset.charge": "Phone charge",
-        "res.food.days": "Food", "svc.power.home": "Home power", "svc.alerts": "Warnings received",
+        "res.food.days": "Food", "res.handset.hours": "Phone battery time",
+        "res.handset.powerBankCharges": "Power bank charges", "svc.power.home": "Home power", "svc.alerts": "Warnings received",
         "svc.destination": "Place to go", "svc.relocated": "Relocated", "svc.water.municipal": "City water supply",
         "svc.water.utilitySafety": "Utility water safety", "svc.water.wellSafety": "Well water safety",
         "svc.wellPump.mechanical": "Well pump (equipment)", "svc.internet": "Internet",
     ]
-    static func name(_ id: String) -> String {
+    /// Device and backup IDs become the labels the household gave them; raw IDs never reach the screen.
+    static func name(_ id: String, household: HouseholdProfile?) -> String {
         if let n = names[id] { return n }
-        if id.hasPrefix("svc.device.") { return "Device: \(id.dropFirst("svc.device.".count))" }
-        if id.hasPrefix("res.backup.") { return "Backup energy: \(id.dropFirst("res.backup.".count))" }
-        return id
+        if id.hasPrefix("svc.device.") { return HouseholdLabels.equipment(String(id.dropFirst("svc.device.".count)), in: household) }
+        if id.hasPrefix("res.backup.") {
+            return "Backup energy: \(HouseholdLabels.backup(String(id.dropFirst("res.backup.".count)), in: household))"
+        }
+        if id.hasPrefix("res.device."), id.hasSuffix(".runtime") {
+            let eid = String(id.dropFirst("res.device.".count).dropLast(".runtime".count))
+            return "\(HouseholdLabels.equipment(eid, in: household)) runtime"
+        }
+        return UnknownNames.fallback(id)
+    }
+}
+
+/// Household-given names for equipment and backup sources, looked up by ID.
+enum HouseholdLabels {
+    static func equipment(_ id: String, in household: HouseholdProfile?) -> String {
+        household?.equipment.first { $0.id == id }?.label ?? "Essential device"
+    }
+    static func backup(_ id: String, in household: HouseholdProfile?) -> String {
+        household?.backupPower.first { $0.id == id }?.label ?? "backup power source"
     }
 }
 
@@ -306,7 +324,7 @@ struct DebriefView: View {
                 }
                 if !result.unknowns.isEmpty {
                     Section(l("common.unconfirmed")) {
-                        ForEach(result.unknowns, id: \.self) { Text(UnknownNames.describe($0)) }
+                        ForEach(result.unknowns, id: \.self) { Text(UnknownNames.describe($0, household: model.household)) }
                     }
                 }
             }
@@ -316,9 +334,68 @@ struct DebriefView: View {
     }
 }
 
+/// Plain-language names for the household facts a rehearsal or preparation depends on (IDs from the core engine).
 enum UnknownNames {
-    static func describe(_ id: String) -> String {
-        id.replacingOccurrences(of: ".", with: " › ")
+    static let names = [
+        "housing.heatingNeedsElectricity": "Whether your heating needs electricity",
+        "housing.heatingFuel": "What fuel your heating uses",
+        "housing.cooling": "How your home is cooled",
+        "housing.homeType": "Your type of home",
+        "housing.waterSource": "Where your water comes from",
+        "housing.wellPumpElectric": "Whether your well pump needs electricity",
+        "housing.wellPressureTankGallons": "How much water your well pressure tank holds",
+        "supplies.storedWaterGallons": "How much water you have stored",
+        "supplies.coolerAndIcePacks": "Whether you have a cooler and ice packs",
+        "pets.waterNeeds": "How much water your pets need",
+        "home.smokeAlarms": "Whether your smoke alarms work",
+        "home.portals": "Your home's doors and windows",
+        "home.spaces": "Your home's rooms",
+        "home.annotations": "Your meeting point and shelter spot",
+        "people.needs.usesWheelchair": "Whether someone uses a wheelchair",
+        "communications.batteryOrCrankRadio": "Whether you have a battery or crank radio",
+        "communications.handsetRuntimeHours": "How long your phones last on battery",
+        "communications.powerBankCharges": "How many phone charges your power banks hold",
+        "communications.routerOnBackup": "Whether your internet router has backup power",
+    ]
+
+    static func describe(_ id: String, household: HouseholdProfile?) -> String {
+        if let n = names[id] { return n }
+        let parts = id.split(separator: ".", maxSplits: 2).map(String.init)
+        if parts.count >= 2, parts[0] == "equipment" {
+            let device = HouseholdLabels.equipment(parts[1], in: household)
+            switch parts.count > 2 ? parts[2] : "" {
+            case "backup": return "A backup that works with \(device)"
+            case "runtime", "documentedBackupRuntimeHours": return "How long \(device) runs on its backup"
+            case "backupOutcome": return "Whether \(device)'s backup lasts through the outage"
+            default: return device
+            }
+        }
+        if parts.count >= 2, parts[0] == "backup" {
+            let backup = HouseholdLabels.backup(parts[1], in: household)
+            switch parts.count > 2 ? parts[2] : "" {
+            case "setupConfirmed": return "Whether \(backup) is set up and tested"
+            case "usableEnergyWh": return "How much energy \(backup) holds"
+            case "safeOutdoorPlacementConfirmed": return "A safe outdoor spot for \(backup)"
+            default: return backup
+            }
+        }
+        if parts.count >= 2, parts[0] == "person" {
+            let name = household?.people.first { $0.id == parts[1] }?.alias ?? "A household member"
+            switch parts.count > 2 ? parts[2] : "" {
+            case "sleepingSpaceID": return "Where \(name) sleeps"
+            case "helperPersonID": return "Who helps \(name)"
+            case "needs": return "What \(name) needs"
+            default: return name
+            }
+        }
+        return ServiceNames.names[id] ?? fallback(id)
+    }
+
+    /// Last resort for an ID with no name yet: the final segment, de-camel-cased ("routerOnBackup" → "router on backup").
+    static func fallback(_ id: String) -> String {
+        let last = id.split(separator: ".").last.map(String.init) ?? id
+        let spaced = last.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1 $2", options: .regularExpression)
+        return spaced.prefix(1).uppercased() + spaced.dropFirst().lowercased()
     }
 }
 
@@ -352,13 +429,19 @@ struct RecommendationDetailView: View {
             Section(l("common.why")) {
                 Text(l(r.whyKey, r.templateValues))
                 if let explanation { Text(explanation).font(.callout).foregroundStyle(.secondary) }
-                if !r.matchedFactIDs.isEmpty { Text("Based on: \(r.matchedFactIDs.joined(separator: ", "))").font(.caption) }
-                if !r.causeEventIDs.isEmpty { Text("Rehearsal events: \(r.causeEventIDs.joined(separator: ", "))").font(.caption) }
+                if !r.matchedFactIDs.isEmpty {
+                    Text("Based on: \(r.matchedFactIDs.map { UnknownNames.describe($0, household: model.household) }.joined(separator: "; "))")
+                        .font(.caption)
+                }
+                let causes = r.causeEventIDs.compactMap { id in model.rehearsal?.result.events.first { $0.id == id } }
+                if !causes.isEmpty {
+                    Text("Rehearsal events: \(causes.map { l($0.titleKey, $0.templateValues) }.joined(separator: "; "))").font(.caption)
+                }
             }
             if let effect = r.modeledEffectKey { Section(l("common.whatChanges")) { Text(l(effect, r.templateValues)) } }
             if !r.unconfirmed.isEmpty || !r.feasibilityNotes.isEmpty {
                 Section(l("common.unconfirmed")) {
-                    ForEach(r.unconfirmed, id: \.self) { Text(UnknownNames.describe($0)) }
+                    ForEach(r.unconfirmed, id: \.self) { Text(UnknownNames.describe($0, household: model.household)) }
                     ForEach(r.feasibilityNotes, id: \.self) { Text(l($0)) }
                 }
             }
@@ -424,17 +507,17 @@ struct ComparisonView: View {
                     ForEach(c.diff.serviceChanges.keys.sorted(), id: \.self) { id in
                         let states = c.diff.serviceChanges[id] ?? []
                         if states.count == 2 {
-                            Text("\(ServiceNames.name(id)): \(l("common.status.\(states[0].rawValue)")) → \(l("common.status.\(states[1].rawValue)"))")
+                            Text("\(ServiceNames.name(id, household: model.household)): \(l("common.status.\(states[0].rawValue)")) → \(l("common.status.\(states[1].rawValue)"))")
                         }
                     }
                     ForEach(c.diff.resourceChanges.keys.sorted(), id: \.self) { id in
                         let q = c.diff.resourceChanges[id] ?? []
                         if q.count == 2 {
-                            Text("\(ServiceNames.name(id)): \(q[0].amount.map(PlanFormatting.number) ?? "unknown") → \(q[1].amount.map(PlanFormatting.number) ?? "unknown") \(q[1].unit)")
+                            Text("\(ServiceNames.name(id, household: model.household)): \(q[0].amount.map(PlanFormatting.number) ?? "unknown") → \(q[1].amount.map(PlanFormatting.number) ?? "unknown") \(q[1].unit)")
                         }
                     }
-                    ForEach(c.diff.resolvedRequirements, id: \.self) { Label(l("common.resolved", ["item": UnknownNames.describe($0)]), systemImage: "checkmark") }
-                    ForEach(c.diff.newRequirements, id: \.self) { Label(l("common.newGap", ["item": UnknownNames.describe($0)]), systemImage: "exclamationmark.triangle") }
+                    ForEach(c.diff.resolvedRequirements, id: \.self) { Label(l("common.resolved", ["item": UnknownNames.describe($0, household: model.household)]), systemImage: "checkmark") }
+                    ForEach(c.diff.newRequirements, id: \.self) { Label(l("common.newGap", ["item": UnknownNames.describe($0, household: model.household)]), systemImage: "exclamationmark.triangle") }
                 }
                 Section(l("common.events")) {
                     ForEach(c.diff.removedEventIDs, id: \.self) { id in

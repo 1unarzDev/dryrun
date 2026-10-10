@@ -5,8 +5,9 @@ household. The rehearsals show how one failure causes others, let the family com
 with a plan they can open offline.
 
 > **Status: AI-assisted first-review prototype (2026-10-09).** The core engine, routing, vault, and backend are
-> tested on Linux. The iOS app is **authored but has not been compiled yet**, because no Mac was available. All safety
-> content and translations are unreviewed drafts. See `docs/VERIFICATION.md` and `docs/AI_ASSISTANCE.md`.
+> tested. The iOS app builds with Xcode 27 and passes its UI journeys and the 42-screen tour on the iOS 27 simulator;
+> it has not been run on a physical iPhone. All safety content and translations are unreviewed drafts. See
+> `docs/VERIFICATION.md` and `docs/AI_ASSISTANCE.md`.
 
 ## What runs today
 
@@ -15,7 +16,7 @@ with a plan they can open offline.
 | `packages/DryRunCore`: models, simulation, ranking, routing, plan builder (Foundation-only) | `scripts/swift.sh packages/DryRunCore test` (Swift 6.2 in Docker) or `swift test` on macOS | Tested |
 | `packages/DryRunVault`: encrypted vault, public pack cache | `scripts/swift.sh packages/DryRunVault test` | Tested (Linux uses swift-crypto; Keychain/file protection need a device) |
 | `services/public-api`: Hono public-data Worker | `cd services/public-api && pnpm install && pnpm test` · local: `pnpm dev` | Tested locally, not deployed |
-| `apps/ios`: SwiftUI app | `cd apps/ios && xcodegen && open DryRun.xcodeproj` | Authored only (syntax-parsed) |
+| `apps/ios`: SwiftUI app | `cd apps/ios && xcodegen && open DryRun.xcodeproj` · `scripts/mac/verify.sh` | Builds; UI tests pass on the simulator (not yet on a device) |
 
 ### Requirements
 - Core/vault: Docker (the `swift:6.2` image) **or** Swift 6 / Xcode 26 on macOS.

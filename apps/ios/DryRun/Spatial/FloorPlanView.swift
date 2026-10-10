@@ -65,19 +65,22 @@ struct FloorPlanView: View {
     // MARK: Drawing
 
     private struct Fit {
-        let scale: Double, minX: Double, maxY: Double, pad: Double
-        func pt(_ v: Vec2) -> CGPoint { CGPoint(x: pad + (v.x - minX) * scale, y: pad + (maxY - v.y) * scale) }
+        let scale: Double, minX: Double, maxY: Double, offset: CGPoint
+        func pt(_ v: Vec2) -> CGPoint { CGPoint(x: offset.x + (v.x - minX) * scale, y: offset.y + (maxY - v.y) * scale) }
     }
 
+    /// Fits and centres the rooms only. Outdoor markers (meeting point, hydrant) can be far from the house; including
+    /// them shrank the plan into a corner, so they are drawn pinned to the canvas edge instead (see `draw`).
     private func fit(_ size: CGSize, _ fid: String) -> Fit? {
         var pts = home.spaces.filter { $0.floorID == fid }.flatMap(\.polygon)
-        pts += home.annotations.filter { $0.floorID == fid && $0.spaceID == nil }.compactMap(\.position)
+        if pts.isEmpty { pts = home.annotations.filter { $0.floorID == fid }.compactMap(\.position) }
         guard let minX = pts.map(\.x).min(), let maxX = pts.map(\.x).max(),
               let minY = pts.map(\.y).min(), let maxY = pts.map(\.y).max() else { return nil }
-        let pad = 18.0
+        let pad = 22.0
         let w = max(maxX - minX, 0.5), h = max(maxY - minY, 0.5)
-        let scale = min((Double(size.width) - 2 * pad) / w, (Double(size.height) - 2 * pad) / h)
-        return Fit(scale: max(scale, 1), minX: minX, maxY: maxY, pad: pad)
+        let scale = max(min((Double(size.width) - 2 * pad) / w, (Double(size.height) - 2 * pad) / h), 1)
+        let offset = CGPoint(x: (Double(size.width) - w * scale) / 2, y: (Double(size.height) - h * scale) / 2)
+        return Fit(scale: scale, minX: minX, maxY: maxY, offset: offset)
     }
 
     private func path(_ poly: [Vec2], _ f: Fit, closed: Bool) -> Path {
@@ -116,13 +119,36 @@ struct FloorPlanView: View {
                 ctx.draw(Text("?").font(.system(size: 11, weight: .bold)).foregroundStyle(PlanColors.unverified), at: f.pt(p.center), anchor: .center)
             }
         }
-        for s in spaces {
-            let c = Geometry.centroid(s.polygon)
-            ctx.draw(Text(s.label).font(.caption2).foregroundStyle(PlanColors.label), at: f.pt(c), anchor: .center)
-        }
+        let bounds = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
+        var markers: [CGPoint] = []
         for a in home.annotations where a.floorID == fid {
             guard let pos = a.position else { continue }
-            ctx.draw(Text(Image(systemName: Self.symbol(a.kind))).font(.system(size: 13)).foregroundStyle(Self.color(a.kind)), at: f.pt(pos), anchor: .center)
+            let p = f.pt(pos)
+            let pinned = CGPoint(x: min(max(p.x, bounds.minX), bounds.maxX), y: min(max(p.y, bounds.minY), bounds.maxY))
+            markers.append(pinned)
+            ctx.draw(Text(Image(systemName: Self.symbol(a.kind))).font(.system(size: 13)).foregroundStyle(Self.color(a.kind)), at: pinned, anchor: .center)
+        }
+        for s in spaces {
+            // A label that does not fit its room is shrunk, then dropped rather than drawn across a neighbour; the
+            // room list and the VoiceOver summary name every room.
+            let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
+            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
+            for font in [Font.caption2, .system(size: 8)] {
+                let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
+                let need = text.measure(in: CGSize(width: room.width, height: .infinity))
+                if need.width <= room.width && need.height <= room.height {
+                    // Safety markers often sit at the room centre: move the name above one rather than cover it.
+                    var c = f.pt(Geometry.centroid(s.polygon))
+                    if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
+                        c.y = max(c.y - need.height / 2 - 9, (ys.min() ?? c.y) + need.height / 2 + 1)
+                    }
+                    let rect = CGRect(x: c.x - need.width / 2, y: c.y - need.height / 2, width: need.width, height: need.height)
+                    ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                             with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
+                    ctx.draw(text, in: rect)
+                    break
+                }
+            }
         }
         for (i, r) in routes.enumerated() {
             for leg in r.legs where leg.floorID == fid && leg.points.count >= 2 {

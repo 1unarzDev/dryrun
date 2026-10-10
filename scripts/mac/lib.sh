@@ -7,7 +7,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 IOS_DIR="$ROOT/apps/ios"
 PROJECT="$IOS_DIR/DryRun.xcodeproj"
 SCHEME="DryRun"
-BUNDLE_ID="${BUNDLE_ID:-org.example.dryrun.app}"
+PLACEHOLDER_BUNDLE_ID="org.example.dryrun.app"
+BUNDLE_ID="${BUNDLE_ID:-$PLACEHOLDER_BUNDLE_ID}"
 DERIVED="$ROOT/.build-mac/DerivedData"
 ART_ROOT="$ROOT/artifacts"
 
@@ -24,6 +25,66 @@ export PATH
 log() { printf '\n==> %s\n' "$*"; }
 warn() { printf 'WARNING: %s\n' "$*" >&2; }
 have() { command -v "$1" >/dev/null 2>&1; }
+
+# Builds, simulators, and devices need Xcode; the Command Line Tools alone have no iOS SDK, simctl, or devicectl, and
+# their Swift is usually too old for the packages. If Xcode is installed but not selected (xcode-select still points at
+# the Command Line Tools), use it through DEVELOPER_DIR rather than asking for sudo.
+select_xcode() {
+  local dev app
+  dev="${DEVELOPER_DIR:-$(xcode-select -p 2>/dev/null)}"
+  case "$dev" in *.app/Contents/Developer) [ -d "$dev" ] && return 0 ;; esac
+  for app in /Applications/Xcode.app /Applications/Xcode*.app "$HOME"/Applications/Xcode*.app; do
+    if [ -d "$app/Contents/Developer" ]; then
+      export DEVELOPER_DIR="$app/Contents/Developer"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Which Xcode can be installed depends on macOS: the Mac App Store only offers the newest, which may not run here.
+xcode_install_hint() {
+  local mac major minor
+  mac="$(sw_vers -productVersion)"; major="${mac%%.*}"; minor="$(echo "$mac" | cut -d. -f2)"
+  if [ "$major" -ge 26 ]; then
+    echo "Install Xcode from the Mac App Store (or https://developer.apple.com/download/all/)."
+  elif [ "$major" -eq 15 ] && [ "${minor:-0}" -ge 6 ]; then
+    echo "On macOS $mac the newest Xcode that runs is 26.3; the App Store version (26.4+) needs macOS Tahoe 26.2."
+    echo "Download 'Xcode 26.3' from https://developer.apple.com/download/all/ (free Apple Account), double-click the"
+    echo ".xip, and move Xcode.app to /Applications. Or update macOS to Tahoe and use the App Store."
+  elif [ "$major" -eq 15 ] && [ "${minor:-0}" -ge 3 ]; then
+    echo "On macOS $mac use Xcode 16.4 from https://developer.apple.com/download/all/ (or update macOS for Xcode 26)."
+  else
+    echo "macOS $mac is too old: Xcode 16.3+ (macOS 15.3+) is the minimum for this project."
+  fi
+}
+
+# require_xcode: selects Xcode and checks it is usable. Prints what to do and returns 1 if not.
+require_xcode() {
+  if ! select_xcode; then
+    warn "Xcode is not installed (xcode-select points at: $(xcode-select -p 2>/dev/null || echo nothing))."
+    xcode_install_hint >&2
+    echo "Then run once: sudo xcode-select -s /Applications/Xcode.app && sudo xcodebuild -runFirstLaunch" >&2
+    return 1
+  fi
+  if ! xcodebuild -license check >/dev/null 2>&1; then
+    warn "The Xcode license has not been accepted. Run: sudo xcodebuild -license accept"
+    return 1
+  fi
+  if ! xcodebuild -checkFirstLaunchStatus >/dev/null 2>&1; then
+    warn "Xcode needs its first-launch components. Run: sudo xcodebuild -runFirstLaunch"
+    return 1
+  fi
+  local mm
+  mm="$(xcrun swift --version 2>/dev/null | sed -nE 's/.*Swift version ([0-9]+)\.([0-9]+).*/\1 \2/p' | head -1)"
+  # shellcheck disable=SC2086
+  if [ -n "$mm" ] && set -- $mm && { [ "$1" -lt 6 ] || { [ "$1" -eq 6 ] && [ "$2" -lt 1 ]; }; }; then
+    warn "$(xcodebuild -version | head -1) has Swift $1.$2; the packages need Swift 6.1 (Xcode 16.3) or later."
+    xcode_install_hint >&2
+    return 1
+  fi
+  return 0
+}
 
 # new_run <prefix>  -> sets OUT (artifact dir for this run) and STEPS file
 new_run() {
@@ -94,7 +155,8 @@ for runtime, devices in data.items():
         if best is None or key > best[0]:
             best = (key, d["udid"])
 if best is None:
-    sys.exit("no matching iPhone simulator; set SIM_NAME or SIM_UDID")
+    sys.exit("no matching iPhone simulator; set SIM_NAME or SIM_UDID, or install an iOS simulator runtime with:"
+             " xcodebuild -downloadPlatform iOS")
 print(best[1])
 '
 }
@@ -120,6 +182,74 @@ ensure_project() {
 
 # Signing: simulator builds need none. Device builds need DEVELOPMENT_TEAM (and a unique BUNDLE_ID).
 SIM_SIGNING="CODE_SIGNING_ALLOWED=NO"
+
+# Team IDs of the valid Apple Development certificates in the login keychain, one per line. The team ID is the
+# certificate's OU; a free Personal Team's ID is not shown anywhere in Xcode's UI, so this is the easy way to find it.
+signing_teams() {
+  local valid
+  valid="$(security find-identity -v -p codesigning 2>/dev/null | awk '/Apple Development/ {print $2}')"
+  [ -n "$valid" ] || return 0
+  security find-certificate -a -Z -p -c "Apple Development" 2>/dev/null | VALID="$valid" /usr/bin/python3 -c '
+import os, re, subprocess, sys
+valid = set(os.environ["VALID"].split())
+teams = set()
+for sha, pem in re.findall(r"SHA-1 hash: ([0-9A-F]+)\n(-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----)", sys.stdin.read(), re.S):
+    if sha not in valid:
+        continue
+    subject = subprocess.run(["openssl", "x509", "-noout", "-subject", "-nameopt", "multiline"],
+                             input=pem, capture_output=True, text=True).stdout
+    m = re.search(r"organizationalUnitName\s*=\s*([A-Z0-9]{10})\b", subject)
+    if m:
+        teams.add(m.group(1))
+print("\n".join(sorted(teams)))
+'
+}
+
+# resolve_signing: sets DEVELOPMENT_TEAM (detected if unset), BUNDLE_ID (made unique to the team if it is still the
+# placeholder, which a Personal Team cannot register), and DEVICE_SIGNING, the xcodebuild settings for a device build.
+# DRYRUN_NO_DATA_PROTECTION=1 drops the entitlements file (its only key is default data protection) for teams whose
+# provisioning profile rejects it; the app still sets FileProtectionType.complete on every private file itself.
+resolve_signing() {
+  if [ -z "${DEVELOPMENT_TEAM:-}" ]; then
+    local teams
+    teams="$(signing_teams)"
+    case "$(printf '%s' "$teams" | grep -c .)" in
+      1) DEVELOPMENT_TEAM="$teams"; echo "Using signing team $DEVELOPMENT_TEAM (from your Apple Development certificate)" ;;
+      0)
+        warn "no Apple Development certificate found. In Xcode > Settings > Accounts, add your Apple Account (free is"
+        warn "fine), select its team, Manage Certificates… > + > Apple Development. Or set DEVELOPMENT_TEAM=<Team ID>."
+        return 1 ;;
+      *)
+        warn "several signing teams found; choose one with DEVELOPMENT_TEAM=<id>:"
+        printf '  %s\n' $teams >&2
+        return 1 ;;
+    esac
+  fi
+  if [ "$BUNDLE_ID" = "$PLACEHOLDER_BUNDLE_ID" ]; then
+    BUNDLE_ID="com.dryrun.dev.$(echo "$DEVELOPMENT_TEAM" | tr '[:upper:]' '[:lower:]')"
+    echo "Using bundle ID $BUNDLE_ID (set BUNDLE_ID to choose another)"
+  fi
+  DEVICE_SIGNING=("DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM" "DRYRUN_BUNDLE_ID=$BUNDLE_ID" -allowProvisioningUpdates)
+  [ "${DRYRUN_NO_DATA_PROTECTION:-}" = 1 ] && DEVICE_SIGNING+=("CODE_SIGN_ENTITLEMENTS=")
+  export DEVELOPMENT_TEAM BUNDLE_ID
+  return 0
+}
+
+# signing_hints <xcodebuild log>: one line per known device-signing failure, with the fix.
+signing_hints() {
+  [ -f "$1" ] || return 0
+  grep -qiE 'data.?protection' "$1" &&
+    warn "your team's profile rejects the Data Protection entitlement: rerun with DRYRUN_NO_DATA_PROTECTION=1"
+  grep -qiE 'No Accounts|No account for team|not logged in' "$1" &&
+    warn "Xcode is not signed in to that team: Xcode > Settings > Accounts"
+  grep -qiE 'is not available|cannot be registered|already (in use|been taken)' "$1" &&
+    warn "the bundle ID is taken: set BUNDLE_ID=com.<something-unique>.dryrun"
+  grep -qiE 'maximum number of (apps|App IDs)' "$1" &&
+    warn "free teams can register 10 App IDs per 7 days: reuse an earlier BUNDLE_ID or wait"
+  grep -qiE 'Developer Mode' "$1" &&
+    warn "turn on Developer Mode on the iPhone: Settings > Privacy & Security > Developer Mode (it restarts)"
+  return 0
+}
 
 # Export XCTest attachments (screenshots, a11y dumps) from an .xcresult into a folder with readable names.
 export_attachments() {

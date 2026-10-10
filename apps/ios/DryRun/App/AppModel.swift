@@ -363,7 +363,7 @@ final class AppModel {
                 let results = try inputs.map { try engine.run($0) }
                 return PlanBuilder.build(household: household, home: home, results: results, localizer: localizer,
                                          resources: resources, contentVersion: content.contentVersion, generatedAt: Date(),
-                                         options: .init(includePrivateNotes: includePrivateNotes))
+                                         options: .init(includePrivateNotes: includePrivateNotes, timeZone: .current))
             }.value
             // Language or household changed while building: drop this plan rather than save a mismatched one.
             guard planGate.shouldApply(ticket, current: planKey) else { return }
