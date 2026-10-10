@@ -24,6 +24,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 
+require_xcode || exit 1
 new_run mac
 "$(dirname "$0")/doctor.sh" "$OUT/environment.md" >/dev/null
 redact_file "$OUT/environment.md"
@@ -102,7 +103,13 @@ fi
   fi
   [ -f "$OUT/compile-warnings.txt" ] && echo "Compile warnings: $(wc -l <"$OUT/compile-warnings.txt" | xargs) unique (see compile-warnings.txt)"
   [ -d "$OUT/screenshots" ] && echo "Screenshots: $(find "$OUT/screenshots" -name '*.png' | wc -l | xargs)"
-  if ls "$OUT"/pdfs/DONE-*.txt >/dev/null 2>&1; then echo; echo "## Plan PDFs"; cat "$OUT"/pdfs/DONE-*.txt; fi
+  if ls "$OUT"/pdfs/DONE-*.txt >/dev/null 2>&1; then
+    echo; echo "## Plan PDFs"
+    # One block per household; the app writes these files without a trailing newline.
+    for f in "$OUT"/pdfs/DONE-*.txt; do
+      n="${f##*/DONE-}"; echo "### ${n%.txt}"; cat "$f"; echo
+    done
+  fi
   echo
   echo "Environment: see environment.md. Logs: logs/. Result bundles: *.xcresult (open in Xcode)."
 } >"$OUT/SUMMARY.md"
