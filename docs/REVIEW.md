@@ -14,9 +14,9 @@ DRYRUN_DUMP=1 scripts/swift.sh packages/DryRunCore test --filter PlanDemoDump
 The last command prints readable rehearsal timelines, decisions, recommendations, before/after comparisons, and a
 Vietnamese plan for the fictional households. That is the fastest way to judge the content without the app.
 
-**On a Mac with Xcode 26** (not yet done: the iOS code has never been compiled):
-`brew install xcodegen && cd apps/ios && xcodegen && open DryRun.xcodeproj`, then run on a simulator and follow the
-demo in the README. Expect some compile fixes first; see `docs/lanes/review-ios-lead.md`.
+**On a Mac** (Xcode 16.3 or later; verified with Xcode 27 on the iOS 27 simulator):
+`scripts/mac/verify.sh` runs everything and writes a bundle. To try the app by hand:
+`brew install xcodegen && cd apps/ios && xcodegen && open DryRun.xcodeproj`, then follow the demo in the README.
 
 ## Screenshots
 
@@ -34,7 +34,8 @@ None. No simulator or device was available on the Linux build host, so no honest
 
 ## Highest-priority gaps
 
-1. **iOS has not been compiled or run.** Every native integration is authored only: RoomPlan, RealityKit, MapKit, PDF, Keychain, file protection, and Foundation Models.
+1. **No physical-device run yet.** The app builds and passes its UI journeys and screenshot tour on the iOS 27
+   simulator. RoomPlan capture, Keychain and file protection, AirPrint, Foundation Models, and iOS 18 are unverified.
 2. **No human review** of safety content or translations has happened.
 3. **County directory:** only some of the 13 counties have verified emergency-management contacts.
 4. **Not deployed:** the public API, and the FEMA flood-map live adapter, which returns a fixture.

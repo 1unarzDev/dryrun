@@ -1,7 +1,8 @@
 # Frontend handoff
 
-The work and decisions that most constrain or enable UI development. The UI layer was authored but **has never been
-compiled**. Expect a first pass of compile fixes on a Mac (`docs/MACOS_VERIFICATION.md`).
+The work and decisions that most constrain or enable UI development. The UI layer builds with Xcode 27 and passes its UI journeys and the
+42-screen tour on the iOS 27 simulator (`docs/VERIFICATION.md`, macOS run). It has not run on a physical iPhone or an
+iOS 18 runtime, and RoomPlan capture and the MapKit view have not been exercised.
 
 ## 1. The UI is a thin client over a tested core
 
@@ -108,12 +109,13 @@ These are product requirements, not styling preferences:
 
 ## 6. Biggest UX gaps (good first frontend targets)
 
-1. Raw identifiers leak in three places:
-   - "Why did this happen?" shows rule and fact IDs.
-   - The debrief's "Still unconfirmed" shows dotted fact paths.
-   - Some resource names come from `ServiceNames` in English.
-
-   Map these to localized human labels. The core already provides the IDs.
+1. Raw identifiers and English-only names:
+   - **Still raw:** the timeline's "Why did this happen?" (`EventCard`) prints rule, fact, cause-event, and source IDs.
+   - **Fixed after the first simulator run:** service rows, the debrief's "Still unconfirmed", recommendation
+     "Based on", picker labels, and home issues now use readable names (`ServiceNames`, `UnknownNames`,
+     `HouseholdLabels`, `DisplayNames`, `HomeValidator.describe`).
+   - **Still English-only:** those readable names are hard-coded, so ES/VI screens show them in English. Move them
+     into the locale packs.
 2. The rehearsal screen is a plain card list. The brief asks for one focused timeline/home view; the home canvas plus
    event annotations is the open design question.
 3. Before/after is a text list. Make the cascade difference visible: the device stays powered, an event disappears.

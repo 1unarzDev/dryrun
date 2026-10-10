@@ -92,7 +92,7 @@ yet) · PARTIAL · BLOCKED.
 | Helper reachability under fire blockage | TESTED_CORE | SimulationTests.helperReach |
 | Egress planner (hard exclusions, confirmed-only evidence, wall audit, independent alternatives, typed no-route) | TESTED_CORE | RouteTests, RouteAdversarialTests (16 probes) |
 | Scan import (proposals only, shared frame required, hull fallback flagged) | TESTED_CORE (synthetic input) | **No real RoomPlan scan tested** |
-| Manual layout (rectangular rooms, doors on shared walls) | TESTED_CORE | SpatialManualLayoutTests; editor UI authored only |
+| Manual layout (rectangular rooms, doors on shared walls) | TESTED_CORE | SpatialManualLayoutTests; editor UI compiles, not exercised by UI tests |
 | Guided confirmation pass | TESTED_CORE (logic) / IMPLEMENTED (UI) | PlanConfirmationTests, LeadAdversarialTests |
 | Cache invalidation on home/household edits (revision + content fingerprint) | TESTED_CORE | RouteCache tests, PlanIntegrationTests.doorEditInvalidates |
 | Plan document (EN/ES/VI, draft/fallback labels, private notes excluded, stale detection) | TESTED_CORE | PlanBuilderTests, PlanIntegrationTests.multilingualPlans |
@@ -108,7 +108,7 @@ yet) · PARTIAL · BLOCKED.
 | ES/VI translations | PARTIAL | Complete drafts, placeholder/number parity tested, drift guard; **no human language review** |
 | SwiftUI app shell (tabs, onboarding, rehearsal, debrief, comparison, plan, help, settings) | TESTED_SIMULATOR | Xcode 27 / iOS 27 simulator; not run on a device |
 | PDF rendering (Core Text, continuation pages, share/print) | TESTED_SIMULATOR | EN/ES/VI rendered and inspected on the simulator; AirPrint untested |
-| RoomPlan capture, RealityKit dollhouse, 2D plan, MapKit | IMPLEMENTED | **Never compiled or run**; API uncertainties listed in docs/lanes/agent-b.md |
+| RoomPlan capture, RealityKit dollhouse, 2D plan, MapKit | PARTIAL | Compile on Xcode 27; 2D plan and 3D view rendered in the simulator tour. RoomPlan capture (needs LiDAR) and the MapKit view not exercised |
 | Optional on-device explanations (FoundationModels, iOS 26, gated, validator) | IMPLEMENTED | **Never run**; template fallback is the tested path |
 | UI test journeys | TESTED_SIMULATOR | 3/3 pass on the iOS 27 simulator |
 | Privacy shield, temp-export lifecycle, generic error alert | IMPLEMENTED | Device behavior unverified |
