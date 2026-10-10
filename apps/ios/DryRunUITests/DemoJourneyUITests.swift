@@ -92,7 +92,10 @@ final class DemoJourneyUITests: XCTestCase {
         XCTAssertTrue(recommendation.exists, "the medical-backup preparation is missing from the debrief")
         recommendation.tap()
 
+        // The button is in the last section of a lazy List: it is not in the tree until scrolled into view.
         let tryChange = element("recommendation.tryChange", in: app)
+        XCTAssertTrue(app.navigationBars["Preparation"].waitForExistence(timeout: 5))
+        for _ in 0..<6 where !(tryChange.exists && tryChange.isHittable) { app.swipeUp() }
         XCTAssertTrue(tryChange.waitForExistence(timeout: 5), "this preparation should offer Try this change")
         tryChange.tap()
         XCTAssertTrue(app.navigationBars["Before and after"].waitForExistence(timeout: 10))

@@ -58,7 +58,7 @@ struct ManualHomeEditorView: View {
                         .onChange(of: space.label) { _, _ in space.labelConfirmed = true; draft.bumpRevision() }
                 }
                 Picker("New room type", selection: $roomKind) {
-                    ForEach(SpaceKind.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    ForEach(SpaceKind.allCases, id: \.self) { Text($0.displayName).tag($0) }
                 }
                 TextField("New room name", text: $roomLabel)
                 Stepper(String(format: "Width %.1f m", roomWidth), value: $roomWidth, in: 1...15, step: 0.5)
@@ -104,7 +104,7 @@ struct ManualHomeEditorView: View {
                 .onDelete { idx in draft.edit { $0.annotations.remove(atOffsets: idx) } }
                 Picker("Marker", selection: $markerKind) {
                     ForEach(AnnotationKind.allCases.filter { $0 != .outsideMeetingPoint && $0 != .exteriorHydrant }, id: \.self) {
-                        Text($0.rawValue).tag($0)
+                        Text($0.displayName).tag($0)
                     }
                 }
                 Picker("Room", selection: $markerRoom) { roomOptions }

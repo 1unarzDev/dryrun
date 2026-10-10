@@ -4,11 +4,8 @@ import DryRunCore
 
 struct HomeTabView: View {
     @Environment(AppModel.self) private var model
-    @State private var mode: Mode = switch DemoLaunch.current.homeMode {
-    case "3d": .dollhouse
-    case "rooms": .rooms
-    default: .plan2D
-    }
+    // Not a `switch` expression inline: Xcode 27's @State macro does not accept one as the initial value.
+    @State private var mode: Mode = Mode.initial(DemoLaunch.current.homeMode)
     @State private var floorID: String?
     @State private var editing = false
     @State private var scanning = false
@@ -20,6 +17,14 @@ struct HomeTabView: View {
     enum Mode: String, CaseIterable, Identifiable {
         case plan2D = "2D plan", dollhouse = "3D", rooms = "Room list"
         var id: String { rawValue }
+
+        static func initial(_ demoMode: String?) -> Mode {
+            switch demoMode {
+            case "3d": .dollhouse
+            case "rooms": .rooms
+            default: .plan2D
+            }
+        }
     }
 
     var body: some View {
@@ -87,8 +92,8 @@ struct HomeTabView: View {
             if let h = model.household {
                 Section("Household systems") {
                     LabeledContent("People", value: "\(h.people.count)")
-                    LabeledContent("Heat", value: "\(h.housing.heatingFuel.rawValue) · needs power: \(tri(h.housing.heatingNeedsElectricity))")
-                    LabeledContent("Water", value: h.housing.waterSource.rawValue)
+                    LabeledContent("Heat", value: "\(h.housing.heatingFuel.displayName) · needs power: \(tri(h.housing.heatingNeedsElectricity))")
+                    LabeledContent("Water", value: h.housing.waterSource.displayName)
                     LabeledContent("Vehicle", value: h.transport.hasVehicle ? "Yes" : "No")
                     ForEach(h.equipment) { eq in
                         LabeledContent(eq.label, value: eq.compatibleBackupIDs.isEmpty ? "No confirmed backup" : "Backup listed")

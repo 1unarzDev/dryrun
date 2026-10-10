@@ -97,7 +97,7 @@ public enum HomeValidator {
                 }
             }
             if p.verification != .verified && p.verification != .rejected {
-                out.append(HomeIssue(kind: .portalUnverified, severity: .needsConfirmation, elementID: p.id, message: "Confirm this \(p.kind.rawValue)."))
+                out.append(HomeIssue(kind: .portalUnverified, severity: .needsConfirmation, elementID: p.id, message: "Confirm the \(Self.describe(p, in: home))."))
             }
             if p.leadsToExterior {
                 if !ground {
@@ -110,7 +110,7 @@ public enum HomeValidator {
                 }
             }
             if p.clearWidthMeters.value == nil && p.kind != .window && p.verification != .rejected {
-                out.append(HomeIssue(kind: .clearWidthUnknown, severity: .needsConfirmation, elementID: p.id, message: "Clear width not measured."))
+                out.append(HomeIssue(kind: .clearWidthUnknown, severity: .needsConfirmation, elementID: p.id, message: "Measure the clear width of the \(Self.describe(p, in: home))."))
             }
         }
         if !verifiedGroundExit {
@@ -135,5 +135,27 @@ public enum HomeValidator {
         var seenIssues = Set<String>()
         out = out.filter { seenIssues.insert($0.id).inserted }
         return out.sorted { (rank[$0.severity]!, $0.kind.rawValue, $0.elementID) < (rank[$1.severity]!, $1.kind.rawValue, $1.elementID) }
+    }
+
+    /// "window in Kitchen", "door between Hallway and Kitchen", "door from Kitchen to outside": which opening an issue
+    /// is about, in the household's own room names, so several "Confirm this window" rows can be told apart.
+    static func describe(_ p: Portal, in home: HomeModel) -> String {
+        func name(_ side: PortalDestination) -> String? {
+            switch side {
+            case .space(let id): home.space(id)?.label
+            case .exterior: "outside"
+            case .commonArea(let label): label
+            case .unknown: nil
+            }
+        }
+        let kind = p.kind == .window ? "window" : p.kind.rawValue.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1 $2",
+                                                                                         options: .regularExpression).lowercased()
+        let a = name(p.sideA), b = name(p.sideB)
+        switch (a, b) {
+        case let (a?, "outside"), let ("outside", a?): return p.kind == .window ? "\(kind) in \(a)" : "\(kind) from \(a) to outside"
+        case let (a?, b?): return p.kind == .window ? "\(kind) in \(a)" : "\(kind) between \(a) and \(b)"
+        case let (a?, nil), let (nil, a?): return "\(kind) in \(a)"
+        case (nil, nil): return kind
+        }
     }
 }

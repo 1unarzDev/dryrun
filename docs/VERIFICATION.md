@@ -4,7 +4,48 @@
 6.2.4); Node 26.10.0; pnpm. **No macOS, no Xcode, no iOS SDK, no simulator, no device.**
 Date: 2026-10-09.
 
-## Commands and results (final run)
+## macOS run (2026-10-09)
+
+**Platform:** macOS 27.0.1, Xcode 27.0 (27A266a), iOS 27.0 simulator (iPhone 18 Pro). No physical device.
+`scripts/mac/verify.sh`, all steps PASS (bundle `artifacts/mac-20261009-200717.tar.gz`):
+
+| Step | Result |
+|---|---|
+| core-tests (native, `swift test`) | 134 tests in 20 suites passed |
+| vault-tests (native; CryptoKit) | 31 tests in 5 suites passed |
+| backend (`pnpm test && pnpm typecheck`) | 68 tests passed; typecheck clean |
+| app-build (`build-for-testing`, simulator) | builds; no warnings in app code |
+| ui-journeys (`DemoJourneyUITests`) | 3/3 passed |
+| screenshot-tour | 14 screens × EN/ES/VI captured and inspected |
+| plan-pdfs | 3 households × EN/ES/VI rendered, validator issues: none |
+
+Fixed during this run:
+- **Compile:** Xcode 27's `@State` macro rejects a `switch` expression as an initial value (`HomeTabView.mode`).
+- **PDF:** long wrapped lines lost their opening lines (the 2-1-1 help line), because `Block.draw` used an
+  unbounded rect height. It now draws into the measured height.
+- **Plan dates:** "Plan generated" used the UTC day, so evening plans showed tomorrow's date.
+  `PlanBuilder.Options.timeZone` (default UTC) is now set to the device time zone by the app; there is a test for it.
+- **Raw IDs on screen:**
+  - Services showed "Device: eq-oxygen".
+  - Recommendation details showed fact and event IDs.
+  - Unknowns showed "backup › bk-station › setupConfirmed".
+  - Onboarding and setup pickers showed enum case names ("singleFamily").
+  - Home issues all read "Confirm this window." and now name the room.
+- **2D plan:** fitting to outdoor markers shrank the house into a corner, and room labels overlapped each other and
+  the safety markers.
+- **UI test:** "Try this change" is below the fold of a lazy `List`; the test now scrolls to it.
+- **Tooling:**
+  - `verify.sh` and `doctor.sh` did not select Xcode when `xcode-select` pointed at the Command Line Tools.
+  - `doctor.sh` reported FoundationModels present when no iOS SDK was installed.
+  - The PDF summary lines ran together.
+
+Open, not fixed:
+- Rehearsal status rows (`ServiceNames`) and the new readable fact names are English-only in ES/VI. Translating
+  them needs new locale keys and a language review.
+- The core resource unit gives "1 charges".
+- Device-only checks are still pending (below).
+
+## Commands and results (Linux run)
 
 | Command | Result |
 |---|---|
@@ -65,18 +106,18 @@ yet) · PARTIAL · BLOCKED.
 | Regional agent (public-only; typed verbatim claims; template brief) | TESTED_CORE (vitest) | Adversarially reviewed; 9 findings fixed. No model provider; not scheduled; claims not shown in app; DNS-rebinding protection relies on the Workers runtime |
 | Region directory | PARTIAL | Statewide pack; 2 verifiedPartial, 6 oemOnly, 5 notStarted of 13 counties; all `needsReview` |
 | ES/VI translations | PARTIAL | Complete drafts, placeholder/number parity tested, drift guard; **no human language review** |
-| SwiftUI app shell (tabs, onboarding, rehearsal, debrief, comparison, plan, help, settings) | IMPLEMENTED (authored, parse-checked, reviewed) | **Never compiled** |
-| PDF rendering (Core Text, continuation pages, share/print) | IMPLEMENTED | **Never rendered**; ES/VI clipping and diacritics unverified |
+| SwiftUI app shell (tabs, onboarding, rehearsal, debrief, comparison, plan, help, settings) | TESTED_SIMULATOR | Xcode 27 / iOS 27 simulator; not run on a device |
+| PDF rendering (Core Text, continuation pages, share/print) | TESTED_SIMULATOR | EN/ES/VI rendered and inspected on the simulator; AirPrint untested |
 | RoomPlan capture, RealityKit dollhouse, 2D plan, MapKit | IMPLEMENTED | **Never compiled or run**; API uncertainties listed in docs/lanes/agent-b.md |
 | Optional on-device explanations (FoundationModels, iOS 26, gated, validator) | IMPLEMENTED | **Never run**; template fallback is the tested path |
-| UI test journeys | IMPLEMENTED | **Never run** |
+| UI test journeys | TESTED_SIMULATOR | 3/3 pass on the iOS 27 simulator |
 | Privacy shield, temp-export lifecycle, generic error alert | IMPLEMENTED | Device behavior unverified |
-| Demo launch modes, SwiftUI previews, screenshot-tour UI test | IMPLEMENTED | Parse-checked only; never run |
-| macOS tooling (`scripts/mac/*`, `scripts/remote-mac.sh`, `.github/workflows/ios-verify.yml`) | IMPLEMENTED | ShellCheck-clean and `bash -n`; YAML valid; **never executed on macOS** — first run may need small fixes (`xcresulttool` flags vary by Xcode version) |
+| Demo launch modes, SwiftUI previews, screenshot-tour UI test | TESTED_SIMULATOR (tour) | Tour passes; previews not opened |
+| macOS tooling (`scripts/mac/*`, `scripts/remote-mac.sh`, `.github/workflows/ios-verify.yml`) | TESTED (verify, screens, doctor) | Run on macOS 27 / Xcode 27; device.sh, remote-mac.sh and the workflow not run |
 
 ## Pending hardware and human verification (not done; do not claim)
 
-- Compile and run on Xcode 26 / iOS 18+ simulator; run `DryRunUITests`.
+- Run on an iOS 18 simulator or device (only iOS 27 was tested).
 - Physical LiDAR RoomPlan scan → confirmation → routes in a real (consenting) home.
 - Keychain accessibility class, behavior while locked, file protection class after atomic replace, backup exclusion.
 - PDF output inspection (EN/ES/VI, longest strings, Dynamic Type), AirPrint.

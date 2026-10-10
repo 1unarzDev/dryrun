@@ -76,7 +76,11 @@ struct PlanPDFRenderer {
                                          options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).height) + spacingAfter
         }
         func draw(at point: CGPoint, width: CGFloat) {
-            attributed.draw(with: CGRect(x: point.x, y: point.y, width: width, height: .greatestFiniteMagnitude),
+            // Draw into the measured height, as `drawText` does. With a .greatestFiniteMagnitude height the opening
+            // lines of a long wrapped entry (e.g. the 2-1-1 help line) were missing from the PDF.
+            let size = attributed.boundingRect(with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                                               options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).size
+            attributed.draw(with: CGRect(x: point.x, y: point.y, width: width, height: ceil(size.height)),
                             options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
         }
     }
