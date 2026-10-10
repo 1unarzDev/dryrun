@@ -53,7 +53,7 @@ struct OnboardingView: View {
     private func summary(_ h: HouseholdProfile) -> String {
         var parts = ["\(h.people.count) people"]
         if !h.pets.isEmpty { parts.append("pets") }
-        parts.append(h.housing.homeType.rawValue)
+        parts.append(h.housing.homeType.displayName.lowercased())
         if !h.transport.hasVehicle { parts.append("no car") }
         if !h.equipment.isEmpty { parts.append("essential equipment") }
         if h.housing.waterSource == .privateWell { parts.append("private well") }
@@ -126,7 +126,7 @@ struct HouseholdSetupView: View {
                 Section(person.alias.isEmpty ? "Person" : person.alias) {
                     TextField("Nickname (no legal name needed)", text: $person.alias)
                     Picker("Age group", selection: $person.ageBand) {
-                        ForEach(AgeBand.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                        ForEach(AgeBand.allCases, id: \.self) { Text($0.displayName).tag($0) }
                     }
                     ForEach(AssistanceNeed.allCases, id: \.self) { need in
                         Toggle(model.localizer("common.need.\(need.rawValue)"), isOn: Binding(
@@ -144,7 +144,7 @@ struct HouseholdSetupView: View {
     private var petsStep: some View {
         Section("Pets") {
             ForEach($draft.pets) { $pet in
-                Picker("Kind", selection: $pet.kind) { ForEach(PetKind.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Kind", selection: $pet.kind) { ForEach(PetKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
                 Stepper("Count: \(pet.count)", value: $pet.count, in: 1...20)
                 TriStateRow(title: "Carrier or leash ready", value: $pet.carrierAvailable)
             }
@@ -155,23 +155,23 @@ struct HouseholdSetupView: View {
     private var housingStep: some View {
         Group {
             Section("Home") {
-                Picker("Home type", selection: $draft.housing.homeType) { ForEach(HomeType.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
-                Picker("You", selection: $draft.housing.tenancy) { ForEach(Tenancy.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Home type", selection: $draft.housing.homeType) { ForEach(HomeType.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker("You", selection: $draft.housing.tenancy) { ForEach(Tenancy.allCases, id: \.self) { Text($0.displayName).tag($0) } }
                 Stepper("Floors: \(draft.housing.floorCount)", value: $draft.housing.floorCount, in: 1...4)
             }
             Section {
-                Picker("Main heat", selection: $draft.housing.heatingFuel) { ForEach(HeatingFuel.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Main heat", selection: $draft.housing.heatingFuel) { ForEach(HeatingFuel.allCases, id: \.self) { Text($0.displayName).tag($0) } }
                 TriStateRow(title: "Heat needs electricity (controls, blower, or electric heat)", value: $draft.housing.heatingNeedsElectricity)
-                Picker("Cooling", selection: $draft.housing.cooling) { ForEach(CoolingKind.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Cooling", selection: $draft.housing.cooling) { ForEach(CoolingKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
             } footer: {
                 Text("Many gas furnaces still need electricity for the blower or controls. If you are not sure, leave it as Not sure.")
             }
             Section("Water and sanitation") {
-                Picker("Water", selection: $draft.housing.waterSource) { ForEach(WaterSourceKind.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Water", selection: $draft.housing.waterSource) { ForEach(WaterSourceKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
                 if draft.housing.waterSource == .privateWell {
                     TriStateRow(title: "Well pump is electric", value: $draft.housing.wellPumpElectric)
                 }
-                Picker("Sanitation", selection: $draft.housing.sanitation) { ForEach(SanitationKind.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Sanitation", selection: $draft.housing.sanitation) { ForEach(SanitationKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
             }
         }
     }
@@ -179,7 +179,7 @@ struct HouseholdSetupView: View {
     private var equipmentStep: some View {
         Section {
             ForEach($draft.equipment) { $eq in
-                Picker("Purpose", selection: $eq.purpose) { ForEach(EquipmentPurpose.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+                Picker("Purpose", selection: $eq.purpose) { ForEach(EquipmentPurpose.allCases, id: \.self) { Text($0.displayName).tag($0) } }
                 TextField("Label", text: $eq.label)
                 Toggle("Needs refrigeration (not power directly)", isOn: $eq.needsRefrigeration)
             }
