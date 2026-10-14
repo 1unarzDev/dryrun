@@ -13,6 +13,8 @@ final class ScreenshotTourUITests: XCTestCase {
         let args: [String]
         /// Accessibility identifier to tap after launch (e.g. open a sheet), if any.
         var tap: String? = nil
+        /// A second identifier to tap once the first one's screen is up.
+        var then: String? = nil
     }
 
     /// Household per locale matches each fictional household's preferred language.
@@ -21,6 +23,10 @@ final class ScreenshotTourUITests: XCTestCase {
     static func screens(household h: String) -> [Screen] {
         [
             Screen(name: "onboarding", args: []),
+            Screen(name: "next-steps", args: ["-demoHousehold", h, "-demoTab", "next"]),
+            Screen(name: "outage-card", args: ["-demoHousehold", h, "-demoTab", "next"], tap: "next.outageCard"),
+            Screen(name: "medical-setup", args: ["-demoHousehold", h, "-demoTab", "next"], tap: "next.outageCard", then: "card.fix"),
+            Screen(name: "share-family", args: ["-demoHousehold", h, "-demoTab", "next"], tap: "next.share"),
             Screen(name: "rehearse-list", args: ["-demoHousehold", h, "-demoTab", "rehearse"]),
             Screen(name: "freeze-decision", args: ["-demoHousehold", h, "-demoScenario", "freeze-power-loss", "-demoStep", "decision"]),
             Screen(name: "freeze-end", args: ["-demoHousehold", h, "-demoScenario", "freeze-power-loss", "-demoStep", "end"]),
@@ -78,7 +84,7 @@ final class ScreenshotTourUITests: XCTestCase {
         app.launch()
         // Let async content load and the rehearsal/plan finish.
         _ = app.navigationBars.firstMatch.waitForExistence(timeout: 15)
-        if let id = screen.tap {
+        for id in [screen.tap, screen.then].compactMap({ $0 }) {
             let element = app.descendants(matching: .any).matching(identifier: id).firstMatch
             // Rows of a lazy list are not in the accessibility tree until scrolled near, so scroll before giving up.
             var found = element.waitForExistence(timeout: 15)
@@ -92,8 +98,9 @@ final class ScreenshotTourUITests: XCTestCase {
                 if !wait(upTo: 20, until: { element.isEnabled }) {
                     XCTFail("\(locale)-\(screen.name): element \(id) never became enabled")
                 }
-                if !element.isHittable { app.swipeUp() }
+                for _ in 0..<4 where !element.isHittable { app.swipeUp() }
                 element.tap()
+                RunLoop.current.run(until: Date().addingTimeInterval(1.0))
             } else {
                 XCTFail("\(locale)-\(screen.name): element \(id) not found")
             }

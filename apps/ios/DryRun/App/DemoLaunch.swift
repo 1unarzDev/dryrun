@@ -5,7 +5,7 @@ import Foundation
 ///
 ///   -demoHousehold hh-oak|hh-lake|hh-pine   load a fictional household (enables demo mode)
 ///   -demoLocale en|es|vi                    plan/UI language
-///   -demoTab rehearse|home|plan|help        initial tab
+///   -demoTab next|rehearse|home|plan|help   initial tab (default: next, or rehearse with -demoScenario)
 ///   -demoScenario <scenarioID>              open that rehearsal
 ///   -demoStep start|decision|end            how far to advance it (end answers each decision with the recommended option)
 ///   -demoHomeMode 2d|3d|rooms               Home tab view

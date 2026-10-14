@@ -3,11 +3,11 @@ import DryRunCore
 
 struct RootView: View {
     @Environment(AppModel.self) private var model
-    @State private var tab = Tab(rawValue: DemoLaunch.current.tab ?? "") ?? .rehearse
+    @State private var tab = Tab(rawValue: DemoLaunch.current.tab ?? "") ?? (DemoLaunch.current.scenarioID != nil ? .rehearse : .next)
     @State private var showSettings = false
     @State private var rehearsePath: [String] = DemoLaunch.current.scenarioID.map { [$0] } ?? []
 
-    enum Tab: String, Hashable { case rehearse, home, plan, help }
+    enum Tab: String, Hashable { case next, rehearse, home, plan, help }
 
     var body: some View {
         Group {
@@ -45,6 +45,9 @@ struct RootView: View {
     private var tabs: some View {
         let l = model.localizer
         return TabView(selection: $tab) {
+            NavigationStack { NextStepsView(openRehearse: { tab = .rehearse }).toolbar { settingsButton } }
+                .tabItem { Label(l("common.tab.next"), systemImage: "checklist") }
+                .tag(Tab.next)
             NavigationStack(path: $rehearsePath) { RehearseTabView().toolbar { settingsButton } }
                 .tabItem { Label(l("common.tab.rehearse"), systemImage: "play.circle") }
                 .tag(Tab.rehearse)
