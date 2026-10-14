@@ -27,6 +27,9 @@ final class AppModel {
     var home: HomeModel?
     var locale: String = "en" { didSet { if locale != oldValue { invalidatePlans() } } }
     var savedPlan: PlanDocument?
+    /// Every scenario run once with default choices, for the Next steps screen. Tied to the household/home revision
+    /// like other derived results; completions are applied on read, so marking one done does not re-run anything.
+    var nextStepResults: [RehearsalResult]?
     var rehearsal: RehearsalCursor?
     var comparison: RehearsalComparison?
     var lastError: String?
@@ -41,6 +44,7 @@ final class AppModel {
 
     private var runGate = LatestRequestGate()
     private var planGate = LatestRequestGate()
+    private var nextGate = LatestRequestGate()
 
     /// Identity of the current household/home/content. Results computed for anything else are discarded.
     var currentKey: RevisionKey? {
@@ -225,9 +229,19 @@ final class AppModel {
     func useSampleHousehold(_ sample: HouseholdProfile) async {
         household = sample
         home = SampleHomes.ranch
+        invalidateDerived()
         locale = sample.preferredLocale
         phase = .ready
         await persist()
+    }
+
+    /// Set by "See how it works": the root view opens this rehearsal once the tabs are up, then clears it.
+    var pendingScenarioID: String?
+
+    /// One tap from onboarding to the flagship rehearsal: the Oak household's freeze with power loss.
+    func startDemo() async {
+        await useSampleHousehold(SampleHouseholds.oak)
+        pendingScenarioID = "freeze-power-loss"
     }
 
     func updateHousehold(_ edit: (inout HouseholdProfile) -> Void) async {
@@ -383,7 +397,59 @@ final class AppModel {
         // Routes, rehearsal results, and comparisons are tied to revisions; drop them so nothing stale is shown.
         rehearsal = nil
         comparison = nil
+        nextStepResults = nil
         runGate.invalidate()
+        nextGate.invalidate()
+    }
+
+    // MARK: - Next steps and outage card
+
+    var nextSteps: NextStepsSummary? {
+        guard let nextStepResults, let household else { return nil }
+        return NextSteps.summarize(nextStepResults, household: household)
+    }
+
+    /// Runs every scenario with default choices (off the main actor) unless results for this revision exist.
+    func refreshNextSteps() async {
+        guard nextStepResults == nil, let household, let home, let content, let scenarios, let engine,
+              let key = currentKey else { return }
+        let ticket = nextGate.begin(for: key)
+        let inputs = RehearseTabView.scenarioIDs.compactMap { id -> RehearsalInput? in
+            guard let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }
+            return RehearsalInput(household: household, home: home, scenarioID: id, scenarioVersion: s.version,
+                                  contentVersion: content.contentVersion, seed: 1)
+        }
+        workInFlight += 1
+        defer { workInFlight -= 1 }
+        do {
+            let results = try await Task.detached(priority: .userInitiated) { try inputs.map { try engine.run($0) } }.value
+            guard nextGate.shouldApply(ticket, current: currentKey) else { return }
+            nextStepResults = results
+        } catch {
+            guard nextGate.shouldApply(ticket, current: currentKey) else { return }
+            lastError = String(describing: error)
+        }
+    }
+
+    /// "Try this change" from Next steps: the intervention belongs to the step's source scenario, so that scenario is
+    /// opened (default choices) before comparing. Returns whether a comparison was produced.
+    func tryChange(for step: NextStep) async -> Bool {
+        guard let intervention = step.recommendation.tryIntervention else { return false }
+        let input = rehearsal?.result.input
+        if input?.scenarioID != step.sourceScenarioID || input?.choices.isEmpty == false || input?.variants.isEmpty == false {
+            await startRehearsal(scenarioID: step.sourceScenarioID)
+        }
+        await tryChange(intervention)
+        return comparison != nil
+    }
+
+    /// The medical power-outage card for every essential device, in the current language. Cheap; built on demand.
+    func outageCard(includePrivateNotes: Bool = false) -> PlanDocument? {
+        guard let household, let home, let content else { return nil }
+        return OutageCardBuilder.build(household: household, homeID: home.id, homeRevision: home.revision,
+                                       localizer: localizer, resources: content.resources(forRegion: household.regionID),
+                                       contentVersion: content.contentVersion, generatedAt: Date(),
+                                       options: .init(includePrivateNotes: includePrivateNotes, timeZone: .current))
     }
 
     private func invalidatePlans() { planGate.invalidate() }
@@ -404,8 +470,8 @@ final class AppModel {
         do {
             try await store.deleteAll()
             TemporaryExports.purgeAll()
-            household = nil; home = nil; savedPlan = nil; rehearsal = nil; comparison = nil
-            runGate.invalidate(); planGate.invalidate()
+            household = nil; home = nil; savedPlan = nil; rehearsal = nil; comparison = nil; nextStepResults = nil
+            runGate.invalidate(); planGate.invalidate(); nextGate.invalidate()
             phase = .onboarding
         } catch {
             lastError = String(describing: error)

@@ -61,14 +61,6 @@ struct HomeTabView: View {
                         HomeRoomListView(home: home)
                     }
                 }
-                let issues = HomeValidator.validate(home)
-                Section("Still to confirm (\(issues.count))") {
-                    if issues.isEmpty { Text("Nothing outstanding in the home model.") }
-                    ForEach(issues) { issue in
-                        Label(issue.message, systemImage: issue.severity == .blocking ? "exclamationmark.octagon" : "questionmark.circle")
-                            .font(.callout)
-                    }
-                }
                 Section("Change the home") {
                     let pending = HomeConfirmation.steps(for: home).count
                     if pending > 0 {
@@ -86,6 +78,14 @@ struct HomeTabView: View {
                     case .unsupportedDevice:
                         Label("Room scanning needs an iPhone with LiDAR. Manual layout works on every device.", systemImage: "info.circle")
                             .font(.footnote)
+                    }
+                }
+                let issues = HomeValidator.validate(home)
+                Section("Still to confirm (\(issues.count))") {
+                    if issues.isEmpty { Text("Nothing outstanding in the home model.") }
+                    ForEach(issues) { issue in
+                        Label(issue.message, systemImage: issue.severity == .blocking ? "exclamationmark.octagon" : "questionmark.circle")
+                            .font(.callout)
                     }
                 }
             }

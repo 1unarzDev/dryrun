@@ -33,10 +33,19 @@ struct PlanTabView: View {
                         set: { if $0 { selected.insert(id) } else { selected.remove(id) } }))
                 }
                 Toggle(l("common.plan.includePrivate"), isOn: $includePrivateNotes)
-                Button(l("common.plan.generate"), systemImage: "doc.badge.gearshape") {
+            }
+            Section {
+                Button {
                     Task { await model.generatePlan(scenarioIDs: Array(selected), includePrivateNotes: includePrivateNotes) }
+                } label: {
+                    if model.isWorking { ProgressView().tint(Theme.onAccent) } else {
+                        Label(l("common.plan.generate"), systemImage: "doc.badge.gearshape")
+                    }
                 }
+                .buttonStyle(.primary)
                 .disabled(selected.isEmpty || model.isWorking)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
                 .accessibilityIdentifier("plan.generate")
             }
             if let plan = model.savedPlan {

@@ -4,6 +4,37 @@
 6.2.4); Node 26.10.0; pnpm. **No macOS, no Xcode, no iOS SDK, no simulator, no device.**
 Date: 2026-10-09.
 
+## UI redesign and impact features (2026-10-14)
+
+**Platform:** macOS 27.0.1, Xcode 27.0, iOS 27.0 simulator (iPhone 18 Pro). No physical device.
+`scripts/mac/verify.sh` passes every step (bundle `artifacts/mac-20261014-111357.tar.gz`):
+
+| Step | Result |
+|---|---|
+| core-tests | 143 tests in 22 suites passed (9 new: outage card, next steps) |
+| vault-tests | 31 passed |
+| backend | 68 passed; translation baseline re-recorded for the new keys |
+| app-build | builds; no warnings in app code |
+| ui-journeys | 8/8 passed (5 new: one-tap demo, guided setup with every answer "Not sure", Next steps mark done, outage card fill-in and share, share with family) |
+| screenshot-tour | 18 screens × EN/ES/VI = 54 captured and inspected |
+| plan-pdfs | 9 rendered, validator issues: none |
+
+**Accessibility pass.** Main screens were captured at Dynamic Type AX XXL (`scripts/mac/screens.sh --xxl`). This
+found and fixed two problems:
+- Next steps overflowed the screen edge.
+- The rehearsal action bar broke words letter by letter.
+
+Rows now stack at accessibility sizes, and the bottom bars cap at AX1.
+
+An Accessibility Inspector audit was **not** run.
+
+**What changed:** see `docs/UI_AUDIT.md` (every control and the test that covers it) and `docs/goals/ui-impact-goal.md`.
+
+**Open:**
+- Home, Settings, the manual home editor, and RoomPlan text are still English-only.
+- ES/VI strings are unreviewed drafts.
+- Device-only checks are unchanged (below).
+
 ## macOS run (2026-10-09)
 
 **Platform:** macOS 27.0.1, Xcode 27.0 (27A266a), iOS 27.0 simulator (iPhone 18 Pro). No physical device.

@@ -190,7 +190,7 @@ public enum PlanBuilder {
         return b.line("plan.meeting.missing", sources: ["S19"])
     }
 
-    private static func helpLines(_ b: Builder, _ resources: [PublicResource]) -> [PlanLine] {
+    static func helpLines(_ b: Builder, _ resources: [PublicResource]) -> [PlanLine] {
         var lines = [b.line("plan.help.911", style: .contact)]
         let phoneTypes: Set<ResourceServiceType> = [.assistanceLine, .emergencyManagement, .electricUtility, .waterProvider, .assistanceRegistry]
         for r in resources where phoneTypes.contains(r.serviceType) {

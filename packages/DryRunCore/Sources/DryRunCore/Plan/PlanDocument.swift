@@ -33,6 +33,10 @@ public struct PlanSection: Codable, Sendable, Hashable, Identifiable {
 public enum PlanPageKind: Codable, Sendable, Hashable {
     case essentials
     case scenario(String)
+    /// Medical power-outage card for one essential device (equipment ID). A card document stands on its own.
+    case outageCard(String)
+
+    public var isOutageCard: Bool { if case .outageCard = self { true } else { false } }
 }
 
 public struct PlanPage: Codable, Sendable, Hashable, Identifiable {
@@ -102,7 +106,8 @@ public enum PlanValidationIssue: Sendable, Hashable, CustomStringConvertible {
 public enum PlanValidator {
     public static func validate(_ doc: PlanDocument, household: HouseholdProfile) -> [PlanValidationIssue] {
         var issues: [PlanValidationIssue] = []
-        if !doc.pages.contains(where: { $0.kind == .essentials }) { issues.append(.missingEssentialsPage) }
+        // A household plan needs its essentials page; an outage-card document is its own essentials.
+        if !doc.pages.contains(where: { $0.kind == .essentials || $0.kind.isOutageCard }) { issues.append(.missingEssentialsPage) }
         let lines = doc.pages.flatMap(\.sections).flatMap(\.lines)
         for section in doc.pages.flatMap(\.sections) where section.isSafetyCritical && section.lines.isEmpty {
             issues.append(.emptySafetySection(section.id))

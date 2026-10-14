@@ -22,6 +22,10 @@ enum DisplayNames {
         "utilityShutoffGas": "Gas shutoff",
         "utilityShutoffElectric": "Electrical shutoff",
         "tornadoShelterCandidate": "Tornado shelter spot",
+        "solarGridTiedOnly": "Solar (grid-tied only)",
+        "solarWithBattery": "Solar with battery",
+        "deviceInternalBattery": "Device's own battery",
+        "friendOrFamilyHome": "Friend or family home",
         "none": "None",
         "unknown": "Not sure",
     ]
