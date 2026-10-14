@@ -6,6 +6,7 @@ import XCTest
 /// Filters (pass through xcodebuild as TEST_RUNNER_<NAME>=value):
 ///   TOUR_LOCALES=en,es,vi     which locales (default all three)
 ///   TOUR_SCREENS=fire-end,plan  substring filter on screen names (default all)
+///   TOUR_XXL=1                largest accessibility text size (Dynamic Type AX XXL); names get an "-xxl" suffix
 @MainActor
 final class ScreenshotTourUITests: XCTestCase {
     struct Screen {
@@ -80,7 +81,9 @@ final class ScreenshotTourUITests: XCTestCase {
 
     private func capture(_ screen: Screen, locale: String) {
         let app = XCUIApplication()
+        let xxl = ProcessInfo.processInfo.environment["TOUR_XXL"] == "1"
         app.launchArguments = ["-uiTestingInMemory", "-disableAnimations", "-demoLocale", locale] + screen.args
+            + (xxl ? ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXL"] : [])
         app.launch()
         // Let async content load and the rehearsal/plan finish.
         _ = app.navigationBars.firstMatch.waitForExistence(timeout: 15)
@@ -107,12 +110,13 @@ final class ScreenshotTourUITests: XCTestCase {
         }
         RunLoop.current.run(until: Date().addingTimeInterval(2.0))
         let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
-        shot.name = "\(locale)-\(screen.name)"
+        let suffix = ProcessInfo.processInfo.environment["TOUR_XXL"] == "1" ? "-xxl" : ""
+        shot.name = "\(locale)-\(screen.name)\(suffix)"
         shot.lifetime = .keepAlways
         add(shot)
         // Accessibility tree dump helps diagnose layout and VoiceOver labels without the screenshot.
         let tree = XCTAttachment(string: app.debugDescription)
-        tree.name = "\(locale)-\(screen.name).a11y.txt"
+        tree.name = "\(locale)-\(screen.name)\(suffix).a11y.txt"
         tree.lifetime = .keepAlways
         add(tree)
         app.terminate()

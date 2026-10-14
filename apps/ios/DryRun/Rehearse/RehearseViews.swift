@@ -175,7 +175,7 @@ struct RehearsalView: View {
     private func controls(_ session: RehearsalCursor) -> some View {
         let l = model.localizer
         let canAdvance = session.pendingDecision == nil && session.revealed < session.result.events.count
-        return HStack(spacing: Theme.Space.s) {
+        return AdaptiveStack(spacing: Theme.Space.s) {
             Button {
                 Task { await model.startRehearsal(scenarioID: scenarioID, variants: session.result.input.variants) }
             } label: {
@@ -201,6 +201,8 @@ struct RehearsalView: View {
                 .accessibilityIdentifier("rehearsal.debrief")
         }
         .padding(.horizontal).padding(.vertical, Theme.Space.s)
+        // The bar stays readable but capped, so at the largest sizes it does not cover most of the screen.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .background(.bar)
     }
 }

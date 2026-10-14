@@ -71,7 +71,7 @@ struct NextStepsView: View {
                 .buttonStyle(PrimaryButtonStyle(tint: Theme.critical))
                 .accessibilityIdentifier("next.outageCard")
             }
-            HStack(spacing: Theme.Space.s) {
+            AdaptiveStack(spacing: Theme.Space.s) {
                 Button { openRehearse() } label: { QuickTile(title: l("ui.next.rehearse"), systemImage: "play.circle.fill") }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("next.rehearse")
@@ -172,9 +172,16 @@ struct NextStepRow: View {
             VStack(alignment: .leading, spacing: Theme.Space.xs) {
                 Text(l(r.titleKey, r.templateValues)).font(.body.weight(.semibold)).multilineTextAlignment(.leading)
                 Text(l(r.whyKey, r.templateValues)).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
-                HStack(spacing: Theme.Space.s) {
-                    StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                    ScenarioIcons(ids: step.scenarioIDs)
+                // Side by side when they fit; stacked at large text sizes instead of pushing the row off screen.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: Theme.Space.s) {
+                        StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
+                        ScenarioIcons(ids: step.scenarioIDs)
+                    }
+                    VStack(alignment: .leading, spacing: Theme.Space.xs) {
+                        StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
+                        ScenarioIcons(ids: step.scenarioIDs)
+                    }
                 }
             }
             Spacer(minLength: 0)
@@ -219,8 +226,12 @@ struct NextStepDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 Text(l(r.titleKey, r.templateValues)).font(.title2.weight(.bold))
-                HStack { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                         ScenarioIcons(ids: step.scenarioIDs) }
+                ViewThatFits(in: .horizontal) {
+                    HStack { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
+                             ScenarioIcons(ids: step.scenarioIDs) }
+                    VStack(alignment: .leading) { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
+                                                  ScenarioIcons(ids: step.scenarioIDs) }
+                }
                 SectionCard(title: l("common.why"), systemImage: "lightbulb") {
                     Text(l(r.whyKey, r.templateValues))
                     if !r.matchedFactIDs.isEmpty {

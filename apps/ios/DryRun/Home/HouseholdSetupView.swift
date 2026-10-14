@@ -156,7 +156,7 @@ struct HouseholdSetupView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            HStack(spacing: Theme.Space.s) {
+            AdaptiveStack(spacing: Theme.Space.s) {
                 if step > 0 {
                     Button { withAnimation { step -= 1 } } label: { Label(l("ui.back"), systemImage: "chevron.left") }
                         .buttonStyle(.secondary)
@@ -174,6 +174,7 @@ struct HouseholdSetupView: View {
                 }
             }
             .padding(.horizontal).padding(.vertical, Theme.Space.s)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .background(.bar)
         }
         .onAppear {

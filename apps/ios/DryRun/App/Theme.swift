@@ -283,3 +283,18 @@ enum PhoneLink {
         return digits.isEmpty ? nil : URL(string: "tel:\(digits)")
     }
 }
+
+/// A row of equal controls that becomes a column at accessibility text sizes, so labels never wrap letter by letter.
+struct AdaptiveStack<Content: View>: View {
+    @Environment(\.dynamicTypeSize) private var size
+    var spacing: CGFloat = Theme.Space.s
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        if size.isAccessibilitySize {
+            VStack(spacing: spacing) { content }
+        } else {
+            HStack(spacing: spacing) { content }
+        }
+    }
+}
