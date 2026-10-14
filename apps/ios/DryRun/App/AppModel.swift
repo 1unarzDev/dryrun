@@ -235,6 +235,15 @@ final class AppModel {
         await persist()
     }
 
+    /// Set by "See how it works": the root view opens this rehearsal once the tabs are up, then clears it.
+    var pendingScenarioID: String?
+
+    /// One tap from onboarding to the flagship rehearsal: the Oak household's freeze with power loss.
+    func startDemo() async {
+        await useSampleHousehold(SampleHouseholds.oak)
+        pendingScenarioID = "freeze-power-loss"
+    }
+
     func updateHousehold(_ edit: (inout HouseholdProfile) -> Void) async {
         guard var h = household else { return }
         edit(&h)

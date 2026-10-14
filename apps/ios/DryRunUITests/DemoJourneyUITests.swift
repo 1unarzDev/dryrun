@@ -181,4 +181,35 @@ final class DemoJourneyUITests: XCTestCase {
         preview.tap()
         XCTAssertTrue(app.navigationBars["Plan preview"].waitForExistence(timeout: 30), "plan and card PDF preview should open")
     }
+
+    // MARK: - Onboarding and guided setup
+
+    func testOnboardingDemoReachesRehearsalInOneTap() {
+        let app = launch()
+        let demo = app.buttons["onboarding.demo"]
+        XCTAssertTrue(demo.waitForExistence(timeout: 20), "onboarding did not appear")
+        demo.tap()
+        XCTAssertTrue(app.navigationBars["Freeze with power loss"].waitForExistence(timeout: 15),
+                      "See how it works should open the freeze rehearsal directly")
+        XCTAssertTrue(app.staticTexts["Practice scenario"].exists, "the practice label must be visible")
+        XCTAssertTrue(app.buttons["rehearsal.next"].waitForExistence(timeout: 10))
+    }
+
+    func testGuidedSetupWithEveryAnswerNotSure() {
+        let app = launch()
+        let create = app.buttons["onboarding.create"]
+        XCTAssertTrue(create.waitForExistence(timeout: 20))
+        create.tap()
+        let next = app.buttons["setup.next"]
+        XCTAssertTrue(next.waitForExistence(timeout: 5))
+        var steps = 0
+        while next.exists && steps < 10 { next.tap(); steps += 1 }
+        XCTAssertEqual(steps, 6, "seven steps: six Next taps, then Finish")
+        app.buttons["setup.save"].tap()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10), "setup should finish into the app")
+        // Next steps runs all scenarios for the new household; unknown answers are allowed and listed as questions.
+        let anyStep = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'next.step.'")).firstMatch
+        XCTAssertTrue(anyStep.waitForExistence(timeout: 30), "Next steps should list preparations for a new household")
+    }
 }
+

@@ -7,6 +7,7 @@ import DryRunCore
 struct HelpTabView: View {
     @Environment(AppModel.self) private var model
     @State private var showMap = false
+    @State private var showCard = false
 
     var body: some View {
         let l = model.localizer
@@ -15,9 +16,21 @@ struct HelpTabView: View {
         let region = model.content?.region(regionID)
         List {
             Section {
-                Label(l("common.help.call911"), systemImage: "phone.fill").font(.headline)
+                // A number shown as text with an explicit call button; nothing dials on its own.
+                PhoneRow(label: l("common.help.call911"), number: "911", systemImage: "phone.fill")
+                    .listRowBackground(Theme.critical.opacity(0.08))
                 if !model.capabilities.isOnline {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
+                }
+                if let h = model.household, !OutageCardBuilder.devices(in: h).isEmpty {
+                    Button { showCard = true } label: { Label(l("ui.card.open"), systemImage: "bolt.heart.fill") }
+                        .foregroundStyle(Theme.critical)
+                        .accessibilityIdentifier("help.outageCard")
+                }
+            }
+            if let contacts = model.household?.contacts.filter({ $0.phone != nil }), !contacts.isEmpty {
+                Section(l("plan.section.contacts")) {
+                    ForEach(contacts) { c in PhoneRow(label: "\(c.alias) · \(l("ui.contact.role.\(c.role.rawValue)"))", number: c.phone ?? "") }
                 }
             }
             AlertsSection(regionID: regionID)
@@ -44,6 +57,7 @@ struct HelpTabView: View {
             }
         }
         .navigationTitle(l("common.tab.help"))
+        .sheet(isPresented: $showCard) { NavigationStack { OutageCardView() } }
     }
 
     private func groups(_ resources: [PublicResource]) -> [(ResourceServiceType, [PublicResource])] {

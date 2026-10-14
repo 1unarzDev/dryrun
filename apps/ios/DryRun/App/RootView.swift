@@ -62,6 +62,12 @@ struct RootView: View {
                 .tag(Tab.help)
         }
         .sheet(isPresented: $showSettings) { SettingsView() }
+        .onChange(of: model.pendingScenarioID, initial: true) { _, id in
+            guard let id else { return }
+            tab = .rehearse
+            rehearsePath = [id]
+            model.pendingScenarioID = nil
+        }
     }
 
     private var settingsButton: some ToolbarContent {
