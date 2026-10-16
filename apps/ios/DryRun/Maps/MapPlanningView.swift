@@ -256,7 +256,9 @@ struct MapPlanningView: View {
         Task { @MainActor in
             isLoadingRoute = true
             defer { isLoadingRoute = false }
-            let location = locationService.lastLocation ?? await locationService.requestOneShot()
+            // Not `?? await …`: Swift does not allow await on the right of `??`.
+            var location = locationService.lastLocation
+            if location == nil { location = await locationService.requestOneShot() }
             guard let location,
                   let origin = GeographicCoordinate(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude) else {
                 guard ticket == routeGeneration else { return }
@@ -326,7 +328,7 @@ private struct ResourceListRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: resource.coordinate == nil ? "text.book.closed" : "mappin.and.ellipse")
-                .foregroundStyle(resource.coordinate == nil ? .secondary : .blue)
+                .foregroundStyle(resource.coordinate == nil ? Color.secondary : Color.blue)
                 .frame(width: 24)
             VStack(alignment: .leading, spacing: 3) {
                 Text(resource.name).font(.body.weight(.semibold))
@@ -567,7 +569,8 @@ private struct MapSearchSheet: View {
                 results = found
             }
             catch is CancellationError { }
-            catch { guard ticket == generation else { return }; error = "Apple Maps search is unavailable right now. Directory contacts remain available." }
+            // `self.error`: a bare `error` here is the caught error, and assigning to it crashes Swift 6.4's type checker.
+            catch { guard ticket == generation else { return }; self.error = "Apple Maps search is unavailable right now. Directory contacts remain available." }
         }
     }
 }

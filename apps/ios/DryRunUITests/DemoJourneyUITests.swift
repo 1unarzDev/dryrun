@@ -110,7 +110,10 @@ final class DemoJourneyUITests: XCTestCase {
         chooseSampleHousehold("hh-lake", in: app)
         app.tabBars.buttons.element(boundBy: 3).tap() // Next steps, Rehearse, Home, Plan
         XCTAssertTrue(app.staticTexts["Bản dịch nháp - đang chờ duyệt ngôn ngữ"].firstMatch.waitForExistence(timeout: 10))
-        app.buttons["plan.generate"].tap()
+        // The button sits below the scenario toggles and meeting places in a lazy List: scroll until it is in the tree.
+        let generate = element("plan.generate", in: app)
+        for _ in 0..<6 where !(generate.exists && generate.isHittable) { app.swipeUp() }
+        generate.tap()
         // The saved-plan row sits below the scenario toggles and may need a scroll before it is in the tree.
         let saved = element("plan.viewSaved", in: app)
         if !saved.waitForExistence(timeout: 10) { app.swipeUp() }

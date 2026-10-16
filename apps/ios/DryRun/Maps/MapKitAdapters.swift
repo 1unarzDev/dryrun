@@ -81,7 +81,8 @@ enum MapDirectionsError: Error, LocalizedError, Sendable {
 /// Location is optional and deliberately inert until the user taps the
 /// recenter or travel-preview action. Opening Help/map never prompts.
 @MainActor
-final class OptionalLocationService: NSObject, CLLocationManagerDelegate {
+// @preconcurrency: the manager is created on the main actor, so Core Location calls this delegate on the main thread.
+final class OptionalLocationService: NSObject, @preconcurrency CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     private(set) var authorization: CLAuthorizationStatus
     private(set) var lastLocation: CLLocation?

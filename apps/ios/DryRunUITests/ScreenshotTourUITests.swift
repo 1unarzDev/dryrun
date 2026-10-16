@@ -42,6 +42,7 @@ final class ScreenshotTourUITests: XCTestCase {
             Screen(name: "plan-tab", args: ["-demoHousehold", h, "-demoTab", "plan", "-demoPlan", "all"]),
             Screen(name: "plan-document", args: ["-demoHousehold", h, "-demoTab", "plan", "-demoPlan", "all"], tap: "plan.viewSaved"),
             Screen(name: "help", args: ["-demoHousehold", h, "-demoTab", "help"]),
+            Screen(name: "help-map", args: ["-demoHousehold", h, "-demoTab", "help"], tap: "help.openMap"),
         ]
     }
 
