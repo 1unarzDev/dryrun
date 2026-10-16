@@ -39,14 +39,17 @@ public struct ContentLibrary: Sendable {
 
     /// Statewide resources plus resources for this region, deterministic order.
     public func resources(forRegion regionID: String) -> [PublicResource] {
-        var seen = Set<String>()
-        var out: [PublicResource] = []
+        var order: [String] = []
+        var byID: [String: PublicResource] = [:]
         for pack in regionPacks {
             for r in pack.resources where r.regionIDs.contains(regionID) || r.regionIDs.contains("tx-statewide") {
-                if seen.insert(r.id).inserted { out.append(r) }
+                if byID[r.id] == nil { order.append(r.id) }
+                // Later validated packs are newer precedence than the bundled
+                // baseline, while preserving the first-seen display order.
+                byID[r.id] = r
             }
         }
-        return out
+        return order.compactMap { byID[$0] }
     }
 
     public func region(_ id: String) -> RegionInfo? {

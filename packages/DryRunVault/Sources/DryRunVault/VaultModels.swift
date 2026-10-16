@@ -12,13 +12,30 @@ public struct VaultPayload: Codable, Sendable, Hashable {
     public var retainedPlans: [RetainedPlan]
     /// Cached rehearsal results; stale entries are invalid once household/home/content revisions change.
     public var rehearsalResults: [CachedRehearsal]
+    /// Private geographic planning places. Absent in schema-version-1 payloads written before map planning.
+    public var savedPlaces: [SavedPlace]
     public var savedAt: Date
 
     public init(household: HouseholdProfile? = nil, home: HomeModel? = nil, retainedPlans: [RetainedPlan] = [],
-                rehearsalResults: [CachedRehearsal] = [], savedAt: Date = Date()) {
+                rehearsalResults: [CachedRehearsal] = [], savedPlaces: [SavedPlace] = [], savedAt: Date = Date()) {
         self.schemaVersion = Self.currentSchemaVersion
         self.household = household; self.home = home; self.retainedPlans = retainedPlans
-        self.rehearsalResults = rehearsalResults; self.savedAt = savedAt
+        self.rehearsalResults = rehearsalResults; self.savedPlaces = savedPlaces; self.savedAt = savedAt
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, household, home, retainedPlans, rehearsalResults, savedPlaces, savedAt
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try c.decode(Int.self, forKey: .schemaVersion)
+        household = try c.decodeIfPresent(HouseholdProfile.self, forKey: .household)
+        home = try c.decodeIfPresent(HomeModel.self, forKey: .home)
+        retainedPlans = try c.decodeIfPresent([RetainedPlan].self, forKey: .retainedPlans) ?? []
+        rehearsalResults = try c.decodeIfPresent([CachedRehearsal].self, forKey: .rehearsalResults) ?? []
+        savedPlaces = try c.decodeIfPresent([SavedPlace].self, forKey: .savedPlaces) ?? []
+        savedAt = try c.decode(Date.self, forKey: .savedAt)
     }
 
     /// Drops plans/results whose revision key no longer matches the current household/home/content.

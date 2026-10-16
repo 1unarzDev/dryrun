@@ -17,6 +17,12 @@ final class RoomCaptureController: NSObject, ObservableObject, RoomCaptureViewDe
     @Published private(set) var rooms: [CapturedRoom] = []
     let captureView: RoomCaptureView
     private var wantsAnotherRoom = false
+    /// Session state is deliberately checked before every callback. RoomPlan can deliver a processed result after
+    /// stop/cancel; accepting that late result would publish a draft after the user left the flow.
+    private var callbackGeneration = 0
+    private var callbackExpected = false
+    private var callbackExpectedGeneration: Int?
+    private var sharedFrameValid = true
 
     override init() {
         captureView = RoomCaptureView(frame: .zero)
@@ -29,27 +35,59 @@ final class RoomCaptureController: NSObject, ObservableObject, RoomCaptureViewDe
     nonisolated func encode(with coder: NSCoder) {}
 
     func start() {
+        guard phase == .idle || hasFailed else { return }
+        // Retrying after an interruption starts a new AR frame. Previously captured rooms cannot be positioned
+        // relative to that frame by guessing, so multiroom import will remain explicitly unaligned.
+        if hasFailed { sharedFrameValid = rooms.isEmpty }
+        callbackGeneration &+= 1
+        callbackExpected = false
+        callbackExpectedGeneration = nil
         phase = .scanning
         captureView.captureSession.run(configuration: RoomCaptureSession.Configuration())
     }
 
     /// Finish the current room but keep the ARSession running so the next room shares its frame.
     func finishRoomAndContinue() {
+        guard phase == .scanning else { return }
         wantsAnotherRoom = true
         phase = .processing
+        callbackGeneration &+= 1
+        callbackExpected = true
+        callbackExpectedGeneration = callbackGeneration
         captureView.captureSession.stop(pauseARSession: false)
     }
 
     func finishScan() {
+        guard phase == .scanning else { return }
         wantsAnotherRoom = false
         phase = .processing
+        callbackGeneration &+= 1
+        callbackExpected = true
+        callbackExpectedGeneration = callbackGeneration
         captureView.captureSession.stop()
     }
 
     func cancel() {
+        callbackGeneration &+= 1
+        callbackExpected = false
+        callbackExpectedGeneration = nil
         captureView.captureSession.stop()
         rooms = []
+        sharedFrameValid = true
         phase = .idle
+    }
+
+    /// Background/interruption path. Retain already processed rooms for an honest retry, but invalidate their shared
+    /// frame so a later retry cannot silently merge coordinates from two AR sessions.
+    func interrupted() {
+        guard phase == .scanning || phase == .processing else { return }
+        callbackGeneration &+= 1
+        callbackExpected = false
+        callbackExpectedGeneration = nil
+        wantsAnotherRoom = false
+        sharedFrameValid = false
+        captureView.captureSession.stop()
+        phase = .failed("Scanning was interrupted. Retry this room or use only the rooms already saved.")
     }
 
     var hasFailed: Bool {
@@ -61,16 +99,27 @@ final class RoomCaptureController: NSObject, ObservableObject, RoomCaptureViewDe
 
     nonisolated func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         Task { @MainActor in
+            // A callback is valid only for the stop operation that put the controller in processing. Duplicate and
+            // late callbacks (including callbacks after cancel/background) are ignored deterministically.
+            guard self.phase == .processing, self.callbackExpected,
+                  self.callbackExpectedGeneration == self.callbackGeneration else { return }
+            self.callbackExpected = false
+            self.callbackExpectedGeneration = nil
             if let error {
                 // The session has ended. Forget "next room" so a later result is not mistaken for a continuation.
                 self.wantsAnotherRoom = false
+                self.sharedFrameValid = false
                 self.phase = .failed(error.localizedDescription)
                 return
             }
             self.rooms.append(processedResult)
             if self.wantsAnotherRoom {
                 self.wantsAnotherRoom = false
-                self.start()
+                self.callbackGeneration &+= 1
+                self.callbackExpected = false
+                self.callbackExpectedGeneration = nil
+                self.phase = .scanning
+                self.captureView.captureSession.run(configuration: RoomCaptureSession.Configuration())
             } else {
                 self.phase = .finished
             }
@@ -83,7 +132,8 @@ final class RoomCaptureController: NSObject, ObservableObject, RoomCaptureViewDe
         if rooms.count > 1 {
             let builder = StructureBuilder(options: [.beautifyObjects])
             let structure = try await builder.capturedStructure(from: rooms)
-            let capture = RoomPlanMapping.capture(rooms: structure.rooms, sharedFrame: true, completed: true)
+            let capture = RoomPlanMapping.capture(rooms: structure.rooms, sharedFrame: sharedFrameValid,
+                                                  completed: phase == .finished)
             return try ScanImport.importCapture(capture, homeID: homeID)
         }
         let capture = RoomPlanMapping.capture(rooms: rooms, sharedFrame: true, completed: phase == .finished)
@@ -104,6 +154,7 @@ struct RoomScanFlowView: View {
     @State private var started = false
     @State private var result: ScanImportResult?
     @State private var errorText: String?
+    @Environment(\.scenePhase) private var scenePhase
 
     init(onFinish: @escaping (HomeModel?) -> Void) { self.onFinish = onFinish }
 
@@ -140,6 +191,9 @@ struct RoomScanFlowView: View {
             .onChange(of: controller.phase) { _, phase in
                 if case .failed(let message) = phase { errorText = message }
                 if phase == .finished { Task { await buildResult() } }
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .background { controller.interrupted() }
             }
         }
     }

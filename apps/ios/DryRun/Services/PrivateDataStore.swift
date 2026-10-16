@@ -6,6 +6,15 @@ struct PrivateSnapshot: Sendable, Equatable {
     var household: HouseholdProfile
     var home: HomeModel
     var savedPlan: PlanDocument?
+    var savedPlaces: [SavedPlace]
+
+    init(household: HouseholdProfile, home: HomeModel, savedPlan: PlanDocument? = nil,
+         savedPlaces: [SavedPlace] = []) {
+        self.household = household
+        self.home = home
+        self.savedPlan = savedPlan
+        self.savedPlaces = savedPlaces
+    }
 }
 
 enum PrivateLoadResult: Sendable, Equatable {

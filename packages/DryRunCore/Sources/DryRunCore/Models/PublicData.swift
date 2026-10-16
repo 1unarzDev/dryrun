@@ -30,6 +30,34 @@ public struct ContactPoint: Codable, Sendable, Hashable {
     }
 }
 
+/// A geographic coordinate in degrees. This is deliberately separate from the
+/// indoor `Vec2` model (which is measured in metres) and from MapKit types.
+/// Coordinates are accepted only when both values are finite and in range.
+public struct GeographicCoordinate: Codable, Sendable, Hashable {
+    public let latitude: Double
+    public let longitude: Double
+
+    public init?(latitude: Double, longitude: Double) {
+        guard latitude.isFinite, longitude.isFinite,
+              (-90...90).contains(latitude), (-180...180).contains(longitude) else { return nil }
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+
+    private enum CodingKeys: String, CodingKey { case latitude, longitude }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let latitude = try c.decode(Double.self, forKey: .latitude)
+        let longitude = try c.decode(Double.self, forKey: .longitude)
+        guard let value = Self(latitude: latitude, longitude: longitude) else {
+            throw DecodingError.dataCorruptedError(forKey: .latitude, in: c,
+                                                   debugDescription: "latitude/longitude out of range or non-finite")
+        }
+        self = value
+    }
+}
+
 public enum ResourceServiceType: String, Codable, Sendable, Hashable, CaseIterable {
     case emergencyManagement, publicHealth, waterProvider, electricUtility, transportation, assistanceLine,
          assistanceRegistry, disasterAssistance, warmingCenter, coolingCenter, shelter, alertEnrollment, other
@@ -48,6 +76,10 @@ public struct PublicResource: Codable, Sendable, Hashable, Identifiable {
     public var activation: ActivationState
     public var latitude: Double?
     public var longitude: Double?
+    /// Source IDs for the coordinate only (the service source remains in `sourceIDs`).
+    /// Omitted for list-only contacts and legacy v1 records.
+    public var coordinateSourceIDs: [String]?
+    public var coordinateCheckedAt: String?
     public var accessibilityNote: String?
     public var petPolicy: String?
     public var sourceIDs: [String]
@@ -66,6 +98,12 @@ public struct RegionInfo: Codable, Sendable, Hashable, Identifiable {
     public var coverage: CoverageStatus
     public var coverageNote: String?
     public var inTX25: String
+    /// Optional browsing context. These values frame a county; they do not
+    /// represent a resource, district boundary, or alert polygon.
+    public var mapCenterLatitude: Double?
+    public var mapCenterLongitude: Double?
+    public var mapSpanLatitude: Double?
+    public var mapSpanLongitude: Double?
 }
 
 public struct RegionPack: Codable, Sendable, Hashable {

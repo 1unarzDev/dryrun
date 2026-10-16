@@ -141,15 +141,17 @@ enum DollhouseBuilder {
         return e
     }
 
-    /// Fan-triangulated slab for a simple polygon (sample/manual rooms are convex; concave scans fall back to a fan
-    /// that can over-draw slightly — display only, never used for navigation).
+    /// Ear-clipped slab for a simple polygon. Concave scan outlines keep their notches instead of being filled by a
+    /// fan from an arbitrary vertex. Unsupported outlines (self-intersections or holes) return nil and remain honest
+    /// in the review UI rather than drawing a reassuring floor.
     static func polygonMesh(_ verts: [SIMD3<Float>]) -> MeshResource? {
         guard verts.count >= 3 else { return nil }
+        // Dollhouse maps the canonical floor's y coordinate to RealityKit's -z axis.
+        let polygon = verts.map { Vec2(Double($0.x), Double(-$0.z)) }
+        guard let triangles = Geometry.triangulate(polygon) else { return nil }
         var desc = MeshDescriptor(name: "slab")
         desc.positions = MeshBuffers.Positions(verts)
-        var idx: [UInt32] = []
-        // Counter-clockwise plan polygons stay counter-clockwise seen from +y, so (0, i, i+1) faces up.
-        for i in 1..<(verts.count - 1) { idx += [0, UInt32(i), UInt32(i + 1)] }
+        let idx = triangles.flatMap { $0.map(UInt32.init) }
         desc.primitives = .triangles(idx)
         return try? MeshResource.generate(from: [desc])
     }

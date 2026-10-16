@@ -34,6 +34,24 @@ struct PlanTabView: View {
                 }
                 Toggle(l("common.plan.includePrivate"), isOn: $includePrivateNotes)
             }
+            if let home = model.home {
+                Section("Private meeting places") {
+                    let places = model.savedPlaces.filter { $0.homeID == home.id && $0.purpose == .outsideMeetingPoint }
+                    if places.isEmpty {
+                        Text("No geographic meeting point saved. A text-only meeting point can still be kept in Home.")
+                            .font(.callout).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(places) { place in
+                            VStack(alignment: .leading, spacing: 3) {
+                                Label(place.label, systemImage: "mappin.and.ellipse")
+                                if let address = place.addressText { Text(address).font(.caption).foregroundStyle(.secondary) }
+                                Text("Private planning point; it does not certify a safe outdoor route.")
+                                    .font(.caption2).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
             Section {
                 Button {
                     Task { await model.generatePlan(scenarioIDs: Array(selected), includePrivateNotes: includePrivateNotes) }

@@ -8,9 +8,10 @@ struct HomeConfirmationView: View {
     let onFinish: (HomeModel) -> Void
     @State private var labelText = ""
     @State private var labelKind = SpaceKind.other
-    @State private var operable = true
+    @State private var operable: Bool?
     @State private var stepFree: Bool?
     @State private var widthText = ""
+    @State private var interiorRoomID: String?
     @State private var meetingText = ""
     @State private var shelterSpaceID: String?
 
@@ -65,21 +66,42 @@ struct HomeConfirmationView: View {
             let portal = home.portal(step.elementID)
             let unknownSide = portal.map { $0.sideA == .unknown || $0.sideB == .unknown } ?? true
             Section {
-                Toggle("Opens without a key or tool", isOn: $operable)
+                Picker("Opens without a key or tool", selection: $operable) {
+                    Text("Yes").tag(Bool?.some(true))
+                    Text("No").tag(Bool?.some(false))
+                    Text("Not sure").tag(Bool?.none)
+                }
                 Picker("Threshold", selection: $stepFree) {
                     Text("Step-free").tag(Bool?.some(true)); Text("Has a step").tag(Bool?.some(false)); Text("Not sure").tag(Bool?.none)
                 }
                 TextField("Clear width in meters (optional)", text: $widthText).keyboardType(.decimalPad)
                 if unknownSide {
                     if portal?.kind != .window {
+                        Picker("This opening also leads to", selection: $interiorRoomID) {
+                            Text("Choose a room").tag(String?.none)
+                            ForEach(home.spaces.filter { room in
+                                guard room.floorID == portal?.floorID else { return false }
+                                guard let portal else { return true }
+                                return portal.sideA != .space(room.id) && portal.sideB != .space(room.id)
+                            }) { room in
+                                Text(room.label).tag(String?.some(room.id))
+                            }
+                        }
+                        Button("Connect to this room") {
+                            if let roomID = interiorRoomID {
+                                answer(.assignPortalInterior(portalID: step.elementID, spaceID: roomID), for: step)
+                            }
+                        }
+                        .disabled(interiorRoomID == nil)
                         Button("It leads outside (ground level)") {
-                            answer(.markPortalExterior(portalID: step.elementID, operable: operable, stepFree: stepFree), for: step)
+                            answer(.markPortalExteriorEvidence(portalID: step.elementID, operable: operable,
+                                                              stepFree: stepFree, clearWidthMeters: parsedWidth), for: step)
                         }
                     }
                 } else {
                     Button(portal?.leadsToExterior == true ? "Yes, this is correct" : "Yes, it connects these rooms") {
-                        answer(.confirmPortal(portalID: step.elementID, operable: operable, stepFree: stepFree,
-                                              clearWidthMeters: Double(widthText.replacingOccurrences(of: ",", with: "."))),
+                        answer(.confirmPortalEvidence(portalID: step.elementID, operable: operable, stepFree: stepFree,
+                                              clearWidthMeters: parsedWidth),
                                for: step)
                     }
                 }
@@ -137,7 +159,12 @@ struct HomeConfirmationView: View {
             notice = nil
         }
         home = updated
-        labelText = ""; widthText = ""; meetingText = ""; operable = true; stepFree = nil; shelterSpaceID = nil
+        labelText = ""; widthText = ""; interiorRoomID = nil; meetingText = ""; operable = nil; stepFree = nil; shelterSpaceID = nil
+    }
+
+    private var parsedWidth: Double? {
+        guard let value = Double(widthText.replacingOccurrences(of: ",", with: ".")), value.isFinite, value > 0 else { return nil }
+        return value
     }
 
     /// Which room, door, or stairs the question is about, in words. Scanned elements have opaque IDs, so the prompt

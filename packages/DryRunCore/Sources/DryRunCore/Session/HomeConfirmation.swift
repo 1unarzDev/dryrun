@@ -17,10 +17,20 @@ public struct ConfirmationStep: Codable, Sendable, Hashable, Identifiable {
 
 public enum ConfirmationAnswer: Codable, Sendable, Hashable {
     case labelSpace(spaceID: String, label: String, kind: SpaceKind)
+    /// Assign the first unresolved side of a proposed interior opening to a selected room.
+    /// This intentionally does not verify the opening or its operability; those remain separate answers.
+    case assignPortalInterior(portalID: String, spaceID: String)
     /// The opening connects the spaces as proposed and the household confirmed it.
     case confirmPortal(portalID: String, operable: Bool, stepFree: Bool?, clearWidthMeters: Double?)
+    /// Evidence-preserving variant for review UIs that allow operability to remain unknown.
+    case confirmPortalEvidence(portalID: String, operable: Bool?, stepFree: Bool?, clearWidthMeters: Double?)
     /// The opening leads outside at ground level (replaces an unknown side).
     case markPortalExterior(portalID: String, operable: Bool, stepFree: Bool?)
+    /// Measured variant used by the review UI. Kept separate so the original three-argument answer remains
+    /// source-compatible for callers that did not collect a width.
+    case markPortalExteriorMeasured(portalID: String, operable: Bool, stepFree: Bool?, clearWidthMeters: Double?)
+    /// Evidence-preserving exterior variant for review UIs that allow unknown operability/accessibility.
+    case markPortalExteriorEvidence(portalID: String, operable: Bool?, stepFree: Bool?, clearWidthMeters: Double?)
     /// Not a usable connection (blocked, locked, or not really an opening).
     case rejectPortal(portalID: String)
     /// Leave as unknown; it stays out of every route.
@@ -73,25 +83,37 @@ public enum HomeConfirmation {
             h.spaces[i].label = label
             h.spaces[i].kind = kind
             h.spaces[i].labelConfirmed = true
+        case .assignPortalInterior(let id, let spaceID):
+            guard let i = portalIndex(id), let space = h.space(spaceID) else { return home }
+            // Windows remain excluded from generic walking connections even when a scan puts them near a room.
+            guard h.portals[i].kind != .window, h.portals[i].floorID == space.floorID else { return home }
+            let destination = PortalDestination.space(spaceID)
+            // Do not allow a self-loop or overwrite an already identified side.
+            guard h.portals[i].sideA != destination, h.portals[i].sideB != destination else { return home }
+            if h.portals[i].sideA == .unknown {
+                h.portals[i].sideA = destination
+            } else if h.portals[i].sideB == .unknown {
+                h.portals[i].sideB = destination
+            } else {
+                return home
+            }
         case .confirmPortal(let id, let operable, let stepFree, let width):
-            guard let i = portalIndex(id), h.portals[i].sideA != .unknown, h.portals[i].sideB != .unknown else { return home }
-            h.portals[i].verification = .verified
-            h.portals[i].operable = .confirmed(operable, verifiedAt: date)
-            if let stepFree { h.portals[i].stepFree = .confirmed(stepFree, verifiedAt: date) }
-            if let width { h.portals[i].clearWidthMeters = .confirmed(width, unit: "m", verifiedAt: date) }
+            let portalIndexValue = portalIndex(id)
+            h = confirmPortal(portalIndex: portalIndexValue, in: h, operable: operable, stepFree: stepFree, width: width, date: date)
+        case .confirmPortalEvidence(let id, let operable, let stepFree, let width):
+            let evidencePortalIndex = portalIndex(id)
+            h = confirmPortal(portalIndex: evidencePortalIndex, in: h, operable: operable, stepFree: stepFree, width: width, date: date)
         case .markPortalExterior(let id, let operable, let stepFree):
             guard let i = portalIndex(id) else { return home }
-            // Windows never become walking exits through the generic door answer.
-            guard h.portals[i].kind != .window else { return home }
-            // One shared definition of "ground" with the planner; upper floors and basements are not walking exits here.
-            guard let floor = h.floors.first(where: { $0.id == h.portals[i].floorID }),
-                  Graph.isGround(floor, .standard) else { return home }
-            if h.portals[i].sideA == .unknown { h.portals[i].sideA = .exterior }
-            else if h.portals[i].sideB == .unknown { h.portals[i].sideB = .exterior }
-            guard h.portals[i].leadsToExterior else { return home }
-            h.portals[i].verification = .verified
-            h.portals[i].operable = .confirmed(operable, verifiedAt: date)
-            if let stepFree { h.portals[i].stepFree = .confirmed(stepFree, verifiedAt: date) }
+            h = markExterior(portalIndex: i, in: h, operable: operable, stepFree: stepFree, width: nil, date: date)
+        case .markPortalExteriorMeasured(let id, let operable, let stepFree, let width):
+            guard let i = portalIndex(id) else { return home }
+            h = markExterior(portalIndex: i, in: h, operable: operable, stepFree: stepFree,
+                             width: width.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }, date: date)
+        case .markPortalExteriorEvidence(let id, let operable, let stepFree, let width):
+            guard let i = portalIndex(id) else { return home }
+            h = markExterior(portalIndex: i, in: h, operable: operable, stepFree: stepFree,
+                             width: width.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }, date: date)
         case .rejectPortal(let id):
             guard let i = portalIndex(id) else { return home }
             h.portals[i].verification = .rejected
@@ -122,6 +144,45 @@ public enum HomeConfirmation {
             h.spaces[i].needsMeasurement = true
         }
         if h != home { h.bumpRevision() }
+        return h
+    }
+
+    private static func confirmPortal(portalIndex: Int?, in home: HomeModel, operable: Bool?, stepFree: Bool?,
+                                      width: Double?, date: Date) -> HomeModel {
+        var h = home
+        guard let i = portalIndex, h.portals[i].sideA != .unknown, h.portals[i].sideB != .unknown else { return home }
+        h.portals[i].verification = .verified
+        h.portals[i].operable = operable.map { .confirmed($0, verifiedAt: date) } ?? .unknown
+        h.portals[i].stepFree = stepFree.map { .confirmed($0, verifiedAt: date) } ?? .unknown
+        if let width, width.isFinite, width > 0 { h.portals[i].clearWidthMeters = .confirmed(width, unit: "m", verifiedAt: date) }
+        return h
+    }
+
+    private static func markExterior(portalIndex i: Int, in home: HomeModel, operable: Bool?, stepFree: Bool?,
+                                     width: Double?, date: Date) -> HomeModel {
+        var h = home
+        // Windows never become walking exits through the generic door answer.
+        guard h.portals[i].kind != .window else { return home }
+        // One shared definition of "ground" with the planner; upper floors and basements are not walking exits here.
+        guard let floor = h.floors.first(where: { $0.id == h.portals[i].floorID }), Graph.isGround(floor, .standard) else { return home }
+        // An exterior answer must still identify the room the household exits from. A completely unresolved
+        // opening cannot become a route merely because the user selected "outside".
+        func isSpace(_ destination: PortalDestination) -> Bool {
+            if case .space(_) = destination { return true }
+            return false
+        }
+        if h.portals[i].sideA == .unknown, isSpace(h.portals[i].sideB) {
+            h.portals[i].sideA = .exterior
+        } else if h.portals[i].sideB == .unknown, isSpace(h.portals[i].sideA) {
+            h.portals[i].sideB = .exterior
+        } else {
+            return home
+        }
+        guard h.portals[i].leadsToExterior else { return home }
+        h.portals[i].verification = .verified
+        h.portals[i].operable = operable.map { .confirmed($0, verifiedAt: date) } ?? .unknown
+        h.portals[i].stepFree = stepFree.map { .confirmed($0, verifiedAt: date) } ?? .unknown
+        if let width { h.portals[i].clearWidthMeters = .confirmed(width, unit: "m", verifiedAt: date) }
         return h
     }
 }

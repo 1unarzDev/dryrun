@@ -1,5 +1,27 @@
 # Verification record
 
+## MapKit and RoomPlan integration pass (2026-10-16)
+
+**Platform actually used:** Linux x86_64 checkout `/home/lunarz/dryrun`; portable Swift commands ran in the repository's
+Swift 6.2 Docker harness (Swift Testing 6.2.4); Node 26.10.0 and pnpm for the backend. There is no macOS host,
+Xcode installation, iOS SDK, simulator runtime, or physical iPhone/LiDAR device in this environment.
+
+| Command | Result |
+|---|---|
+| `DRYRUN_SCRATCH=final scripts/swift.sh packages/DryRunCore test` | **149 tests in 23 suites passed** |
+| `DRYRUN_SCRATCH=final scripts/swift.sh packages/DryRunVault test` | **33 tests in 5 suites passed** |
+| `cd services/public-api && pnpm test && pnpm typecheck` | **68 backend tests passed**; TypeScript typecheck clean |
+| Docker `swift:6.2` `swiftc -parse` over every `apps/ios/DryRun/**/*.swift` (mounted checkout) | **Passed**; syntax parsing only |
+| `git diff --check` | Passed |
+
+The portable suites exercise coordinate validation and provenance, county frames, resource precedence, private-place
+separation, legacy vault decoding, save-failure behavior, RoomPlan import/geometry, confirmation, interruption and
+unknown-start handling. The backend tests cover the paired Zod contract and regional scoping. Source parsing does not
+prove that MapKit, Core Location, RoomPlan, RealityKit, SwiftUI, or strict-concurrency APIs compile against an iOS 18
+SDK. No simulator journeys, Apple Maps search/directions calls, screenshots, or physical RoomPlan capture were run or
+visually reviewed here. See [`docs/MAPKIT_SCAN_INTEGRATION.md`](MAPKIT_SCAN_INTEGRATION.md) for the architecture,
+privacy boundary, provenance, offline behavior, migration behavior, and device checklist.
+
 **Platform actually used:** Arch Linux x86_64, kernel 7.2.8; Docker image `swift:6.2` (Swift 6.2.x, Swift Testing
 6.2.4); Node 26.10.0; pnpm. **No macOS, no Xcode, no iOS SDK, no simulator, no device.**
 Date: 2026-10-09.

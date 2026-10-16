@@ -402,6 +402,26 @@
       "reviewState": "needsReview",
       "category": "help",
       "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S50",
+      "publisher": "OpenStreetMap contributors",
+      "title": "OpenStreetMap map data used to locate official county-office addresses",
+      "url": "https://www.openstreetmap.org/copyright",
+      "checkedAt": "2026-10-16",
+      "reviewState": "needsReview",
+      "category": "geography",
+      "scopeNote": "Coordinates matched official Erath and Hood County office addresses against OSM objects. OSM attribution applies; coordinates are browsing pins, not proof of access or activation."
+    },
+    {
+      "id": "S51",
+      "publisher": "OpenStreetMap contributors",
+      "title": "Hood County Emergency Operations Center geocoder result for the official county address",
+      "url": "https://www.openstreetmap.org/way/855408462",
+      "checkedAt": "2026-10-16",
+      "reviewState": "needsReview",
+      "category": "geography",
+      "scopeNote": "Coordinate matched the official Hood County office address against an OSM object. OSM attribution applies; this is a browsing pin, not proof of access or activation."
     }
   ]
 }

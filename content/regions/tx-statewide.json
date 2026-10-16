@@ -13,8 +13,12 @@
       "nwsZoneIDs": [],
       "nwsCountyIDs": [],
       "coverage": "statewideOnly",
-      "coverageNote": "Statewide help lines only. County-specific contacts are in the tx-25-counties pack.",
-      "inTX25": "n/a"
+      "coverageNote": "Statewide help lines only. County-specific contacts are in the tx-25-counties pack. Map framing is approximate statewide browsing context; it is not a resource location or alert boundary.",
+      "inTX25": "n/a",
+      "mapCenterLatitude": 31.9686,
+      "mapCenterLongitude": -99.9018,
+      "mapSpanLatitude": 12.0,
+      "mapSpanLongitude": 18.0
     }
   ],
   "resources": [

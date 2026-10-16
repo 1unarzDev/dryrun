@@ -11,6 +11,7 @@ struct HomeTabView: View {
     @State private var scanning = false
     @State private var editingHousehold = false
     @State private var confirming: HomeModel?
+    @State private var showingMeetingPlaceMap = false
     /// A finished scan waiting for the scan cover to finish dismissing before the confirmation sheet is presented.
     @State private var pendingProposal: HomeModel?
 
@@ -80,6 +81,52 @@ struct HomeTabView: View {
                             .font(.footnote)
                     }
                 }
+                if let household = model.household, !household.people.isEmpty {
+                    Section("Resident starting rooms") {
+                        Text("Assign each person to the room where a rehearsal should start. Leave a person unassigned when the answer is unknown; Dry Run will report that explicitly instead of guessing.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                        ForEach(household.people) { person in
+                            Picker(person.alias.isEmpty ? "Resident" : person.alias,
+                                   selection: Binding<String?>(
+                                    get: { model.household?.people.first(where: { $0.id == person.id })?.sleepingSpaceID },
+                                    set: { value in
+                                        Task {
+                                            await model.updateHousehold { edited in
+                                                guard let index = edited.people.firstIndex(where: { $0.id == person.id }) else { return }
+                                                edited.people[index].sleepingSpaceID = value
+                                            }
+                                        }
+                                    })) {
+                                Text("Not assigned").tag(String?.none)
+                                ForEach(home.spaces) { space in
+                                    Text(space.label).tag(String?.some(space.id))
+                                }
+                            }
+                        }
+                    }
+                }
+                Section("Outside meeting place") {
+                    if let annotation = home.meetingPoint {
+                        Label(annotation.label, systemImage: "mappin.and.ellipse")
+                        Text("This text note is kept separate from indoor floor-plan coordinates.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    } else {
+                        Text("Add a text meeting point in the home review, or choose a geographic planning point.")
+                            .font(.callout).foregroundStyle(.secondary)
+                    }
+                    ForEach(model.savedPlaces.filter { $0.homeID == home.id && $0.purpose == .outsideMeetingPoint }) { place in
+                        VStack(alignment: .leading, spacing: 3) {
+                            Label(place.label, systemImage: "mappin.and.ellipse")
+                            if let address = place.addressText { Text(address).font(.caption).foregroundStyle(.secondary) }
+                            Text("Saved privately. A map point does not certify a safe outdoor path.")
+                                .font(.caption2).foregroundStyle(.secondary)
+                        }
+                        .swipeActions {
+                            Button("Delete", role: .destructive) { Task { await model.deletePlace(id: place.id) } }
+                        }
+                    }
+                    Button("Choose on map", systemImage: "map") { showingMeetingPlaceMap = true }
+                }
                 let issues = HomeValidator.validate(home)
                 Section("Still to confirm (\(issues.count))") {
                     if issues.isEmpty { Text("Nothing outstanding in the home model.") }
@@ -107,8 +154,9 @@ struct HomeTabView: View {
             if let home = model.home {
                 NavigationStack {
                     ManualHomeEditorView(home: home) { updated in
-                        Task { await model.updateHome(updated) }
-                        editing = false
+                        Task {
+                            if await model.updateHome(updated) { editing = false }
+                        }
                     }
                 }
             }
@@ -127,11 +175,31 @@ struct HomeTabView: View {
             }
         }
         .navigationDestination(isPresented: $editingHousehold) { HouseholdSetupView(mode: .edit) }
+        .sheet(isPresented: $showingMeetingPlaceMap) {
+            if let home = model.home, let regionalResources = model.regionalResources {
+                MapPlanningView(store: regionalResources) { coordinate, label, address in
+                    let place = SavedPlace(homeID: home.id, purpose: .outsideMeetingPoint, label: label,
+                                           coordinate: coordinate, addressText: address, provenance: .userSelected)
+                    let saved = await model.savePlace(place)
+                    if saved { showingMeetingPlaceMap = false }
+                    return saved
+                }
+            } else if let content = model.content, let home = model.home {
+                MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "tx-statewide") { coordinate, label, address in
+                    let place = SavedPlace(homeID: home.id, purpose: .outsideMeetingPoint, label: label,
+                                           coordinate: coordinate, addressText: address, provenance: .userSelected)
+                    let saved = await model.savePlace(place)
+                    if saved { showingMeetingPlaceMap = false }
+                    return saved
+                }
+            }
+        }
         .sheet(item: $confirming) { draft in
             NavigationStack {
                 HomeConfirmationView(home: draft) { confirmed in
-                    Task { await model.updateHome(confirmed) }
-                    confirming = nil
+                    Task {
+                        if await model.updateHome(confirmed) { confirming = nil }
+                    }
                 }
             }
         }

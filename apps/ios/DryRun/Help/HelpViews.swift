@@ -6,14 +6,16 @@ import DryRunCore
 /// Phone and website actions always require a tap. Nothing auto-calls, and nothing private is sent.
 struct HelpTabView: View {
     @Environment(AppModel.self) private var model
-    @State private var showMap = false
+    @State private var showMapPlanner = false
     @State private var showCard = false
 
     var body: some View {
         let l = model.localizer
         let regionID = model.household?.regionID ?? "tx-statewide"
-        let resources = model.content?.resources(forRegion: regionID) ?? []
-        let region = model.content?.region(regionID)
+        let resources = model.regionalResources?.resources(for: regionID)
+            ?? model.content?.resources(forRegion: regionID) ?? []
+        let region = model.regionalResources?.regionInfo(for: regionID)
+            ?? model.content?.region(regionID)
         List {
             Section {
                 // A number shown as text with an explicit call button; nothing dials on its own.
@@ -26,6 +28,19 @@ struct HelpTabView: View {
                     Button { showCard = true } label: { Label(l("ui.card.open"), systemImage: "bolt.heart.fill") }
                         .foregroundStyle(Theme.critical)
                         .accessibilityIdentifier("help.outageCard")
+                }
+            }
+            if model.content != nil {
+                Section {
+                    Button {
+                        showMapPlanner = true
+                    } label: {
+                        Label("Plan with Apple Maps", systemImage: "map.fill")
+                    }
+                    .font(.headline)
+                    .accessibilityIdentifier("help.openMap")
+                } footer: {
+                    Text("Browse verified directory places by county, search Apple Maps explicitly, and preview an ordinary trip. Location access is optional.")
                 }
             }
             if let contacts = model.household?.contacts.filter({ $0.phone != nil }), !contacts.isEmpty {
@@ -45,19 +60,18 @@ struct HelpTabView: View {
                     ForEach(items) { ResourceRow(resource: $0) }
                 }
             }
-            Section {
-                Button(showMap ? l("common.help.hideMap") : l("common.help.showMap"), systemImage: "map") { showMap.toggle() }
-                if showMap {
-                    DirectoryMapView(resources: resources)
-                        .frame(height: 300)
-                        .listRowInsets(EdgeInsets())
-                }
-            } footer: {
-                Text(l("common.help.mapFooter"))
-            }
         }
         .navigationTitle(l("common.tab.help"))
         .sheet(isPresented: $showCard) { NavigationStack { OutageCardView() } }
+        .sheet(isPresented: $showMapPlanner) {
+            if let regionalResources = model.regionalResources {
+                MapPlanningView(store: regionalResources)
+            } else if let content = model.content {
+                MapPlanningView(content: content, client: model.publicClient, regionID: regionID)
+            } else {
+                ProgressView("Loading map")
+            }
+        }
     }
 
     private func groups(_ resources: [PublicResource]) -> [(ResourceServiceType, [PublicResource])] {
@@ -148,8 +162,11 @@ struct DirectoryMapView: View {
     let resources: [PublicResource]
     var body: some View {
         Map {
-            ForEach(resources.filter { $0.latitude != nil && $0.longitude != nil }) { r in
-                Marker(r.name, systemImage: "building.2", coordinate: CLLocationCoordinate2D(latitude: r.latitude!, longitude: r.longitude!))
+            ForEach(resources) { r in
+                if let latitude = r.latitude, let longitude = r.longitude,
+                   let coordinate = GeographicCoordinate(latitude: latitude, longitude: longitude) {
+                    Marker(r.name, systemImage: "building.2", coordinate: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude))
+                }
             }
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))

@@ -21,6 +21,20 @@ struct GeometryTests {
         #expect(abs(p.x - 1) < 1e-12 && abs(p.y - 1) < 1e-12)
     }
 
+    @Test func concavePolygonTriangulationPreservesAreaAndRejectsBowties() {
+        // An L-shaped floor: the notch must remain empty in the display mesh.
+        let concave = [Vec2(0, 0), Vec2(4, 0), Vec2(4, 1), Vec2(1, 1), Vec2(1, 4), Vec2(0, 4)]
+        let triangles = try! #require(Geometry.triangulate(concave))
+        #expect(triangles.count == concave.count - 2)
+        let triangleArea = triangles.reduce(0.0) { total, t in
+            total + abs(Geometry.signedArea(t.map { concave[$0] }))
+        }
+        #expect(abs(triangleArea - abs(Geometry.signedArea(concave))) < 1e-9)
+
+        let bowtie = [Vec2(0, 0), Vec2(2, 2), Vec2(0, 2), Vec2(2, 0)]
+        #expect(Geometry.triangulate(bowtie) == nil)
+    }
+
     // House-local layout (metres, x/z ground plane, y up). Room A: 4×4 at origin; Room B: 4×3 to the east.
     static let worldYaw = 0.5
     static let worldT = Vec3(10, 0, -3)
@@ -120,6 +134,14 @@ struct GeometryTests {
             try ScanImport.importCapture(c, homeID: "x")
         }
         #expect(throws: ScanImportError.empty) { try ScanImport.importCapture(ScanCapture(rooms: [], sharedCoordinateFrame: true), homeID: "x") }
+    }
+
+    @Test func interruptedCaptureRemainsIncompleteEvenWithSeveralSavedRooms() throws {
+        var capture = Self.capture
+        capture.sessionCompleted = false
+        let result = try ScanImport.importCapture(capture, homeID: "interrupted")
+        #expect(result.home.completeness == .incomplete)
+        #expect(result.notes.contains { $0.contains("did not finish") })
     }
 
     @Test func nearTouchingScannedRoomsWithoutADoorAreNotConnected() throws {

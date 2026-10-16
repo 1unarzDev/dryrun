@@ -42,6 +42,15 @@ struct Fixture {
 
 @Suite("Encrypted household vault")
 struct VaultTests {
+    @Test func schemaVersionOnePayloadWithoutSavedPlacesStillLoads() throws {
+        let legacy = Data("""
+        {"schemaVersion":1,"household":null,"home":null,"retainedPlans":[],"rehearsalResults":[],"savedAt":"2026-10-09T00:00:00Z"}
+        """.utf8)
+        let payload = try DryRunJSON.decoder().decode(VaultPayload.self, from: legacy)
+        #expect(payload.savedPlaces.isEmpty)
+        #expect(payload.schemaVersion == 1)
+    }
+
     @Test func roundTripAndNoPlaintextOnDisk() async throws {
         let f = Fixture()
         let repo = f.repo

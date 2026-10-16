@@ -387,15 +387,16 @@ struct HouseholdSetupView: View {
             draft.equipment[i].label = draft.equipment[i].purpose.displayName
         }
         Task {
+            let saved: Bool
             if mode == .create {
-                await model.useSampleHouseholdIfNoHome(draft)
+                saved = await model.useSampleHouseholdIfNoHome(draft)
             } else {
                 let d = draft
-                await model.updateHousehold { $0 = d }
+                saved = await model.updateHousehold { $0 = d }
                 // The language chosen here is the app's language; without this it only changed after a relaunch.
-                model.locale = d.preferredLocale
+                if saved { model.locale = d.preferredLocale }
             }
-            dismiss()
+            if saved { dismiss() }
         }
     }
 
@@ -452,17 +453,5 @@ struct NumberEvidenceRow: View {
                 }
             }
             .accessibilityLabel("\(title). Leave empty if not sure.")
-    }
-}
-
-extension AppModel {
-    /// New households start with the fictional sample home until the user builds or scans their own,
-    /// which is clearly labeled in the Home tab.
-    func useSampleHouseholdIfNoHome(_ household: HouseholdProfile) async {
-        self.household = household
-        if home == nil { home = SampleHomes.ranch }
-        locale = household.preferredLocale
-        phase = .ready
-        await persist()
     }
 }

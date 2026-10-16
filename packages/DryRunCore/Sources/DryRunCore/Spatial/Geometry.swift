@@ -151,6 +151,53 @@ public enum Geometry {
         return true
     }
 
+    /// Ear-clips a simple polygon into triangles, preserving the input winding. The returned values are indices
+    /// into `poly`; a nil result means the outline is empty, self-intersecting, degenerate, or could not be reduced.
+    /// This is intentionally a small deterministic triangulator for display meshes. It does not accept holes.
+    public static func triangulate(_ poly: [Vec2], epsilon: Double = 1e-9) -> [[Int]]? {
+        guard isSimplePolygon(poly), poly.count >= 3 else { return nil }
+        let winding = signedArea(poly) >= 0 ? 1.0 : -1.0
+        var remaining = Array(poly.indices)
+        var triangles: [[Int]] = []
+
+        func isInside(_ p: Vec2, _ a: Vec2, _ b: Vec2, _ c: Vec2) -> Bool {
+            let ab = cross(b - a, p - a), bc = cross(c - b, p - b), ca = cross(a - c, p - c)
+            let hasNegative = ab < -epsilon || bc < -epsilon || ca < -epsilon
+            let hasPositive = ab > epsilon || bc > epsilon || ca > epsilon
+            return !(hasNegative && hasPositive)
+        }
+
+        // A simple polygon with n vertices always has n - 2 ears. The guard prevents malformed input from
+        // looping forever when all remaining corners are collinear at floating-point precision.
+        while remaining.count > 3 {
+            var clipped = false
+            for offset in remaining.indices {
+                let prevIndex = remaining[(offset + remaining.count - 1) % remaining.count]
+                let currentIndex = remaining[offset]
+                let nextIndex = remaining[(offset + 1) % remaining.count]
+                let a = poly[prevIndex], b = poly[currentIndex], c = poly[nextIndex]
+                guard winding * cross(b - a, c - b) > epsilon else { continue }
+
+                var containsOther = false
+                for candidate in remaining where candidate != prevIndex && candidate != currentIndex && candidate != nextIndex {
+                    if isInside(poly[candidate], a, b, c) {
+                        containsOther = true
+                        break
+                    }
+                }
+                guard !containsOther else { continue }
+                triangles.append([prevIndex, currentIndex, nextIndex])
+                remaining.remove(at: offset)
+                clipped = true
+                break
+            }
+            guard clipped else { return nil }
+        }
+        guard remaining.count == 3 else { return nil }
+        triangles.append(remaining)
+        return triangles
+    }
+
     public static func polylineLength(_ pts: [Vec2]) -> Double {
         zip(pts, pts.dropFirst()).reduce(0) { $0 + $1.0.distance(to: $1.1) }
     }

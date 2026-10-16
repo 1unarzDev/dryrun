@@ -129,4 +129,23 @@ struct PublicDataContractTests {
         #expect(env.alerts.count == 1)
         #expect(PublicDataPolicy.currentOfficialAlerts(env.alerts, now: now).isEmpty)
     }
+
+    @Test("Region frames are deliberate and only verified offices receive pins")
+    func mapGeographyContract() throws {
+        let data = try Data(contentsOf: repoRoot.appendingPathComponent("content/regions/tx-25-counties.json"))
+        let pack = try DryRunJSON.decoder().decode(RegionPack.self, from: data)
+        #expect(pack.regions.allSatisfy { region in
+            guard let latitude = region.mapCenterLatitude, let longitude = region.mapCenterLongitude,
+                  let center = GeographicCoordinate(latitude: latitude, longitude: longitude),
+                  let latSpan = region.mapSpanLatitude, let lonSpan = region.mapSpanLongitude else { return false }
+            return center.latitude.isFinite && center.longitude.isFinite && latSpan > 0 && lonSpan > 0
+        })
+        let erath = try #require(pack.resources.first { $0.id == "r-48143-oem" })
+        let hood = try #require(pack.resources.first { $0.id == "r-48221-oem" })
+        #expect(GeographicCoordinate(latitude: erath.latitude ?? .nan, longitude: erath.longitude ?? .nan) != nil)
+        #expect(GeographicCoordinate(latitude: hood.latitude ?? .nan, longitude: hood.longitude ?? .nan) != nil)
+        #expect(erath.coordinateSourceIDs == ["S50"])
+        #expect(hood.coordinateSourceIDs == ["S51"])
+        #expect(pack.resources.filter { $0.latitude != nil }.map(\.id).sorted() == ["r-48143-oem", "r-48221-oem"])
+    }
 }

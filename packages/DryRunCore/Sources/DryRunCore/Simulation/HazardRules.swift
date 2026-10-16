@@ -152,8 +152,11 @@ extension RunState {
     // MARK: Fire (immediate exercise; practice routes under authored assumptions)
 
     func startSpace(for p: Person) -> String {
-        if let s = p.sleepingSpaceID, home.space(s) != nil { return s }
-        return home.spaces.first { $0.kind == .livingRoom }?.id ?? home.spaces.first?.id ?? "unknown"
+        // A missing or stale assignment is an explicit unknown. Never silently start a person in
+        // the living room (or the first scanned room), which can make a rehearsal claim a route
+        // from the wrong place.
+        guard let s = p.sleepingSpaceID, home.space(s) != nil else { return "unknown" }
+        return s
     }
 
     /// Human label for an exit: the room it leaves from (household-entered label), never the raw portal ID.
@@ -199,7 +202,8 @@ extension RunState {
 
     /// Applies authored blockage. `originKind` blocks every space of that kind (the authored fire origin);
     /// `mode == "currentRoutes"` additionally blocks the exits of everyone's current practice route.
-    /// If the home has no space of `originKind`, the origin falls back to the exit room of the first person's usual route.
+    /// If a scanned home has no space of `originKind`, preserve the missing authored input as an
+    /// unknown instead of relabelling an unrelated room as the fire origin.
     mutating func fireBlock(e: AuthoredEvent, cause: String) {
         var blockedSpaces = Set<String>(), blockedPortals = Set<String>()
         for (_, r) in currentRoutes {
@@ -208,9 +212,9 @@ extension RunState {
         }
         if let kindRaw = e.params["originKind"], let kind = SpaceKind(rawValue: kindRaw) {
             let origin = home.spaces.filter { $0.kind == kind }.map(\.id)
-            if origin.isEmpty, let first = household.people.sorted(by: { $0.id < $1.id }).compactMap({ currentRoutes[$0.id]?.primary }).first,
-               let last = first.spaceSequence.last {
-                blockedSpaces.insert(last)
+            if origin.isEmpty {
+                unknowns.insert("home.fireOrigin.(kindRaw)")
+                flags.insert("fire.originUnresolved")
             } else {
                 blockedSpaces.formUnion(origin)
             }

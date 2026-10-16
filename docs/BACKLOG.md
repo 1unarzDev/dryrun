@@ -3,6 +3,18 @@
 Each item: acceptance condition · dependencies. "P0" blocks a credible demo; "P1" is needed for the full product;
 "P2" improves it.
 
+## Completed in the 2026-10-16 integration pass
+
+- **MapKit planning journey (M1/M2 portable integration):** full-size native map and accessible list, county frames,
+  filters, source-aware directory details, Apple Maps search disclosure, explicit location/origin and transport-mode
+  travel previews, ordinary-route wording, Open in Apple Maps, and encrypted private meeting-place saves. Bundled and
+  cached public data share one precedence-aware snapshot. Portable contracts, backend tests, and source parsing pass;
+  Xcode, simulator, Apple services, and device behavior remain unverified.
+- **RoomPlan/home review repairs (M3 portable integration):** callback generations, interruption/incomplete capture
+  state, interior portal assignment, measured widths, unknown evidence, concave display triangulation, explicit room
+  starts, and durable candidate-before-publish home replacement. Synthetic fixtures pass; RoomPlan hardware and iOS
+  UI behavior remain unverified.
+
 ## P0 — make it run where it must run
 
 1. **Compile and run on macOS / Xcode 26 (iOS 18 deployment target).**

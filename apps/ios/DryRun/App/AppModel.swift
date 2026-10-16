@@ -25,6 +25,8 @@ final class AppModel {
     private(set) var engine: RehearsalEngine?
     var household: HouseholdProfile?
     var home: HomeModel?
+    /// Explicitly saved geographic planning places. Coordinates remain separate from indoor floor-plan geometry.
+    var savedPlaces: [SavedPlace] = []
     var locale: String = "en" { didSet { if locale != oldValue { invalidatePlans() } } }
     var savedPlan: PlanDocument?
     /// Every scenario run once with default choices, for the Next steps screen. Tied to the household/home revision
@@ -39,6 +41,9 @@ final class AppModel {
     var isWorking: Bool { workInFlight > 0 }
     let capabilities = CapabilityService()
     let store: PrivateDataStore
+    /// Shared validated public-resource snapshot used by Help and map planning. Browsing a different county never
+    /// changes the household's region or the resources selected for a saved plan.
+    var regionalResources: RegionalResourcesStore?
     /// Public-only client (region ID in, public data out). Backed by an atomic known-good cache.
     let publicClient: PublicAPIClient = AppModel.makePublicClient()
 
@@ -91,6 +96,7 @@ final class AppModel {
             content = loaded.0
             scenarios = loaded.1
             engine = RehearsalEngine(library: loaded.1, planner: EgressPlanner())
+            configureRegionalResources()
         } catch {
             phase = .contentFailed(String(describing: error))
             return
@@ -214,7 +220,9 @@ final class AppModel {
             household = snapshot.household
             home = snapshot.home
             savedPlan = snapshot.savedPlan
+            savedPlaces = snapshot.savedPlaces
             locale = snapshot.household.preferredLocale
+            configureRegionalResources()
             phase = .ready
         case .locked:
             phase = .vaultLocked
@@ -227,12 +235,39 @@ final class AppModel {
     // MARK: - Household
 
     func useSampleHousehold(_ sample: HouseholdProfile) async {
+        let candidateHome = SampleHomes.ranch
+        let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: [])
+        guard await save(snapshot: snapshot) else { return }
         household = sample
-        home = SampleHomes.ranch
+        home = candidateHome
+        savedPlaces = []
+        configureRegionalResources()
         invalidateDerived()
         locale = sample.preferredLocale
         phase = .ready
-        await persist()
+    }
+
+    /// Creates the first household against the fictional starter home. The candidate is written before it becomes
+    /// observable so an onboarding save failure leaves the user on the editable form rather than showing a false
+    /// ready state.
+    @discardableResult
+    func useSampleHouseholdIfNoHome(_ candidateHousehold: HouseholdProfile) async -> Bool {
+        guard home == nil else {
+            let saved = await updateHousehold { $0 = candidateHousehold }
+            if saved { locale = candidateHousehold.preferredLocale }
+            return saved
+        }
+        let candidateHome = SampleHomes.ranch
+        let snapshot = PrivateSnapshot(household: candidateHousehold, home: candidateHome, savedPlan: nil, savedPlaces: [])
+        guard await save(snapshot: snapshot) else { return false }
+        household = candidateHousehold
+        home = candidateHome
+        savedPlaces = []
+        configureRegionalResources()
+        invalidateDerived()
+        locale = candidateHousehold.preferredLocale
+        phase = .ready
+        return true
     }
 
     /// Set by "See how it works": the root view opens this rehearsal once the tabs are up, then clears it.
@@ -244,21 +279,42 @@ final class AppModel {
         pendingScenarioID = "freeze-power-loss"
     }
 
-    func updateHousehold(_ edit: (inout HouseholdProfile) -> Void) async {
-        guard var h = household else { return }
+    @discardableResult
+    func updateHousehold(_ edit: (inout HouseholdProfile) -> Void) async -> Bool {
+        guard var h = household, let home else { return false }
         edit(&h)
         h.bumpRevision()
+        let snapshot = PrivateSnapshot(household: h, home: home, savedPlan: savedPlan, savedPlaces: savedPlaces)
+        guard await save(snapshot: snapshot) else { return false }
         household = h
+        configureRegionalResources()
         invalidateDerived()
-        await persist()
+        return true
     }
 
-    func updateHome(_ newHome: HomeModel) async {
+    @discardableResult
+    func updateHome(_ newHome: HomeModel) async -> Bool {
         var h = newHome
         if let old = home, old != newHome, old.revision == newHome.revision { h.bumpRevision() }
-        home = h
+        guard let household else { return false }
+        let oldPlan = savedPlan
+        var candidateHousehold = household
+        // A replacement home cannot keep references to rooms that no longer exist. Keep unresolved
+        // assignments explicit so the rehearsal engine returns unknownStartSpace instead of guessing.
+        let validSpaceIDs = Set(h.spaces.map(\.id))
+        for index in candidateHousehold.people.indices where !validSpaceIDs.contains(candidateHousehold.people[index].sleepingSpaceID ?? "") {
+            candidateHousehold.people[index].sleepingSpaceID = nil
+        }
+        if candidateHousehold != household { candidateHousehold.bumpRevision() }
+        let candidatePlaces = savedPlaces.filter { $0.homeID == h.id }
+        let snapshot = PrivateSnapshot(household: candidateHousehold, home: h, savedPlan: oldPlan,
+                                       savedPlaces: candidatePlaces)
+        guard await save(snapshot: snapshot) else { return false }
+        self.household = candidateHousehold
+        self.home = h
+        self.savedPlaces = candidatePlaces
         invalidateDerived()
-        await persist()
+        return true
     }
 
     /// "Mark preparation completed": changes the REAL household state, only on explicit user action.
@@ -364,7 +420,7 @@ final class AppModel {
         let ticket = planGate.begin(for: key)
         let locale = self.locale
         let localizer = content.localizer(for: locale)
-        let resources = content.resources(forRegion: household.regionID)
+        let resources = regionalResources?.resources(for: household.regionID) ?? content.resources(forRegion: household.regionID)
         let inputs = scenarioIDs.compactMap { id -> RehearsalInput? in
             guard let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }
             return RehearsalInput(household: household, home: home, scenarioID: id, scenarioVersion: s.version,
@@ -447,22 +503,72 @@ final class AppModel {
     func outageCard(includePrivateNotes: Bool = false) -> PlanDocument? {
         guard let household, let home, let content else { return nil }
         return OutageCardBuilder.build(household: household, homeID: home.id, homeRevision: home.revision,
-                                       localizer: localizer, resources: content.resources(forRegion: household.regionID),
+                                       localizer: localizer,
+                                       resources: regionalResources?.resources(for: household.regionID) ?? content.resources(forRegion: household.regionID),
                                        contentVersion: content.contentVersion, generatedAt: Date(),
                                        options: .init(includePrivateNotes: includePrivateNotes, timeZone: .current))
     }
 
     private func invalidatePlans() { planGate.invalidate() }
 
+    private func configureRegionalResources() {
+        guard let content else { return }
+        let regionID = household?.regionID ?? "tx-statewide"
+        if let regionalResources {
+            regionalResources.select(regionID: regionID)
+        } else {
+            regionalResources = RegionalResourcesStore(content: content, client: publicClient, regionID: regionID)
+        }
+    }
+
     // MARK: - Persistence
 
     func persist() async {
         guard let household, let home else { return }
+        _ = await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: savedPlan,
+                                                  savedPlaces: savedPlaces))
+    }
+
+    /// Saves a complete candidate before publishing it to observable state. This keeps failed home/place writes
+    /// from presenting a success state while the previous committed snapshot remains intact.
+    @discardableResult
+    private func save(snapshot: PrivateSnapshot) async -> Bool {
         do {
-            try await store.save(PrivateSnapshot(household: household, home: home, savedPlan: savedPlan))
+            try await store.save(snapshot)
+            return true
         } catch {
             lastError = String(describing: error)
+            return false
         }
+    }
+
+    // MARK: - Private map places
+
+    @discardableResult
+    func savePlace(_ place: SavedPlace) async -> Bool {
+        guard let home, place.homeID == home.id, !place.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        var candidate = savedPlaces.filter { $0.id != place.id }
+        candidate.append(place)
+        guard let household else { return false }
+        // The current plan does not embed private map points. Retain the household/home revisions but clear the
+        // derived document so the Plan tab cannot present a document that predates this linked meeting-place edit.
+        let snapshot = PrivateSnapshot(household: household, home: home, savedPlan: nil, savedPlaces: candidate)
+        guard await save(snapshot: snapshot) else { return false }
+        savedPlaces = candidate
+        savedPlan = nil
+        invalidatePlans()
+        return true
+    }
+
+    func deletePlace(id: String) async {
+        guard let household, let home else { return }
+        let candidate = savedPlaces.filter { $0.id != id }
+        guard candidate.count != savedPlaces.count else { return }
+        let snapshot = PrivateSnapshot(household: household, home: home, savedPlan: nil, savedPlaces: candidate)
+        guard await save(snapshot: snapshot) else { return }
+        savedPlaces = candidate
+        savedPlan = nil
+        invalidatePlans()
     }
 
     /// Delete everything private: vault, derived caches, temporary exports, and the key.
@@ -470,7 +576,7 @@ final class AppModel {
         do {
             try await store.deleteAll()
             TemporaryExports.purgeAll()
-            household = nil; home = nil; savedPlan = nil; rehearsal = nil; comparison = nil; nextStepResults = nil
+            household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
             runGate.invalidate(); planGate.invalidate(); nextGate.invalidate()
             phase = .onboarding
         } catch {

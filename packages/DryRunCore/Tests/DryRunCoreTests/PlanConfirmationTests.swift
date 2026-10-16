@@ -45,6 +45,40 @@ struct PlanConfirmationTests {
         #expect(route.homeRevision == home.revision)
     }
 
+    @Test("An unresolved interior side can be assigned without claiming operability, and measured exterior width is retained")
+    func assignInteriorAndMeasureExterior() {
+        var home = Self.scanned()
+        home = HomeConfirmation.apply(.assignPortalInterior(portalID: "p-out", spaceID: "s1"), to: home)
+        #expect(home.portal("p-out")?.sideB == .space("s1"))
+        #expect(home.portal("p-out")?.verification == .proposed)
+        #expect(home.portal("p-out")?.operable.value == nil)
+
+        // Recreate an unresolved exit; the measured constructor uses the same call shape as the UI.
+        home.portals[1].sideB = .unknown
+        home = HomeConfirmation.apply(.markPortalExteriorMeasured(portalID: "p-out", operable: true, stepFree: true,
+                                                                   clearWidthMeters: 0.86), to: home)
+        #expect(home.portal("p-out")?.clearWidthMeters.value == 0.86)
+        #expect(home.portal("p-out")?.verification == .verified)
+
+        var evidence = Self.scanned()
+        evidence = HomeConfirmation.apply(.confirmPortalEvidence(portalID: "p-int", operable: nil, stepFree: nil,
+                                                                  clearWidthMeters: 0.91), to: evidence)
+        #expect(evidence.portal("p-int")?.operable.value == nil)
+        #expect(evidence.portal("p-int")?.stepFree.value == nil)
+        #expect(evidence.portal("p-int")?.clearWidthMeters.value == 0.91)
+        evidence = HomeConfirmation.apply(.markPortalExteriorEvidence(portalID: "p-out", operable: nil, stepFree: nil,
+                                                                       clearWidthMeters: 0.86), to: evidence)
+        #expect(evidence.portal("p-out")?.operable.value == nil)
+        #expect(evidence.portal("p-out")?.clearWidthMeters.value == 0.86)
+
+        var unresolved = home
+        unresolved.portals[1].sideA = .unknown
+        unresolved.portals[1].sideB = .unknown
+        let unchanged = HomeConfirmation.apply(.markPortalExteriorMeasured(portalID: "p-out", operable: true,
+                                                                            stepFree: true, clearWidthMeters: 0.86), to: unresolved)
+        #expect(unchanged == unresolved, "outside confirmation still needs the room side")
+    }
+
     @Test("Skipping leaves an opening unknown and out of every route; windows are never made walking exits by a door answer")
     func skipAndWindows() {
         var home = Self.scanned()

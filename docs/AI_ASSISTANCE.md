@@ -22,6 +22,18 @@ real defects, which were fixed and turned into regression tests.
 A human (the owner) wrote the product/engineering brief that defined requirements. The agents made the routine
 engineering decisions recorded in `DECISIONS.md` and `docs/lanes/*.md`.
 
+## Integration pass (2026-10-16)
+
+| Role | Model / tool | Scope |
+|---|---|---|
+| Codex integration agent | GPT-6-based Codex, Linux checkout | Integrated the MapKit planning journey, public geographic contracts and resource precedence, private saved places and vault migration, RoomPlan lifecycle/review repairs, transactional home persistence, portable verification, and integration documentation |
+| Existing map lane | AI sub-agent | Native map/list/search/directions/location adapters, public resource and content changes, map provenance |
+| Existing RoomPlan lane | AI sub-agent | RoomPlan callback lifecycle, confirmation controls, geometry triangulation, scan fixtures |
+
+This pass did not have access to Xcode, an iOS SDK, a simulator, or a physical LiDAR phone. The exact portable test
+results and those unverified platform limits are recorded in `docs/VERIFICATION.md`; no screenshots or private-home
+data were created.
+
 ## Materially AI-generated
 
 Everything under `apps/`, `packages/`, `services/`, `content/`, `fixtures/`, `scripts/`, and `docs/` (except the
