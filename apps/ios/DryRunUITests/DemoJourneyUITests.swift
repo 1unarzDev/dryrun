@@ -90,6 +90,43 @@ final class DemoJourneyUITests: XCTestCase {
             app.terminate()
         }
     }
+
+    #if targetEnvironment(simulator)
+    /// Real encrypted repository and Keychain bridge, isolated from normal app data. Relaunch reads
+    /// persisted contacts/layout absence; this still does not establish device Data Protection or Print.
+    func testEncryptedVaultRetainsLayoutlessContactAndCardAcrossProcessRelaunch() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestingVaultID", UUID().uuidString, "-disableAnimations"]
+        app.launch()
+        XCTAssertTrue(app.buttons["onboarding.create"].waitForExistence(timeout: 20))
+        app.buttons["onboarding.create"].tap()
+        tap("setup.finishLater", in: app)
+        tap("next.contacts", in: app)
+        let name = app.textFields.matching(NSPredicate(format: "identifier BEGINSWITH 'contacts.name.'")).firstMatch
+        XCTAssertTrue(name.waitForExistence(timeout: 10))
+        name.tap(); name.typeText("Persisted fictional contact")
+        let phone = app.textFields.matching(NSPredicate(format: "identifier BEGINSWITH 'contacts.phone.'")).firstMatch
+        phone.tap(); phone.typeText("+44 20 7946 0958")
+        tap("focused.save", in: app)
+        tap("next.outageCard", in: app)
+        XCTAssertTrue(element("card.page", in: app).waitForExistence(timeout: 10))
+        tap("card.share", in: app)
+        XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 20))
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+        XCTAssertFalse(app.buttons["onboarding.create"].exists)
+        tap("next.home", in: app)
+        XCTAssertTrue(element("home.addManual", in: app).waitForExistence(timeout: 10))
+        XCTAssertFalse(element("home.scene", in: app).exists)
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        tap("plan.familyCard", in: app)
+        XCTAssertTrue(element("card.page", in: app).waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS 'Persisted fictional contact'")).firstMatch.exists)
+        tap("card.share", in: app)
+        XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 20))
+    }
+    #endif
     /// Manual address/pin keeps this connected journey independent of live Apple search results.
     /// Nearby discovery may run; this test does not certify its results or any ordinary map route.
     func testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected() {

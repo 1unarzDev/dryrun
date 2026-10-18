@@ -39,6 +39,8 @@
   "plan.transport.alternative": "{kind}: {agreed}",
   "plan.transport.agreed": "đã thỏa thuận trước",
   "plan.transport.notAgreed": "chưa thỏa thuận",
+  "plan.transport.destination.recorded": "Nơi đến đã ghi nhận: {place}. Gia đình đã xác nhận các điều kiện ở đó; hãy kiểm tra lại trước khi đi.",
+  "plan.transport.destination.public": "Địa điểm công cộng đã ghi nhận: {place}. Chưa xác minh tình trạng mở cửa, sức chứa và khả năng tiếp cận hiện tại; hãy hỏi cơ quan phụ trách trước khi đi.",
   "plan.transport.none": "Chưa có phương tiện thay thế nào được sắp xếp.",
   "plan.water.target": "Mục tiêu dự trữ cho {people} người trong 3 ngày: {targetGallons} (mục tiêu dự trữ của CDC, chưa tính vật nuôi; không phải chỉ định lượng nước uống y tế). Hiện có: {storedGallons}.",
   "plan.water.storedUnknown": "chưa rõ",

@@ -39,6 +39,8 @@
   "plan.transport.alternative": "{kind}: {agreed}",
   "plan.transport.agreed": "acordado de antemano",
   "plan.transport.notAgreed": "aún no acordado",
+  "plan.transport.destination.recorded": "Lugar registrado al que ir: {place}. El hogar confirmó sus condiciones; vuelva a comprobarlas antes de viajar.",
+  "plan.transport.destination.public": "Opción de sitio público registrada: {place}. La activación, capacidad y acceso actuales no están verificados; consulte a la autoridad responsable antes de viajar.",
   "plan.transport.none": "Aún no hay transporte alternativo acordado.",
   "plan.water.target": "Meta de almacenamiento para {people} personas durante 3 días: {targetGallons} (meta de almacenamiento de los CDC, sin incluir mascotas; no es una prescripción clínica). Reserva actual: {storedGallons}.",
   "plan.water.storedUnknown": "desconocido",

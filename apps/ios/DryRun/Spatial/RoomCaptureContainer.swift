@@ -52,6 +52,9 @@ final class RoomCaptureController: NSObject, ObservableObject {
         guard let session = view.captureSession else {
             callbackGate.invalidate()
             callbackGeneration = callbackGate.generation
+            arSession.pause()
+            sharedARSession = nil
+            captureView = nil
             phase = .failed("spatial.scan-interrupted")
             return
         }
@@ -80,24 +83,33 @@ final class RoomCaptureController: NSObject, ObservableObject {
     /// Finish the current room but keep the ARSession running so the next room shares its frame.
     func finishRoomAndContinue() {
         guard phase == .scanning else { return }
+        guard let session = captureView?.captureSession else {
+            failedCapture("spatial.scan-interrupted", generation: callbackGeneration)
+            return
+        }
+        guard callbackGate.expectFinish(from: callbackGeneration) else { return }
         wantsAnotherRoom = true
         phase = .processing
-        guard callbackGate.expectFinish(from: callbackGeneration) else { return }
-        captureView?.captureSession.stop(pauseARSession: false)
+        session.stop(pauseARSession: false)
     }
 
     func finishScan() {
         guard phase == .scanning else { return }
+        guard let session = captureView?.captureSession else {
+            failedCapture("spatial.scan-interrupted", generation: callbackGeneration)
+            return
+        }
+        guard callbackGate.expectFinish(from: callbackGeneration) else { return }
         wantsAnotherRoom = false
         phase = .processing
-        guard callbackGate.expectFinish(from: callbackGeneration) else { return }
-        captureView?.captureSession.stop()
+        session.stop()
     }
 
     func cancel() {
         callbackGate.invalidate()
         callbackGeneration = callbackGate.generation
-        captureView?.captureSession.stop()
+        captureView?.captureSession?.stop()
+        sharedARSession?.pause()
         sharedARSession = nil
         captureView = nil
         rooms = []
@@ -117,7 +129,8 @@ final class RoomCaptureController: NSObject, ObservableObject {
         callbackGeneration = callbackGate.generation
         wantsAnotherRoom = false
         // Already processed rooms retain their valid shared frame; retry starts a separate group.
-        captureView?.captureSession.stop()
+        captureView?.captureSession?.stop()
+        sharedARSession?.pause()
         phase = .failed("spatial.scan-interrupted")
     }
 
@@ -135,6 +148,7 @@ final class RoomCaptureController: NSObject, ObservableObject {
         guard phase == .processing, callbackGate.accept(from: generation) else { return }
         if let error {
             wantsAnotherRoom = false
+            sharedARSession?.pause()
             phase = .failed(error.localizedDescription)
             return
         }
@@ -149,7 +163,8 @@ final class RoomCaptureController: NSObject, ObservableObject {
         guard generation == callbackGeneration, phase == .scanning || phase == .processing else { return }
         callbackGate.invalidate(); callbackGeneration = callbackGate.generation
         wantsAnotherRoom = false
-        captureView?.captureSession.stop()
+        captureView?.captureSession?.stop()
+        sharedARSession?.pause()
         phase = .failed(message)
     }
 
@@ -167,7 +182,7 @@ final class RoomCaptureController: NSObject, ObservableObject {
         let generation = callbackGeneration
         wantsAnotherRoom = false
         phase = .processing
-        captureView?.captureSession.stop()
+        captureView?.captureSession?.stop()
         sharedARSession?.pause()
         if usePrevious {
             rooms = capturedRooms; previousGroup = []
@@ -265,7 +280,7 @@ struct RoomScanFlowView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(s("Cancel")) { startGeneration += 1; buildGeneration += 1; controller.cancel(); onFinish(nil) }
+                    Button(s("Cancel")) { tearDown(); onFinish(nil) }
                 }
             }
             .alert(model.localizer("spatial.scan-problem"), isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
@@ -278,6 +293,7 @@ struct RoomScanFlowView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .background { startGeneration += 1; buildGeneration += 1; controller.interrupted() }
             }
+            .onDisappear { tearDown() }
         }
     }
 
@@ -314,14 +330,22 @@ struct RoomScanFlowView: View {
             } else if controller.hasFailed {
                 // The capture session ended with an error, so "Next room" and "Done" would wait for a result that
                 // never comes. Offer a retry, and the rooms already saved if there are any.
-                Button(s("Scan this room again")) { controller.start() }
-                    .buttonStyle(.bordered)
-                Spacer()
-                Text(model.localizer("spatial.rooms-saved", ["count": "\(controller.rooms.count)"])).font(.footnote)
-                Spacer()
-                Button(s("Use saved rooms")) { Task { await buildResult() } }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(controller.rooms.isEmpty)
+                VStack(spacing: 12) {
+                    HStack {
+                        Button(s("Scan this room again")) { controller.start() }
+                            .buttonStyle(.bordered)
+                        Spacer()
+                        Text(model.localizer("spatial.rooms-saved", ["count": "\(controller.rooms.count)"])).font(.footnote)
+                        Spacer()
+                        Button(s("Use saved rooms")) { Task { await buildResult() } }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(controller.rooms.isEmpty)
+                    }
+                    if !controller.previousGroup.isEmpty {
+                        Button(s("Use earlier rooms")) { Task { await buildResult(usePrevious: true) } }
+                            .buttonStyle(.bordered)
+                    }
+                }
             } else {
                 if !controller.previousGroup.isEmpty {
                     Button(s("Use earlier rooms")) { Task { await buildResult(usePrevious: true) } }
@@ -358,7 +382,7 @@ struct RoomScanFlowView: View {
     }
 
     private func buildResult(usePrevious: Bool = false) async {
-        guard !building else { return }
+        guard started, scenePhase != .background, !building else { return }
         building = true
         buildGeneration += 1
         let generation = buildGeneration
@@ -375,5 +399,13 @@ struct RoomScanFlowView: View {
                 errorText = message
             }
         }
+    }
+
+    private func tearDown() {
+        // Only the full flow's disappearance calls this; alerts and the inline review do not dismiss it.
+        // Invalidate permission, processing and delegate results before releasing any camera/session state.
+        startGeneration += 1; buildGeneration += 1
+        started = false
+        controller.cancel()
     }
 }

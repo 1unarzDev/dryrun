@@ -37,5 +37,11 @@
   "native.recoveryDelete": "Delete unreadable data and start over?",
   "native.deleteStartOver": "Delete and start over",
   "native.call": "Call",
-  "native.localHelp": "Official resources and alerts are not available for this location. Keep local emergency contacts in your family card."
+  "native.localHelp": "Official resources and alerts are not available for this location. Keep local emergency contacts in your family card.",
+  "native.removePerson": "Remove family member",
+  "native.removePersonConfirm": "Remove {person} from this household?",
+  "native.removePersonNote": "Their person-specific details and checks will be removed. Equipment stays recorded but becomes unassigned, and helpers must be chosen again where needed. Tap Save to apply this change.",
+  "native.removeEquipment": "Remove this device or medicine",
+  "native.removeEquipmentConfirm": "Remove {device}?",
+  "native.removeEquipmentNote": "This removes only this item and its preparation records. Family members, backup sources, contacts and places stay recorded. The change is saved when you confirm."
 }

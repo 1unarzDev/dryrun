@@ -288,12 +288,15 @@ final class AppModel {
 
     @discardableResult
     func updateHousehold(_ edit: (inout HouseholdProfile) -> Void) async -> Bool {
-        guard var h = household else { return false }
+        guard let previous = household else { return false }
+        var h = previous
         edit(&h)
         h.bumpRevision()
-        let snapshot = PrivateSnapshot(household: h, home: home, savedPlan: savedPlan, savedPlaces: savedPlaces)
+        let candidateHome = HouseholdEditing.homeAfterRemovingResidents(previous: previous, updated: h, home: home)
+        let snapshot = PrivateSnapshot(household: h, home: candidateHome, savedPlan: savedPlan, savedPlaces: savedPlaces)
         guard await save(snapshot: snapshot) else { return false }
         household = h
+        home = candidateHome
         configureRegionalResources()
         invalidateDerived()
         return true

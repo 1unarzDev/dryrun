@@ -13,6 +13,7 @@ struct MedicalSetupView: View {
     @State private var deviceID = ""
     @State private var saving = false
     @State private var saveFailed = false
+    @State private var confirmingRemoval = false
 
     var body: some View {
         let l = model.localizer
@@ -31,6 +32,10 @@ struct MedicalSetupView: View {
                 }
                 contactsSection
                 destinationSection
+                Section {
+                    Button(l("native.removeEquipment"), role: .destructive) { confirmingRemoval = true }
+                        .disabled(saving).accessibilityIdentifier("medical.removeDevice")
+                }
             }
             if saveFailed { Text(model.lastError ?? l("ui.tryFailed")).foregroundStyle(Theme.caution) }
         }
@@ -43,9 +48,17 @@ struct MedicalSetupView: View {
             }
         }
         .onAppear(perform: load)
+        .confirmationDialog(l("native.removeEquipmentConfirm", ["device": deviceLabel]), isPresented: $confirmingRemoval, titleVisibility: .visible) {
+            Button(l("native.removeEquipment"), role: .destructive) { removeDevice() }
+            Button(l("ui.cancel"), role: .cancel) { }
+        } message: { Text(l("native.removeEquipmentNote")) }
     }
 
     private var deviceIndex: Int? { draft?.equipment.firstIndex { $0.id == deviceID } }
+    private var deviceLabel: String {
+        guard let draft, let index = deviceIndex else { return model.localizer("ui.medical.device") }
+        return draft.equipment[index].localizedLabel(model.localizer)
+    }
 
     private func load() {
         guard draft == nil, var h = model.household else { return }
@@ -193,6 +206,19 @@ struct MedicalSetupView: View {
             let saved = await model.updateHousehold(final)
             saving = false
             saveFailed = !saved
+            if saved { dismiss() }
+        }
+    }
+
+    private func removeDevice() {
+        guard !saving, var candidate = draft,
+              HouseholdEditing.removeEquipment(deviceID, from: &candidate) else { return }
+        let final = candidate
+        saving = true
+        Task {
+            let saved = await model.updateHousehold(final)
+            saving = false; saveFailed = !saved
+            // Keep the original editable device draft on failure. Publish deletion only after durable save.
             if saved { dismiss() }
         }
     }

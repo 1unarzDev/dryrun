@@ -25,6 +25,8 @@ done
 
 require_xcode || exit 1
 new_run screens
+"$(dirname "$0")/doctor.sh" "$OUT/environment.md" >/dev/null
+redact_file "$OUT/environment.md"
 step xcodegen ensure_project || { cat "$OUT/logs/xcodegen.log"; exit 1; }
 
 if [ -n "$DEVICE" ]; then
@@ -54,9 +56,10 @@ if [ -n "$SCREENS" ]; then export TEST_RUNNER_TOUR_SCREENS="$SCREENS"; else unse
 step tour xcodebuild test-without-building \
   -project "$PROJECT" -scheme "$SCHEME" -destination "$DEST" -derivedDataPath "$DERIVED" "${SIGN[@]}" \
   -only-testing:DryRunUITests/ScreenshotTourUITests -resultBundlePath "$OUT/tour.xcresult"
-export_attachments "$OUT/tour.xcresult" "$OUT/screenshots"
+step screenshot-export export_attachments "$OUT/tour.xcresult" "$OUT/screenshots"
 
 TARBALL="$(make_bundle)"
 echo "Screenshots: ${OUT#"$ROOT"/}/screenshots  ·  Bundle: ${TARBALL#"$ROOT"/}"
 [ "$OPEN" = 1 ] && open "$OUT/screenshots"
+if [ -n "${CI:-}" ] && steps_failed; then exit 1; fi
 exit 0

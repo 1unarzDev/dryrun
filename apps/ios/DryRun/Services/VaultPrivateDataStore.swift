@@ -8,6 +8,20 @@ struct VaultPrivateDataStore: PrivateDataStore {
     let repository: HouseholdVaultRepository
 
     static func makeDefault() -> VaultPrivateDataStore {
+        #if DEBUG && targetEnvironment(simulator)
+        // Explicit simulator-only UI testing uses the real encrypted repository/Keychain bridge in a
+        // unique namespace. It never reads, clears, or replaces the household's normal vault.
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-uiTestingVaultID"), index + 1 < arguments.count,
+           let identifier = UUID(uuidString: arguments[index + 1]) {
+            let testRoot = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("DryRunUITests", isDirectory: true)
+                .appendingPathComponent(identifier.uuidString, isDirectory: true)
+            return VaultPrivateDataStore(repository: HouseholdVaultRepository(locations: VaultLocations(root: testRoot),
+                keyStore: KeychainVaultKeyStore(service: "org.dryrun.uitest.\(identifier.uuidString)"),
+                protection: VaultFileProtection()))
+        }
+        #endif
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("DryRun", isDirectory: true)
         let repo = HouseholdVaultRepository(locations: VaultLocations(root: support),

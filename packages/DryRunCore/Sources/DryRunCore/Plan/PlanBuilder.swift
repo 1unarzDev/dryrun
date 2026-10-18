@@ -107,10 +107,11 @@ public enum PlanBuilder {
 
         sections.append(b.section("meeting", "plan.section.meeting", meetingLines(b, home, places), critical: true))
         if !places.isEmpty {
-            let lines = places.sorted { $0.id < $1.id }.enumerated().map { index, place in
-                let coordinate = place.coordinate.map { "\($0.latitude), \($0.longitude)" }
-                return PlanLine(text: "\(index + 1). " + [place.label, place.addressText, place.findingInstructions, coordinate].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "), style: .normal, key: "private.savedPlace", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: [])
+            let lines = places.sorted { $0.id < $1.id }.enumerated().flatMap { index, place in
+                PlanPlacePresentation.lines(for: place, number: index + 1, localizer: b.localizer)
             }
+            b.usedFallback = b.usedFallback || lines.contains(where: \.isFallback)
+            b.usedDraft = b.usedDraft || lines.contains(where: \.isDraftTranslation)
             sections.append(b.section("neighborhood", "map.neighborhood", lines, critical: false))
         }
 
@@ -352,6 +353,22 @@ public enum PlanBuilder {
         return lines
     }
 
+    /// The family card and full plan retain the same explicitly recorded continuity destinations.
+    /// A household confirmation cannot establish activation of a public shelter or cooling/warming site.
+    static func continuityDestinationLines(_ b: Builder, _ h: HouseholdProfile) -> [PlanLine] {
+        let destinations = h.transport.destinations.filter {
+            $0.conditionsConfirmed.confirmedValue == true && !$0.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        if destinations.isEmpty {
+            return h.transport.destinations.isEmpty ? [] : [b.line("card.goTo.none", style: .caveat, sources: ["S52"])]
+        }
+        return destinations.map { destination in
+            let publicSite = destination.kind == .publicShelter || destination.kind == .publicWarmingOrCoolingSite
+            return b.line(publicSite ? "plan.transport.destination.public" : "plan.transport.destination.recorded",
+                          ["place": destination.label], sources: ["S52"])
+        }
+    }
+
     private static func transportLines(_ b: Builder, _ h: HouseholdProfile) -> [PlanLine] {
         var lines: [PlanLine] = h.transport.vehicles.map { b.line("plan.transport.vehicle", ["seats": "\($0.seats)"]) }
         if !h.transport.hasVehicle { lines.append(b.line("plan.transport.noVehicle")) }
@@ -360,6 +377,7 @@ public enum PlanBuilder {
             lines.append(b.line("plan.transport.alternative", ["kind": b.l("common.transport.\(alt.kind.rawValue)"), "agreed": agreed]))
         }
         if h.transport.alternatives.isEmpty && !h.transport.hasVehicle { lines.append(b.line("plan.transport.none")) }
+        lines.append(contentsOf: continuityDestinationLines(b, h))
         return lines
     }
 

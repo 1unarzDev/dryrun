@@ -121,3 +121,12 @@ for a session before assigning its delegate/running, retaining a retryable failu
 stable captured-room UUID projection, one additional native regression and a connected UI journey await rerun.
 The simulator picker now prefers a runtime no newer than the selected SDK; portable mock harness tests passed.
 Downloaded evidence: ignored `artifacts/github-39087330893/`.
+
+## Third hosted native attempt — run 39087653478
+
+Exact SHA `88cd8d6`, Xcode16.4/iOS18.5, now correctly selecting an iPhone16 Pro on iOS18.5:
+https://github.com/1unarzDev/dryrun/actions/runs/39087653478
+Helper regressions, core306, vault35, backend68/typecheck passed. The optional capture-session correction
+compiled; app build next failed on Swift6 isolation of the async non-Sendable MKMapSnapshotter.Snapshot return.
+App/UI/screenshot/PDF gates were skipped. The renderer is being changed to callback-owned rendering rather
+than treating the SDK object as Sendable. Downloaded evidence: ignored `artifacts/github-39087653478/`.

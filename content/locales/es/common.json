@@ -626,5 +626,10 @@
   "map.savedSourceNote": "Los datos de contacto guardados no confirman el servicio actual ni la activación de un refugio.",
   "map.noCoordinateDirections": "No hay un punto geográfico registrado. Puede guardar los datos de texto; las indicaciones necesitan un punto en el mapa.",
   "family.recordedPreparations": "Preparativos registrados",
-  "family.recordedExplanation": "Estos datos cumplen sus comprobaciones de preparación. Abra uno para revisar o cambiar los datos. Para volver a comprobar un elemento físico, borre la comprobación registrada."
+  "family.recordedExplanation": "Estos datos cumplen sus comprobaciones de preparación. Abra uno para revisar o cambiar los datos. Para volver a comprobar un elemento físico, borre la comprobación registrada.",
+  "map.source.apple": "Sugerencia de Apple Maps",
+  "map.source.official": "Referencia de recurso público",
+  "map.source.label": "Fuente: {source}",
+  "map.source.checkMissing": "Fecha de comprobación de la fuente no registrada.",
+  "map.snapshotMissing": "Imagen del mapa no disponible para: {panels}. Usa los nombres, direcciones e instrucciones guardados."
 }

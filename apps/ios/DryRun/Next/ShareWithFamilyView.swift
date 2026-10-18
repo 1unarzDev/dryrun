@@ -113,7 +113,7 @@ struct ShareWithFamilyView: View {
         guard let doc = request.document(generatedPlan: generatedPlan, card: card) else { return }
         var panels: [PlanMapPanel] = []
         if request.includePlan, let snapshot = doc.visualSnapshot {
-            panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood"))
+            panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood"), localizer: model.localizer.with(locale: doc.locale))
         }
         guard model.currentKey == startingKey, model.locale == startingLocale, model.savedPlaces == startingPlaces else { return }
         let output = PlanPDFRenderer().render(doc, mapPanels: panels)

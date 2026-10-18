@@ -40,6 +40,28 @@ final class PlanExportTests: XCTestCase {
 }
 
 extension PlanExportTests {
+    func testPartialMapSnapshotFailureNamesTheMissingInsetAndRetainsItsText() throws {
+        let library = try ContentLibrary.load(from: ContentLocator.contentRoot())
+        var household = SampleHouseholds.oak
+        household.privateLocation = PrivateLocation(latitude: 32.2, longitude: -98.2)
+        let backup = SavedPlace(id: "far-backup", homeID: household.stableHomeID, purpose: .backupMeetingPlace, label: "DISTANT-MEETUP", coordinate: GeographicCoordinate(latitude: 35, longitude: -98.2), addressText: "99 Fictional Road", findingInstructions: "Beside the public entrance")
+        let doc = PlanBuilder.build(household: household, home: nil, savedPlaces: [backup], results: [], localizer: library.localizer(for: "en"), resources: [], contentVersion: library.contentVersion, generatedAt: Date(timeIntervalSince1970: 1700000000))
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 900, height: 520)).image { context in
+            UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 900, height: 520))
+        }
+        let local = PlanMapPanel(image: image, title: "Neighborhood", legend: [], extentID: "neighborhood")
+        let distant = PlanMapPanel(image: image, title: backup.label, legend: [], extentID: "place|" + backup.id)
+        for paper in PlanPDFRenderer.Paper.allCases {
+            let partial = PlanPDFRenderer().render(doc, paper: paper, mapPanels: [local])
+            let partialText = try XCTUnwrap(PDFDocument(data: partial.data)?.string)
+            XCTAssertTrue(partialText.contains("Map image unavailable for: DISTANT-MEETUP"))
+            XCTAssertTrue(partialText.contains("99 Fictional Road"))
+            XCTAssertTrue(partialText.contains("Beside the public entrance"))
+            let complete = PlanPDFRenderer().render(doc, paper: paper, mapPanels: [local, distant])
+            XCTAssertFalse(try XCTUnwrap(PDFDocument(data: complete.data)?.string).contains("Map image unavailable for:"))
+        }
+    }
+
     func testCardOnlyExportDoesNotAppendHiddenHomeGeometry() throws {
         let library = try ContentLibrary.load(from: ContentLocator.contentRoot())
         var card = PlanBuilder.build(household: SampleHouseholds.oak, home: SampleHomes.ranch, results: [], localizer: library.localizer(for: "en"), resources: [], contentVersion: library.contentVersion, generatedAt: Date(timeIntervalSince1970: 1700000000))

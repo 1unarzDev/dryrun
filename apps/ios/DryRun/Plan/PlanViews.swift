@@ -39,7 +39,7 @@ struct PlanTabView: View {
                     Button(t("homeAddress")) { showingAddress = true }.accessibilityIdentifier("plan.address")
                 }
                 Section(t("neighborhood")) {
-                    if let snapshot = doc.visualSnapshot, snapshot.homeCoordinate != nil || snapshot.savedPlaces.contains(where: { $0.coordinate != nil }) { NeighborhoodPlanPreview(snapshot: snapshot).frame(height: 190) }
+                    if let snapshot = doc.visualSnapshot, snapshot.homeCoordinate != nil || snapshot.savedPlaces.contains(where: { $0.coordinate != nil }) { NeighborhoodPlanPreview(snapshot: snapshot) }
                     else { Text(t("noHome")).font(.callout).foregroundStyle(.secondary) }
                     ForEach(model.savedPlaces) { place in
                         VStack(alignment: .leading) { Text(place.label).font(.headline); if let address = place.addressText { Text(address) }; if let instructions = place.findingInstructions { Text(instructions).font(.caption) } }
@@ -94,7 +94,7 @@ struct PlanTabView: View {
             guard selection == chosenSelection, includePrivateNotes == chosenNotes, selectedScenarios.sorted() == chosenScenarios else { return }
             if !export { previewDocument = doc; showingDocument = true; return }
             var panels: [PlanMapPanel] = []
-            if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: t("neighborhood")) }
+            if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: t("neighborhood"), localizer: model.localizer.with(locale: doc.locale)) }
             guard selection == chosenSelection, includePrivateNotes == chosenNotes, selectedScenarios.sorted() == chosenScenarios, paper == chosenPaper,
                   model.documentIsCurrent(doc) else { return }
             let result = PlanPDFRenderer().render(doc, paper: chosenPaper, mapPanels: panels)
@@ -130,7 +130,7 @@ struct PlanDocumentView: View {
                     }
                 }
                 if snapshot.savedPlaces.contains(where: { $0.coordinate != nil }) || snapshot.homeCoordinate != nil {
-                    Section(model.localizer("map.neighborhood")) { NeighborhoodPlanPreview(snapshot: snapshot).frame(height: 220); Text(model.localizer("map.offline")).font(.caption) }
+                    Section(model.localizer("map.neighborhood")) { NeighborhoodPlanPreview(snapshot: snapshot); Text(model.localizer("map.offline")).font(.caption) }
                 }
             }
             ForEach(doc.pages.filter { $0.id != "family-card" }) { page in pageSection(page) }
@@ -189,12 +189,12 @@ struct PDFPreviewSheet: View {
             .navigationTitle(model.localizer("map.selectedPreview"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button(model.localizer("map.done")) { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(model.localizer("map.done")) { dismiss() }.accessibilityIdentifier("pdf.done") }
                 ToolbarItemGroup(placement: .bottomBar) {
                     // Explicit user actions only; sharing moves a copy outside the vault.
-                    Button { showingActivity = true } label: { Label(model.localizer("common.action.share"), systemImage: "square.and.arrow.up") }
+                    Button { showingActivity = true } label: { Label(model.localizer("common.action.share"), systemImage: "square.and.arrow.up") }.accessibilityIdentifier("pdf.share")
                     Spacer()
-                    Button(model.localizer("common.action.print"), systemImage: "printer") { Printing.print(url: url) }
+                    Button(model.localizer("common.action.print"), systemImage: "printer") { Printing.print(url: url) }.accessibilityIdentifier("pdf.print")
                 }
             }
         }
@@ -237,13 +237,22 @@ struct NeighborhoodPlanPreview: View {
     @Environment(AppModel.self) private var model
     let snapshot: PlanVisualSnapshot
     var body: some View {
-        Map {
-            if let coordinate = snapshot.homeCoordinate { Marker(model.localizer("map.home"), systemImage: "house.fill", coordinate: coordinate.cl) }
-            ForEach(Array(snapshot.savedPlaces.enumerated()), id: \.element.id) { index, place in
-                if let coordinate = place.coordinate { Marker("\(index + 1). \(place.label)", coordinate: coordinate.cl).tint(place.purpose == .outsideMeetingPoint ? .green : .orange) }
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(PlanMapSelection.extents(homeCoordinate: snapshot.homeCoordinate, places: snapshot.savedPlaces)) { extent in
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(extent.title(neighborhood: model.localizer("map.neighborhood"))).font(.caption.weight(.semibold))
+                    Map {
+                        if let coordinate = extent.homeCoordinate { Marker(model.localizer("map.home"), systemImage: "house.fill", coordinate: coordinate.cl) }
+                        ForEach(extent.places, id: \.place.id) { entry in
+                            if let coordinate = entry.place.coordinate {
+                                Marker("\(entry.number). \(entry.place.label)", coordinate: coordinate.cl).tint(entry.place.purpose == .outsideMeetingPoint ? .green : .orange)
+                            }
+                        }
+                    }.mapStyle(.standard(pointsOfInterest: .excludingAll)).frame(height: 190)
+                        .accessibilityLabel(([extent.homeCoordinate == nil ? nil : model.localizer("map.home")] + extent.places.map { Optional($0.place.label) }).compactMap { $0 }.joined(separator: ", "))
+                }
             }
-        }.mapStyle(.standard(pointsOfInterest: .excludingAll))
-            .accessibilityLabel(snapshot.savedPlaces.map(\.label).joined(separator: ", "))
+        }
     }
 }
 
@@ -286,7 +295,7 @@ struct PlanShareButton: View {
             working = true; Task { @MainActor in
             defer { working = false }
             var panels: [PlanMapPanel] = []
-            if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood")) }
+            if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood"), localizer: model.localizer.with(locale: doc.locale)) }
             guard model.currentKey == startingKey, model.savedPlaces == startingPlaces, model.locale == startingLocale else { return }
             do {
                 url = try TemporaryExports.write(PlanPDFRenderer().render(doc, paper: paper, mapPanels: panels).data, name: "DryRun-preview-\(UUID().uuidString).pdf")

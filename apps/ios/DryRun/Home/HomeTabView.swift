@@ -187,6 +187,7 @@ struct HomeTabView: View {
                 pendingProposal = proposed
                 scanning = false
             }
+            .interactiveDismissDisabled()
         }
         .navigationDestination(isPresented: $editingHousehold) { HouseholdSetupView(mode: .edit) }
         .sheet(isPresented: $showingMeetingPlaceMap) {

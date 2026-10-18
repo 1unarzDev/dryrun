@@ -37,5 +37,11 @@
   "native.recoveryDelete": "¿Eliminar los datos ilegibles y empezar de nuevo?",
   "native.deleteStartOver": "Eliminar y empezar de nuevo",
   "native.call": "Llamar",
-  "native.localHelp": "No hay recursos ni alertas oficiales para esta ubicación. Guarda los contactos locales de emergencia en la tarjeta familiar."
+  "native.localHelp": "No hay recursos ni alertas oficiales para esta ubicación. Guarda los contactos locales de emergencia en la tarjeta familiar.",
+  "native.removePerson": "Eliminar miembro del hogar",
+  "native.removePersonConfirm": "¿Eliminar a {person} de este hogar?",
+  "native.removePersonNote": "Se eliminarán sus datos y comprobaciones personales. El equipo seguirá registrado sin persona asignada y habrá que volver a elegir ayudantes donde sea necesario. Pulse Guardar para aplicar el cambio.",
+  "native.removeEquipment": "Eliminar este equipo o medicamento",
+  "native.removeEquipmentConfirm": "¿Eliminar {device}?",
+  "native.removeEquipmentNote": "Solo se eliminan este artículo y sus registros de preparación. Se conservan los miembros del hogar, las fuentes de energía de respaldo, los contactos y los lugares. El cambio se guarda al confirmar."
 }

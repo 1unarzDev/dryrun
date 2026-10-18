@@ -32,6 +32,9 @@ struct PlanPDFRenderer {
         let qualifications = (localizer ?? Self.bundledContent?.localizer(for: doc.locale))?.with(locale: doc.locale)
             ?? Localizer(locale: doc.locale, tables: [:], manifest: nil)
         let mapPanels = doc.pages.allSatisfy { $0.id == "family-card" } ? [] : mapPanels
+        let missingMapExtents = doc.visualSnapshot.map {
+            PlanMapSelection.missingExtents(homeCoordinate: $0.homeCoordinate, places: $0.savedPlaces, renderedExtentIDs: Set(mapPanels.compactMap(\.extentID)))
+        } ?? []
         let width = size.width - Self.margin * 2
         let bounds = CGRect(origin: .zero, size: size)
         let format = UIGraphicsPDFRendererFormat()
@@ -49,8 +52,12 @@ struct PlanPDFRenderer {
                     blocks.append(Block(attributed: NSAttributedString(string: Self.exportText("sources", locale: doc.locale), attributes: [.font: UIFont.boldSystemFont(ofSize: 12)]), spacingAfter: 4))
                     blocks.append(Block(attributed: NSAttributedString(string: doc.sourceIDs.joined(separator: ", "), attributes: [.font: UIFont.systemFont(ofSize: 11)]), spacingAfter: 8))
                 }
-                if page.id == "essentials", mapPanels.isEmpty, doc.visualSnapshot?.homeCoordinate != nil || doc.visualSnapshot?.savedPlaces.contains(where: { $0.coordinate != nil }) == true {
-                    blocks.append(Block(attributed: NSAttributedString(string: Self.exportText("mapUnavailable", locale: doc.locale), attributes: [.font: UIFont.systemFont(ofSize: 11)]), spacingAfter: 8))
+                if page.id == "essentials", !missingMapExtents.isEmpty {
+                    let neighborhood = qualifications.text("map.neighborhood")
+                    let names = missingMapExtents.map { $0.title(neighborhood: neighborhood.isMissing ? "Neighborhood" : neighborhood.text) }.joined(separator: ", ")
+                    let notice = qualifications.text("map.snapshotMissing", ["panels": names])
+                    let text = notice.isMissing ? Self.exportText("mapUnavailable", locale: doc.locale) + " (" + names + ")" : notice.text
+                    blocks.append(Block(attributed: NSAttributedString(string: text, attributes: [.font: UIFont.systemFont(ofSize: 11)]), spacingAfter: 8))
                 }
                 var first = true
                 while !blocks.isEmpty {

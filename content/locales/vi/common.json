@@ -626,5 +626,10 @@
   "map.savedSourceNote": "Thông tin liên hệ đã lưu không xác nhận dịch vụ hiện tại hoặc việc kích hoạt nơi trú ẩn.",
   "map.noCoordinateDirections": "Chưa có ghim vị trí địa lý. Bạn có thể lưu thông tin văn bản; chỉ đường cần có ghim vị trí.",
   "family.recordedPreparations": "Việc chuẩn bị đã ghi nhận",
-  "family.recordedExplanation": "Các thông tin này đáp ứng mục kiểm tra chuẩn bị tương ứng. Mở một mục để xem lại hoặc sửa thông tin. Muốn kiểm tra lại một vật dụng, hãy xóa lần kiểm tra đã ghi."
+  "family.recordedExplanation": "Các thông tin này đáp ứng mục kiểm tra chuẩn bị tương ứng. Mở một mục để xem lại hoặc sửa thông tin. Muốn kiểm tra lại một vật dụng, hãy xóa lần kiểm tra đã ghi.",
+  "map.source.apple": "Gợi ý từ Apple Maps",
+  "map.source.official": "Thông tin tham khảo về nguồn lực công cộng",
+  "map.source.label": "Nguồn: {source}",
+  "map.source.checkMissing": "Chưa ghi ngày kiểm tra nguồn.",
+  "map.snapshotMissing": "Không có ảnh bản đồ cho: {panels}. Dùng tên, địa chỉ và hướng dẫn đã lưu."
 }

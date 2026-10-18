@@ -626,5 +626,10 @@
   "map.savedSourceNote": "Saved contact details do not confirm current service or shelter activation.",
   "map.noCoordinateDirections": "No geographic pin is recorded. You can save the text details; directions need a pin.",
   "family.recordedPreparations": "Recorded preparations",
-  "family.recordedExplanation": "These records satisfy their preparation checks. Open one to review or change the facts. A physical check can be reopened by clearing its recorded check."
+  "family.recordedExplanation": "These records satisfy their preparation checks. Open one to review or change the facts. A physical check can be reopened by clearing its recorded check.",
+  "map.source.apple": "Apple Maps suggestion",
+  "map.source.official": "Public resource reference",
+  "map.source.label": "Source: {source}",
+  "map.source.checkMissing": "Source check date not recorded.",
+  "map.snapshotMissing": "Map image unavailable for: {panels}. Use the saved names, addresses and finding instructions."
 }

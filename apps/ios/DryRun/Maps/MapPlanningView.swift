@@ -24,6 +24,7 @@ struct MapPlanningView: View {
     @State private var showingList = false
     @State private var discovery = NearbyDiscovery()
     @State private var routeRequest = MapRoutePreviewModel()
+    @State private var routeEndpoints: MapPlanningRouteEndpoints?
     @State private var mode: MapTravelMode = .walking
     @State private var originID = "home"
     @State private var message: String?
@@ -96,7 +97,7 @@ struct MapPlanningView: View {
                 }) }
             }
             .task(id: homeCoordinate) {
-                discovery.cancel(clearResults: true); routeRequest.cancel(clearPreview: true); cameraCenter = nil
+                discovery.cancel(clearResults: true); invalidateChangedRouteEndpoints(); cameraCenter = nil
                 if let homeCoordinate {
                     let newHomeRegion = MapRegionHint(center: homeCoordinate, spanLatitude: radius / 55000, spanLongitude: radius / 55000)
                     camera = .region(newHomeRegion.mapRegion)
@@ -106,6 +107,7 @@ struct MapPlanningView: View {
             .onChange(of: selected?.id) { _, _ in routeRequest.cancel() }
             .onChange(of: originID) { _, _ in routeRequest.cancel(clearPreview: true) }
             .onChange(of: mode) { _, _ in routeRequest.cancel(clearPreview: true) }
+            .onChange(of: places) { _, _ in invalidateChangedRouteEndpoints() }
             .onChange(of: routeRequest.result) { _, result in
                 guard let result else { return }
                 guard selected?.id == result.destinationID else { routeRequest.cancel(clearPreview: true); return }
@@ -273,6 +275,13 @@ struct MapPlanningView: View {
         guard let coordinate = destination.place.coordinate else { return }
         let selectedOriginID = originID
         let savedOrigin = selectedOriginID == "home" ? homeCoordinate : places.first { $0.id == selectedOriginID }?.coordinate
+        let origin: MapPlanningRouteEndpoints.Reference
+        if selectedOriginID == "home", let homeCoordinate { origin = .home(homeCoordinate) }
+        else if selectedOriginID != "current", let savedOrigin { origin = .savedPlace(id: selectedOriginID, coordinate: savedOrigin) }
+        else { origin = .external }
+        let target: MapPlanningRouteEndpoints.Reference = places.contains(where: { $0.id == destination.id })
+            ? .savedPlace(id: destination.id, coordinate: coordinate) : .external
+        routeEndpoints = MapPlanningRouteEndpoints(origin: origin, destination: target)
         routeRequest.start(destinationID: destination.id, destination: coordinate, mode: mode) {
             if selectedOriginID == "current" {
                 guard let current = await location.requestOneShot() else { return nil }
@@ -280,6 +289,12 @@ struct MapPlanningView: View {
             }
             return savedOrigin
         }
+    }
+
+    private func invalidateChangedRouteEndpoints() {
+        guard let routeEndpoints, !routeEndpoints.isCurrent(homeCoordinate: homeCoordinate, places: places) else { return }
+        routeRequest.cancel(clearPreview: true)
+        self.routeEndpoints = nil
     }
 }
 

@@ -21,6 +21,7 @@ private actor ControlledStore: PrivateDataStore {
     }
     func deleteAll() async throws { snapshot = nil }
     func failWrites() { fail = true }
+    func allowWrites() { fail = false }
     func holdWrites() { hold = true }
     func waitForWrite() async {
         if !didBegin { await withCheckedContinuation { began = $0 } }
@@ -31,6 +32,31 @@ private actor ControlledStore: PrivateDataStore {
 /// Native app integration tests: run by scripts/mac/verify.sh. Authored on Linux; execution evidence is separate.
 @MainActor
 final class AppPersistenceTests: XCTestCase {
+    func testResidentRemovalCommitsWindowAssociationsWithHouseholdAndRetainsBothOnFailure() async throws {
+        let store = ControlledStore()
+        let model = AppModel(store: store)
+        var household = SampleHouseholds.oak
+        let removedID = try XCTUnwrap(household.people.last?.id)
+        let retainedID = try XCTUnwrap(household.people.first?.id)
+        household.people[household.people.count - 1].isSelf = false
+        var home = SampleHomes.ranch
+        home.portals[0].emergencyEscapePersonIDs = [removedID, retainedID]
+        model.household = household; model.home = home
+        await store.failWrites()
+        let failed = await model.updateHousehold { _ = HouseholdEditing.removePerson(removedID, from: &$0) }
+        XCTAssertFalse(failed)
+        XCTAssertEqual(model.household, household)
+        XCTAssertEqual(model.home, home)
+        await store.allowWrites()
+        let saved = await model.updateHousehold { _ = HouseholdEditing.removePerson(removedID, from: &$0) }
+        XCTAssertTrue(saved)
+        XCTAssertFalse(model.household?.people.contains { $0.id == removedID } ?? true)
+        XCTAssertEqual(model.home?.portals[0].emergencyEscapePersonIDs, [retainedID])
+        guard case .loaded(let disk) = await store.load() else { return XCTFail("Missing committed household/home") }
+        XCTAssertEqual(disk.home, model.home)
+        XCTAssertEqual(disk.household, model.household)
+    }
+
     func testPersonalSetupSavesAndReloadsWithoutFictionalLayout() async {
         let store = InMemoryPrivateDataStore()
         let model = AppModel(store: store)

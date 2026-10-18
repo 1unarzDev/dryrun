@@ -37,5 +37,11 @@
   "native.recoveryDelete": "Xóa dữ liệu không đọc được và bắt đầu lại?",
   "native.deleteStartOver": "Xóa và bắt đầu lại",
   "native.call": "Gọi",
-  "native.localHelp": "Không có tài nguyên và cảnh báo chính thức cho vị trí này. Lưu liên hệ khẩn cấp địa phương trong thẻ gia đình."
+  "native.localHelp": "Không có tài nguyên và cảnh báo chính thức cho vị trí này. Lưu liên hệ khẩn cấp địa phương trong thẻ gia đình.",
+  "native.removePerson": "Xóa thành viên gia đình",
+  "native.removePersonConfirm": "Xóa {person} khỏi hộ gia đình này?",
+  "native.removePersonNote": "Thông tin và các mục kiểm tra riêng của người này sẽ bị xóa. Thiết bị vẫn được ghi nhận nhưng không còn gắn với người sử dụng; hãy chọn lại người hỗ trợ khi cần. Nhấn Lưu để áp dụng thay đổi.",
+  "native.removeEquipment": "Xóa thiết bị hoặc thuốc này",
+  "native.removeEquipmentConfirm": "Xóa {device}?",
+  "native.removeEquipmentNote": "Chỉ xóa mục này và các thông tin chuẩn bị liên quan. Các thành viên, nguồn điện dự phòng, liên hệ và địa điểm vẫn được giữ. Thay đổi được lưu khi bạn xác nhận."
 }

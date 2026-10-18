@@ -39,6 +39,8 @@
   "plan.transport.alternative": "{kind}: {agreed}",
   "plan.transport.agreed": "agreed in advance",
   "plan.transport.notAgreed": "not yet agreed",
+  "plan.transport.destination.recorded": "Recorded place to go: {place}. The household confirmed its conditions; check again before travel.",
+  "plan.transport.destination.public": "Recorded public-site option: {place}. Current activation, capacity and access are unverified; check the responsible authority before travel.",
   "plan.transport.none": "No alternative transport is arranged yet.",
   "plan.water.target": "Storage target for {people} people for 3 days: {targetGallons} (CDC storage planning target, before pet needs; not a clinical drinking prescription). Stored now: {storedGallons}.",
   "plan.water.storedUnknown": "unknown",

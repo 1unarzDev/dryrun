@@ -172,6 +172,7 @@ public enum FamilyEmergencyCardBuilder {
             }
             continuity.append(line(details, sources: ["S52"]))
         }
+        continuity.append(contentsOf: PlanBuilder.continuityDestinationLines(b, h))
         for id in ["water", "food", "firstAid", "flashlight", "batteries", "sanitation", "pets", "extinguisher"] {
             let fact = h.preparedness?.items[id]
             let location = fact?.location.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""

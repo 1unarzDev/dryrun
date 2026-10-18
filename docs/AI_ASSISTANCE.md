@@ -111,3 +111,14 @@ the private NSCoding delegate's unstable Objective-C name. Added an explicit run
 generation guards, and prepared a rerun. Also corrected portable tabular-status parsing and updated stale county/
 equipment-only backlog and Mac instructions. Exact run/environment/failures are in VERIFICATION. No simulator
 journey or physical capture result is implied by this failed build.
+
+Further hosted-native/source review (same Codex integration and three AI lanes) fixed the optional RoomPlan
+session, stable SDK room identities, full-flow camera teardown/retry, actor-confined map snapshot rendering,
+removed-place route invalidation, shared neighborhood/inset extents and partial snapshot notices. Saved resource
+contact/source/status and confirmed continuity destinations now reach portable plans. Direct resident/equipment
+deletion uses confirmation and transactional reference cleanup. A simulator-only isolated encrypted-vault UI
+journey was added for process relaunch; it is not a device Data Protection test. Workflow checks now include
+unsigned iphoneos compilation and configurable small-phone/large-text screenshots. Early native runs failed
+before app/UI execution; VERIFICATION records exact failures and subsequent results. All new translations remain
+AI drafts; recording their English baselines does not imply professional review. No physical scan or human
+participant result is claimed.

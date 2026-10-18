@@ -15,6 +15,8 @@ struct FocusedHouseholdEditor: View {
     @State private var newContactID: String?
     @State private var saving = false
     @State private var saveFailed = false
+    @State private var removingPersonID: String?
+    @State private var confirmingPersonRemoval = false
 
     var body: some View {
         let l = model.localizer
@@ -59,6 +61,16 @@ struct FocusedHouseholdEditor: View {
                 }
             }
         }
+        .confirmationDialog(l("native.removePersonConfirm", ["person": removingPersonLabel]), isPresented: $confirmingPersonRemoval, titleVisibility: .visible) {
+            Button(l("native.removePerson"), role: .destructive) {
+                if let id = removingPersonID, var edited = draft {
+                    HouseholdEditing.removePerson(id, from: &edited)
+                    draft = edited
+                }
+                removingPersonID = nil
+            }
+            Button(l("ui.cancel"), role: .cancel) { removingPersonID = nil }
+        } message: { Text(l("native.removePersonNote")) }
     }
 
     private var title: String {
@@ -104,43 +116,54 @@ struct FocusedHouseholdEditor: View {
         }
     }
     private var personID: String? { if case .person(let id) = focus { return id }; return nil }
+    private var removingPersonLabel: String {
+        draft?.people.first { $0.id == removingPersonID }?.localizedLabel(model.localizer) ?? model.localizer("ui.person")
+    }
     private var familyFields: some View {
         let l = model.localizer
         return Group {
             if personID == nil { Section { TextField(l("family.identity"), text: binding(\.displayName)).accessibilityIdentifier("family.householdName") } }
-            ForEach(Array((draft?.people ?? []).indices).filter { personID == nil || draft!.people[$0].id == personID }, id: \.self) { i in
-                Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
-                    TextField(l("family.name"), text: binding(\.people[i].alias)).accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
-                    Picker(l("family.relationship"), selection: binding(\.people[i].relationship)) {
-                        Text(l("family.unknown")).tag(FamilyRelationship?.none)
-                        ForEach(FamilyRelationship.allCases, id: \.self) { relationship in
-                            Text(l("relationship.\(relationship.rawValue)")).tag(Optional(relationship))
+            ForEach((draft?.people ?? []).filter { personID == nil || $0.id == personID }) { person in
+                if let i = draft?.people.firstIndex(where: { $0.id == person.id }) {
+                    Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
+                        TextField(l("family.name"), text: binding(\.people[i].alias)).accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
+                        Picker(l("family.relationship"), selection: binding(\.people[i].relationship)) {
+                            Text(l("family.unknown")).tag(FamilyRelationship?.none)
+                            ForEach(FamilyRelationship.allCases, id: \.self) { relationship in
+                                Text(l("relationship.\(relationship.rawValue)")).tag(Optional(relationship))
+                            }
                         }
-                    }
-                    if draft!.people[i].relationship == .custom {
-                        TextField(l("family.relationship"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
-                    }
-                    Picker(l("family.age"), selection: binding(\.people[i].ageBand)) {
-                        ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
-                    }
-                    TextField(l("family.conditions"), text: info(i, \.criticalConditions), axis: .vertical)
-                    TextField(l("family.allergies"), text: info(i, \.severeAllergies), axis: .vertical)
-                    TextField(l("family.medication"), text: info(i, \.essentialMedication), axis: .vertical)
-                    TextField(l("family.instructions"), text: info(i, \.responderInstructions), axis: .vertical)
-                    ForEach(AssistanceNeed.allCases, id: \.self) { need in
-                        Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
-                            draft!.people[i].needs.removeAll { $0 == need }
-                            if on { draft!.people[i].needs.append(need) }
-                        }))
-                    }
-                    TextField(l("common.need.communicationSupport"), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
-                    Picker(l("family.startRoom"), selection: binding(\.people[i].sleepingSpaceID)) {
-                        Text(l("family.unknown")).tag(String?.none)
-                        ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
-                    }
-                    Picker(l("family.helper"), selection: binding(\.people[i].helperPersonID)) {
-                        Text(l("family.unknown")).tag(String?.none)
-                        ForEach(draft!.people.filter { $0.id != draft!.people[i].id }) { Text($0.localizedLabel(l)).tag(Optional($0.id)) }
+                        if draft!.people[i].relationship == .custom {
+                            TextField(l("family.relationship"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
+                        }
+                        Picker(l("family.age"), selection: binding(\.people[i].ageBand)) {
+                            ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
+                        }
+                        TextField(l("family.conditions"), text: info(i, \.criticalConditions), axis: .vertical)
+                        TextField(l("family.allergies"), text: info(i, \.severeAllergies), axis: .vertical)
+                        TextField(l("family.medication"), text: info(i, \.essentialMedication), axis: .vertical)
+                        TextField(l("family.instructions"), text: info(i, \.responderInstructions), axis: .vertical)
+                        ForEach(AssistanceNeed.allCases, id: \.self) { need in
+                            Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
+                                draft!.people[i].needs.removeAll { $0 == need }
+                                if on { draft!.people[i].needs.append(need) }
+                            }))
+                        }
+                        TextField(l("common.need.communicationSupport"), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
+                        Picker(l("family.startRoom"), selection: binding(\.people[i].sleepingSpaceID)) {
+                            Text(l("family.unknown")).tag(String?.none)
+                            ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
+                        }
+                        Picker(l("family.helper"), selection: binding(\.people[i].helperPersonID)) {
+                            Text(l("family.unknown")).tag(String?.none)
+                            ForEach(draft!.people.filter { $0.id != draft!.people[i].id }) { Text($0.localizedLabel(l)).tag(Optional($0.id)) }
+                        }
+                        if HouseholdEditing.canRemovePerson(draft!.people[i].id, from: draft!) {
+                            Button(l("native.removePerson"), role: .destructive) {
+                                removingPersonID = draft!.people[i].id
+                                confirmingPersonRemoval = true
+                            }.accessibilityIdentifier("family.removePerson.\(draft!.people[i].id)")
+                        }
                     }
                 }
             }
