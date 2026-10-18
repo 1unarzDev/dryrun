@@ -238,7 +238,7 @@ public enum PlanBuilder {
     private static func meetingLines(_ b: Builder, _ home: HomeModel?, _ places: [SavedPlace]) -> [PlanLine] {
         let selected = places.filter { $0.homeID == (home?.id ?? "") || home == nil }
             .filter { $0.purpose == .outsideMeetingPoint || $0.purpose == .backupMeetingPlace }
-            .sorted { $0.purpose.rawValue == $1.purpose.rawValue ? $0.id < $1.id : $0.purpose.rawValue < $1.purpose.rawValue }
+            .sorted { ($0.purpose == .outsideMeetingPoint ? 0 : 1, $0.id) < ($1.purpose == .outsideMeetingPoint ? 0 : 1, $1.id) }
         if !selected.isEmpty { return selected.map { place in
             let purpose = b.l(place.purpose == .outsideMeetingPoint ? "plan.meeting.near" : "plan.meeting.backup")
             let detail = [place.label, place.addressText, place.findingInstructions].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " — ")

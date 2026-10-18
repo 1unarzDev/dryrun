@@ -145,7 +145,7 @@
 
               ],
               "style" : "contact",
-              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "text" : "Example trusted contact · Family friend · Contacto fuera del área · +1 202 555 0148",
               "unfilledPlaceholders" : [
 
               ]
@@ -251,6 +251,90 @@
               ],
               "style" : "normal",
               "text" : "Vehículo: 5 asientos.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Almacenar agua potable · Disponible en el hogar: Sí · Agua potable almacenada (galones): 5",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Guardar alimentos para el hogar · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Ubicar el botiquín · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Ubicar linternas · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Comprobar pilas o batería portátil · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Ubicar el extintor · Disponible en el hogar: Sí",
               "unfilledPlaceholders" : [
 
               ]
@@ -381,7 +465,7 @@
           ]
         },
         {
-          "heading" : "Punto de reunión afuera",
+          "heading" : "Puntos de encuentro",
           "id" : "meeting",
           "isSafetyCritical" : true,
           "lines" : [
@@ -394,7 +478,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Encuentro alternativo fuera del vecindario: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
+              "text" : "Encuentro exterior cerca de casa: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
               "unfilledPlaceholders" : [
 
               ]
@@ -408,7 +492,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Encuentro exterior cerca de casa: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
+              "text" : "Encuentro alternativo fuera del vecindario: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
               "unfilledPlaceholders" : [
 
               ]
@@ -2153,20 +2237,6 @@
               "unfilledPlaceholders" : [
 
               ]
-            },
-            {
-              "isDraftTranslation" : true,
-              "isFallback" : false,
-              "key" : "action.act.water.save-utility-contact.title",
-              "resolvedLocale" : "es",
-              "sourceIDs" : [
-                "S24"
-              ],
-              "style" : "normal",
-              "text" : "Guarde el contacto de su compañía de agua y la inscripción a sus avisos",
-              "unfilledPlaceholders" : [
-
-              ]
             }
           ]
         },
@@ -2216,7 +2286,8 @@
     "S25",
     "S26",
     "S27",
-    "S52"
+    "S52",
+    "S53"
   ],
   "visualSnapshot" : {
     "fictional" : true,

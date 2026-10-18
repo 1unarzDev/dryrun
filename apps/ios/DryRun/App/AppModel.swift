@@ -302,7 +302,7 @@ final class AppModel {
     @discardableResult
     func updateHousehold(_ candidate: HouseholdProfile) async -> Bool {
         guard let household, candidate.id == household.id, candidate.revision == household.revision else {
-            lastError = "Your family was edited elsewhere. Your draft was kept; reopen the current records before saving."
+            lastError = localizer("family.staleDraft")
             return false
         }
         return await updateHousehold { $0 = candidate }
@@ -318,6 +318,7 @@ final class AppModel {
         candidate.regionID = ""
         for index in candidate.people.indices { candidate.people[index].sleepingSpaceID = nil }
         candidate.preparedness?.items.removeValue(forKey: "clearExits")
+        candidate.preparedness?.items.removeValue(forKey: "fireDrill")
         candidate.preparedness?.items.removeValue(forKey: "smokeAlarms")
         candidate.preparedness?.items.removeValue(forKey: "coAlarms")
         candidate.preparedness?.items.removeValue(forKey: "extinguisher")
@@ -344,6 +345,7 @@ final class AppModel {
         candidateHousehold.homeID = h.id
         if HomeGeometryEditor.requiresNewEscapeCheck(previous: home, updated: h) {
             candidateHousehold.preparedness?.items["clearExits"]?.checkedAt = nil
+            candidateHousehold.preparedness?.items["fireDrill"]?.checkedAt = nil
         }
         // A replacement home cannot keep references to rooms that no longer exist. Keep unresolved
         // assignments explicit so the rehearsal engine returns unknownStartSpace instead of guessing.
@@ -474,8 +476,10 @@ final class AppModel {
     // MARK: - Plans
 
     /// Builds a plan for the selected scenarios by running each deterministically, then saves it in the vault.
-    func generatePlan(scenarioIDs: [String], includePrivateNotes: Bool, selection: FamilyCardSelection = FamilyCardSelection()) async {
-        guard let household, let content, let scenarios, let engine, let key = planKey else { return }
+    /// Returns only this request's committed document. A retained older plan is never a successful result.
+    @discardableResult
+    func generatePlan(scenarioIDs: [String], includePrivateNotes: Bool, selection: FamilyCardSelection = FamilyCardSelection()) async -> PlanDocument? {
+        guard let household, let content, let scenarios, let engine, let key = planKey else { return nil }
         let ticket = planGate.begin(for: key)
         let locale = self.locale
         let localizer = content.localizer(for: locale)
@@ -497,20 +501,21 @@ final class AppModel {
                                          options: .init(includePrivateNotes: includePrivateNotes, familyCardSelection: selection, timeZone: .current))
             }.value
             // Language or household changed while building: drop this plan rather than save a mismatched one.
-            guard planGate.shouldApply(ticket, current: planKey) else { return }
+            guard planGate.shouldApply(ticket, current: planKey) else { return nil }
             guard await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: doc, savedPlaces: places)),
-                  planGate.shouldApply(ticket, current: planKey) else { return }
+                  planGate.shouldApply(ticket, current: planKey) else { return nil }
             savedPlan = doc
+            return doc
         } catch {
-            guard planGate.shouldApply(ticket, current: planKey) else { return }
+            guard planGate.shouldApply(ticket, current: planKey) else { return nil }
             lastError = String(describing: error)
+            return nil
         }
     }
 
     var planIsStale: Bool {
         guard let savedPlan, let household, let content else { return false }
-        return savedPlan.isStale(household: household, home: home, contentVersion: content.contentVersion) || savedPlan.locale != locale
-            || savedPlan.visualSnapshot?.savedPlaces != savedPlaces
+        return savedPlan.isStale(household: household, home: home, contentVersion: content.contentVersion, savedPlaces: savedPlaces) || savedPlan.locale != locale
     }
 
     private func invalidateDerived() {

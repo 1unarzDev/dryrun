@@ -145,7 +145,7 @@
 
               ],
               "style" : "contact",
-              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "text" : "Example trusted contact · Family friend · Người liên lạc ở xa · +1 202 555 0148",
               "unfilledPlaceholders" : [
 
               ]
@@ -240,6 +240,90 @@
               "unfilledPlaceholders" : [
 
               ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ nước uống · Gia đình có sẵn: Có · Nước uống dự trữ (gallon): 5",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ thực phẩm cho gia đình · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Xác định vị trí bộ sơ cứu · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Xác định vị trí đèn pin · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Kiểm tra pin hoặc sạc dự phòng · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Xác định vị trí bình chữa cháy · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
             }
           ]
         },
@@ -275,6 +359,7 @@
   "sourceIDs" : [
     "S19",
     "S26",
-    "S52"
+    "S52",
+    "S53"
   ]
 }

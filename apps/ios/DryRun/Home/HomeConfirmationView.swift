@@ -17,6 +17,7 @@ struct HomeConfirmationView: View {
     @State private var meetingText = ""
     @State private var shelterSpaceID: String?
     @State private var undo: [HomeModel] = []
+    @State private var previewConnectorDestination = false
 
     /// Pending steps, minus the ones set aside in this session. `HomeConfirmation.steps` is rebuilt from the home in a
     /// fixed order and "Not sure" does not change the home, so without this filter a skipped item stays first forever.
@@ -31,7 +32,7 @@ struct HomeConfirmationView: View {
                     if let about = subject(of: step) { Text(about).font(.callout) }
                     if let notice { Text(notice).font(.footnote).foregroundStyle(Theme.caution) }
                 }
-                FloorPlanView(home: home, routes: [], highlightedFloorID: floorID(for: step), highlightedElementID: step.elementID)
+                FloorPlanView(home: home, routes: [], highlightedFloorID: floorID(for: step), highlightedElementID: step.kind == .shelterSpot ? shelterSpaceID : step.elementID)
                     .frame(height: 220)
                     .accessibilityLabel(model.localizer("spatial.review-item", ["item": subject(of: step) ?? model.localizer("spatial.floor-plan")]))
                 stepControls(step)
@@ -52,6 +53,7 @@ struct HomeConfirmationView: View {
         .navigationTitle(s("Confirm your home"))
         .onChange(of: steps.first?.id, initial: true) { _, _ in
             labelText = ""; widthText = ""; interiorRoomID = nil; operable = nil; stepFree = nil
+            previewConnectorDestination = false; shelterSpaceID = nil; notice = nil
             if let step = steps.first {
                 if let room = home.space(step.elementID) { labelText = room.label; labelKind = room.kind }
                 if let portal = home.portal(step.elementID) {
@@ -62,6 +64,7 @@ struct HomeConfirmationView: View {
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button(s("Undo")) { if let previous = undo.popLast() { home = previous; skipped.removeAll() } }.disabled(undo.isEmpty) }
+            ToolbarItem(placement: .bottomBar) { Button(s("Finish later")) { onFinish(home) } }
             ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { onFinish(home) } }
         }
     }
@@ -143,6 +146,7 @@ struct HomeConfirmationView: View {
             }
         case .confirmConnector:
             Section {
+                Toggle(model.localizer("spatial.preview-second-landing"), isOn: $previewConnectorDestination)
                 Button(s("Yes, these stairs are usable")) { answer(.confirmConnector(connectorID: step.elementID, usable: true), for: step) }
                 Button(s("Not usable"), role: .destructive) { answer(.confirmConnector(connectorID: step.elementID, usable: false), for: step) }
                 Button(s("Not sure — decide later")) { answer(.skip(elementID: step.elementID), for: step) }
@@ -229,11 +233,8 @@ struct HomeConfirmationView: View {
     }
 
     private func floorID(for step: ConfirmationStep) -> String? {
-        switch step.kind {
-        case .confirmFloor: step.elementID
-        case .confirmPortal: home.portal(step.elementID)?.floorID
-        case .labelSpace, .confirmRoomGeometry: home.space(step.elementID)?.floorID
-        default: home.floors.first?.id
-        }
+        let elementID: String? = step.kind == .shelterSpot ? shelterSpaceID : step.elementID
+        return elementID.flatMap { HomeScenePresentation.floorID(for: $0, in: home, connectorDestination: previewConnectorDestination) }
+            ?? home.floors.first?.id
     }
 }

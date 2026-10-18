@@ -14,12 +14,13 @@ struct DollhouseView: View {
     let routes: [RoutePath]
     let floorID: String?
     let spatialState: SpatialExerciseState?
+    let selectedRoute: RouteResult?
     @State private var visible = false
 
-    init(home: HomeModel, routes: [RoutePath], floorID: String?, spatialState: SpatialExerciseState? = nil) {
+    init(home: HomeModel, routes: [RoutePath], floorID: String?, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil) {
         self.home = home
         self.routes = routes
-        self.floorID = floorID; self.spatialState = spatialState
+        self.floorID = floorID; self.spatialState = spatialState; self.selectedRoute = selectedRoute
     }
 
     /// Rebuild only when the inputs change, never per frame. Includes the home's CONTENT fingerprint (an edit without
@@ -28,20 +29,20 @@ struct DollhouseView: View {
         let routePoints = routes.map { r in
             r.legs.map { leg in "\(leg.floorID):" + leg.points.map { "\($0.x),\($0.y)" }.joined(separator: ";") }.joined(separator: "|")
         }.joined(separator: "#")
-        return "\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)#\(spatialState?.stageID ?? "")#\(spatialState?.hazard.rawValue ?? "")#\(spatialState?.affectedSpaceIDs.joined(separator: ",") ?? "")#\(spatialState?.exposedSpaceIDs?.joined(separator: ",") ?? "")#\(spatialState?.destinationSpaceID ?? "")"
+        return "\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)#\(spatialState?.stageID ?? "")#\(spatialState?.hazard.rawValue ?? "")#\(spatialState?.affectedSpaceIDs.joined(separator: ",") ?? "")#\(spatialState?.exposedSpaceIDs?.joined(separator: ",") ?? "")#\(spatialState?.destinationSpaceID ?? "")#\(spatialState?.affectedPortalIDs.joined(separator: ",") ?? "")#\(String(describing: selectedRoute?.request))"
     }
 
     var body: some View {
         ZStack {
             if visible {
                 RealityView { content in
-                    let root = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID, spatialState: spatialState)
+                    let root = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID, spatialState: spatialState, selectedRoute: selectedRoute)
                     root.name = sceneKey
                     content.add(root)
                 } update: { content in
                     guard let root = content.entities.first, root.name != sceneKey else { return }
                     content.remove(root)
-                    let fresh = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID, spatialState: spatialState)
+                    let fresh = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID, spatialState: spatialState, selectedRoute: selectedRoute)
                     fresh.name = sceneKey
                     content.add(fresh)
                 }
@@ -54,7 +55,7 @@ struct DollhouseView: View {
         .onAppear { visible = true }
         .onDisappear { visible = false }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("3D view of \(home.label). Use the room list for the same information as text.")
+        .accessibilityLabel(model.localizer("spatial.dollhouse-summary", ["home": home.label]))
     }
 }
 
@@ -64,7 +65,7 @@ enum DollhouseBuilder {
     static let slab: Float = 0.05
     private static var meshCache: [String: MeshResource] = [:]
 
-    static func build(home: HomeModel, routes: [RoutePath], floorID: String?, spatialState: SpatialExerciseState? = nil) -> Entity {
+    static func build(home: HomeModel, routes: [RoutePath], floorID: String?, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil) -> Entity {
         let root = Entity()
         let floors = home.floors.filter { floorID == nil || $0.id == floorID }
         // uniquingKeysWith, not uniqueKeysWithValues: a duplicate floor ID is a reportable data problem
@@ -102,8 +103,15 @@ enum DollhouseBuilder {
         }
         for p in home.portals where floors.contains(where: { $0.id == p.floorID }) {
 
-            let exit = p.leadsToExterior && p.verification == .verified && p.kind != .window
-            let mat = p.kind == .window ? SimpleMaterial(color: spatialState?.hazard == .tornado ? .systemPurple : .systemTeal, isMetallic: false) : exit ? exitMat : (p.verification == .verified ? wallMat : unverifiedMat)
+            let status = HomeScenePresentation.openingStatus(p, in: home, state: spatialState, request: selectedRoute?.request)
+            let exit = status == .availableExit
+            let mat = status == .unavailable ? SimpleMaterial(color: .systemRed, isMetallic: false) : p.kind == .window ? SimpleMaterial(color: spatialState?.hazard == .tornado ? .systemPurple : .systemTeal, isMetallic: false) : exit ? exitMat : (status == .confirmedConnection ? wallMat : unverifiedMat)
+            if status == .unavailable {
+                let c = p.center
+                for sign in [-1.0, 1.0] {
+                    root.addChild(bar(from: p3(c + Vec2(-0.18, -0.18 * sign), p.floorID, lift: 0.13), to: p3(c + Vec2(0.18, 0.18 * sign), p.floorID, lift: 0.13), height: 0.05, thickness: 0.06, material: mat))
+                }
+            }
             // A thin threshold marker in the opening (doors are gaps in the cut-away walls visually).
             root.addChild(bar(from: p3(p.a, p.floorID, lift: 0.01), to: p3(p.b, p.floorID, lift: 0.01), height: 0.03, thickness: 0.25, material: mat))
         }
@@ -127,6 +135,20 @@ enum DollhouseBuilder {
             if let mesh = polygonMesh(room.polygon.map { p3($0, room.floorID, lift: 0.10) }) {
                 root.addChild(ModelEntity(mesh: mesh, materials: [SimpleMaterial(color: spatialState?.hazard == .flashFlood ? .systemBlue : .systemOrange, isMetallic: false)]))
             }
+        }
+        // Destination and exposure outlines preserve the hazard fill underneath.
+        for room in home.spaces where floors.contains(where: { $0.id == room.floorID })
+            && (spatialState?.destinationSpaceID == room.id || spatialState?.exposedSpaceIDs?.contains(room.id) == true) {
+            let material = SimpleMaterial(color: .systemPurple, isMetallic: false)
+            for (a, b) in zip(room.polygon, room.polygon.dropFirst() + room.polygon.prefix(1)) {
+                root.addChild(bar(from: p3(a, room.floorID, lift: 0.14), to: p3(b, room.floorID, lift: 0.14), height: 0.04, thickness: 0.06, material: material))
+            }
+        }
+        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), floors.contains(where: { $0.id == room.floorID }),
+           let position = HomeScenePresentation.startingRoomPosition(in: home, route: selectedRoute) {
+            let marker = ModelEntity(mesh: .generateSphere(radius: 0.18), materials: [routeMat])
+            marker.position = p3(position, room.floorID, lift: 0.35)
+            root.addChild(marker)
         }
         for a in home.annotations {
             guard let pos = a.position, let fid = a.floorID, floors.contains(where: { $0.id == fid }) else { continue }

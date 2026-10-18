@@ -37,6 +37,24 @@ struct LivingPlanTests {
         #expect(!doc.isStale(household: h, home: nil, contentVersion: "test", savedPlaces: [place, other]))
     }
 
+    @Test("The near-home meeting purpose precedes backup regardless of IDs or save order")
+    func meetingPurposeOrder() throws {
+        let h = SampleHouseholds.oak
+        let near = SavedPlace(id: "z-near", homeID: h.stableHomeID, purpose: .outsideMeetingPoint, label: "NEAR-CANARY")
+        let backup = SavedPlace(id: "a-backup", homeID: h.stableHomeID, purpose: .backupMeetingPlace, label: "BACKUP-CANARY")
+        for locale in ["en", "es", "vi"] {
+            for places in [[backup, near], [near, backup]] {
+                let l = try PlanBuilderTests.localizer(locale)
+                let doc = PlanBuilder.build(household: h, home: nil, savedPlaces: places, results: [], localizer: l, resources: [], contentVersion: "test", generatedAt: LeadTestSupport.fixedDate)
+                let meeting = try #require(doc.pages.first { $0.id == "essentials" }?.sections.first { $0.id == "meeting" })
+                #expect(meeting.heading == l("plan.section.meeting"))
+                #expect(meeting.lines.count == 2)
+                #expect(meeting.lines.first?.text.contains("NEAR-CANARY") == true)
+                #expect(meeting.lines.last?.text.contains("BACKUP-CANARY") == true)
+            }
+        }
+    }
+
     @Test("Legacy private places and plans decode without newer optional visual or instruction fields")
     func legacyDocument() throws {
         let place = SavedPlace(homeID: "h", purpose: .outsideMeetingPoint, label: "Gate")

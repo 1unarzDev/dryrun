@@ -9,8 +9,12 @@ struct HomeRoomListView: View {
     private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let home: HomeModel
+    let spatialState: SpatialExerciseState?
+    let selectedRoute: RouteResult?
 
-    init(home: HomeModel) { self.home = home }
+    init(home: HomeModel, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil) {
+        self.home = home; self.spatialState = spatialState; self.selectedRoute = selectedRoute
+    }
 
     var body: some View {
         ForEach(home.floors.sorted { $0.level < $1.level }) { floor in
@@ -66,7 +70,7 @@ struct HomeRoomListView: View {
                 .font(.caption).foregroundStyle(.secondary)
             if space.geometryNeedsReview == true { Text(model.localizer("spatial.issue.correctedGeometryNeedsReview")).font(.caption) }
             ForEach(doors) { p in
-                Text(model.localizer("spatial.opening-summary", ["kind": DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "destination": destination(p, from: space.id), "status": stateText(p.verification)]))
+                Text(model.localizer("spatial.opening-summary", ["kind": DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "destination": destination(p, from: space.id), "status": openingText(p)]))
                     .font(.caption)
             }
         }
@@ -75,7 +79,7 @@ struct HomeRoomListView: View {
 
     private func portalRow(_ p: Portal) -> some View {
         let inside = [p.sideA, p.sideB].compactMap { if case .space(let id) = $0 { return label(id) }; return nil }.first ?? "?"
-        var facts: [String] = [stateText(p.verification)]
+        var facts: [String] = [stateText(p.verification), openingText(p)]
         if p.kind == .window { facts.append(s("window — not counted as an exit")) }
         if isCommonArea(p) { facts.append(s("opens to a shared building area that is not modelled")) }
         if let w = p.clearWidthMeters.value {
@@ -90,6 +94,18 @@ struct HomeRoomListView: View {
             Text(facts.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func openingText(_ portal: Portal) -> String {
+        let key: String
+        switch HomeScenePresentation.openingStatus(portal, in: home, state: spatialState, request: selectedRoute?.request) {
+        case .availableExit: key = "spatial.opening.available-exit"
+        case .confirmedConnection: key = "spatial.opening.confirmed-connection"
+        case .window: key = "spatial.opening.window-inventory"
+        case .unconfirmed: key = "spatial.opening.review-required"
+        case .unavailable: key = "spatial.opening.unavailable"
+        }
+        return model.localizer(key)
     }
 
     private func isCommonArea(_ p: Portal) -> Bool {

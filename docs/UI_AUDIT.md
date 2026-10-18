@@ -36,3 +36,10 @@ contextual state, and an outside-wall correction requires a new explicit choice.
 issues, confirmation questions, connection/floor summaries and reminder controls use EN/ES/VI keys. All issue and
 question enums have locale-resolution coverage; native text layout/VoiceOver usability remain unverified.
 Solo card review does not appear as joint family review; changing an item's location clears its old physical checks.
+
+Latest independent source review led to fixes for location saves erasing ownership, duplicate-looking medical
+subjects, permanent preparation loops, unreachable Reopen, broad Add contact forms, old-sensitive-export fallback,
+route requests outliving selected destinations, missing scene-floor selection, invalid exit styling, missing
+no-route occupant markers, scan-review dismissal and mismatched highlights. Typed focused editors and exact
+subject captions now connect those facts to current tasks/cards. These are source/core findings, not observed
+native usability results. The 29 native tests and current tours remain unrun; no screenshot-based review is claimed.

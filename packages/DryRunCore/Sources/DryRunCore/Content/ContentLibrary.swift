@@ -37,7 +37,8 @@ public struct ContentLibrary: Sendable {
 
     public func source(_ id: String) -> SourceRef? { sources.first { $0.id == id } }
 
-    /// Statewide resources plus resources for this region, deterministic order.
+    /// Statewide resources plus resources for an explicitly supported region, deterministic order.
+    /// An unsupported address must not inherit Texas resources from a syntactically valid numeric ID.
     public func resources(forRegion regionID: String) -> [PublicResource] {
         guard PublicDataPolicy.isAllowedRegionID(regionID) else { return [] }
         var order: [String] = []

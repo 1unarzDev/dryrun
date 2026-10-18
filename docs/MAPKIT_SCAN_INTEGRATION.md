@@ -71,3 +71,10 @@ map request isolation and private transactions are authored. **No current native
 search/snapshot, or physical scan occurred here.** RoomPlan categories/transforms/story/structure assumptions
 require installed-SDK build and consenting measured-space verification. Follow CLAUDE_NATIVE_HANDOFF and
 DEVICE_CHECKLIST; do not call source parsing device readiness.
+
+The latest map request owner captures origin/mode/destination once and rejects late GPS and SDK results after
+cancellation, selection or home changes; cancelled loading state resets. Family sharing uses bounded attributed
+map panels and fails closed on a newly requested plan save failure; no old consent selection is exported.
+Cards retain dropped-pin coordinates and contact roles as text. Scan review disables accidental dismissal;
+explicit save/Finish later retain drafts on failed writes. Shared 2D/3D/list opening status includes actual
+blockage, operability, grade and relevant mobility evidence; unknown/no-route starts keep a recorded room marker.

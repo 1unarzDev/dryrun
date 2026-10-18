@@ -97,3 +97,11 @@ Physical check/coverage/awareness evidence is invalidated when the described ite
 Monthly alarm review and the app's 180-day other/card maintenance cadence are prompts, never protection guarantees
 or medicine-storage advice. Users may explicitly schedule one generic, non-repeating local review reminder; the app
 never starts a default notification campaign. Native delivery/cancellation/deletion still require testing.
+
+Latest baseline records distinguish essential medicine availability, equipment supplies, cold storage and direct
+power support per exact subject. Selected card content follows those same boundaries. A utility number does not
+substitute a trusted family contact. A physical drill is separately dated; flood/well testing arrangements are
+preparations, never a supported refuge/route, completed evacuation, safe drinking-water test or protection score.
+Location-only edits preserve known ownership. Rendering unavailable/balcony/blocked openings as ordinary exits
+was removed using shared presentation semantics; route decisions still belong to the deterministic planner.
+New EN/ES/VI prose remains AI draft content with existing source/review status.

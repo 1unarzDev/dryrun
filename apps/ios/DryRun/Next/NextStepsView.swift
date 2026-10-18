@@ -44,7 +44,7 @@ struct NextStepsView: View {
                 case .card: OutageCardView()
                 case .share: ShareWithFamilyView()
                 case .household: FocusedHouseholdEditor(focus: .family)
-                case .contacts: FocusedHouseholdEditor(focus: .contacts)
+                case .contacts: FocusedHouseholdEditor(focus: .newContact(.other))
                 case .supplies: FocusedHouseholdEditor(focus: .supplies)
                 }
             }
@@ -124,11 +124,9 @@ struct NextStepsView: View {
                 Text(l("ui.next.questionsWhy")).font(.footnote).foregroundStyle(.secondary)
                 ForEach(summary.unknownFacts.prefix(6), id: \.self) { id in
                     IconRow(systemImage: "questionmark", tint: Theme.caution,
-                            title: UnknownNames.describe(id, household: model.household))
+                            title: UnknownNames.describe(id, household: model.household, localizer: l))
                 }
-                Button { sheet = .household } label: { Label(l("ui.next.answer"), systemImage: "square.and.pencil") }
-                    .buttonStyle(.secondary)
-                    .accessibilityIdentifier("next.answerQuestions")
+                Text(l("ui.next.answerViaTasks")).font(.footnote).foregroundStyle(.secondary)
             }
         }
     }
@@ -142,6 +140,8 @@ struct NextStepsView: View {
                     IconRow(systemImage: "checkmark", tint: Theme.success,
                             title: l(step.recommendation.titleKey, step.recommendation.localizedTemplateValues(household: model.household, localizer: l)),
                             subtitle: step.completedAt.map { l("ui.next.doneOn", ["date": $0.formatted(date: .abbreviated, time: .omitted)]) })
+                    Button(l("family.reopen")) { Task { await model.reopenPreparation(step.id) } }
+                        .accessibilityIdentifier("next.reopen.\(step.id)")
                 }
             }
             .accessibilityElement(children: .contain)
@@ -183,6 +183,10 @@ struct NextStepRow: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Theme.Space.xs) {
                 Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(isPrimary ? .title3.weight(.bold) : .body.weight(.semibold)).multilineTextAlignment(.leading)
+                if let subjectID = r.subjectID {
+                    let values = r.localizedTemplateValues(household: model.household, localizer: l)
+                    if let name = values[subjectID.hasPrefix("person.") ? "person" : "device"] { Text(name).font(.subheadline.weight(.semibold)) }
+                }
                 Text(l(r.whyKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
                 // Side by side when they fit; stacked at large text sizes instead of pushing the row off screen.
                 ViewThatFits(in: .horizontal) {
@@ -248,7 +252,7 @@ struct NextStepDetailView: View {
                 SectionCard(title: l("common.why"), systemImage: "lightbulb") {
                     Text(l(r.whyKey, r.localizedTemplateValues(household: model.household, localizer: l)))
                     if !r.matchedFactIDs.isEmpty {
-                        Text(l("ui.basedOn", ["facts": r.matchedFactIDs.map { UnknownNames.describe($0, household: model.household) }.joined(separator: "; ")]))
+                        Text(l("ui.basedOn", ["facts": r.matchedFactIDs.map { UnknownNames.describe($0, household: model.household, localizer: l) }.joined(separator: "; ")]))
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }
@@ -257,7 +261,7 @@ struct NextStepDetailView: View {
                 }
                 if !r.unconfirmed.isEmpty || !r.feasibilityNotes.isEmpty {
                     SectionCard(title: l("common.unconfirmed"), systemImage: "questionmark.circle", tint: Theme.caution) {
-                        ForEach(r.unconfirmed, id: \.self) { Text(UnknownNames.describe($0, household: model.household)) }
+                        ForEach(r.unconfirmed, id: \.self) { Text(UnknownNames.describe($0, household: model.household, localizer: l)) }
                         ForEach(r.feasibilityNotes, id: \.self) { Text(l($0)) }
                     }
                 }
@@ -317,41 +321,30 @@ struct PreparationTaskEditor: View {
     @Environment(\.dismiss) private var dismiss
     let step: NextStep
     @ViewBuilder var body: some View {
-        let r = step.recommendation
-        let id = r.actionID
-        if id.contains("contact") || id.contains("Contact") { FocusedHouseholdEditor(focus: .contacts) }
-        else if id.contains("Meetup") || id.contains("meeting") {
-            if let store = model.regionalResources { MapPlanningView(store: store, purpose: id.lowercased().contains("backup") ? .backupMeetingPlace : .outsideMeetingPoint, dismissAfterSave: true) }
-            else if let content = model.content { MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "", purpose: id.lowercased().contains("backup") ? .backupMeetingPlace : .outsideMeetingPoint, dismissAfterSave: true) }
+        switch PreparationEditTarget.resolve(step.recommendation, home: model.home) {
+        case .contact(let role): FocusedHouseholdEditor(focus: .newContact(role))
+        case .family(let personID):
+            FocusedHouseholdEditor(focus: personID.map { .person($0) } ?? .family)
+        case .equipment(let id): MedicalSetupView(equipmentID: id)
+        case .backups: FocusedHouseholdEditor(focus: .backups)
+        case .meeting(let purpose):
+            if let store = model.regionalResources { MapPlanningView(store: store, purpose: purpose, dismissAfterSave: true) }
+            else if let content = model.content { MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "", purpose: purpose, dismissAfterSave: true) }
+        case .transport: FocusedHouseholdEditor(focus: .transport)
+        case .home(let elementID):
+            if let home = model.home {
+                ManualHomeEditorView(home: home, selectedElementID: elementID) { candidate in
+                    Task { if await model.updateHome(candidate) { dismiss() } }
+                }
+            } else { HomeTabView() }
+        case .homeSetup: HomeTabView()
+        case .review: FocusedHouseholdEditor(focus: .review)
+        case .water: FocusedHouseholdEditor(focus: .water)
+        case .communications: FocusedHouseholdEditor(focus: .communications)
+        case .housing: FocusedHouseholdEditor(focus: .housing)
+        case .checklist(let id, let titleKey): FocusedHouseholdEditor(focus: .checklist(id: id, titleKey: titleKey))
+        case .supplies: FocusedHouseholdEditor(focus: .supplies)
         }
-        else if let subject = r.subjectID, subject.hasPrefix("equipment.") { MedicalSetupView(equipmentID: String(subject.dropFirst("equipment.".count))) }
-        else if r.subjectID?.hasPrefix("backup.") == true || id.contains("generator") { FocusedHouseholdEditor(focus: .backups) }
-        else if id == "prep.transport" || id.contains("relocation") || id.contains("sturdy-building") { FocusedHouseholdEditor(focus: .transport) }
-        else if (id.contains("exit") || id.contains("shelter")), let home = model.home {
-            ManualHomeEditorView(home: home, selectedElementID: spatialSubject(r, in: home)) { candidate in
-                Task { if await model.updateHome(candidate) { dismiss() } }
-            }
-        }
-        else if id == "prep.layout" { HomeTabView() }
-        else if id == "prep.reviewCard" { FocusedHouseholdEditor(focus: .review) }
-        else if id == "prep.helper" || id.contains("assign-helper") || id == "prep.reconnect" { FocusedHouseholdEditor(focus: .family) }
-        else if id.hasPrefix("prep."), BaselinePreparedness.definitions.contains(where: { "prep." + $0.id == id }) {
-            FocusedHouseholdEditor(focus: .preparation(String(id.dropFirst(5))))
-        } else { FocusedHouseholdEditor(focus: .supplies) }
-    }
-    private func spatialSubject(_ recommendation: Recommendation, in home: HomeModel) -> String? {
-        if let subject = recommendation.subjectID {
-            for prefix in ["room.", "portal.", "space."] where subject.hasPrefix(prefix) {
-                let id = String(subject.dropFirst(prefix.count))
-                if home.space(id) != nil || home.portal(id) != nil { return id }
-            }
-        }
-        if recommendation.actionID.contains("shelter") {
-            return home.annotations.first { $0.kind == .tornadoShelterCandidate }?.spaceID
-        }
-        // Highlight an existing opening needing review; never invent an alternate exit.
-        return home.portals.sorted { $0.id < $1.id }.first { $0.verification != .verified && $0.verification != .rejected }?.id
-            ?? home.portals.sorted { $0.id < $1.id }.first { $0.sideA == .exterior || $0.sideB == .exterior }?.id
     }
 }
 

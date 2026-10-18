@@ -86,7 +86,7 @@ Manually verify these connected journeys (record exact results and errors):
    time to first useful card and a rehearsal; 90 seconds and 2–4 minutes are targets, not measured claims.
 
 Follow-up native gates authored but not run: 8 AppPersistenceTests, 3 MapRequestTests, 4 PlanExportTests and
-5 ReviewReminderTests (20 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
+5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 3 RehearsalNamesTests (29 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
 authorization/add, cancel as Delete Everything does, then resume to check no late reminder remains. Exercise actual
 system permission denied/granted, one-time delivery, relaunch, cancellation and successful/failed Delete Everything.
 No permission request or schedule is allowed merely by opening Settings/review.
@@ -120,3 +120,34 @@ exists. `artifacts/mac-*/` has local xcresults; tarballs omit xcresults because 
 identifiers. Inspect/redact attachments before sharing. Do not erase errors or replace unrun checks with old results.
 Update VERIFICATION, UI_AUDIT, REVISION_EVIDENCE and this handoff with exact commands, SHA, counts and remaining
 hardware/human limits. Safety and translation professional review remain pending unless actually obtained.
+
+## Latest integrated fixes to exercise on the Mac
+
+Portable settled-source result: 246 core / 36 suites, 35 vault / 6 suites, 68 backend / 4 files; TypeScript and
+all app/test Swift syntax checks pass. Three extra Linux presentation-helper checks passed in a temporary harness.
+None of the 29 native XCTest methods or 5 UI journeys has executed on iOS in this revision.
+
+- Prepare Add contact opens a new contact even when others exist. Out-of-area/water-utility tasks preselect the
+  correct role. Utility contacts do not close the trusted-contact task. Helpers retain their exact person.
+- Water opens amount and location together; adding first-aid/extinguisher/flashlight location preserves existing
+  ownership. Food quantity, radio/alternate reception, pet carriers, medication and device-supply records are
+  reachable directly. Verify subject captions when two location-only medical tasks otherwise have the same title.
+- Record physical fire drill separately from checking an exit; dated review reopens after 180 days or relevant
+  home correction. Flood/well plans close tasks without certifying water, map routes or indoor refuge. Clear the
+  actual record to reopen; legacy completion rows now expose Reopen directly.
+- Force a fresh selected full-plan save to fail while an old more-sensitive plan exists. No PDF should open.
+  Successful family sharing uses the same bounded map-panel renderer as Plan, with revision/locale/place guards.
+  Coordinate-only meetup details, contact roles and selected medical supply locations must survive every export.
+  Oversized responder instructions must continue after the main contact/meetup card, with their full text unchanged.
+- Begin directions A, dismiss/select B or change home/origin/mode, then release the old response/GPS request.
+  Nothing should close B or display A; loading resets so retry works. Exercise actual Apple unsupported routes.
+- Inspect a balcony/inoperable/fire-blocked opening in 2D, 3D and list: it must not look like an available exit.
+  No-route starts retain a named room marker; selected person/floor and cross-floor destinations agree.
+- Review a scan: swipe dismissal is disabled; Finish later/save failure keeps the edited proposal. Highlight an
+  alarm, change shelter, review both stair endpoints, clear width to unknown and recheck mobility exclusion.
+- EN/ES/VI fact/service explanations receive the selected localizer. Dotted IDs retain names; unknown facts use
+  a readable generic fallback; quantities use localized plurals/decimal separators without rewriting stored units.
+
+The reference examples now span two-page cards, 19-page A4/20-page Letter full plans and a five-page long-note
+card. Their intentionally spacious portable layout is not a native page-count target. Inspect native PDFs and
+phone previews independently; do not reuse those reference artifacts as native evidence.

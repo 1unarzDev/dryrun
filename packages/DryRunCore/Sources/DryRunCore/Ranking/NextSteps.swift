@@ -52,11 +52,19 @@ public enum NextSteps {
         let equivalents = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
                            "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water",
                            "act.fire.meeting-point": "prep.nearMeetup", "act.fire.smoke-alarms": "prep.smokeAlarms",
-                           "act.assist.assign-helper": "prep.helper"]
+                           "act.assist.assign-helper": "prep.helper", "act.comms.weather-radio": "prep.radio", "act.alerts.enroll-local": "prep.alerts",
+                           "act.fire.practice-drill": "prep.fireDrill", "act.flood.higher-ground-plan": "prep.floodPlan",
+                           "act.water.well-test-after-flood": "prep.wellFloodPlan", "act.water.save-utility-contact": "prep.waterUtility"]
+        let factualOnly = Set(["prep.radio", "prep.alerts", "prep.fireDrill", "prep.floodPlan", "prep.wellFloodPlan", "prep.waterUtility"])
         for key in best.keys.sorted() {
             guard let exercise = best[key], let action = equivalents[exercise.rec.actionID] else { continue }
             let canonical = exercise.rec.subjectID.map { "\(action)|\($0)" } ?? action
-            guard var baseline = best[canonical] else { continue }
+            guard var baseline = best[canonical] else {
+                // Actual readiness may be recorded or the household need may be inapplicable.
+                // An authored exercise must not recreate the closed factual preparation task.
+                if factualOnly.contains(action) { best.removeValue(forKey: key) }
+                continue
+            }
             baseline.rec.tier = min(baseline.rec.tier, exercise.rec.tier)
             baseline.rec.matchedFactIDs = Array(Set(baseline.rec.matchedFactIDs + exercise.rec.matchedFactIDs)).sorted()
             baseline.rec.sourceIDs = Array(Set(baseline.rec.sourceIDs + exercise.rec.sourceIDs)).sorted()
@@ -92,12 +100,17 @@ extension Recommendation {
         var values = templateValues
         if let subjectID, subjectID.hasPrefix("equipment."), let equipment = household.equipment.first(where: { "equipment.\($0.id)" == subjectID }) {
             values["device"] = equipment.localizedLabel(localizer)
+            if actionID == "prep.medication" { values["person"] = equipment.localizedLabel(localizer) }
         }
         if let subjectID, subjectID.hasPrefix("person."), let person = household.people.first(where: { "person.\($0.id)" == subjectID }) {
             values["person"] = person.alias.isEmpty ? localizer(person.isSelf == true ? "family.you" : "ui.person") : person.alias
         }
         if let subjectID, subjectID.hasPrefix("backup."), let backup = household.backupPower.first(where: { "backup.\($0.id)" == subjectID }) {
             values["backup"] = backup.label.isEmpty ? localizer("enum.\(backup.kind.rawValue)") : backup.label
+        }
+        if let item = values["item"] {
+            let base = item.hasPrefix("medication.") ? "medication" : (item.hasPrefix("equipmentSupplies.") ? "equipmentSupplies" : item)
+            values["item"] = localizer("prep.\(base).title", values)
         }
         return values
     }

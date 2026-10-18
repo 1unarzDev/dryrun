@@ -30,7 +30,7 @@ struct CounterfactualTests {
         #expect(cmp.diff.serviceChanges["svc.device.eq-oxygen"] == [.unavailable, .operational])
         // Heat and water are unaffected by a device backup.
         #expect(!cmp.diff.resolvedRequirements.contains("req.heat"))
-        #expect(cmp.diff.resolvedRecommendations.contains("act.backup.confirm-medical-backup"))
+        #expect(cmp.diff.resolvedRecommendations.contains(rec.id))
         // Hypothetical evidence is marked as a scenario assumption.
         #expect(cmp.modified.recommendations.contains { $0.actionID == "act.medical.document-runtime" })
     }

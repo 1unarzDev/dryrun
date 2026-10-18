@@ -281,12 +281,16 @@ struct SpatialRehearsalScene: View {
     @State private var selectedFloorID: String?
     private var route: RouteResult? { state?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
 
+    private var sceneFloorID: String? {
+        HomeScenePresentation.sceneFloorID(in: home, selected: selectedFloorID, route: route, destinationID: state?.destinationSpaceID)
+    }
+
     var body: some View {
-        SectionCard(title: "Current exercise scene", systemImage: "house") {
+        SectionCard(title: s("Current exercise scene"), systemImage: "house") {
             if home.isFictional { Label(s("Example home"), systemImage: "sparkles").font(.caption.weight(.semibold)) }
             if household.people.count > 1 {
                 Picker(s("Person"), selection: Binding(get: { personID ?? household.people.first?.id ?? "" }, set: { personID = $0 })) {
-                    ForEach(household.people) { Text($0.alias).tag($0.id) }
+                    ForEach(household.people) { Text($0.localizedLabel(model.localizer)).tag($0.id) }
                 }
                 .accessibilityIdentifier("rehearsal.person")
             }
@@ -296,7 +300,11 @@ struct SpatialRehearsalScene: View {
                 }.accessibilityIdentifier("rehearsal.floor")
             }
             FloorPlanView(home: home, routes: route?.primary.map { [$0] } ?? [], highlightedFloorID: sceneFloorID,
-                          highlightedElementID: state?.destinationSpaceID, spatialState: state).frame(height: 260)
+                          highlightedElementID: state?.destinationSpaceID, spatialState: state, selectedRoute: route).frame(height: 260)
+            if let room = HomeScenePresentation.startingRoom(in: home, route: route) {
+                Label(model.localizer("spatial.recorded-start-room", ["room": room.label]), systemImage: "person.crop.circle")
+                    .font(.footnote)
+            } else { Text(model.localizer("spatial.start-room-unknown")).font(.footnote) }
             if let state {
                 Text(state.assumptionKey.map { model.localizer($0) } ?? state.assumption).font(.footnote).foregroundStyle(.secondary)
                 if !state.affectedSpaceIDs.isEmpty {
@@ -317,14 +325,17 @@ struct SpatialRehearsalScene: View {
                     }.joined(separator: " → ")).font(.callout.weight(.semibold))
                     if !path.verificationNeeded.isEmpty { Text(s("Some opening measurements still need confirmation.")).font(.footnote) }
                 } else {
-                    Label(route.noRouteReason == .blockedByScenario ? "No supported route: the starting room or a required connection is affected." : "No supported route from the recorded starting room. Review the layout, destination and this person's access needs.", systemImage: "exclamationmark.triangle")
+                    Label(s(route.noRouteReason == .blockedByScenario ? "No supported route: the starting room or a required connection is affected." : "No supported route from the recorded starting room. Review the layout, destination and this person's access needs."), systemImage: "exclamationmark.triangle")
                         .font(.callout)
                 }
             } else { Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary) }
+            DisclosureGroup(s("Room list")) { HomeRoomListView(home: home, spatialState: state, selectedRoute: route) }
             DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
-                if show3D { DollhouseView(home: home, routes: route?.primary.map { [$0] } ?? [], floorID: nil, spatialState: state).frame(height: 230) }
+                if show3D { DollhouseView(home: home, routes: route?.primary.map { [$0] } ?? [], floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230) }
             }
         }
+        .onChange(of: personID) { _, _ in selectedFloorID = nil }
+        .onChange(of: state?.stageID) { _, _ in selectedFloorID = nil }
     }
 }
 
@@ -373,7 +384,7 @@ struct ServiceStateGrid: View {
                     Image(systemName: "shippingbox").foregroundStyle(.secondary).accessibilityHidden(true)
                     Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                     Spacer()
-                    Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit) } ?? l("common.status.unknown"))
+                    Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit, localizer: l) } ?? l("common.status.unknown"))
                         .foregroundStyle(.secondary)
                 }
                 .font(.callout)
@@ -599,9 +610,9 @@ struct RecommendationRow: View {
         let l = model.localizer
         HStack(alignment: .top, spacing: Theme.Space.m) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(l(recommendation.titleKey, recommendation.templateValues)).font(.body.weight(.semibold))
+                Text(l(recommendation.titleKey, recommendation.localizedTemplateValues(household: model.household, localizer: l))).font(.body.weight(.semibold))
                     .multilineTextAlignment(.leading)
-                Text(l(recommendation.whyKey, recommendation.templateValues)).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                Text(l(recommendation.whyKey, recommendation.localizedTemplateValues(household: model.household, localizer: l))).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
                     .multilineTextAlignment(.leading)
                 StatusPill(text: l("common.effort.\(recommendation.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
             }
@@ -691,7 +702,7 @@ struct ComparisonView: View {
                         ForEach(d.resourceChanges.keys.sorted(), id: \.self) { id in
                             let q = d.resourceChanges[id] ?? []
                             if q.count == 2 {
-                                Text("\(ServiceNames.name(id, household: model.household, localizer: model.localizer)): \(q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit) } ?? l("common.status.unknown")) → \(q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit) } ?? l("common.status.unknown"))")
+                                Text("\(ServiceNames.name(id, household: model.household, localizer: model.localizer)): \(q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit, localizer: l) } ?? l("common.status.unknown")) → \(q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit, localizer: l) } ?? l("common.status.unknown"))")
                             }
                         }
                         ForEach(d.resolvedRequirements, id: \.self) {

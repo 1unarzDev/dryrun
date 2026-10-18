@@ -13,8 +13,8 @@ CLAUDE_NATIVE_HANDOFF.md gives commands and evidence gates. This pass cannot say
 
 | Executed command/check | Current result |
 |---|---|
-| `DRYRUN_SCRATCH=oct17-followup scripts/swift.sh packages/DryRunCore test` | **204 tests / 29 suites passed** |
-| `DRYRUN_SCRATCH=oct17-followup scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
+| `DRYRUN_SCRATCH=oct17-current-core scripts/swift.sh packages/DryRunCore test` | **246 tests / 36 suites passed** |
+| `DRYRUN_SCRATCH=oct17-current-vault scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
 | `cd services/public-api && pnpm test && pnpm typecheck` | **68 tests / 4 files passed**, TypeScript clean |
 | Docker Swift6.2 `swiftc -parse`, all app, app-test and UI-test Swift sources | Passed; **syntax only**, no native SDK typecheck |
 | `git diff --check`, shell syntax, Python artifact scripts compile | Passed |
@@ -42,7 +42,7 @@ They did **not** inspect native screenshots. Local logs are in `artifacts/revisi
 artifacts). Portable PDF audit/results are retained with fictional examples; no real home data was collected.
 
 Native tests are authored and wired into project/scheme/verify script: 8 AppPersistenceTests, 3 MapRequestTests,
-4 PlanExportTests, 5 ReviewReminderTests (20 total); 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
+4 PlanExportTests, 5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 3 RehearsalNamesTests (29 total); 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
 in this pass. The fresh-install UI test uses in-memory storage; real vault force-quit/relaunch remains a separate
 native/device gate. Source parsing cannot establish their selectors or SDK concurrency correctness.
 
@@ -68,6 +68,36 @@ failure reproduced in that scratch directory; the unchanged source passed all 35
 again after `swift package clean` rebuilt the original directory. No source/test expectation was changed for this
 build-artifact failure. Final counts above come from current integrated sources; the failed/rebuilt logs are kept
 locally alongside the final logs. Native tests are still zero executed.
+
+## Integrated connected-flow follow-up (October 17 local / October 18 UTC)
+
+The current full suites above passed after all implementation lanes froze. Logs are
+`/tmp/dryrun-current-{core,vault,backend,parse}-final.log`, with ignored copies under
+`artifacts/revision-20261017/logs`. An earlier concurrent build stopped because BaselinePreparedness changed
+while compiling; the final run used settled sources. No test was disabled for that build race.
+
+Added meaningful coverage includes oversized responder instructions after the main contact/meetup card without rewriting them; canonical quantity/ownership plus storage location; scoped medication and
+equipment supplies; physical drill/flood/well/utility completion without changing hazards or routes; old contact
+roles and the additive waterUtility role; exact subject IDs in comparison diffs; availability synchronization
+that preserves untouched supply evidence; purpose-specific direct editors; supported coverage; failed selected
+export with no retained-sensitive-plan fallback; stable place ordering; coordinate-only meetups; and selected
+medical supply locations in every language. A utility number cannot substitute a family emergency contact.
+The near-home meeting purpose now precedes the backup under a neutral Meeting places heading, independent of IDs.
+
+Shared HomeScenePresentation tests exercise unavailable/upper-floor/unknown-grade/blocked openings, selected
+floor and no-route starts, annotation/stair floor selection, and clearing a recorded opening width. Native views
+now use that presentation contract; actual scene rendering remains unrun. Source review fixed the missing
+sceneFloorID declaration, scan-review dismissal and highlighted item/floor mismatches.
+
+Three additional Linux XCTest presentation checks compiled the actual Names.swift/DisplayNames.swift in a
+throwaway SwiftPM harness (`/tmp/dryrun-names-presentation.log`): dotted subject IDs, unnamed-person fallbacks,
+and EN/ES/VI number/unit/plural display. These are separate from the 246 core tests and do not constitute
+execution of the native RehearsalNamesTests target. The target still requires Xcode.
+
+Fourteen fictional Letter/A4 reference PDFs were regenerated from seven current core JSON documents and audited
+for phone/meetup text, paper size, glyph replacement and long-note END marker. Representative current pages and
+full-plan contact sheets were visually inspected; see output/README.md for exact limits. They are reference
+ReportLab renders, not native screenshots or iOS PDF output. No native/simulator/device count has increased.
 
 ## Historical records below — do not apply them to the current build
 

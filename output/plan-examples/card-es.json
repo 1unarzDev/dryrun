@@ -145,7 +145,7 @@
 
               ],
               "style" : "contact",
-              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "text" : "Example trusted contact · Family friend · Contacto fuera del área · +1 202 555 0148",
               "unfilledPlaceholders" : [
 
               ]
@@ -240,6 +240,90 @@
               "unfilledPlaceholders" : [
 
               ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Almacenar agua potable · Disponible en el hogar: Sí · Agua potable almacenada (galones): 5",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Guardar alimentos para el hogar · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Ubicar el botiquín · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Ubicar linternas · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Comprobar pilas o batería portátil · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "es",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Ubicar el extintor · Disponible en el hogar: Sí",
+              "unfilledPlaceholders" : [
+
+              ]
             }
           ]
         },
@@ -275,6 +359,7 @@
   "sourceIDs" : [
     "S19",
     "S26",
-    "S52"
+    "S52",
+    "S53"
   ]
 }

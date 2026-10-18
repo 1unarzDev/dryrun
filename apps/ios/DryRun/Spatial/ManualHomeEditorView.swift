@@ -49,6 +49,7 @@ struct ManualHomeEditorView: View {
     @State private var doorSide: ManualLayout.Side = .south
     @State private var doorKind: PortalKind = .door
     @State private var doorWidthText = ""
+    @State private var measuredWidthText = ""
 
     // Add-marker form
     @State private var markerKind: AnnotationKind = .smokeAlarm
@@ -288,11 +289,16 @@ struct ManualHomeEditorView: View {
             } else if let index = draft.portals.firstIndex(where: { $0.id == selectedID }) {
                 portalEditor($draft.portals[index])
                 openingPlacementEditor(index)
-                TextField(s("Measured width in metres"), text: Binding(get: { draft.portals[index].clearWidthMeters.value.map(String.init(describing:)) ?? "" }, set: { text in
-                    if let width = Double(text.replacingOccurrences(of: ",", with: ".")), width > 0, width.isFinite {
-                        draft.portals[index].clearWidthMeters = .confirmed(width, unit: "m")
-                    }
+                TextField(s("Measured width in metres"), text: Binding(get: { measuredWidthText }, set: { text in
+                    measuredWidthText = text
+                    draft.portals[index].clearWidthMeters = HomeScenePresentation.editedWidth(text, previous: draft.portals[index].clearWidthMeters)
                 })).keyboardType(.decimalPad)
+                Button(model.localizer("spatial.width-unknown")) {
+                    measuredWidthText = ""; draft.portals[index].clearWidthMeters = .unknown
+                }
+                if !measuredWidthText.isEmpty && (decimal(measuredWidthText).map { $0 <= 0 } ?? true) {
+                    Text(model.localizer("spatial.width-invalid")).font(.footnote).foregroundStyle(Theme.caution)
+                }
                 if draft.portals[index].kind == .window {
                     Toggle(s("I checked this as an escape option for the person who would use it"), isOn: Binding(get: { draft.portals[index].emergencyEscapeConfirmed == true }, set: { draft.portals[index].emergencyEscapeConfirmed = $0 }))
                 }
@@ -353,6 +359,7 @@ struct ManualHomeEditorView: View {
 
     private func resetContext() {
         message = nil
+        measuredWidthText = draft.portals.first(where: { $0.id == selectedID })?.clearWidthMeters.value.map(String.init(describing:)) ?? ""
         landingPreviewTo = false
         correctionSide = nil
         correctionFromRoom = ""; correctionToRoom = "unknown"

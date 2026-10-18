@@ -144,7 +144,7 @@
 
               ],
               "style" : "contact",
-              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "text" : "Example trusted contact · Family friend · Out-of-area contact · +1 202 555 0148",
               "unfilledPlaceholders" : [
 
               ]
@@ -239,6 +239,90 @@
               "unfilledPlaceholders" : [
 
               ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Store drinking water · Available in our household: Yes · Stored drinking water (gallons): 5",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Store food for your household · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Locate your first-aid kit · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Locate flashlights · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Check batteries or a power bank · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Locate the fire extinguisher · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
             }
           ]
         },
@@ -274,6 +358,7 @@
   "sourceIDs" : [
     "S19",
     "S26",
-    "S52"
+    "S52",
+    "S53"
   ]
 }

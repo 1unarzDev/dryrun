@@ -129,7 +129,9 @@ public enum ActionRules {
         if s.flags.contains("fire.smokeAlarmsUnverified") {
             add("act.fire.smoke-alarms", tier: .blockingUnknownFact, facts: ["home.annotations"], status: .unknown)
         }
-        if scen == "home-fire" { add("act.fire.practice-drill", tier: .general, facts: []) }
+        if scen == "home-fire", !BaselinePreparedness.hasRecordedReadiness("fireDrill", household: h) {
+            add("act.fire.practice-drill", tier: .general, facts: ["preparedness.fireDrill"])
+        }
 
         // Heating dependency unknown.
         if s.unknowns.contains("housing.heatingNeedsElectricity"), s.scenario.ambient == "cold" || scen == "freeze-power-loss" {
@@ -146,13 +148,18 @@ public enum ActionRules {
                 unconfirmed: h.pets.isEmpty ? [] : ["pets.waterNeeds"],
                 whySuffix: h.supplies.storedWaterGallons.isConfirmed ? nil : "unknown")
         }
-        if scen == "water-outage" || s.flags.contains(where: { $0.hasPrefix("advisory.") }) {
-            add("act.water.save-utility-contact", tier: .multiScenarioPreparation, facts: ["housing.waterSource"])
+        if h.housing.waterSource == .municipal,
+           (scen == "water-outage" || s.flags.contains(where: { $0.hasPrefix("advisory.") })),
+           !BaselinePreparedness.hasRecordedReadiness("waterUtility", household: h) {
+            add("act.water.save-utility-contact", tier: .multiScenarioPreparation, facts: ["housing.waterSource", "contacts.waterUtility"])
         }
-        if scen == "flash-flood", h.housing.waterSource == .privateWell {
-            add("act.water.well-test-after-flood", tier: .scenarioSupplyOrContinuityGap, facts: ["housing.waterSource"])
+        if scen == "flash-flood", h.housing.waterSource == .privateWell,
+           !BaselinePreparedness.hasRecordedReadiness("wellFloodPlan", household: h) {
+            add("act.water.well-test-after-flood", tier: .scenarioSupplyOrContinuityGap, facts: ["housing.waterSource", "preparedness.wellFloodPlan"])
         }
-        if scen == "flash-flood" { add("act.flood.higher-ground-plan", tier: .multiScenarioPreparation, facts: []) }
+        if scen == "flash-flood", !BaselinePreparedness.hasRecordedReadiness("floodPlan", household: h) {
+            add("act.flood.higher-ground-plan", tier: .multiScenarioPreparation, facts: ["preparedness.floodPlan"])
+        }
 
         // Communications.
         if s.unmetEver.contains("req.comms.handset") {
@@ -176,7 +183,12 @@ public enum ActionRules {
         }
 
         // Cross-scenario, no cost.
-        add("act.alerts.enroll-local", tier: .multiScenarioPreparation, facts: ["regionID"])
+        let alerts = h.preparedness?.items["alerts"]
+        let enrolled = alerts?.available.confirmedValue == true
+            && !(alerts?.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        if PublicDataPolicy.isAllowedRegionID(h.regionID), !enrolled {
+            add("act.alerts.enroll-local", tier: .multiScenarioPreparation, facts: ["regionID", "preparedness.alerts"])
+        }
         return out
     }
 }
@@ -241,7 +253,7 @@ public enum RehearsalDiffer {
         for k in Set(ra.keys).union(rb.keys) where ra[k] != rb[k] {
             res[k] = [ra[k] ?? ResourceQuantity(amount: nil, unit: rb[k]?.unit ?? ""), rb[k] ?? ResourceQuantity(amount: nil, unit: ra[k]?.unit ?? "")]
         }
-        let recA = Set(a.recommendations.map(\.actionID)), recB = Set(b.recommendations.map(\.actionID))
+        let recA = Set(a.recommendations.map(\.id)), recB = Set(b.recommendations.map(\.id))
         return RehearsalDiff(addedEventIDs: eb.subtracting(ea).sorted(), removedEventIDs: ea.subtracting(eb).sorted(), serviceChanges: svc,
                              resolvedRequirements: ua.subtracting(ub).sorted(), newRequirements: ub.subtracting(ua).sorted(),
                              resourceChanges: res, resolvedRecommendations: recA.subtracting(recB).sorted())

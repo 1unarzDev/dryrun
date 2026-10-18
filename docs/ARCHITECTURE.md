@@ -141,3 +141,12 @@ baseline accepts an injected reference date for maintenance, with no default not
 The shared scheduler invalidates suspended authorization/add operations when canceled or private data is deleted;
 failed deletion leaves existing data/reminders intact. Payloads contain only generic localized app text. This native
 boundary has authored fake tests but has not been compiled or executed against UserNotifications here.
+
+The connected-flow follow-up adds plain PreparationEditTarget (exact factual editor/subject), PreparationDraft
+(only deliberate supply ownership changes), and FamilyPlanExportRequest (immutable selections, no older-plan
+fallback). generatePlan returns the successfully persisted candidate; callers export that value. Place-order
+staleness is normalized in the core. MapRoutePreviewModel owns cancellable GPS/directions generations. Shared
+HomeScenePresentation supplies renderer/list status and floor/start/selection geometry without deciding routes.
+RehearsalDiff resolvedRecommendations now carries exact recommendation IDs, preserving subject context.
+ContactRole.waterUtility is additive; old enum values and household data are retained. Public coverage is the
+explicit bundled county/aggregate set; a Texas-shaped number alone does not establish coverage.

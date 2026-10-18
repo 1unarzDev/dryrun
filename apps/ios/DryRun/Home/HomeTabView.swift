@@ -72,7 +72,7 @@ struct HomeTabView: View {
                     if pending > 0 {
                         Button(model.localizer("spatial.confirm-count", ["count": String(pending)]), systemImage: "checklist") { confirming = home }
                     }
-                    Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { editing = true }
+                    Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { selectedElementID = nil; editing = true }
                     scanControls
                 }
                 if let household = model.household, !household.people.isEmpty {
@@ -162,7 +162,7 @@ struct HomeTabView: View {
             }
         }
         .navigationTitle(model.localizer("common.tab.home"))
-        .sheet(isPresented: $editing) {
+        .sheet(isPresented: $editing, onDismiss: { selectedElementID = nil }) {
             if let home = model.home ?? manualDraft {
                 NavigationStack {
                     ManualHomeEditorView(home: home, selectedElementID: selectedElementID) { updated in
@@ -203,6 +203,7 @@ struct HomeTabView: View {
                     }
                 }
             }
+            .interactiveDismissDisabled()
         }
     }
 

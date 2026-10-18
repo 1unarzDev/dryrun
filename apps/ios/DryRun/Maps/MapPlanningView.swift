@@ -23,14 +23,11 @@ struct MapPlanningView: View {
     @State private var showingSearch = false
     @State private var showingList = false
     @State private var discovery = NearbyDiscovery()
-    @State private var route: MapTravelPreview?
+    @State private var routeRequest = MapRoutePreviewModel()
     @State private var mode: MapTravelMode = .walking
     @State private var originID = "home"
     @State private var message: String?
-    @State private var loadingRoute = false
-    @State private var routeGeneration = 0
     @State private var radius = 5000.0
-    private let directions = AppleMapDirectionsService()
     @State private var location = OptionalLocationService()
 
     init(content: ContentLibrary, client: PublicAPIClient, regionID: String,
@@ -43,6 +40,7 @@ struct MapPlanningView: View {
         initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave
     }
     private var places: [SavedPlace] { model.savedPlaces.filter { $0.homeID == model.household?.stableHomeID } }
+    private var route: MapTravelPreview? { routeRequest.result?.preview }
     private var homeCoordinate: GeographicCoordinate? {
         guard let p = model.household?.privateLocation, let lat = p.latitude, let lon = p.longitude else { return nil }
         return GeographicCoordinate(latitude: lat, longitude: lon)
@@ -73,7 +71,7 @@ struct MapPlanningView: View {
                 if let route {
                     HStack {
                         Text("\(t(route.mode.rawValue)): \(Measurement(value: route.distanceMeters, unit: UnitLength.meters).formatted(.measurement(width: .abbreviated, usage: .road))) · \(Int((route.expectedTravelTime / 60).rounded(.up))) min")
-                        Spacer(); Button(t("clear")) { routeGeneration += 1; self.route = nil; directions.cancel() }
+                        Spacer(); Button(t("clear")) { routeRequest.cancel(clearPreview: true) }
                     }.font(.caption).padding(10)
                 }
                 if let message { Text(message).font(.caption).padding(10) }
@@ -97,14 +95,27 @@ struct MapPlanningView: View {
                 }) }
             }
             .task(id: homeCoordinate) {
-                discovery.cancel(clearResults: true); routeGeneration += 1; route = nil; cameraCenter = nil
+                discovery.cancel(clearResults: true); routeRequest.cancel(clearPreview: true); cameraCenter = nil
                 if let homeCoordinate {
                     let newHomeRegion = MapRegionHint(center: homeCoordinate, spanLatitude: radius / 55000, spanLongitude: radius / 55000)
                     camera = .region(newHomeRegion.mapRegion)
                     await discovery.search(region: newHomeRegion, locale: model.locale)
                 }
             }
-            .onDisappear { discovery.cancel(); directions.cancel(); routeGeneration += 1 }
+            .onChange(of: selected?.id) { _, _ in routeRequest.cancel() }
+            .onChange(of: originID) { _, _ in routeRequest.cancel(clearPreview: true) }
+            .onChange(of: mode) { _, _ in routeRequest.cancel(clearPreview: true) }
+            .onChange(of: routeRequest.result) { _, result in
+                guard let result else { return }
+                guard selected?.id == result.destinationID else { routeRequest.cancel(clearPreview: true); return }
+                selected = nil
+                var rect = MKMapRect.null
+                for point in ([result.origin, result.destination] + result.preview.coordinates) {
+                    let p = MKMapPoint(point.cl); rect = rect.union(MKMapRect(x: p.x, y: p.y, width: 1, height: 1))
+                }
+                camera = .rect(rect.insetBy(dx: -rect.width * 0.15, dy: -rect.height * 0.15))
+            }
+            .onDisappear { discovery.cancel(); routeRequest.cancel() }
         }
     }
 
@@ -175,7 +186,8 @@ struct MapPlanningView: View {
                         Text(t("current")).tag("current")
                     }
                     Picker(t("mode"), selection: $mode) { ForEach(MapTravelMode.allCases) { Text(t($0.rawValue)).tag($0) } }
-                    Button(t("preview")) { preview(result.coordinate) }.disabled(loadingRoute)
+                    Button(t("preview")) { preview(result) }.disabled(routeRequest.isLoading)
+                    if let key = routeRequest.errorKey { Text(t(key)).font(.caption).foregroundStyle(.secondary) }
                     Text(t("routeNote")).font(.caption)
                 }
                 Section {
@@ -185,7 +197,7 @@ struct MapPlanningView: View {
             }
             .navigationTitle(t("destination"))
             .onAppear { if originID == "home" && homeCoordinate == nil { originID = places.first(where: { $0.coordinate != nil })?.id ?? "current" } }
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(t("done")) { selected = nil } } }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(t("done")) { routeRequest.cancel(); selected = nil } } }
         }
     }
     private func discover() async {
@@ -198,20 +210,15 @@ struct MapPlanningView: View {
         if selected != nil { deferredPlace = place; selected = nil }
         else { editedPlace = place; showingEditor = true }
     }
-    private func preview(_ destination: GeographicCoordinate) {
-        routeGeneration += 1; let ticket = routeGeneration; loadingRoute = true; route = nil
-        Task { @MainActor in
-            defer { if ticket == routeGeneration { loadingRoute = false } }
-            var origin = originID == "home" ? homeCoordinate : places.first { $0.id == originID }?.coordinate
-            if originID == "current", let current = await location.requestOneShot() { origin = GeographicCoordinate(latitude: current.coordinate.latitude, longitude: current.coordinate.longitude) }
-            guard let origin else { message = t("originMissing"); return }
-            do {
-                let preview = try await directions.preview(from: origin, to: destination, mode: mode)
-                guard ticket == routeGeneration else { return }; route = preview; selected = nil
-                var rect = MKMapRect.null
-                for point in ([origin, destination] + preview.coordinates) { let p = MKMapPoint(point.cl); rect = rect.union(MKMapRect(x: p.x, y: p.y, width: 1, height: 1)) }
-                camera = .rect(rect.insetBy(dx: -rect.width * 0.15, dy: -rect.height * 0.15))
-            } catch { if ticket == routeGeneration { message = t("routeError") } }
+    private func preview(_ destination: AppleMapSearchResult) {
+        let selectedOriginID = originID
+        let savedOrigin = selectedOriginID == "home" ? homeCoordinate : places.first { $0.id == selectedOriginID }?.coordinate
+        routeRequest.start(destinationID: destination.id, destination: destination.coordinate, mode: mode) {
+            if selectedOriginID == "current" {
+                guard let current = await location.requestOneShot() else { return nil }
+                return GeographicCoordinate(latitude: current.coordinate.latitude, longitude: current.coordinate.longitude)
+            }
+            return savedOrigin
         }
     }
 }

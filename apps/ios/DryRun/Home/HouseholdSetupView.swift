@@ -438,6 +438,7 @@ struct TriStateRow: View {
 }
 
 struct NumberEvidenceRow: View {
+    @Environment(AppModel.self) private var model
     let title: String
     @Binding var value: EvidenceValue<Double>
     let unit: String
@@ -458,6 +459,6 @@ struct NumberEvidenceRow: View {
                     value = EvidenceValue<Double>.unknown
                 }
             }
-            .accessibilityLabel("\(title). Leave empty if not sure.")
+            .accessibilityLabel(title + ". " + model.localizer("family.numberUnknown"))
     }
 }

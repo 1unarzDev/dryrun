@@ -3,11 +3,16 @@ import DryRunCore
 
 /// One save boundary shared by Prepare, the card, and individual factual tasks.
 struct FocusedHouseholdEditor: View {
-    enum Focus { case family, contacts, supplies, transport, backups, review, preparation(String) }
+    enum Focus {
+        case family, person(String), contacts, newContact(ContactRole), supplies, transport, backups, review, preparation(String)
+        case water, communications, housing, checklist(id: String, titleKey: String)
+    }
     let focus: Focus
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     @State private var draft: HouseholdProfile?
+    @State private var original: HouseholdProfile?
+    @State private var newContactID: String?
     @State private var saving = false
     @State private var saveFailed = false
 
@@ -17,12 +22,17 @@ struct FocusedHouseholdEditor: View {
             if draft != nil {
                 switch focus {
                 case .family: familyFields
-                case .contacts: contactFields
+                case .person(let id): helperFields(id)
+                case .contacts, .newContact: contactFields
                 case .supplies: supplyFields
                 case .transport: transportFields
                 case .backups: backupFields
                 case .review: reviewFields
                 case .preparation(let id): preparationFields(id)
+                case .water: waterFields
+                case .communications: communicationFields
+                case .housing: housingFields
+                case .checklist(let id, let titleKey): checklistFields(id, titleKey: titleKey)
                 }
             }
             if saveFailed { Text(model.lastError ?? l("ui.tryFailed")).foregroundStyle(Theme.caution) }
@@ -38,6 +48,12 @@ struct FocusedHouseholdEditor: View {
         .onAppear {
             if draft == nil {
                 draft = model.household
+                original = model.household
+                if case .newContact(let role) = focus, draft != nil {
+                    let contact = HouseholdContact(id: UUID().uuidString, role: role, alias: "")
+                    newContactID = contact.id
+                    draft?.contacts.append(contact)
+                }
                 if case .contacts = focus, draft?.contacts.isEmpty == true {
                     draft?.contacts.append(HouseholdContact(id: UUID().uuidString, role: .other, alias: ""))
                 }
@@ -47,13 +63,18 @@ struct FocusedHouseholdEditor: View {
 
     private var title: String {
         switch focus {
-        case .family: model.localizer("family.edit")
+        case .family, .person: model.localizer("family.edit")
         case .contacts: model.localizer("family.contacts")
+        case .newContact: model.localizer("prep.contact.title")
         case .supplies: model.localizer("family.supplies")
         case .transport: model.localizer("ui.setup.gettingAround")
         case .backups: model.localizer("card.section.backup")
         case .review: model.localizer("prep.reviewCard.title")
         case .preparation(let id): model.localizer("prep.\(id).title")
+        case .water: model.localizer("prep.water.title")
+        case .communications: model.localizer("action.act.comms.power-bank.title")
+        case .housing: model.localizer("ui.setup.heat")
+        case .checklist(_, let titleKey): model.localizer(titleKey)
         }
     }
     private func binding<T>(_ path: WritableKeyPath<HouseholdProfile, T>) -> Binding<T> {
@@ -65,11 +86,29 @@ struct FocusedHouseholdEditor: View {
             draft!.people[index].emergencyInformation![keyPath: path] = value
         })
     }
+    @ViewBuilder private func helperFields(_ personID: String) -> some View {
+        let l = model.localizer
+        if let i = draft?.people.firstIndex(where: { $0.id == personID }) {
+            Section(draft!.people[i].localizedLabel(l)) {
+                Picker(l("family.helper"), selection: binding(\.people[i].helperPersonID)) {
+                    Text(l("family.unknown")).tag(String?.none)
+                    ForEach(draft!.people.filter { $0.id != personID }) { Text($0.localizedLabel(l)).tag(Optional($0.id)) }
+                }
+                Picker(l("family.startRoom"), selection: binding(\.people[i].sleepingSpaceID)) {
+                    Text(l("family.unknown")).tag(String?.none)
+                    ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
+                }
+                TextField(l("common.need.communicationSupport"), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
+                Text(l("prep.helper.why")).font(.footnote)
+            }
+        }
+    }
+    private var personID: String? { if case .person(let id) = focus { return id }; return nil }
     private var familyFields: some View {
         let l = model.localizer
         return Group {
-            Section { TextField(l("family.identity"), text: binding(\.displayName)).accessibilityIdentifier("family.householdName") }
-            ForEach(Array((draft?.people ?? []).indices), id: \.self) { i in
+            if personID == nil { Section { TextField(l("family.identity"), text: binding(\.displayName)).accessibilityIdentifier("family.householdName") } }
+            ForEach(Array((draft?.people ?? []).indices).filter { personID == nil || draft!.people[$0].id == personID }, id: \.self) { i in
                 Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
                     TextField(l("family.name"), text: binding(\.people[i].alias)).accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
                     Picker(l("family.relationship"), selection: binding(\.people[i].relationship)) {
@@ -105,6 +144,7 @@ struct FocusedHouseholdEditor: View {
                     }
                 }
             }
+            if personID == nil {
             Section {
                 Button(l("family.add"), systemImage: "person.badge.plus") {
                     draft!.people.append(Person(id: UUID().uuidString, alias: "", ageBand: .unknown))
@@ -118,27 +158,33 @@ struct FocusedHouseholdEditor: View {
                 }))
                 if let date = draft?.preparedness?.jointlyReviewedAt { Text(date, style: .date) }
             }
+            }
         }
     }
     private var contactFields: some View {
         let l = model.localizer
         return Group {
-            ForEach(binding(\.contacts)) { $contact in
+            ForEach(Array((draft?.contacts ?? []).indices).filter { newContactID == nil || draft!.contacts[$0].id == newContactID }, id: \.self) { i in
                 Section {
-                    TextField(l("ui.contact.name"), text: $contact.alias).accessibilityIdentifier("contacts.name.\(contact.id)")
-                    TextField(l("family.relationship"), text: Binding(get: { contact.relationship ?? "" }, set: { contact.relationship = $0 }))
-                    Picker(l("ui.contact.role"), selection: $contact.role) {
+                    TextField(l("ui.contact.name"), text: binding(\.contacts[i].alias)).accessibilityIdentifier("contacts.name.\(draft!.contacts[i].id)")
+                    TextField(l("family.relationship"), text: Binding(get: { draft!.contacts[i].relationship ?? "" }, set: { draft!.contacts[i].relationship = $0 }))
+                    Picker(l("ui.contact.role"), selection: binding(\.contacts[i].role)) {
                         ForEach(ContactRole.allCases, id: \.self) { Text(l("ui.contact.role.\($0.rawValue)")).tag($0) }
                     }
-                    TextField(l("ui.contact.phone"), text: Binding(get: { contact.phone ?? "" }, set: { contact.phone = $0 }))
-                        .keyboardType(.phonePad).textContentType(.telephoneNumber).accessibilityIdentifier("contacts.phone.\(contact.id)")
-                    if !contact.hasUsablePhone { Text(l("family.phoneMissing")).font(.caption).foregroundStyle(Theme.caution) }
+                    TextField(l("ui.contact.phone"), text: Binding(get: { draft!.contacts[i].phone ?? "" }, set: { draft!.contacts[i].phone = $0 }))
+                        .keyboardType(.phonePad).textContentType(.telephoneNumber).accessibilityIdentifier("contacts.phone.\(draft!.contacts[i].id)")
+                    if !draft!.contacts[i].hasUsablePhone { Text(l("family.phoneMissing")).font(.caption).foregroundStyle(Theme.caution) }
                 }
             }
-            .onDelete { draft!.contacts.remove(atOffsets: $0) }
-            Button(l("prep.contact.title"), systemImage: "plus") {
-                draft!.contacts.append(HouseholdContact(id: UUID().uuidString, role: .other, alias: ""))
-            }.accessibilityIdentifier("contacts.add")
+            .onDelete { offsets in
+                let visible = Array(draft!.contacts.indices).filter { newContactID == nil || draft!.contacts[$0].id == newContactID }
+                for i in offsets.map({ visible[$0] }).sorted(by: >) { draft!.contacts.remove(at: i) }
+            }
+            if newContactID == nil {
+                Button(l("prep.contact.title"), systemImage: "plus") {
+                    draft!.contacts.append(HouseholdContact(id: UUID().uuidString, role: .other, alias: ""))
+                }.accessibilityIdentifier("contacts.add")
+            }
         }
     }
     private var reviewFields: some View {
@@ -164,18 +210,80 @@ struct FocusedHouseholdEditor: View {
     private var supplyFields: some View {
         let l = model.localizer
         return Group {
-            Section(l("prep.water.title")) {
-                WaterStorageEvidenceRow(value: binding(\.supplies.storedWaterGallons), countryCode: draft?.privateLocation?.countryCode)
-                Text(l("prep.water.why", ["target": String((draft?.people.count ?? 1) * 3), "litres": String(Int(Double((draft?.people.count ?? 1) * 3) * 3.78541))])).font(.footnote)
-            }
+            waterFields
             Section(l("family.supplies")) {
                 NumberEvidenceRow(title: l("ui.setup.food.days"), value: binding(\.supplies.shelfStableFoodDays), unit: "d")
                 NumberEvidenceRow(title: l("family.powerBankCharges"), value: binding(\.communications.powerBankCharges), unit: "charges")
                 TriStateRow(title: l("action.act.comms.weather-radio.title"), value: binding(\.communications.batteryOrCrankRadio))
                 TriStateRow(title: l("family.cooler"), value: binding(\.supplies.coolerAndIcePacks))
             }
-            ForEach(BaselinePreparedness.definitions) { preparationFields($0.id) }
-            if !(draft?.pets.isEmpty ?? true) { preparationFields("pets") }
+            ForEach(BaselinePreparedness.definitions) { checklistFields($0.id, titleKey: "prep.\($0.id).title") }
+            if !(draft?.pets.isEmpty ?? true) { checklistFields("pets", titleKey: "prep.pets.title") }
+        }
+    }
+    private var waterQuantity: Binding<EvidenceValue<Double>> {
+        Binding(get: { draft!.supplies.storedWaterGallons }, set: { value in
+            draft!.supplies.storedWaterGallons = value
+            fact("water").wrappedValue.available = value.confirmedValue.map { .confirmed($0 > 0, verifiedAt: Date()) } ?? .unknown
+        })
+    }
+    private var waterFields: some View {
+        let l = model.localizer
+        return Group {
+            Section(l("prep.water.title")) {
+                WaterStorageEvidenceRow(value: waterQuantity, countryCode: draft?.privateLocation?.countryCode)
+                Text(l("prep.water.why", ["target": String((draft?.people.count ?? 1) * 3), "litres": String(Int((Double((draft?.people.count ?? 1) * 3) * 3.78541).rounded()))])).font(.footnote)
+            }
+            TextField(l("family.locationOfItem"), text: fact("water").location, axis: .vertical)
+            TextField(l("family.notes"), text: fact("water").notes, axis: .vertical)
+        }
+    }
+    private var communicationFields: some View {
+        let l = model.localizer
+        return Section(l("action.act.comms.power-bank.title")) {
+            NumberEvidenceRow(title: l("family.powerBankCharges"), value: binding(\.communications.powerBankCharges), unit: "charges")
+            TextField(l("family.locationOfItem"), text: fact("batteries").location, axis: .vertical)
+        }
+    }
+    private var housingFields: some View {
+        let l = model.localizer
+        return Section(l("ui.setup.heat")) {
+            Picker(l("ui.setup.heat"), selection: binding(\.housing.heatingFuel)) {
+                ForEach(HeatingFuel.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
+            }
+            TriStateRow(title: l("ui.setup.heatNeedsPower"), value: binding(\.housing.heatingNeedsElectricity))
+        }
+    }
+    @ViewBuilder private func checklistFields(_ id: String, titleKey: String) -> some View {
+        let l = model.localizer
+        if let person = draft?.people.first(where: { id == "medication.person.\($0.id)" }) {
+            Section { Text(person.localizedLabel(l)).font(.headline) }
+        }
+        if let equipment = draft?.equipment.first(where: { id == "medication.equipment.\($0.id)" || id == "equipmentSupplies.\($0.id)" }) {
+            Section { Text(equipment.localizedLabel(l)).font(.headline) }
+        }
+        if id == "food" {
+            Section { NumberEvidenceRow(title: l("ui.setup.food.days"), value: binding(\.supplies.shelfStableFoodDays), unit: "d") }
+        }
+        if id == "radio" {
+            Section(l("prep.radio.title")) {
+                TriStateRow(title: l("action.act.comms.weather-radio.title"), value: binding(\.communications.batteryOrCrankRadio))
+                Text(l("family.radioAlternative")).font(.footnote)
+            }
+        }
+        if id == "pets" {
+            ForEach(Array((draft?.pets ?? []).indices), id: \.self) { i in
+                Section(DisplayNames.name(draft!.pets[i].kind.rawValue, localizer: l)) {
+                    TriStateRow(title: l("ui.setup.carrier"), value: binding(\.pets[i].carrierAvailable))
+                }
+            }
+        }
+        preparationFields(id, titleKey: titleKey)
+        if ["fireDrill", "wellFloodPlan", "floodPlan"].contains(id) {
+            Text(l("prep.\(id).why")).font(.footnote)
+        }
+        if id.hasPrefix("medication.") || id.hasPrefix("equipmentSupplies.") {
+            Text(l(id.hasPrefix("medication.") ? "family.medicationAvailability" : "family.equipmentSupplies")).font(.footnote)
         }
     }
     private var backupFields: some View {
@@ -243,12 +351,12 @@ struct FocusedHouseholdEditor: View {
             draft!.preparedness!.items[id] = current.applyingEdits(value)
         })
     }
-    private func preparationFields(_ id: String) -> some View {
+    private func preparationFields(_ id: String, titleKey: String? = nil) -> some View {
         let l = model.localizer
         let record = fact(id)
         return Section {
-            TriStateRow(title: l("family.haveItem"), value: record.available)
-            TextField(l("family.locationOfItem"), text: record.location, axis: .vertical)
+            TriStateRow(title: l(id == "fireDrill" ? "family.fireDrillRecord" : (["floodPlan", "wellFloodPlan", "reconnect", "heatCold"].contains(id) ? "family.planRecorded" : "family.haveItem")), value: record.available)
+            TextField(l(id == "fireDrill" ? "family.drillInstructions" : (id == "floodPlan" ? "family.floodInstructions" : (id == "wellFloodPlan" ? "family.wellInstructions" : "family.locationOfItem"))), text: record.location, axis: .vertical)
             TextField(l("family.notes"), text: record.notes, axis: .vertical)
             if BaselinePreparedness.definitions.contains(where: { $0.id == id }) || id == "pets" {
                 Toggle(l("family.recordedCheck"), isOn: Binding(get: { record.wrappedValue.checkedAt != nil }, set: { record.wrappedValue.checkedAt = $0 ? Date() : nil }))
@@ -265,16 +373,11 @@ struct FocusedHouseholdEditor: View {
                 TriStateRow(title: l("family.extinguisherAwareness"), value: Binding(get: { record.wrappedValue.familyAware ?? .unknown }, set: { record.wrappedValue.familyAware = $0 }))
                 Text(l("family.extinguisherNote")).font(.footnote)
             }
-        } header: { Text(l("prep.\(id).title")) }
+        } header: { Text(l(titleKey ?? "prep.\(id).title")) }
     }
     private func save() {
         guard !saving, var value = draft else { return }
-        if let fact = value.preparedness?.items["firstAid"] { value.supplies.firstAidKit = fact.available }
-        if let fact = value.preparedness?.items["extinguisher"] { value.supplies.fireExtinguisher = fact.available }
-        if let available = value.preparedness?.items["flashlight"]?.available.confirmedValue {
-            if !available { value.supplies.flashlights = .confirmed(0) }
-            else if (value.supplies.flashlights.confirmedValue ?? 0) < 1 { value.supplies.flashlights = .confirmed(1) }
-        }
+        if let original { PreparationDraft.synchronizeSupplyAnswers(&value, original: original) }
         value.contacts.removeAll { $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && ($0.phone ?? "").isEmpty }
         saving = true
         Task {

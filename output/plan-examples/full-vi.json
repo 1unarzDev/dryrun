@@ -145,7 +145,7 @@
 
               ],
               "style" : "contact",
-              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "text" : "Example trusted contact · Family friend · Người liên lạc ở xa · +1 202 555 0148",
               "unfilledPlaceholders" : [
 
               ]
@@ -251,6 +251,90 @@
               ],
               "style" : "normal",
               "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ nước uống · Gia đình có sẵn: Có · Nước uống dự trữ (gallon): 5",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ thực phẩm cho gia đình · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Xác định vị trí bộ sơ cứu · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Xác định vị trí đèn pin · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Kiểm tra pin hoặc sạc dự phòng · Gia đình có sẵn: Có",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Xác định vị trí bình chữa cháy · Gia đình có sẵn: Có",
               "unfilledPlaceholders" : [
 
               ]
@@ -381,7 +465,7 @@
           ]
         },
         {
-          "heading" : "Điểm hẹn bên ngoài",
+          "heading" : "Các điểm gặp",
           "id" : "meeting",
           "isSafetyCritical" : true,
           "lines" : [
@@ -394,7 +478,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Điểm gặp dự phòng ngoài khu phố: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
+              "text" : "Điểm gặp ngoài trời gần nhà: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
               "unfilledPlaceholders" : [
 
               ]
@@ -408,7 +492,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Điểm gặp ngoài trời gần nhà: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
+              "text" : "Điểm gặp dự phòng ngoài khu phố: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
               "unfilledPlaceholders" : [
 
               ]
@@ -2153,20 +2237,6 @@
               "unfilledPlaceholders" : [
 
               ]
-            },
-            {
-              "isDraftTranslation" : true,
-              "isFallback" : false,
-              "key" : "action.act.water.save-utility-contact.title",
-              "resolvedLocale" : "vi",
-              "sourceIDs" : [
-                "S24"
-              ],
-              "style" : "normal",
-              "text" : "Lưu liên lạc của công ty cấp nước và đăng ký nhận thông báo",
-              "unfilledPlaceholders" : [
-
-              ]
             }
           ]
         },
@@ -2216,7 +2286,8 @@
     "S25",
     "S26",
     "S27",
-    "S52"
+    "S52",
+    "S53"
   ],
   "visualSnapshot" : {
     "fictional" : true,

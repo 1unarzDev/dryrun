@@ -78,3 +78,14 @@ one-time reminder cancellation/deletion. Added tests and EN/ES/VI draft controls
 binary failure was reproduced, then cleared by rebuilding without source changes; fresh suites provide the reported
 evidence. Native reminder tests are authored only. No current simulator/device screenshots or professional review
 were produced; remaining native work is handed to the owner's existing Claude/Mac checkout.
+
+Additional October 17 connected-flow review (same Codex/AI lanes) fixed focused task ownership, canonical
+supply/location continuity, subject-specific medical supplies, utility/drill/flood/well completion, selected-export
+failure/privacy, route/GPS cancellation, card coordinate/role output, explicit public coverage, scene-floor/exit
+presentation, retained scan review and localized subject/quantity labels. Core comparison diffs retain subjects.
+The PDF skill was used for regenerated fictional reference artifacts and visual/text inspection. Current counts
+are recorded in VERIFICATION; no current native, simulator, physical test or human review was performed.
+
+Final portable PDF review moved oversized responder instructions after the main contact/meetup card, retaining
+all user-authored text and explicit export selection. The regenerated long-note Letter/A4 first/continuation/end
+pages were inspected; output/README.md records exact pages and limits. This did not execute native PDF rendering.

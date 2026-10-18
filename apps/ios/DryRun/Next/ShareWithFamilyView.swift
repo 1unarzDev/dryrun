@@ -37,6 +37,7 @@ struct ShareWithFamilyView: View {
             } header: {
                 Text(l("ui.share.what"))
             }
+            .disabled(preparing)
             Section {
                 if gaps.isEmpty {
                     Text(l("ui.share.readyFooter")).foregroundStyle(.secondary)
@@ -94,32 +95,28 @@ struct ShareWithFamilyView: View {
     }
 
     private func prepare() async {
+        guard !preparing else { return }
+        let request = FamilyPlanExportRequest(includePlan: includePlan, includeCard: includeCard,
+            includePrivateNotes: includePrivateNotes, selection: selection)
+        let scenarioIDs = model.savedPlan?.scenarioIDs ?? []
+        let startingKey = model.currentKey
+        let startingLocale = model.locale
+        let startingPlaces = model.savedPlaces
         preparing = true
         defer { preparing = false }
-        var pages: [PlanPage] = []
-        var base: PlanDocument?
-        if includePlan {
-            await model.generatePlan(scenarioIDs: model.savedPlan?.scenarioIDs ?? [], includePrivateNotes: includePrivateNotes, selection: selection)
-            guard !model.planIsStale, let plan = model.savedPlan, plan.locale == model.locale else { return }
-            base = plan
-            pages = plan.pages.filter { $0.id != "family-card" || includeCard }
-
+        var generatedPlan: PlanDocument?
+        if request.includePlan {
+            generatedPlan = await model.generatePlan(scenarioIDs: scenarioIDs, includePrivateNotes: request.includePrivateNotes, selection: request.selection)
+            guard generatedPlan != nil, !model.planIsStale else { return }
         }
-        if includeCard, let card = model.outageCard(includePrivateNotes: includePrivateNotes, selection: selection), !card.pages.isEmpty {
-            // The card goes first: it is the page someone needs in a hurry.
-            pages = card.pages + pages.filter { $0.id != "family-card" }
-            if var merged = base {
-                merged.draftTranslationBanner = merged.draftTranslationBanner ?? card.draftTranslationBanner
-                merged.fallbackNote = merged.fallbackNote ?? card.fallbackNote
-                merged.sourceIDs = Array(Set(merged.sourceIDs + card.sourceIDs)).sorted()
-                base = merged
-            } else {
-                base = card
-            }
+        let card = request.includeCard ? model.outageCard(includePrivateNotes: request.includePrivateNotes, selection: request.selection) : nil
+        guard let doc = request.document(generatedPlan: generatedPlan, card: card) else { return }
+        var panels: [PlanMapPanel] = []
+        if request.includePlan, let snapshot = doc.visualSnapshot {
+            panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood"))
         }
-        guard var doc = base, !pages.isEmpty else { return }
-        doc.pages = pages
-        let output = PlanPDFRenderer().render(doc)
+        guard model.currentKey == startingKey, model.locale == startingLocale, model.savedPlaces == startingPlaces else { return }
+        let output = PlanPDFRenderer().render(doc, mapPanels: panels)
         do {
             exportURL = try TemporaryExports.write(output.data, name: "DryRun-family-\(doc.locale).pdf")
             TemporaryExports.hasActiveExport = true

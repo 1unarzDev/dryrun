@@ -193,6 +193,7 @@ public struct RehearsalDiff: Codable, Sendable, Hashable {
     public var resolvedRequirements: [String]
     public var newRequirements: [String]
     public var resourceChanges: [String: [ResourceQuantity]]
+    /// Exact recommendation IDs (action plus subject). One resolved device never resolves its peers.
     public var resolvedRecommendations: [String]
     public init(addedEventIDs: [String], removedEventIDs: [String], serviceChanges: [String: [ServiceState]],
                 resolvedRequirements: [String], newRequirements: [String], resourceChanges: [String: [ResourceQuantity]],

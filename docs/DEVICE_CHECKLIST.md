@@ -28,6 +28,9 @@ A8 Deny reminder permission, retained draft/existing reminder; schedule/relaunch
 A9 Delete while permission/add is suspended; no late reminder survives; no household fields in notification:
 A10 Solo card review and joint review independent; change alarm location -> check/coverage reopen, notes preserve:
 
+A11 Quantity/location and subject-specific medical preparation save-return, relaunch and exact Undo/reopen:
+A12 Physical drill separate from exit check; utility number does not complete trusted contact:
+
 B. Native LiDAR (network/location/intelligence independent)
 B1 Camera requested only when scan chosen; support check accurate; denial retains manual path:
 B2 Guidance -> first room -> continue connected room in shared frame -> process:
@@ -48,6 +51,9 @@ B16 Add/remove a room after correction: no missing/phantom outline walls; select
 B17 Explicit new level/first room/stairs: separately positioned landings, invalid/same-floor/stair-free mobility refused:
 B18 Change shelter grade/add lower floor/window: old shelter rejected by both current scene and planner; re-review:
 
+B19 Selected floor/person agrees in 2D/3D/list; exposed/no-route start room still named:
+B20 Balcony/blocked/inoperable opening unavailable; annotation/shelter/two stair endpoint highlight correct:
+
 C. Maps, share and offline
 C1 GPS denied, typed home address still plans; automatic nearby discovery cancel/retry:
 C2 Near and backup meetup survive sheets/relaunch, every edit updates card and next PDF:
@@ -58,12 +64,15 @@ C6 Print preview Letter/A4/grayscale; print completion/cancel releases export le
 C7 Map snapshot failure still exports readable text/home/card, essential meetup/phone details:
 C8 No private household/contact/medical/scan fields in public request/diagnostic traffic:
 
+C9 Select/dismiss/change destination while GPS/directions pending; no late route or stuck loading:
+C10 Failed fresh selected export never shares older sensitive document; medical locations follow selection:
+
 D. Presentation/accessibility
 D1 Small phone and large Dynamic Type: no hidden primary control, clipped data or collisions:
 D2 VoiceOver can create/contact/card/rehearse/choose place; meaningful list/route alternatives:
 D3 Reduce Motion: equivalent static hazard scene; light/dark/non-color statuses readable:
 D4 EN/ES/VI selected values/errors/unit/labels and diacritics; no silent critical translation:
-D5 Very long individual note ends correctly after continuation, large family all listed:
+D5 Very long responder note follows the main contact/meetup card without rewriting; END retained, large family all listed:
 D6 Time to first useful card / rehearsal duration (record observed seconds; no target claims):
 ```
 

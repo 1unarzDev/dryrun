@@ -144,7 +144,7 @@
 
               ],
               "style" : "contact",
-              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "text" : "Example trusted contact · Family friend · Out-of-area contact · +1 202 555 0148",
               "unfilledPlaceholders" : [
 
               ]
@@ -250,6 +250,90 @@
               ],
               "style" : "normal",
               "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Store drinking water · Available in our household: Yes · Stored drinking water (gallons): 5",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Store food for your household · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Locate your first-aid kit · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Locate flashlights · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Check batteries or a power bank · Available in our household: Yes",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S53"
+              ],
+              "style" : "normal",
+              "text" : "Locate the fire extinguisher · Available in our household: Yes",
               "unfilledPlaceholders" : [
 
               ]
@@ -380,7 +464,7 @@
           ]
         },
         {
-          "heading" : "Outside meeting point",
+          "heading" : "Meeting places",
           "id" : "meeting",
           "isSafetyCritical" : true,
           "lines" : [
@@ -393,7 +477,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Backup meetup outside neighborhood: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
+              "text" : "Outside meetup near home: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
               "unfilledPlaceholders" : [
 
               ]
@@ -407,7 +491,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Outside meetup near home: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
+              "text" : "Backup meetup outside neighborhood: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
               "unfilledPlaceholders" : [
 
               ]
@@ -2152,20 +2236,6 @@
               "unfilledPlaceholders" : [
 
               ]
-            },
-            {
-              "isDraftTranslation" : false,
-              "isFallback" : false,
-              "key" : "action.act.water.save-utility-contact.title",
-              "resolvedLocale" : "en",
-              "sourceIDs" : [
-                "S24"
-              ],
-              "style" : "normal",
-              "text" : "Save your water utility's contact and advisory sign-up",
-              "unfilledPlaceholders" : [
-
-              ]
             }
           ]
         },
@@ -2215,7 +2285,8 @@
     "S25",
     "S26",
     "S27",
-    "S52"
+    "S52",
+    "S53"
   ],
   "visualSnapshot" : {
     "fictional" : true,

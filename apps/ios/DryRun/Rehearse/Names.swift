@@ -30,15 +30,27 @@ enum ServiceNames {
             let name = HouseholdLabels.equipment(eid, in: household, localizer: localizer)
             return localizer?("spatial.device-runtime", ["name": name]) ?? "\(name) runtime"
         }
-        return UnknownNames.fallback(id)
+        return UnknownNames.fallback(id, localizer: localizer)
     }
 
-    /// "1 charge", "2 charges", "5 gal": a resource amount with a unit that agrees with the number.
-    static func quantity(_ amount: Double, unit: String) -> String {
-        let n = PlanFormatting.number(amount)
-        let singular = ["charges": "charge", "days": "day", "people": "person"]
-        let u = amount == 1 ? (singular[unit] ?? unit) : unit
-        return u.isEmpty ? n : "\(n) \(u)"
+    /// Localized presentation only. Evidence keeps its original stable unit string.
+    static func quantity(_ amount: Double, unit: String, localizer: Localizer) -> String {
+        guard amount.isFinite else { return localizer("common.status.unknown") }
+        let number = PlanFormatting.number(amount, locale: localizer.locale)
+        if unit.isEmpty { return number }
+        let key: String?
+        switch unit {
+        case "gal": key = "gallons"
+        case "h", "hours": key = "hours"
+        case "charges": key = "charges"
+        case "days": key = "days"
+        case "people": key = "people"
+        case "Wh": key = "watt-hours"
+        case "L": key = "litres"
+        default: key = nil
+        }
+        guard let key else { return localizer("spatial.quantity.unspecified", ["number": number]) }
+        return localizer("spatial.quantity.\(key).\(amount == 1 ? "one" : "other")", ["number": number])
     }
 }
 
@@ -57,7 +69,9 @@ enum HouseholdLabels {
 }
 
 enum PlanFormatting {
-    static func number(_ v: Double) -> String { v == v.rounded() ? String(Int(v)) : String(format: "%.1f", v) }
+    static func number(_ v: Double, locale: String? = nil) -> String {
+        v.formatted(.number.precision(.fractionLength(0...1)).locale(Locale(identifier: locale ?? "en")))
+    }
 }
 
 /// Plain-language names for the household facts a rehearsal or preparation depends on (IDs from the core engine).
@@ -87,47 +101,60 @@ enum UnknownNames {
     static func describe(_ id: String, household: HouseholdProfile?, localizer: Localizer? = nil) -> String {
         if let localizer {
             let value = localizer.text("spatial.fact." + id)
-            if !value.isMissing { return value.text }
+            if !value.isMissing && value.unfilledPlaceholders.isEmpty { return value.text }
         }
         func fact(_ key: String, _ name: String, _ fallback: String) -> String {
             localizer?("spatial.fact." + key, ["name": name]) ?? fallback
         }
         if let n = names[id] { return n }
-        let parts = id.split(separator: ".", maxSplits: 2).map(String.init)
-        if parts.count >= 2, parts[0] == "equipment" {
-            let device = HouseholdLabels.equipment(parts[1], in: household, localizer: localizer)
-            switch parts.count > 2 ? parts[2] : "" {
+        if let subject = subject(in: id, prefix: "equipment", knownIDs: household?.equipment.map(\.id) ?? []) {
+            let device = HouseholdLabels.equipment(subject.id, in: household, localizer: localizer)
+            switch subject.suffix {
+            case "": return device
             case "backup": return fact("equipment.backup", device, "A backup that works with \(device)")
             case "runtime", "documentedBackupRuntimeHours": return fact("equipment.runtime", device, "How long \(device) runs on its backup")
             case "backupOutcome": return fact("equipment.backupOutcome", device, "Whether \(device)'s backup lasts through the outage")
-            default: return device
+            default: return fallback(id, localizer: localizer)
             }
         }
-        if parts.count >= 2, parts[0] == "backup" {
-            let backup = HouseholdLabels.backup(parts[1], in: household, localizer: localizer)
-            switch parts.count > 2 ? parts[2] : "" {
+        if let subject = subject(in: id, prefix: "backup", knownIDs: household?.backupPower.map(\.id) ?? []) {
+            let backup = HouseholdLabels.backup(subject.id, in: household, localizer: localizer)
+            switch subject.suffix {
+            case "": return backup
             case "setupConfirmed": return fact("backup.setup", backup, "Whether \(backup) is set up and tested")
             case "usableEnergyWh": return fact("backup.energy", backup, "How much energy \(backup) holds")
             case "safeOutdoorPlacementConfirmed": return fact("backup.outdoor", backup, "A safe outdoor spot for \(backup)")
-            default: return backup
+            default: return fallback(id, localizer: localizer)
             }
         }
-        if parts.count >= 2, parts[0] == "person" {
-            let name = household?.people.first { $0.id == parts[1] }?.alias ?? "A household member"
-            switch parts.count > 2 ? parts[2] : "" {
-            case "sleepingSpaceID": return fact("person.start", name, "Where \(name) sleeps")
+        if let subject = subject(in: id, prefix: "person", knownIDs: household?.people.map(\.id) ?? []),
+           let person = household?.people.first(where: { $0.id == subject.id }) {
+            let name = localizer.map { person.localizedLabel($0) }
+                ?? (person.alias.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? (person.isSelf == true ? "You" : "Person") : person.alias)
+            switch subject.suffix {
+            case "": return name
+            case "sleepingSpaceID": return fact("person.start", name, "Where \(name) starts")
             case "helperPersonID": return fact("person.helper", name, "Who helps \(name)")
             case "needs": return fact("person.needs", name, "What \(name) needs")
-            default: return name
+            default: return fallback(id, localizer: localizer)
             }
         }
-        return ServiceNames.names[id] ?? fallback(id)
+        if ServiceNames.names[id] != nil { return ServiceNames.name(id, household: household, localizer: localizer) }
+        return fallback(id, localizer: localizer)
     }
 
-    /// Last resort for an ID with no name yet: the final segment, de-camel-cased ("routerOnBackup" → "router on backup").
-    static func fallback(_ id: String) -> String {
-        let last = id.split(separator: ".").last.map(String.init) ?? id
-        let spaced = last.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1 $2", options: .regularExpression)
-        return spaced.prefix(1).uppercased() + spaced.dropFirst().lowercased()
+    /// IDs are opaque and may contain dots. Match a complete known subject before interpreting its suffix.
+    private static func subject(in factID: String, prefix: String, knownIDs: [String]) -> (id: String, suffix: String)? {
+        for subjectID in knownIDs.sorted(by: { $0.count == $1.count ? $0 < $1 : $0.count > $1.count }) {
+            let base = prefix + "." + subjectID
+            if factID == base { return (subjectID, "") }
+            if factID.hasPrefix(base + ".") { return (subjectID, String(factID.dropFirst(base.count + 1))) }
+        }
+        return nil
+    }
+
+    /// Unrecognized facts must not expose internal IDs or look like translated advice.
+    static func fallback(_ id: String, localizer: Localizer? = nil) -> String {
+        localizer?("spatial.information-to-record") ?? "Information still to record"
     }
 }

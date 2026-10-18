@@ -13,21 +13,22 @@ struct FloorPlanView: View {
     let highlightedFloorID: String?
     var highlightedElementID: String?
     var spatialState: SpatialExerciseState?
+    var selectedRoute: RouteResult?
     var onSelect: ((String) -> Void)?
     @State private var selectedFloorID: String?
 
-    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, onSelect: ((String) -> Void)? = nil) {
+    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil, onSelect: ((String) -> Void)? = nil) {
         self.home = home
         self.routes = routes
         self.highlightedFloorID = highlightedFloorID
-        self.highlightedElementID = highlightedElementID; self.spatialState = spatialState; self.onSelect = onSelect
+        self.highlightedElementID = highlightedElementID; self.spatialState = spatialState; self.selectedRoute = selectedRoute; self.onSelect = onSelect
     }
 
-    private var floorID: String? { selectedFloorID ?? highlightedFloorID ?? home.floors.first?.id }
+    private var floorID: String? { highlightedFloorID ?? selectedFloorID ?? home.floors.first?.id }
 
     var body: some View {
         VStack(spacing: 6) {
-            if home.floors.count > 1 && highlightedFloorID == nil || routeFloors.count > 1 {
+            if home.floors.count > 1 && highlightedFloorID == nil {
                 Picker(s("Floor"), selection: Binding(get: { floorID ?? "" }, set: { selectedFloorID = $0 })) {
                     ForEach(home.floors) { f in
                         Text(routeFloors.contains(f.id) ? model.localizer("spatial.floor-route", ["floor": f.label]) : f.label).tag(f.id)
@@ -68,8 +69,12 @@ struct FloorPlanView: View {
     private var accessibilitySummary: String {
         guard let fid = floorID, let floor = home.floors.first(where: { $0.id == fid }) else { return model.localizer("spatial.floor-plan") }
         let rooms = home.spaces.filter { $0.floorID == fid }.map(\.label).joined(separator: ", ")
-        let exits = home.portals.filter { $0.floorID == fid && $0.leadsToExterior && $0.verification == .verified && $0.kind != .window }.count
-        return model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
+        let exits = home.portals.filter { $0.floorID == fid && HomeScenePresentation.openingStatus($0, in: home, state: spatialState, request: selectedRoute?.request) == .availableExit }.count
+        let summary = model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
+        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid {
+            return summary + " " + model.localizer("spatial.recorded-start-room", ["room": room.label])
+        }
+        return summary
     }
 
     // MARK: Drawing
@@ -126,17 +131,20 @@ struct FloorPlanView: View {
             // Erase the wall at the opening, then draw it with a style that does not rely on colour alone.
             let line = path([p.a, p.b], f, closed: false)
             ctx.stroke(line, with: .color(PlanColors.background), lineWidth: 5)
-            let verifiedExit = p.leadsToExterior && p.verification == .verified && p.kind != .window
-            let style: StrokeStyle = p.verification == .verified ? StrokeStyle(lineWidth: 3) : StrokeStyle(lineWidth: 2, dash: [3, 3])
-            let color: Color = p.kind == .window ? PlanColors.window : verifiedExit ? PlanColors.exit : p.verification == .verified ? PlanColors.door : PlanColors.unverified
+            let status = HomeScenePresentation.openingStatus(p, in: home, state: spatialState, request: selectedRoute?.request)
+            let verifiedExit = status == .availableExit
+            let style: StrokeStyle = status == .unconfirmed ? StrokeStyle(lineWidth: 2, dash: [3, 3]) : StrokeStyle(lineWidth: 3)
+            let color: Color = status == .unavailable ? PlanColors.alarm : p.kind == .window ? PlanColors.window : verifiedExit ? PlanColors.exit : status == .confirmedConnection ? PlanColors.door : PlanColors.unverified
             ctx.stroke(line, with: .color(color), style: style)
             if p.kind == .window && spatialState?.hazard == .tornado {
                 // Static cue also serves Reduce Motion. It illustrates exposure, not predicted structural damage.
                 ctx.draw(Text("×").font(.system(size: 18, weight: .bold)).foregroundStyle(.purple), at: f.pt(p.center))
             }
-            if verifiedExit {
+            if status == .unavailable {
+                ctx.draw(Text("×").font(.system(size: 18, weight: .bold)).foregroundStyle(PlanColors.alarm), at: f.pt(p.center))
+            } else if verifiedExit {
                 ctx.draw(Text(s("EXIT")).font(.system(size: 9, weight: .bold)).foregroundStyle(PlanColors.exit), at: f.pt(p.center), anchor: .center)
-            } else if p.verification != .verified && p.kind != .window {
+            } else if status == .unconfirmed {
                 ctx.draw(Text(s("?")).font(.system(size: 11, weight: .bold)).foregroundStyle(PlanColors.unverified), at: f.pt(p.center), anchor: .center)
             }
         }
@@ -159,12 +167,14 @@ struct FloorPlanView: View {
             }
             if let obstacle = home.obstacles.first(where: { $0.id == id && $0.floorID == fid }) { ctx.stroke(path(obstacle.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }
         }
-        let bounds = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
         var markers: [CGPoint] = []
         for a in home.annotations where a.floorID == fid {
             guard let pos = a.position else { continue }
             let p = f.pt(pos)
-            let pinned = CGPoint(x: min(max(p.x, bounds.minX), bounds.maxX), y: min(max(p.y, bounds.minY), bounds.maxY))
+            let pinned = pinnedPoint(p, size: size)
+            if a.id == highlightedElementID {
+                ctx.stroke(Path(ellipseIn: CGRect(origin: pinned, size: .zero).insetBy(dx: -13, dy: -13)), with: .color(.purple), lineWidth: 4)
+            }
             markers.append(pinned)
             ctx.draw(Text(Image(systemName: Self.symbol(a.kind))).font(.system(size: 13)).foregroundStyle(Self.color(a.kind)), at: pinned, anchor: .center)
         }
@@ -190,6 +200,10 @@ struct FloorPlanView: View {
                 }
             }
         }
+        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid,
+           let position = HomeScenePresentation.startingRoomPosition(in: home, route: selectedRoute) {
+            ctx.draw(Text(Image(systemName: "person.crop.circle.fill")).font(.title2).foregroundStyle(PlanColors.route), at: f.pt(position))
+        }
         for (i, r) in routes.enumerated() {
             for leg in r.legs where leg.floorID == fid && leg.points.count >= 2 {
                 let style = StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round, dash: i == 0 ? [] : [8, 5])
@@ -201,10 +215,20 @@ struct FloorPlanView: View {
         }
     }
 
+    private func pinnedPoint(_ point: CGPoint, size: CGSize) -> CGPoint {
+        let bounds = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
+        return CGPoint(x: min(max(point.x, bounds.minX), bounds.maxX), y: min(max(point.y, bounds.minY), bounds.maxY))
+    }
+
     private func hitTest(_ point: CGPoint, size: CGSize) -> String? {
         guard let fid = floorID, let fit = fit(size, fid) else { return nil }
         let local = Vec2((point.x - fit.offset.x) / fit.scale + fit.minX, fit.maxY - (point.y - fit.offset.y) / fit.scale)
         let tolerance = 18 / fit.scale
+        if let annotation = home.annotations.first(where: { annotation in
+            guard annotation.floorID == fid, let position = annotation.position else { return false }
+            let marker = pinnedPoint(fit.pt(position), size: size)
+            return hypot(marker.x - point.x, marker.y - point.y) <= 18
+        }) { return annotation.id }
         if let portal = home.portals.filter({ $0.floorID == fid }).min(by: {
             Geometry.distancePointSegment(local, $0.a, $0.b) < Geometry.distancePointSegment(local, $1.a, $1.b)
         }), Geometry.distancePointSegment(local, portal.a, portal.b) <= tolerance { return portal.id }
@@ -212,7 +236,6 @@ struct FloorPlanView: View {
             (home.space(connector.fromSpaceID)?.floorID == fid && connector.fromPoint.distance(to: local) <= tolerance)
             || (home.space(connector.toSpaceID)?.floorID == fid && connector.toPoint.distance(to: local) <= tolerance)
         }) { return connector.id }
-        if let annotation = home.annotations.first(where: { $0.floorID == fid && ($0.position?.distance(to: local) ?? .infinity) <= tolerance }) { return annotation.id }
         if let obstacle = home.obstacles.first(where: { $0.floorID == fid && Geometry.contains($0.polygon, local) }) { return obstacle.id }
         return home.spaces.first(where: { $0.floorID == fid && Geometry.contains($0.polygon, local) })?.id
     }

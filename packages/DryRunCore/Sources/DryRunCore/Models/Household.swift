@@ -387,7 +387,7 @@ public struct Supplies: Codable, Sendable, Hashable {
 }
 
 public enum ContactRole: String, Codable, Sendable, Hashable, CaseIterable {
-    case outOfAreaContact, neighborHelper, transportSupport, careProvider, utilityMedicalRegistry, other
+    case outOfAreaContact, neighborHelper, transportSupport, careProvider, utilityMedicalRegistry, waterUtility, other
 }
 
 public struct HouseholdContact: Codable, Sendable, Hashable, Identifiable {
