@@ -1,6 +1,6 @@
 {
   "contentReviewBanner" : "Contenido de seguridad de prototipo - revisión de expertos pendiente",
-  "contentVersion" : "2026.10.0",
+  "contentVersion" : "2026.10.1",
   "draftTranslationBanner" : "Traducción en borrador - revisión lingüística pendiente / Draft translation - language review pending",
   "footer" : "Plan de práctica de Dry Run. Los ensayos son ejercicios bajo supuestos indicados; no verifican cómo será una emergencia real.",
   "generatedAt" : "2026-10-09T15:00:00Z",
@@ -355,7 +355,7 @@
   "scenarioIDs" : [
 
   ],
-  "schemaVersion" : 1,
+  "schemaVersion" : 2,
   "sourceIDs" : [
     "S19",
     "S26",

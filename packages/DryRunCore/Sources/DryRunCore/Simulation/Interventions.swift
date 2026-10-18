@@ -9,14 +9,20 @@ public enum InterventionApplier {
         EvidenceValue(value: v, origin: .scenarioAssumption, status: .confirmed, unit: unit)
     }
 
-    public static func apply(_ interventions: [Intervention], household: HouseholdProfile, home: HomeModel) -> (HouseholdProfile, HomeModel) {
+    public static func apply(_ interventions: [Intervention], household: HouseholdProfile, home: HomeModel?) -> (HouseholdProfile, HomeModel?) {
         var h = household
         var m = home
         for i in interventions { apply(i, &h, &m) }
         return (h, m)
     }
 
-    static func apply(_ i: Intervention, _ h: inout HouseholdProfile, _ m: inout HomeModel) {
+    /// Preserve source compatibility for geometry-backed callers while the optional overload serves no-layout runs.
+    public static func apply(_ interventions: [Intervention], household: HouseholdProfile, home: HomeModel) -> (HouseholdProfile, HomeModel) {
+        let (household, revisedHome) = apply(interventions, household: household, home: Optional(home))
+        return (household, revisedHome ?? home)
+    }
+
+    static func apply(_ i: Intervention, _ h: inout HouseholdProfile, _ home: inout HomeModel?) {
         switch i.actionID {
         case "act.backup.confirm-medical-backup":
             let targets = h.equipment.indices.filter { idx in
@@ -63,6 +69,7 @@ public enum InterventionApplier {
         case "act.refrigeration.cooler-plan":
             h.supplies.coolerAndIcePacks = hypothetical(true)
         case "act.tornado.choose-shelter":
+            guard var m = home else { return }
             let preferred: [SpaceKind] = [.closet, .bathroom, .hallway]
             for kind in preferred {
                 if let idx = m.spaces.indices.sorted(by: { m.spaces[$0].id < m.spaces[$1].id })
@@ -78,6 +85,7 @@ public enum InterventionApplier {
                     break
                 }
             }
+            home = m
         case "act.assist.assign-helper":
             for idx in h.people.indices {
                 let p = h.people[idx]

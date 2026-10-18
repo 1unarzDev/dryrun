@@ -340,7 +340,9 @@ struct Graph {
         if p.kind == .window {
             if request.mobility.requiresStepFree { return "incompatibleMobility: window exit" }
             if p.operable.confirmedValue != true { return "windowOperabilityUnconfirmed" }
-            if p.emergencyEscapeConfirmed != true { return "windowEscapeSuitabilityUnconfirmed" }
+            guard let personID = request.personID, p.emergencyEscapePersonIDs?.contains(personID) == true else {
+                return "windowEscapeSuitabilityUnconfirmed"
+            }
         }
         if p.kind != .opening {
             if p.operable.value == false { return "inoperable" }            // even an unconfirmed "no" rules it out

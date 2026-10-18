@@ -397,7 +397,7 @@
   "spatial.fact.contacts": "Các liên hệ khẩn cấp đã ghi nhận",
   "spatial.fact.contacts.waterUtility": "Liên hệ đơn vị cấp nước đã ghi nhận",
   "spatial.fact.savedPlaces": "Các điểm gặp và nơi đến đã lưu",
-  "spatial.fact.home": "Sơ đồ nhà đã ghi nhận",
+  "spatial.fact.home": "Chưa thêm sơ đồ nhà",
   "spatial.fact.transport.alternatives": "Kế hoạch đi lại khi không có xe của hộ gia đình",
   "spatial.fact.transport.destinations.conditions": "Các điều kiện đã xác nhận tại nơi dự định đến",
   "spatial.fact.regionID": "Nguồn thông tin chính thức có hỗ trợ khu vực đã ghi nhận hay không",
@@ -412,5 +412,8 @@
   "spatial.scan-note.missing-floor": "Phòng {number}: không có đường viền sàn; đang dùng đường viền tường. Cần đo lại.",
   "spatial.scan-note.ambiguous-opening": "Một lối mở ở gần hơn hai phòng; hãy xác nhận lối mở đó dẫn đến đâu.",
   "spatial.confirm-opening-correct": "Đúng, thông tin này chính xác",
-  "spatial.confirm-opening-connects": "Đúng, lối mở nối các phòng này"
+  "spatial.confirm-opening-connects": "Đúng, lối mở nối các phòng này",
+  "spatial.window-person-question": "Ai đã kiểm tra rằng mình có thể dùng cửa sổ này làm lối thoát?",
+  "spatial.window-person-note": "Chọn riêng từng người sau khi kiểm tra lối ra bên ngoài và khả năng sử dụng ô cửa của họ. Chỉ đánh dấu cửa sổ không có nghĩa là đã xác lập lối thoát.",
+  "spatial.leak-location-unknown": "Chưa ghi vị trí rò rỉ"
 }

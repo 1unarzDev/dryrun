@@ -29,10 +29,11 @@ def fonts():
 
 
 class Diagram(Flowable):
-    def __init__(self, home, floor, route=None):
+    def __init__(self, home, floor, routes=None, state=None, start=None):
         super().__init__()
         self.width, self.height = 500, 250
-        self.home, self.floor, self.route = home, floor, route
+        self.home, self.floor, self.routes, self.state = home, floor, routes or [], state or {}
+        self.start=start
 
     def draw(self):
         c = self.canv
@@ -51,13 +52,14 @@ class Diagram(Flowable):
             path.moveTo(*xy(room['polygon'][0]))
             for p in room['polygon'][1:]: path.lineTo(*xy(p))
             path.close()
-            c.setFillColor(colors.HexColor('#f2f2f2')); c.setStrokeColor(colors.HexColor('#444444'))
+            c.setFillColor(colors.HexColor('#b8b8b8' if room['id'] in self.state.get('affectedSpaceIDs',[]) else '#f2f2f2')); c.setStrokeColor(colors.HexColor('#444444'))
             c.drawPath(path, fill=1, stroke=1)
             x = sum(p['x'] for p in room['polygon'])/len(room['polygon'])
             y = sum(p['y'] for p in room['polygon'])/len(room['polygon'])
             cx, cy = xy({'x':x,'y':y})
             c.setFillColor(colors.black); c.setFont('Body',8)
-            c.drawCentredString(cx,cy,room['label'])
+            if room['id'] in self.state.get('affectedSpaceIDs',[]): c.setFont('Bold',14);c.drawCentredString(cx,cy+15,'~' if self.state.get('hazard')=='flashFlood' else '!')
+            if room['id'] in self.state.get('exposedSpaceIDs',[]): c.setDash(3,3);c.setLineWidth(2);c.drawPath(path,fill=0,stroke=1);c.setDash();c.setLineWidth(1)
         # Portals interrupt the room boundary, preserving canonical endpoints.
         for portal in self.home['portals']:
             if portal['floorID'] != self.floor['id']: continue
@@ -66,18 +68,31 @@ class Diagram(Flowable):
                 c.setStrokeColor(colors.HexColor('#888888')); c.setLineWidth(1); line(portal['a'],portal['b'])
             elif portal.get('verification') != 'verified':
                 c.setStrokeColor(colors.black); c.setLineWidth(1); c.setDash(2,2);line(portal['a'],portal['b']);c.setDash()
+            if portal['id'] in self.state.get('affectedPortalIDs',[]) or (portal['kind']=='window' and self.state.get('hazard')=='tornado'):
+                x,y=xy({'x':(portal['a']['x']+portal['b']['x'])/2,'y':(portal['a']['y']+portal['b']['y'])/2});c.setFont('Bold',14);c.setFillColor(colors.black);c.drawString(x,y,'×')
         for obstacle in self.home.get('obstacles',[]):
             if obstacle['floorID'] != self.floor['id'] or not obstacle.get('polygon'): continue
             path=c.beginPath();path.moveTo(*xy(obstacle['polygon'][0]))
             for p in obstacle['polygon'][1:]:path.lineTo(*xy(p))
             path.close();c.setFillColor(colors.HexColor('#999999'));c.drawPath(path,stroke=1,fill=1)
         for connector in self.home.get('connectors',[]):
-            p = connector.get('fromPoint') if connector.get('fromFloorID') == self.floor['id'] else connector.get('toPoint') if connector.get('toFloorID') == self.floor['id'] else None
+            by_id={r['id']:r for r in self.home['spaces']}
+            p = connector.get('fromPoint') if by_id.get(connector.get('fromSpaceID'),{}).get('floorID') == self.floor['id'] else connector.get('toPoint') if by_id.get(connector.get('toSpaceID'),{}).get('floorID') == self.floor['id'] else None
             if p:
                 x,y=xy(p);c.setFillColor(colors.black);c.setFont('Bold',8);c.drawString(x,y,'STAIR')
-        if self.route:
+        # Furniture fills cannot obscure room names. Keep names above geometry and below routes.
+        for room in rooms:
+            cx,cy=xy({'x':sum(p['x'] for p in room['polygon'])/len(room['polygon']), 'y':sum(p['y'] for p in room['polygon'])/len(room['polygon'])})
+            c.setFont('Body',8);w=pdfmetrics.stringWidth(room['label'],'Body',8)
+            c.setFillColor(colors.white);c.rect(cx-w/2-2,cy-2,w+4,11,stroke=0,fill=1)
+            c.setFillColor(colors.black);c.drawCentredString(cx,cy,room['label'])
+        if self.start:
+            c.setDash();c.setFillColor(colors.white);c.setStrokeColor(colors.black)
+            x,y=xy(self.start);c.circle(x,y,7,stroke=1,fill=1);c.setFillColor(colors.black);c.setFont('Bold',8);c.drawCentredString(x,y-3,'P')
+        for index,route in enumerate(self.routes):
+            c.setDash() if index==0 else c.setDash(8,5)
             c.setStrokeColor(colors.black);c.setLineWidth(2.5)
-            for leg in self.route.get('legs',[]):
+            for leg in route.get('legs',[]):
                 if leg['floorID'] != self.floor['id']:continue
                 pts=leg['points']
                 for a,b in zip(pts,pts[1:]):line(a,b)
@@ -114,16 +129,15 @@ def render(path, target, paper):
     snapshot=data.get('visualSnapshot') or {}
     home=snapshot.get('home')
     if home:
-        for floor in home['floors']:
-            story.extend([PageBreak(),p('Example home / '+floor['label'],'title'),p('Canonical indoor metres. This overview contains no implied current route. Door gaps, windows and obstacles are shown from saved data.','note'),Diagram(home,floor)])
-        for i,result in enumerate(snapshot.get('routes',[])):
-            if not result.get('primary'):continue
-            person=(snapshot.get('personLabels') or {}).get(result['request'].get('personID'), 'Unassigned person')
-            scenario=(snapshot.get('routeScenarioIDs') or ['unknown']*len(snapshot.get('routes',[])))[i]
-            label=(snapshot.get('scenarioLabels') or {}).get(scenario,scenario)
-            for floor in home['floors']:
-                if not any(leg['floorID']==floor['id'] for leg in result['primary']['legs']):continue
-                story.extend([PageBreak(),p(label+' / '+person,'title'),p('One qualified exercise route, using the exact saved route legs. No predicted safe time or outdoor path is implied.','note'),Diagram(home,floor,result['primary'])])
+        # Computed by DryRunCore, exactly like native phone/print. No Python route interpretation.
+        floors={floor['id']:floor for floor in home['floors']}
+        for panel in data.get('referenceHomePanels',[]):
+            floor=floors[panel['floorID']]
+            result=panel.get('route') or {}
+            routes=[result[k] for k in ['primary','alternative'] if result.get(k)]
+            title=(data.get('referencePanelTitles') or {}).get(panel['id'],floor['label'])
+            story.extend([PageBreak(),p(title,'title'),Diagram(home,floor,routes,panel.get('spatialState'),(data.get('referenceStartPositions') or {}).get(panel['id']))])
+            for detail in (snapshot.get('panelDetails') or {}).get(panel['id'],[]): story.append(p(detail))
     if snapshot.get('savedPlaces') or snapshot.get('homeCoordinate'):
         story.extend([PageBreak(),p('Saved neighborhood destinations','title'),p('Map unavailable in this portable reference. Names, addresses and finding instructions remain usable as text. No retained Apple map imagery is included.','note')])
         for i,place in enumerate(snapshot.get('savedPlaces',[]),1):

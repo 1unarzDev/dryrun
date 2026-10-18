@@ -74,6 +74,9 @@ public struct BackupAllocator: Sendable {
                     if use == .setupUnconfirmed || use == .islandingUnconfirmed { lastState = .unknown }
                     continue
                 }
+                if drawUnknown.contains(sid), (loadsOnSource[sid] ?? 0) > 0 {
+                    lastReason = "sharedDrawUnknown"; lastState = .unknown; continue
+                }
                 if let w = watts {
                     if let cap = b.continuousOutputW.confirmedValue {
                         let used = outputUsed[sid, default: 0]
@@ -84,11 +87,11 @@ public struct BackupAllocator: Sendable {
                         lastReason = "outputLimitUnknown"; lastState = .unknown; continue
                     }
                 } else {
-                    drawUnknown.insert(sid)
                     if (loadsOnSource[sid] ?? 0) > 0 || outputUsed[sid] != nil {
                         // Sharing a source with an unknown draw cannot be confirmed.
                         lastReason = "sharedDrawUnknown"; lastState = .unknown; continue
                     }
+                    drawUnknown.insert(sid)
                 }
                 loadsOnSource[sid, default: 0] += 1
                 out[load] = BackupAssignment(loadID: load, sourceID: sid, state: .operational, reason: "assigned")

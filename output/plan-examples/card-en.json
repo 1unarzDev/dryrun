@@ -1,6 +1,6 @@
 {
   "contentReviewBanner" : "Prototype safety content - expert review pending",
-  "contentVersion" : "2026.10.0",
+  "contentVersion" : "2026.10.1",
   "footer" : "Dry Run practice plan. Rehearsals are exercises under stated assumptions; they do not verify how a real emergency will go.",
   "generatedAt" : "2026-10-09T15:00:00Z",
   "homeID" : "home-sample-ranch",
@@ -354,7 +354,7 @@
   "scenarioIDs" : [
 
   ],
-  "schemaVersion" : 1,
+  "schemaVersion" : 2,
   "sourceIDs" : [
     "S19",
     "S26",

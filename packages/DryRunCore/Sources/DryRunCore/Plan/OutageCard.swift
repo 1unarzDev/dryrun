@@ -9,6 +9,8 @@ public enum OutageCardGap: String, Codable, Sendable, Hashable, CaseIterable {
     case noCompatibleBackup
     /// A compatible backup is recorded, but nobody has set it up and tested it.
     case backupNotTested
+    /// Source prerequisites or the allocation to this device remain unresolved.
+    case backupPrerequisitesUnconfirmed
     /// The runtime on backup is not documented (manufacturer or care plan). Dry Run never estimates it.
     case runtimeUnknown
     /// No supplier, care team, or utility medical registry contact is recorded.
@@ -47,7 +49,8 @@ public enum OutageCardBuilder {
         if eq.requiresElectricalPower {
         if backups.isEmpty { out.append(.noCompatibleBackup) }
         else if !backups.contains(where: { $0.setupConfirmed.confirmedValue == true }) { out.append(.backupNotTested) }
-        if eq.documentedBackupRuntimeHours.confirmedValue == nil { out.append(.runtimeUnknown) }
+        else if MedicalBackupReadiness.assignment(for: eq, in: h)?.state != .operational { out.append(.backupPrerequisitesUnconfirmed) }
+        if !MedicalBackupReadiness.hasRecordedRuntime(eq) { out.append(.runtimeUnknown) }
         }
         if eq.requiresColdStorage {
             if (eq.storageInstructions ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { out.append(.storageInstructionsUnknown) }
@@ -95,11 +98,20 @@ public enum OutageCardBuilder {
 
         // Backup power: only what the household recorded; never an estimate.
         if eq.requiresElectricalPower {
-        var power: [PlanLine] = backups.map { bk in
-            b.line(bk.setupConfirmed.confirmedValue == true ? "card.backup.tested" : "card.backup.notTested",
-                   ["backup": bk.localizedLabel(b.localizer)], sources: ["S25"])
+        var power: [PlanLine] = backups.flatMap { bk in
+            var lines = [b.line(bk.setupConfirmed.confirmedValue == true ? "card.backup.tested" : "card.backup.notTested",
+                   ["backup": bk.localizedLabel(b.localizer)], sources: ["S25"])]
+            let usability = BackupAllocator.usability(bk, energyRemaining: bk.usableEnergyWh.confirmedValue)
+            if usability != .usable {
+                lines.append(b.line("card.backup.prerequisites", ["reason": b.l("reason.\(usability.rawValue)")], style: .caveat, sources: ["S25"]))
+            }
+            return lines
         }
         if backups.isEmpty { power.append(b.line("card.backup.none", sources: ["S25"])) }
+        if !backups.isEmpty, let assignment = MedicalBackupReadiness.assignment(for: eq, in: h), assignment.state != .operational,
+           !backups.contains(where: { BackupAllocator.usability($0, energyRemaining: $0.usableEnergyWh.confirmedValue).rawValue == assignment.reason }) {
+            power.append(b.line("card.backup.prerequisites", ["reason": b.l("reason.\(assignment.reason)")], style: .caveat, sources: ["S25"]))
+        }
         let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
             b.l("plan.equipment.runtimeKnown", ["hours": PlanBuilder.formatNumber($0, locale: b.localizer.locale)])
         } ?? b.l("plan.equipment.runtimeUnknown")
@@ -114,8 +126,9 @@ public enum OutageCardBuilder {
         // First steps when the power goes out.
         var steps: [PlanLine] = []
         if h.privateLocation?.countryCode?.uppercased() == "US" || (h.privateLocation?.countryCode == nil && PublicDataPolicy.isAllowedRegionID(h.regionID)) { steps.append(b.line("plan.help.911", style: .contact)) }
-        if let tested = backups.first(where: { $0.setupConfirmed.confirmedValue == true }) {
-            steps.append(b.line("card.steps.switchToBackup", ["device": eq.localizedLabel(b.localizer), "backup": tested.localizedLabel(b.localizer)]))
+        if let assignment = MedicalBackupReadiness.assignment(for: eq, in: h), assignment.state == .operational,
+           let selected = backups.first(where: { $0.id == assignment.sourceID }) {
+            steps.append(b.line("card.steps.switchToBackup", ["device": eq.localizedLabel(b.localizer), "backup": selected.localizedLabel(b.localizer)]))
         }
         let care = careContacts(in: h)
         if let first = care.first {

@@ -96,7 +96,8 @@ struct HomeAddressEditorView: View {
         guard var household = model.household else { return }
         if (draft.latitude != nil || draft.longitude != nil) && coordinate == nil { error = t("invalidPin"); return }
         draft.addressLine = address.isEmpty ? nil : address; draft.unit = unit.isEmpty ? nil : unit
-        household.privateLocation = draft; household.regionID = "unsupported"
+        household.regionID = HomeLocationChange.regionID(previous: household.privateLocation, updated: draft, existingRegionID: household.regionID)
+        household.privateLocation = draft
         // Apple administrative names never become trusted county/FIPS identifiers.
         saving = true
         Task {

@@ -14,19 +14,18 @@ struct PlanMapPanel {
 @MainActor
 struct PlanMapSnapshotRenderer {
     func panels(for snapshot: PlanVisualSnapshot, title: String) async -> [PlanMapPanel] {
-        let origin = snapshot.homeCoordinate ?? snapshot.savedPlaces.compactMap(\.coordinate).first
-        guard let origin else { return [] }
-        let local = snapshot.savedPlaces.enumerated().filter { _, p in p.coordinate.map { origin.clLocation.distance(from: $0.clLocation) <= 50000 } ?? false }
-        let distant = snapshot.savedPlaces.enumerated().filter { _, p in p.coordinate.map { origin.clLocation.distance(from: $0.clLocation) > 50000 } ?? false }
+        let selected = PlanMapSelection.panels(homeCoordinate: snapshot.homeCoordinate, places: snapshot.savedPlaces)
+        guard selected.origin != nil else { return [] }
         var panels: [PlanMapPanel] = []
-        let localPoints = (snapshot.homeCoordinate.map { [("H", $0)] } ?? []) + local.prefix(6).compactMap { index, p in p.coordinate.map { ("\(index + 1)", $0) } }
-        if let image = await image(points: localPoints) {
-            panels.append(PlanMapPanel(image: image, title: title, legend: local.prefix(6).map { index, p in "\(index + 1). \(p.label)" }))
+        let localPoints = (snapshot.homeCoordinate.map { [("H", $0)] } ?? []) + selected.local.compactMap { entry in entry.place.coordinate.map { ("\(entry.number)", $0) } }
+        if !localPoints.isEmpty, let image = await image(points: localPoints) {
+            panels.append(PlanMapPanel(image: image, title: title, legend: selected.local.map { "\($0.number). \($0.place.label)" }))
         }
         // A distant meetup never makes the neighborhood panel unreadably small.
-        for (index, place) in distant.prefix(2) {
-            if let coordinate = place.coordinate, let image = await image(points: [("\(index + 1)", coordinate)]) {
-                panels.append(PlanMapPanel(image: image, title: place.label, legend: ["\(index + 1). \(place.addressText ?? place.label)"]))
+        for entry in selected.distant {
+            let place = entry.place
+            if let coordinate = place.coordinate, let image = await image(points: [("\(entry.number)", coordinate)]) {
+                panels.append(PlanMapPanel(image: image, title: place.label, legend: ["\(entry.number). \(place.addressText ?? place.label)"]))
             }
         }
         return panels

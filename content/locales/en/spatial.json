@@ -397,7 +397,7 @@
   "spatial.fact.contacts": "Your recorded emergency contacts",
   "spatial.fact.contacts.waterUtility": "Your recorded water utility contact",
   "spatial.fact.savedPlaces": "Your saved meeting places and destinations",
-  "spatial.fact.home": "Your recorded home layout",
+  "spatial.fact.home": "Home layout has not been added",
   "spatial.fact.transport.alternatives": "Your transportation plan without a household vehicle",
   "spatial.fact.transport.destinations.conditions": "The conditions you have confirmed at the place you plan to go",
   "spatial.fact.regionID": "Whether official resources cover your recorded area",
@@ -412,5 +412,8 @@
   "spatial.scan-note.missing-floor": "Room {number}: no floor outline; using the outline of its walls. Needs measurement.",
   "spatial.scan-note.ambiguous-opening": "An opening is near more than two rooms; confirm where it leads.",
   "spatial.confirm-opening-correct": "Yes, this is correct",
-  "spatial.confirm-opening-connects": "Yes, it connects these rooms"
+  "spatial.confirm-opening-connects": "Yes, it connects these rooms",
+  "spatial.window-person-question": "Who has checked that they can use this window as an escape option?",
+  "spatial.window-person-note": "Select each person separately after checking exterior access and their ability to use the opening. A window marker alone does not establish an escape route.",
+  "spatial.leak-location-unknown": "Leak location not recorded"
 }

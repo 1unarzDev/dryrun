@@ -200,6 +200,8 @@ public enum RuleID {
     public static let tornadoWarning = "rule.tornado.warning"
     /// Flash-flood warning: road crossings closed, relocation constraints.
     public static let floodWarning = "rule.flood.warning"
+    /// A selected local water-affected area, without regional road, utility or evacuation assumptions.
+    public static let householdLeak = "rule.flood.household-leak"
     /// Planning checkpoint: resource accounting summary (water storage target, handset, backups).
     public static let checkpoint = "rule.checkpoint"
     /// Recovery: power back. Must NOT refill batteries/water, clear advisories, or certify devices.
@@ -210,5 +212,5 @@ public enum RuleID {
     public static let note = "rule.note"
 
     public static let known: Set<String> = [setExternal, waterAdvisory, fireIgnition, fireBlockPrimary, tornadoWarning,
-                                            floodWarning, checkpoint, recoveryPowerRestored, recoveryDisplacement, note]
+                                            floodWarning, householdLeak, checkpoint, recoveryPowerRestored, recoveryDisplacement, note]
 }

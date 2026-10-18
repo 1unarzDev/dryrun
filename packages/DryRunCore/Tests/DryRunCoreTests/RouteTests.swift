@@ -8,7 +8,7 @@ struct RouteTests {
 
     func plan(_ home: HomeModel, from start: String, mobility: MobilityProfile = .walking,
               blockSpaces: [String] = [], blockPortals: [String] = []) -> RouteResult {
-        planner.plan(RouteRequest(startSpaceID: start, mobility: mobility,
+        planner.plan(RouteRequest(personID: "test-resident", startSpaceID: start, mobility: mobility,
                                   exclusions: ScenarioExclusions(blockedSpaceIDs: blockSpaces, blockedPortalIDs: blockPortals)), in: home)
     }
 
@@ -85,7 +85,7 @@ struct RouteTests {
         }
         let openingOnly = plan(home, from: "sp-bed1", blockPortals: ["pt-front", "pt-back"])
         #expect(openingOnly.primary == nil)
-        home.portals[home.portals.firstIndex { $0.id == "pt-win-bed1" }!].emergencyEscapeConfirmed = true
+        home.portals[home.portals.firstIndex { $0.id == "pt-win-bed1" }!].emergencyEscapePersonIDs = ["test-resident"]
         let r3 = plan(home, from: "sp-bed1", blockPortals: ["pt-front", "pt-back"])
         #expect(r3.primary?.exitPortalID == "pt-win-bed1")
         #expect(r3.primary?.verificationNeeded.contains("pt-win-bed1.windowEscapeEveryPerson") == true)

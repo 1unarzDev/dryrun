@@ -27,6 +27,11 @@ struct EquipmentEditorFields: View {
             }
             Text(l("family.providerPrompt")).font(.footnote)
         }
+        if equipment.requiresElectricalPower {
+            DisclosureGroup(l("family.backupTechnical")) {
+                NumberEvidenceRow(title: l("family.devicePower"), value: $equipment.powerWatts, unit: "W")
+            }
+        }
     }
 }
 
@@ -34,6 +39,7 @@ struct BackupEditorFields: View {
     @Environment(AppModel.self) private var model
     @Binding var backup: BackupPowerSource
     let onKindChanged: (String) -> Void
+    var showsTechnicalFields = true
     var body: some View {
         let l = model.localizer
         Picker(l("ui.medical.backupKind"), selection: Binding(get: { backup.kind }, set: { value in
@@ -48,6 +54,15 @@ struct BackupEditorFields: View {
         TriStateRow(title: l("ui.medical.tested"), value: $backup.setupConfirmed)
         if backup.kind == .portableGenerator || backup.kind == .standbyGenerator {
             TriStateRow(title: l("action.act.generator.outdoor-placement.title"), value: $backup.safeOutdoorPlacementConfirmed)
+        }
+        if backup.kind == .solarWithBattery {
+            TriStateRow(title: l("family.islanding"), value: $backup.islandingConfirmed)
+        }
+        if showsTechnicalFields {
+            DisclosureGroup(l("family.backupTechnical")) {
+                NumberEvidenceRow(title: l("family.energy"), value: $backup.usableEnergyWh, unit: "Wh")
+                NumberEvidenceRow(title: l("family.output"), value: $backup.continuousOutputW, unit: "W")
+            }
         }
     }
 }

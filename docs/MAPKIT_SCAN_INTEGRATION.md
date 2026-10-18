@@ -61,7 +61,7 @@ barriers are retained. Corrected rooms and their proposed connections need separ
 follow additions/deletions without a stale wall cache. Shelter confirmation/planning/simulation share current
 floor/window/review checks. Free vertex/CAD and independent captured-wall editing are not provided.
 Save is transactional; same-home rescans normalize to stable identity and preserve
-geographic places, clearing only room IDs no longer found. Moving is a separate confirmed reset of home-specific
+geographic places, remapping only assignments supported by capture lineage/manual identity. Moving is a separate confirmed reset of home-specific
 geometry/places/checks while family/contact/equipment records persist.
 
 ## Evidence limits
@@ -80,3 +80,16 @@ explicit save/Finish later retain drafts on failed writes. Shared 2D/3D/list ope
 blockage, operability, grade and relevant mobility evidence; unknown/no-route starts keep a recorded room marker.
 
 Selected-language follow-up: MapPlanningView uses shared country-aware distance and selected-language travel-time formatting, including unknown invalid estimates, and structured PhoneLink for calling. Resource categories/statuses and source-language fallback labels are localized. Scan-import note forms, floor/opening/marker selected values and default annotation labels now resolve in all three packs without rewriting custom room/annotation text. Locale completeness tests are portable; installed SDK, live Apple calls and actual capture remain pending.
+
+## Latest integration
+
+No-op/unit-only address edits preserve explicitly supported coverage; actual geographic changes clear it.
+Official text-only resources now open shared save/contact/directions details. Saved source IDs, publishers,
+check dates, phone/URL and Apple suggestion provenance survive privately; saving does not imply activation.
+Meetup pins take precedence over optional-resource map caps, retaining matching text numbers.
+
+RoomPlan processing of retained earlier groups freezes the selected group/frame and invalidates callbacks from
+the interrupted live session before stopping/processing. Valid groups remain drafts on processing failure.
+Room assignments survive rescans only with capture lineage/manual evidence; new ordinal IDs alone are not proof.
+Person-scoped window eligibility and canonical helper routes tighten routing. The real SDK transforms, shared
+frame, native callback timing and physical measurements are still pending; no native build is implied.

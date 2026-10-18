@@ -300,7 +300,17 @@ struct ManualHomeEditorView: View {
                     Text(model.localizer("spatial.width-invalid")).font(.footnote).foregroundStyle(Theme.caution)
                 }
                 if draft.portals[index].kind == .window {
-                    Toggle(s("I checked this as an escape option for the person who would use it"), isOn: Binding(get: { draft.portals[index].emergencyEscapeConfirmed == true }, set: { draft.portals[index].emergencyEscapeConfirmed = $0 }))
+                    Text(model.localizer("spatial.window-person-question")).font(.subheadline)
+                    Text(model.localizer("spatial.window-person-note")).font(.footnote)
+                    ForEach(model.household?.people ?? []) { person in
+                        Toggle(person.localizedLabel(model.localizer), isOn: Binding(get: {
+                            draft.portals[index].emergencyEscapePersonIDs?.contains(person.id) == true
+                        }, set: { checked in
+                            var people = Set(draft.portals[index].emergencyEscapePersonIDs ?? [])
+                            if checked { people.insert(person.id) } else { people.remove(person.id) }
+                            draft.portals[index].emergencyEscapePersonIDs = people.sorted()
+                        }))
+                    }
                 }
             } else if let index = draft.connectors.firstIndex(where: { $0.id == selectedID }) {
                 landingEditor(index)

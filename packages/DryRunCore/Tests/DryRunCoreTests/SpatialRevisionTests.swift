@@ -57,8 +57,8 @@ struct SpatialRevisionTests {
     func window() {
         var home = oneRoom(); home.portals[0].kind = .window
         #expect(EgressPlanner().plan(.init(startSpaceID: "r"), in: home).primary == nil)
-        home.portals[0].emergencyEscapeConfirmed = true
-        #expect(EgressPlanner().plan(.init(startSpaceID: "r"), in: home).primary != nil)
+        home.portals[0].emergencyEscapePersonIDs = ["resident"]
+        #expect(EgressPlanner().plan(.init(personID: "resident", startSpaceID: "r"), in: home).primary != nil)
         #expect(EgressPlanner().plan(.init(startSpaceID: "r", mobility: .wheelchair), in: home).primary == nil)
     }
 

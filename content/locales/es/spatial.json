@@ -397,7 +397,7 @@
   "spatial.fact.contacts": "Sus contactos de emergencia registrados",
   "spatial.fact.contacts.waterUtility": "El contacto registrado de su proveedor de agua",
   "spatial.fact.savedPlaces": "Sus lugares de reunión y destinos guardados",
-  "spatial.fact.home": "El plano registrado de su hogar",
+  "spatial.fact.home": "Aún no se ha añadido la distribución del hogar",
   "spatial.fact.transport.alternatives": "Su plan de transporte sin un vehículo del hogar",
   "spatial.fact.transport.destinations.conditions": "Las condiciones que ha confirmado en el lugar al que planea ir",
   "spatial.fact.regionID": "Si los recursos oficiales cubren su zona registrada",
@@ -412,5 +412,8 @@
   "spatial.scan-note.missing-floor": "Habitación {number}: no hay contorno del suelo; se usa el contorno de sus paredes. Necesita medición.",
   "spatial.scan-note.ambiguous-opening": "Una abertura está cerca de más de dos habitaciones; confirme a dónde conduce.",
   "spatial.confirm-opening-correct": "Sí, esto es correcto",
-  "spatial.confirm-opening-connects": "Sí, conecta estas habitaciones"
+  "spatial.confirm-opening-connects": "Sí, conecta estas habitaciones",
+  "spatial.window-person-question": "¿Quién ha comprobado que puede usar esta ventana como salida de emergencia?",
+  "spatial.window-person-note": "Seleccione a cada persona por separado después de comprobar el acceso al exterior y su capacidad para usar la abertura. Marcar una ventana no establece una ruta de escape.",
+  "spatial.leak-location-unknown": "Ubicación de la fuga no registrada"
 }

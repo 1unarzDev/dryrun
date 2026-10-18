@@ -156,3 +156,29 @@ explicit bundled county/aggregate set; a Texas-shaped number alone does not esta
 The existing Localizer remains the single text bridge. selectableLocales requires every bundled English domain/key, nonempty strings and matching placeholders; it does not promote AI drafts to human-reviewed content. UI pickers, default marker labels, Help, scan review and rehearsal clocks use stable IDs and selected-language strings. Personal notes/proper names stay exact. FamilyEmergencyCard and PlanBuilder share provenance tracking; card fallback/draft notices and source IDs reach the document. Validation exposes localized privacy-preserving descriptions separately from diagnostic IDs.
 
 PlanningMeasurements formats Apple distance/time estimates and canonical-US-gallon water values for display only: US water uses gallons, other/unknown countries litres; map distances use miles for US/GB and metric elsewhere. Recommendation/event presentation, comparisons and full-plan water lines share this conversion. The deterministic engine, evidence values, indoor metres and saved facts are unchanged. Explicit CA emergency-number lines cite S56; unknown/unsupported countries retain the local-number prompt, with no public-region substitution.
+
+## Connected data and scene contract follow-up
+
+RehearsalInput and run state accept intentionally absent geometry. All six exercises can still assess household
+continuity/decisions; absent geometry supplies no route, floor, shelter or invented scene. Optional applicability
+requires evidence: missing layout satisfies neither hasStairs nor its negation.
+
+HomeRoomAssociations remaps resident assignments only from retained manual identity or originating capture
+room/frame lineage. Ordinal collisions in unrelated rescans clear the assignment. Space.sourceScanRoomID and
+HomeModel.sourceCaptureFrameID are additive provenance. Window escape suitability is explicitly person-scoped;
+the legacy Boolean alone authorizes nobody. Helper reach uses canonical geometry/portals/mobility routing.
+
+MedicalBackupReadiness and TransportReadiness share recorded support requirements between preparedness, cards,
+plans and allocator outcomes. BaselinePreparedness.recorded exposes tangible satisfied preparations with direct
+review links; it does not persist synthetic Done records or create a safety percentage.
+
+Plan schema 2 retains canonical final exercise exclusions, per-person results and shared PlanHomePanel
+descriptors. Preview and PDF draw the same primary/alternative legs and hazard state on every relevant floor,
+including no-route/start/destination/exposure floors. Selected export reuses a matching real rehearsal's recorded
+seed, origin, starts, choices and leak variant; hypothetical comparison inputs cannot become actual plan facts.
+Old schema-one documents remain readable but stale. Engine/route versions are cascade-engine/2 and
+egress-portal-graph/2. Local leaks have separate content/events from regional flood exercises.
+
+PlanMapSelection prioritizes near/backup meetup coordinates ahead of optional resources while retaining text
+ordinals. Official and Apple records share destination actions; optional source/contact/check metadata is
+persisted privately. HomeLocationChange distinguishes harmless unit/no-op corrections from geographic changes.

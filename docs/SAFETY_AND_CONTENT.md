@@ -111,3 +111,18 @@ Selected-language follow-up removes unconditional 911/211 Texas wording from fir
 Water is a CDC storage planning target, not a clinical prescription. Only displayed quantities convert from canonical US gallons to litres outside US; storage facts and simulation outcomes do not change. Card translation provenance and source lists now include composed labels and long-note continuation without altering user-authored instructions. All new translation/safety wording remains AI draft content pending human review.
 
 The independent follow-up source review found four further issues and fixes: empty default event subjects now resolve by longest exact evidence ID (including dotted IDs), mixed power/cold-storage card wording no longer denies electrical requirements, composed water-unit fallbacks reach document provenance, and official English alert text has a fallback label. Core regressions cover subject/default/custom-name retention, route reasons, unit fallback and mixed card sections; native interaction remains pending.
+
+## Shared support and spatial semantics
+
+A backup source can be owned/assigned yet remain unavailable: recorded setup, generator placement or solar
+islanding where applicable, output/shared-load constraints, compatibility and positive user-documented runtime
+remain separate gates. Unknown-first sharing cannot bypass a source's capacity check for a second device.
+Cold-only medication notes survive intentionally selected export without requiring electrical runtime.
+Wheelchair transport and separate alarm presence/location/coverage/functional-check facts reach both tasks and
+rehearsal. A confirmed alarm marker alone never certifies function or coverage, including without a layout.
+
+A local leak no longer borrows regional flood road, well/outage/displacement or higher-refuge assumptions;
+regional flooding retains early official action and no water/road safety certification. No-layout exercises
+produce no spatial guidance. Legacy window suitability alone cannot authorize a person's escape; helper reach
+uses actual portal/geometry/mobility validation. Qualified diagrams include current exclusions and no-route
+starts, never historical routes presented as available. EN/ES/VI additions remain AI drafts awaiting review.

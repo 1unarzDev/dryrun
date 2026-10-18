@@ -101,6 +101,8 @@ public struct Space: Codable, Sendable, Hashable, Identifiable {
     public var interiorNoWindowsConfirmed: EvidenceValue<Bool>
     /// An explicitly reviewed higher refuge has a way out and is not a closed attic. Unknown is not suitable.
     public var higherRefugeConfirmed: EvidenceValue<Bool>?
+    /// Originating RoomPlan room identifier; ordinal display labels never establish room identity.
+    public var sourceScanRoomID: String?
     public init(id: String, floorID: String, label: String, kind: SpaceKind, polygon: [Vec2], labelConfirmed: Bool = true,
                 needsMeasurement: Bool = false, interiorNoWindowsConfirmed: EvidenceValue<Bool> = .unknown, higherRefugeConfirmed: EvidenceValue<Bool>? = nil) {
         self.id = id; self.floorID = floorID; self.label = label; self.kind = kind; self.polygon = polygon
@@ -147,13 +149,17 @@ public struct Portal: Codable, Sendable, Hashable, Identifiable {
     /// Step-free threshold (user-confirmed).
     public var stepFree: EvidenceValue<Bool>
     public var verification: VerificationState
-    /// Window inventory alone never establishes an emergency escape option.
+    /// Original legacy answer retained for review. It does not identify who can use this opening.
     public var emergencyEscapeConfirmed: Bool?
+    /// Explicitly reviewed for these residents only. Missing legacy data grants access to nobody.
+    public var emergencyEscapePersonIDs: [String]?
     public var note: String?
     public init(id: String, floorID: String, kind: PortalKind, a: Vec2, b: Vec2, sideA: PortalDestination, sideB: PortalDestination,
                 clearWidthMeters: EvidenceValue<Double> = .unknown, operable: EvidenceValue<Bool> = .unknown,
-                stepFree: EvidenceValue<Bool> = .unknown, verification: VerificationState = .proposed, note: String? = nil, emergencyEscapeConfirmed: Bool? = nil) {
+                stepFree: EvidenceValue<Bool> = .unknown, verification: VerificationState = .proposed, note: String? = nil, emergencyEscapeConfirmed: Bool? = nil,
+                emergencyEscapePersonIDs: [String]? = nil) {
         self.emergencyEscapeConfirmed = emergencyEscapeConfirmed
+        self.emergencyEscapePersonIDs = emergencyEscapePersonIDs
         self.id = id; self.floorID = floorID; self.kind = kind; self.a = a; self.b = b; self.sideA = sideA; self.sideB = sideB
         self.clearWidthMeters = clearWidthMeters; self.operable = operable; self.stepFree = stepFree
         self.verification = verification; self.note = note
@@ -229,6 +235,8 @@ public struct HomeModel: Codable, Sendable, Hashable, Identifiable {
     public var schemaVersion: Int
     public var label: String
     public var source: HomeSource
+    /// One shared capture frame/group. Retained through edits, replaced for an unrelated rescan.
+    public var sourceCaptureFrameID: String?
     public var frame: CoordinateFrame
     public var floors: [Floor]
     public var spaces: [Space]
@@ -281,7 +289,7 @@ public struct ScenarioExclusions: Codable, Sendable, Hashable {
     public static let none = ScenarioExclusions()
 }
 
-public enum RoutePurpose: String, Codable, Sendable, Hashable { case outdoorEgress, interiorShelter, higherRefuge }
+public enum RoutePurpose: String, Codable, Sendable, Hashable { case outdoorEgress, interiorShelter, higherRefuge, helperReach }
 
 public struct RouteRequest: Codable, Sendable, Hashable {
     public var personID: String?
@@ -345,7 +353,7 @@ public enum AlternativeStatus: String, Codable, Sendable, Hashable {
 }
 
 public struct RouteResult: Codable, Sendable, Hashable {
-    public static let algorithmVersion = "egress-portal-graph/1"
+    public static let algorithmVersion = "egress-portal-graph/2"
     public var request: RouteRequest
     public var primary: RoutePath?
     public var alternative: RoutePath?

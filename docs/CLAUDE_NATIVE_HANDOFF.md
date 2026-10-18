@@ -30,7 +30,7 @@ git merge --ff-only origin/main
 
 Suggested opening prompt for the existing Claude session:
 
-> Read docs/CLAUDE_NATIVE_HANDOFF.md, VERIFICATION.md, REVISION_EVIDENCE.md and current repository instructions
+> Read docs/CLAUDE_NATIVE_HANDOFF.md, docs/VERIFICATION.md, docs/REVISION_EVIDENCE.md and current repository instructions
 > completely. Reconcile this Mac checkout with origin/main while preserving local work. Continue the October 17
 > DryRun revision through the installed-SDK native build and simulator journeys; fix failures, capture current
 > fictional screenshots/PDFs, and prepare/install the iPhone build when signing/hardware allows. Keep iOS 18,
@@ -85,8 +85,8 @@ Manually verify these connected journeys (record exact results and errors):
 8. VoiceOver, small display, large Dynamic Type, contrast/light/dark and text/list alternatives. Record actual
    time to first useful card and a rehearsal; 90 seconds and 2–4 minutes are targets, not measured claims.
 
-Follow-up native gates authored but not run: 8 AppPersistenceTests, 3 MapRequestTests, 4 PlanExportTests and
-5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 7 RehearsalNamesTests (33 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
+Follow-up native gates authored but not run: 8 AppPersistenceTests, 3 MapRequestTests, 6 PlanExportTests and
+5 ReviewReminderTests, 7 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 7 RehearsalNamesTests (39 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
 authorization/add, cancel as Delete Everything does, then resume to check no late reminder remains. Exercise actual
 system permission denied/granted, one-time delivery, relaunch, cancellation and successful/failed Delete Everything.
 No permission request or schedule is allowed merely by opening Settings/review.
@@ -121,39 +121,53 @@ identifiers. Inspect/redact attachments before sharing. Do not erase errors or r
 Update VERIFICATION, UI_AUDIT, REVISION_EVIDENCE and this handoff with exact commands, SHA, counts and remaining
 hardware/human limits. Safety and translation professional review remain pending unless actually obtained.
 
-## Latest integrated fixes to exercise on the Mac
+## Latest connected-state closure to exercise on the Mac
 
-Portable settled-source result: 262 core / 39 suites, 35 vault / 6 suites, 68 backend / 4 files; TypeScript and
-all app/test Swift syntax checks pass. Seven extra Linux presentation-helper checks passed in a temporary harness.
-None of the 33 native XCTest methods or 5 UI journeys has executed on iOS in this revision.
+Settled-source portable result: **306 core / 47 suites, 35 vault / 6 suites, 68 backend / 4 files**, clean
+TypeScript and 54 app/test Swift sources syntax-parsed. **None of the 39 native XCTest methods, five UI
+journeys or screenshot tours ran on iOS.** The last Linux commit updating this file contains these changes.
+Do not substitute historical results. See VERIFICATION for the failed-and-fixed migration regression record.
 
-- Prepare Add contact opens a new contact even when others exist. Out-of-area/water-utility tasks preselect the
-  correct role. Utility contacts do not close the trusted-contact task. Helpers retain their exact person.
-- Water opens amount and location together; adding first-aid/extinguisher/flashlight location preserves existing
-  ownership. Food quantity, radio/alternate reception, pet carriers, medication and device-supply records are
-  reachable directly. Verify subject captions when two location-only medical tasks otherwise have the same title.
-- Record physical fire drill separately from checking an exit; dated review reopens after 180 days or relevant
-  home correction. Flood/well plans close tasks without certifying water, map routes or indoor refuge. Clear the
-  actual record to reopen; legacy completion rows now expose Reopen directly.
-- Force a fresh selected full-plan save to fail while an old more-sensitive plan exists. No PDF should open.
-  Successful family sharing uses the same bounded map-panel renderer as Plan, with revision/locale/place guards.
-  Coordinate-only meetup details, contact roles and selected medical supply locations must survive every export.
-  Oversized responder instructions must continue after the main contact/meetup card, with their full text unchanged.
-- Begin directions A, dismiss/select B or change home/origin/mode, then release the old response/GPS request.
-  Nothing should close B or display A; loading resets so retry works. Exercise actual Apple unsupported routes.
-- Inspect a balcony/inoperable/fire-blocked opening in 2D, 3D and list: it must not look like an available exit.
-  No-route starts retain a named room marker; selected person/floor and cross-floor destinations agree.
-- Review a scan: swipe dismissal is disabled; Finish later/save failure keeps the edited proposal. Highlight an
-  alarm, change shelter, review both stair endpoints, clear width to unknown and recheck mobility exclusion.
-- EN/ES/VI fact/service explanations receive the selected localizer. Dotted IDs retain names; unknown facts use
-  a readable generic fallback; quantities use localized plurals/decimal separators without rewriting stored units.
+1. Begin all six hazards without home geometry. Household decisions and continuity should remain useful;
+   no fictional scene, routes, stairs or shelter may appear. Test intentional absence through actual vault relaunch.
+2. Alarm readiness agrees in Prepare/fire with and without a layout: presence, location, coverage reviewed,
+   explicit functional check. A verified marker alone is insufficient. Review Recorded preparations through
+   direct editors; contact/place save closes only its actual task. Two medical subjects stay independent.
+3. Backup source ownership/assignment never confirms device testing, compatibility, safe generator placement,
+   solar islanding, output/shared load or runtime. Exercise unknown-first and second-device allocation; cold-only
+   medicine needs storage/availability and selected notes without electrical runtime. Wheelchair transport matters.
+4. Same-home rescan keeps home/address/meetups but uses source room/frame lineage to remap residents. Unrelated
+   ordinal collisions clear assignments. Window inventory/legacy Boolean alone authorizes nobody; suitability
+   is person-specific. Helper reach cannot cross walls or incompatible portals/stairs.
+5. After interruption process retained valid RoomPlan groups. They must freeze their originating frame/group,
+   invalidate the active session before stop and reject late callbacks. Failure retains the draft; unrelated frames
+   never merge. Verify actual installed SDK/parent/category/transform/story/structure assumptions and measurements.
+6. Compare a local household leak and regional flooding. Leak events/choices/plan headings/instructions must not
+   borrow regional roads, well/outage, displacement or higher-refuge assumptions. Fire origin/start exposure and
+   selected shelter routes stay canonical. No-layout hazards remain explicitly unknown spatially.
+7. Select practiced scenario export after changing origin/starts/choices/seed. A matching real exercise is reused;
+   hypothetical comparison edits never become facts. Selected preview and direct Share/Print use the same newly
+   persisted content; failure never falls back to an older sensitive document. Controls stay locked while preparing.
+8. Inspect family card before diagrams in phone preview. All relevant start/path/destination/affected/exposed
+   floors appear, including no-route stages. Primary solid/alternative dashed, current exclusions/start marker and
+   route qualifications agree across phone/2D/3D/PDF; old route history never reappears. Letter/A4 propagates from
+   selection through preview toolbar share. Long text and map failure cannot hide contact/meetup details.
+9. No-op/unit-only address correction preserves explicit coverage; actual geographic correction clears it.
+   Official text-only resources open shared save/contact/directions details; saved source metadata survives
+   relaunch. Near/backup meetup pins precede optional resource limits, with matching text numbering.
+10. Legacy verified named indoor meetup migrates to text-only SavedPlace without inventing a pin; generic raw
+    marker labels do not. Edit its name/finding instructions in the canvas, save and relaunch; every card/task
+    updates. Delete explicitly and verify it stays deleted. Rescan/replacement/lost room preserves geographic plans.
+11. Rapid destination/origin/mode/home/category changes reject late GPS/directions/discovery responses. Test real
+    Apple unsupported routes, GPS denial, map-snapshot failure and Apple attribution. Retained essential text works
+    offline; live search/routes/tiles are not promised.
+12. EN/ES/VI forms, selected values, scan coaching, alerts' English fallback, dates/decimals/plurals and card source
+    notices; US versus VN/FR/unknown water uses gallons only for US and otherwise litres. Proper names/critical
+    notes remain exact. Explicit US/CA service numbers are sourced; unknown foreign locations do not default to 911.
 
-The reference examples now span two-page cards, 19–20-page A4/20-page Letter full plans and a five-page long-note
-card. Their intentionally spacious portable layout is not a native page-count target. Inspect native PDFs and
-phone previews independently; do not reuse those reference artifacts as native evidence.
-
-## Selected-language follow-up to verify
-
-Current portable closure is 262 core / 39 suites, 35 vault / 6 suites, 68 backend / 4 files and clean TypeScript; 53 app/test/UI sources parse. Seven actual Names/DisplayNames/SpatialLocalization helper tests ran in Linux, not iOS. Native inventory is **33 XCTest methods + 5 UI journeys**, all unrun here.
-
-Exercise EN/ES/VI controls and selected values in Help, contact calls, room/opening/marker pickers, scan coaching, exercise clock/VoiceOver/plurals, validation and card/PDF dates/decimals. Personal notes/names must stay unchanged. English official-source text needs a visible fallback label. Only structurally complete packs are offered; translations remain drafts. Compare US versus VN/FR/unknown-country water in editor → Prepare → rehearsal event/resource/comparison → full plan: gallons only for US, litres otherwise; stored evidence remains canonical. Check US/GB map miles versus metric elsewhere. Inspect explicit US/CA emergency numbers (CA cites S56) and local-number prompt elsewhere; no Texas resources for unsupported regions. Test fallback/draft notices on family-card composed labels and long instruction continuation. Native CoreText pagination must be checked independently from the newly regenerated 19–20-page portable full-plan references.
+Reference examples: seven JSON documents and 14 ReportLab Letter/A4 PDFs, with two-page cards, five-page long
+card and 24-page full plans. Core-computed current home panel descriptors are included in the reference-only JSON
+envelope. These intentionally spacious layouts are not native output or page-count targets. See output/README
+for actual inspected pages. A room-name/furniture ordering issue was fixed in reference and native renderer
+source; native figures still need visual inspection. Translation/safety expert review and real-household timing
+remain pending. The owner’s Mac checkout must retain its own uncommitted/newer work during integration.

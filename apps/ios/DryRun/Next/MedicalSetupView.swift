@@ -20,6 +20,12 @@ struct MedicalSetupView: View {
             if let index = deviceIndex {
                 deviceSection(index)
                 if draft?.equipment[index].requiresElectricalPower == true {
+                    if let household = draft, let assignment = MedicalBackupReadiness.assignment(for: household.equipment[index], in: household), assignment.state != .operational {
+                        Section {
+                            Text(l("card.backup.prerequisites", ["reason": l("reason.\(assignment.reason)")]))
+                                .foregroundStyle(Theme.caution)
+                        }
+                    }
                     backupSection(index)
                     runtimeSection(index)
                 }

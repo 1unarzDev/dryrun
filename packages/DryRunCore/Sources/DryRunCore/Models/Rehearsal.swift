@@ -22,7 +22,8 @@ public struct Intervention: Codable, Sendable, Hashable {
 /// Immutable rehearsal input. Counterfactual replay copies this and changes only `interventions`.
 public struct RehearsalInput: Codable, Sendable, Hashable {
     public var household: HouseholdProfile
-    public var home: HomeModel
+    /// Intentionally absent until the household supplies a layout. Never substitute fictional geometry.
+    public var home: HomeModel?
     public var scenarioID: String
     public var scenarioVersion: String
     public var contentVersion: String
@@ -34,7 +35,7 @@ public struct RehearsalInput: Codable, Sendable, Hashable {
     /// Named variant toggles authored in the scenario (e.g. "night" for tornado).
     public var variants: [String]
     public var spatialOptions: SpatialExerciseOptions?
-    public init(household: HouseholdProfile, home: HomeModel, scenarioID: String, scenarioVersion: String,
+    public init(household: HouseholdProfile, home: HomeModel? = nil, scenarioID: String, scenarioVersion: String,
                 contentVersion: String, seed: UInt64 = 1, choices: [String: String] = [:],
                 interventions: [Intervention] = [], variants: [String] = [], spatialOptions: SpatialExerciseOptions? = nil) {
         self.household = household; self.home = home; self.scenarioID = scenarioID; self.scenarioVersion = scenarioVersion

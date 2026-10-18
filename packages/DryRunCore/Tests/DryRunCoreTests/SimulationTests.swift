@@ -303,9 +303,14 @@ struct SimulationTests {
         }
         #expect(r.decisions.flatMap(\.options).filter { $0.id == "go-back-in" }.allSatisfy { !$0.isRecommended })
         // Reachability never passes through a blocked room, even when it is the only connection.
-        #expect(!RunState.reachable(from: "sp-bed1", to: "sp-bed2", home: SimFixtures.home, blockedSpaces: ["sp-hall"], blockedPortals: []))
-        #expect(RunState.reachable(from: "sp-bed1", to: "sp-bed2", home: SimFixtures.home, blockedSpaces: ["sp-kitchen"], blockedPortals: []))
-        #expect(!RunState.reachable(from: "sp-bed1", to: "sp-kitchen", home: SimFixtures.home, blockedSpaces: ["sp-kitchen"], blockedPortals: []))
+        let planner = EgressPlanner()
+        func reach(_ target: String, blocked: [String]) -> RouteResult {
+            planner.plan(.init(startSpaceID: "sp-bed1", exclusions: .init(blockedSpaceIDs: blocked),
+                               purpose: .helperReach, destinationSpaceID: target), in: SimFixtures.home)
+        }
+        #expect(reach("sp-bed2", blocked: ["sp-hall"]).primary == nil)
+        #expect(reach("sp-bed2", blocked: ["sp-kitchen"]).primary != nil)
+        #expect(reach("sp-kitchen", blocked: ["sp-kitchen"]).primary == nil)
     }
 
     @Test("Water outage: stored-water use decision; chemical advisories never reward boiling or tap use")

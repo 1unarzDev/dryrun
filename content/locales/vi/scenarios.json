@@ -325,5 +325,19 @@
   "service.wifi.degraded": "Wi-Fi trong nhà bị giảm trong bài tập này.",
   "service.wifi.operational": "Wi-Fi trong nhà hoạt động trở lại trong bài tập này.",
   "service.wifi.unavailable": "Wi-Fi trong nhà không hoạt động vì bộ phát (router) không có điện. Sóng di động là riêng.",
-  "service.wifi.unknown": "Wi-Fi trong nhà: chưa rõ kết quả vì có thông tin chưa được xác nhận."
+  "service.wifi.unknown": "Wi-Fi trong nhà: chưa rõ kết quả vì có thông tin chưa được xác nhận.",
+  "scenario.household-leak.title": "Bài tập rò rỉ nước trong nhà",
+  "scenario.household-leak.event.detected": "Nước ảnh hưởng đến phòng đã chọn",
+  "scenario.household-leak.event.detected.detail": "Bài tập này chỉ giả định có rò rỉ nước cục bộ. Cảnh báo lũ khu vực, đường sá, tiện ích và điều kiện sơ tán không thay đổi. Tránh xa nước gần thiết bị điện.",
+  "scenario.household-leak.event.review": "Xem ai có thể hỗ trợ mà không đi vào khu vực bị nước ảnh hưởng.",
+  "scenario.household-leak.choice.clear.prompt": "Có nước trong phòng đã chọn. Bạn làm gì trước?",
+  "scenario.household-leak.choice.clear.keep-clear": "Giữ người và thú nuôi tránh xa khu vực bị ảnh hưởng",
+  "scenario.household-leak.choice.clear.keep-clear.feedback": "Tránh xa khu vực bị nước ảnh hưởng, đặc biệt khi có thể có điện. Không xác lập đường đi xuyên qua nước.",
+  "scenario.household-leak.choice.clear.enter-water": "Đi vào nước để kiểm tra vấn đề",
+  "scenario.household-leak.choice.clear.enter-water.feedback": "Đi vào nước có thể khiến bạn gặp nguy hiểm về điện hoặc các nguy cơ khác. Bài tập này không xác nhận rằng việc đi vào là an toàn.",
+  "scenario.household-leak.choice.help.prompt": "Bạn sẽ nhờ hỗ trợ thế nào?",
+  "scenario.household-leak.choice.help.get-help": "Liên hệ người lớn đáng tin cậy, quản lý tòa nhà hoặc chuyên gia phù hợp từ nơi khô ráo",
+  "scenario.household-leak.choice.help.get-help.feedback": "Tìm sự hỗ trợ phù hợp với tình huống. Nếu có nguy hiểm tức thì, liên hệ dịch vụ khẩn cấp địa phương. Bài tập này không cung cấp quy trình sửa điện hoặc đường ống nước.",
+  "scenario.household-leak.choice.help.touch-electrics": "Chạm vào thiết bị điện ướt để kiểm tra",
+  "scenario.household-leak.choice.help.touch-electrics.feedback": "Không chạm vào thiết bị điện khi người ướt hoặc đang đứng trong nước. Tránh xa và tìm sự hỗ trợ phù hợp."
 }

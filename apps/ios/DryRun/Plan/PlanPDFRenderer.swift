@@ -23,8 +23,14 @@ struct PlanPDFRenderer {
         var continuedPageIDs: [String]
     }
 
-    func render(_ doc: PlanDocument, paper: Paper = .letter, mapPanels: [PlanMapPanel] = []) -> Output {
+    /// Callers may supply their loaded packs; retained older documents use the bundled packs by default.
+    /// This is a content adapter, not a second translation table maintained by the PDF renderer.
+    private static let bundledContent: ContentLibrary? = try? ContentLibrary.load(from: ContentLocator.contentRoot())
+
+    func render(_ doc: PlanDocument, paper: Paper = .letter, mapPanels: [PlanMapPanel] = [], localizer: Localizer? = nil) -> Output {
         let size = paper.size
+        let qualifications = (localizer ?? Self.bundledContent?.localizer(for: doc.locale))?.with(locale: doc.locale)
+            ?? Localizer(locale: doc.locale, tables: [:], manifest: nil)
         let mapPanels = doc.pages.allSatisfy { $0.id == "family-card" } ? [] : mapPanels
         let width = size.width - Self.margin * 2
         let bounds = CGRect(origin: .zero, size: size)
@@ -108,25 +114,35 @@ struct PlanPDFRenderer {
                 Self.drawFooter(doc: doc, pageNumber: pageCount, size: size)
             }
             if doc.pages.contains(where: { $0.id != "family-card" }), let snapshot = doc.visualSnapshot, let home = snapshot.home {
-                for floor in home.floors {
+                for panel in snapshot.homePanels {
                     ctx.beginPage(); pageCount += 1
-                    let title = floor.label
-                    let y = Self.drawHeader(doc: doc, title: title, width: width)
-                    Self.drawHome(home, floorID: floor.id, routes: [], rect: CGRect(x: Self.margin, y: y, width: width, height: min(340, size.height - y - 140)))
-                    Self.drawFooter(doc: doc, pageNumber: pageCount, size: size)
-                }
-                // Each route is a separate qualified exercise view; incompatible scenarios are never merged.
-                for (index, result) in snapshot.routes.enumerated() {
-                    guard let path = result.primary else { continue }
-                    for floorID in Set(path.legs.map(\.floorID)).sorted() {
-                        ctx.beginPage(); pageCount += 1
-                        let scenario = snapshot.routeScenarioIDs?.indices.contains(index) == true ? snapshot.routeScenarioIDs![index] : "Exercise"
-                        let who = result.request.personID.flatMap { snapshot.personLabels?[$0] } ?? ""
-                        let scenarioTitle = snapshot.scenarioLabels?[scenario] ?? scenario
-                        let y = Self.drawHeader(doc: doc, title: "\(scenarioTitle) · \(who) · \(home.floors.first { $0.id == floorID }?.label ?? floorID)", width: width)
-                        Self.drawHome(home, floorID: floorID, routes: [path], rect: CGRect(x: Self.margin, y: y, width: width, height: min(340, size.height - y - 140)))
-                        Self.drawFooter(doc: doc, pageNumber: pageCount, size: size)
+                    var y = Self.drawHeader(doc: doc, title: panel.title(in: snapshot), width: width)
+                    let diagramHeight = min(300, size.height - y - 220)
+                    Self.drawHome(home, floorID: panel.floorID, routes: panel.paths, state: panel.spatialState, selectedRoute: panel.route,
+                                  rect: CGRect(x: Self.margin, y: y, width: width, height: diagramHeight))
+                    y += diagramHeight + 8
+                    // Qualifications use the same wrapping/continuation blocks as ordinary plan text.
+                    var details = (snapshot.panelDetails?[panel.id] ?? panel.details(in: snapshot, localizer: qualifications)).map {
+                        Block(attributed: NSAttributedString(string: $0, attributes: [.font: UIFont.systemFont(ofSize: Self.minimumBodySize)]), spacingAfter: 5)
                     }
+                    let footerTop = size.height - Self.margin - 36
+                    while let block = details.first {
+                        let available = footerTop - y
+                        if available < 24 {
+                            Self.drawFooter(doc: doc, pageNumber: pageCount, size: size)
+                            ctx.beginPage(); pageCount += 1
+                            y = Self.drawHeader(doc: doc, title: panel.title(in: snapshot) + " (" + Self.exportText("continued", locale: doc.locale) + ")", width: width)
+                            continue
+                        }
+                        if block.height(width: width) > available {
+                            let (prefix, rest) = block.split(width: width, height: available)
+                            prefix.draw(at: CGPoint(x: Self.margin, y: y), width: width)
+                            details.removeFirst(); if let rest { details.insert(rest, at: 0) }; y = footerTop
+                        } else {
+                            block.draw(at: CGPoint(x: Self.margin, y: y), width: width); y += block.height(width: width); details.removeFirst()
+                        }
+                    }
+                    Self.drawFooter(doc: doc, pageNumber: pageCount, size: size)
                 }
             }
         }
@@ -256,7 +272,7 @@ struct PlanPDFRenderer {
 
 extension PlanPDFRenderer {
     /// Same floor polygons, openings and exact route-leg points as the on-device canvas.
-    static func drawHome(_ home: HomeModel, floorID: String, routes: [RoutePath], rect: CGRect) {
+    static func drawHome(_ home: HomeModel, floorID: String, routes: [RoutePath], state: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil, rect: CGRect) {
         let rooms = home.spaces.filter { $0.floorID == floorID }
         let pts = rooms.flatMap(\.polygon)
         guard let minX = pts.map(\.x).min(), let maxX = pts.map(\.x).max(), let minY = pts.map(\.y).min(), let maxY = pts.map(\.y).max() else { return }
@@ -264,24 +280,46 @@ extension PlanPDFRenderer {
         func point(_ p: Vec2) -> CGPoint { CGPoint(x: rect.minX + 15 + (p.x - minX) * scale, y: rect.minY + 15 + (maxY - p.y) * scale) }
         func polygon(_ points: [Vec2]) -> UIBezierPath { let path = UIBezierPath(); if let first = points.first { path.move(to: point(first)); for p in points.dropFirst() { path.addLine(to: point(p)) }; path.close() }; return path }
         for room in rooms {
-            let path = polygon(room.polygon); UIColor(white: 0.95, alpha: 1).setFill(); path.fill(); UIColor.black.setStroke(); path.lineWidth = 1; path.stroke()
-            let x = room.polygon.map(\.x).reduce(0,+) / Double(max(1,room.polygon.count)); let y = room.polygon.map(\.y).reduce(0,+) / Double(max(1,room.polygon.count))
-            drawText(room.label, at: point(Vec2(x,y)), font: .systemFont(ofSize: 9), width: 90)
+            let path = polygon(room.polygon)
+            UIColor(white: state?.affectedSpaceIDs.contains(room.id) == true ? 0.72 : 0.95, alpha: 1).setFill(); path.fill()
+            UIColor.black.setStroke(); path.lineWidth = 1; path.stroke()
+            if state?.exposedSpaceIDs?.contains(room.id) == true { path.setLineDash([3,3], count: 2, phase: 0); path.lineWidth = 2; path.stroke() }
         }
         for obstacle in home.obstacles where obstacle.floorID == floorID { UIColor.gray.setFill(); polygon(obstacle.polygon).fill() }
+        // Draw names and hazard symbols after furniture so an obstacle cannot conceal the room.
+        for room in rooms {
+            let center = point(RoomPaths.anchor(in: room, home: home, clearance: 0) ?? Geometry.centroid(room.polygon))
+            if state?.affectedSpaceIDs.contains(room.id) == true {
+                drawText(state?.hazard == .flashFlood ? "≈" : "!", at: CGPoint(x: center.x, y: center.y - 20), font: .boldSystemFont(ofSize: 16), width: 24)
+            }
+            let labelPoint = CGPoint(x: min(center.x, rect.maxX - 95), y: center.y)
+            drawText(room.label, at: labelPoint, font: .systemFont(ofSize: 9), width: 90)
+        }
         for portal in home.portals where portal.floorID == floorID {
             let path = UIBezierPath(); path.move(to: point(portal.a)); path.addLine(to: point(portal.b)); path.lineWidth = 5
             UIColor.white.setStroke(); path.stroke()
             path.lineWidth = portal.kind == .window ? 2 : 1
-            UIColor.black.setStroke(); if portal.verification != .verified { path.setLineDash([3,3], count: 2, phase: 0) }; path.stroke()
+            let status = HomeScenePresentation.openingStatus(portal, in: home, state: state, request: selectedRoute?.request)
+            UIColor.black.setStroke(); if status == .unconfirmed { path.setLineDash([3,3], count: 2, phase: 0) }; path.stroke()
+            if status == .unavailable || (portal.kind == .window && state?.hazard == .tornado) { drawText("×", at: point(portal.center), font: .boldSystemFont(ofSize: 16), width: 24) }
+            if status == .availableExit { drawText("↗", at: point(portal.center), font: .boldSystemFont(ofSize: 12), width: 20) }
         }
-        for route in routes { for leg in route.legs where leg.floorID == floorID {
-            let path = UIBezierPath(); if let first = leg.points.first { path.move(to: point(first)); for p in leg.points.dropFirst() { path.addLine(to: point(p)) } }; path.lineWidth = 2.5; UIColor.black.setStroke(); path.setLineDash([6,3], count: 2, phase: 0); path.stroke()
+        for (index, route) in routes.enumerated() { for leg in route.legs where leg.floorID == floorID {
+            let path = UIBezierPath(); if let first = leg.points.first { path.move(to: point(first)); for p in leg.points.dropFirst() { path.addLine(to: point(p)) } }; path.lineWidth = 2.5; UIColor.black.setStroke(); path.setLineDash(index == 0 ? [] : [8,5], count: index == 0 ? 0 : 2, phase: 0); path.stroke()
         } }
         for connector in home.connectors {
             if home.space(connector.fromSpaceID)?.floorID == floorID { drawText("↕", at: point(connector.fromPoint), font: .systemFont(ofSize: 16, weight: .bold), width: 30) }
             if home.space(connector.toSpaceID)?.floorID == floorID { drawText("↕", at: point(connector.toPoint), font: .systemFont(ofSize: 16, weight: .bold), width: 30) }
         }
         for annotation in home.annotations where annotation.floorID == floorID { if let p = annotation.position { drawText(annotation.label, at: point(p), font: .systemFont(ofSize: 8), width: 100) } }
+        // A failed route still has a recorded starting room. Match the phone's illustrative marker;
+        // never substitute a path endpoint or imply a measured/live occupant position.
+        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == floorID,
+           let position = HomeScenePresentation.startingRoomPosition(in: home, route: selectedRoute) {
+            let p = point(position)
+            let marker = CGRect(x: p.x - 9, y: p.y - 9, width: 18, height: 18)
+            UIColor.white.setFill(); UIBezierPath(ovalIn: marker.insetBy(dx: -1, dy: -1)).fill()
+            UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal).draw(in: marker)
+        }
     }
 }

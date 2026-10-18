@@ -37,10 +37,10 @@ B2 Guidance -> first room -> continue connected room in shared frame -> process:
 B3 Compare walls, surface categories, parent/opening matching, scale, orientation to measurements:
 B4 Correct room/type/opening on highlighted canvas; width/operability survive connection edits:
 B5 Confirm actual grade (above/below/ground/walkout), discharge and stairs/landings; unknown blocks:
-B6 Window inventory alone never becomes escape; mobility/grade/access checks enforced:
+B6 Window inventory/legacy Boolean alone never authorizes escape; person-specific mobility/grade/access checks enforced:
 B7 Assign occupant, save, force-quit/relaunch; same canonical home and assignments retained:
 B8 Rehearse fire/flood/tornado; export qualified current routes/diagram; no superseded route:
-B9 Rescan same home retains address/meetups/home ID; ambiguous room assignments surfaced:
+B9 Rescan retains address/meetups/home ID; unrelated ordinal room IDs clear, supported capture lineage remaps:
 B10 Cancel/restart + late room/builder callback; repeated Finish; no stale publication:
 B11 Background during camera request, scanning AND structure processing; retained draft/retry:
 B12 Poor tracking/processing failure; valid completed groups retained; unrelated frames not merged:
@@ -53,6 +53,10 @@ B18 Change shelter grade/add lower floor/window: old shelter rejected by both cu
 
 B19 Selected floor/person agrees in 2D/3D/list; exposed/no-route start room still named:
 B20 Balcony/blocked/inoperable opening unavailable; annotation/shelter/two stair endpoint highlight correct:
+B21 Process earlier valid groups after interruption: active callback cannot enter frozen group; failure retains draft:
+B22 Helper reach cannot cross walls/blocked spaces/narrow openings or incompatible stairs:
+B23 No-layout six hazards work without routes/scenes; leak and regional flood have distinct instructions:
+B24 Selected preview/export retains practiced origin/starts/choices; current exclusions and primary/alternative styles agree:
 
 C. Maps, share and offline
 C1 GPS denied, typed home address still plans; automatic nearby discovery cancel/retry:
@@ -66,6 +70,10 @@ C8 No private household/contact/medical/scan fields in public request/diagnostic
 
 C9 Select/dismiss/change destination while GPS/directions pending; no late route or stuck loading:
 C10 Failed fresh selected export never shares older sensitive document; medical locations follow selection:
+C11 No-op/unit-only address keeps coverage; changed geography invalidates it without resetting family:
+C12 Legacy named indoor meetup appears on card, remains editable/deletable without being recreated:
+C13 Official text-only resource opens save/contact/details; source metadata survives save/relaunch:
+C14 Near/backup meetup pins survive optional-resource caps; map and text numbering agree:
 
 D. Presentation/accessibility
 D1 Small phone and large Dynamic Type: no hidden primary control, clipped data or collisions:

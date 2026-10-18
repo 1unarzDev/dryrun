@@ -93,3 +93,14 @@ pages were inspected; output/README.md records exact pages and limits. This did 
 Selected-language closure (Codex on Linux, with the same preparation/maps/scan AI lanes): localized Help, scan/rehearsal presentation, default marker/enum values, plan validation/dates/decimals and composed-card translation/source provenance. Root added complete-pack selection and shared country-aware map/water presentation, kept engine data unchanged, corrected local emergency-service wording and recorded an accessible official Canadian source. An independent AI source review inspected this follow-up. New core tests, seven Linux app-helper checks and regenerated fictional reference renders provide portable evidence only. ES/VI remain AI drafts; no human translation, safety, simulator/device or native export result is implied.
 
 The independent follow-up source review found four further issues and fixes: empty default event subjects now resolve by longest exact evidence ID (including dotted IDs), mixed power/cold-storage card wording no longer denies electrical requirements, composed water-unit fallbacks reach document provenance, and official English alert text has a fallback label. Core regressions cover subject/default/custom-name retention, route reasons, unit fallback and mixed card sections; native interaction remains pending.
+
+Connected-state closure (Codex, Linux; the same independent preparation/maps/spatial AI lanes) added optional-layout
+rehearsals, lineage-safe room assignments, person-scoped window escape, canonical helper reach, frozen RoomPlan
+processing generations, distinct local-leak content, shared medical/alarm/transport readiness, recorded factual
+progress, source-resource actions/provenance and canonical current-state plan panels. Root integrated selected
+preview/export transactions and practiced-input reuse, migration/linkage, schema/engine versions and EN/ES/VI
+content. Independent review found migration canvas-edit/localization regressions; fixes and tests were integrated.
+Reference PDF visual inspection caught furniture covering room names; label order was corrected in reference
+and native renderer source. Exact final evidence is in VERIFICATION; native output has not been executed.
+Human translation/safety review and all physical/simulator results remain pending. No participant or endorsement
+is invented. All user-authored audit/handoff files remain outside the commit.

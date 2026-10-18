@@ -70,4 +70,70 @@ final class PlanGenerationPrivacyTests: XCTestCase {
         XCTAssertFalse(restored.planIsStale)
         XCTAssertEqual(restored.savedPlan, generated)
     }
+    func testSelectedScenarioDocumentIncludesTheSameCurrentRoutesUsedByItsPanels() async throws {
+        let (model, _) = await makeModel()
+        let savedHome = await model.updateHome(SampleHomes.ranch)
+        XCTAssertTrue(savedHome)
+        let generated = await model.generatePlan(scenarioIDs: ["home-fire"], includePrivateNotes: false)
+        let document = try XCTUnwrap(generated)
+        XCTAssertEqual(document.scenarioIDs, ["home-fire"])
+        XCTAssertTrue(document.pages.contains { $0.id == "scenario-home-fire" })
+        let snapshot = try XCTUnwrap(document.visualSnapshot)
+        XCTAssertFalse(snapshot.routes.isEmpty)
+        XCTAssertTrue(snapshot.homePanels.contains { $0.scenarioID == "home-fire" })
+        XCTAssertTrue(model.documentIsCurrent(document))
+        var changed = try XCTUnwrap(model.household)
+        changed.displayName = "Changed after snapshot began"
+        let changedSaved = await model.updateHousehold(changed)
+        XCTAssertTrue(changedSaved)
+        XCTAssertFalse(model.documentIsCurrent(document))
+    }
+
+    func testNoLayoutRehearsalAndPlanNeverInsertAnExampleHome() async throws {
+        let (model, _) = await makeModel()
+        XCTAssertNil(model.home)
+        await model.startRehearsal(scenarioID: "water-outage")
+        let result = try XCTUnwrap(model.rehearsal?.result)
+        XCTAssertNil(result.input.home)
+        XCTAssertFalse(result.events.isEmpty)
+        XCTAssertTrue(result.routes.isEmpty)
+        let generated = await model.generatePlan(scenarioIDs: ["water-outage"], includePrivateNotes: false)
+        let document = try XCTUnwrap(generated)
+        XCTAssertEqual(document.scenarioIDs, ["water-outage"])
+        XCTAssertTrue(document.pages.contains { $0.id == "family-card" })
+        XCTAssertTrue(document.pages.contains { $0.id == "scenario-water-outage" })
+        XCTAssertNil(document.visualSnapshot?.home)
+    }
+
+    func testFailedFactWriteDoesNotShowRecordedProgress() async throws {
+        let (model, store) = await makeModel()
+        var household = try XCTUnwrap(model.household)
+        household.contacts = []
+        let initialSaved = await model.updateHousehold(household)
+        XCTAssertTrue(initialSaved)
+        XCTAssertFalse(model.nextSteps?.recorded.contains { $0.id == "prep.contact" } == true)
+        household = try XCTUnwrap(model.household)
+        household.contacts.append(HouseholdContact(id: "new", role: .other, alias: "Trusted contact", phone: "+44 20 7946 0000"))
+        await store.failWrites()
+        let failedSaved = await model.updateHousehold(household)
+        XCTAssertFalse(failedSaved)
+        XCTAssertFalse(model.nextSteps?.recorded.contains { $0.id == "prep.contact" } == true)
+        XCTAssertTrue(model.nextSteps?.toDo.contains { $0.id == "prep.contact" } == true)
+    }
+
+    func testSelectedPlanRetainsPracticedOriginAndLeakAssumptions() async throws {
+        let (model, _) = await makeModel()
+        let saved = await model.updateHome(SampleHomes.ranch)
+        XCTAssertTrue(saved)
+        await model.startRehearsal(scenarioID: "home-fire", variants: ["origin:sp-kitchen", "start:p-oak-1|sp-living"])
+        let practiced = try XCTUnwrap(model.rehearsal?.result)
+        let fire = await model.generatePlan(scenarioIDs: ["home-fire"], includePrivateNotes: false)
+        XCTAssertEqual(fire?.visualSnapshot?.exerciseStates?.first?.state, practiced.snapshots.last(where: { $0.spatialState != nil })?.spatialState)
+        await model.startRehearsal(scenarioID: "flash-flood", variants: ["householdLeak", "waterEntry:sp-kitchen"])
+        let leak = await model.generatePlan(scenarioIDs: ["flash-flood"], includePrivateNotes: false)
+        let document = try XCTUnwrap(leak)
+        XCTAssertEqual(document.visualSnapshot?.scenarioLabels?["flash-flood"], model.localizer("scenario.household-leak.title"))
+        XCTAssertFalse(document.pages.flatMap(\.sections).flatMap(\.lines).contains { $0.key.hasPrefix("plan.scenario.flash-flood.immediate.") })
+    }
+
 }

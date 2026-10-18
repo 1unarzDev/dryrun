@@ -291,7 +291,7 @@ struct FocusedHouseholdEditor: View {
         return Group {
             ForEach(binding(\.backupPower)) { $backup in
                 Section {
-                    BackupEditorFields(backup: $backup, onKindChanged: { draft?.invalidateBackupCompatibility(for: $0) })
+                    BackupEditorFields(backup: $backup, onKindChanged: { draft?.invalidateBackupCompatibility(for: $0) }, showsTechnicalFields: false)
                     NumberEvidenceRow(title: l("family.energy"), value: $backup.usableEnergyWh, unit: "Wh")
                     NumberEvidenceRow(title: l("family.output"), value: $backup.continuousOutputW, unit: "W")
                 }

@@ -11,13 +11,13 @@ struct MapPlanningView: View {
     @State private var store: RegionalResourcesStore
     @State private var camera: MapCameraPosition = .automatic
     @State private var cameraCenter: GeographicCoordinate?
-    @State private var selected: AppleMapSearchResult?
+    @State private var selected: MapPlanningDestination?
     @State private var pendingSearchResult: AppleMapSearchResult?
     @State private var deferredPlace: SavedPlace?
     @State private var editedPlace: SavedPlace?
     @State private var showingEditor = false
     @State private var contextualSaveFinished = false
-    @State private var deferredDestination: AppleMapSearchResult?
+    @State private var deferredDestination: MapPlanningDestination?
     private let initialPurpose: SavedPlacePurpose?
     private let dismissAfterSave: Bool
     @State private var showingSearch = false
@@ -40,6 +40,7 @@ struct MapPlanningView: View {
         initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave
     }
     private var places: [SavedPlace] { model.savedPlaces.filter { $0.homeID == model.household?.stableHomeID } }
+    private var officialResources: [PublicResource] { store.resources(for: model.household?.regionID ?? "") }
     private var route: MapTravelPreview? { routeRequest.result?.preview }
     private var homeCoordinate: GeographicCoordinate? {
         guard let p = model.household?.privateLocation, let lat = p.latitude, let lon = p.longitude else { return nil }
@@ -81,7 +82,7 @@ struct MapPlanningView: View {
                 ToolbarItem(placement: .cancellationAction) { Button(t("done")) { dismiss() } }
                 ToolbarItem(placement: .primaryAction) { Button { showingSearch = true } label: { Label(t("search"), systemImage: "magnifyingglass") }.accessibilityIdentifier("map.search") }
             }
-            .sheet(isPresented: $showingSearch, onDismiss: { if let pendingSearchResult { selected = pendingSearchResult; self.pendingSearchResult = nil } }) {
+            .sheet(isPresented: $showingSearch, onDismiss: { if let pendingSearchResult { select(pendingSearchResult); self.pendingSearchResult = nil } }) {
                 MapSearchSheet(region: hint, onSelect: { pendingSearchResult = $0; showingSearch = false })
             }
             .sheet(item: $selected, onDismiss: { if let deferredPlace { editedPlace = deferredPlace; self.deferredPlace = nil; showingEditor = true } }) { result in destinationSheet(result) }
@@ -90,8 +91,8 @@ struct MapPlanningView: View {
                 else if let deferredDestination { selected = deferredDestination; self.deferredDestination = nil }
             }) {
                 if let editedPlace { PlaceEditorView(place: editedPlace, onSaved: { contextualSaveFinished = true }, onDirections: { place in
-                    guard let coordinate = place.coordinate else { return }
-                    deferredDestination = AppleMapSearchResult(id: place.id, name: place.label, coordinate: coordinate, address: place.addressText, category: nil)
+                    guard place.coordinate != nil else { return }
+                    deferredDestination = MapPlanningDestination(place: place)
                 }) }
             }
             .task(id: homeCoordinate) {
@@ -131,7 +132,16 @@ struct MapPlanningView: View {
                 }
             }
             ForEach(discovery.results) { result in
-                Annotation(result.name, coordinate: result.coordinate.cl) { Button { selected = result } label: { Image(systemName: "mappin.circle.fill").font(.title2).foregroundStyle(.orange).background(.background, in: Circle()) }.accessibilityLabel(result.name) }
+                Annotation(result.name, coordinate: result.coordinate.cl) { Button { select(result) } label: { Image(systemName: "mappin.circle.fill").font(.title2).foregroundStyle(.orange).background(.background, in: Circle()) }.accessibilityLabel(result.name) }
+            }
+            ForEach(officialResources.filter { resource in !places.contains { $0.provenance == .officialDirectory && $0.sourceResourceID == resource.id } }) { resource in
+                if let coordinate = resource.planningCoordinate {
+                    Annotation(resource.name, coordinate: coordinate.cl) {
+                        Button { select(resource) } label: {
+                            Image(systemName: "building.2.crop.circle.fill").font(.title2).foregroundStyle(.teal).background(.background, in: Circle())
+                        }.accessibilityLabel(resource.name)
+                    }
+                }
             }
             if let route { MapPolyline(coordinates: route.coordinates.map(\.cl)).stroke(.blue, lineWidth: 4) }
         }
@@ -156,49 +166,95 @@ struct MapPlanningView: View {
             Section(t("suggestions")) {
                 if discovery.results.isEmpty { Text(discovery.isLoading ? t("searching") : t("empty")).foregroundStyle(.secondary) }
                 ForEach(discovery.results) { result in
-                    Button { selected = result } label: { VStack(alignment: .leading) {
+                    Button { select(result) } label: { VStack(alignment: .leading) {
                         Text(result.name).font(.headline); Text(t(["hospital", "pharmacy", "grocery"].contains(result.category ?? "") ? result.category! : "suggestion")); if let address = result.address { Text(address).font(.caption) }
                         if let homeCoordinate { Text(distance(homeCoordinate.clLocation.distance(from: result.coordinate.clLocation))).font(.caption) }
                     } }.buttonStyle(.plain)
                 }
             }
             if store.regionInfo(for: model.household?.regionID ?? "") != nil {
-                Section(t("official")) { ForEach(store.resources(for: model.household?.regionID ?? "")) { resource in
-                    VStack(alignment: .leading) { Text(resource.name).font(.headline); Text(resource.summary).font(.caption); if model.locale != "en" { Text(model.localizer("common.fallbackShown")).font(.caption) }; if let phone = resource.contact.phone { Text(phone) }; if let address = resource.contact.address { Text(address) }; Text("\(resource.publisher) · \(resource.checkedAt)").font(.caption2) }
+                Section(t("official")) { ForEach(officialResources) { resource in
+                    Button { select(resource) } label: {
+                        VStack(alignment: .leading) {
+                            Text(resource.name).font(.headline)
+                            Text(model.localizer("help.service.\(resource.serviceType.rawValue)")).font(.caption)
+                            Text(resource.summary).font(.caption)
+                            if model.locale != "en" { Text(model.localizer("common.fallbackShown")).font(.caption) }
+                            if let phone = resource.contact.phone { Text(phone) }
+                            if let address = resource.contact.address { Text(address) }
+                            if let homeCoordinate, let coordinate = resource.planningCoordinate {
+                                Text(distance(homeCoordinate.clLocation.distance(from: coordinate.clLocation))).font(.caption)
+                            }
+                            Text("\(resource.publisher) · \(resource.checkedAt)").font(.caption2)
+                        }
+                    }.buttonStyle(.plain)
                 } }
             }
             Section { Text(t("offline")).font(.footnote) }
         }
     }
 
-    private func destinationSheet(_ result: AppleMapSearchResult) -> some View {
-        NavigationStack {
+    private func destinationSheet(_ result: MapPlanningDestination) -> some View {
+        let place = result.place
+        return NavigationStack {
             Form {
-                Section { Text(result.name).font(.headline); if let address = result.address { Text(address) }; Text(t("suggestionNote")).font(.caption) }
-                if let phone = result.phone, let url = PhoneLink.url(phone) {
+                Section {
+                    Text(place.label).font(.headline)
+                    if let address = place.addressText { Text(address) }
+                    if let resource = result.officialResource {
+                        Text(model.localizer("help.service.\(resource.serviceType.rawValue)"))
+                        Text(resource.summary).font(.callout)
+                        if model.locale != "en" { Text(model.localizer("common.fallbackShown")).font(.caption) }
+                        if resource.reviewState != .reviewed { Text(model.localizer("help.review.needsReview")).font(.caption) }
+                        if resource.classification == .demo || resource.classification == .fixture { Text(model.localizer("help.freshness.demo")).font(.caption) }
+                        let activation = PublicDataPolicy.activationDisplay(for: resource, now: Date())
+                        if activation != .notApplicable {
+                            Text(model.localizer(activation == .confirmedActive ? "help.activation.status.active" : activation == .confirmedInactive ? "help.activation.status.inactive" : "help.activation.unconfirmed")).font(.caption.weight(.semibold))
+                        }
+                    } else { Text(t(place.provenance == .appleMapsSearch ? "suggestionNote" : "savedSourceNote")).font(.caption) }
+                    if let publisher = place.sourcePublisher { Text(publisher).font(.caption) }
+                    if let checked = place.sourceCheckedAt { Text(model.localizer("help.freshness.checkedOn", ["date": checked])).font(.caption) }
+                }
+                if let phone = place.contactPhone, let url = PhoneLink.url(phone) {
                     Section(t("contact")) { Link(destination: url) { Label(phone, systemImage: "phone") } }
                 }
-                if let website = result.website, let url = URL(string: website) { Link(t("website"), destination: url) }
-                Section(t("directions")) {
-                    Picker(t("origin"), selection: $originID) {
-                        if homeCoordinate != nil { Text(t("home")).tag("home") }
-                        ForEach(places.filter { $0.coordinate != nil }) { Text($0.label).tag($0.id) }
-                        Text(t("current")).tag("current")
+                if let website = place.websiteURL, let url = URL(string: website) { Link(t("website"), destination: url) }
+                if place.coordinate != nil {
+                    Section(t("directions")) {
+                        Picker(t("origin"), selection: $originID) {
+                            if homeCoordinate != nil { Text(t("home")).tag("home") }
+                            ForEach(places.filter { $0.coordinate != nil }) { Text($0.label).tag($0.id) }
+                            Text(t("current")).tag("current")
+                        }
+                        Picker(t("mode"), selection: $mode) { ForEach(MapTravelMode.allCases) { Text(t($0.rawValue)).tag($0) } }
+                        Button(t("preview")) { preview(result) }.disabled(routeRequest.isLoading)
+                        if let key = routeRequest.errorKey { Text(t(key)).font(.caption).foregroundStyle(.secondary) }
+                        Text(t("routeNote")).font(.caption)
                     }
-                    Picker(t("mode"), selection: $mode) { ForEach(MapTravelMode.allCases) { Text(t($0.rawValue)).tag($0) } }
-                    Button(t("preview")) { preview(result) }.disabled(routeRequest.isLoading)
-                    if let key = routeRequest.errorKey { Text(t(key)).font(.caption).foregroundStyle(.secondary) }
-                    Text(t("routeNote")).font(.caption)
-                }
+                } else { Section { Text(t("noCoordinateDirections")).font(.caption) } }
                 Section {
-                    Button(t("save")) { newPlace(coordinate: result.coordinate, label: result.name, address: result.address, provenance: .appleMapsSearch) }
-                    Button(t("openApple")) { let item = MKMapItem(placemark: MKPlacemark(coordinate: result.coordinate.cl)); item.name = result.name; item.openInMaps() }
+                    Button(t("save")) { deferredPlace = place; selected = nil }
+                    if let coordinate = place.coordinate {
+                        Button(t("openApple")) { let item = MKMapItem(placemark: MKPlacemark(coordinate: coordinate.cl)); item.name = place.label; item.openInMaps() }
+                    }
                 }
             }
             .navigationTitle(t("destination"))
             .onAppear { if originID == "home" && homeCoordinate == nil { originID = places.first(where: { $0.coordinate != nil })?.id ?? "current" } }
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(t("done")) { routeRequest.cancel(); selected = nil } } }
         }
+    }
+    private func select(_ result: AppleMapSearchResult) {
+        guard let household = model.household else { return }
+        let place = SavedPlace.appleSuggestion(sourceID: result.id, name: result.name, coordinate: result.coordinate,
+            address: result.address, phone: result.phone, website: result.website, homeID: household.stableHomeID,
+            purpose: initialPurpose ?? .fallbackDestination)
+        selected = MapPlanningDestination(place: place)
+    }
+    private func select(_ resource: PublicResource) {
+        guard let household = model.household else { return }
+        selected = MapPlanningDestination(place: .officialResource(resource, homeID: household.stableHomeID,
+            purpose: initialPurpose ?? .fallbackDestination), officialResource: resource)
     }
     private func discover() async {
         guard discovery.enabled, let hint else { message = t("noHome"); return }
@@ -213,10 +269,11 @@ struct MapPlanningView: View {
         if selected != nil { deferredPlace = place; selected = nil }
         else { editedPlace = place; showingEditor = true }
     }
-    private func preview(_ destination: AppleMapSearchResult) {
+    private func preview(_ destination: MapPlanningDestination) {
+        guard let coordinate = destination.place.coordinate else { return }
         let selectedOriginID = originID
         let savedOrigin = selectedOriginID == "home" ? homeCoordinate : places.first { $0.id == selectedOriginID }?.coordinate
-        routeRequest.start(destinationID: destination.id, destination: destination.coordinate, mode: mode) {
+        routeRequest.start(destinationID: destination.id, destination: coordinate, mode: mode) {
             if selectedOriginID == "current" {
                 guard let current = await location.requestOneShot() else { return nil }
                 return GeographicCoordinate(latitude: current.coordinate.latitude, longitude: current.coordinate.longitude)
@@ -247,6 +304,18 @@ struct PlaceEditorView: View {
             Form {
                 Section { TextField(t("label"), text: $place.label); Picker(t("purpose"), selection: $place.purpose) { ForEach(SavedPlacePurpose.allCases, id: \.self) { Text(t($0.rawValue)).tag($0) } }; TextField(t("address"), text: Binding(get: { place.addressText ?? "" }, set: { place.addressText = $0 })); TextField(t("instructions"), text: Binding(get: { place.findingInstructions ?? "" }, set: { place.findingInstructions = $0 }), axis: .vertical) }
                 if let coordinate = place.coordinate { Section(t("pin")) { Text("\(coordinate.latitude), \(coordinate.longitude)").font(.caption); Button(t("directions")) { onDirections?(place); dismiss() }.disabled(onDirections == nil) } }
+                if place.provenance == .officialDirectory || place.provenance == .appleMapsSearch {
+                    Section(t("contact")) {
+                        Text(t("savedSourceNote")).font(.caption)
+                        if let publisher = place.sourcePublisher { Text(publisher).font(.caption) }
+                        if let checked = place.sourceCheckedAt { Text(model.localizer("help.freshness.checkedOn", ["date": checked])).font(.caption) }
+                        if let phone = place.contactPhone {
+                            Text(phone).textSelection(.enabled)
+                            if let url = PhoneLink.url(phone) { Link(model.localizer("common.help.call"), destination: url) }
+                        }
+                        if let website = place.websiteURL, let url = URL(string: website) { Link(t("website"), destination: url) }
+                    }
+                }
                 if let error { Text(error).foregroundStyle(.red) }
                 if model.savedPlaces.contains(where: { $0.id == place.id }) { Button(t("delete"), role: .destructive) { confirmingDelete = true } }
             }.navigationTitle(t("save"))

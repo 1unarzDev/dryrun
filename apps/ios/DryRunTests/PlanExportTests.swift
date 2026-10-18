@@ -70,4 +70,51 @@ extension PlanExportTests {
             XCTAssertTrue(output.continuedPageIDs.contains("map-legend"))
         }
     }
+
+    func testLegacyDiagramQualificationsAreRetainedInPDFForEverySupportedLanguage() throws {
+        let library = try ContentLibrary.load(from: ContentLocator.contentRoot())
+        let home = SampleHomes.ranch, household = SampleHouseholds.oak
+        var route = EgressPlanner().plan(RouteRequest(personID: household.people[0].id, startSpaceID: "sp-bed1"), in: home)
+        route.primary = nil; route.alternative = nil; route.alternativeStatus = .none; route.noRouteReason = .blockedByScenario
+        let state = SpatialExerciseState(hazard: .homeFire, seed: 7, stageID: "blocked", affectedSpaceIDs: ["sp-bed1"], routes: [route], assumption: "Authored blockage", assumptionKey: "spatial.assumption.fire-blocked")
+        let input = RehearsalInput(household: household, home: home, scenarioID: "home-fire", scenarioVersion: "test", contentVersion: library.contentVersion, seed: 7)
+        let result = RehearsalResult(input: input, events: [], snapshots: [.init(simMinute: 3, services: [:], resources: [:], unmetRequirements: [], unknowns: [], firedEventIDs: [], spatialState: state)], decisions: [], routes: [route], recommendations: [], unknowns: [], engineVersion: "test")
+        func normalized(_ string: String) -> String { string.split(whereSeparator: \.isWhitespace).joined(separator: " ") }
+        for locale in ["en", "es", "vi"] {
+            let l = library.localizer(for: locale)
+            let doc = PlanBuilder.build(household: household, home: home, results: [result], localizer: l, resources: [], contentVersion: library.contentVersion, generatedAt: Date(timeIntervalSince1970: 1700000000))
+            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(doc)) as? [String: Any])
+            var visual = try XCTUnwrap(object["visualSnapshot"] as? [String: Any])
+            visual.removeValue(forKey: "panelDetails"); object["visualSnapshot"] = visual
+            let legacy = try JSONDecoder().decode(PlanDocument.self, from: JSONSerialization.data(withJSONObject: object))
+            let snapshot = try XCTUnwrap(legacy.visualSnapshot)
+            XCTAssertNil(snapshot.panelDetails)
+            let expected = try XCTUnwrap(snapshot.homePanels.first { $0.route != nil }).details(in: snapshot, localizer: l)
+            for paper in PlanPDFRenderer.Paper.allCases {
+                // Exercise the real bundled-content fallback, not an injected precomputed dictionary.
+                let output = PlanPDFRenderer().render(legacy, paper: paper)
+                let text = normalized(try XCTUnwrap(PDFDocument(data: output.data)?.string))
+                for detail in expected { XCTAssertTrue(text.contains(normalized(detail)), "Missing diagram qualification: \(detail)") }
+                XCTAssertFalse(text.contains("plan.route.reason."))
+            }
+        }
+    }
+
+    func testFailedRouteStillDrawsTheRecordedStartingRoomMarker() throws {
+        let home = SampleHomes.ranch
+        var route = EgressPlanner().plan(RouteRequest(startSpaceID: "sp-bed1"), in: home)
+        route.primary = nil; route.alternative = nil; route.alternativeStatus = .none; route.noRouteReason = .blockedByScenario
+        let floorID = try XCTUnwrap(HomeScenePresentation.startingRoom(in: home, route: route)?.floorID)
+        XCTAssertNotNil(HomeScenePresentation.startingRoomPosition(in: home, route: route))
+        let bounds = CGRect(x: 0, y: 0, width: 400, height: 300)
+        func image(selected: RouteResult?) -> Data? {
+            UIGraphicsImageRenderer(size: bounds.size).image { context in
+                UIColor.white.setFill(); context.fill(bounds)
+                PlanPDFRenderer.drawHome(home, floorID: floorID, routes: [], selectedRoute: selected, rect: bounds)
+            }.pngData()
+        }
+        // The original rendering produced identical diagrams when a current route was unavailable.
+        // A room marker must remain visible even when there are no path legs to draw.
+        XCTAssertNotEqual(try XCTUnwrap(image(selected: route)), try XCTUnwrap(image(selected: nil)))
+    }
 }

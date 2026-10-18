@@ -69,6 +69,11 @@ struct LivingPlanTests {
         let legacy = try JSONDecoder().decode(PlanDocument.self, from: JSONSerialization.data(withJSONObject: json))
         #expect(legacy.visualSnapshot == nil)
         #expect(legacy.pages == doc.pages)
+        // Retained version-one output is readable, but its older planning semantics need regeneration.
+        json["schemaVersion"] = 1
+        let oldVersion = try JSONDecoder().decode(PlanDocument.self, from: JSONSerialization.data(withJSONObject: json))
+        #expect(oldVersion.pages == doc.pages)
+        #expect(oldVersion.isStale(household: h, home: nil, contentVersion: "test"))
     }
 }
 

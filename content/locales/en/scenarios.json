@@ -325,5 +325,19 @@
   "service.wifi.degraded": "Home Wi-Fi is reduced in this exercise.",
   "service.wifi.operational": "Home Wi-Fi is working again in this exercise.",
   "service.wifi.unavailable": "Home Wi-Fi is down because the router has no power. Cellular service is separate.",
-  "service.wifi.unknown": "Home Wi-Fi: the outcome is unknown because a fact is unconfirmed."
+  "service.wifi.unknown": "Home Wi-Fi: the outcome is unknown because a fact is unconfirmed.",
+  "scenario.household-leak.title": "Household leak exercise",
+  "scenario.household-leak.event.detected": "Water affects the selected room",
+  "scenario.household-leak.event.detected.detail": "This exercise assumes a local leak only. Regional flood warnings, roads, utilities and evacuation conditions have not changed. Keep away from water near electrical equipment.",
+  "scenario.household-leak.event.review": "Review who can help without entering the water-affected area.",
+  "scenario.household-leak.choice.clear.prompt": "Water is in the selected room. What do you do first?",
+  "scenario.household-leak.choice.clear.keep-clear": "Keep people and pets away from the affected area",
+  "scenario.household-leak.choice.clear.keep-clear.feedback": "Stay clear of the water-affected area, especially where electricity may be involved. No route through the water is established.",
+  "scenario.household-leak.choice.clear.enter-water": "Enter the water to inspect the problem",
+  "scenario.household-leak.choice.clear.enter-water.feedback": "Entering the water may expose you to electrical or other hazards. This exercise does not establish that it is safe to enter.",
+  "scenario.household-leak.choice.help.prompt": "How would you arrange help?",
+  "scenario.household-leak.choice.help.get-help": "Contact a trusted adult, building manager or appropriate professional from a dry place",
+  "scenario.household-leak.choice.help.get-help.feedback": "Use help appropriate to the situation. If there is immediate danger, contact the local emergency service. This exercise supplies no electrical or plumbing repair procedure.",
+  "scenario.household-leak.choice.help.touch-electrics": "Touch wet electrical equipment to check it",
+  "scenario.household-leak.choice.help.touch-electrics.feedback": "Do not touch electrical equipment while wet or standing in water. Keep clear and seek appropriate help."
 }

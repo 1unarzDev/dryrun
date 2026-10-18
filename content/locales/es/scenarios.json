@@ -325,5 +325,19 @@
   "service.wifi.degraded": "El Wi-Fi de la casa está reducido en este ejercicio.",
   "service.wifi.operational": "El Wi-Fi de la casa vuelve a funcionar en este ejercicio.",
   "service.wifi.unavailable": "El Wi-Fi de la casa no funciona porque el router no tiene electricidad. El servicio celular es aparte.",
-  "service.wifi.unknown": "Wi-Fi de la casa: el resultado es desconocido porque falta confirmar un dato."
+  "service.wifi.unknown": "Wi-Fi de la casa: el resultado es desconocido porque falta confirmar un dato.",
+  "scenario.household-leak.title": "Ejercicio de fuga de agua en casa",
+  "scenario.household-leak.event.detected": "El agua afecta a la habitación seleccionada",
+  "scenario.household-leak.event.detected.detail": "Este ejercicio supone solo una fuga local. No han cambiado las alertas regionales de inundación, las carreteras, los servicios ni las condiciones de evacuación. Manténgase lejos del agua cerca de equipos eléctricos.",
+  "scenario.household-leak.event.review": "Revise quién puede ayudar sin entrar en la zona afectada por el agua.",
+  "scenario.household-leak.choice.clear.prompt": "Hay agua en la habitación seleccionada. ¿Qué hace primero?",
+  "scenario.household-leak.choice.clear.keep-clear": "Mantener a las personas y mascotas lejos de la zona afectada",
+  "scenario.household-leak.choice.clear.keep-clear.feedback": "Manténgase lejos de la zona afectada por el agua, especialmente si hay electricidad. No se establece una ruta a través del agua.",
+  "scenario.household-leak.choice.clear.enter-water": "Entrar en el agua para inspeccionar el problema",
+  "scenario.household-leak.choice.clear.enter-water.feedback": "Entrar en el agua puede exponerle a peligros eléctricos u otros riesgos. Este ejercicio no establece que sea seguro entrar.",
+  "scenario.household-leak.choice.help.prompt": "¿Cómo pediría ayuda?",
+  "scenario.household-leak.choice.help.get-help": "Contactar con un adulto de confianza, el administrador del edificio o un profesional adecuado desde un lugar seco",
+  "scenario.household-leak.choice.help.get-help.feedback": "Busque ayuda adecuada a la situación. Si hay peligro inmediato, contacte con el servicio local de emergencias. Este ejercicio no incluye procedimientos de reparación eléctrica ni de fontanería.",
+  "scenario.household-leak.choice.help.touch-electrics": "Tocar equipos eléctricos mojados para revisarlos",
+  "scenario.household-leak.choice.help.touch-electrics.feedback": "No toque equipos eléctricos si está mojado o de pie en el agua. Manténgase lejos y busque ayuda adecuada."
 }

@@ -52,13 +52,15 @@ public struct ScanRoom: Codable, Sendable, Hashable {
 
 public struct ScanCapture: Codable, Sendable, Hashable {
     public var rooms: [ScanRoom]
+    public var coordinateFrameID: String?
     /// True when every room was captured in ONE shared coordinate frame (single session / shared ARSession /
     /// StructureBuilder output). Independently scanned rooms are never placed by guessing.
     public var sharedCoordinateFrame: Bool
     /// True when the capture session ended normally.
     public var sessionCompleted: Bool
-    public init(rooms: [ScanRoom], sharedCoordinateFrame: Bool, sessionCompleted: Bool = true) {
+    public init(rooms: [ScanRoom], sharedCoordinateFrame: Bool, sessionCompleted: Bool = true, coordinateFrameID: String? = nil) {
         self.rooms = rooms; self.sharedCoordinateFrame = sharedCoordinateFrame; self.sessionCompleted = sessionCompleted
+        self.coordinateFrameID = coordinateFrameID
     }
 }
 
@@ -129,6 +131,7 @@ public enum ScanImport {
             let lowConfidence = room.surfaces.contains { $0.confidence == .low }
             spaces.append(Space(id: spaceID, floorID: fid, label: "Room \(ri + 1)", kind: .other, polygon: outline,
                                 labelConfirmed: false, needsMeasurement: hullFallback || lowConfidence || outline.count < 3))
+            spaces[spaces.count - 1].sourceScanRoomID = room.id
             for w in room.surfaces where w.category == .wall {
                 let e = endpoints(w)
                 walls.append(WallSegment(id: "w-\(w.id)", floorID: fid, a: e[0], b: e[1], thicknessMeters: max(0.05, w.dimensions.z)))
@@ -186,13 +189,14 @@ public enum ScanImport {
         }
         notes.append("Scanned doors and openings are proposals. Confirm each connection and choose your exterior exits.")
 
-        let home = HomeModel(id: homeID, revision: 1, label: label, source: .roomPlanScan,
+        var home = HomeModel(id: homeID, revision: 1, label: label, source: .roomPlanScan,
                              frame: CoordinateFrame(units: "meters", handedness: "right", sourceUpAxis: "y",
                                                     note: "Projected from RoomPlan world (x, y-up, z) to floor plane (x, -z)."),
                              floors: floors, spaces: spaces, walls: walls, portals: portals, obstacles: obstacles,
                              connectors: connectors, annotations: [], completeness: incomplete ? .incomplete : .unknown,
                              completenessNote: incomplete ? "Scan is incomplete or has unconfirmed openings." : "Confirm the scan covers the whole home.",
                              isFictional: false)
+        home.sourceCaptureFrameID = capture.coordinateFrameID
         return ScanImportResult(home: home, notes: notes)
     }
 

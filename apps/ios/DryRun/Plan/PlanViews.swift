@@ -15,6 +15,8 @@ struct PlanTabView: View {
     @State private var selectedScenarios: Set<String> = []
     @State private var showingExport = false
     @State private var exporting = false
+    @State private var previewDocument: PlanDocument?
+    @State private var showingDocument = false
     @State private var paper: PlanPDFRenderer.Paper = .letter
     private func t(_ key: String) -> String { model.localizer("map.\(key)") }
     var body: some View {
@@ -54,10 +56,10 @@ struct PlanTabView: View {
                     Picker(t("paper"), selection: $paper) { Text("Letter").tag(PlanPDFRenderer.Paper.letter); Text("A4").tag(PlanPDFRenderer.Paper.a4) }
                     DisclosureGroup(model.localizer("common.plan.scenarioPages")) {
                         ForEach(RehearseTabView.scenarioIDs, id: \.self) { id in Toggle(model.localizer("common.scenario.\(id)"), isOn: Binding(get: { selectedScenarios.contains(id) }, set: { if $0 { selectedScenarios.insert(id) } else { selectedScenarios.remove(id) } })) }
-                        Button(model.localizer("common.plan.generate")) { Task { await model.generatePlan(scenarioIDs: Array(selectedScenarios), includePrivateNotes: includePrivateNotes, selection: selection) } }.disabled(model.isWorking || selectedScenarios.isEmpty || model.home == nil)
                     }
-                    NavigationLink(t("selectedPreview")) { PlanDocumentView(doc: doc) }.accessibilityIdentifier("plan.viewSaved")
-                    Button(model.localizer("common.action.share") + " / " + model.localizer("common.action.print"), systemImage: "square.and.arrow.up") { export(doc) }.disabled(exporting)
+                    Button(t("selectedPreview")) { prepareDocument(export: false) }.accessibilityIdentifier("plan.viewSaved")
+                    Button(model.localizer("common.action.share") + " / " + model.localizer("common.action.print"), systemImage: "square.and.arrow.up") { prepareDocument(export: true) }
+                    if exporting { ProgressView() }
                 }
                 Section { NavigationLink(t("official")) { HelpTabView() } }
                 if let saved = model.savedPlan, !saved.scenarioIDs.isEmpty {
@@ -68,7 +70,9 @@ struct PlanTabView: View {
                 }
             } else { Text(t("noHousehold")) }
         }
+        .disabled(exporting)
         .navigationTitle(model.localizer("common.tab.plan"))
+        .navigationDestination(isPresented: $showingDocument) { if let previewDocument { PlanDocumentView(doc: previewDocument, paper: paper) } }
         .sheet(isPresented: $showingMap) {
             if let store = model.regionalResources { MapPlanningView(store: store) }
             else if let content = model.content { MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "") }
@@ -77,26 +81,35 @@ struct PlanTabView: View {
         .sheet(isPresented: $showingAddress) { HomeAddressEditorView() }
         .sheet(isPresented: $showingExport, onDismiss: { TemporaryExports.hasActiveExport = false; TemporaryExports.purgeAll(); exportURL = nil }) { if let exportURL { PDFPreviewSheet(url: exportURL, note: nil) } }
     }
-    private func export(_ doc: PlanDocument) {
+    /// Both actions commit the same current selected document. Choices stay locked through map preparation.
+    private func prepareDocument(export: Bool) {
+        let chosenSelection = selection
+        let chosenNotes = includePrivateNotes
+        let chosenScenarios = selectedScenarios.sorted()
+        let chosenPaper = paper
         exporting = true
         Task { @MainActor in
             defer { exporting = false }
+            guard let doc = await model.generatePlan(scenarioIDs: chosenScenarios, includePrivateNotes: chosenNotes, selection: chosenSelection) else { return }
+            guard selection == chosenSelection, includePrivateNotes == chosenNotes, selectedScenarios.sorted() == chosenScenarios else { return }
+            if !export { previewDocument = doc; showingDocument = true; return }
             var panels: [PlanMapPanel] = []
             if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: t("neighborhood")) }
-            guard model.household?.revision == doc.householdRevision, model.locale == doc.locale,
-                  (model.home?.id ?? model.household?.stableHomeID) == doc.homeID, (model.home?.revision ?? 0) == doc.homeRevision,
-                  model.savedPlaces.filter({ $0.homeID == doc.homeID }).sorted(by: { $0.id < $1.id }) == (doc.visualSnapshot?.savedPlaces ?? []).sorted(by: { $0.id < $1.id }) else { return }
-            let result = PlanPDFRenderer().render(doc, paper: paper, mapPanels: panels)
+            guard selection == chosenSelection, includePrivateNotes == chosenNotes, selectedScenarios.sorted() == chosenScenarios, paper == chosenPaper,
+                  model.documentIsCurrent(doc) else { return }
+            let result = PlanPDFRenderer().render(doc, paper: chosenPaper, mapPanels: panels)
             do { exportURL = try TemporaryExports.write(result.data, name: "DryRun-family-plan-\(doc.locale).pdf"); TemporaryExports.hasActiveExport = true; showingExport = true }
             catch { model.lastError = String(describing: error) }
         }
     }
+
 }
 
 /// Native, accessible rendering of the same PlanDocument used for the PDF.
 struct PlanDocumentView: View {
     @Environment(AppModel.self) private var model
     let doc: PlanDocument
+    var paper: PlanPDFRenderer.Paper = .letter
 
     var body: some View {
         List {
@@ -105,40 +118,49 @@ struct PlanDocumentView: View {
             }
             if let note = doc.fallbackNote { Text(note).font(.footnote) }
             if let content = doc.contentReviewBanner { Text(content).font(.footnote).foregroundStyle(.secondary) }
+            ForEach(doc.pages.filter { $0.id == "family-card" }) { page in pageSection(page) }
             if let snapshot = doc.visualSnapshot {
                 if let home = snapshot.home {
-                    Section(home.label) { FloorPlanView(home: home, routes: [], highlightedFloorID: nil).frame(minHeight: 260) }
+                    ForEach(snapshot.homePanels) { panel in
+                        Section(panel.title(in: snapshot)) {
+                            FloorPlanView(home: home, routes: panel.paths, highlightedFloorID: panel.floorID,
+                                          spatialState: panel.spatialState, selectedRoute: panel.route).frame(minHeight: 260)
+                            ForEach(Array((snapshot.panelDetails?[panel.id] ?? panel.details(in: snapshot, localizer: model.localizer.with(locale: doc.locale))).enumerated()), id: \.offset) { _, detail in Text(detail).font(.callout) }
+                        }
+                    }
                 }
                 if snapshot.savedPlaces.contains(where: { $0.coordinate != nil }) || snapshot.homeCoordinate != nil {
                     Section(model.localizer("map.neighborhood")) { NeighborhoodPlanPreview(snapshot: snapshot).frame(height: 220); Text(model.localizer("map.offline")).font(.caption) }
                 }
             }
-            ForEach(doc.pages) { page in
-                Section {
-                    ForEach(page.sections) { section in
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(section.heading).font(.headline)
-                            ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in
-                                HStack(alignment: .firstTextBaseline) {
-                                    Image(systemName: icon(line.style)).accessibilityHidden(true)
-                                    Text(line.text).font(line.style == .prohibition ? .body.weight(.semibold) : .body)
-                                    if line.isFallback {
-                                        Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary)
-                                            .accessibilityLabel(model.localizer("plan.fallbackNote"))
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    }
-                } header: {
-                    Text(page.title).font(.title3.weight(.bold)).textCase(nil)
-                }
-            }
+            ForEach(doc.pages.filter { $0.id != "family-card" }) { page in pageSection(page) }
             Section { Text(doc.footer).font(.footnote) }
         }
         .navigationTitle(model.localizer("common.tab.plan"))
-        .toolbar { PlanShareButton(doc: doc) }
+        .toolbar { PlanShareButton(doc: doc, paper: paper) }
+    }
+
+    private func pageSection(_ page: PlanPage) -> some View {
+        Section {
+            ForEach(page.sections) { section in
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(section.heading).font(.headline)
+                    ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: icon(line.style)).accessibilityHidden(true)
+                            Text(line.text).font(line.style == .prohibition ? .body.weight(.semibold) : .body)
+                            if line.isFallback {
+                                Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary)
+                                    .accessibilityLabel(model.localizer("plan.fallbackNote"))
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+        } header: {
+            Text(page.title).font(.title3.weight(.bold)).textCase(nil)
+        }
     }
 
     private func icon(_ style: PlanLineStyle) -> String {
@@ -254,6 +276,7 @@ struct ExportActivityView: UIViewControllerRepresentable {
 struct PlanShareButton: View {
     @Environment(AppModel.self) private var model
     let doc: PlanDocument
+    var paper: PlanPDFRenderer.Paper = .letter
     @State private var url: URL?
     @State private var preview = false
     @State private var working = false
@@ -266,7 +289,7 @@ struct PlanShareButton: View {
             if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood")) }
             guard model.currentKey == startingKey, model.savedPlaces == startingPlaces, model.locale == startingLocale else { return }
             do {
-                url = try TemporaryExports.write(PlanPDFRenderer().render(doc, mapPanels: panels).data, name: "DryRun-preview-\(UUID().uuidString).pdf")
+                url = try TemporaryExports.write(PlanPDFRenderer().render(doc, paper: paper, mapPanels: panels).data, name: "DryRun-preview-\(UUID().uuidString).pdf")
                 TemporaryExports.hasActiveExport = true; preview = true
             } catch { model.lastError = String(describing: error) }
         } } label: { Label(model.localizer("common.action.share"), systemImage: working ? "hourglass" : "square.and.arrow.up") }

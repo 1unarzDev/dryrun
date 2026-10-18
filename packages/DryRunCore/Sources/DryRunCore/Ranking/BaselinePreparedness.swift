@@ -11,6 +11,17 @@ public struct PreparationDefinition: Sendable, Hashable, Identifiable {
 
 /// Coverage and completion contract shared by baseline evaluation and the focused checklist editor.
 public enum BaselinePreparedness {
+    /// Alarm markers describe location only. Readiness needs independently recorded presence,
+    /// findable locations, coverage review and a functional check; geometry is not a prerequisite.
+    /// Recency is evaluated separately with the baseline evaluator's injected reference date.
+    public static func hasRecordedAlarmReadiness(_ id: String, household: HouseholdProfile) -> Bool {
+        guard id == "smokeAlarms" || id == "coAlarms",
+              let fact = household.preparedness?.items[id], fact.available.confirmedValue == true,
+              !fact.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              fact.coverageReviewed?.confirmedValue == true, fact.checkedAt != nil else { return false }
+        return true
+    }
+
     /// Recorded ownership/quantity establishes availability only, never location, functional checks,
     /// coverage or suitability. Contradictory supply answers remain incomplete.
     public static func recordedSupplyAvailability(_ id: String, household h: HouseholdProfile) -> Bool? {
@@ -67,6 +78,19 @@ public enum BaselinePreparedness {
     /// The reference date is injected for repeatable maintenance checks. The 180-day review is an app
     /// planning prompt, not a prediction of safety or a substitute for item-specific instructions.
     public static func evaluate(household h: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> [Recommendation] {
+        recommendations(household: h, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate, includeSatisfied: false)
+    }
+
+    /// Tangible progress derives from real records, never generic Done flags or hypothetical choices.
+    /// The same applicability and completion criteria produce both unresolved and recorded lists.
+    public static func recorded(household: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> [Recommendation] {
+        let unresolved = Set(evaluate(household: household, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate).map(\.id))
+        return recommendations(household: household, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate, includeSatisfied: true)
+            .filter { !unresolved.contains($0.id) }
+    }
+
+    private static func recommendations(household h: HouseholdProfile, home: HomeModel?, savedPlaces: [SavedPlace], referenceDate: Date, includeSatisfied: Bool) -> [Recommendation] {
+        let matchingPlaces = HomeMeetingPlaces.placesIncludingLocalMeetup(home: home, places: savedPlaces, recordedAt: h.updatedAt).filter { $0.homeID == (home?.id ?? h.stableHomeID) }
         var out: [Recommendation] = []
         func add(_ id: String, tier: PriorityTier = .scenarioSupplyOrContinuityGap, facts: [String] = [], values: [String: String] = [:], scenarios: [String] = [], sources: [String] = ["S53"], subjectID: String? = nil, whyKey: String? = nil) {
             out.append(Recommendation(actionID: "prep.\(id)", tier: tier, titleKey: "prep.\(id).title", whyKey: whyKey ?? "prep.\(id).why", templateValues: values,
@@ -86,11 +110,11 @@ public enum BaselinePreparedness {
             let fact = h.preparedness?.items[d.id]
             let alarm = d.id == "smokeAlarms" || d.id == "coAlarms"
             let owned = recordedSupplyAvailability(d.id, household: h) == true
-            let complete = owned && hasLocation(fact)
-                && (!d.requiresPhysicalCheck || fact?.checkedAt != nil)
-                && (!alarm || fact?.coverageReviewed?.confirmedValue == true)
-                && (d.id != "extinguisher" || fact?.familyAware?.confirmedValue == true)
-            if !complete {
+            let complete = alarm ? hasRecordedAlarmReadiness(d.id, household: h)
+                : owned && hasLocation(fact)
+                    && (!d.requiresPhysicalCheck || fact?.checkedAt != nil)
+                    && (d.id != "extinguisher" || fact?.familyAware?.confirmedValue == true)
+            if !complete || includeSatisfied {
                 let critical = ["smokeAlarms", "coAlarms", "clearExits"].contains(d.id)
                 add(d.id, tier: critical ? (fact?.available.confirmedValue == false || (alarm && fact?.coverageReviewed?.confirmedValue == false) ? .unmetEssentialRequirement : .blockingUnknownFact) : (d.id == "fireDrill" ? .general : .scenarioSupplyOrContinuityGap),
                     facts: ["preparedness.\(d.id)"], values: ["item": d.id], scenarios: d.scenarioIDs, sources: d.sourceIDs,
@@ -103,45 +127,46 @@ public enum BaselinePreparedness {
                 }
             }
         }
-        if h.preparedness?.reviewedAt.map({ referenceDate.timeIntervalSince($0) < 180 * 86_400 }) != true {
+        if includeSatisfied || h.preparedness?.reviewedAt.map({ referenceDate.timeIntervalSince($0) < 180 * 86_400 }) != true {
             add("reviewCard", tier: .general, facts: ["preparedness.reviewedAt"], sources: ["S52"])
         }
         let water = h.supplies.storedWaterGallons.confirmedValue
         let enoughWater = water.map { $0.isFinite && $0 >= Double(h.people.count) * 3 && $0 >= 0 } == true
             && h.preparedness?.items["water"]?.available.confirmedValue != false
-        if !enoughWater || !hasLocation(h.preparedness?.items["water"]) {
+        if includeSatisfied || !enoughWater || !hasLocation(h.preparedness?.items["water"]) {
             add("water", facts: ["supplies.storedWaterGallons", "preparedness.water.location"], values: ["item": "water", "target": String(h.people.count * 3), "litres": String(Int((Double(h.people.count) * 3 * 3.78541).rounded()))], sources: ["S26"],
                 whyKey: enoughWater ? "prep.location.why" : nil)
         }
         // Supported enrollment is optional coverage metadata, not inferred from an Apple county name.
         if PublicDataPolicy.isAllowedRegionID(h.regionID) {
             let fact = h.preparedness?.items["alerts"]
-            if !owns(fact) || !hasLocation(fact) {
+            if includeSatisfied || !owns(fact) || !hasLocation(fact) {
                 add("alerts", facts: ["regionID", "preparedness.alerts"], sources: ["S52"])
             }
         }
-        if !h.contacts.contains(where: { $0.role != .waterUtility && $0.isComplete }) { add("contact", facts: ["contacts"]) }
-        if !h.contacts.contains(where: { $0.role == .outOfAreaContact && $0.isComplete }) { add("outOfAreaContact", facts: ["contacts"]) }
-        if h.housing.waterSource == .municipal, !hasRecordedReadiness("waterUtility", household: h) {
+        if includeSatisfied || !h.contacts.contains(where: { $0.role != .waterUtility && $0.isComplete }) { add("contact", facts: ["contacts"]) }
+        if includeSatisfied || !h.contacts.contains(where: { $0.role == .outOfAreaContact && $0.isComplete }) { add("outOfAreaContact", facts: ["contacts"]) }
+        if h.housing.waterSource == .municipal, includeSatisfied || !hasRecordedReadiness("waterUtility", household: h) {
             add("waterUtility", facts: ["housing.waterSource", "contacts.waterUtility"], scenarios: ["water-outage", "flash-flood"], sources: ["S24"])
         }
-        if !savedPlaces.contains(where: { $0.purpose == .outsideMeetingPoint }) { add("nearMeetup", facts: ["savedPlaces"], scenarios: ["home-fire"]) }
-        if !savedPlaces.contains(where: { $0.purpose == .backupMeetingPlace }) { add("backupMeetup", facts: ["savedPlaces"]) }
-        if home == nil { add("layout", tier: .multiScenarioPreparation, facts: ["home"], scenarios: ["home-fire", "tornado", "flash-flood"]) }
-        for person in h.people where person.needs.contains(.needsHelperToEvacuate) && person.helperPersonID == nil {
-            add("helper", tier: .unmetEssentialRequirement, facts: ["person.\(person.id).helperPersonID"], values: ["person": person.alias], subjectID: "person.\(person.id)")
+        if includeSatisfied || !matchingPlaces.contains(where: { $0.purpose == .outsideMeetingPoint }) { add("nearMeetup", facts: ["savedPlaces"], scenarios: ["home-fire"]) }
+        if includeSatisfied || !matchingPlaces.contains(where: { $0.purpose == .backupMeetingPlace }) { add("backupMeetup", facts: ["savedPlaces"]) }
+        if includeSatisfied || home == nil { add("layout", tier: .multiScenarioPreparation, facts: ["home"], scenarios: ["home-fire", "tornado", "flash-flood"]) }
+        for person in h.people where person.needs.contains(.needsHelperToEvacuate) {
+            let helperAssigned = h.people.contains { $0.id != person.id && $0.id == person.helperPersonID }
+            if includeSatisfied || !helperAssigned { add("helper", tier: .unmetEssentialRequirement, facts: ["person.\(person.id).helperPersonID"], values: ["person": person.alias], subjectID: "person.\(person.id)") }
         }
         for eq in h.equipment where eq.isEssential {
-            if eq.requiresElectricalPower && !OutageCardBuilder.gaps(for: eq, in: h).filter({ [.noCompatibleBackup, .backupNotTested, .runtimeUnknown].contains($0) }).isEmpty {
+            if eq.requiresElectricalPower && (includeSatisfied || !MedicalBackupReadiness.isReady(eq, in: h)) {
                 add("medicalBackup", tier: .unmetEssentialRequirement, facts: ["equipment.\(eq.id)"], values: ["device": eq.label.isEmpty ? eq.purpose.rawValue : eq.label], sources: ["S25"], subjectID: "equipment.\(eq.id)")
             }
-            if eq.requiresColdStorage && ((eq.storageInstructions ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || eq.storagePlanConfirmed?.confirmedValue != true) {
+            if eq.requiresColdStorage && (includeSatisfied || (eq.storageInstructions ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || eq.storagePlanConfirmed?.confirmedValue != true) {
                 add("coldStorage", tier: .blockingUnknownFact, facts: ["equipment.\(eq.id)"], values: ["device": eq.label.isEmpty ? eq.purpose.rawValue : eq.label], sources: ["S54"], subjectID: "equipment.\(eq.id)")
             }
             if eq.purpose != .refrigeratedMedication {
                 let key = "equipmentSupplies.\(eq.id)"
                 let fact = h.preparedness?.items[key]
-                if !owns(fact) || !hasLocation(fact) {
+                if includeSatisfied || !owns(fact) || !hasLocation(fact) {
                     add("equipmentSupplies", tier: fact?.available.confirmedValue == false ? .unmetEssentialRequirement : .blockingUnknownFact,
                         facts: ["equipment.\(eq.id)", "preparedness.\(key)"], values: ["device": eq.label.isEmpty ? eq.purpose.rawValue : eq.label, "item": key],
                         sources: ["S25"], subjectID: "equipment.\(eq.id)", whyKey: owns(fact) ? "prep.location.why" : nil)
@@ -155,7 +180,7 @@ public enum BaselinePreparedness {
         for person in medicationPeople {
             let key = "medication.person.\(person.id)"
             let fact = h.preparedness?.items[key]
-            if !owns(fact) || !hasLocation(fact) {
+            if includeSatisfied || !owns(fact) || !hasLocation(fact) {
                 add("medication", tier: fact?.available.confirmedValue == false ? .unmetEssentialRequirement : .blockingUnknownFact,
                     facts: ["person.\(person.id).essentialMedication", "preparedness.\(key)"], values: ["person": person.alias, "item": key],
                     sources: ["S54"], subjectID: "person.\(person.id)", whyKey: owns(fact) ? "prep.location.why" : nil)
@@ -165,16 +190,19 @@ public enum BaselinePreparedness {
         for eq in h.equipment where eq.isEssential && eq.purpose == .refrigeratedMedication && !h.people.contains(where: { $0.id == eq.personID }) {
             let key = "medication.equipment.\(eq.id)"
             let fact = h.preparedness?.items[key]
-            if !owns(fact) || !hasLocation(fact) {
+            if includeSatisfied || !owns(fact) || !hasLocation(fact) {
                 add("medication", tier: fact?.available.confirmedValue == false ? .unmetEssentialRequirement : .blockingUnknownFact,
                     facts: ["equipment.\(eq.id)", "preparedness.\(key)"], values: ["person": eq.label.isEmpty ? eq.purpose.rawValue : eq.label, "item": key],
                     sources: ["S54"], subjectID: "equipment.\(eq.id)", whyKey: owns(fact) ? "prep.location.why" : nil)
             }
         }
-        if !h.transport.hasVehicle && !h.transport.alternatives.contains(where: { $0.agreed.confirmedValue == true }) { add("transport", facts: ["transport.alternatives"]) }
+        if includeSatisfied || !TransportReadiness.hasRecordedOption(h) {
+            add("transport", tier: TransportReadiness.needsAccessibleTransport(h) ? .blockingUnknownFact : .scenarioSupplyOrContinuityGap,
+                facts: ["transport.vehicles", "transport.alternatives"] + (TransportReadiness.needsAccessibleTransport(h) ? ["people.needs.usesWheelchair"] : []))
+        }
         if h.pets.contains(where: { $0.count > 0 }) {
             let fact = h.preparedness?.items["pets"]
-            if !owns(fact) || !hasLocation(fact) { add("pets", facts: ["pets", "preparedness.pets"], values: ["item": "pets"], whyKey: owns(fact) ? "prep.location.why" : nil) }
+            if includeSatisfied || !owns(fact) || !hasLocation(fact) { add("pets", facts: ["pets", "preparedness.pets"], values: ["item": "pets"], whyKey: owns(fact) ? "prep.location.why" : nil) }
         }
         return RecommendationRanker.rank(out)
     }

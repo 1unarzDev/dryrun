@@ -18,6 +18,8 @@ public struct NextStep: Sendable, Hashable, Identifiable {
 public struct NextStepsSummary: Sendable, Hashable {
     public var toDo: [NextStep]
     public var completed: [NextStep]
+    /// Factual progress remains visible after its real preparation gap closes. No completion date is inferred.
+    public var recorded: [NextStep] = []
     /// Household facts the rehearsals could not confirm (IDs as in `RehearsalResult.unknowns`), de-duplicated.
     public var unknownFacts: [String]
     /// Scenarios these steps were computed from.
@@ -88,6 +90,9 @@ public enum NextSteps {
         return NextStepsSummary(
             toDo: steps.filter { $0.completedAt == nil },
             completed: steps.filter { $0.completedAt != nil },
+            recorded: BaselinePreparedness.recorded(household: household, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate).map {
+                NextStep(recommendation: $0, sourceScenarioID: $0.scenarioIDs.first ?? "", scenarioIDs: $0.scenarioIDs, completedAt: nil)
+            },
             unknownFacts: Array(Set(results.flatMap(\.unknowns))).sorted(),
             scenarioIDs: results.map(\.input.scenarioID).sorted { PlanBuilder.order($0) < PlanBuilder.order($1) })
     }

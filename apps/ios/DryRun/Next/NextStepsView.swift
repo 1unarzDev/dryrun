@@ -20,6 +20,7 @@ struct NextStepsView: View {
                     toDo(summary)
                     quickActions
                     questions(summary)
+                    recorded(summary)
                     done(summary)
                 } else {
                     SectionCard {
@@ -128,6 +129,21 @@ struct NextStepsView: View {
                 }
                 Text(l("ui.next.answerViaTasks")).font(.footnote).foregroundStyle(.secondary)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func recorded(_ summary: NextStepsSummary) -> some View {
+        if !summary.recorded.isEmpty {
+            SectionCard(title: model.localizer("family.recordedPreparations"), systemImage: "checkmark.circle", tint: Theme.success) {
+                Text(model.localizer("family.recordedExplanation")).font(.footnote).foregroundStyle(.secondary)
+                ForEach(summary.recorded) { step in
+                    NavigationLink { PreparationTaskEditor(step: step, reviewingRecordedFacts: true) } label: {
+                        Label(model.localizer(step.recommendation.titleKey, step.recommendation.localizedTemplateValues(household: model.household, localizer: model.localizer)), systemImage: "checkmark")
+                    }
+                    .accessibilityIdentifier("next.recorded.\(step.id)")
+                }
+            }.accessibilityIdentifier("next.recordedSection")
         }
     }
 
@@ -320,9 +336,10 @@ struct PreparationTaskEditor: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     let step: NextStep
+    var reviewingRecordedFacts = false
     @ViewBuilder var body: some View {
         switch PreparationEditTarget.resolve(step.recommendation, home: model.home) {
-        case .contact(let role): FocusedHouseholdEditor(focus: .newContact(role))
+        case .contact(let role): FocusedHouseholdEditor(focus: reviewingRecordedFacts ? .contacts : .newContact(role))
         case .family(let personID):
             FocusedHouseholdEditor(focus: personID.map { .person($0) } ?? .family)
         case .equipment(let id): MedicalSetupView(equipmentID: id)

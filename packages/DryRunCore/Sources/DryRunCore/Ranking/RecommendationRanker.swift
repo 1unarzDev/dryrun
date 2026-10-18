@@ -153,11 +153,11 @@ public enum ActionRules {
            !BaselinePreparedness.hasRecordedReadiness("waterUtility", household: h) {
             add("act.water.save-utility-contact", tier: .multiScenarioPreparation, facts: ["housing.waterSource", "contacts.waterUtility"])
         }
-        if scen == "flash-flood", h.housing.waterSource == .privateWell,
+        if scen == "flash-flood", !s.variants.contains("householdLeak"), h.housing.waterSource == .privateWell,
            !BaselinePreparedness.hasRecordedReadiness("wellFloodPlan", household: h) {
             add("act.water.well-test-after-flood", tier: .scenarioSupplyOrContinuityGap, facts: ["housing.waterSource", "preparedness.wellFloodPlan"])
         }
-        if scen == "flash-flood", !BaselinePreparedness.hasRecordedReadiness("floodPlan", household: h) {
+        if scen == "flash-flood", !s.variants.contains("householdLeak"), !BaselinePreparedness.hasRecordedReadiness("floodPlan", household: h) {
             add("act.flood.higher-ground-plan", tier: .multiScenarioPreparation, facts: ["preparedness.floodPlan"])
         }
 

@@ -94,15 +94,19 @@ struct RehearsalView: View {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 VStack(alignment: .leading, spacing: Theme.Space.s) {
                     PracticeBanner(text: l("common.practiceLabel")).id("top")
+                    if session?.result.input.effectiveSpatialOptions.floodIsHouseholdLeak == true {
+                        Label(l("scenario.household-leak.title"), systemImage: "drop").font(.headline)
+                    }
                     if let session { clock(session) }
                 }
                 if let session {
-                    if ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
-                        sceneOptions(session)
-                        SpatialRehearsalScene(home: session.result.input.home, household: session.result.input.household,
+                    if let home = session.result.input.home, ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
+                        sceneOptions(session, home: home)
+                        SpatialRehearsalScene(home: home, household: session.result.input.household,
                                               state: session.snapshotAtCursor?.spatialState)
                             .accessibilityIdentifier("rehearsal.scene")
                     }
+                    if session.result.input.home == nil { Label(model.localizer("map.layoutMissing"), systemImage: "house").font(.callout).foregroundStyle(.secondary) }
                     let events = session.visibleEvents
                     if let latest = events.last {
                         EventCard(event: latest, isCurrent: true, result: session.result)
@@ -154,7 +158,7 @@ struct RehearsalView: View {
         }
         .background(Theme.background)
         .safeAreaInset(edge: .bottom) { if let session { controls(session) } }
-        .navigationTitle(l("common.scenario.\(scenarioID)"))
+        .navigationTitle(l(session?.result.input.effectiveSpatialOptions.floodIsHouseholdLeak == true ? "scenario.household-leak.title" : "common.scenario.\(scenarioID)"))
         .navigationBarTitleDisplayMode(.inline)
         .task {
             if model.rehearsal?.result.input.scenarioID != scenarioID {
@@ -164,11 +168,19 @@ struct RehearsalView: View {
             }
         }
         .sheet(isPresented: $showDebrief) { NavigationStack { DebriefView() } }
+        .onChange(of: session?.result.input, initial: true) { _, input in
+            guard let input else { return }
+            let options = input.effectiveSpatialOptions
+            originID = options.originSpaceID ?? ""
+            waterEntryID = options.floodAffectedSpaceIDs.first ?? ""
+            refugeID = options.refugeSpaceID ?? ""
+            householdLeak = options.floodIsHouseholdLeak
+            daytimeStarts = options.startingSpaceIDs
+        }
     }
 
-    private func sceneOptions(_ session: RehearsalCursor) -> some View {
+    private func sceneOptions(_ session: RehearsalCursor, home: HomeModel) -> some View {
         DisclosureGroup(s("Exercise starting assumptions")) {
-            let home = session.result.input.home
             if scenarioID == "home-fire" {
                 Picker(s("Fire starts in one room"), selection: $originID) {
                     Text(s("Use the authored default")).tag("")
@@ -178,12 +190,14 @@ struct RehearsalView: View {
             if scenarioID == "flash-flood" {
                 Toggle(s("Local household leak exercise"), isOn: $householdLeak)
                 Picker(s("Water-affected room (optional)"), selection: $waterEntryID) {
-                    Text(s("Regional warning; indoor extent unknown")).tag("")
+                    Text(householdLeak ? model.localizer("spatial.leak-location-unknown") : s("Regional warning; indoor extent unknown")).tag("")
                     ForEach(home.spaces) { Text($0.label).tag($0.id) }
                 }
-                Picker(s("Higher refuge to review (optional)"), selection: $refugeID) {
-                    Text(s("No refuge established")).tag("")
-                    ForEach(home.spaces.filter { $0.kind != .closet }) { Text($0.label).tag($0.id) }
+                if !householdLeak {
+                    Picker(s("Higher refuge to review (optional)"), selection: $refugeID) {
+                        Text(s("No refuge established")).tag("")
+                        ForEach(home.spaces.filter { $0.kind != .closet }) { Text($0.label).tag($0.id) }
+                    }
                 }
             }
             ForEach(session.result.input.household.people) { person in
@@ -196,7 +210,7 @@ struct RehearsalView: View {
                 var variants = session.result.input.variants.filter { !$0.hasPrefix("origin:") && !$0.hasPrefix("waterEntry:") && !$0.hasPrefix("refuge:") && !$0.hasPrefix("start:") && $0 != "householdLeak" }
                 if !originID.isEmpty { variants.append("origin:\(originID)") }
                 if !waterEntryID.isEmpty { variants.append("waterEntry:\(waterEntryID)") }
-                if !refugeID.isEmpty { variants.append("refuge:\(refugeID)") }
+                if !householdLeak && !refugeID.isEmpty { variants.append("refuge:\(refugeID)") }
                 if householdLeak { variants.append("householdLeak") }
                 for key in daytimeStarts.keys.sorted() { if let room = daytimeStarts[key], !room.isEmpty { variants.append("start:\(key)|\(room)") } }
                 Task { await model.startRehearsal(scenarioID: scenarioID, variants: variants) }

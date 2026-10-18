@@ -19,8 +19,8 @@ October 17 revision. These are records of preparation, never a safety score or c
 | Trusted/out-of-area contact | Structured name and usable recorded phone; a name alone is incomplete | Contacts | Reconnection / S52 |
 | Near-home / backup meetup | Separate saved-place purposes, with readable label/address/instructions; indoor annotations alone do not substitute a geographic record | Shared place selector | Fire / displacement / S52 |
 | Helpers | Relevant assistance need and explicit helper ID; no duty to re-enter danger | Family | Fire / relocation / S19 |
-| No-car transport | No vehicle plus an agreed alternative | Household travel | Relocation / S52 |
-| Essential power support | Exact device's confirmed compatible source, source setup check, documented runtime; ownership alone does not satisfy | Shared equipment/backup form | Outage / S25 |
+| Usable transport | A recorded vehicle or agreed alternative, with confirmed wheelchair access when applicable; shared with exercise transport eligibility | Household travel | Relocation / S52 |
+| Essential power support | Exact device's recorded compatible source, source setup, generator placement/solar outage prerequisites, output/shared-load allocation and positive documented runtime; same allocator as the exercise. Source setup never claims a per-device test. Unknown W/Wh remain optional for an unshared load with documented runtime | Shared equipment/backup form | Outage / S25 |
 | Cold medicine storage | Medicine-specific recorded instructions, explicit storage requirement/unknown, planned cold support; no invented storage limit | Shared medical form | Outage / S54 |
 | Flood and heat/cold arrangements | Explicit recorded household plan/location, not an address-level hazard prediction | Preparation record | Flood / heat / cold / S23,S53 |
 | Home/shelter geometry | Optional geometry for general use; spatial routes require reviewed relevant exits/grade/connections/shelter | Home review | Fire/flood/tornado / S19,S23,S22 |
@@ -43,3 +43,5 @@ person/device captions in the list and editor. PreparationDraft synchronizes onl
 answers, so adding a location/contact cannot replace a known supply answer with unknown. The card uses the same
 recordedSupplyAvailability rules as baseline evaluation. Medication locations follow Medication selection;
 equipment-supply locations follow Critical information selection. Neither depends on generic private notes.
+
+Backup preparation and both card forms use `MedicalBackupReadiness`, which delegates to `BackupAllocator` using recorded initial source energy and all household electrical loads. A checked portable generator without confirmed outdoor placement, solar without confirmed outage operation, a known output shortfall, or unresolved shared draw cannot close the device task or produce a switch instruction. Optional technical fields and the existing solar-outage confirmation are available in the shared editor; no technical or runtime value is generated. Cold-only medicine notes follow the explicit private-note selection independently of electrical requirements.

@@ -48,7 +48,7 @@ public struct PlanPage: Codable, Sendable, Hashable, Identifiable {
 
 /// The validated, localized source for both the on-device viewer and the PDF renderer.
 public struct PlanDocument: Codable, Sendable, Hashable {
-    public static let schemaVersion = 1
+    public static let schemaVersion = 2
     public var schemaVersion: Int
     public var locale: String
     public var householdID: String
@@ -79,10 +79,11 @@ public struct PlanDocument: Codable, Sendable, Hashable {
 
     /// True when the plan was built from older household/home/content than `current`.
     public func isStale(household: HouseholdProfile, home: HomeModel?, contentVersion: String, savedPlaces: [SavedPlace]? = nil) -> Bool {
+        if schemaVersion != Self.schemaVersion { return true }
         if household.id != householdID || household.revision != householdRevision || (home?.id ?? household.stableHomeID) != homeID
             || (home?.revision ?? 0) != homeRevision || contentVersion != self.contentVersion { return true }
         if let savedPlaces {
-            return visualSnapshot?.savedPlaces.sorted { $0.id < $1.id } != savedPlaces.filter { $0.homeID == homeID }.sorted { $0.id < $1.id }
+            return visualSnapshot?.savedPlaces.sorted { $0.id < $1.id } != HomeMeetingPlaces.placesIncludingLocalMeetup(home: home, places: savedPlaces, recordedAt: household.updatedAt).filter { $0.homeID == homeID }.sorted { $0.id < $1.id }
         }
         return false
     }
@@ -159,11 +160,14 @@ public struct PlanVisualSnapshot: Codable, Sendable, Hashable {
     public var routeScenarioIDs: [String]? = nil
     public var personLabels: [String: String]? = nil
     public var scenarioLabels: [String: String]? = nil
+    public var exerciseStates: [PlanExerciseSnapshot]? = nil
+    /// Localized once with the document, so both print and phone show exactly the same qualifications.
+    public var panelDetails: [String: [String]]? = nil
     public var homeCoordinate: GeographicCoordinate?
     public var fictional: Bool
-    public init(home: HomeModel?, routes: [RouteResult], savedPlaces: [SavedPlace], homeCoordinate: GeographicCoordinate?, fictional: Bool, routeScenarioIDs: [String]? = nil, personLabels: [String: String]? = nil, scenarioLabels: [String: String]? = nil) {
+    public init(home: HomeModel?, routes: [RouteResult], savedPlaces: [SavedPlace], homeCoordinate: GeographicCoordinate?, fictional: Bool, routeScenarioIDs: [String]? = nil, personLabels: [String: String]? = nil, scenarioLabels: [String: String]? = nil, exerciseStates: [PlanExerciseSnapshot]? = nil) {
         self.home = home; self.routes = routes; self.savedPlaces = savedPlaces
         self.homeCoordinate = homeCoordinate; self.fictional = fictional; self.routeScenarioIDs = routeScenarioIDs
-        self.personLabels = personLabels; self.scenarioLabels = scenarioLabels
+        self.personLabels = personLabels; self.scenarioLabels = scenarioLabels; self.exerciseStates = exerciseStates
     }
 }

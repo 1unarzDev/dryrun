@@ -21,6 +21,11 @@ final class RoomCaptureController: NSObject, ObservableObject {
     @Published private(set) var captureView: RoomCaptureView?
     @Published private(set) var captureGeneration = 0
     private var sharedARSession: ARSession?
+    private var captureFrameID = UUID().uuidString
+    private var previousFrameID: String?
+    /// Completion belongs to the selected group, never to the phase of a newer live capture.
+    private var groupCompleted = false
+    private var previousGroupCompleted = false
     private var delegates: [CaptureGenerationDelegate] = []
     private var wantsAnotherRoom = false
     /// Session state is deliberately checked before every callback. RoomPlan can deliver a processed result after
@@ -58,9 +63,12 @@ final class RoomCaptureController: NSObject, ObservableObject {
         guard phase == .idle || hasFailed else { return }
         // Retrying after an interruption starts a new AR frame. Previously captured rooms cannot be positioned
         // relative to that frame by guessing, so multiroom import will remain explicitly unaligned.
-        if hasFailed, !rooms.isEmpty { previousGroup = rooms; rooms = [] }
+        if hasFailed, !rooms.isEmpty {
+            previousGroup = rooms; previousFrameID = captureFrameID
+            previousGroupCompleted = groupCompleted; rooms = []
+        }
         sharedFrameValid = true
-        if hasFailed { sharedARSession = nil }
+        if hasFailed { sharedARSession = nil; captureFrameID = UUID().uuidString; groupCompleted = false }
         beginRoom()
     }
 
@@ -89,6 +97,9 @@ final class RoomCaptureController: NSObject, ObservableObject {
         captureView = nil
         rooms = []
         previousGroup = []
+        previousFrameID = nil
+        groupCompleted = false; previousGroupCompleted = false
+        captureFrameID = UUID().uuidString
         sharedFrameValid = true
         phase = .idle
     }
@@ -110,6 +121,11 @@ final class RoomCaptureController: NSObject, ObservableObject {
         return false
     }
 
+    func retainDraftAfterProcessingFailure(_ message: String) {
+        // makeProposedHome already froze capture. Keep its selected rooms and present Retry / Use saved rooms.
+        phase = .failed(message)
+    }
+
     fileprivate func received(_ room: CapturedRoom, error: Error?, generation: Int) {
         guard phase == .processing, callbackGate.accept(from: generation) else { return }
         if let error {
@@ -121,7 +137,7 @@ final class RoomCaptureController: NSObject, ObservableObject {
         if wantsAnotherRoom {
             wantsAnotherRoom = false
             beginRoom()
-        } else { phase = .finished }
+        } else { groupCompleted = true; phase = .finished }
     }
 
     fileprivate func failedCapture(_ message: String, generation: Int) {
@@ -134,20 +150,38 @@ final class RoomCaptureController: NSObject, ObservableObject {
 
     /// Merge into one structure (shared frame) and convert to a PROPOSED HomeModel.
     func makeProposedHome(usePrevious: Bool = false) async throws -> ScanImportResult {
-        let generation = callbackGeneration
         let capturedRooms = usePrevious ? previousGroup : rooms
-        let completed = phase == .finished
+        guard !capturedRooms.isEmpty else { throw ScanImportError.empty }
+        let completed = usePrevious ? previousGroupCompleted : groupCompleted
         let frameValid = usePrevious || sharedFrameValid
+        let selectedFrameID = usePrevious ? previousFrameID : captureFrameID
+        // Freeze the selected completed group before awaiting StructureBuilder. In particular, choosing
+        // earlier rooms abandons the newer live capture; its delegate must never append into this draft.
+        callbackGate.invalidate()
+        callbackGeneration = callbackGate.generation
+        let generation = callbackGeneration
+        wantsAnotherRoom = false
+        phase = .processing
+        captureView?.captureSession.stop()
+        sharedARSession?.pause()
+        if usePrevious {
+            rooms = capturedRooms; previousGroup = []
+            if let selectedFrameID { captureFrameID = selectedFrameID }
+            groupCompleted = completed; previousGroupCompleted = false
+            previousFrameID = nil
+        }
         let homeID = "home-scan-\(UUID().uuidString.prefix(8).lowercased())"
         if capturedRooms.count > 1 {
             let builder = StructureBuilder(options: [.beautifyObjects])
             let structure = try await builder.capturedStructure(from: capturedRooms)
             guard generation == callbackGeneration else { throw CancellationError() }
-            let capture = RoomPlanMapping.capture(rooms: structure.rooms, sharedFrame: frameValid,
+            var capture = RoomPlanMapping.capture(rooms: structure.rooms, sharedFrame: frameValid,
                                                   completed: completed)
+            capture.coordinateFrameID = selectedFrameID
             return try ScanImport.importCapture(capture, homeID: homeID)
         }
-        let capture = RoomPlanMapping.capture(rooms: capturedRooms, sharedFrame: true, completed: completed)
+        var capture = RoomPlanMapping.capture(rooms: capturedRooms, sharedFrame: true, completed: completed)
+        capture.coordinateFrameID = selectedFrameID
         return try ScanImport.importCapture(capture, homeID: homeID)
     }
 }
@@ -295,7 +329,7 @@ struct RoomScanFlowView: View {
                     .buttonStyle(.borderedProminent)
             }
         }
-        .disabled(controller.phase == .processing)
+        .disabled(controller.phase == .processing || building)
         .padding()
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
     }
@@ -328,6 +362,12 @@ struct RoomScanFlowView: View {
             guard generation == buildGeneration else { return }
             result = proposed
         } catch is CancellationError { }
-        catch { if generation == buildGeneration { errorText = model.localizer("spatial.scan-processing-failed", ["error": error.localizedDescription]) } }
+        catch {
+            if generation == buildGeneration {
+                let message = model.localizer("spatial.scan-processing-failed", ["error": error.localizedDescription])
+                controller.retainDraftAfterProcessingFailure(message)
+                errorText = message
+            }
+        }
     }
 }

@@ -26,3 +26,11 @@ are usability targets, not measured outcomes. Use USABILITY_PROTOCOL and results
 no testers, reviews, partnerships, endorsements or injury-reduction outcomes have been invented.
 
 Language/unit demonstration after native verification: switch EN/ES/VI with the same fictional household and show localized selected room/device values, exercise time, card date/decimal, and unchanged proper names/notes. Compare a separate fictional non-US/unknown-location setup for litres and local-emergency-number prompt without changing the canonical rehearsal evidence. Human translation review is still pending.
+
+Latest demonstration gates after a successful native build: start all six exercises with a personal layoutless
+household and show useful household decisions without a fabricated scene. With the fictional home, select a
+fire origin/start, finish and open the selected plan: same seed/choices, current exclusions, start marker and
+qualified primary/alternative legs. Contrast a local household leak with regional flood instructions. Save a
+contact/meetup and show its preparation close into Recorded preparations, then review it directly. Show a
+source resource's save/contact/directions sheet, two persistent meetup pins and updated textual PDF details.
+Do not record native success until the Mac run actually verifies it.

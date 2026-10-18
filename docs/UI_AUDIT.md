@@ -42,6 +42,19 @@ subjects, permanent preparation loops, unreachable Reopen, broad Add contact for
 route requests outliving selected destinations, missing scene-floor selection, invalid exit styling, missing
 no-route occupant markers, scan-review dismissal and mismatched highlights. Typed focused editors and exact
 subject captions now connect those facts to current tasks/cards. These are source/core findings, not observed
-native usability results. The 33 native tests and current tours remain unrun; no screenshot-based review is claimed.
+native usability results. The 39 native tests and current tours remain unrun; no screenshot-based review is claimed.
 
 The selected-language follow-up closes source-level picker values, marker defaults, Help controls/statuses, phone actions, scan coaching, exercise clock/plurals, route facts, validation messages and export dates/decimals/provenance. All offered packs pass structural completeness, but ES/VI remain drafts. Official English resource text is identified; unknown SDK diagnostics and personal notes stay unchanged. Country water units now agree across the focused editor, tasks, rehearsal quantities/events/comparison and plan. New EN/ES/VI portable card/full-plan references were inspected as recorded in output/README; they do not verify native phone layouts. Seven app presentation-helper tests ran in a Linux harness, not an iOS test host.
+
+## Final connected-flow source review
+
+Prepare now lists recorded factual preparations for review/edit, separately from unresolved priorities. All
+six rehearsals can start without geometry; the unavailable spatial state is explicit. Selected Plan preview
+and Share/Print generate the same persisted document, lock selections during preparation and reject stale async
+map results. The family card precedes diagrams in the selected phone document. Letter/A4 choice reaches sharing
+from that preview. Home panels retain current affected/exposed rooms, start markers and no-route explanations.
+
+Independent AI review found local-meetup migration/canvas-edit feedback and default-label localization defects;
+regressions and fixes were integrated before the final portable run. Portable PDF inspection also found room
+names could be covered by furniture fills; label drawing was moved after furniture in reference/native output.
+These are source/reference-artifact findings; actual native views and accessibility remain unrun.

@@ -47,7 +47,20 @@ struct PlanDemoDumpTests {
             let full = PlanBuilder.build(household: h, home: SampleHomes.ranch, savedPlaces: places, results: results,
                 localizer: e.content.localizer(for: locale), resources: [], contentVersion: e.content.contentVersion,
                 generatedAt: LeadTestSupport.fixedDate, options: options)
-            try DryRunJSON.encoder().encode(full).write(to: dir.appendingPathComponent("full-\(locale).json"))
+            // Reference-only envelope supplements the PlanDocument JSON with its computed plain panel
+            // descriptors. Production persistence remains one canonical geometry/routes snapshot.
+            var reference = try JSONSerialization.jsonObject(with: DryRunJSON.encoder().encode(full)) as! [String: Any]
+            reference["referenceHomePanels"] = try JSONSerialization.jsonObject(with: DryRunJSON.encoder().encode(full.visualSnapshot?.homePanels ?? []))
+            reference["referencePanelTitles"] = Dictionary(uniqueKeysWithValues: (full.visualSnapshot?.homePanels ?? []).map { ($0.id, $0.title(in: full.visualSnapshot!)) })
+            if let snapshot = full.visualSnapshot, let home = snapshot.home {
+                let positions = Dictionary(uniqueKeysWithValues: snapshot.homePanels.compactMap { panel -> (String, Vec2)? in
+                    guard let point = HomeScenePresentation.startingRoomPosition(in: home, route: panel.route),
+                          HomeScenePresentation.startingRoom(in: home, route: panel.route)?.floorID == panel.floorID else { return nil }
+                    return (panel.id, point)
+                })
+                reference["referenceStartPositions"] = try JSONSerialization.jsonObject(with: DryRunJSON.encoder().encode(positions))
+            }
+            try JSONSerialization.data(withJSONObject: reference, options: [.prettyPrinted, .sortedKeys]).write(to: dir.appendingPathComponent("full-\(locale).json"))
             var noLayout = h; noLayout.equipment = []; noLayout.backupPower = []
             var card = PlanBuilder.build(household: noLayout, home: nil, savedPlaces: places, results: [],
                 localizer: e.content.localizer(for: locale), resources: [], contentVersion: e.content.contentVersion,

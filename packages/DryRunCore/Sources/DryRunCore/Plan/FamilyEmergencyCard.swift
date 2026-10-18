@@ -133,8 +133,14 @@ public enum FamilyEmergencyCardBuilder {
             if eq.requiresElectricalPower {
                 let subject = equipmentSubject(eq)
                 let backups = OutageCardBuilder.compatibleBackups(for: eq, in: h)
-                let backupDetails = backups.isEmpty ? [localized("card.backup.none")] : backups.map {
-                    localized($0.setupConfirmed.confirmedValue == true ? "card.backup.tested" : "card.backup.notTested", ["backup": displayLabel($0)])
+                var backupDetails = backups.isEmpty ? [localized("card.backup.none")] : backups.map { backup in
+                    let status = localized(backup.setupConfirmed.confirmedValue == true ? "card.backup.tested" : "card.backup.notTested", ["backup": displayLabel(backup)])
+                    let usability = BackupAllocator.usability(backup, energyRemaining: backup.usableEnergyWh.confirmedValue)
+                    return usability == .usable ? status : status + " " + localized("card.backup.prerequisites", ["reason": localized("reason.\(usability.rawValue)")])
+                }
+                if !backups.isEmpty, let assignment = MedicalBackupReadiness.assignment(for: eq, in: h), assignment.state != .operational,
+                   !backups.contains(where: { BackupAllocator.usability($0, energyRemaining: $0.usableEnergyWh.confirmedValue).rawValue == assignment.reason }) {
+                    backupDetails.append(localized("card.backup.prerequisites", ["reason": localized("reason.\(assignment.reason)")]))
                 }
                 let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
                     localized("plan.equipment.runtimeKnown", ["hours": PlanBuilder.formatNumber($0, locale: l.locale)])

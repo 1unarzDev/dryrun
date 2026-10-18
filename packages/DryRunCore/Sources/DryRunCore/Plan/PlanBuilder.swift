@@ -33,12 +33,19 @@ public enum PlanBuilder {
         options: Options = Options()
     ) -> PlanDocument {
         let b = Builder(l: l)
-        let matchingPlaces = savedPlaces.filter { $0.homeID == (home?.id ?? household.stableHomeID) }
+        let matchingPlaces = HomeMeetingPlaces.placesIncludingLocalMeetup(home: home, places: savedPlaces, recordedAt: household.updatedAt).filter { $0.homeID == (home?.id ?? household.stableHomeID) }
         var pages: [PlanPage] = [FamilyEmergencyCardBuilder.page(household: household, savedPlaces: matchingPlaces, builder: b, selection: options.familyCardSelection, timeZone: options.timeZone), essentialsPage(b, household, home, matchingPlaces, resources, contentVersion, generatedAt, options)]
-        for result in (home == nil ? [] : results).sorted(by: { order($0.input.scenarioID) < order($1.input.scenarioID) }) {
-            pages.append(scenarioPage(b, result, household, home!, resources, options))
+        for result in results.sorted(by: { order($0.input.scenarioID) < order($1.input.scenarioID) }) {
+            pages.append(scenarioPage(b, result, household, home, resources, options))
         }
         b.sourceIDs.append(contentsOf: pages.flatMap(\.sections).flatMap(\.lines).flatMap(\.sourceIDs))
+        var visualSnapshot = PlanVisualSnapshot(home: exportHome(home, options: options, localizer: l), routes: results.flatMap { currentRoutes($0) }, savedPlaces: matchingPlaces.sorted { $0.id < $1.id }, homeCoordinate: household.privateLocation.flatMap { location in
+                guard let lat = location.latitude, let lon = location.longitude else { return nil }; return GeographicCoordinate(latitude: lat, longitude: lon)
+            }, fictional: household.isFictional || home?.source == .sample || home?.isFictional == true, routeScenarioIDs: results.flatMap { result in currentRoutes(result).map { _ in result.input.scenarioID } }, personLabels: Dictionary(uniqueKeysWithValues: household.people.map { ($0.id, $0.localizedLabel(l)) }), scenarioLabels: scenarioLabels(results, localizer: l), exerciseStates: results.compactMap { result in
+                guard let state = result.snapshots.last(where: { $0.spatialState != nil })?.spatialState else { return nil }
+                return PlanExerciseSnapshot(scenarioID: result.input.scenarioID, state: state)
+            })
+        visualSnapshot.panelDetails = Dictionary(uniqueKeysWithValues: visualSnapshot.homePanels.map { ($0.id, $0.details(in: visualSnapshot, localizer: l)) })
         let anyDraft = b.usedDraft
         let anyFallback = b.usedFallback
         return PlanDocument(
@@ -52,9 +59,7 @@ public enum PlanBuilder {
             contentReviewBanner: l.text("plan.contentDraftBanner").text,
             footer: l.text("plan.footer.practice").text,
             sourceIDs: Array(Set(b.sourceIDs)).sorted(),
-            visualSnapshot: PlanVisualSnapshot(home: exportHome(home, options: options, localizer: l), routes: results.flatMap { currentRoutes($0) }, savedPlaces: matchingPlaces.sorted { $0.id < $1.id }, homeCoordinate: household.privateLocation.flatMap { location in
-                guard let lat = location.latitude, let lon = location.longitude else { return nil }; return GeographicCoordinate(latitude: lat, longitude: lon)
-            }, fictional: household.isFictional || home?.source == .sample || home?.isFictional == true, routeScenarioIDs: results.flatMap { result in currentRoutes(result).map { _ in result.input.scenarioID } }, personLabels: Dictionary(uniqueKeysWithValues: household.people.map { ($0.id, $0.localizedLabel(l)) }), scenarioLabels: Dictionary(uniqueKeysWithValues: Set(results.map { $0.input.scenarioID }).map { ($0, l("common.scenario.\($0)")) }))
+            visualSnapshot: visualSnapshot
         )
     }
 
@@ -67,6 +72,20 @@ public enum PlanBuilder {
 
     static let scenarioOrder = ["home-fire", "tornado", "flash-flood", "freeze-power-loss", "heat-grid-strain", "water-outage"]
     static func order(_ id: String) -> Int { scenarioOrder.firstIndex(of: id) ?? 99 }
+
+    static func scenarioLabelKey(_ result: RehearsalResult) -> String {
+        isHouseholdLeak(result) ? "scenario.household-leak.title" : "common.scenario.\(result.input.scenarioID)"
+    }
+
+    private static func isHouseholdLeak(_ result: RehearsalResult) -> Bool {
+        result.input.scenarioID == "flash-flood" && result.input.effectiveSpatialOptions.floodIsHouseholdLeak
+    }
+
+    private static func scenarioLabels(_ results: [RehearsalResult], localizer: Localizer) -> [String: String] {
+        Dictionary(grouping: results, by: { $0.input.scenarioID }).mapValues { matching in
+            Set(matching.map { localizer(scenarioLabelKey($0)) }).sorted().joined(separator: " / ")
+        }
+    }
 
     // MARK: - Pages
 
@@ -118,16 +137,18 @@ public enum PlanBuilder {
         return PlanPage(id: "essentials", kind: .essentials, title: b.l("plan.title.essentials"), sections: sections)
     }
 
-    private static func scenarioPage(_ b: Builder, _ r: RehearsalResult, _ h: HouseholdProfile, _ home: HomeModel,
+    private static func scenarioPage(_ b: Builder, _ r: RehearsalResult, _ h: HouseholdProfile, _ home: HomeModel?,
                                      _ resources: [PublicResource], _ options: Options) -> PlanPage {
         let id = r.input.scenarioID
-        let sources = b.l("plan.scenario.\(id).sources").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        let leak = isHouseholdLeak(r)
+        let contentID = leak ? "household-leak" : id
+        let sources = b.l("plan.scenario.\(contentID).sources").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
         var sections: [PlanSection] = []
 
         var immediate: [PlanLine] = []
         var i = 1
-        while b.localizer.has("plan.scenario.\(id).immediate.\(i)", in: "en") {
-            let key = "plan.scenario.\(id).immediate.\(i)"
+        while b.localizer.has("plan.scenario.\(contentID).immediate.\(i)", in: "en") {
+            let key = "plan.scenario.\(contentID).immediate.\(i)"
             // Classify from the source-language text so a prohibition keeps its emphasis in every locale.
             let source = b.localizer.with(locale: b.localizer.sourceLocale).text(key).text.lowercased()
             let style: PlanLineStyle = (source.contains("never") || source.contains("do not") || source.contains("don't")) ? .prohibition : .normal
@@ -137,11 +158,23 @@ public enum PlanBuilder {
             immediate.append(b.line(key, ["emergencyNumber": emergencyNumber], style: style, sources: sources + numberSources))
             i += 1
         }
+        if leak { immediate.append(b.line("plan.scenario.household-leak.sourceScope", style: .caveat, sources: sources)) }
         sections.append(b.section("immediate", "plan.section.immediate", immediate, critical: true))
 
         if id == "home-fire" || id == "tornado" || id == "flash-flood" {
             var homePlan: [PlanLine] = []
-            if id == "tornado" {
+            if home == nil {
+                homePlan.append(b.line("map.layoutMissing", style: .caveat))
+                sections.append(b.section("homeplan", "plan.section.homeplan", homePlan, critical: true))
+            } else if let home, leak {
+                let affectedIDs = r.snapshots.last(where: { $0.spatialState != nil })?.spatialState?.affectedSpaceIDs
+                    ?? r.input.effectiveSpatialOptions.floodAffectedSpaceIDs
+                let rooms = Array(Set(affectedIDs)).sorted().compactMap { home.space($0)?.label }
+                homePlan.append(rooms.isEmpty ? b.line("plan.scenario.household-leak.areaUnknown")
+                    : b.line("plan.scenario.household-leak.affected", ["rooms": rooms.joined(separator: ", ")]))
+                homePlan.append(b.line("plan.scenario.household-leak.noRoute", style: .caveat, sources: sources))
+                sections.append(b.section("homeplan", "plan.section.homeplan", homePlan, critical: true))
+            } else if let home, id == "tornado" {
                 if h.housing.homeType == .manufacturedHome {
                     homePlan.append(b.line("plan.shelter.manufactured", style: .prohibition, sources: ["S22"]))
                 } else if let shelter = currentShelter(r, home: home) {
@@ -152,7 +185,7 @@ public enum PlanBuilder {
                 }
                 homePlan.append(contentsOf: routeLines(b, currentRoutes(r), home, h))
                 sections.append(b.section("shelter", "plan.section.shelter", homePlan, critical: true))
-            } else if id == "home-fire" {
+            } else if let home, id == "home-fire" {
                 homePlan.append(contentsOf: routeLines(b, currentRoutes(r), home, h))
                 homePlan.append(meetingLine(b, home))
                 homePlan.append(b.line("plan.route.caveat", style: .caveat))
@@ -192,7 +225,7 @@ public enum PlanBuilder {
 
         sections.append(b.section("help", "plan.section.help", helpLines(b, resources, countryCode: h.privateLocation?.countryCode), critical: true))
 
-        let title = b.l("plan.title.scenario", ["scenario": b.l("common.scenario.\(id)")])
+        let title = b.l("plan.title.scenario", ["scenario": b.l(scenarioLabelKey(r))])
         return PlanPage(id: "scenario-\(id)", kind: .scenario(id), title: title, sections: sections)
     }
 
@@ -294,18 +327,20 @@ public enum PlanBuilder {
                 let storage = eq.storageInstructions?.isEmpty == false ? eq.storageInstructions! : b.l("family.providerPrompt")
                 lines.append(PlanLine(text: eq.localizedLabel(b.localizer) + ": " + storage, style: .normal, key: "private.storageInstructions", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: ["S54"]))
             }
-            guard eq.requiresElectricalPower else { continue }
-            let confirmedBackups = eq.compatibleBackupIDs.filter { id in
-                h.backupPower.first(where: { $0.id == id })?.setupConfirmed.confirmedValue == true
+            if eq.requiresElectricalPower {
+                let assignment = MedicalBackupReadiness.assignment(for: eq, in: h)
+                let state: String
+                if assignment?.state == .operational { state = b.l("plan.equipment.backup.confirmed") }
+                else if eq.compatibleBackupIDs.isEmpty && h.backupPower.isEmpty { state = b.l("plan.equipment.backup.none") }
+                else { state = b.l("plan.equipment.backup.unconfirmed") }
+                let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
+                    b.l("plan.equipment.runtimeKnown", ["hours": formatNumber($0, locale: b.localizer.locale)])
+                } ?? b.l("plan.equipment.runtimeUnknown")
+                lines.append(b.line("plan.equipment.line", ["label": eq.localizedLabel(b.localizer), "backupState": state, "runtime": runtime], sources: ["S25"]))
+                if let assignment, assignment.state != .operational {
+                    lines.append(b.line("card.backup.prerequisites", ["reason": b.l("reason.\(assignment.reason)")], style: .caveat, sources: ["S25"]))
+                }
             }
-            let state: String
-            if !confirmedBackups.isEmpty { state = b.l("plan.equipment.backup.confirmed") }
-            else if eq.compatibleBackupIDs.isEmpty && h.backupPower.isEmpty { state = b.l("plan.equipment.backup.none") }
-            else { state = b.l("plan.equipment.backup.unconfirmed") }
-            let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
-                b.l("plan.equipment.runtimeKnown", ["hours": formatNumber($0, locale: b.localizer.locale)])
-            } ?? b.l("plan.equipment.runtimeUnknown")
-            lines.append(b.line("plan.equipment.line", ["label": eq.localizedLabel(b.localizer), "backupState": state, "runtime": runtime], sources: ["S25"]))
             if let notes = eq.carePlanNotes, !notes.isEmpty, options.includePrivateNotes {
                 lines.append(PlanLine(text: notes, style: .normal, key: "private.carePlanNotes", resolvedLocale: b.localizer.locale,
                                       isFallback: false, isDraftTranslation: false, sourceIDs: []))

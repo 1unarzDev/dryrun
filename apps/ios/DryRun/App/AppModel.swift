@@ -221,9 +221,9 @@ final class AppModel {
             var restored = snapshot.household
             if restored.homeID == nil, let existingHome = snapshot.home { restored.homeID = existingHome.id }
             household = restored
-            home = snapshot.home
+            savedPlaces = HomeMeetingPlaces.placesIncludingLocalMeetup(home: snapshot.home, places: snapshot.savedPlaces, recordedAt: restored.updatedAt)
+            home = snapshot.home.map { HomeMeetingPlaces.synchronize($0, places: savedPlaces) }
             savedPlan = snapshot.savedPlan
-            savedPlaces = snapshot.savedPlaces
             locale = snapshot.household.preferredLocale
             configureRegionalResources()
             phase = .ready
@@ -240,12 +240,13 @@ final class AppModel {
     func useSampleHousehold(_ sample: HouseholdProfile) async {
         var sample = sample
         sample.homeID = SampleHomes.ranch.id
-        let candidateHome = SampleHomes.ranch
-        let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: [])
+        let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: SampleHomes.ranch, places: [], recordedAt: sample.updatedAt)
+        let candidateHome = HomeMeetingPlaces.synchronize(SampleHomes.ranch, places: places)
+        let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: places)
         guard await save(snapshot: snapshot) else { return }
         household = sample
         home = candidateHome
-        savedPlaces = []
+        savedPlaces = places
         configureRegionalResources()
         invalidateDerived()
         locale = sample.preferredLocale
@@ -339,7 +340,8 @@ final class AppModel {
         if let old = home, old != newHome, old.revision == newHome.revision { h.bumpRevision() }
         guard let household else { return false }
         h.id = home?.id ?? household.stableHomeID
-        h = HomeMeetingPlaces.synchronize(h, places: savedPlaces)
+        let candidatePlaces = HomeMeetingPlaces.placesAfterHomeEdit(previous: home, updated: h, places: savedPlaces, editedAt: Date())
+        h = HomeMeetingPlaces.synchronize(h, places: candidatePlaces)
         if let old = home { h.revision = max(h.revision, old.revision + 1) }
         var candidateHousehold = household
         candidateHousehold.homeID = h.id
@@ -347,14 +349,13 @@ final class AppModel {
             candidateHousehold.preparedness?.items["clearExits"]?.checkedAt = nil
             candidateHousehold.preparedness?.items["fireDrill"]?.checkedAt = nil
         }
-        // A replacement home cannot keep references to rooms that no longer exist. Keep unresolved
-        // assignments explicit so the rehearsal engine returns unknownStartSpace instead of guessing.
-        let validSpaceIDs = Set(h.spaces.map(\.id))
-        for index in candidateHousehold.people.indices where !validSpaceIDs.contains(candidateHousehold.people[index].sleepingSpaceID ?? "") {
-            candidateHousehold.people[index].sleepingSpaceID = nil
+        // A scan ordinal is not room identity. Preserve only supported capture-lineage/manual
+        // associations, and leave unrelated rescans explicitly unassigned for the focused review.
+        for index in candidateHousehold.people.indices {
+            candidateHousehold.people[index].sleepingSpaceID = HomeRoomAssociations.remappedRoomID(
+                candidateHousehold.people[index].sleepingSpaceID, from: home, to: h)
         }
         if candidateHousehold != household { candidateHousehold.bumpRevision() }
-        let candidatePlaces = savedPlaces
         let snapshot = PrivateSnapshot(household: candidateHousehold, home: h, savedPlan: savedPlan,
                                        savedPlaces: candidatePlaces)
         guard await save(snapshot: snapshot) else { return false }
@@ -419,7 +420,7 @@ final class AppModel {
     // MARK: - Rehearsal
 
     func startRehearsal(scenarioID: String, variants: [String] = []) async {
-        guard let household, let home, let content, let scenarios,
+        guard let household, let content, let scenarios,
               let scenario = scenarios.scenarios.first(where: { $0.id == scenarioID }) else { return }
         let input = RehearsalInput(household: household, home: home, scenarioID: scenarioID,
                                    scenarioVersion: scenario.version, contentVersion: content.contentVersion,
@@ -486,8 +487,16 @@ final class AppModel {
         let resources = regionalResources?.resources(for: household.regionID) ?? content.resources(forRegion: household.regionID)
         let places = savedPlaces
         let home = self.home
-        let inputs = scenarioIDs.compactMap { id -> RehearsalInput? in
-            guard let home, let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }
+        // A matching real exercise retains its recorded seed/origin/starts/choices. Hypothetical
+        // comparisons are never adopted as household facts or silently exported as actual readiness.
+        let practicedInput = rehearsal?.result.input
+        let inputs = Array(Set(scenarioIDs)).sorted().compactMap { id -> RehearsalInput? in
+            guard let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }
+            if let practicedInput, practicedInput.scenarioID == id, practicedInput.household == household,
+               practicedInput.home == home, practicedInput.contentVersion == content.contentVersion,
+               practicedInput.scenarioVersion == s.version, practicedInput.interventions.isEmpty {
+                return practicedInput
+            }
             return RehearsalInput(household: household, home: home, scenarioID: id, scenarioVersion: s.version,
                                   contentVersion: content.contentVersion, seed: 1)
         }
@@ -511,6 +520,12 @@ final class AppModel {
             lastError = String(describing: error)
             return nil
         }
+    }
+
+    /// Snapshot preparation can await Apple services; refuse publication after any relevant input changes.
+    func documentIsCurrent(_ document: PlanDocument) -> Bool {
+        guard let household, let content, document.locale == locale else { return false }
+        return !document.isStale(household: household, home: home, contentVersion: content.contentVersion, savedPlaces: savedPlaces)
     }
 
     var planIsStale: Bool {
@@ -539,7 +554,7 @@ final class AppModel {
     func refreshNextSteps() async {
         guard nextStepResults == nil, let household, let content, let scenarios, let engine,
               let key = currentKey else { return }
-        guard let home else { nextStepResults = []; return }
+        let home = self.home
         let ticket = nextGate.begin(for: key)
         let inputs = RehearseTabView.scenarioIDs.compactMap { id -> RehearsalInput? in
             guard let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }

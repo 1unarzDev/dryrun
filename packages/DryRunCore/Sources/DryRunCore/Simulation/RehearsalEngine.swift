@@ -16,7 +16,7 @@ public enum RehearsalError: Error, Equatable, Sendable {
 /// emitted as derived events with their evidence chain. No wall-clock time, randomness, or hashing
 /// order affects results; `seed` is carried for future authored variation and recorded in the input.
 public struct RehearsalEngine: Sendable {
-    public static let engineVersion = "cascade-engine/1"
+    public static let engineVersion = "cascade-engine/2"
     public static let maxEvents = 5_000
 
     public let library: ScenarioLibrary
@@ -61,7 +61,7 @@ public struct RehearsalEngine: Sendable {
 public struct RunSummary: Sendable {
     public var scenario: ScenarioDefinition
     public var household: HouseholdProfile
-    public var home: HomeModel
+    public var home: HomeModel?
     public var unmetEver: Set<String>
     public var unknowns: Set<String>
     public var flags: Set<String>
@@ -84,7 +84,7 @@ struct RunState {
     let scenario: ScenarioDefinition
     let input: RehearsalInput
     let household: HouseholdProfile
-    let home: HomeModel
+    let home: HomeModel?
     let planner: EgressPlanning
     let model: DependencyModel
     let allocator = BackupAllocator()
@@ -129,7 +129,7 @@ struct RunState {
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
     let interventionChoices: [String: String]
 
-    init(scenario: ScenarioDefinition, input: RehearsalInput, household: HouseholdProfile, home: HomeModel, planner: EgressPlanning) {
+    init(scenario: ScenarioDefinition, input: RehearsalInput, household: HouseholdProfile, home: HomeModel?, planner: EgressPlanning) {
         self.scenario = scenario; self.input = input; self.household = household; self.home = home; self.planner = planner
         self.model = DependencyModel.build(household: household)
         self.storedWater = household.supplies.storedWaterGallons.confirmedValue
@@ -149,16 +149,23 @@ struct RunState {
 
     // MARK: Execution
 
+    /// Explicit spatial options and the native variant path select the same authored exercise.
+    var effectiveVariants: [String] {
+        var variants = input.variants.filter { $0 != "householdLeak" }
+        if scenario.hazard == .flashFlood && input.effectiveSpatialOptions.floodIsHouseholdLeak { variants.append("householdLeak") }
+        return variants
+    }
+
     mutating func execute() throws {
         noteStaticUnknowns()
         try reevaluate(trigger: nil, emit: false)
         snapshot()
 
         var schedule: [ScheduledItem] = []
-        for e in scenario.events where Applicability.holds(e.when, household: household, home: home, variants: input.variants) {
+        for e in scenario.events where Applicability.holds(e.when, household: household, home: home, variants: effectiveVariants) {
             schedule.append(ScheduledItem(minute: e.minute, priority: e.priority, id: e.id, kind: .event(e)))
         }
-        for c in scenario.choicePoints where Applicability.holds(c.when, household: household, home: home, variants: input.variants) {
+        for c in scenario.choicePoints where Applicability.holds(c.when, household: household, home: home, variants: effectiveVariants) {
             schedule.append(ScheduledItem(minute: c.minute, priority: 100, id: c.id, kind: .choice(c)))
         }
         schedule.sort { ($0.minute, $0.priority, $0.id) < ($1.minute, $1.priority, $1.id) }
@@ -190,7 +197,7 @@ struct RunState {
     func summary() -> RunSummary {
         RunSummary(scenario: scenario, household: household, home: home, unmetEver: unmetEver, unknowns: unknowns,
                    flags: flags, causes: causes, finalServices: services, everUnavailable: everUnavailable,
-                   variants: input.variants)
+                   variants: effectiveVariants)
     }
 
     // MARK: Time and resources
@@ -387,6 +394,10 @@ struct RunState {
     }
 
     mutating func noteStaticUnknowns() {
+        if home == nil && [.homeFire, .flashFlood, .tornado].contains(scenario.hazard) {
+            unknowns.insert("home")
+            flags.insert("spatial.layoutUnavailable")
+        }
         let h = household
         if [.naturalGas, .propane].contains(h.housing.heatingFuel), !h.housing.heatingNeedsElectricity.isConfirmed {
             unknowns.insert("housing.heatingNeedsElectricity")
@@ -504,11 +515,13 @@ enum Fmt {
 
 /// Applicability predicates for authored events/choices.
 public enum Applicability {
-    public static func holds(_ preds: [String], household h: HouseholdProfile, home: HomeModel, variants: [String]) -> Bool {
+    public static func holds(_ preds: [String], household h: HouseholdProfile, home: HomeModel?, variants: [String]) -> Bool {
         preds.allSatisfy { holds($0, h, home, variants) }
     }
 
-    static func holds(_ p: String, _ h: HouseholdProfile, _ home: HomeModel, _ variants: [String]) -> Bool {
+    static func holds(_ p: String, _ h: HouseholdProfile, _ home: HomeModel?, _ variants: [String]) -> Bool {
+        // Absence is not evidence of "no stairs", even under a negated predicate.
+        if home == nil && p.drop(while: { $0 == "!" }) == "hasStairs" { return false }
         if p.hasPrefix("!") { return !holds(String(p.dropFirst()), h, home, variants) }
         let parts = p.split(separator: ":", maxSplits: 1).map(String.init)
         let key = parts[0], val = parts.count > 1 ? parts[1] : ""
@@ -520,7 +533,7 @@ public enum Applicability {
         case "noVehicle": return !h.transport.hasVehicle
         case "hasEssentialEquipment": return h.equipment.contains { $0.isEssential }
         case "heatingFuel": return h.housing.heatingFuel.rawValue == val
-        case "hasStairs": return !home.connectors.isEmpty
+        case "hasStairs": return home.map { !$0.connectors.isEmpty } ?? false
         default: return false
         }
     }

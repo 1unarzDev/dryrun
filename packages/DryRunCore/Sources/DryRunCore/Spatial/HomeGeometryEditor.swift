@@ -70,6 +70,7 @@ public enum HomeGeometryEditor {
         for i in candidate.portals.indices where candidate.portals[i].sideA == .space(roomID) || candidate.portals[i].sideB == .space(roomID) {
             if candidate.portals[i].verification != .rejected { candidate.portals[i].verification = .proposed }
             candidate.portals[i].emergencyEscapeConfirmed = nil
+            candidate.portals[i].emergencyEscapePersonIDs = nil
         }
         for i in candidate.connectors.indices where candidate.connectors[i].fromSpaceID == roomID || candidate.connectors[i].toSpaceID == roomID {
             if candidate.connectors[i].verification != .rejected { candidate.connectors[i].verification = .proposed }
@@ -178,6 +179,7 @@ public enum HomeGeometryEditor {
             $0.portals[index].sideA = placement.sideA; $0.portals[index].sideB = placement.sideB
             $0.portals[index].verification = .proposed
             $0.portals[index].emergencyEscapeConfirmed = nil
+            $0.portals[index].emergencyEscapePersonIDs = nil
         }
     }
 }

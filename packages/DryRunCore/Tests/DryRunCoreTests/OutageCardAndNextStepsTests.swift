@@ -58,7 +58,7 @@ struct OutageCardTests {
         #expect(OutageCardBuilder.gaps(for: h.equipment[0], in: h).isEmpty)
         let page = try Self.card(h).pages[0]
         let text = page.sections.flatMap(\.lines).map(\.text).joined(separator: "\n")
-        #expect(text.contains("Portable battery station: recorded as working with this device and tested by the household."))
+        #expect(text.contains("Portable battery station: compatibility and source setup are recorded."))
         #expect(text.contains("6 hours (documented by the household)"))
         #expect(text.contains("Switch Oxygen concentrator to Portable battery station."))
         #expect(text.contains("Oxygen supplier (fictional): 254-555-0199"))
