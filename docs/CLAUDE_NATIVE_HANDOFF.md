@@ -12,10 +12,30 @@ Read `Dry_Run_MapKit_Codex_Handoff.md` if supplied by the owner, this file, `doc
 family-preparedness app and authorized commit/push. Preserve newer checkout work. No publishing, submissions,
 outreach, real-home uploads, or deployments are authorized.
 
-Use `main` from `https://github.com/1unarzDev/dryrun`; record `git rev-parse HEAD` and `git status --short` before
-changing anything. The Linux revision is the commit adding this handoff (find with
+The owner confirmed the Mac already has a checkout. Inspect its instructions and local work first; reconcile
+them with the pushed source without resetting or discarding newer Mac changes. Use `main` from `https://github.com/1unarzDev/dryrun`; record `git rev-parse HEAD` and `git status --short` before
+changing anything. The latest Linux follow-up is the newest commit updating this handoff (find with
 `git log -1 --format='%H %s' -- docs/CLAUDE_NATIVE_HANDOFF.md`). Evidence must identify the actual tested SHA,
 plus any subsequent native fixes. Do not force-reset a checkout with changes.
+
+For an unchanged checkout, inspect divergence before a fast-forward:
+
+```bash
+git status --short
+git fetch origin
+git log --oneline --left-right HEAD...origin/main
+# Only after resolving any local changes/divergence without losing work:
+git merge --ff-only origin/main
+```
+
+Suggested opening prompt for the existing Claude session:
+
+> Read docs/CLAUDE_NATIVE_HANDOFF.md, VERIFICATION.md, REVISION_EVIDENCE.md and current repository instructions
+> completely. Reconcile this Mac checkout with origin/main while preserving local work. Continue the October 17
+> DryRun revision through the installed-SDK native build and simulator journeys; fix failures, capture current
+> fictional screenshots/PDFs, and prepare/install the iPhone build when signing/hardware allows. Keep iOS 18,
+> privacy and deterministic routing. Record exact SHA/SDK/device results. The owner authorized commit/push,
+> with no publishing, third-party outreach or private-home uploads.
 
 ## Build and simulator
 
@@ -31,7 +51,7 @@ minimum target to fix compatibility errors. Prefer an iOS 18 runtime too when av
 runtime, phone size, and OS. Use `--sim-name` to select a device. Run the normal and a small phone separately.
 
 `verify.sh` runs native core/vault tests, backend checks, build-for-testing, **DryRunTests** (persistence/map
-fake-service tests), current **DemoJourneyUITests**, screenshot tours, and native demo PDFs. Inspect every
+fake-service/export/reminder tests), current **DemoJourneyUITests**, screenshot tours, and native demo PDFs. Inspect every
 PASS/FAIL/SKIP in its SUMMARY; a bundle existing is not success. First resolve SDK/Swift 6 errors in
 RoomPlan/MapKit/RealityKit/SwiftUI before polishing. Linux `swiftc -parse` never typechecked those APIs.
 
@@ -52,6 +72,8 @@ Manually verify these connected journeys (record exact results and errors):
    two meetups remain after sheet dismissal/relaunch. Edit/delete through every entry point. No Texas fallback.
 4. Save one factual preparation → it closes automatically; independent device tasks remain separate. Failed
    write retains draft and old state. Review/Undo where supported. No generic Done certifies a physical fact.
+   Change a recorded alarm location/availability: check/coverage/awareness must reopen; notes alone preserve them.
+   Solo card review must not imply joint family review. The new core helper tests are portable, native forms unrun.
 5. Rehearse fire/flood/tornado from beginning: one current scene, person selection, origins/starts, choices,
    earlier-stage review, inaccessible/no-route outcomes, Reduce Motion. Current blocked route disappears;
    comparison changes only hypothetical facts. Verify all six scenarios remain reachable.
@@ -62,6 +84,18 @@ Manually verify these connected journeys (record exact results and errors):
    is purged. Repeat Print completion/cancel. No private fields in public-service requests or diagnostics.
 8. VoiceOver, small display, large Dynamic Type, contrast/light/dark and text/list alternatives. Record actual
    time to first useful card and a rehearsal; 90 seconds and 2–4 minutes are targets, not measured claims.
+
+Follow-up native gates authored but not run: 8 AppPersistenceTests, 3 MapRequestTests, 4 PlanExportTests and
+5 ReviewReminderTests (20 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
+authorization/add, cancel as Delete Everything does, then resume to check no late reminder remains. Exercise actual
+system permission denied/granted, one-time delivery, relaunch, cancellation and successful/failed Delete Everything.
+No permission request or schedule is allowed merely by opening Settings/review.
+
+The home canvas now has constrained shape-preserving resize/move, explicit additional levels/first rooms and
+separate stair landings. Confirm that independent captured walls remain after another room changes, added/deleted
+rooms have current outlines, and corrected rooms/doors/stairs stay unavailable until independently reviewed. Test
+selection reset/Undo/draft/failed save, and shelter invalidation after grade/window/lower-level changes. These native
+controls and SDK coordinate assumptions have not been typechecked or visually exercised in Linux.
 
 ## Physical installation and scan gate
 

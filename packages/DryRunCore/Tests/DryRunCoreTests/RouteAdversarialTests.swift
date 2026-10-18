@@ -226,14 +226,14 @@ struct RouteAdversarialTests {
         #expect(r.primary.map { RouteGeometryAudit.violations($0, in: h) } == [])
     }
 
-    @Test("Fire rehearsal: no practice route enters an authored blocked space except the person's own start room")
+    @Test("Fire rehearsal: no practice route enters an authored blocked space, including the start room")
     func fireBlocked() throws {
         for h in SampleHouseholds.all {
             for v in [[String](), ["second-exit-blocked"]] {
                 let r = try SimFixtures.run(h, "home-fire", variants: v)
                 for route in r.routes { guard let p = route.primary else { continue }
                     let blocked = Set(route.request.exclusions.blockedSpaceIDs)
-                    #expect(Set(p.spaceSequence.dropFirst()).isDisjoint(with: blocked))
+                    #expect(Set(p.spaceSequence).isDisjoint(with: blocked))
                     #expect(!p.portalSequence.contains { route.request.exclusions.blockedPortalIDs.contains($0) })
                     #expect(RouteGeometryAudit.violations(p, in: SimFixtures.home) == [])
                 }

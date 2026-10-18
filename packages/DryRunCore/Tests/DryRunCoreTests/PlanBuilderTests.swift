@@ -32,6 +32,22 @@ struct PlanBuilderTests {
         return Localizer(locale: locale, tables: tables, manifest: manifest ?? lib.localeManifest)
     }
 
+    @Test("Every home-validation issue and confirmation question resolves in all supported languages")
+    func spatialReviewLocales() throws {
+        let library = try ContentLibrary.load(from: LeadTestSupport.contentRoot)
+        let questions = ConfirmationStepKind.allCases.map(\.rawValue)
+        let keys = HomeIssueKind.allCases.map { "spatial.issue.\($0.rawValue)" }
+            + questions.map { "spatial.question.\($0)" }
+        for locale in ["en", "es", "vi"] {
+            let localizer = Localizer(locale: locale, tables: library.tables, manifest: library.localeManifest)
+            for key in keys {
+                let resolved = localizer.text(key, ["room": "Home room", "floor": "Home level"])
+                #expect(!resolved.isMissing && !resolved.isFallback && resolved.unfilledPlaceholders.isEmpty,
+                    "\(locale):\(key) must never disappear or fall back during a safety-related review")
+            }
+        }
+    }
+
     @Test("English plan for every sample household validates with no unresolved keys or placeholders")
     func englishPlansValidate() throws {
         let l = try Self.localizer("en")

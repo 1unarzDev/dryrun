@@ -86,7 +86,7 @@ public enum OutageCardBuilder {
         // Who and what.
         var device = [user.map { b.line("card.device.usedBy", ["device": eq.localizedLabel(b.localizer), "person": $0.alias]) }
                       ?? b.line("card.device.line", ["device": eq.localizedLabel(b.localizer)])]
-        if eq.needsRefrigeration { device.append(b.line("card.device.needsRefrigeration")) }
+        if eq.requiresColdStorage { device.append(b.line("card.device.needsRefrigeration")) }
         if let notes = eq.carePlanNotes, !notes.isEmpty, options.includePrivateNotes {
             device.append(PlanLine(text: notes, style: .normal, key: "private.carePlanNotes", resolvedLocale: b.localizer.locale,
                                    isFallback: false, isDraftTranslation: false, sourceIDs: []))

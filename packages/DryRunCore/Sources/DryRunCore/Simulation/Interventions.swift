@@ -63,13 +63,18 @@ public enum InterventionApplier {
         case "act.refrigeration.cooler-plan":
             h.supplies.coolerAndIcePacks = hypothetical(true)
         case "act.tornado.choose-shelter":
-            let lowest = m.floors.map(\.level).min() ?? 0
-            let floors = Set(m.floors.filter { $0.level == lowest }.map(\.id))
             let preferred: [SpaceKind] = [.closet, .bathroom, .hallway]
             for kind in preferred {
                 if let idx = m.spaces.indices.sorted(by: { m.spaces[$0].id < m.spaces[$1].id })
-                    .first(where: { m.spaces[$0].kind == kind && floors.contains(m.spaces[$0].floorID) }) {
+                    .first(where: { m.spaces[$0].kind == kind && ShelterSuitability.canConfirm(roomID: m.spaces[$0].id, in: m) }) {
+                    // Both the room answer and selection are hypothetical, confined to this simulation copy.
+                    // Recorded windows, unknown floors and unreviewed corrections still cannot be overridden.
                     m.spaces[idx].interiorNoWindowsConfirmed = hypothetical(true)
+                    m.annotations.removeAll { $0.kind == .tornadoShelterCandidate }
+                    m.annotations.append(Annotation(id: "an-hypothetical-tornado-shelter-\(m.spaces[idx].id)",
+                        kind: .tornadoShelterCandidate, floorID: m.spaces[idx].floorID, spaceID: m.spaces[idx].id,
+                        label: m.spaces[idx].label, verification: .verified,
+                        note: "Hypothetical exercise selection only; not a recorded household confirmation or an engineered safe room."))
                     break
                 }
             }

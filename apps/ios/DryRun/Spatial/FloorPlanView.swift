@@ -30,7 +30,7 @@ struct FloorPlanView: View {
             if home.floors.count > 1 && highlightedFloorID == nil || routeFloors.count > 1 {
                 Picker(s("Floor"), selection: Binding(get: { floorID ?? "" }, set: { selectedFloorID = $0 })) {
                     ForEach(home.floors) { f in
-                        Text(routeFloors.contains(f.id) ? "\(f.label) (route)" : f.label).tag(f.id)
+                        Text(routeFloors.contains(f.id) ? model.localizer("spatial.floor-route", ["floor": f.label]) : f.label).tag(f.id)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -66,10 +66,10 @@ struct FloorPlanView: View {
     }
 
     private var accessibilitySummary: String {
-        guard let fid = floorID, let floor = home.floors.first(where: { $0.id == fid }) else { return "Floor plan" }
+        guard let fid = floorID, let floor = home.floors.first(where: { $0.id == fid }) else { return model.localizer("spatial.floor-plan") }
         let rooms = home.spaces.filter { $0.floorID == fid }.map(\.label).joined(separator: ", ")
         let exits = home.portals.filter { $0.floorID == fid && $0.leadsToExterior && $0.verification == .verified && $0.kind != .window }.count
-        return "\(floor.label) floor plan. Rooms: \(rooms). \(exits) verified exterior door\(exits == 1 ? "" : "s")."
+        return model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
     }
 
     // MARK: Drawing

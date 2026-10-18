@@ -126,4 +126,32 @@ final class AppPersistenceTests: XCTestCase {
         XCTAssertEqual(model.home?.id, SampleHomes.ranch.id)
         XCTAssertEqual(model.savedPlaces, [place])
     }
+
+    func testGeometryEditInvalidatesOnlyEscapeCheckAfterSuccessfulSave() async throws {
+        let store = ControlledStore()
+        let model = AppModel(store: store)
+        var household = SampleHouseholds.oak
+        household.preparedness = PreparednessRecord()
+        let checked = Date(timeIntervalSince1970: 1_792_000_000)
+        var exit = PreparationFact(); exit.checkedAt = checked
+        household.preparedness?.items["clearExits"] = exit
+        household.preparedness?.items["firstAid"] = exit
+        model.household = household; model.home = SampleHomes.ranch
+        var renamed = SampleHomes.ranch; renamed.spaces[0].label = "Renamed room"
+        let renamedSaved = await model.updateHome(renamed)
+        XCTAssertTrue(renamedSaved)
+        XCTAssertEqual(model.household?.preparedness?.items["clearExits"]?.checkedAt, checked)
+        var corrected = try XCTUnwrap(model.home)
+        corrected.portals[0].operable = .confirmed(false)
+        let saved = await model.updateHome(corrected)
+        XCTAssertTrue(saved)
+        XCTAssertNil(model.household?.preparedness?.items["clearExits"]?.checkedAt)
+        XCTAssertEqual(model.household?.preparedness?.items["firstAid"]?.checkedAt, checked)
+        let prior = model.home
+        await store.failWrites()
+        corrected.portals[0].operable = .confirmed(true)
+        let failed = await model.updateHome(corrected)
+        XCTAssertFalse(failed)
+        XCTAssertEqual(model.home, prior)
+    }
 }

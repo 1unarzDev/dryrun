@@ -8,7 +8,7 @@ struct NextStepsView: View {
     @State private var showAll = false
     /// One sheet slot (several `.sheet` modifiers on one view can fail to present right after another closes).
     @State private var sheet: Sheet?
-    enum Sheet: String, Identifiable { case card, share, household, home, contacts, supplies; var id: String { rawValue } }
+    enum Sheet: String, Identifiable { case card, share, household, contacts, supplies; var id: String { rawValue } }
     var openRehearse: () -> Void = {}
 
     var body: some View {
@@ -44,7 +44,6 @@ struct NextStepsView: View {
                 case .card: OutageCardView()
                 case .share: ShareWithFamilyView()
                 case .household: FocusedHouseholdEditor(focus: .family)
-                case .home: HomeTabView()
                 case .contacts: FocusedHouseholdEditor(focus: .contacts)
                 case .supplies: FocusedHouseholdEditor(focus: .supplies)
                 }
@@ -84,7 +83,7 @@ struct NextStepsView: View {
     @ViewBuilder private var familyHomeButtons: some View {
         Button { sheet = .household } label: { Label(model.localizer("family.edit"), systemImage: "person.2.fill") }
             .accessibilityIdentifier("next.family").frame(minHeight: Theme.minTap)
-        Button { sheet = .home } label: { Label(model.localizer("family.home"), systemImage: "house.fill") }
+        NavigationLink { HomeTabView() } label: { Label(model.localizer("family.home"), systemImage: "house.fill") }
             .accessibilityIdentifier("next.home").frame(minHeight: Theme.minTap)
     }
     @ViewBuilder private var contactSupplyButtons: some View {
@@ -334,6 +333,7 @@ struct PreparationTaskEditor: View {
             }
         }
         else if id == "prep.layout" { HomeTabView() }
+        else if id == "prep.reviewCard" { FocusedHouseholdEditor(focus: .review) }
         else if id == "prep.helper" || id.contains("assign-helper") || id == "prep.reconnect" { FocusedHouseholdEditor(focus: .family) }
         else if id.hasPrefix("prep."), BaselinePreparedness.definitions.contains(where: { "prep." + $0.id == id }) {
             FocusedHouseholdEditor(focus: .preparation(String(id.dropFirst(5))))

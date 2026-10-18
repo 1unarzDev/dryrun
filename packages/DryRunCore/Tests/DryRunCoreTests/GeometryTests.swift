@@ -35,6 +35,17 @@ struct GeometryTests {
         #expect(Geometry.triangulate(bowtie) == nil)
     }
 
+    @Test func roomOverlapDistinguishesAlignedStripsFromSharedWallsAndConcaveNotches() {
+        let first = SampleHomes.rect(0, 0, 5, 4)
+        #expect(Geometry.polygonsOverlap(first, SampleHomes.rect(4, 0, 7, 4)))
+        #expect(!Geometry.polygonsOverlap(first, SampleHomes.rect(5, 0, 7, 4)))
+        #expect(!Geometry.polygonsOverlap(first, SampleHomes.rect(5, 4, 7, 6)))
+        let l = [Vec2(0, 0), Vec2(4, 0), Vec2(4, 1), Vec2(1, 1), Vec2(1, 4), Vec2(0, 4)]
+        #expect(!Geometry.polygonsOverlap(l, SampleHomes.rect(1, 1, 4, 4)))
+        #expect(Geometry.polygonsOverlap(l, SampleHomes.rect(0.5, 2, 2, 3)))
+        #expect(!Geometry.isSimplePolygon([Vec2(0, 0), Vec2(.infinity, 0), Vec2(0, 1)]))
+    }
+
     // House-local layout (metres, x/z ground plane, y up). Room A: 4×4 at origin; Room B: 4×3 to the east.
     static let worldYaw = 0.5
     static let worldT = Vec3(10, 0, -3)

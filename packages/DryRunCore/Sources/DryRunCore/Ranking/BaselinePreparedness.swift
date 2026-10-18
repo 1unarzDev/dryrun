@@ -26,14 +26,17 @@ public enum BaselinePreparedness {
         .init(id: "heatCold", editor: .supplies, scenarioIDs: ["freeze-power-loss", "extreme-heat"], sourceIDs: ["S53"], requiresPhysicalCheck: false)
     ]
 
-    public static func evaluate(household h: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = []) -> [Recommendation] {
+    /// The reference date is injected for repeatable maintenance checks. The 180-day review is an app
+    /// planning prompt, not a prediction of safety or a substitute for item-specific instructions.
+    public static func evaluate(household h: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> [Recommendation] {
         var out: [Recommendation] = []
-        func add(_ id: String, tier: PriorityTier = .scenarioSupplyOrContinuityGap, facts: [String] = [], values: [String: String] = [:], scenarios: [String] = [], sources: [String] = ["S53"], subjectID: String? = nil) {
-            out.append(Recommendation(actionID: "prep.\(id)", tier: tier, titleKey: "prep.\(id).title", whyKey: "prep.\(id).why", templateValues: values,
+        func add(_ id: String, tier: PriorityTier = .scenarioSupplyOrContinuityGap, facts: [String] = [], values: [String: String] = [:], scenarios: [String] = [], sources: [String] = ["S53"], subjectID: String? = nil, whyKey: String? = nil) {
+            out.append(Recommendation(actionID: "prep.\(id)", tier: tier, titleKey: "prep.\(id).title", whyKey: whyKey ?? "prep.\(id).why", templateValues: values,
                 matchedFactIDs: facts, causeEventIDs: [], scenarioIDs: scenarios, tryIntervention: nil, modeledEffectKey: nil, effort: .noCost, sourceIDs: sources, verificationStatus: .needsVerification, subjectID: subjectID))
         }
         for d in definitions {
-            if d.id == "coAlarms", h.housing.heatingFuel == .none { continue }
+            // Heating fuel alone cannot rule out CO sources such as cooking appliances, an attached garage
+            // or nearby combustion equipment. Do not erase an unresolved alarm review from that one answer.
             let fact = h.preparedness?.items[d.id]
             let alarm = d.id == "smokeAlarms" || d.id == "coAlarms"
             let complete = fact?.available.confirmedValue == true && !(fact?.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
@@ -44,7 +47,16 @@ public enum BaselinePreparedness {
                 let critical = ["smokeAlarms", "coAlarms", "clearExits"].contains(d.id)
                 add(d.id, tier: critical ? (fact?.available.confirmedValue == false || (alarm && fact?.coverageReviewed?.confirmedValue == false) ? .unmetEssentialRequirement : .blockingUnknownFact) : .scenarioSupplyOrContinuityGap,
                     facts: ["preparedness.\(d.id)"], scenarios: d.scenarioIDs, sources: d.sourceIDs)
+            } else if let checkedAt = fact?.checkedAt {
+                let days = alarm ? 30 : 180
+                if referenceDate.timeIntervalSince(checkedAt) >= Double(days) * 86_400 {
+                    add(d.id, tier: .general, facts: ["preparedness.\(d.id).checkedAt"], values: ["days": String(days)], scenarios: d.scenarioIDs,
+                        sources: alarm ? ["S53"] : d.sourceIDs, whyKey: "prep.recheck.why")
+                }
             }
+        }
+        if h.preparedness?.reviewedAt.map({ referenceDate.timeIntervalSince($0) < 180 * 86_400 }) != true {
+            add("reviewCard", tier: .general, facts: ["preparedness.reviewedAt"], sources: ["S52"])
         }
         if h.supplies.storedWaterGallons.confirmedValue ?? 0 < Double(h.people.count) * 3 {
             add("water", facts: ["supplies.storedWaterGallons"], values: ["target": String(h.people.count * 3), "litres": String(Int((Double(h.people.count) * 3 * 3.78541).rounded()))], sources: ["S26"])

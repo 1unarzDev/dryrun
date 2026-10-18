@@ -141,7 +141,7 @@ public enum Geometry {
 
     /// Simple polygon: >= 3 vertices, non-zero area, no non-adjacent edge intersections.
     public static func isSimplePolygon(_ poly: [Vec2]) -> Bool {
-        guard poly.count >= 3, abs(signedArea(poly)) > 1e-9 else { return false }
+        guard poly.count >= 3, poly.allSatisfy({ $0.x.isFinite && $0.y.isFinite }), abs(signedArea(poly)) > 1e-9 else { return false }
         let es = edges(poly)
         for i in es.indices {
             for j in es.indices where j > i + 1 && !(i == 0 && j == es.count - 1) {
@@ -149,6 +149,35 @@ public enum Geometry {
             }
         }
         return true
+    }
+
+    /// Positive-area intersection, including crossing strips whose vertices all lie on/outside the other
+    /// boundary. Shared walls and corner-only contact are not overlap. Works with concave simple polygons.
+    public static func polygonsOverlap(_ a: [Vec2], _ b: [Vec2], areaToleranceSquareMeters: Double = 1e-8) -> Bool {
+        guard let at = triangulate(a), let bt = triangulate(b) else { return false }
+        for ai in at {
+            for bi in bt {
+                var clipped = ai.map { a[$0] }
+                let triangle = bi.map { b[$0] }, sign = signedArea(triangle) >= 0 ? 1.0 : -1.0
+                for (p, q) in edges(triangle) {
+                    let input = clipped; clipped = []
+                    guard !input.isEmpty else { break }
+                    let axis = q - p
+                    for index in input.indices {
+                        let start = input[index], end = input[(index + 1) % input.count]
+                        let sd = sign * cross(axis, start - p), ed = sign * cross(axis, end - p)
+                        let sin = sd >= 0, ein = ed >= 0
+                        if sin != ein {
+                            let fraction = sd / (sd - ed)
+                            clipped.append(start + (end - start) * fraction)
+                        }
+                        if ein { clipped.append(end) }
+                    }
+                }
+                if abs(signedArea(clipped)) > areaToleranceSquareMeters { return true }
+            }
+        }
+        return false
     }
 
     /// Ear-clips a simple polygon into triangles, preserving the input winding. The returned values are indices

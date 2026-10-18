@@ -16,11 +16,13 @@ struct EquipmentEditorFields: View {
             Text(l("ui.notSure")).tag(String?.none)
             ForEach(people) { Text($0.alias.isEmpty ? l($0.isSelf == true ? "family.you" : "ui.person") : $0.alias).tag(Optional($0.id)) }
         }
-        if equipment.purpose == .refrigeratedMedication {
-            TriStateRow(title: l("family.refrigeration"), value: Binding(get: { equipment.refrigeratedStorage ?? .unknown }, set: { equipment.refrigeratedStorage = $0; equipment.needsRefrigeration = $0.value == true }))
-            TriStateRow(title: l("family.power"), value: Binding(get: { equipment.electricalRequirement ?? .confirmed(false) }, set: { equipment.electricalRequirement = $0 }))
+        if equipment.purpose == .refrigeratedMedication || equipment.needsRefrigeration || equipment.refrigeratedStorage != nil {
+            TriStateRow(title: l(equipment.purpose == .refrigeratedMedication ? "family.refrigeration" : "family.itemRefrigeration"), value: Binding(get: { equipment.refrigeratedStorage ?? .unknown }, set: { equipment.refrigeratedStorage = $0 }))
+            if equipment.purpose == .refrigeratedMedication {
+                TriStateRow(title: l("family.power"), value: Binding(get: { equipment.electricalRequirement ?? .confirmed(false) }, set: { equipment.electricalRequirement = $0 }))
+            }
             if equipment.requiresColdStorage {
-                TextField(l("family.storageInstructions"), text: Binding(get: { equipment.storageInstructions ?? "" }, set: { equipment.storageInstructions = $0 }), axis: .vertical)
+                TextField(l(equipment.purpose == .refrigeratedMedication ? "family.storageInstructions" : "family.itemStorageInstructions"), text: Binding(get: { equipment.storageInstructions ?? "" }, set: { equipment.storageInstructions = $0 }), axis: .vertical)
                 TriStateRow(title: l("family.storagePlan"), value: Binding(get: { equipment.storagePlanConfirmed ?? .unknown }, set: { equipment.storagePlanConfirmed = $0 }))
             }
             Text(l("family.providerPrompt")).font(.footnote)

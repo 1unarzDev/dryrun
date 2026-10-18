@@ -84,3 +84,16 @@ References S52 Red Cross family planning, S53 Red Cross fire preparedness, S54 F
 flood safety were fetched successfully in this pass. Fetching sources is not professional safety review. EN/ES/VI
 native/spatial additions remain AI drafts, including untranslated source titles and user-authored notes retained
 verbatim. All safety wording and translations need qualified human review; no participants or endorsements exist.
+
+
+Follow-up review fixes retain unrelated captured barriers during room correction, exclude corrected rooms until
+explicit review, and use one current shelter suitability contract across confirmation, routing and simulation.
+A recorded window contradicts a no-window shelter candidate even if it is rejected as an escape option. Adding a
+lower level or changing grade cannot leave a historical marker sufficient for a shelter route. A hypothetical
+comparison edits only its copied inputs.
+
+Heating fuel alone does not remove the CO-alarm review: other combustion sources or garage exposure may be unknown.
+Physical check/coverage/awareness evidence is invalidated when the described item's availability/location changes.
+Monthly alarm review and the app's 180-day other/card maintenance cadence are prompts, never protection guarantees
+or medicine-storage advice. Users may explicitly schedule one generic, non-repeating local review reminder; the app
+never starts a default notification campaign. Native delivery/cancellation/deletion still require testing.

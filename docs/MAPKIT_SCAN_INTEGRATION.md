@@ -54,7 +54,13 @@ Captured floor story is preserved separately from user-confirmed ground/above/be
 are not guessed by vertical overlap. Windows need explicit emergency-escape suitability, not inventory confirmation.
 
 The same HomeModel drives confirmation, manual canvas, room list, 2D/3D, routes and PDF. Contextual edits preserve
-unrelated width/operability. Save is transactional; same-home rescans normalize to stable identity and preserve
+unrelated width/operability. The canvas supports constrained shape-preserving resize/move, explicit levels and
+first rooms per level, and two separately positioned stair landings. A new opening-wall selection is required
+when changing the selected opening. Captured outlines/walls remain provenance; independent/ambiguous captured
+barriers are retained. Corrected rooms and their proposed connections need separate review. Dynamic outline walls
+follow additions/deletions without a stale wall cache. Shelter confirmation/planning/simulation share current
+floor/window/review checks. Free vertex/CAD and independent captured-wall editing are not provided.
+Save is transactional; same-home rescans normalize to stable identity and preserve
 geographic places, clearing only room IDs no longer found. Moving is a separate confirmed reset of home-specific
 geometry/places/checks while family/contact/equipment records persist.
 

@@ -22,7 +22,11 @@ A2 Add international phone contact and selected critical note; card preview/shar
 A3 Force-quit/relaunch; household, contacts and intentional absent geometry retained:
 A4 Device lock/unlock and background privacy cover (also while PDF open):
 A5 Failed save retains draft and does not publish/completion-report success:
-A6 Settings delete-all confirms; relaunch remains onboarding:
+A6 Settings delete-all confirms; relaunch remains onboarding; failed deletion retains existing data/reminder:
+A7 Opening review/Settings asks no notification permission; explicit reminder button requests it once:
+A8 Deny reminder permission, retained draft/existing reminder; schedule/relaunch/deliver/cancel one local reminder:
+A9 Delete while permission/add is suspended; no late reminder survives; no household fields in notification:
+A10 Solo card review and joint review independent; change alarm location -> check/coverage reopen, notes preserve:
 
 B. Native LiDAR (network/location/intelligence independent)
 B1 Camera requested only when scan chosen; support check accurate; denial retains manual path:
@@ -39,6 +43,10 @@ B11 Background during camera request, scanning AND structure processing; retaine
 B12 Poor tracking/processing failure; valid completed groups retained; unrelated frames not merged:
 B13 Upstairs-only/basement-only scan does not infer ground; split/walkout and offset landing review:
 B14 Unsupported non-LiDAR device and denied camera -> usable manual/example paths:
+B15 Resize/move a room: first capture retained, unrelated captured wall stays, no route until room/doors reviewed:
+B16 Add/remove a room after correction: no missing/phantom outline walls; select another opening resets wall choice:
+B17 Explicit new level/first room/stairs: separately positioned landings, invalid/same-floor/stair-free mobility refused:
+B18 Change shelter grade/add lower floor/window: old shelter rejected by both current scene and planner; re-review:
 
 C. Maps, share and offline
 C1 GPS denied, typed home address still plans; automatic nearby discovery cancel/retry:

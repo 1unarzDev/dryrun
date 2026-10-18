@@ -122,3 +122,22 @@ remain pending; see CLAUDE_NATIVE_HANDOFF and VERIFICATION.
 Locales use the existing versioned content Localizer, extended with native/spatial domains. Stable model IDs stay
 untranslated; user names, addresses and critical notes are retained. ES/VI strings remain drafts requiring human
 review. No optional automatic clinical translation or default reminder campaign was introduced.
+
+
+Follow-up correction contract: `HomeGeometryEditor` applies transactional shape-preserving room resize/move,
+explicit opening placement and two-floor stair landing edits. First capture polygons/walls remain provenance.
+Independent or ambiguously owned captured walls remain physical barriers; only exclusive old room-boundary
+segments are replaced. Dynamic outline walls are derived per render, never cached as captured walls. Corrected
+rooms stay outside routing until reviewed; openings/stairs have separate evidence. Adding/removing rooms cannot
+silently remove another room's barrier. `ShelterSuitability` is shared by confirmation, planner and simulation;
+current grade, lowest level, windows, selection and room review must agree.
+
+`PreparationFact.applyingEdits` invalidates physical checks/coverage/location awareness when availability or
+location changes, retaining note-only edits and later explicit checks. Home geometry changes clear only the
+escape-check date. Solo card review and optional joint family review have separate additive dates. The deterministic
+baseline accepts an injected reference date for maintenance, with no default notification scheduling.
+
+`ReviewReminderScheduling` and `ReviewNotificationAccess` isolate a one-time, explicitly selected local reminder.
+The shared scheduler invalidates suspended authorization/add operations when canceled or private data is deleted;
+failed deletion leaves existing data/reminders intact. Payloads contain only generic localized app text. This native
+boundary has authored fake tests but has not been compiled or executed against UserNotifications here.

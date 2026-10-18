@@ -3,7 +3,7 @@
 ## Family-preparedness revision (2026-10-17) — current evidence
 
 **Implementation prepared; native build and device test pending.** Starting checkout: main at
-`2a8ab385a113cbcebcb8dc5a594d8ed8bacdd5b3`. Current source revision is the commit introducing
+`2a8ab385a113cbcebcb8dc5a594d8ed8bacdd5b3`. Current source revision is the latest commit updating
 CLAUDE_NATIVE_HANDOFF.md; use `git log -1 --format='%H %s' -- docs/CLAUDE_NATIVE_HANDOFF.md` to identify it.
 The owner's two untracked audit/handoff files were read and preserved, not committed.
 
@@ -13,8 +13,8 @@ CLAUDE_NATIVE_HANDOFF.md gives commands and evidence gates. This pass cannot say
 
 | Executed command/check | Current result |
 |---|---|
-| `DRYRUN_SCRATCH=revision-final scripts/swift.sh packages/DryRunCore test` | **181 tests / 27 suites passed** |
-| `DRYRUN_SCRATCH=revision-final scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
+| `DRYRUN_SCRATCH=oct17-followup scripts/swift.sh packages/DryRunCore test` | **204 tests / 29 suites passed** |
+| `DRYRUN_SCRATCH=oct17-followup scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
 | `cd services/public-api && pnpm test && pnpm typecheck` | **68 tests / 4 files passed**, TypeScript clean |
 | Docker Swift6.2 `swiftc -parse`, all app, app-test and UI-test Swift sources | Passed; **syntax only**, no native SDK typecheck |
 | `git diff --check`, shell syntax, Python artifact scripts compile | Passed |
@@ -41,17 +41,33 @@ cleared; the app and both test targets were syntax-parsed again and vault tests 
 They did **not** inspect native screenshots. Local logs are in `artifacts/revision-20261017/logs` (ignored build
 artifacts). Portable PDF audit/results are retained with fictional examples; no real home data was collected.
 
-Native tests are authored and wired into project/scheme/verify script: 7 AppPersistenceTests, 3 MapRequestTests,
-4 PlanExportTests; 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
+Native tests are authored and wired into project/scheme/verify script: 8 AppPersistenceTests, 3 MapRequestTests,
+4 PlanExportTests, 5 ReviewReminderTests (20 total); 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
 in this pass. The fresh-install UI test uses in-memory storage; real vault force-quit/relaunch remains a separate
 native/device gate. Source parsing cannot establish their selectors or SDK concurrency correctness.
 
 Material unverified/limited work: real SDK RoomPlan categories/transforms/story/shared-frame alignment, actual
 MapKit failures/attribution, share/print lifecycle, small phone/large text/VoiceOver/Reduce Motion, EN/ES/VI end-to-end
-rendering and human translations. Manual edits support contextual corrections but arbitrary scan polygon resizing
-and unmatched stair landing creation remain limited. Reminders are not scheduled; some preparedness details use
-household-authored notes rather than tailored questionnaires. Dynamic validation text still has English fallbacks.
+rendering and human translations. Manual edits now include shape-preserving room resizing, explicit additional
+levels/first rooms and separately recorded stair landings; free vertex/CAD and independent captured-wall editing
+remain absent. The optional one-time local reminder is implemented but system permission/delivery/deletion paths
+are unverified. Some preparedness details use household-authored notes rather than tailored questionnaires.
+Validation issues/questions have EN/ES/VI key coverage; other dynamic text can still have English fallbacks.
 Do not characterize this revision as fully complete or device verified. See REVISION_EVIDENCE.md for the mapping.
+
+Follow-up verification added constrained correction/provenance/room-review, independent captured-wall retention,
+current dynamic outlines after add/delete, actual concave-boundary opening placement, legal stair endpoints/mobility,
+polygon-overlap/nonfinite regressions,
+shared current shelter validation and isolated hypothetical selection, review maintenance, independent solo/joint
+review, fact-specific check invalidation and EN/ES/VI issue/question coverage. Source reviews caught and fixed the
+barrier/shelter/stale-check/nested-sheet defects before push. The fire blocked-space regression now asserts the
+entire route, including its start; it no longer permits an implicit exposed-start exception.
+
+An incremental vault binary initially failed `pruneStaleDropsResultsForOldRevisions` and crashed. The focused
+failure reproduced in that scratch directory; the unchanged source passed all 35 tests in a fresh directory and
+again after `swift package clean` rebuilt the original directory. No source/test expectation was changed for this
+build-artifact failure. Final counts above come from current integrated sources; the failed/rebuilt logs are kept
+locally alongside the final logs. Native tests are still zero executed.
 
 ## Historical records below — do not apply them to the current build
 

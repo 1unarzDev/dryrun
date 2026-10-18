@@ -71,6 +71,7 @@ struct RootView: View {
     private var settingsButton: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button { showSettings = true } label: { Label(t("settingsPrivacy"), systemImage: "gearshape") }
+                .accessibilityIdentifier("app.settings")
         }
     }
 }

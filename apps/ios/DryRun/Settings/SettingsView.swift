@@ -34,6 +34,7 @@ struct SettingsView: View {
                     LabeledContent(t("explanations"), value: availabilityText(model.capabilities.explanationModel))
                     LabeledContent(t("network"), value: model.capabilities.isOnline ? t("online") : t("offline"))
                 }
+                if model.household != nil { ReviewReminderSection() }
                 Section {
                     Button(t("delete"), role: .destructive) { confirmDelete = true }
                 } footer: {
@@ -48,7 +49,7 @@ struct SettingsView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button(t("done")) { dismiss() } } }
             .confirmationDialog(t("deleteConfirm"), isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button(t("deleteEverything"), role: .destructive) {
-                    Task { await model.deleteAllPrivateData(); dismiss() }
+                    Task { if await model.deleteAllPrivateData() { dismiss() } }
                 }
             }
         }

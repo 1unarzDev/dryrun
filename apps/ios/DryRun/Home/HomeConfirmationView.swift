@@ -33,7 +33,7 @@ struct HomeConfirmationView: View {
                 }
                 FloorPlanView(home: home, routes: [], highlightedFloorID: floorID(for: step), highlightedElementID: step.elementID)
                     .frame(height: 220)
-                    .accessibilityLabel("Floor plan. The item being confirmed is \(step.elementID).")
+                    .accessibilityLabel(model.localizer("spatial.review-item", ["item": subject(of: step) ?? model.localizer("spatial.floor-plan")]))
                 stepControls(step)
             } else if !skipped.isEmpty {
                 Section {
@@ -69,6 +69,12 @@ struct HomeConfirmationView: View {
     @ViewBuilder
     private func stepControls(_ step: ConfirmationStep) -> some View {
         switch step.kind {
+        case .confirmRoomGeometry:
+            Section {
+                Text(model.localizer("spatial.outline-note")).font(.footnote)
+                Button(model.localizer("spatial.review-outline")) { answer(.reviewRoomGeometry(spaceID: step.elementID), for: step) }
+                Button(s("Not sure — decide later")) { answer(.skip(elementID: step.elementID), for: step) }
+            }
         case .confirmFloor:
             Section {
                 ForEach([ExteriorGrade.ground, .aboveGround, .belowGround, .walkout], id: \.self) { grade in
@@ -180,7 +186,7 @@ struct HomeConfirmationView: View {
             if updated == home {
                 // The core refused the answer (for example an exit that is not on the ground floor, or a shelter room
                 // that is not on the lowest floor). Stay on this item and say so.
-                notice = "That answer doesn't fit this item, so nothing was changed. Choose another answer, or leave it as not sure."
+                notice = model.localizer("spatial.answer-refused")
                 return
             }
             notice = nil
@@ -200,21 +206,21 @@ struct HomeConfirmationView: View {
     private func subject(of step: ConfirmationStep) -> String? {
         func name(_ side: PortalDestination) -> String {
             switch side {
-            case .space(let id): return home.space(id)?.label ?? "a room"
-            case .exterior: return "outside"
-            case .commonArea: return "a shared building area"
-            case .unknown: return "not known yet"
+            case .space(let id): return home.space(id)?.label ?? s("Room")
+            case .exterior: return s("outside")
+            case .commonArea: return s("building corridor")
+            case .unknown: return s("unknown")
             }
         }
         switch step.kind {
-        case .labelSpace:
-            return home.space(step.elementID).map { "Currently shown as: \($0.label)" }
+        case .labelSpace, .confirmRoomGeometry:
+            return home.space(step.elementID)?.label
         case .confirmPortal:
             guard let p = home.portal(step.elementID) else { return nil }
-            return "\(DisplayNames.name(p.kind.rawValue, localizer: model.localizer)) between: \(name(p.sideA)) and \(name(p.sideB))"
+            return model.localizer("spatial.connection-between", ["kind": DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "from": name(p.sideA), "to": name(p.sideB)])
         case .confirmConnector:
             guard let c = home.connectors.first(where: { $0.id == step.elementID }) else { return nil }
-            return "Between: \(home.space(c.fromSpaceID)?.label ?? "a room") and \(home.space(c.toSpaceID)?.label ?? "a room")"
+            return model.localizer("spatial.connection-between", ["kind": model.localizer("spatial.connector.\(c.kind.rawValue)"), "from": home.space(c.fromSpaceID)?.label ?? s("Room"), "to": home.space(c.toSpaceID)?.label ?? s("Room")])
         case .confirmFloor:
             return home.floors.first(where: { $0.id == step.elementID })?.label
         case .meetingPoint, .shelterSpot:
@@ -226,7 +232,7 @@ struct HomeConfirmationView: View {
         switch step.kind {
         case .confirmFloor: step.elementID
         case .confirmPortal: home.portal(step.elementID)?.floorID
-        case .labelSpace: home.space(step.elementID)?.floorID
+        case .labelSpace, .confirmRoomGeometry: home.space(step.elementID)?.floorID
         default: home.floors.first?.id
         }
     }

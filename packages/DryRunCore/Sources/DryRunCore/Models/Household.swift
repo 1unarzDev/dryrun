@@ -439,8 +439,13 @@ public struct PersonEmergencyInformation: Codable, Sendable, Hashable {
 /// Explicit household records; recording location never implies a functional check.
 public struct PreparednessRecord: Codable, Sendable, Hashable {
     public var items: [String: PreparationFact]
+    /// Review of the current card and contacts; does not imply other family members participated.
     public var reviewedAt: Date?
-    public init(items: [String: PreparationFact] = [:], reviewedAt: Date? = nil) { self.items = items; self.reviewedAt = reviewedAt }
+    /// Explicit joint review only. Absent in legacy records and never inferred from a solo card review.
+    public var jointlyReviewedAt: Date?
+    public init(items: [String: PreparationFact] = [:], reviewedAt: Date? = nil, jointlyReviewedAt: Date? = nil) {
+        self.items = items; self.reviewedAt = reviewedAt; self.jointlyReviewedAt = jointlyReviewedAt
+    }
 }
 public struct PreparationFact: Codable, Sendable, Hashable {
     public var available: EvidenceValue<Bool>
@@ -451,6 +456,19 @@ public struct PreparationFact: Codable, Sendable, Hashable {
     public var notes: String
     public init(available: EvidenceValue<Bool> = .unknown, location: String = "", checkedAt: Date? = nil, notes: String = "", coverageReviewed: EvidenceValue<Bool>? = nil, familyAware: EvidenceValue<Bool>? = nil) {
         self.available = available; self.location = location; self.checkedAt = checkedAt; self.notes = notes; self.coverageReviewed = coverageReviewed; self.familyAware = familyAware
+    }
+
+    /// A physical check, coverage review or family location-awareness record applies to the recorded
+    /// item at its recorded location. Editing those facts requires fresh evidence; notes alone do not.
+    /// Forms apply this on each edit so users can explicitly record a new check after the change.
+    public func applyingEdits(_ proposed: PreparationFact) -> PreparationFact {
+        guard available.value != proposed.available.value || available.status != proposed.available.status
+                || location != proposed.location else { return proposed }
+        var result = proposed
+        result.checkedAt = nil
+        result.coverageReviewed = nil
+        result.familyAware = nil
+        return result
     }
 }
 

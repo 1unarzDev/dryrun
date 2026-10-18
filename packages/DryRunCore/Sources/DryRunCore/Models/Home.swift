@@ -90,6 +90,12 @@ public struct Space: Codable, Sendable, Hashable, Identifiable {
     public var polygon: [Vec2]
     public var labelConfirmed: Bool
     public var needsMeasurement: Bool
+    /// First captured outline retained when a household corrects it; never used as the current route geometry.
+    public var originalCapturedPolygon: [Vec2]?
+    /// A changed outline is excluded from routing until its actual geometry has been reviewed.
+    public var geometryNeedsReview: Bool?
+    /// Render current room boundaries dynamically alongside retained independent captured walls.
+    public var usesOutlineWalls: Bool?
     /// Interior room with no exterior windows on the lowest floor, as declared by the household.
     /// A candidate is NOT an engineered safe room.
     public var interiorNoWindowsConfirmed: EvidenceValue<Bool>
@@ -221,6 +227,8 @@ public struct HomeModel: Codable, Sendable, Hashable, Identifiable {
     public var floors: [Floor]
     public var spaces: [Space]
     public var walls: [WallSegment]
+    /// Original captured wall segments, retained before the first outline correction.
+    public var originalCapturedWalls: [WallSegment]?
     public var portals: [Portal]
     public var obstacles: [Obstacle]
     public var connectors: [FloorConnector]

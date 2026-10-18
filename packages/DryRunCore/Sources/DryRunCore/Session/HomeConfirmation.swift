@@ -3,8 +3,8 @@ import Foundation
 /// Guided confirmation pass after a scan (or manual edits): label rooms, confirm doors/connections, identify exterior
 /// exits, inspect unknown openings, confirm stairs, choose a meeting point, and mark shelter/measurement needs.
 /// Nothing becomes verified except through an explicit `ConfirmationAnswer`.
-public enum ConfirmationStepKind: String, Codable, Sendable, Hashable {
-    case confirmFloor, labelSpace, confirmPortal, confirmConnector, meetingPoint, shelterSpot
+public enum ConfirmationStepKind: String, Codable, Sendable, Hashable, CaseIterable {
+    case confirmFloor, labelSpace, confirmRoomGeometry, confirmPortal, confirmConnector, meetingPoint, shelterSpot
 }
 
 public struct ConfirmationStep: Codable, Sendable, Hashable, Identifiable {
@@ -19,6 +19,7 @@ public enum ConfirmationAnswer: Codable, Sendable, Hashable {
     case higherRefuge(spaceID: String, hasWayOutAndIsNotClosedAttic: Bool)
     case floorGrade(floorID: String, grade: ExteriorGrade)
     case labelSpace(spaceID: String, label: String, kind: SpaceKind)
+    case reviewRoomGeometry(spaceID: String)
     /// Assign the first unresolved side of a proposed interior opening to a selected room.
     /// This intentionally does not verify the opening or its operability; those remain separate answers.
     case assignPortalInterior(portalID: String, spaceID: String)
@@ -54,6 +55,10 @@ public enum HomeConfirmation {
         for s in home.spaces.sorted(by: { $0.id < $1.id }) where !s.labelConfirmed {
             out.append(ConfirmationStep(kind: .labelSpace, elementID: s.id, prompt: "What is this room called?"))
         }
+        for s in home.spaces.sorted(by: { $0.id < $1.id }) where s.geometryNeedsReview == true {
+            out.append(ConfirmationStep(kind: .confirmRoomGeometry, elementID: s.id,
+                prompt: "Check this corrected outline and the recorded positions of openings, stairs and obstacles in your actual room."))
+        }
         for p in home.portals.sorted(by: { $0.id < $1.id }) where p.verification == .proposed || p.verification == .unknown {
             let prompt: String
             if p.kind == .window {
@@ -72,7 +77,7 @@ public enum HomeConfirmation {
             out.append(ConfirmationStep(kind: .meetingPoint, elementID: "meeting",
                                         prompt: "Choose one outside meeting point everyone can reach, away from the home."))
         }
-        if !home.annotations.contains(where: { $0.kind == .tornadoShelterCandidate && $0.verification == .verified }) {
+        if ShelterSuitability.confirmedRoom(in: home) == nil {
             out.append(ConfirmationStep(kind: .shelterSpot, elementID: "shelter",
                                         prompt: "Which room on the lowest floor is interior and away from windows? This is a shelter spot, not a safe room."))
         }
@@ -84,6 +89,11 @@ public enum HomeConfirmation {
         var h = home
         func portalIndex(_ id: String) -> Int? { h.portals.firstIndex { $0.id == id } }
         switch answer {
+        case .reviewRoomGeometry(let spaceID):
+            do { try HomeGeometryEditor.reviewRoom(in: &h, roomID: spaceID) }
+            catch { return home }
+            // The shared correction service already increments the revision.
+            return h
         case .higherRefuge(let spaceID, let suitable):
             guard let index = h.spaces.firstIndex(where: { $0.id == spaceID }) else { return home }
             h.spaces[index].higherRefugeConfirmed = .confirmed(suitable, verifiedAt: date)
@@ -133,6 +143,7 @@ public enum HomeConfirmation {
             return home
         case .confirmConnector(let id, let usable):
             guard let i = h.connectors.firstIndex(where: { $0.id == id }) else { return home }
+            guard !usable || HomeGeometryEditor.validLandings(h.connectors[i], in: h) else { return home }
             h.connectors[i].verification = usable ? .verified : .rejected
         case .meetingPoint(let label):
             let trimmed = label.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -141,12 +152,10 @@ public enum HomeConfirmation {
             h.annotations.append(Annotation(id: "an-meeting", kind: .outsideMeetingPoint, label: trimmed, verification: .verified))
         case .shelterSpot(let spaceID, let interior):
             guard let i = h.spaces.firstIndex(where: { $0.id == spaceID }) else { return home }
-            // Shelter spots must be on the lowest floor.
-            let lowest = h.floors.map(\.level).min()
-            guard h.floors.first(where: { $0.id == h.spaces[i].floorID })?.level == lowest,
-                  h.floors.first(where: { $0.id == h.spaces[i].floorID })?.exteriorGrade != .unknown else { return home }
+            // A negative answer must remain available after a floor/window edit invalidates an old candidate.
+            guard !interior || ShelterSuitability.canConfirm(roomID: spaceID, in: h) else { return home }
             h.spaces[i].interiorNoWindowsConfirmed = .confirmed(interior, verifiedAt: date)
-            h.annotations.removeAll { $0.kind == .tornadoShelterCandidate }
+            h.annotations.removeAll { $0.kind == .tornadoShelterCandidate && (interior || $0.spaceID == spaceID) }
             if interior {
                 h.annotations.append(Annotation(id: "an-shelter", kind: .tornadoShelterCandidate, floorID: h.spaces[i].floorID,
                                                 spaceID: spaceID, label: h.spaces[i].label, verification: .verified,
@@ -155,6 +164,13 @@ public enum HomeConfirmation {
         case .needsMeasurement(let spaceID):
             guard let i = h.spaces.firstIndex(where: { $0.id == spaceID }) else { return home }
             h.spaces[i].needsMeasurement = true
+        }
+        for i in h.annotations.indices where h.annotations[i].kind == .tornadoShelterCandidate
+            && h.annotations[i].verification == .verified {
+            guard let roomID = h.annotations[i].spaceID, ShelterSuitability.canConfirm(roomID: roomID, in: h) else {
+                h.annotations[i].verification = .proposed
+                continue
+            }
         }
         if h != home { h.bumpRevision() }
         return h

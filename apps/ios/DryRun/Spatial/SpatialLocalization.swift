@@ -129,6 +129,9 @@ enum SpatialStrings {
         "Sample home (fictional). Build or scan your own home to rehearse it.": "spatial.sample-home-fictional-build-or-scan-your-own-home-to-rehearse-it",
         "Scanned layout. Doors and exits count only after you confirm them.": "spatial.scanned-layout-doors-and-exits-count-only-after-you-confirm-them",
         "View": "spatial.view",
+        "2D plan": "spatial.mode-plan",
+        "3D": "spatial.mode-3d",
+        "Room list": "spatial.mode-rooms",
         "Change the home": "spatial.change-the-home",
         "Edit rooms, doors, and markers": "spatial.edit-rooms-doors-and-markers",
         "Scan with RoomPlan": "spatial.scan-with-roomplan",
@@ -193,5 +196,12 @@ enum SpatialStrings {
         guard let key = keys[english] else { return english }
         let resolved = localizer.text(key)
         return resolved.isMissing ? english : resolved.text
+    }
+
+    static func issue(_ issue: HomeIssue, in home: HomeModel, localizer: Localizer) -> String {
+        localizer("spatial.issue.\(issue.kind.rawValue)", [
+            "room": home.space(issue.elementID)?.label ?? text("Room", localizer: localizer),
+            "floor": home.floors.first(where: { $0.id == issue.elementID })?.label ?? text("Floor", localizer: localizer)
+        ])
     }
 }

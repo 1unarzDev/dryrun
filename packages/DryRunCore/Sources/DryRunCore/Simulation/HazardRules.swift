@@ -331,12 +331,7 @@ extension RunState {
     // MARK: Tornado
 
     var shelterSpace: Space? {
-        let lowest = home.floors.map(\.level).min() ?? 0
-        let lowestFloors = Set(home.floors.filter { $0.level == lowest }.map(\.id))
-        let annotated = home.annotations.filter { $0.kind == .tornadoShelterCandidate && $0.verification == .verified }.compactMap(\.spaceID)
-        return home.spaces.sorted { $0.id < $1.id }.first { s in
-            lowestFloors.contains(s.floorID) && home.floors.first(where: { $0.id == s.floorID })?.exteriorGrade != .unknown && home.floors.first(where: { $0.id == s.floorID })?.exteriorGrade != .aboveGround && !(home.source == .roomPlanScan && home.floors.first(where: { $0.id == s.floorID })?.exteriorGrade == nil) && (annotated.contains(s.id) || s.interiorNoWindowsConfirmed.confirmedValue == true)
-        }
+        ShelterSuitability.confirmedRoom(in: home)
     }
 
     mutating func tornadoWarning(cause: String) {

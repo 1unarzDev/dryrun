@@ -112,7 +112,9 @@ struct PlanConfirmationTests {
         #expect(home.meetingPoint == nil)
         home = HomeConfirmation.apply(.meetingPoint(label: "Neighbor's oak tree (fictional)"), to: home)
         #expect(home.meetingPoint?.verification == .verified)
-        home = HomeConfirmation.apply(.shelterSpot(spaceID: "s1", interiorNoWindows: true), to: home)
+        #expect(HomeConfirmation.apply(.shelterSpot(spaceID: "s1", interiorNoWindows: true), to: home) == home,
+            "The recorded window contradicts a no-window shelter answer")
+        home = HomeConfirmation.apply(.shelterSpot(spaceID: "s2", interiorNoWindows: true), to: home)
         let shelter = home.annotations.first { $0.kind == .tornadoShelterCandidate }
         #expect(shelter?.note?.contains("not an engineered safe room") == true)
         #expect(!HomeConfirmation.steps(for: home).contains { $0.kind == .meetingPoint || $0.kind == .shelterSpot })

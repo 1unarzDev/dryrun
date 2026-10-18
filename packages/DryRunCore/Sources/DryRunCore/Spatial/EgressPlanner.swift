@@ -36,8 +36,7 @@ public struct EgressPlanner: EgressPlanning {
             guard let destinationID = request.destinationSpaceID, let destination = home.space(destinationID) else { return fail(.incompleteConnectivity) }
             guard !request.exclusions.blockedSpaceIDs.contains(destinationID) else { return fail(.blockedByScenario) }
             if purpose == .interiorShelter {
-                guard destination.interiorNoWindowsConfirmed.confirmedValue == true,
-                      home.annotations.contains(where: { $0.kind == .tornadoShelterCandidate && $0.spaceID == destinationID && $0.verification == .verified }) else { return fail(.incompleteConnectivity) }
+                guard ShelterSuitability.isConfirmed(roomID: destinationID, in: home) else { return fail(.incompleteConnectivity) }
             }
             if purpose == .higherRefuge {
                 guard destination.kind != .closet, destination.higherRefugeConfirmed?.confirmedValue == true,
@@ -155,9 +154,13 @@ struct Graph {
         let spaces = Dictionary(uniqueKeysWithValues: home.spaces.map { ($0.id, $0) })
 
         for id in request.exclusions.blockedSpaceIDs.sorted() { exclusions.append(RouteExclusion(elementID: id, reason: "blockedByScenario")) }
+        for room in home.spaces.sorted(by: { $0.id < $1.id }) where room.geometryNeedsReview == true {
+            exclusions.append(RouteExclusion(elementID: room.id, reason: "correctedGeometryNeedsReview"))
+        }
 
         func usable(_ spaceID: String) -> Space? {
-            guard let s = spaces[spaceID], !blockedSpaces.contains(spaceID), Geometry.isSimplePolygon(s.polygon) else { return nil }
+            guard let s = spaces[spaceID], !blockedSpaces.contains(spaceID), s.geometryNeedsReview != true,
+                  Geometry.isSimplePolygon(s.polygon) else { return nil }
             return s
         }
 
@@ -248,7 +251,8 @@ struct Graph {
                 if let reason { exclusions.append(RouteExclusion(elementID: cn.id, reason: reason)) }
                 continue
             }
-            guard let fs = usable(cn.fromSpaceID), let ts = usable(cn.toSpaceID),
+            guard HomeGeometryEditor.validLandings(cn, in: home),
+                  let fs = usable(cn.fromSpaceID), let ts = usable(cn.toSpaceID),
                   Geometry.contains(fs.polygon, cn.fromPoint), Geometry.contains(ts.polygon, cn.toPoint) else {
                 if !(blockedSpaces.contains(cn.fromSpaceID) || blockedSpaces.contains(cn.toSpaceID)) {
                     exclusions.append(RouteExclusion(elementID: cn.id, reason: "invalidGeometry: connector endpoints not inside their spaces"))

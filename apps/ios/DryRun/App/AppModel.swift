@@ -342,6 +342,9 @@ final class AppModel {
         if let old = home { h.revision = max(h.revision, old.revision + 1) }
         var candidateHousehold = household
         candidateHousehold.homeID = h.id
+        if HomeGeometryEditor.requiresNewEscapeCheck(previous: home, updated: h) {
+            candidateHousehold.preparedness?.items["clearExits"]?.checkedAt = nil
+        }
         // A replacement home cannot keep references to rooms that no longer exist. Keep unresolved
         // assignments explicit so the rehearsal engine returns unknownStartSpace instead of guessing.
         let validSpaceIDs = Set(h.spaces.map(\.id))
@@ -656,18 +659,22 @@ final class AppModel {
     }
 
     /// Delete everything private: vault, derived caches, temporary exports, and the key.
-    func deleteAllPrivateData() async {
-        guard !privateWriteInFlight else { lastError = "An edit is still saving. Try again."; return }
+    @discardableResult
+    func deleteAllPrivateData() async -> Bool {
+        guard !privateWriteInFlight else { lastError = "An edit is still saving. Try again."; return false }
         privateWriteInFlight = true
         defer { privateWriteInFlight = false }
         do {
             try await store.deleteAll()
+            LocalReviewReminderScheduler.shared.cancel()
             TemporaryExports.purgeAll()
             household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
             runGate.invalidate(); planGate.invalidate(); nextGate.invalidate()
             phase = .onboarding
+            return true
         } catch {
             lastError = String(describing: error)
+            return false
         }
     }
 }

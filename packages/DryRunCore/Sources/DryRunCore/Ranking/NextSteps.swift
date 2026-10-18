@@ -25,7 +25,7 @@ public struct NextStepsSummary: Sendable, Hashable {
 }
 
 public enum NextSteps {
-    public static func summarize(_ results: [RehearsalResult], household: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = []) -> NextStepsSummary {
+    public static func summarize(_ results: [RehearsalResult], household: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> NextStepsSummary {
         var best: [String: (rec: Recommendation, scenario: String)] = [:]
         var scenarios: [String: Set<String>] = [:]
         for r in results {
@@ -43,7 +43,7 @@ public enum NextSteps {
                 }
             }
         }
-        for rec in BaselinePreparedness.evaluate(household: household, home: home, savedPlaces: savedPlaces) {
+        for rec in BaselinePreparedness.evaluate(household: household, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate) {
             best[rec.id] = (rec, rec.scenarioIDs.first ?? "")
             scenarios[rec.id] = Set(rec.scenarioIDs)
         }

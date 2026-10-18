@@ -11,7 +11,7 @@ prediction of remaining safe time. Do not publish or submit without the owner's 
 | 3 | Plan → address/map → near and backup meetup | Two meeting purposes; Apple suggestions are ordinary planning resources; saved details feed the card/PDF |
 | 4 | Rehearse → home fire, one origin and person | Scene is visible from the beginning; authored smoke/blockage updates the current validated route; unknown/no route stays honest |
 | 5 | Flood / tornado brief scene | Indoor-water and interior shelter destinations use the same canonical geometry and explicit assumptions |
-| 6 | End action → record one real preparation | Physical check or saved fact closes the corresponding gap; a hypothetical comparison leaves household facts untouched |
+| 6 | End action → record one real preparation | Physical check or saved fact closes the corresponding gap; solo/joint review stay distinct; an optional review reminder is chosen explicitly; a hypothetical comparison leaves household facts untouched |
 | 7 | Plan → selected-content preview → PDF share/Print | Critical details, contacts, meetups, home and separate neighborhood panel; unavailable map still leaves useful text |
 | 8 | Relaunch offline; switch EN/ES/VI | Retained essentials remain local; live Apple services are not promised offline; translations/safety wording are drafts |
 

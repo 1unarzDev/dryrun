@@ -10,7 +10,7 @@ No timing, VoiceOver, real Maps, camera, Print, or share-lifecycle claim is esta
 | Example household | Explicit fictional path, badges in preparation/home/rehearsal/export | Source review; visual badge consistency needs current screenshots |
 | Prepare | First recommendation prominent, next two priorities, unresolved count, all preparations | Source review; small-screen/hierarchy check pending |
 | Your family / contacts / supplies | Shared focused editor, save then dismiss, failures retain draft | Native AppPersistenceTests authored; UI tests unrun |
-| Your home | Manual/scanned layout, contextual correction and resident assignment | Core confirmation/routing tests; native canvas and LiDAR gate |
+| Your home | Navigation from Prepare; manual/scanned layout, contextual shape/opening/landing correction, explicit levels, review and resident assignment | Core confirmation/routing tests; native canvas and LiDAR gate |
 | Preparation row | Relevant factual editor; no generic completion certification | Subject/fingerprint tests; inspect each task's return path on simulator |
 | Family emergency card | Universal selected-content preview; structured phone call actions | Core selected-content tests; native preview/share/print pending |
 | Rehearse | Six hazards, visible home at start, stage/person selector, current-route state | Core deterministic fixtures; actual scene/gesture/AX checks pending |
@@ -18,7 +18,7 @@ No timing, VoiceOver, real Maps, camera, Print, or share-lifecycle claim is esta
 | Plan | Live card, home and neighborhood previews; contacts/destinations; optional scenario export | Core plan/place tests; native PDF/snapshot inspect pending |
 | Address | Apple autocomplete/manual/pin correction; correction versus moving | Native adapter/source review; real Apple resolution pending |
 | Map | Persistent home/places, nearby suggestions, equivalent list, origin/mode choice | Fake cancellation tests authored; Apple failures/offline pending |
-| Settings toolbar | Language, privacy/capability status, destructive delete confirmation | Source review; EN/ES/VI control and destructive lifecycle checks pending |
+| Settings toolbar | Language, privacy/capability status, opt-in one-time local review reminder, destructive delete confirmation | Source review; EN/ES/VI control and destructive lifecycle checks pending |
 | PDF activity/Print | Protected file leases until activity completion; same preview bytes | Source review; system activity/print/background test pending |
 
 `DemoJourneyUITests` now covers skip-layout/contact/card preview, absent-layout home path, direct family/plan,
@@ -29,3 +29,10 @@ Accessibility requirements still to execute: small iPhone and large Dynamic Type
 canvas/map text alternative; static Reduce Motion; non-color current/blocked/unknown distinctions; dark/light
 contrast; long names/notes and translated pickers. The app keeps minimum target iOS 18. No language beyond the
 existing English/Spanish/Vietnamese packs was added. Draft translations need human review even when keys resolve.
+
+Follow-up source review removed the Prepare → Home sheet nesting; Home is a navigation destination with a focused
+editor sheet. Primary preparation tasks still open their subject's relevant editor directly. Room selection resets
+contextual state, and an outside-wall correction requires a new explicit choice. Home mode labels, validation
+issues, confirmation questions, connection/floor summaries and reminder controls use EN/ES/VI keys. All issue and
+question enums have locale-resolution coverage; native text layout/VoiceOver usability remain unverified.
+Solo card review does not appear as joint family review; changing an item's location clears its old physical checks.

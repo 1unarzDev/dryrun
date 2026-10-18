@@ -22,6 +22,21 @@ struct FamilyPreparationRevisionTests {
         #expect(tasks.contains { $0.id == "prep.medicalBackup|equipment.mixed" })
         #expect(tasks.contains { $0.id == "prep.coldStorage|equipment.mixed" })
     }
+    @Test func legacyNonMedicationStorageCanBeClarifiedWithoutChangingItsPowerRequirement() throws {
+        let old = PoweredEquipment(id: "legacy", purpose: .other, label: "Recorded item", needsRefrigeration: true)
+        var item = try JSONDecoder().decode(PoweredEquipment.self, from: JSONEncoder().encode(old))
+        #expect(item.needsRefrigeration && item.refrigeratedStorage == nil)
+        #expect(item.requiresElectricalPower && item.requiresColdStorage)
+        var household = SampleHouseholds.oak; household.equipment = [item]
+        #expect(BaselinePreparedness.evaluate(household: household).contains { $0.actionID == "prep.coldStorage" })
+        item.refrigeratedStorage = .confirmed(false)
+        household.equipment = [item]
+        #expect(item.requiresElectricalPower && !item.requiresColdStorage)
+        #expect(!BaselinePreparedness.evaluate(household: household).contains { $0.actionID == "prep.coldStorage" })
+        item.refrigeratedStorage = .unknown
+        household.equipment = [item]
+        #expect(BaselinePreparedness.evaluate(household: household).contains { $0.actionID == "prep.coldStorage" }, "an unresolved inherited answer still needs review")
+    }
     @Test func taskSubjectsAndFingerprintsDoNotLeakAcrossDevices() {
         var h = SampleHouseholds.oak
         let first = h.equipment[0]
@@ -129,10 +144,85 @@ struct FamilyPreparationRevisionTests {
         h.preparedness?.items["smokeAlarms"]?.coverageReviewed = .confirmed(true)
         #expect(!BaselinePreparedness.evaluate(household: h).contains { $0.actionID == "prep.smokeAlarms" })
     }
+    @Test func maintenanceUsesRecordedDatesAndStaysBelowEssentialGaps() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        var h = SampleHouseholds.oak
+        h.preparedness = .init(items: [
+            "smokeAlarms": .init(available: .confirmed(true), location: "Hall", checkedAt: now.addingTimeInterval(-31 * 86_400), coverageReviewed: .confirmed(true)),
+            "firstAid": .init(available: .confirmed(true), location: "Cupboard", checkedAt: now.addingTimeInterval(-181 * 86_400))
+        ], reviewedAt: now.addingTimeInterval(-181 * 86_400))
+        let stale = BaselinePreparedness.evaluate(household: h, referenceDate: now)
+        #expect(stale.contains { $0.actionID == "prep.reviewCard" && $0.tier == .general })
+        #expect(stale.contains { $0.actionID == "prep.smokeAlarms" && $0.tier == .general && $0.templateValues["days"] == "30" })
+        #expect(stale.contains { $0.actionID == "prep.firstAid" && $0.tier == .general })
+        #expect(stale.firstIndex { $0.tier == .unmetEssentialRequirement }! < stale.firstIndex { $0.actionID == "prep.reviewCard" }!)
+        #expect(stale == BaselinePreparedness.evaluate(household: h, referenceDate: now))
+        h.preparedness?.reviewedAt = now
+        h.preparedness?.items["smokeAlarms"]?.checkedAt = now
+        h.preparedness?.items["firstAid"]?.checkedAt = now
+        let fresh = BaselinePreparedness.evaluate(household: h, referenceDate: now)
+        #expect(!fresh.contains { ["prep.reviewCard", "prep.smokeAlarms", "prep.firstAid"].contains($0.actionID) })
+        h.preparedness?.items["smokeAlarms"]?.available = .confirmed(false)
+        #expect(BaselinePreparedness.evaluate(household: h, referenceDate: now).contains { $0.actionID == "prep.smokeAlarms" && $0.tier == .unmetEssentialRequirement })
+    }
+    @Test func heatingFuelAloneCannotDismissCOAlarmReview() {
+        var h = SampleHouseholds.oak
+        h.housing.heatingFuel = .none; h.backupPower = []
+        #expect(BaselinePreparedness.evaluate(household: h).contains { $0.actionID == "prep.coAlarms" })
+        h.backupPower = [BackupPowerSource(id: "generator", kind: .portableGenerator, label: "")]
+        #expect(BaselinePreparedness.evaluate(household: h).contains { $0.actionID == "prep.coAlarms" })
+    }
 }
 
 
 extension FamilyPreparationRevisionTests {
+    @Test("Legacy card review never becomes a joint family review")
+    func cardAndJointReviewMigrateIndependently() throws {
+        let cardDate = Date(timeIntervalSince1970: 1_700_000_000)
+        let jointDate = cardDate.addingTimeInterval(86_400)
+        let legacy = PreparednessRecord(items: ["firstAid": .init(location: "Cupboard")], reviewedAt: cardDate)
+        var json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(legacy)) as! [String: Any]
+        json.removeValue(forKey: "jointlyReviewedAt")
+        var restored = try JSONDecoder().decode(PreparednessRecord.self, from: JSONSerialization.data(withJSONObject: json))
+        #expect(restored.reviewedAt == cardDate)
+        #expect(restored.jointlyReviewedAt == nil)
+        #expect(restored.items == legacy.items)
+        restored.jointlyReviewedAt = jointDate
+        let roundTrip = try JSONDecoder().decode(PreparednessRecord.self, from: JSONEncoder().encode(restored))
+        #expect(roundTrip.reviewedAt == cardDate && roundTrip.jointlyReviewedAt == jointDate)
+        restored.reviewedAt = jointDate.addingTimeInterval(86_400)
+        #expect(restored.jointlyReviewedAt == jointDate)
+        restored.jointlyReviewedAt = nil
+        #expect(restored.reviewedAt != nil)
+    }
+
+    @Test("Item changes reopen physical checks and their coverage or awareness without invalidating note edits")
+    func itemEditsInvalidateOnlyDependentEvidence() {
+        let date = Date(timeIntervalSince1970: 1_800_000_000)
+        let original = PreparationFact(available: .confirmed(true), location: "Hall", checkedAt: date,
+                                       notes: "Original note", coverageReviewed: .confirmed(true), familyAware: .confirmed(true))
+        var moved = original; moved.location = "Bedroom"
+        let corrected = original.applyingEdits(moved)
+        #expect(corrected.location == "Bedroom")
+        #expect(corrected.checkedAt == nil && corrected.coverageReviewed == nil && corrected.familyAware == nil)
+        var removed = original; removed.available = .confirmed(false)
+        let missing = original.applyingEdits(removed)
+        #expect(missing.available.confirmedValue == false)
+        #expect(missing.checkedAt == nil && missing.coverageReviewed == nil && missing.familyAware == nil)
+        var noted = original; noted.notes = "New finding instructions"
+        #expect(original.applyingEdits(noted) == noted)
+        var restamped = original; restamped.available = .confirmed(true, verifiedAt: date.addingTimeInterval(60))
+        #expect(original.applyingEdits(restamped) == restamped, "restamping the same availability is not a changed item")
+        var fresh = corrected; fresh.checkedAt = date.addingTimeInterval(60); fresh.coverageReviewed = .confirmed(true)
+        #expect(corrected.applyingEdits(fresh) == fresh, "a deliberate subsequent check survives once item facts are unchanged")
+        var household = SampleHouseholds.oak
+        household.preparedness = .init(items: ["smokeAlarms": original, "extinguisher": original])
+        household.preparedness?.items["smokeAlarms"] = corrected
+        let tasks = BaselinePreparedness.evaluate(household: household, referenceDate: date)
+        #expect(tasks.contains { $0.actionID == "prep.smokeAlarms" })
+        #expect(!tasks.contains { $0.actionID == "prep.extinguisher" }, "unrelated item remains checked")
+    }
+
     @Test("Changing equipment type resets support evidence while retaining a genuine custom name")
     func typeChangeInvalidatesOldSupport() {
         var equipment = PoweredEquipment(id: "example", purpose: .refrigeratedMedication, label: "Family custom model",

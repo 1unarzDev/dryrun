@@ -3,7 +3,7 @@ import DryRunCore
 
 /// One save boundary shared by Prepare, the card, and individual factual tasks.
 struct FocusedHouseholdEditor: View {
-    enum Focus { case family, contacts, supplies, transport, backups, preparation(String) }
+    enum Focus { case family, contacts, supplies, transport, backups, review, preparation(String) }
     let focus: Focus
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
@@ -21,6 +21,7 @@ struct FocusedHouseholdEditor: View {
                 case .supplies: supplyFields
                 case .transport: transportFields
                 case .backups: backupFields
+                case .review: reviewFields
                 case .preparation(let id): preparationFields(id)
                 }
             }
@@ -51,6 +52,7 @@ struct FocusedHouseholdEditor: View {
         case .supplies: model.localizer("family.supplies")
         case .transport: model.localizer("ui.setup.gettingAround")
         case .backups: model.localizer("card.section.backup")
+        case .review: model.localizer("prep.reviewCard.title")
         case .preparation(let id): model.localizer("prep.\(id).title")
         }
     }
@@ -110,11 +112,11 @@ struct FocusedHouseholdEditor: View {
             }
             preparationFields("reconnect")
             Section(l("family.review")) {
-                Toggle(l("family.reviewedTogether"), isOn: Binding(get: { draft?.preparedness?.reviewedAt != nil }, set: { reviewed in
+                Toggle(l("family.reviewedTogether"), isOn: Binding(get: { draft?.preparedness?.jointlyReviewedAt != nil }, set: { reviewed in
                     if draft?.preparedness == nil { draft?.preparedness = PreparednessRecord() }
-                    draft?.preparedness?.reviewedAt = reviewed ? Date() : nil
+                    draft?.preparedness?.jointlyReviewedAt = reviewed ? Date() : nil
                 }))
-                if let date = draft?.preparedness?.reviewedAt { Text(date, style: .date) }
+                if let date = draft?.preparedness?.jointlyReviewedAt { Text(date, style: .date) }
             }
         }
     }
@@ -137,6 +139,26 @@ struct FocusedHouseholdEditor: View {
             Button(l("prep.contact.title"), systemImage: "plus") {
                 draft!.contacts.append(HouseholdContact(id: UUID().uuidString, role: .other, alias: ""))
             }.accessibilityIdentifier("contacts.add")
+        }
+    }
+    private var reviewFields: some View {
+        let l = model.localizer
+        return Group {
+            if let draft {
+                let page = FamilyEmergencyCardBuilder.page(household: draft, savedPlaces: model.savedPlaces.filter { $0.homeID == (model.home?.id ?? draft.stableHomeID) },
+                    localizer: l, selection: .init(includeCriticalInformation: true, includeMedication: true, includeResponderInstructions: true))
+                ForEach(page.sections) { section in
+                    Section(section.heading) { ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in Text(line.text) } }
+                }
+            }
+            Section {
+                Button(l("family.reviewNow")) {
+                    if draft?.preparedness == nil { draft?.preparedness = PreparednessRecord() }
+                    draft?.preparedness?.reviewedAt = Date()
+                }.accessibilityIdentifier("family.reviewNow")
+                Text(l("prep.reviewCard.why")).font(.footnote)
+            }
+            ReviewReminderSection()
         }
     }
     private var supplyFields: some View {
@@ -217,7 +239,8 @@ struct FocusedHouseholdEditor: View {
     private func fact(_ id: String) -> Binding<PreparationFact> {
         Binding(get: { draft!.preparedness?.items[id] ?? PreparationFact() }, set: { value in
             if draft!.preparedness == nil { draft!.preparedness = PreparednessRecord() }
-            draft!.preparedness!.items[id] = value
+            let current = draft!.preparedness!.items[id] ?? PreparationFact()
+            draft!.preparedness!.items[id] = current.applyingEdits(value)
         })
     }
     private func preparationFields(_ id: String) -> some View {
@@ -227,8 +250,12 @@ struct FocusedHouseholdEditor: View {
             TriStateRow(title: l("family.haveItem"), value: record.available)
             TextField(l("family.locationOfItem"), text: record.location, axis: .vertical)
             TextField(l("family.notes"), text: record.notes, axis: .vertical)
-            if BaselinePreparedness.definitions.first(where: { $0.id == id })?.requiresPhysicalCheck == true {
+            if BaselinePreparedness.definitions.contains(where: { $0.id == id }) || id == "pets" {
                 Toggle(l("family.recordedCheck"), isOn: Binding(get: { record.wrappedValue.checkedAt != nil }, set: { record.wrappedValue.checkedAt = $0 ? Date() : nil }))
+                if let date = record.wrappedValue.checkedAt {
+                    Text(date, style: .date)
+                    Button(l("family.recheckNow")) { record.wrappedValue.checkedAt = Date() }
+                }
             }
             if id == "smokeAlarms" || id == "coAlarms" {
                 TriStateRow(title: l("family.alarmCoverage"), value: Binding(get: { record.wrappedValue.coverageReviewed ?? .unknown }, set: { record.wrappedValue.coverageReviewed = $0 }))

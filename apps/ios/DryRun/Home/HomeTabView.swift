@@ -44,7 +44,7 @@ struct HomeTabView: View {
                             .font(.footnote)
                     }
                     Picker(s("View"), selection: $mode) {
-                        ForEach(Mode.allCases) { Text($0.rawValue).tag($0) }
+                        ForEach(Mode.allCases) { Text(s($0.rawValue)).tag($0) }
                     }
                     .pickerStyle(.segmented)
                     if home.floors.count > 1 {
@@ -70,7 +70,7 @@ struct HomeTabView: View {
                 Section(s("Change the home")) {
                     let pending = HomeConfirmation.steps(for: home).count
                     if pending > 0 {
-                        Button("Confirm rooms, doors, and exits (\(pending))", systemImage: "checklist") { confirming = home }
+                        Button(model.localizer("spatial.confirm-count", ["count": String(pending)]), systemImage: "checklist") { confirming = home }
                     }
                     Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { editing = true }
                     scanControls
@@ -80,7 +80,7 @@ struct HomeTabView: View {
                         Text(s("Assign each person to the room where a rehearsal should start. Leave a person unassigned when the answer is unknown; Dry Run will report that explicitly instead of guessing."))
                             .font(.footnote).foregroundStyle(.secondary)
                         ForEach(household.people) { person in
-                            Picker(person.alias.isEmpty ? "Resident" : person.alias,
+                            Picker(person.localizedLabel(model.localizer),
                                    selection: Binding<String?>(
                                     get: { model.household?.people.first(where: { $0.id == person.id })?.sleepingSpaceID },
                                     set: { value in
@@ -122,10 +122,10 @@ struct HomeTabView: View {
                     Button(s("Choose on map"), systemImage: "map") { showingMeetingPlaceMap = true }
                 }
                 let issues = HomeValidator.validate(home)
-                Section("Still to confirm (\(issues.count))") {
+                Section(model.localizer("spatial.issues-count", ["count": String(issues.count)])) {
                     if issues.isEmpty { Text(s("Nothing outstanding in the home model.")) }
                     ForEach(issues) { issue in
-                        Label(issue.message, systemImage: issue.severity == .blocking ? "exclamationmark.octagon" : "questionmark.circle")
+                        Label(issueText(issue), systemImage: issue.severity == .blocking ? "exclamationmark.octagon" : "questionmark.circle")
                             .font(.callout)
                     }
                 }
@@ -151,11 +151,11 @@ struct HomeTabView: View {
             if let h = model.household {
                 Section(s("Household systems")) {
                     LabeledContent(s("People"), value: "\(h.people.count)")
-                    LabeledContent(s("Heat"), value: "\(h.housing.heatingFuel.displayName) · needs power: \(tri(h.housing.heatingNeedsElectricity))")
-                    LabeledContent(s("Water"), value: h.housing.waterSource.displayName)
-                    LabeledContent(s("Vehicle"), value: h.transport.hasVehicle ? "Yes" : "No")
+                    LabeledContent(s("Heat"), value: model.localizer("spatial.heating-summary", ["type": DisplayNames.name(h.housing.heatingFuel.rawValue, localizer: model.localizer), "power": tri(h.housing.heatingNeedsElectricity)]))
+                    LabeledContent(s("Water"), value: DisplayNames.name(h.housing.waterSource.rawValue, localizer: model.localizer))
+                    LabeledContent(s("Vehicle"), value: s(h.transport.hasVehicle ? "Yes" : "No"))
                     ForEach(h.equipment) { eq in
-                        LabeledContent(eq.label, value: eq.compatibleBackupIDs.isEmpty ? "No confirmed backup" : "Backup listed")
+                        LabeledContent(DisplayNames.equipment(eq, localizer: model.localizer), value: model.localizer(eq.compatibleBackupIDs.isEmpty ? "spatial.no-confirmed-backup" : "spatial.backup-listed"))
                     }
                     Button(s("Edit household"), systemImage: "person.2") { editingHousehold = true }
                 }
@@ -223,7 +223,12 @@ struct HomeTabView: View {
     }
 
     private func tri(_ v: EvidenceValue<Bool>) -> String {
-        guard let b = v.value else { return "not sure" }
-        return b ? "yes" : "no"
+        guard let b = v.value else { return s("Not sure") }
+        return s(b ? "Yes" : "No")
+    }
+
+    private func issueText(_ issue: HomeIssue) -> String {
+        guard let home = model.home else { return issue.message }
+        return SpatialStrings.issue(issue, in: home, localizer: model.localizer)
     }
 }

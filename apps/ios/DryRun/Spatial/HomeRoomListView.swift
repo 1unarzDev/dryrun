@@ -31,7 +31,7 @@ struct HomeRoomListView: View {
             DisclosureGroup(s("Stairs and floor connections")) {
                 ForEach(home.connectors) { c in
                     VStack(alignment: .leading) {
-                        Text("\(c.kind.rawValue.capitalized): \(label(c.fromSpaceID)) ↔ \(label(c.toSpaceID))")
+                        Text("\(model.localizer("spatial.connector.\(c.kind.rawValue)")): \(label(c.fromSpaceID)) ↔ \(label(c.toSpaceID))")
                         Text(stateText(c.verification)).font(.caption).foregroundStyle(.secondary)
                     }
                     .accessibilityElement(children: .combine)
@@ -45,7 +45,7 @@ struct HomeRoomListView: View {
                 Label {
                     VStack(alignment: .leading) {
                         Text(a.label)
-                        Text([a.spaceID.map(label) ?? "Outside", stateText(a.verification)].joined(separator: " · "))
+                        Text([a.spaceID.map(label) ?? s("Outside"), stateText(a.verification)].joined(separator: " · "))
                             .font(.caption).foregroundStyle(.secondary)
                         if let note = a.note { Text(note).font(.caption).foregroundStyle(.secondary) }
                     }
@@ -57,15 +57,16 @@ struct HomeRoomListView: View {
         }
     }
 
-    private func spaceRow(_ s: Space) -> some View {
-        let doors = home.portals.filter { p in p.sideA == .space(s.id) || p.sideB == .space(s.id) }
-        let area = abs(Geometry.signedArea(s.polygon))
+    private func spaceRow(_ space: Space) -> some View {
+        let doors = home.portals.filter { p in p.sideA == .space(space.id) || p.sideB == .space(space.id) }
+        let area = abs(Geometry.signedArea(space.polygon)).formatted(.number.precision(.fractionLength(0)).locale(Locale(identifier: model.locale)))
         return VStack(alignment: .leading, spacing: 2) {
-            Text(s.label + (s.labelConfirmed ? "" : " (name not confirmed)"))
-            Text(String(format: "About %.0f m²", area) + (s.needsMeasurement ? " · needs measurement" : ""))
+            Text(space.label + (space.labelConfirmed ? "" : " " + s("(name not confirmed)")))
+            Text(model.localizer("spatial.room-area", ["area": area]) + (space.needsMeasurement ? " · " + s("needs measurement") : ""))
                 .font(.caption).foregroundStyle(.secondary)
+            if space.geometryNeedsReview == true { Text(model.localizer("spatial.issue.correctedGeometryNeedsReview")).font(.caption) }
             ForEach(doors) { p in
-                Text("• \(p.kind.rawValue.capitalized) to \(destination(p, from: s.id)) — \(stateText(p.verification))")
+                Text(model.localizer("spatial.opening-summary", ["kind": DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "destination": destination(p, from: space.id), "status": stateText(p.verification)]))
                     .font(.caption)
             }
         }
@@ -77,12 +78,15 @@ struct HomeRoomListView: View {
         var facts: [String] = [stateText(p.verification)]
         if p.kind == .window { facts.append(s("window — not counted as an exit")) }
         if isCommonArea(p) { facts.append(s("opens to a shared building area that is not modelled")) }
-        if let w = p.clearWidthMeters.value { facts.append(String(format: "%.2f m wide%@", w, p.clearWidthMeters.isConfirmed ? "" : " (scanned, unconfirmed)")) }
+        if let w = p.clearWidthMeters.value {
+            let width = w.formatted(.number.precision(.fractionLength(2)).locale(Locale(identifier: model.locale)))
+            facts.append(model.localizer("spatial.opening-width", ["width": width]) + (p.clearWidthMeters.isConfirmed ? "" : " · " + model.localizer("spatial.scanned-unconfirmed")))
+        }
         else if p.kind != .window { facts.append(s("width not measured")) }
         if let sf = p.stepFree.value { facts.append(s(sf ? "step-free" : "has a step")) }
         if p.operable.value == nil && p.kind != .opening { facts.append(s("opening not confirmed")) }
         return VStack(alignment: .leading, spacing: 2) {
-            Text("\(p.note ?? p.kind.rawValue.capitalized) (from \(inside))")
+            Text(model.localizer("spatial.opening-from", ["opening": p.note ?? DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "room": inside]))
             Text(facts.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)

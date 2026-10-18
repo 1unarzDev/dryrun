@@ -69,3 +69,12 @@ results and limits are in VERIFICATION. No native SDK build, simulator/device ru
 professional clinical/fire review or human translation review occurred in this pass. A Claude session on the
 owner's Mac is expected to continue native verification via CLAUDE_NATIVE_HANDOFF. Do not attribute future results
 until that session supplies them. No student contribution, recruitment, partner feedback or endorsement is implied.
+
+
+October 17 follow-up (same Linux Codex integration, with independent AI preparation/spatial/maps source reviews):
+added constrained geometry correction/provenance and explicit levels/stairs; fixed independent-wall preservation,
+shared current shelter validation, maintenance/physical-check invalidation, separate solo/joint review and optional
+one-time reminder cancellation/deletion. Added tests and EN/ES/VI draft controls. The vault incremental build's stale
+binary failure was reproduced, then cleared by rebuilding without source changes; fresh suites provide the reported
+evidence. Native reminder tests are authored only. No current simulator/device screenshots or professional review
+were produced; remaining native work is handed to the owner's existing Claude/Mac checkout.
