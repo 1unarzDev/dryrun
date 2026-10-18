@@ -66,7 +66,7 @@ struct HomeAddressEditorView: View {
             }.navigationTitle(t("homeAddress"))
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button(t("cancel")) { dismiss() } }
-                    ToolbarItem(placement: .confirmationAction) { Button(t("save")) { if moving { confirmingMove = true } else { save() } }.disabled(saving || resolving).accessibilityIdentifier("address.save") }
+                    ToolbarItem(placement: .confirmationAction) { Button(model.localizer("ui.save")) { if moving { confirmingMove = true } else { save() } }.disabled(saving || resolving).accessibilityIdentifier("address.save") }
                 }
                 .task {
                     guard !initialized else { return }; initialized = true

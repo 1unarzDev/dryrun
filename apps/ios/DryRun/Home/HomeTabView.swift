@@ -189,12 +189,9 @@ struct HomeTabView: View {
             }
             .interactiveDismissDisabled()
         }
-        .navigationDestination(isPresented: $editingHousehold) { HouseholdSetupView(mode: .edit) }
+        .navigationDestination(isPresented: $editingHousehold) { FocusedHouseholdEditor(focus: .family) }
         .sheet(isPresented: $showingMeetingPlaceMap) {
-            if let regionalResources = model.regionalResources { MapPlanningView(store: regionalResources, purpose: .outsideMeetingPoint) }
-            else if let content = model.content {
-                MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "", purpose: .outsideMeetingPoint)
-            }
+            MeetingPlaceChooser(purpose: .outsideMeetingPoint)
         }
         .sheet(item: $confirming) { draft in
             NavigationStack {

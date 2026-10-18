@@ -631,5 +631,22 @@
   "map.source.official": "Thông tin tham khảo về nguồn lực công cộng",
   "map.source.label": "Nguồn: {source}",
   "map.source.checkMissing": "Chưa ghi ngày kiểm tra nguồn.",
-  "map.snapshotMissing": "Không có ảnh bản đồ cho: {panels}. Dùng tên, địa chỉ và hướng dẫn đã lưu."
+  "map.snapshotMissing": "Không có ảnh bản đồ cho: {panels}. Dùng tên, địa chỉ và hướng dẫn đã lưu.",
+  "ui.next.shortcuts": "Gia đình, ngôi nhà và thẻ khẩn cấp của bạn",
+  "ui.plan.headline": "Kế hoạch của gia đình bạn",
+  "ui.plan.subhead": "Tự cập nhật khi bạn thêm thông tin. Chia sẻ hoặc in bất cứ lúc nào.",
+  "ui.plan.cardComplete": "Thẻ đã có người liên lạc và cả hai điểm hẹn",
+  "ui.plan.missing": "Còn thiếu: {items}",
+  "ui.plan.chooseMeetup": "Chọn một địa điểm",
+  "ui.plan.editContacts": "Sửa người liên lạc",
+  "ui.plan.openMap": "Mở bản đồ",
+  "ui.plan.homeDiagram": "Sơ đồ nhà có {rooms} phòng. Danh sách phòng nằm trong Nhà của bạn.",
+  "ui.plan.notChosen": "chưa chọn",
+  "ui.scene.origin": "Nơi bắt đầu (bài tập)",
+  "ui.rehearse.step": "Bước {step}/{total}",
+  "ui.scene.newThisStep": "Mới ở bước này",
+  "ui.scene.newAffected": "Hiện bị ảnh hưởng: {rooms}",
+  "ui.scene.newBlocked": "Số lối không còn dùng được trong bài tập: {count}",
+  "ui.scene.routeChanged": "Đường tập luyện đã thay đổi. Đường cũ không còn hiển thị.",
+  "ui.scene.routeLost": "Đường cũ không còn dùng được và không tìm thấy đường nào khác."
 }

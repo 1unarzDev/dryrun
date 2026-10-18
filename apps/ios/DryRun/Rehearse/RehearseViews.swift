@@ -4,7 +4,8 @@ import DryRunCore
 struct RehearseTabView: View {
     private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
-    static let scenarioIDs = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
+    // Spatial exercises first, home fire as the flagship; all six hazards stay available.
+    static let scenarioIDs = ["home-fire", "tornado", "flash-flood", "freeze-power-loss", "heat-grid-strain", "water-outage"]
     static let symbols = ["freeze-power-loss": "snowflake", "heat-grid-strain": "thermometer.sun", "tornado": "tornado",
                           "flash-flood": "water.waves", "home-fire": "flame", "water-outage": "drop.triangle"]
     static let tints: [String: Color] = ["freeze-power-loss": .blue, "heat-grid-strain": .orange, "tornado": .purple,
@@ -97,14 +98,15 @@ struct RehearsalView: View {
                     if session?.result.input.effectiveSpatialOptions.floodIsHouseholdLeak == true {
                         Label(l("scenario.household-leak.title"), systemImage: "drop").font(.headline)
                     }
-                    if let session { clock(session) }
+                    if let session { stepLabel(session) }
                 }
                 if let session {
                     if let home = session.result.input.home, ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
-                        sceneOptions(session, home: home)
                         SpatialRehearsalScene(home: home, household: session.result.input.household,
-                                              state: session.snapshotAtCursor?.spatialState)
+                                              state: session.snapshotAtCursor?.spatialState,
+                                              previous: session.spatialStateBeforeCursor)
                             .accessibilityIdentifier("rehearsal.scene")
+                        sceneOptions(session, home: home)
                     }
                     if session.result.input.home == nil { Label(model.localizer("map.layoutMissing"), systemImage: "house").font(.callout).foregroundStyle(.secondary) }
                     let events = session.visibleEvents
@@ -220,6 +222,15 @@ struct RehearsalView: View {
         .accessibilityIdentifier("rehearsal.assumptions")
     }
 
+    /// "Step 2 of 6": progress through the exercise. Exercise minutes are not shown up front, so nothing reads as a
+    /// countdown or a prediction of how much time a household has.
+    private func stepLabel(_ session: RehearsalCursor) -> some View {
+        Label(model.localizer("ui.rehearse.step", ["step": "\(max(session.revealed, 1))", "total": "\(max(session.result.events.count, 1))"]), systemImage: "list.number")
+            .font(.subheadline.weight(.semibold).monospacedDigit())
+            .foregroundStyle(.secondary)
+            .accessibilityIdentifier("rehearsal.step")
+    }
+
     private func clock(_ session: RehearsalCursor) -> some View {
         let minute = session.currentMinute
         let text = RehearsalPresentation.compactTime(minutes: minute, localizer: model.localizer)
@@ -290,10 +301,29 @@ struct SpatialRehearsalScene: View {
     let home: HomeModel
     let household: HouseholdProfile
     let state: SpatialExerciseState?
+    var previous: SpatialExerciseState? = nil
     @State private var personID: String?
     @State private var show3D = false
     @State private var selectedFloorID: String?
     private var route: RouteResult? { state?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
+    private var previousRoute: RouteResult? { previous?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
+    /// Only the selected person's current routes. An earlier route that is no longer valid is never drawn as available.
+    private var currentPaths: [RoutePath] { [route?.primary, route?.alternative].compactMap { $0 } }
+
+    /// What this stage changed compared with the previous one, in words.
+    private var changes: [String] {
+        guard let state else { return [] }
+        let l = model.localizer
+        var out: [String] = []
+        let newRooms = state.affectedSpaceIDs.filter { !(previous?.affectedSpaceIDs.contains($0) ?? false) }.compactMap { home.space($0)?.label }
+        if !newRooms.isEmpty { out.append(l("ui.scene.newAffected", ["rooms": newRooms.joined(separator: ", ")])) }
+        let newPortals = state.affectedPortalIDs.filter { !(previous?.affectedPortalIDs.contains($0) ?? false) }
+        if !newPortals.isEmpty { out.append(l("ui.scene.newBlocked", ["count": "\(newPortals.count)"])) }
+        if let before = previousRoute?.primary, before != route?.primary {
+            out.append(l(route?.primary == nil ? "ui.scene.routeLost" : "ui.scene.routeChanged"))
+        }
+        return out
+    }
 
     private var sceneFloorID: String? {
         HomeScenePresentation.sceneFloorID(in: home, selected: selectedFloorID, route: route, destinationID: state?.destinationSpaceID)
@@ -313,8 +343,17 @@ struct SpatialRehearsalScene: View {
                     ForEach(home.floors) { Text($0.label).tag($0.id) }
                 }.accessibilityIdentifier("rehearsal.floor")
             }
-            FloorPlanView(home: home, routes: route?.primary.map { [$0] } ?? [], highlightedFloorID: sceneFloorID,
-                          highlightedElementID: state?.destinationSpaceID, spatialState: state, selectedRoute: route).frame(height: 260)
+            FloorPlanView(home: home, routes: currentPaths, highlightedFloorID: sceneFloorID,
+                          highlightedElementID: nil, spatialState: state, selectedRoute: route)
+                .frame(height: 300)
+            if !changes.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(model.localizer("ui.scene.newThisStep")).font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                    ForEach(changes, id: \.self) { Label($0, systemImage: "arrow.turn.down.right").font(.callout.weight(.semibold)) }
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("rehearsal.changes")
+            }
             if let room = HomeScenePresentation.startingRoom(in: home, route: route) {
                 Label(model.localizer("spatial.recorded-start-room", ["room": room.label]), systemImage: "person.crop.circle")
                     .font(.footnote)
@@ -345,7 +384,7 @@ struct SpatialRehearsalScene: View {
             } else { Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary) }
             DisclosureGroup(s("Room list")) { HomeRoomListView(home: home, spatialState: state, selectedRoute: route) }
             DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
-                if show3D { DollhouseView(home: home, routes: route?.primary.map { [$0] } ?? [], floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230) }
+                if show3D { DollhouseView(home: home, routes: currentPaths, floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230) }
             }
         }
         .onChange(of: personID) { _, _ in selectedFloorID = nil }
@@ -758,5 +797,15 @@ struct ComparisonView: View {
         .navigationTitle(l("common.beforeAfter"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } } }
+    }
+}
+
+extension RehearsalCursor {
+    /// The spatial state one revealed event earlier, so a scene can say what this step changed.
+    var spatialStateBeforeCursor: SpatialExerciseState? {
+        guard revealed > 1 else { return nil }
+        let earlier = revealed - 1
+        let minute = result.events[earlier - 1].simMinute
+        return result.snapshots.last { ($0.revealedEventCount.map { $0 <= earlier } ?? ($0.simMinute <= minute)) }?.spatialState
     }
 }

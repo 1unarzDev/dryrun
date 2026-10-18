@@ -205,3 +205,32 @@ struct FamilyPlanExportRequestTests {
         }
     }
 }
+
+@Suite("Family card layout parts")
+struct FamilyCardLayoutPartsTests {
+    /// The renderer may lay parts out as a table, so every part must also be in the line's full text, and missing
+    /// facts must be flagged rather than left blank.
+    @Test func partsNeverAddTextAndMissingFactsAreFlagged() throws {
+        var household = SampleHouseholds.oak
+        household.people[0].emergencyInformation = .init(severeAllergies: "PEANUT-CANARY")
+        household.contacts.append(HouseholdContact(id: "c-nophone", role: .outOfAreaContact, alias: "No phone yet", relationship: "Cousin"))
+        let page = FamilyEmergencyCardBuilder.page(household: household, localizer: try PlanBuilderTests.localizer("en"),
+                                                   selection: .init(includeCriticalInformation: true))
+        let lines = page.sections.flatMap(\.lines)
+        for line in lines {
+            guard let parts = line.parts else { continue }
+            let pieces = [parts.subject, parts.detail, parts.phone].compactMap { $0 } + parts.fields.flatMap { [$0.label, $0.value].compactMap { $0 } }
+            for piece in pieces { #expect(line.text.contains(piece), "\(piece) is not in \(line.text)") }
+        }
+        let critical = try #require(page.sections.first { $0.id == "critical" })
+        let first = try #require(critical.lines.first?.parts)
+        #expect(first.fields.contains { $0.value == "PEANUT-CANARY" && $0.label != nil } && !first.isMissing)
+        #expect(critical.lines.dropFirst().contains { $0.parts?.isMissing == true }, "People with nothing selected read as not provided")
+        let contacts = try #require(page.sections.first { $0.id == "contacts" })
+        let noPhone = try #require(contacts.lines.first { $0.parts?.subject == "No phone yet" }?.parts)
+        #expect(noPhone.isMissing && noPhone.phone == nil && noPhone.detail?.contains("Cousin") == true)
+        // No backup meetup saved: the slot is explicitly missing, never omitted.
+        let backup = try #require(page.sections.first { $0.id == "backupMeetingPlace" })
+        #expect(backup.lines.first?.parts?.isMissing == true)
+    }
+}

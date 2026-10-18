@@ -115,6 +115,9 @@ struct HouseholdSetupView: View {
     @State private var loaded = false
     @State private var saving = false
     @State private var saveFailed = false
+    /// Address suggestions come from Apple only; a typed address alone is still valid offline.
+    @State private var completion = AddressCompletionService()
+    @State private var resolvingAddress = false
 
     enum Step: Int, CaseIterable { case area, people, medical, backup, home, contacts, travel }
 
@@ -163,6 +166,8 @@ struct HouseholdSetupView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
+            // Creating a household has a single save ("Finish later" in the form); the step bar is for editing only.
+            if mode == .edit {
             AdaptiveStack(spacing: Theme.Space.s) {
                 if mode == .edit && step > 0 {
                     Button { withAnimation { step -= 1 } } label: { Label(l("ui.back"), systemImage: "chevron.left") }
@@ -184,6 +189,7 @@ struct HouseholdSetupView: View {
             .padding(.horizontal).padding(.vertical, Theme.Space.s)
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .background(.bar)
+            }
         }
         .onAppear {
             guard !loaded else { return }
@@ -204,10 +210,33 @@ struct HouseholdSetupView: View {
             }
             .onChange(of: draft.preferredLocale) { _, new in model.locale = new }
             TextField(l("family.location"), text: Binding(get: { draft.privateLocation?.addressLine ?? "" }, set: { value in
-                if draft.privateLocation == nil { draft.privateLocation = PrivateLocation() }
-                draft.privateLocation?.addressLine = value
+                let unit = draft.privateLocation?.unit
+                // Typing again replaces any earlier resolved pin: an old coordinate never stays with a new address.
+                draft.privateLocation = value.isEmpty && (unit ?? "").isEmpty ? nil : PrivateLocation(addressLine: value, unit: unit)
+                completion.update(value)
             }))
             .textContentType(.fullStreetAddress)
+            .accessibilityIdentifier("setup.address")
+            ForEach(completion.suggestions) { suggestion in
+                Button {
+                    resolvingAddress = true
+                    Task {
+                        defer { resolvingAddress = false }
+                        guard var resolved = try? await completion.resolve(suggestion) else { return }
+                        resolved.unit = draft.privateLocation?.unit
+                        draft.privateLocation = resolved
+                        completion.cancel()
+                    }
+                } label: {
+                    VStack(alignment: .leading) { Text(suggestion.title); Text(suggestion.subtitle).font(.caption).foregroundStyle(.secondary) }
+                }
+            }
+            if resolvingAddress { ProgressView() }
+            if let location = draft.privateLocation, location.latitude != nil {
+                Label([location.city, location.administrativeArea, location.countryCode].compactMap { $0 }.joined(separator: ", "), systemImage: "mappin.circle.fill")
+                    .font(.footnote).foregroundStyle(Theme.success)
+                    .accessibilityIdentifier("setup.addressPinned")
+            }
             TextField(l("family.unit"), text: Binding(get: { draft.privateLocation?.unit ?? "" }, set: { value in
                 if draft.privateLocation == nil { draft.privateLocation = PrivateLocation() }
                 draft.privateLocation?.unit = value

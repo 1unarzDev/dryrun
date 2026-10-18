@@ -454,7 +454,7 @@ public enum PlanBuilder {
         return formatter.string(from: NSNumber(value: v)) ?? String(v)
     }
 
-    static func displayDate(_ date: Date, locale: String, timeZone: TimeZone) -> String {
+    public static func displayDate(_ date: Date, locale: String, timeZone: TimeZone) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: locale)
         formatter.timeZone = timeZone

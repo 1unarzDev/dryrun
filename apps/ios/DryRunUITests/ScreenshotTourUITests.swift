@@ -28,13 +28,15 @@ final class ScreenshotTourUITests: XCTestCase {
             Screen(name: "outage-card", args: ["-demoHousehold", h, "-demoTab", "prepare"], tap: "next.outageCard"),
             Screen(name: "medical-setup", args: ["-demoHousehold", h, "-demoTab", "prepare"], tap: "next.outageCard", then: "card.addDevice"),
             Screen(name: "family-editor", args: ["-demoHousehold", h, "-demoTab", "prepare"], tap: "next.family"),
-            Screen(name: "contacts", args: ["-demoHousehold", h, "-demoTab", "prepare"], tap: "next.contacts"),
+            Screen(name: "contacts", args: ["-demoHousehold", h, "-demoTab", "plan"], tap: "plan.addContact"),
             Screen(name: "rehearse-list", args: ["-demoHousehold", h, "-demoTab", "rehearse"]),
             Screen(name: "freeze-decision", args: ["-demoHousehold", h, "-demoScenario", "freeze-power-loss", "-demoStep", "decision"]),
             Screen(name: "freeze-end", args: ["-demoHousehold", h, "-demoScenario", "freeze-power-loss", "-demoStep", "end"]),
             Screen(name: "freeze-debrief", args: ["-demoHousehold", h, "-demoScenario", "freeze-power-loss", "-demoStep", "end"],
                    tap: "rehearsal.debrief"),
             Screen(name: "fire-start", args: ["-demoHousehold", h, "-demoScenario", "home-fire", "-demoStep", "start"]),
+            Screen(name: "fire-decision", args: ["-demoHousehold", h, "-demoScenario", "home-fire", "-demoStep", "decision"]),
+            Screen(name: "tornado-end", args: ["-demoHousehold", h, "-demoScenario", "tornado", "-demoStep", "end"]),
             Screen(name: "flood-start", args: ["-demoHousehold", h, "-demoScenario", "flash-flood", "-demoStep", "start"]),
             Screen(name: "flood-end", args: ["-demoHousehold", h, "-demoScenario", "flash-flood", "-demoStep", "end"]),
             Screen(name: "fire-end", args: ["-demoHousehold", h, "-demoScenario", "home-fire", "-demoStep", "end"]),
@@ -47,6 +49,9 @@ final class ScreenshotTourUITests: XCTestCase {
             Screen(name: "plan-document", args: ["-demoHousehold", h, "-demoTab", "plan", "-demoPlan", "all"], tap: "plan.viewSaved"),
             Screen(name: "neighborhood-map", args: ["-demoHousehold", h, "-demoTab", "plan"], tap: "plan.map"),
             Screen(name: "address", args: ["-demoHousehold", h, "-demoTab", "plan"], tap: "plan.address"),
+            Screen(name: "meetup-near", args: ["-demoHousehold", h, "-demoTab", "plan"], tap: "plan.meetup.outsideMeetingPoint"),
+            Screen(name: "share", args: ["-demoHousehold", h, "-demoTab", "plan"], tap: "plan.share"),
+            Screen(name: "share-preview", args: ["-demoHousehold", h, "-demoTab", "plan"], tap: "plan.share", then: "share.preview"),
         ]
     }
 

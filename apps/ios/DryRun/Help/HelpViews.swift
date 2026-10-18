@@ -70,7 +70,7 @@ struct HelpTabView: View {
             }
         }
         .navigationTitle(l("common.tab.help"))
-        .sheet(isPresented: $showCard) { NavigationStack { OutageCardView() } }
+        .sheet(isPresented: $showCard) { NavigationStack { OutageCardView(showsDone: true) } }
         .sheet(isPresented: $showMapPlanner) {
             if let regionalResources = model.regionalResources {
                 MapPlanningView(store: regionalResources)

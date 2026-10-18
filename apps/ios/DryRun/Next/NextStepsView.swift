@@ -6,9 +6,6 @@ import DryRunCore
 struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
-    /// One sheet slot (several `.sheet` modifiers on one view can fail to present right after another closes).
-    @State private var sheet: Sheet?
-    enum Sheet: String, Identifiable { case card, share, household, contacts, supplies; var id: String { rawValue } }
     var openRehearse: () -> Void = {}
 
     var body: some View {
@@ -39,17 +36,6 @@ struct NextStepsView: View {
         .navigationTitle(l("common.tab.prepare"))
         .navigationDestination(for: NextStep.self) { PreparationTaskEditor(step: $0) }
         .task(id: model.currentKey) { await model.refreshNextSteps() }
-        .sheet(item: $sheet) { which in
-            NavigationStack {
-                switch which {
-                case .card: OutageCardView()
-                case .share: ShareWithFamilyView()
-                case .household: FocusedHouseholdEditor(focus: .family)
-                case .contacts: FocusedHouseholdEditor(focus: .newContact(.other))
-                case .supplies: FocusedHouseholdEditor(focus: .supplies)
-                }
-            }
-        }
     }
 
     private var header: some View {
@@ -64,34 +50,25 @@ struct NextStepsView: View {
         }
     }
 
+    /// Three equal entry points, each one transition from the tab root.
     private var quickActions: some View {
         let l = model.localizer
-        return SectionCard {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: Theme.Space.m) { familyHomeButtons }
-                VStack(alignment: .leading, spacing: Theme.Space.s) { familyHomeButtons }
-            }
-            Divider()
-            Button { sheet = .card } label: { Label(l("ui.card.open"), systemImage: "person.text.rectangle") }
-                .accessibilityIdentifier("next.outageCard")
-                .frame(minHeight: Theme.minTap)
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: Theme.Space.m) { contactSupplyButtons }
-                VStack(alignment: .leading, spacing: Theme.Space.s) { contactSupplyButtons }
-            }
+        return ViewThatFits(in: .horizontal) {
+            HStack(spacing: Theme.Space.s) { tiles }
+            VStack(spacing: Theme.Space.s) { tiles }
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(l("ui.next.shortcuts"))
     }
-    @ViewBuilder private var familyHomeButtons: some View {
-        Button { sheet = .household } label: { Label(model.localizer("family.edit"), systemImage: "person.2.fill") }
-            .accessibilityIdentifier("next.family").frame(minHeight: Theme.minTap)
-        NavigationLink { HomeTabView() } label: { Label(model.localizer("family.home"), systemImage: "house.fill") }
-            .accessibilityIdentifier("next.home").frame(minHeight: Theme.minTap)
-    }
-    @ViewBuilder private var contactSupplyButtons: some View {
-        Button { sheet = .contacts } label: { Label(model.localizer("prep.contact.title"), systemImage: "person.crop.circle.badge.plus") }
-            .accessibilityIdentifier("next.contacts").frame(minHeight: Theme.minTap)
-        Button { sheet = .supplies } label: { Label(model.localizer("family.supplies"), systemImage: "checklist") }
-            .accessibilityIdentifier("next.supplies").frame(minHeight: Theme.minTap)
+    @ViewBuilder private var tiles: some View {
+        let l = model.localizer
+        NavigationLink { FocusedHouseholdEditor(focus: .family) } label: { QuickTile(title: l("family.edit"), systemImage: "person.2.fill") }
+            .buttonStyle(.plain).accessibilityIdentifier("next.family")
+        NavigationLink { HomeTabView() } label: { QuickTile(title: l("family.home"), systemImage: "house.fill") }
+            .buttonStyle(.plain).accessibilityIdentifier("next.home")
+        NavigationLink { OutageCardView() } label: { QuickTile(title: l("family.title"), systemImage: "person.text.rectangle.fill") }
+            .buttonStyle(.plain).accessibilityIdentifier("next.outageCard")
     }
 
     @ViewBuilder
@@ -345,8 +322,7 @@ struct PreparationTaskEditor: View {
         case .equipment(let id): MedicalSetupView(equipmentID: id)
         case .backups: FocusedHouseholdEditor(focus: .backups)
         case .meeting(let purpose):
-            if let store = model.regionalResources { MapPlanningView(store: store, purpose: purpose, dismissAfterSave: true) }
-            else if let content = model.content { MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "", purpose: purpose, dismissAfterSave: true) }
+            MeetingPlaceChooser(purpose: purpose, embedInNavigation: false)
         case .transport: FocusedHouseholdEditor(focus: .transport)
         case .home(let elementID):
             if let home = model.home {
@@ -384,6 +360,22 @@ struct SourcesCard: View {
                     }
                 }
             }
+        }
+    }
+}
+
+/// The shared map flow for choosing one meeting place. Saving closes it and returns to the initiating task.
+struct MeetingPlaceChooser: View {
+    @Environment(AppModel.self) private var model
+    var purpose: SavedPlacePurpose? = nil
+    var embedInNavigation = true
+    var dismissAfterSave = true
+    var body: some View {
+        if let store = model.regionalResources {
+            MapPlanningView(store: store, purpose: purpose, dismissAfterSave: dismissAfterSave && purpose != nil, embedInNavigation: embedInNavigation)
+        } else if let content = model.content {
+            MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "", purpose: purpose,
+                            dismissAfterSave: dismissAfterSave && purpose != nil, embedInNavigation: embedInNavigation)
         }
     }
 }

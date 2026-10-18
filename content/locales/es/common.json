@@ -631,5 +631,22 @@
   "map.source.official": "Referencia de recurso público",
   "map.source.label": "Fuente: {source}",
   "map.source.checkMissing": "Fecha de comprobación de la fuente no registrada.",
-  "map.snapshotMissing": "Imagen del mapa no disponible para: {panels}. Usa los nombres, direcciones e instrucciones guardados."
+  "map.snapshotMissing": "Imagen del mapa no disponible para: {panels}. Usa los nombres, direcciones e instrucciones guardados.",
+  "ui.next.shortcuts": "Tu familia, tu hogar y tu tarjeta de emergencia",
+  "ui.plan.headline": "El plan de tu familia",
+  "ui.plan.subhead": "Se actualiza cuando agregas datos. Compártelo o imprímelo cuando quieras.",
+  "ui.plan.cardComplete": "La tarjeta tiene contactos y los dos puntos de encuentro",
+  "ui.plan.missing": "Aún falta: {items}",
+  "ui.plan.chooseMeetup": "Elegir un lugar",
+  "ui.plan.editContacts": "Editar contactos",
+  "ui.plan.openMap": "Abrir mapa",
+  "ui.plan.homeDiagram": "Diagrama de la casa con {rooms} cuartos. La lista de cuartos está en Tu hogar.",
+  "ui.plan.notChosen": "aún sin elegir",
+  "ui.scene.origin": "Dónde empieza (ejercicio)",
+  "ui.rehearse.step": "Paso {step} de {total}",
+  "ui.scene.newThisStep": "Nuevo en este paso",
+  "ui.scene.newAffected": "Ahora afectado: {rooms}",
+  "ui.scene.newBlocked": "Aberturas que ya no se pueden usar en este ejercicio: {count}",
+  "ui.scene.routeChanged": "La ruta de práctica cambió. La ruta anterior ya no se muestra.",
+  "ui.scene.routeLost": "La ruta anterior ya no se puede usar y no se encontró otra ruta posible."
 }

@@ -13,15 +13,39 @@ final class DemoJourneyUITests: XCTestCase {
     private func element(_ id: String, in app: XCUIApplication) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: id).firstMatch
     }
-    private func tap(_ id: String, in app: XCUIApplication) {
+    /// Scrolls in small steps until the control is on screen and not under the floating tab bar, then back up if
+    /// a step overshot. Lazy list rows only exist once scrolled near.
+    @discardableResult
+    private func reveal(_ id: String, in app: XCUIApplication) -> XCUIElement {
         let control = element(id, in: app)
-        for _ in 0..<8 {
-            if control.exists && control.isHittable { break }
-            app.swipeUp()
+        _ = control.waitForExistence(timeout: 3)
+        for _ in 0..<12 {
+            if control.exists && control.isHittable && !underTabBar(control, in: app) { return control }
+            app.swipeUp(velocity: .slow)
         }
+        for _ in 0..<6 {
+            if control.exists && control.isHittable && !underTabBar(control, in: app) { return control }
+            app.swipeDown(velocity: .slow)
+        }
+        return control
+    }
+    private func underTabBar(_ control: XCUIElement, in app: XCUIApplication) -> Bool {
+        let bar = app.tabBars.firstMatch
+        guard bar.exists, bar.isHittable else { return false }
+        return control.frame.maxY > bar.frame.minY - 4 && control.frame.minY < bar.frame.maxY
+    }
+    private func tap(_ id: String, in app: XCUIApplication) {
+        let control = reveal(id, in: app)
         XCTAssertTrue(control.waitForExistence(timeout: 15), "Missing control: \(id)")
         XCTAssertTrue(control.isHittable, "Hidden control: \(id)")
         control.tap()
+    }
+    private func hasText(_ text: String, in app: XCUIApplication) -> Bool {
+        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch.waitForExistence(timeout: 5)
+    }
+    private func openPlan(_ app: XCUIApplication) {
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        for _ in 0..<6 { app.swipeDown() }
     }
     private func sample(_ locale: String = "en") -> XCUIApplication {
         let app = launch(["-demoHousehold", "hh-oak", "-demoLocale", locale])
@@ -37,16 +61,18 @@ final class DemoJourneyUITests: XCTestCase {
         tap("setup.finishLater", in: app)
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15))
         XCTAssertEqual(app.tabBars.buttons.count, 3)
-        tap("next.contacts", in: app)
+        openPlan(app)
+        tap("plan.addContact", in: app)
         let name = app.textFields.matching(NSPredicate(format: "identifier BEGINSWITH 'contacts.name.'")).firstMatch
         XCTAssertTrue(name.waitForExistence(timeout: 5))
         name.tap(); name.typeText("Example trusted contact")
         let phone = app.textFields.matching(NSPredicate(format: "identifier BEGINSWITH 'contacts.phone.'")).firstMatch
         phone.tap(); phone.typeText("+44 20 7946 0958")
         tap("focused.save", in: app)
+        app.tabBars.buttons.element(boundBy: 0).tap()
         tap("next.outageCard", in: app)
         XCTAssertTrue(element("card.page", in: app).waitForExistence(timeout: 10))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS 'Example trusted contact'")).firstMatch.exists)
+        XCTAssertTrue(hasText("Example trusted contact", in: app))
         tap("card.share", in: app)
         XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 15))
     }
@@ -64,7 +90,7 @@ final class DemoJourneyUITests: XCTestCase {
     func testFamilyEditorAndLivePlanHaveDirectEntryPoints() {
         let app = sample()
         tap("next.family", in: app)
-        XCTAssertTrue(element("family.addPerson", in: app).waitForExistence(timeout: 10))
+        XCTAssertTrue(reveal("family.addPerson", in: app).exists)
         tap("focused.save", in: app)
         app.tabBars.buttons.element(boundBy: 2).tap()
         XCTAssertTrue(element("plan.familyCard", in: app).waitForExistence(timeout: 10))
@@ -101,13 +127,15 @@ final class DemoJourneyUITests: XCTestCase {
         XCTAssertTrue(app.buttons["onboarding.create"].waitForExistence(timeout: 20))
         app.buttons["onboarding.create"].tap()
         tap("setup.finishLater", in: app)
-        tap("next.contacts", in: app)
+        openPlan(app)
+        tap("plan.addContact", in: app)
         let name = app.textFields.matching(NSPredicate(format: "identifier BEGINSWITH 'contacts.name.'")).firstMatch
         XCTAssertTrue(name.waitForExistence(timeout: 10))
         name.tap(); name.typeText("Persisted fictional contact")
         let phone = app.textFields.matching(NSPredicate(format: "identifier BEGINSWITH 'contacts.phone.'")).firstMatch
         phone.tap(); phone.typeText("+44 20 7946 0958")
         tap("focused.save", in: app)
+        app.tabBars.buttons.element(boundBy: 0).tap()
         tap("next.outageCard", in: app)
         XCTAssertTrue(element("card.page", in: app).waitForExistence(timeout: 10))
         tap("card.share", in: app)
@@ -122,7 +150,7 @@ final class DemoJourneyUITests: XCTestCase {
         app.tabBars.buttons.element(boundBy: 2).tap()
         tap("plan.familyCard", in: app)
         XCTAssertTrue(element("card.page", in: app).waitForExistence(timeout: 10))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS 'Persisted fictional contact'")).firstMatch.exists)
+        XCTAssertTrue(hasText("Persisted fictional contact", in: app))
         tap("card.share", in: app)
         XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 20))
     }
@@ -140,21 +168,21 @@ final class DemoJourneyUITests: XCTestCase {
         tap("address.longitude", in: app)
         element("address.longitude", in: app).typeText("-98.2")
         tap("address.save", in: app)
-        tap("plan.map", in: app)
+        XCTAssertTrue(element("address.save", in: app).waitForNonExistence(timeout: 10), "Address editor did not close after saving")
+        // The backup slot opens the map already set to that purpose; saving returns to Plan.
+        tap("plan.meetup.backupMeetingPlace", in: app)
         let list = app.segmentedControls.firstMatch.buttons.element(boundBy: 1)
         XCTAssertTrue(list.waitForExistence(timeout: 10)); list.tap()
         tap("map.addText", in: app)
         tap("place.name", in: app)
         element("place.name", in: app).typeText("Example backup meeting place")
-        tap("place.purpose", in: app)
-        app.buttons["Backup meetup outside neighborhood"].tap()
         tap("place.address", in: app)
         element("place.address", in: app).typeText("456 Fictional Road")
         tap("place.instructions", in: app)
         element("place.instructions", in: app).typeText("Call our example contact before going")
         tap("place.save", in: app)
-        XCTAssertTrue(app.staticTexts["Example backup meeting place"].waitForExistence(timeout: 10))
-        tap("map.done", in: app)
+        XCTAssertTrue(element("plan.meetup.backupMeetingPlace", in: app).waitForExistence(timeout: 10))
+        XCTAssertTrue(hasText("Example backup meeting place", in: app))
 
         // A saved destination closes its own real preparation before any rehearsal is completed.
         app.tabBars.buttons.element(boundBy: 0).tap()
@@ -179,13 +207,26 @@ final class DemoJourneyUITests: XCTestCase {
             }
         }
         XCTAssertTrue(debrief.isEnabled)
-        app.tabBars.buttons.element(boundBy: 2).tap()
-        for _ in 0..<8 { app.swipeDown() }
+        openPlan(app)
         tap("plan.familyCard", in: app)
         XCTAssertTrue(element("card.page", in: app).waitForExistence(timeout: 10))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS 'Example backup meeting place'")).firstMatch.exists)
-        tap("card.share", in: app)
-        XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 20))
+        XCTAssertTrue(hasText("Example backup meeting place", in: app))
+        // One share flow: choose content, then the preview is pushed inside the same sheet.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        tap("plan.share", in: app)
+        tap("share.preview", in: app)
+        XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 30))
+        XCTAssertTrue(element("pdf.share", in: app).exists)
+    }
+
+    func testRehearsalShowsStepNotClockAndPlanSharesOnce() {
+        let app = launch(["-demoHousehold", "hh-oak", "-demoScenario", "home-fire", "-demoStep", "decision"])
+        XCTAssertTrue(element("rehearsal.scene", in: app).waitForExistence(timeout: 20))
+        XCTAssertTrue(element("rehearsal.step", in: app).exists)
+        openPlan(app)
+        tap("plan.share", in: app)
+        tap("share.preview", in: app)
+        XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 30))
     }
 
 }

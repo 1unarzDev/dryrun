@@ -36,7 +36,7 @@ final class AppleMapSearchService: MapSearching {
             // Apple documents that start(completionHandler:) invokes this on the main thread.
             // Consume the non-Sendable response here and resume only plain core values.
             search.start { response, error in
-                MainActor.assumeIsolated {
+                do {
                     if let error { continuation.resume(throwing: error); return }
                     guard let response else { continuation.resume(throwing: MapResponseError.missingResponse); return }
                     let results: [AppleMapSearchResult] = response.mapItems.compactMap { item in
@@ -79,7 +79,7 @@ final class AppleMapDirectionsService {
         return try await withCheckedThrowingContinuation { continuation in
             // calculate(completionHandler:) also documents main-thread delivery.
             directions.calculate { response, error in
-                MainActor.assumeIsolated {
+                do {
                     if let error { continuation.resume(throwing: error); return }
                     guard let route = response?.routes.first else { continuation.resume(throwing: MapDirectionsError.noRoute); return }
                     let points = route.polyline.points()
@@ -188,14 +188,13 @@ final class NearbyDiscovery {
         let queries = ["hospital", "pharmacy", "grocery"]
         services = queries.map { _ in makeService() }
         let requests = services
-        let found = await withTaskGroup(of: (Int, [AppleMapSearchResult]?).self) { group in
-            for (index, query) in queries.enumerated() {
-                group.addTask { @MainActor in (index, try? await requests[index].search(query: query, region: region)) }
-            }
-            var values: [(Int, [AppleMapSearchResult]?)] = []
-            for await value in group { values.append(value) }
-            return values.sorted { $0.0 < $1.0 }
+        // One task per category runs concurrently; each owns its own service, so cancelling one never cancels another.
+        let tasks = queries.enumerated().map { index, query in
+            let service = requests[index]
+            return Task { @MainActor in try? await service.search(query: query, region: region) }
         }
+        var found: [(Int, [AppleMapSearchResult]?)] = []
+        for (index, task) in tasks.enumerated() { found.append((index, await task.value)) }
         guard ticket == generation else { return }
         isLoading = false
         let center = region.center.clLocation
@@ -253,7 +252,7 @@ final class AddressCompletionService: NSObject, @preconcurrency MKLocalSearchCom
         let addressLine = [suggestion.title, suggestion.subtitle].filter { !$0.isEmpty }.joined(separator: ", ")
         let location: PrivateLocation = try await withCheckedThrowingContinuation { continuation in
             search.start { response, error in
-                MainActor.assumeIsolated {
+                do {
                     if let error { continuation.resume(throwing: error); return }
                     guard let placemark = response?.mapItems.first?.placemark else {
                         continuation.resume(throwing: MapResponseError.missingResponse); return

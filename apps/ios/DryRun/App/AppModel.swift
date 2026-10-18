@@ -149,14 +149,28 @@ final class AppModel {
         var report: [String] = []
         for l in ["en", "es", "vi"] {
             locale = l
-            await generatePlan(scenarioIDs: DemoLaunch.allScenarios, includePrivateNotes: false)
+            // Fictional data only: every selectable family-card field is included so reviewers see the full layout.
+            let selection = FamilyCardSelection(includeCriticalInformation: true, includeMedication: true, includeResponderInstructions: true, includeContacts: true)
+            await generatePlan(scenarioIDs: DemoLaunch.allScenarios, includePrivateNotes: false, selection: selection)
             guard let plan = savedPlan, plan.locale == l else { report.append("\(l): plan not generated"); continue }
-            let output = PlanPDFRenderer().render(plan)
+            var panels: [PlanMapPanel] = []
+            if let snapshot = plan.visualSnapshot {
+                panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: localizer("map.neighborhood"), localizer: localizer)
+            }
             let base = "plan-\(household.id)-\(l)"
-            try? output.data.write(to: dir.appendingPathComponent("\(base).pdf"))
+            for paper in PlanPDFRenderer.Paper.allCases where l == "en" || paper == .letter {
+                let output = PlanPDFRenderer().render(plan, paper: paper, mapPanels: panels)
+                let suffix = paper == .letter ? "" : "-a4"
+                try? output.data.write(to: dir.appendingPathComponent("\(base)\(suffix).pdf"))
+                let issues = PlanValidator.validate(plan, household: household)
+                report.append("\(l)\(suffix): pages=\(output.pageCount) maps=\(panels.count) continued=\(output.continuedPageIDs.joined(separator: ",")) issues=\(issues.map(\.description))")
+            }
+            if let card = outageCard(selection: selection) {
+                let output = PlanPDFRenderer().render(card)
+                try? output.data.write(to: dir.appendingPathComponent("plan-\(household.id)-card-\(l).pdf"))
+                report.append("\(l) card: pages=\(output.pageCount)")
+            }
             try? DryRunJSON.encoder().encode(plan).write(to: dir.appendingPathComponent("\(base).json"))
-            let issues = PlanValidator.validate(plan, household: household)
-            report.append("\(l): pages=\(output.pageCount) continued=\(output.continuedPageIDs.joined(separator: ",")) issues=\(issues.map(\.description))")
         }
         locale = original
         try? report.joined(separator: "\n").write(to: dir.appendingPathComponent("DONE-\(household.id).txt"), atomically: true, encoding: .utf8)
@@ -240,7 +254,18 @@ final class AppModel {
     func useSampleHousehold(_ sample: HouseholdProfile) async {
         var sample = sample
         sample.homeID = SampleHomes.ranch.id
-        let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: SampleHomes.ranch, places: [], recordedAt: sample.updatedAt)
+        var extraPlaces: [SavedPlace] = []
+        if sample.id == "hh-oak", sample.privateLocation == nil {
+            // Demo-only map inputs: a public town-centre pin and a distant relative's town, both labelled fictional.
+            // They show the neighborhood map and its separate distant panel; no real household address is implied.
+            sample.privateLocation = PrivateLocation(addressLine: "Ranch road outside Stephenville, TX (fictional)", latitude: 32.2207, longitude: -98.2023,
+                                                     city: "Stephenville", administrativeArea: "TX", countryCode: "US")
+            extraPlaces = [SavedPlace(id: "demo-backup-meetup", homeID: sample.stableHomeID, purpose: .backupMeetingPlace,
+                                      label: "Aunt's house in Abilene (fictional)", coordinate: GeographicCoordinate(latitude: 32.4487, longitude: -99.7331),
+                                      addressText: "Abilene, TX (fictional household)", findingInstructions: "Call the aunt before driving; meet at her front porch.",
+                                      provenance: .fixture, createdAt: sample.updatedAt ?? Date(), updatedAt: sample.updatedAt ?? Date())]
+        }
+        let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: SampleHomes.ranch, places: extraPlaces, recordedAt: sample.updatedAt)
         let candidateHome = HomeMeetingPlaces.synchronize(SampleHomes.ranch, places: places)
         let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: places)
         guard await save(snapshot: snapshot) else { return }

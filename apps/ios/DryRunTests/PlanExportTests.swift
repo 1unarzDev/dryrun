@@ -18,7 +18,8 @@ final class PlanExportTests: XCTestCase {
                 let pdf = try XCTUnwrap(PDFDocument(data: output.data))
                 let text = try XCTUnwrap(pdf.string)
                 XCTAssertTrue(text.contains("BEGIN-RECORDED-NOTE"))
-                XCTAssertTrue(text.contains("END-RECORDED-NOTE"))
+                // Core Text may wrap at a hyphen; PDFKit then reports a line break inside the marker.
+                XCTAssertTrue(text.replacingOccurrences(of: "\n", with: "").contains("END-RECORDED-NOTE"), "\(locale) \(paper)")
                 XCTAssertGreaterThan(output.pageCount, 2)
                 XCTAssertTrue(output.continuedPageIDs.contains("family-card"))
                 let bounds = try XCTUnwrap(pdf.page(at: 0)).bounds(for: .mediaBox)

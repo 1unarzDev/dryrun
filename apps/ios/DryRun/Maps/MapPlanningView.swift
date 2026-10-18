@@ -20,6 +20,8 @@ struct MapPlanningView: View {
     @State private var deferredDestination: MapPlanningDestination?
     private let initialPurpose: SavedPlacePurpose?
     private let dismissAfterSave: Bool
+    /// False when pushed onto an existing navigation stack (a preparation task), so stacks never nest.
+    private let embedInNavigation: Bool
     @State private var showingSearch = false
     @State private var showingList = false
     @State private var discovery = NearbyDiscovery()
@@ -32,14 +34,16 @@ struct MapPlanningView: View {
     @State private var location = OptionalLocationService()
 
     init(content: ContentLibrary, client: PublicAPIClient, regionID: String,
-         purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false) {
+         purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true) {
         _store = State(initialValue: RegionalResourcesStore(content: content, client: client, regionID: regionID))
-        initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave
+        initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave; self.embedInNavigation = embedInNavigation
     }
-    init(store: RegionalResourcesStore, purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false) {
+    init(store: RegionalResourcesStore, purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true) {
         _store = State(initialValue: store)
-        initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave
+        initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave; self.embedInNavigation = embedInNavigation
     }
+    /// Choosing a meeting place is the task itself: a tapped result goes straight to its editor.
+    private var choosingMeetup: Bool { initialPurpose == .outsideMeetingPoint || initialPurpose == .backupMeetingPlace }
     private var places: [SavedPlace] { model.savedPlaces.filter { $0.homeID == model.household?.stableHomeID } }
     private var officialResources: [PublicResource] { store.resources(for: model.household?.regionID ?? "") }
     private var route: MapTravelPreview? { routeRequest.result?.preview }
@@ -51,8 +55,15 @@ struct MapPlanningView: View {
     private func t(_ key: String) -> String { model.localizer("map.\(key)") }
 
     var body: some View {
-        NavigationStack {
+        if embedInNavigation { NavigationStack { content } } else { content }
+    }
+
+    private var content: some View {
             VStack(spacing: 0) {
+                if let initialPurpose, choosingMeetup {
+                    Label(t(initialPurpose.rawValue), systemImage: initialPurpose.mapSymbol)
+                        .font(.headline).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).padding(.top, 8)
+                }
                 Text(t("privacy")).font(.caption).foregroundStyle(.secondary).padding(10)
                 Picker(t("view"), selection: $showingList) { Text(t("map")).tag(false); Text(t("list")).tag(true) }
                     .pickerStyle(.segmented).padding(.horizontal)
@@ -63,7 +74,7 @@ struct MapPlanningView: View {
                     Menu(t("more")) {
                         Button(t("expand")) { radius = min(radius * 2, 80000); Task { await discover() } }
                         Button(t("dropPin")) { newPlace(coordinate: cameraCenter ?? homeCoordinate) }
-                        Button(t("textPlace")) { newPlace(coordinate: nil) }.accessibilityIdentifier("map.addText")
+                        Button(t("textPlace")) { newPlace(coordinate: nil) }.accessibilityIdentifier("map.menu.addText")
                         Button(t("disableDiscovery")) { discovery.cancel(); discovery.enabled = false }
                         Button(t("enableDiscovery")) { discovery.enabled = true; Task { await discover() } }
                     }
@@ -80,7 +91,9 @@ struct MapPlanningView: View {
             }
             .navigationTitle(t("title"))
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button(t("done")) { dismiss() }.accessibilityIdentifier("map.done") }
+                if embedInNavigation {
+                    ToolbarItem(placement: .cancellationAction) { Button(t("done")) { dismiss() }.accessibilityIdentifier("map.done") }
+                }
                 ToolbarItem(placement: .primaryAction) { Button { showingSearch = true } label: { Label(t("search"), systemImage: "magnifyingglass") }.accessibilityIdentifier("map.search") }
             }
             .sheet(isPresented: $showingSearch, onDismiss: { if let pendingSearchResult { select(pendingSearchResult); self.pendingSearchResult = nil } }) {
@@ -119,7 +132,6 @@ struct MapPlanningView: View {
                 camera = .rect(rect.insetBy(dx: -rect.width * 0.15, dy: -rect.height * 0.15))
             }
             .onDisappear { discovery.cancel(); routeRequest.cancel() }
-        }
     }
 
     private var map: some View {
@@ -251,12 +263,12 @@ struct MapPlanningView: View {
         let place = SavedPlace.appleSuggestion(sourceID: result.id, name: result.name, coordinate: result.coordinate,
             address: result.address, phone: result.phone, website: result.website, homeID: household.stableHomeID,
             purpose: initialPurpose ?? .fallbackDestination)
-        selected = MapPlanningDestination(place: place)
+        if choosingMeetup { editedPlace = place; showingEditor = true } else { selected = MapPlanningDestination(place: place) }
     }
     private func select(_ resource: PublicResource) {
         guard let household = model.household else { return }
-        selected = MapPlanningDestination(place: .officialResource(resource, homeID: household.stableHomeID,
-            purpose: initialPurpose ?? .fallbackDestination), officialResource: resource)
+        let place = SavedPlace.officialResource(resource, homeID: household.stableHomeID, purpose: initialPurpose ?? .fallbackDestination)
+        if choosingMeetup { editedPlace = place; showingEditor = true } else { selected = MapPlanningDestination(place: place, officialResource: resource) }
     }
     private func discover() async {
         guard discovery.enabled, let hint else { message = t("noHome"); return }

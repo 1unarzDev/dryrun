@@ -631,5 +631,22 @@
   "map.source.official": "Public resource reference",
   "map.source.label": "Source: {source}",
   "map.source.checkMissing": "Source check date not recorded.",
-  "map.snapshotMissing": "Map image unavailable for: {panels}. Use the saved names, addresses and finding instructions."
+  "map.snapshotMissing": "Map image unavailable for: {panels}. Use the saved names, addresses and finding instructions.",
+  "ui.next.shortcuts": "Your family, your home, and your emergency card",
+  "ui.plan.headline": "Your family's plan",
+  "ui.plan.subhead": "Updates as you add details. Share or print it any time.",
+  "ui.plan.cardComplete": "Card has contacts and both meeting places",
+  "ui.plan.missing": "Still missing: {items}",
+  "ui.plan.chooseMeetup": "Choose a place",
+  "ui.plan.editContacts": "Edit contacts",
+  "ui.plan.openMap": "Open map",
+  "ui.plan.homeDiagram": "Home diagram with {rooms} rooms. The room list is in Your home.",
+  "ui.plan.notChosen": "not chosen yet",
+  "ui.scene.origin": "Where it starts (exercise)",
+  "ui.rehearse.step": "Step {step} of {total}",
+  "ui.scene.newThisStep": "New this step",
+  "ui.scene.newAffected": "Now affected: {rooms}",
+  "ui.scene.newBlocked": "Openings no longer usable in this exercise: {count}",
+  "ui.scene.routeChanged": "The practice route changed. The earlier route is no longer shown.",
+  "ui.scene.routeLost": "The earlier route is no longer usable, and no other supported route was found."
 }

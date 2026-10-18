@@ -36,67 +36,98 @@ public enum FamilyEmergencyCardBuilder {
         func displayLabel(_ backup: BackupPowerSource) -> String {
             backup.label.isEmpty ? localized("enum.\(backup.kind.rawValue)") : backup.label
         }
-        func line(_ text: String, style: PlanLineStyle = .normal, sources: [String] = []) -> PlanLine {
+        func line(_ text: String, style: PlanLineStyle = .normal, sources: [String] = [], parts: PlanLineParts? = nil) -> PlanLine {
             let translated = pending; pending.removeAll()
             b.sourceIDs.append(contentsOf: sources)
             return PlanLine(text: text, style: style, key: "family.recorded", resolvedLocale: l.locale,
                             isFallback: translated.contains(where: \.isFallback),
                             isDraftTranslation: translated.contains(where: \.needsDraftLabel), sourceIDs: sources,
-                            unfilledPlaceholders: Array(Set(translated.flatMap(\.unfilledPlaceholders))).sorted())
+                            unfilledPlaceholders: Array(Set(translated.flatMap(\.unfilledPlaceholders))).sorted(),
+                            parts: parts)
         }
         func section(_ id: String, _ heading: String, _ lines: [PlanLine], critical: Bool = false) -> PlanSection {
             PlanSection(id: id, heading: b.l(heading), lines: lines, isSafetyCritical: critical)
         }
-        var identity = [line(h.displayName)]
+        var identity = [line(h.displayName, parts: PlanLineParts(subject: h.displayName))]
         if h.isFictional { identity.append(line(localized("family.example"), style: .caveat)) }
-        identity.append(line(h.privateLocation?.addressLine ?? localized("family.addressMissing")))
+        let address = h.privateLocation?.addressLine
+        identity.append(line(address ?? localized("family.addressMissing"),
+                             parts: PlanLineParts(fields: [PlanField(value: address ?? localized("family.addressMissing"))], isMissing: address == nil)))
         if let unit = h.privateLocation?.unit, !unit.isEmpty { identity.append(line(unit)) }
         var sections = [section("identity", "family.identity", identity)]
         var critical: [PlanLine] = []
         var instructionContinuations: [PlanLine] = []
         for p in h.people {
             var details: [String] = []
+            var fields: [PlanField] = []
             var longInstruction: String?
             let info = p.emergencyInformation
             if selection.includeCriticalInformation {
-                if let value = info?.severeAllergies, !value.isEmpty { details.append(localized("family.allergies") + ": " + value) }
-                if let value = info?.criticalConditions, !value.isEmpty { details.append(localized("family.conditions") + ": " + value) }
-                details += p.needs.map { localized("common.need.\($0.rawValue)") }
-                if let note = p.communicationNotes, !note.isEmpty { details.append(note) }
+                if let value = info?.severeAllergies, !value.isEmpty {
+                    let label = localized("family.allergies"); details.append(label + ": " + value); fields.append(PlanField(label: label, value: value))
+                }
+                if let value = info?.criticalConditions, !value.isEmpty {
+                    let label = localized("family.conditions"); details.append(label + ": " + value); fields.append(PlanField(label: label, value: value))
+                }
+                for need in p.needs {
+                    let value = localized("common.need.\(need.rawValue)"); details.append(value); fields.append(PlanField(value: value))
+                }
+                if let note = p.communicationNotes, !note.isEmpty { details.append(note); fields.append(PlanField(value: note)) }
             }
-            details += h.equipment.filter {
-                $0.personID == p.id && $0.isEssential && ($0.purpose == .refrigeratedMedication ? selection.includeMedication : selection.includeCriticalInformation)
-            }.map { displayLabel($0) }
-            if selection.includeMedication, let value = info?.essentialMedication, !value.isEmpty { details.append(localized("family.medication") + ": " + value) }
+            for eq in h.equipment where eq.personID == p.id && eq.isEssential
+                && (eq.purpose == .refrigeratedMedication ? selection.includeMedication : selection.includeCriticalInformation) {
+                let value = displayLabel(eq); details.append(value); fields.append(PlanField(value: value))
+            }
+            if selection.includeMedication, let value = info?.essentialMedication, !value.isEmpty {
+                let label = localized("family.medication"); details.append(label + ": " + value); fields.append(PlanField(label: label, value: value))
+            }
             if selection.includeResponderInstructions, let value = info?.responderInstructions, !value.isEmpty {
                 if value.count > 600 {
                     // Keep contacts and meetups on the main card. Never summarize or rewrite a clinical note.
-                    details.append(localized("family.instructionsContinued"))
+                    let pointer = localized("family.instructionsContinued")
+                    details.append(pointer); fields.append(PlanField(value: pointer))
                     longInstruction = value
-                } else { details.append(value) }
+                } else { details.append(value); fields.append(PlanField(value: value)) }
             }
-            critical.append(line((p.alias.isEmpty ? localized(p.isSelf == true ? "family.you" : "ui.person") : p.alias) + ": " + (details.isEmpty ? localized("family.notProvidedSelected") : details.joined(separator: "; "))))
+            let name = p.alias.isEmpty ? localized(p.isSelf == true ? "family.you" : "ui.person") : p.alias
+            let missing = localized("family.notProvidedSelected")
+            critical.append(line(name + ": " + (details.isEmpty ? missing : details.joined(separator: "; ")),
+                                 parts: PlanLineParts(subject: name, fields: details.isEmpty ? [PlanField(value: missing)] : fields, isMissing: details.isEmpty)))
             if let longInstruction {
-                instructionContinuations.append(line(displayLabel(p) + ": " + longInstruction))
+                instructionContinuations.append(line(displayLabel(p) + ": " + longInstruction,
+                                                     parts: PlanLineParts(subject: displayLabel(p), fields: [PlanField(value: longInstruction)])))
             }
         }
-        sections.append(section("critical", "family.critical", critical.isEmpty ? [line(localized("family.notProvidedSelected"))] : critical, critical: true))
+        let noCritical = localized("family.notProvidedSelected")
+        sections.append(section("critical", "family.critical", critical.isEmpty ? [line(noCritical, parts: PlanLineParts(fields: [PlanField(value: noCritical)], isMissing: true))] : critical, critical: true))
         if selection.includeContacts {
             let contacts = h.contacts.map { c in
                 let role = c.role == .other ? nil : localized("ui.contact.role.\(c.role.rawValue)")
-                return line([c.alias, c.relationship, role, c.phone].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ") + (c.hasUsablePhone ? "" : " — " + localized("family.phoneMissing")), style: .contact)
+                let phoneMissing = c.hasUsablePhone ? nil : localized("family.phoneMissing")
+                let detail = [c.relationship, role].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+                return line([c.alias, c.relationship, role, c.phone].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ") + (phoneMissing.map { " — " + $0 } ?? ""), style: .contact,
+                            parts: PlanLineParts(subject: c.alias, detail: detail.isEmpty ? nil : detail,
+                                                 fields: phoneMissing.map { [PlanField(value: $0)] } ?? [],
+                                                 phone: c.hasUsablePhone ? c.phone : nil, isMissing: phoneMissing != nil))
             }
-            sections.append(section("contacts", "family.contacts", contacts.isEmpty ? [line(localized("family.contactMissing"))] : contacts, critical: true))
+            let noContact = localized("family.contactMissing")
+            sections.append(section("contacts", "family.contacts", contacts.isEmpty ? [line(noContact, parts: PlanLineParts(fields: [PlanField(value: noContact)], isMissing: true))] : contacts, critical: true))
         }
         for purpose in [SavedPlacePurpose.outsideMeetingPoint, .backupMeetingPlace] {
             let places = savedPlaces.filter { $0.purpose == purpose }
             let lines = places.map { p in
-                let coordinate = p.coordinate.map {
-                    localized("map.pin") + ": " + String(format: "%.6f, %.6f", locale: Locale(identifier: "en_US_POSIX"), $0.latitude, $0.longitude)
-                }
-                return line([p.label, p.addressText, p.findingInstructions, coordinate].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                let pinLabel = localized("map.pin")
+                let pinValue = p.coordinate.map { String(format: "%.6f, %.6f", locale: Locale(identifier: "en_US_POSIX"), $0.latitude, $0.longitude) }
+                let coordinate = pinValue.map { pinLabel + ": " + $0 }
+                var fields: [PlanField] = []
+                if let address = p.addressText, !address.isEmpty { fields.append(PlanField(value: address)) }
+                if let instructions = p.findingInstructions, !instructions.isEmpty { fields.append(PlanField(value: instructions)) }
+                if let pinValue { fields.append(PlanField(label: pinLabel, value: pinValue)) }
+                return line([p.label, p.addressText, p.findingInstructions, coordinate].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "),
+                            parts: PlanLineParts(subject: p.label, fields: fields))
             }
-            sections.append(section(purpose.rawValue, purpose == .outsideMeetingPoint ? "family.nearMeetup" : "family.backupMeetup", lines.isEmpty ? [line(localized("family.meetupMissing"))] : lines))
+            let noMeetup = localized("family.meetupMissing")
+            sections.append(section(purpose.rawValue, purpose == .outsideMeetingPoint ? "family.nearMeetup" : "family.backupMeetup", lines.isEmpty ? [line(noMeetup, parts: PlanLineParts(fields: [PlanField(value: noMeetup)], isMissing: true))] : lines))
         }
         // Supporting details follow the same intentional clinical selections as the critical section.
         // Only recorded facts are included: no estimated runtime, storage limit, or free-text notes.
@@ -188,7 +219,9 @@ public enum FamilyEmergencyCardBuilder {
             continuity.append(line(details.joined(separator: " · "), sources: [id == "water" ? "S26" : "S53"]))
         }
         if !continuity.isEmpty { sections.append(section("continuity", "family.continuity", continuity)) }
-        sections.append(section("review", "family.review", [line(h.preparedness?.reviewedAt.map { PlanBuilder.displayDate($0, locale: l.locale, timeZone: timeZone) } ?? localized("family.reviewMissing"))]))
+        let reviewed = h.preparedness?.reviewedAt.map { PlanBuilder.displayDate($0, locale: l.locale, timeZone: timeZone) }
+        let reviewText = reviewed ?? localized("family.reviewMissing")
+        sections.append(section("review", "family.review", [line(reviewText, parts: PlanLineParts(fields: [PlanField(value: reviewText)], isMissing: reviewed == nil))]))
         if !instructionContinuations.isEmpty {
             sections.append(section("instruction-continuation", "family.instructions", instructionContinuations, critical: true))
         }

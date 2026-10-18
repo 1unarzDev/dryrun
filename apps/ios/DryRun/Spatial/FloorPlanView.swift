@@ -55,14 +55,28 @@ struct FloorPlanView: View {
 
     private var routeFloors: Set<String> { Set(routes.flatMap { $0.legs.map(\.floorID) }) }
 
+    /// Generated from what this scene actually shows, never a fixed list.
     private var legend: some View {
-        HStack(spacing: 12) {
-            Label(s("Verified exit"), systemImage: "door.left.hand.open").foregroundStyle(PlanColors.exit)
-            Label(s("Unconfirmed"), systemImage: "questionmark.diamond").foregroundStyle(PlanColors.unverified)
-            if !routes.isEmpty { Label(s("Practice route"), systemImage: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(PlanColors.route) }
+        let l = model.localizer
+        var items: [(String, String, Color)] = [(s("Verified exit"), "door.left.hand.open", PlanColors.exit), (s("Unconfirmed"), "questionmark.diamond", PlanColors.unverified)]
+        if !routes.isEmpty { items.append((l("pdf.legend.primary"), "arrow.right", PlanColors.route)) }
+        if routes.count > 1 { items.append((l("pdf.legend.alternative"), "arrow.right.circle.dotted", PlanColors.route)) }
+        if let state = spatialState {
+            if state.originSpaceID != nil && state.hazard != .flashFlood { items.append((l("ui.scene.origin"), "flame.fill", PlanColors.alarm)) }
+            if !state.affectedSpaceIDs.isEmpty { items.append((l("pdf.legend.affected"), state.hazard == .flashFlood ? "water.waves" : "smoke.fill", state.hazard == .flashFlood ? .blue : .secondary)) }
+            if state.exposedSpaceIDs?.isEmpty == false || state.hazard == .tornado { items.append((l("pdf.legend.exposed"), "exclamationmark.triangle.fill", .purple)) }
+            if state.destinationSpaceID != nil { items.append((l("pdf.legend.shelter"), "shield.lefthalf.filled", PlanColors.exit)) }
+        }
+        if selectedRoute != nil { items.append((l("pdf.legend.start"), "person.circle.fill", Color(.label))) }
+        return ViewThatFits(in: .horizontal) {
+            HStack(spacing: 12) { ForEach(items, id: \.0) { Label($0.0, systemImage: $0.1).foregroundStyle($0.2) } }
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 130), alignment: .leading)], alignment: .leading, spacing: 4) {
+                ForEach(items, id: \.0) { Label($0.0, systemImage: $0.1).foregroundStyle($0.2) }
+            }
         }
         .font(.caption2)
         .labelStyle(.titleAndIcon)
+        .padding(.horizontal, 6)
         .padding(.bottom, 4)
     }
 
@@ -114,12 +128,45 @@ struct FloorPlanView: View {
         for s in spaces {
             ctx.fill(path(s.polygon, f, closed: true), with: .color(s.kind == .hallway ? PlanColors.hall : PlanColors.room))
         }
+        // Hazard layers. Each state has its own pattern and badge, so none relies on colour alone:
+        // origin = solid fill + badge; smoke = diagonal hatch; water = horizontal waves; exposure = dotted band.
+        let water = spatialState?.hazard == .flashFlood
+        var badges: [(CGPoint, String)] = []
         for room in spaces where spatialState?.affectedSpaceIDs.contains(room.id) == true {
-            ctx.fill(path(room.polygon, f, closed: true), with: .color(spatialState?.hazard == .flashFlood ? .blue.opacity(0.22) : .orange.opacity(0.25)))
-            ctx.draw(Text(spatialState?.hazard == .flashFlood ? "≈" : "!").font(.title.bold()), at: f.pt(Geometry.centroid(room.polygon)))
+            let shape = path(room.polygon, f, closed: true)
+            let isOrigin = spatialState?.originSpaceID == room.id
+            if isOrigin && !water {
+                ctx.fill(shape, with: .color(PlanColors.alarm.opacity(0.32)))
+            } else {
+                ctx.fill(shape, with: .color(water ? Color.blue.opacity(0.16) : Color.gray.opacity(0.22)))
+            }
+            var clipped = ctx
+            clipped.clip(to: shape)
+            let box = shape.boundingRect
+            var lines = Path()
+            if water {
+                var y = box.minY + 4
+                while y < box.maxY { 
+                    var x = box.minX; lines.move(to: CGPoint(x: x, y: y))
+                    while x < box.maxX { lines.addQuadCurve(to: CGPoint(x: x + 8, y: y), control: CGPoint(x: x + 4, y: y - 3)); x += 8 }
+                    y += 7
+                }
+                clipped.stroke(lines, with: .color(.blue.opacity(0.55)), lineWidth: 1)
+            } else {
+                var x = box.minX - box.height
+                while x < box.maxX { lines.move(to: CGPoint(x: x, y: box.maxY)); lines.addLine(to: CGPoint(x: x + box.height, y: box.minY)); x += 7 }
+                clipped.stroke(lines, with: .color(Color(.label).opacity(isOrigin ? 0.25 : 0.4)), lineWidth: 1)
+            }
+            badges.append((f.pt(Geometry.centroid(room.polygon)), isOrigin ? (water ? "water.waves" : "flame.fill") : (water ? "water.waves" : "smoke.fill")))
         }
         for room in spaces where spatialState?.exposedSpaceIDs?.contains(room.id) == true {
-            ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple.opacity(0.6)), style: StrokeStyle(lineWidth: 3, dash: [4, 3]))
+            ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple.opacity(0.75)), style: StrokeStyle(lineWidth: 3, dash: [1.5, 3.5]))
+        }
+        if let shelter = spatialState?.destinationSpaceID.flatMap({ home.space($0) }), shelter.floorID == fid {
+            let shape = path(shelter.polygon, f, closed: true)
+            ctx.stroke(shape, with: .color(PlanColors.exit), lineWidth: 6)
+            ctx.stroke(shape, with: .color(PlanColors.background), lineWidth: 2)
+            badges.append((f.pt(Geometry.centroid(shelter.polygon)), "shield.lefthalf.filled"))
         }
         for o in home.obstacles where o.floorID == fid {
             ctx.fill(path(o.polygon, f, closed: true), with: .color(PlanColors.obstacle))
@@ -137,8 +184,19 @@ struct FloorPlanView: View {
             let color: Color = status == .unavailable ? PlanColors.alarm : p.kind == .window ? PlanColors.window : verifiedExit ? PlanColors.exit : status == .confirmedConnection ? PlanColors.door : PlanColors.unverified
             ctx.stroke(line, with: .color(color), style: style)
             if p.kind == .window && spatialState?.hazard == .tornado {
-                // Static cue also serves Reduce Motion. It illustrates exposure, not predicted structural damage.
-                ctx.draw(Text("×").font(.system(size: 18, weight: .bold)).foregroundStyle(.purple), at: f.pt(p.center))
+                // A zigzag along the glass: a static exposure cue (also the Reduce Motion scene). It never reads as
+                // "blocked" and illustrates why to move away from windows, not predicted structural damage.
+                let a = f.pt(p.a), b = f.pt(p.b)
+                let dx = b.x - a.x, dy = b.y - a.y, len = max(hypot(dx, dy), 1)
+                let nx = -dy / len * 4, ny = dx / len * 4
+                var zig = Path(); zig.move(to: a)
+                let steps = max(2, Int(len / 6))
+                for i in 1...steps {
+                    let t = CGFloat(i) / CGFloat(steps), sign: CGFloat = i % 2 == 0 ? -1 : 1
+                    zig.addLine(to: CGPoint(x: a.x + dx * t + (i == steps ? 0 : nx * sign), y: a.y + dy * t + (i == steps ? 0 : ny * sign)))
+                }
+                ctx.stroke(zig, with: .color(.purple), lineWidth: 2)
+                badges.append((CGPoint(x: f.pt(p.center).x + nx * 3, y: f.pt(p.center).y + ny * 3), "exclamationmark.triangle.fill"))
             }
             if status == .unavailable {
                 ctx.draw(Text("×").font(.system(size: 18, weight: .bold)).foregroundStyle(PlanColors.alarm), at: f.pt(p.center))
@@ -200,18 +258,41 @@ struct FloorPlanView: View {
                 }
             }
         }
-        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid,
-           let position = HomeScenePresentation.startingRoomPosition(in: home, route: selectedRoute) {
-            ctx.draw(Text(Image(systemName: "person.crop.circle.fill")).font(.title2).foregroundStyle(PlanColors.route), at: f.pt(position))
+        for (point, symbol) in badges {
+            let disc = CGRect(origin: point, size: .zero).insetBy(dx: -11, dy: -11).offsetBy(dx: 0, dy: -14)
+            ctx.fill(Path(ellipseIn: disc), with: .color(PlanColors.background))
+            ctx.stroke(Path(ellipseIn: disc), with: .color(Color(.label).opacity(0.5)), lineWidth: 1)
+            let tint: Color = symbol == "flame.fill" ? PlanColors.alarm : symbol == "water.waves" ? .blue : symbol == "shield.lefthalf.filled" ? PlanColors.exit : symbol.hasPrefix("exclamation") ? .purple : Color(.label)
+            ctx.draw(Text(Image(systemName: symbol)).font(.system(size: 12, weight: .semibold)).foregroundStyle(tint), at: CGPoint(x: disc.midX, y: disc.midY))
         }
         for (i, r) in routes.enumerated() {
             for leg in r.legs where leg.floorID == fid && leg.points.count >= 2 {
-                let style = StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round, dash: i == 0 ? [] : [8, 5])
+                let style = StrokeStyle(lineWidth: i == 0 ? 5 : 3, lineCap: .round, lineJoin: .round, dash: i == 0 ? [] : [8, 5])
+                // A white casing keeps the route legible over hatching.
+                ctx.stroke(path(leg.points, f, closed: false), with: .color(PlanColors.background), style: StrokeStyle(lineWidth: style.lineWidth + 3, lineCap: .round, lineJoin: .round, dash: style.dash))
                 ctx.stroke(path(leg.points, f, closed: false), with: .color(PlanColors.route), style: style)
-                if let start = leg.points.first {
-                    ctx.fill(Path(ellipseIn: CGRect(origin: f.pt(start), size: .zero).insetBy(dx: -5, dy: -5)), with: .color(PlanColors.route))
-                }
+                let n = leg.points.count
+                let a = f.pt(leg.points[n - 2]), b = f.pt(leg.points[n - 1])
+                let dx = b.x - a.x, dy = b.y - a.y, len = max(hypot(dx, dy), 0.001), ux = dx / len, uy = dy / len
+                let size: CGFloat = i == 0 ? 11 : 8
+                var head = Path(); head.move(to: b)
+                head.addLine(to: CGPoint(x: b.x - ux * size - uy * size * 0.6, y: b.y - uy * size + ux * size * 0.6))
+                head.addLine(to: CGPoint(x: b.x - ux * size + uy * size * 0.6, y: b.y - uy * size - ux * size * 0.6))
+                head.closeSubpath()
+                ctx.fill(head, with: .color(PlanColors.route))
             }
+        }
+        // The person: a black-ringed marker, never route blue, so it does not merge into the line. A start inside an
+        // affected room keeps a red ring (exposure is retained, never erased to make a route appear).
+        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid,
+           let position = HomeScenePresentation.startingRoomPosition(in: home, route: selectedRoute) {
+            let c = f.pt(position)
+            let exposedStart = spatialState?.affectedSpaceIDs.contains(room.id) == true
+            let disc = CGRect(origin: c, size: .zero).insetBy(dx: -12, dy: -12)
+            ctx.fill(Path(ellipseIn: disc.insetBy(dx: -2, dy: -2)), with: .color(PlanColors.background))
+            ctx.fill(Path(ellipseIn: disc), with: .color(Color(.label)))
+            ctx.stroke(Path(ellipseIn: disc.insetBy(dx: -2, dy: -2)), with: .color(exposedStart ? PlanColors.alarm : Color(.label)), lineWidth: exposedStart ? 3 : 1)
+            ctx.draw(Text(Image(systemName: "person.fill")).font(.system(size: 13, weight: .bold)).foregroundStyle(PlanColors.background), at: c)
         }
     }
 

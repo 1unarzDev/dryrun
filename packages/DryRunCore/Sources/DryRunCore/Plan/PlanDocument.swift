@@ -19,6 +19,28 @@ public struct PlanLine: Codable, Sendable, Hashable {
     public var sourceIDs: [String]
     /// Template placeholders left without values (never braces typed by the household).
     public var unfilledPlaceholders: [String] = []
+    /// Optional structure for layout (family card rows). `text` stays the complete, readable line;
+    /// renderers may lay these parts out as a table but never show anything that is not also in `text`.
+    public var parts: PlanLineParts? = nil
+}
+
+/// Layout parts of one recorded line: who or what it is about, labeled values, and a phone number to set apart.
+public struct PlanLineParts: Codable, Sendable, Hashable {
+    public var subject: String?
+    public var detail: String?
+    public var fields: [PlanField]
+    public var phone: String?
+    /// The value is absent ("not provided"), shown as a missing-information state rather than blank.
+    public var isMissing: Bool
+    public init(subject: String? = nil, detail: String? = nil, fields: [PlanField] = [], phone: String? = nil, isMissing: Bool = false) {
+        self.subject = subject; self.detail = detail; self.fields = fields; self.phone = phone; self.isMissing = isMissing
+    }
+}
+
+public struct PlanField: Codable, Sendable, Hashable {
+    public var label: String?
+    public var value: String
+    public init(label: String? = nil, value: String) { self.label = label; self.value = value }
 }
 
 public struct PlanSection: Codable, Sendable, Hashable, Identifiable {
