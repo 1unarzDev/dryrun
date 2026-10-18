@@ -182,3 +182,15 @@ egress-portal-graph/2. Local leaks have separate content/events from regional fl
 PlanMapSelection prioritizes near/backup meetup coordinates ahead of optional resources while retaining text
 ordinals. Official and Apple records share destination actions; optional source/contact/check metadata is
 persisted privately. HomeLocationChange distinguishes harmless unit/no-op corrections from geographic changes.
+
+## Latest integration seams and handoff
+
+HouseholdEditing prepares focused deletion/reference cleanup; AppModel commits the household and affected
+window-person associations transactionally. PlanMapSelection/PlanMapExtent and PlanPlacePresentation share
+near/distant extents, numbering, retained resource provenance and missing-snapshot reporting across phone and
+export. MapKit responses are consumed inside documented main-thread callbacks before plain values resume
+async callers; no global Sendable override was added. NearbyDiscovery's task-group closure still fails the
+installed SDK build at Maps/MapKitAdapters:193 (see VERIFICATION). An explicit DEBUG simulator-only UUID
+namespace permits real encrypted file/Keychain UI relaunch tests without touching the normal vault.
+Content2026.10.2 invalidates older retained plan content. These seams require full native verification.
+The complete owner goal and Claude continuation prompt govern the next pass; this is not a completion record.

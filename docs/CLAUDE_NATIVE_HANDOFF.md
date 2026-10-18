@@ -1,11 +1,19 @@
 # Native verification handoff — October 17 revision
 
-Status: **Implementation prepared; native build and device test pending.** This Linux pass has no Xcode,
-iOS SDK, simulator, LiDAR hardware, or real-household usability observations. Historical October 14 simulator
-results do not verify this revision. Continue implementation when native checks expose defects; do not merely
-run the scripts and mark the brief complete.
+Status: **Claude continuation requested; implementation is not complete. Native build failing; physical test pending.**
+Authorized GitHub macOS CI has Xcode16.4/iOS18.5 and is exposing SDK issues, which are being fixed rather than
+handed off as successful. See VERIFICATION for exact commits/runs. The owner confirmed this existing Mac
+checkout will have a LiDAR-capable iPhone Pro and an Xcode signing account. No physical scan or installation
+has occurred from this workspace. Historical October14 screenshots do not verify this revision.
 
 ## Session instructions
+
+**Owner's latest direction:** Claude owns the next PDF/visual refinement and continued product pass.
+Use [the copy-ready continuation prompt](CLAUDE_CONTINUE_PROMPT.md). Read
+[the original /goal, preserved verbatim](goals/2026-10-17-family-preparedness.md) completely and independently
+audit current implementation against it. This handoff is not a completion certificate. Use ideators and actual
+UI/PDF inspection to improve map/home/icon visual communication, remove nested friction and finish the
+connected rehearsal journey without feature bloat. Reconcile missed requirements, not just the latest diff.
 
 Read `Dry_Run_MapKit_Codex_Handoff.md` if supplied by the owner, this file, `docs/VERIFICATION.md`,
 `docs/REVISION_EVIDENCE.md`, and current instructions/uncommitted changes. The user requested a full connected
@@ -28,16 +36,18 @@ git log --oneline --left-right HEAD...origin/main
 git merge --ff-only origin/main
 ```
 
-Suggested opening prompt for the existing Claude session:
-
-> Read docs/CLAUDE_NATIVE_HANDOFF.md, docs/VERIFICATION.md, docs/REVISION_EVIDENCE.md and current repository instructions
-> completely. Reconcile this Mac checkout with origin/main while preserving local work. Continue the October 17
-> DryRun revision through the installed-SDK native build and simulator journeys; fix failures, capture current
-> fictional screenshots/PDFs, and prepare/install the iPhone build when signing/hardware allows. Keep iOS 18,
-> privacy and deterministic routing. Record exact SHA/SDK/device results. The owner authorized commit/push,
-> with no publishing, third-party outreach or private-home uploads.
+Suggested opening prompt: copy the complete contents of `docs/CLAUDE_CONTINUE_PROMPT.md` into the existing
+Claude session. It includes the owner's original-goal link, explicit non-completion instruction, ideator/visual
+workflow, privacy/safety boundaries and verification/commit requirements.
 
 ## Build and simulator
+
+**Start here:** latest exact tested SHA `4a3bd60855cce77b99cc9f910323cd2dda24f4ed`, hosted run
+https://github.com/1unarzDev/dryrun/actions/runs/39088361958 failed simulator and unsigned iphoneos builds at
+`Maps/MapKitAdapters.swift:193`: NearbyDiscovery's non-Sendable task-group closure transfer. Resolve against
+Xcode16.4/iOS18.5 (or the installed supported SDK) without removing independent category ownership or stale-result
+guards. Other diagnostics may follow; no successful full target build or app/UI execution is claimed.
+The existing workflow also offers `mode=build` for compile-only diagnosis and simulator/xxl inputs for screenshots.
 
 ```bash
 scripts/mac/doctor.sh
@@ -85,8 +95,8 @@ Manually verify these connected journeys (record exact results and errors):
 8. VoiceOver, small display, large Dynamic Type, contrast/light/dark and text/list alternatives. Record actual
    time to first useful card and a rehearsal; 90 seconds and 2–4 minutes are targets, not measured claims.
 
-Follow-up native gates authored but not run: 8 AppPersistenceTests, 3 MapRequestTests, 6 PlanExportTests and
-5 ReviewReminderTests, 7 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 7 RehearsalNamesTests (39 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
+Follow-up native gates authored but not run: 9 AppPersistenceTests, 3 MapRequestTests, 7 PlanExportTests and
+5 ReviewReminderTests, 7 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 7 RehearsalNamesTests and 1 RoomPlanMappingTests (42 total), plus 7 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
 authorization/add, cancel as Delete Everything does, then resume to check no late reminder remains. Exercise actual
 system permission denied/granted, one-time delivery, relaunch, cancellation and successful/failed Delete Everything.
 No permission request or schedule is allowed merely by opening Settings/review.
@@ -94,8 +104,8 @@ No permission request or schedule is allowed merely by opening Settings/review.
 The home canvas now has constrained shape-preserving resize/move, explicit additional levels/first rooms and
 separate stair landings. Confirm that independent captured walls remain after another room changes, added/deleted
 rooms have current outlines, and corrected rooms/doors/stairs stay unavailable until independently reviewed. Test
-selection reset/Undo/draft/failed save, and shelter invalidation after grade/window/lower-level changes. These native
-controls and SDK coordinate assumptions have not been typechecked or visually exercised in Linux.
+selection reset/Undo/draft/failed save, and shelter invalidation after grade/window/lower-level changes. Hosted SDK checks now compile these source paths; full target success and visual execution remain separate gates.
+Coordinate/scale assumptions still require device measurements.
 
 ## Physical installation and scan gate
 
@@ -123,9 +133,9 @@ hardware/human limits. Safety and translation professional review remain pending
 
 ## Latest connected-state closure to exercise on the Mac
 
-Settled-source portable result: **306 core / 47 suites, 35 vault / 6 suites, 68 backend / 4 files**, clean
-TypeScript and 54 app/test Swift sources syntax-parsed. **None of the 39 native XCTest methods, five UI
-journeys or screenshot tours ran on iOS.** The last Linux commit updating this file contains these changes.
+Settled-source portable result: **317 core / 50 suites, 35 vault / 6 suites, 68 backend / 4 files**, clean
+TypeScript and 55 app/test Swift sources syntax-parsed. **The 42 native XCTest methods, seven UI
+journeys and screenshot tours still await successful app compilation and execution.** The last Linux commit updating this file contains these changes.
 Do not substitute historical results. See VERIFICATION for the failed-and-fixed migration regression record.
 
 1. Begin all six hazards without home geometry. Household decisions and continuity should remain useful;

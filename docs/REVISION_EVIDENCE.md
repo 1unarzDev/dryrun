@@ -1,8 +1,12 @@
 # October 17 requirement-to-evidence map
 
-**Implementation prepared; native build and device test pending.** No current simulator or physical-device run.
-Current portable counts: core306, vault35, backend68; exact commands/limits in VERIFICATION. Source paths are
-relative to this repository. The native handoff is actionable; no build success is implied by its existence.
+**Continuation handoff, not completion.** Read the owner's complete original
+[goal prompt](goals/2026-10-17-family-preparedness.md) before accepting any row. Claude is explicitly asked to
+find omissions, improve PDF/map/home/rehearsal visuals with ideators and inspect running UI/navigation.
+Current portable results: core317/50 suites, vault35/6 suites, backend68/4 files; native builds currently fail.
+The latest hosted SDK error is `MapKitAdapters.swift:193` (NearbyDiscovery task-group Sendable transfer), exact
+SHA/run in VERIFICATION. Native XCTest, simulator journeys and physical capture have not run. Source paths
+below are implementation candidates and tests are scoped evidence, not completed-product certification.
 
 | Requested change | Implemented behavior / principal files | Validation performed | Remaining hardware/human check |
 |---|---|---|---|
@@ -16,13 +20,14 @@ relative to this repository. The native handoff is actionable; no build success 
 | Native RoomPlan and correction | RoomCaptureContainer, RoomPlanMapping, HomeConfirmation, ManualHomeEditor, ManualLayout. Shared AR frame/StructureBuilder, generation-bound callbacks, blank manual fallback, grade/exit review, shape-preserving resizing, explicit levels/stair endpoints, assignment | Core import/generation/grade/correction/independent-wall/landing tests; Apple API docs checked; syntax parse | Installed SDK build; measured LiDAR connected-room capture, transforms/story/tracking/interruption |
 | Deterministic fire/flood/tornado scene | SpatialExercise, HazardRules, EgressPlanner, RehearsalCursor, FloorPlan/Dollhouse/Rehearse. Current stage/person routes; real shelter/refuge; exposed start; explicit window suitability and shared drawing status/known start markers | Spatial matrix13 configurations, fire origin/start/exclusion cases, flood/tornado access and route audits; shared current shelter/hypothetical isolation, full deterministic suites | Native 2D/3D/export visual agreement, Reduce Motion, physical home rehearsal |
 | Coherent live visual plan/export | PlanDocument/Builder, PlanHomePanel, PlanViews/PDFRenderer/MapSnapshotRenderer. Shared current-stage/exclusion/floor panels and practiced-input reuse; schema 2 marks old outputs stale. Live facts/saved places, qualified final route geometry, separate geographic/indoor panels, snapshot fallback, Letter/A4 continuation | LivingPlan/PlanIntegration tests, portable fictional PDFs; selected-export failure/order/consent core regressions; native long-note/legend/lease/generation tests authored | Attributed native snapshots, real Letter/A4/grayscale PDFs and system lifecycle |
-| EN/ES/VI, accessibility | Localizer complete-pack selection; localized native/spatial/plan/help controls, dates/decimals/country units and exported provenance; InfoPlist.strings; stable IDs, proper names/notes preserved | 306 core tests including language availability, measurement/journey and document provenance; backend68 placeholder/number/drift checks; 7 Linux app-presentation helper tests; fictional render QA | Known plan/home validation localized; Apple diagnostics/English official text labeled or retained; native forms/AX/VO/large text and professional translation review pending |
+| EN/ES/VI, accessibility | Localizer complete-pack selection; localized native/spatial/plan/help controls, dates/decimals/country units and exported provenance; InfoPlist.strings; stable IDs, proper names/notes preserved | 317 core tests including language availability, measurement/journey and document provenance; backend68 placeholder/number/drift checks; 7 Linux app-presentation helper tests; fictional render QA | Known plan/home validation localized; Apple diagnostics/English official text labeled or retained; native forms/AX/VO/large text and professional translation review pending |
 | Optional review reminder | ReviewReminders, ReviewReminderSection, Settings/FocusedHouseholdEditor. One explicit generic non-repeating local reminder; shared cancel/deletion generation | 5 fake native tests authored, syntax parsed | Permission/delivery/relaunch/deletion on system, native typecheck |
 | Demonstration and community evidence | DEMO_SCRIPT, USABILITY_PROTOCOL, results template, output examples, CLAUDE_NATIVE_HANDOFF | Fictional artifact generation and portable QA only | No recording, unfamiliar-household pilot, external endorsement or recruitment performed |
 
 ## Material remaining limitations
 
-Native adapters have not compiled against the installed iOS SDK in this session; iOS18 minimum remains. Actual
+Current installed-SDK simulator and unsigned iphoneos target builds fail; iOS18 minimum remains. Do not call
+this Ready for iPhone testing. Earlier SDK diagnostics were fixed, but more can emerge after the current blocker. Actual
 RoomPlan mapping/frame alignment and errors must be verified with the owner’s Mac/iPhone. Manual context correction
 covers names/types/moves, shape-preserving resize, opening re-placement, markers, explicit levels/first rooms,
 refuge and separately recorded stair endpoints with review/Undo. Free vertex/CAD and independent captured-wall
@@ -35,3 +40,14 @@ AI drafts. No professional/participant outcomes are claimed.
 The project is native SwiftUI/RoomPlan; Expo Go cannot run it. The owner’s Claude/Mac session should build and
 fix native errors, run the current full journey/screens, and return exact SHA/environment evidence. Install via
 `scripts/mac/device.sh` after successful native build. No publishing or third-party outreach is authorized.
+
+## Closeout findings integrated and still requiring native review
+
+Confirmed continuity destinations now reach both card and full plan without upgrading public-site activation.
+Focused resident/equipment deletion confirms destructive edits, cleans exact references and publishes the
+household/home candidate only after durable save. Failed-write regression is authored in AppPersistenceTests.
+Map routes invalidate only when saved endpoints change/disappear. Phone/export neighborhood extents and symbol
+numbers share plain core structures; saved resource contact/source/check/status survives into document text,
+and partial snapshot omissions are named. Core regressions passed; native PDF/MapKit behavior is unverified.
+The added isolated real encrypted-repository UI journey covers process relaunch when executed, not physical
+Data Protection or actual system Share/Print. All42 native methods and7 UI journeys remain unrun.

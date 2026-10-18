@@ -45,3 +45,9 @@ room names remain English. This reference renderer is not whole-app localization
 Native SDK compilation, phone preview, native pagination, attribution, grayscale printing, VoiceOver, activity
 lifecycle and actual Letter/A4 output are pending the Mac session. See
 [the native handoff](../docs/CLAUDE_NATIVE_HANDOFF.md) and [verification](../docs/VERIFICATION.md).
+
+October17 hosted-native follow-up regenerated all seven JSON snapshots and 14 reference PDFs with content
+version2026.10.2 after portable planning fixes. The full text/paper audit passed. Newly re-opened images were
+Spanish A4 card page1, Vietnamese long-note A4 page5 (including END marker) and the English Letter full-plan
+contact sheet; no new clipping/overlap was observed there. Earlier detailed inspections above remain a record
+of those earlier renders. Native PDFs and activity/Print behavior remain a distinct verification gate.

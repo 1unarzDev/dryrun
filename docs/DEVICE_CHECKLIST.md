@@ -88,3 +88,15 @@ D8 Card date/timezone/decimal and fallback/source labels correct; user notes unc
 
 A successful source parse or simulator render does not satisfy B. Report exact device/OS/SHA and incomplete
 paths. An approved physical test validates this implementation's observed behavior, not real disaster safety.
+
+## Owner-confirmed Mac/device handoff
+
+The owner confirmed the existing Claude/Mac checkout will have a connected LiDAR-capable iPhone Pro and an
+Xcode signing account. Model/OS/signing/install success are not yet recorded. First reconcile local work and
+fix the current native SDK build failure in VERIFICATION, then run scripts/mac/verify.sh. Only after a
+successful target build, use `scripts/mac/device.sh --list` and
+`DEVELOPMENT_TEAM=<TeamID> BUNDLE_ID=com.<unique>.dryrun scripts/mac/device.sh --device <UDID>`.
+No Expo Go server runs this native SwiftUI/RoomPlan app. Read CLAUDE_CONTINUE_PROMPT and the complete original
+goal; do not accept this checklist's existence as device verification. Record actual model/OS/commit,
+connected-room scan/correction/grade/occupant assignment/save/relaunch/rehearsal/export and interruption paths.
+Keep private real-home geometry local and use fictional evidence for anything committed/shared.

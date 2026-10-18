@@ -1,6 +1,6 @@
 {
   "contentReviewBanner" : "Contenido de seguridad de prototipo - revisión de expertos pendiente",
-  "contentVersion" : "2026.10.1",
+  "contentVersion" : "2026.10.2",
   "draftTranslationBanner" : "Traducción en borrador - revisión lingüística pendiente \/ Draft translation - language review pending",
   "footer" : "Plan de práctica de Dry Run. Los ensayos son ejercicios bajo supuestos indicados; no verifican cómo será una emergencia real.",
   "generatedAt" : "2026-10-09T15:00:00Z",
@@ -505,7 +505,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "private.savedPlace",
               "resolvedLocale" : "es",
@@ -513,13 +513,13 @@
 
               ],
               "style" : "normal",
-              "text" : "1. Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "text" : "1. Example relative's home · Encuentro alternativo fuera del vecindario · 456 Fictional Road, Another Town · Call the example contact before going",
               "unfilledPlaceholders" : [
 
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "private.savedPlace",
               "resolvedLocale" : "es",
@@ -527,7 +527,7 @@
 
               ],
               "style" : "normal",
-              "text" : "2. Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "text" : "2. Example mailbox · Encuentro exterior cerca de casa · Outside 123 Example Lane · Fictional landmark beside the driveway",
               "unfilledPlaceholders" : [
 
               ]
@@ -681,7 +681,7 @@
 
               ],
               "style" : "normal",
-              "text" : "Plan generado el 2026-10-09. Revisión de la información del hogar 1; revisión de la casa 1; versión del contenido 2026.10.1.",
+              "text" : "Plan generado el 2026-10-09. Revisión de la información del hogar 1; revisión de la casa 1; versión del contenido 2026.10.2.",
               "unfilledPlaceholders" : [
 
               ]

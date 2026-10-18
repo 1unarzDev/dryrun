@@ -93,3 +93,15 @@ the interrupted live session before stopping/processing. Valid groups remain dra
 Room assignments survive rescans only with capture lineage/manual evidence; new ordinal IDs alone are not proof.
 Person-scoped window eligibility and canonical helper routes tighten routing. The real SDK transforms, shared
 frame, native callback timing and physical measurements are still pending; no native build is implied.
+
+## Claude continuation: current SDK and physical gates
+
+The owner explicitly requested Claude take over PDF/visual refinement and continued goal completion with
+ideators and actual UI inspection. Read CLAUDE_CONTINUE_PROMPT and the complete original goal. The latest
+hosted Xcode16.4/iOS18.5 run fails both simulator and unsigned iphoneos targets on NearbyDiscovery's task-group
+closure at MapKitAdapters:193. Earlier RoomPlan optional-session/NSCoding and MapKit response-transfer/POI
+errors were corrected; further errors may surface. No successful app target, simulator journey or physical
+capture is claimed. The owner will have a connected LiDAR iPhone Pro and signing account on the existing Mac.
+Capture teardown/retry, stable SDK room IDs, endpoint invalidation, shared map extents/provenance and partial
+snapshot notices now have source/portable evidence only. Verify the actual device and native renderer before
+claiming readiness, especially shared frames, floor transforms/grade and late callbacks.

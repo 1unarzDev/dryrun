@@ -126,3 +126,13 @@ regional flooding retains early official action and no water/road safety certifi
 produce no spatial guidance. Legacy window suitability alone cannot authorize a person's escape; helper reach
 uses actual portal/geometry/mobility validation. Qualified diagrams include current exclusions and no-route
 starts, never historical routes presented as available. EN/ES/VI additions remain AI drafts awaiting review.
+
+## Visual refinement boundary for the next pass
+
+Claude owns the owner-requested visual refinement; see the original goal and CLAUDE_CONTINUE_PROMPT.
+Strong maps, home plans and icons must keep source/evidence/unknown states and route qualifications legible.
+Visual hazard animation is an illustrative authored exercise, never the routing authority or a prediction.
+Confirmed continuity destinations now export with household-recorded/recheck wording; a public-site record
+still does not confirm activation, capacity or access. Saved map-resource contact/source/check details survive
+into plan text. New EN/ES/VI strings and content2026.10.2 remain AI drafts; no professional safety or language
+review occurred. Actual native PDFs, system lifecycle and physical capture remain unverified.

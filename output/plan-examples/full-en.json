@@ -1,6 +1,6 @@
 {
   "contentReviewBanner" : "Prototype safety content - expert review pending",
-  "contentVersion" : "2026.10.1",
+  "contentVersion" : "2026.10.2",
   "footer" : "Dry Run practice plan. Rehearsals are exercises under stated assumptions; they do not verify how a real emergency will go.",
   "generatedAt" : "2026-10-09T15:00:00Z",
   "homeID" : "home-sample-ranch",
@@ -512,7 +512,7 @@
 
               ],
               "style" : "normal",
-              "text" : "1. Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "text" : "1. Example relative's home · Backup meetup outside neighborhood · 456 Fictional Road, Another Town · Call the example contact before going",
               "unfilledPlaceholders" : [
 
               ]
@@ -526,7 +526,7 @@
 
               ],
               "style" : "normal",
-              "text" : "2. Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "text" : "2. Example mailbox · Outside meetup near home · Outside 123 Example Lane · Fictional landmark beside the driveway",
               "unfilledPlaceholders" : [
 
               ]
@@ -680,7 +680,7 @@
 
               ],
               "style" : "normal",
-              "text" : "Plan generated 2026-10-09. Household information revision 1; home revision 1; content version 2026.10.1.",
+              "text" : "Plan generated 2026-10-09. Household information revision 1; home revision 1; content version 2026.10.2.",
               "unfilledPlaceholders" : [
 
               ]

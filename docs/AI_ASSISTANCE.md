@@ -37,7 +37,7 @@ data were created.
 ## Materially AI-generated
 
 Everything under `apps/`, `packages/`, `services/`, `content/`, `fixtures/`, `scripts/`, and `docs/` (except the
-owner's brief PDF in `docs/`). Specifically AI-written content that needs human review before anyone relies on it:
+owner's brief PDF and verbatim original goal in `docs/goals/2026-10-17-family-preparedness.md`). Specifically AI-written content that needs human review before anyone relies on it:
 
 - **Safety text** in `content/locales/en/*.json` and scenario packs (paraphrased from cited CDC/NWS/USFA/FDA pages).
 - **Spanish and Vietnamese translations** in `content/locales/{es,vi}` — machine/AI drafts, all marked `draft`.
@@ -122,3 +122,12 @@ unsigned iphoneos compilation and configurable small-phone/large-text screenshot
 before app/UI execution; VERIFICATION records exact failures and subsequent results. All new translations remain
 AI drafts; recording their English baselines does not imply professional review. No physical scan or human
 participant result is claimed.
+
+Owner-requested closeout: Codex preserved the owner's complete original /goal verbatim in docs/goals and
+prepared CLAUDE_CONTINUE_PROMPT plus an updated native handoff. The owner expressly assigned further PDF/visual
+refinement and goal completion to Claude, including ideators, UI inspection and friction review. This pass
+stops visual implementation here; it does not claim the product complete. The fifth hosted native run fails
+on NearbyDiscovery's task-group closure; all native app/UI/device checks remain unverified. The owner says a
+LiDAR iPhone Pro and signing account will be available on the existing Mac; no device model, OS or test result
+is invented. Source content was versioned2026.10.2 and fictional portable references regenerated/audited;
+these remain interim reference designs for Claude. No messages were sent to a Claude session or third party.

@@ -1,26 +1,27 @@
 # Verification record — October 17 revision
 
-**Implementation prepared; native build and device test pending.** This record covers the settled integrated
-sources committed with this file, following `e43f9acf4e1f533a6ebba32324256cf8a1b1144c`. Identify the exact SHA
-with `git log -1 --format='%H %s' -- docs/CLAUDE_NATIVE_HANDOFF.md`; native evidence must name the actual tested
-SHA and any local changes. The original revision baseline was `2a8ab385a113cbcebcb8dc5a594d8ed8bacdd5b3`.
-The owner's two untracked root audit/handoff documents were read fully and preserved outside the commits.
+**Implementation handed off for continued goal work; native build failing and device verification pending.**
+Current source follows `4a3bd60`; evidence below records exact tested commits. The original revision baseline
+was `2a8ab385a113cbcebcb8dc5a594d8ed8bacdd5b3`. The owner's two untracked root audit/handoff documents
+were read fully and preserved outside commits.
 
 ## Actual platform and results
 
 Linux x86_64, Docker `swift:6.2` (Swift Testing 6.2.4), Node/pnpm and portable Python/Poppler tools.
-No Xcode, iOS SDK, simulator, physical iPhone or LiDAR hardware was available. The owner confirmed that the Mac
-handoff uses an existing Claude session and checkout; see [CLAUDE_NATIVE_HANDOFF.md](CLAUDE_NATIVE_HANDOFF.md).
+Authorized GitHub macOS CI provides Xcode16.4 and iOS18.5 SDK/runtime; native attempts and failures are recorded
+below. No physical iPhone or LiDAR hardware is connected to this workspace. The owner confirmed the existing
+Claude/Mac checkout will have a LiDAR-capable iPhone Pro and signing account; see [CLAUDE_NATIVE_HANDOFF.md](CLAUDE_NATIVE_HANDOFF.md).
 
 | Executed command/check | Settled-source result | Local log |
 |---|---|---|
-| `DRYRUN_SCRATCH=root-plan scripts/swift.sh packages/DryRunCore test` | **306 tests / 47 suites passed** | `dryrun-closure-core-final.log` |
+| `DRYRUN_SCRATCH=native-followup scripts/swift.sh packages/DryRunCore test` | **317 tests / 50 suites passed** | `dryrun-native-followup-core-final.log` |
 | `DRYRUN_SCRATCH=oct17-closure scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** | `dryrun-closure-vault.log` |
-| `cd services/public-api && pnpm test && pnpm typecheck` | **68 tests / 4 files passed**; TypeScript clean | `dryrun-closure-backend.log` |
-| Docker Swift `swiftc -parse`, every app/app-test/UI-test Swift file | **54 sources parsed**; syntax only, no SDK typecheck | `dryrun-closure-parse-final.log` |
+| `cd services/public-api && pnpm test && pnpm typecheck` | **68 tests / 4 files passed**; TypeScript clean | `dryrun-native-followup-backend-final.log` |
+| Docker Swift `swiftc -parse`, every app/app-test/UI-test Swift file | **55 sources parsed**; syntax only, no SDK typecheck | `dryrun-native-followup-parse.log` |
 | `git diff --check`; `bash -n` all shell scripts; Python AST parse all artifact scripts | Passed | `dryrun-closure-static.log` |
 | `DRYRUN_DUMP=1` core dump, portable PDF generation and text/render audit | Seven fictional JSON snapshots; **14 Letter/A4 PDFs**; all text checks pass | `dryrun-closure-pdfs.log`, `dryrun-closure-pdf-audit.log` |
-| Native iOS build / native XCTest / simulator UI / live Apple services | **Not run** | Mac pending |
+| Native simulator/iphoneos builds | **Attempted, failing SDK checks**; see exact runs below | GitHub artifacts |
+| Native XCTest / simulator UI / live Apple services | **Not executed**; build gates failed | Native pending |
 | Physical RoomPlan capture/review/assignment/save/relaunch/rehearse/export | **Not run** | Device pending |
 | Real-household pilot / professional safety review / human translation review | **Not performed** | Human pending |
 
@@ -74,10 +75,10 @@ clean rebuild without changing source/expectations; the current fresh vault scra
 
 ## Native and human gates still open
 
-There are **39 authored native XCTest methods**: AppPersistence 8, MapRequest 3, MapDirectionsRequest 3,
-PlanExport 6, PlanGenerationPrivacy 7, RehearsalNames 7, ReviewReminder 5; also **5 DemoJourneyUITests** and EN/ES/VI
-screenshot tours. **Zero ran on iOS in this revision.** The in-memory fresh-install UI journey is not proof of
-real-vault force-quit/relaunch. Syntax parsing cannot establish SDK API/concurrency or selector correctness.
+There are **42 authored native XCTest methods**: AppPersistence 9, MapRequest 3, MapDirectionsRequest 3,
+PlanExport 7, PlanGenerationPrivacy 7, RehearsalNames 7, ReviewReminder 5, RoomPlanMapping 1; also **7 DemoJourneyUITests** and EN/ES/VI
+screenshot tours. **Zero ran on iOS in this revision.** The new simulator-only encrypted-vault journey uses isolated file/Keychain namespaces and tests process
+relaunch; it is not yet executed and does not establish physical Data Protection. In-memory journeys remain separate. Syntax parsing cannot establish SDK API/concurrency or selector correctness.
 
 The Mac must compile against the installed SDK with the iOS 18 target, fix native failures, run the real connected
 journey, inspect native PDFs/screens and perform installation. RoomPlan categories/transforms/parent IDs/story,
@@ -143,3 +144,45 @@ main-thread completion handlers and return plain values; the map uses documented
 Sendable override or concurrency relaxation was added. Apple documentation for start(completionHandler:),
 calculate(completionHandler:) and PointOfInterestCategories was rechecked directly on October17 local time.
 These corrections await the next SDK run. Evidence: ignored `artifacts/github-39088100904/`.
+
+## Closeout for Claude continuation — latest native blocker
+
+The owner requested Codex close out and hand visual/PDF refinement and further goal completion to Claude,
+with ideators and actual UI inspection. The complete original `/goal` is preserved verbatim in
+[goals/2026-10-17-family-preparedness.md](goals/2026-10-17-family-preparedness.md). This handoff is explicitly
+**not a completion claim**. See [CLAUDE_CONTINUE_PROMPT](CLAUDE_CONTINUE_PROMPT.md).
+
+Fifth hosted run https://github.com/1unarzDev/dryrun/actions/runs/39088361958 tested exact SHA
+`4a3bd60855cce77b99cc9f910323cd2dda24f4ed` in compile-only mode. Xcode16.4 (16F6), Swift6.1.2,
+iOS/Simulator SDK18.5; iPhone16 Pro/iOS18.5 selected. Helper tests and XcodeGen passed. Simulator test-target
+build **failed (67s)** and unsigned generic iphoneos app build **failed (28s)** with:
+
+```
+apps/ios/DryRun/Maps/MapKitAdapters.swift:193:23:
+error: sending value of non-Sendable type '() async -> (Int, [AppleMapSearchResult]?)' risks causing data races
+```
+
+This is NearbyDiscovery's task-group child closure. Claude must fix it against the installed SDK while retaining
+independent per-category services and stale-generation rejection; subsequent compiler errors may still emerge.
+Earlier response-projection/POI diagnostics no longer appeared. No relaxed concurrency or Sendable override was
+used. Full app/native XCTest/UI/screenshot/native PDF execution remains **unverified**; build-only intentionally
+skipped test execution. No physical device/signing/scan was performed. Downloaded redacted logs are in ignored
+`artifacts/github-39088361958/`; the linked Actions run is the remotely retrievable evidence.
+
+Later closeout changes version the authored content as2026.10.2 so retained older plans become stale, and
+regenerate the seven fictional JSON documents/14 portable PDF references. These are not additional native
+build evidence. Original audit/handoff documents remain untracked; no real household data was uploaded.
+
+
+## Final portable closeout rerun
+
+After the content2026.10.2 bump and reference regeneration, the closing rerun passed:
+
+- `DRYRUN_SCRATCH=native-followup scripts/swift.sh packages/DryRunCore test`: **317 tests / 50 suites**.
+- `DRYRUN_SCRATCH=oct17-closure scripts/swift.sh packages/DryRunVault test`: **35 tests / 6 suites**.
+- `pnpm --dir services/public-api test` and `typecheck`: **68 tests / 4 files**, TypeScript clean.
+- `scripts/tests/mac-helpers.sh`, `bash -n` on all scripts, and `git diff --check`: passed.
+- Docker Swift6.2 `swiftc -parse` on all **55 app/test Swift sources**: passed, syntax only.
+
+Local logs: `/tmp/dryrun-closeout-{core,vault,backend,static,parse}.log`.
+These final portable results do not change the hosted native failure or any pending simulator/device/human gate.

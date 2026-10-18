@@ -34,3 +34,12 @@ qualified primary/alternative legs. Contrast a local household leak with regiona
 contact/meetup and show its preparation close into Recorded preparations, then review it directly. Show a
 source resource's save/contact/directions sheet, two persistent meetup pins and updated textual PDF details.
 Do not record native success until the Mac run actually verifies it.
+
+## Next owner-directed visual pass
+
+Claude should use ideators, inspect the current UI and the reference PDFs, and implement a concise visual
+journey with strong neighborhood-map and canonical home/hazard scenes, useful icons and clean native PDFs.
+Remove unnecessary nesting and detours; do not add broad features to make the recording look richer.
+Read the full original goal, not just this script or the latest diff. Build failure, unrun simulator/device
+checks and draft translations must remain explicit until actual evidence changes them. No recording or
+usability results were produced by this closeout.
