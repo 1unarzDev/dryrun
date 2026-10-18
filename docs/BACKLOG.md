@@ -1,66 +1,56 @@
-# Backlog (priority order)
+# Remaining work — October 17 product revision
 
-Each item: acceptance condition · dependencies. "P0" blocks a credible demo; "P1" is needed for the full product;
-"P2" improves it.
+The current product is Prepare, Rehearse and Plan. General family preparation is useful without address,
+geometry, medical equipment or rehearsal. County coverage is optional public content, not the organizing
+principle. This backlog supersedes the older county-first and equipment-only priorities; historical decisions
+remain in git history. Implemented behavior and actual evidence are mapped in REVISION_EVIDENCE and VERIFICATION.
 
-## Completed in the 2026-10-16 integration pass
+## Required verification and fixes
 
-- **MapKit planning journey (M1/M2 portable integration):** full-size native map and accessible list, county frames,
-  filters, source-aware directory details, Apple Maps search disclosure, explicit location/origin and transport-mode
-  travel previews, ordinary-route wording, Open in Apple Maps, and encrypted private meeting-place saves. Bundled and
-  cached public data share one precedence-aware snapshot. Portable contracts, backend tests, and source parsing pass;
-  Xcode, simulator, Apple services, and device behavior remain unverified.
-- **RoomPlan/home review repairs (M3 portable integration):** callback generations, interruption/incomplete capture
-  state, interior portal assignment, measured widths, unknown evidence, concave display triangulation, explicit room
-  starts, and durable candidate-before-publish home replacement. Synthetic fixtures pass; RoomPlan hardware and iOS
-  UI behavior remain unverified.
+1. **Installed-SDK native build and simulator integration.** Build the current SHA using
+   `scripts/mac/verify.sh`, with the iOS 18 minimum. Fix compiler/API/concurrency errors and actual journey defects;
+   do not replace failing gates with syntax parsing. Exercise a small iPhone, ordinary/large text, EN/ES/VI,
+   VoiceOver, Reduce Motion, light/dark, and inspect new screenshots. See CLAUDE_NATIVE_HANDOFF.
+2. **Real local persistence and selected exports.** Fresh real-vault install: skip address/scan, add an
+   international contact, open/select/share/print the universal family card, force quit/relaunch. Verify protected
+   key/file attributes, locked-device recovery, save failure/draft behavior and export leases through activity/
+   Print background, cancellation and completion. In-memory UI tests alone do not satisfy this gate.
+3. **Apple services with optional location.** Texas/other-US/non-US/rural/unresolved addresses, denied GPS,
+   rapid changes/cancel/retry, ordinary directions origins/modes, map-snapshot failure, attribution and offline
+   essentials. Both meetups and source records must persist through all entry points and update the next PDF.
+4. **LiDAR-capable physical iPhone Pro.** Native connected-room scan, structure processing, measured mapping,
+   grade/stair/exit correction, person assignment, save/relaunch, fire/flood/tornado rehearsal and export. Include
+   interruption, late callbacks, repeated Finish, poor capture and denial/manual fallback. Keep private scans local.
+   Record exact hardware/OS/SHA/error evidence in DEVICE_CHECKLIST; simulator success cannot satisfy capture.
+5. **Native visual plan inspection.** Phone preview and Letter/A4/grayscale PDF, long individual notes, large
+   family, selected critical fields, native map unavailable, all supported languages, exact current route panels.
+   Portable ReportLab references are useful layout evidence only. Verify the full note and vital contact/meetup
+   text survive native pagination without shrinking or clipping.
+6. **Human safety and language review.** Compare authored wording/source provenance and EN/ES/VI translations
+   with qualified/fluent reviewers before changing draft/needsReview states. Automated tests and source checks
+   do not certify family protection or clinical instructions. Do not invent reviewers or endorsements.
+7. **Observed usability.** Use USABILITY_PROTOCOL and the local privacy-minimal results template with consenting
+   testers when available. Measure time to a useful card/plan, navigation errors, meeting/route understanding and
+   one practical preparation. The 90-second card and 2–4-minute exercise times remain unmeasured design targets.
+   Recruitment/outreach requires explicit authorization.
 
-## P0 — make it run where it must run
+## Product boundaries to retain during fixes
 
-1. **Compile and run on macOS / Xcode 26 (iOS 18 deployment target).**
-   Accept: `xcodegen && xcodebuild -scheme DryRun -destination 'platform=iOS Simulator,name=<real device name>' build test`
-   succeeds; UI journeys in `DryRunUITests` pass; results recorded in VERIFICATION.md. · Depends on: Mac with Xcode.
-2. **Device verification of the vault.** Accept: on a physical iPhone, key created with
-   `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`; vault file attributes show `NSFileProtectionComplete` and
-   excluded-from-backup after atomic replace; locked-device launch shows "Unlock your iPhone", not onboarding.
-3. **Human safety-content review** of every string in `content/locales/en` and scenario packs against the cited
-   sources; flip manifest review states only after review. · Depends on: a qualified reviewer.
-4. **Language review** for ES and VI by fluent reviewers; until then all ES/VI output keeps the draft banner.
+- No fabricated personal home or ground-floor assumption; unknown/no-supported-route states remain explicit.
+- Factual preparation completion follows the correct saved subject; physical checks require actual records.
+  Generic Done, hypothetical comparison and source ownership never certify compatibility or readiness.
+- Unsupported addresses use local planning and requested Apple services without substituted Texas resources.
+  More regional providers, live flood overlays and a global-alert backend are outside this release's core.
+- Public API receives no household/medical/contact/indoor data. Encrypted local storage, provenance and
+  deterministic conservative routing stay intact. No live disaster command, survival score or safe-time countdown.
+- Manual correction remains constrained; free-vertex CAD editing and independent captured-wall editing are absent.
+  Concise household-authored arrangements are used for several continuity needs rather than lengthy questionnaires.
 
-## P1 — complete the required product
+## Optional work after the required journey is verified
 
-5. **RoomPlan capture on device.** Accept: single-session multi-room scan on a LiDAR iPhone produces a proposed
-   HomeModel with correct relative room placement; confirmation pass required before routes; unsupported devices
-   see the manual path. Physical scan results recorded (TESTED_DEVICE). · Depends on: LiDAR iPhone.
-6. **Confirmation pass on device.** The guided flow (`HomeConfirmationView` over the tested `HomeConfirmation` logic) is
-   built. Accept: after a real scan, every opening is answered or left unknown; routes appear only for confirmed exits.
-7. **PDF verification.** Accept: rendered EN/ES/VI PDFs for all sample households have no clipped text, correct
-   Vietnamese diacritics, searchable text, and continuation pages reported (never shrunk below 11 pt).
-8. **Move remaining hard-coded UI chrome strings into the locale packs / String Catalog** with plural rules;
-   test with the longest ES/VI strings and Dynamic Type XXL.
-9. **Unify temporary exports on `HouseholdVaultRepository.makeExportFile`** (one protected export location).
-10. **Region coverage:** verified OEM contact for each of the 13 TX-25 counties, with check dates; county-level
-    alert enrollment links. Partial-county membership must not be asserted without boundary checks.
-11. **Deploy the public API** (after authorization): Cloudflare Worker with the NWS User-Agent contact set; client
-    base URL configured; app still fully functional offline.
-12. **Signed content updates** (pinned public key, manifest with hashes/versions) before any downloadable rule content.
-13. **FEMA NFHL live adapter** (map date, effective/preliminary status, missing coverage) — currently fixture only
-    unless `docs/lanes/agent-c.md` says otherwise.
-
-14. **Basement walkout and split-level exits:** a per-door "this opens to ground outside" confirmation, replacing the
-    level-0 rule.
-15. **Same-room exits:** two exits from the start room count as independent. The UI should say "both exits are in
-    this room".
-16. **Explicit style markers on safety lines** (prohibition/caveat) in content, replacing English keyword detection.
-17. **Regional agent:** schedule runs, store claims for human review, and surface reviewed claims in the Help tab.
-18. **Helper "assigned" line ordering:** it currently appears before a later "helper blocked" event in the fire timeline.
-19. **Vault-backed derived cache:** use `storeDerived`/`loadDerived` for rehearsal results keyed by RevisionKey.
-
-## P2 — quality and reach
-
-20. Design pass (owner-directed): typography, spacing, dollhouse styling, scenario art direction (restrained).
-21. Performance on device: measure dollhouse frame pacing and simulation latency on the oldest supported iPhone.
-22. Accessibility audit with VoiceOver, Switch Control, Reduce Motion/Transparency, contrast checks.
-23. Optional on-device explanations: evaluate prose quality and validator false-accept rate on iOS 26 hardware.
-24. Encrypted, user-controlled export/recovery-key design (no server-held keys).
-25. Additional scenario variants (night fire, apartment common-stair fire, multi-day heat with intermittent grid).
+- Profile rendering and simulation on the oldest supported physical device; optimize demonstrated bottlenecks.
+- Additional reviewed language packs or optional noncritical translation after EN/ES/VI is visually/human checked.
+- Signed downloadable content before introducing remote rule updates. Any public-service deployment requires
+  separate authorization; no deployment or broader county coverage is needed for the basic local product.
+- Richer spatial illustration, derived-result caching or export recovery options only when they improve the
+  verified family journey. No extra tab, accounts, invitations or notification campaign is required.

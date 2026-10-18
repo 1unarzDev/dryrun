@@ -131,6 +131,15 @@ skip_step() {
   echo "    SKIP $1: $2"
 }
 
+# Read the actual tab-separated status column. POSIX/BSD grep does not treat \t as a tab.
+# Optional step name restricts the query; no argument checks the complete ledger.
+steps_failed() {
+  awk -F '\t' -v wanted="${1:-}" '
+    NR > 1 && $2 == "FAIL" && (wanted == "" || $1 == wanted) { failed = 1 }
+    END { exit !failed }
+  ' "$STEPS"
+}
+
 # Picks an available iPhone simulator: $SIM_UDID, else name match on $SIM_NAME, else newest iOS runtime.
 pick_simulator() {
   if [ -n "${SIM_UDID:-}" ]; then echo "$SIM_UDID"; return 0; fi

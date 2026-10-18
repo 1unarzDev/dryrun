@@ -187,6 +187,7 @@ final class RoomCaptureController: NSObject, ObservableObject {
 }
 
 /// NSCoding comes from RoomCaptureViewDelegate. The controller never archives these delegates.
+@objc(DryRunCaptureGenerationDelegate)
 @MainActor
 private final class CaptureGenerationDelegate: NSObject, RoomCaptureViewDelegate, RoomCaptureSessionDelegate {
     nonisolated let generation: Int

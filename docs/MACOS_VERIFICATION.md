@@ -1,6 +1,6 @@
 # macOS verification guide
 
-This takes about 30–45 minutes on a first run, most of it Xcode building. You need a Mac with **Xcode 16.3 or later**
+Run time depends on Xcode/package caches and the selected test matrix; record actual durations. You need a Mac with **Xcode 16.3 or later**
 (the vault package resolves swift-crypto 4.5.2, whose manifest needs Swift 6.1); Xcode 26 is needed to also compile the
 optional Foundation Models code. Everything uses fictional data.
 
@@ -11,7 +11,8 @@ xcode-select -p                      # should point inside Xcode.app; if not: su
 xcodebuild -runFirstLaunch           # accept components
 brew install xcodegen                # https://brew.sh if Homebrew is missing
 brew install pnpm                    # optional: backend tests
-git clone <repo> dryrun && cd dryrun # or copy the folder
+# This owner already has a Mac checkout: inspect git status/divergence and preserve local work.
+# See docs/CLAUDE_NATIVE_HANDOFF.md before integrating origin/main.
 ```
 
 In Xcode > Settings > Components (Platforms), make sure an **iOS simulator runtime** is installed.
@@ -26,11 +27,11 @@ It runs:
 - the core and vault package tests natively; the vault uses real CryptoKit here
 - the backend tests
 - XcodeGen project generation and an app build
-- the UI journeys
-- a 14-screen × 3-language screenshot tour
+- native app integration tests and the current five UI journeys
+- the current EN/ES/VI screenshot tour (inspect the actual resulting screens)
 - EN/ES/VI plan PDFs for each fictional household
 
-A failing step never stops the run.
+A failing step does not stop later checks. Inspect every PASS/FAIL/SKIP in SUMMARY.md; a bundle alone is not success.
 
 **Output:** `artifacts/mac-<timestamp>.tar.gz` plus a printed summary.
 
@@ -40,11 +41,11 @@ Faster variants:
 - `--locales en`: screenshots in one language only.
 
 If the build fails, the first 40 unique compiler errors are in the summary and in `compile-errors.txt`. Send them
-as they are; don't fix them by hand unless you want to (if you do, say what you changed).
+with the exact tested SHA. The Mac agent should fix the source defect, rerun the affected checks and record the fix; do not disable a failing gate.
 
-## 3. Hardware-only checks (optional, ~15 min, needs an iPhone)
+## 3. Hardware-only capture gate (required for device verification, needs a LiDAR iPhone)
 
-Follow `docs/DEVICE_CHECKLIST.md` and fill in its short form. Use `scripts/mac/device.sh` to install on the phone.
+Follow `docs/DEVICE_CHECKLIST.md` and record actual results/errors. Use `scripts/mac/device.sh` to install on the phone after a successful native build. Do not claim a duration until measured; capture, interruption and export checks may take longer than one short scan.
 
 ## 4. What to send back
 
@@ -62,14 +63,14 @@ What the bundle does *not* contain:
 The `.xcresult` bundles stay in the `artifacts/mac-<timestamp>/` folder so you can open them in Xcode. They are left
 out of the `.tar.gz`, because they record full paths, the Mac, and device names and IDs and cannot be redacted.
 
-## Working without being at the Mac
+## Other authorized Mac workflows
 
-- **External Mac over SSH, from the Linux machine:**
+- **External Mac over SSH, if the owner supplies access:**
   `scripts/remote-mac.sh you@mac.local verify` (or `screens --locales en --screens fire,plan`).
-  It syncs the repo, runs the script on the Mac, and pulls `artifacts/` back. Turn on Remote Login on the Mac first:
+  It syncs to its dedicated remote checkout, runs the script and pulls `artifacts/` back. Inspect the script and remote destination first; do not overwrite the owner’s existing checkout. Turn on Remote Login on the Mac first:
   System Settings > General > Sharing.
 - **Cloud Mac, if the repo is pushed to GitHub:** in the Actions tab, run **iOS verify** manually and download the
-  bundle artifact. This uses a simulator only and needs no secrets.
+  bundle artifact. This uses a simulator only, needs no signing secrets and does not deploy. Record the workflow run URL, head SHA and every test result. A queued run is not verification.
 
 ## Previewing and testing the UI (for frontend work)
 

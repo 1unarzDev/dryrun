@@ -100,7 +100,7 @@ fi
   if [ -s "$OUT/compile-errors.txt" ]; then
     echo "## Build errors ($(wc -l <"$OUT/compile-errors.txt" | xargs) unique lines, first 40)"
     echo '```'; head -40 "$OUT/compile-errors.txt"; echo '```'
-  elif grep -q "^app-build	FAIL" "$STEPS"; then
+  elif steps_failed app-build; then
     # The build failed without a line the filter recognises: show the end of the log rather than nothing.
     echo "## Build failed (last 40 log lines)"
     echo '```'; tail -40 "$OUT/logs/app-build.log"; echo '```'
@@ -124,5 +124,5 @@ cat "$OUT/SUMMARY.md"
 echo
 echo "Bundle: ${TARBALL#"$ROOT"/}  ← send this file"
 # A failing step never stops the run, but automation (the GitHub workflow) should not report success for it.
-if [ -n "${CI:-}" ] && grep -q "	FAIL	" "$STEPS"; then exit 1; fi
+if [ -n "${CI:-}" ] && steps_failed; then exit 1; fi
 exit 0

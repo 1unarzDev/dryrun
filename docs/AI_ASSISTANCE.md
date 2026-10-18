@@ -104,3 +104,10 @@ Reference PDF visual inspection caught furniture covering room names; label orde
 and native renderer source. Exact final evidence is in VERIFICATION; native output has not been executed.
 Human translation/safety review and all physical/simulator results remain pending. No participant or endorsement
 is invented. All user-authored audit/handoff files remain outside the commit.
+
+Hosted-native continuation (same Codex agent): discovered and manually ran the repository's existing GitHub
+macOS verification workflow for dbac954. Native package/backend checks passed; actual app compilation exposed
+the private NSCoding delegate's unstable Objective-C name. Added an explicit runtime class name, retained all
+generation guards, and prepared a rerun. Also corrected portable tabular-status parsing and updated stale county/
+equipment-only backlog and Mac instructions. Exact run/environment/failures are in VERIFICATION. No simulator
+journey or physical capture result is implied by this failed build.

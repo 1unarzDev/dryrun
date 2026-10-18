@@ -91,3 +91,22 @@ and retained provenance; free vertex/CAD and independent captured-wall editing r
 arrangements use concise household notes. Translation and safety content remain AI drafts; no professionals or
 consenting household testers have reviewed this revision. Timing targets have not been measured. Do not label
 this release fully verified, scanning Device verified, or Ready for iPhone testing before the corresponding gates.
+
+## First hosted native attempt — run 39087041160
+
+After the Linux closure, the existing manual GitHub macOS workflow was discovered and dispatched for exact
+SHA `dbac954180a873b81b0088a1bb6d9bf20d47d171`. This supersedes the earlier statement that no native build had
+been attempted; it does not establish a successful app build. Run:
+https://github.com/1unarzDev/dryrun/actions/runs/39087041160
+
+Actual environment: macOS15.7.9 arm64 VirtualMac2,1; Xcode16.4 (16F6), Apple Swift6.1.2, iOS/Simulator SDK18.5;
+the default selector chose iPhone17 Pro from the installed runtimes. Hosted package checks passed: core306,
+vault35, backend68 and TypeScript. App build-for-testing **failed** on the private CaptureGenerationDelegate's
+unstable NSCoding class name. All native app tests, UI journeys, screenshots and native PDF gates were **skipped**.
+No physical device/signing identities were available.
+
+The delegate now has an explicit Objective-C class name while retaining immutable originating-generation checks.
+This source fix awaits the next native run. The tabular verification-status detector was also changed from a
+nonportable escaped-tab grep to an actual-column awk query; PASS/SKIP/failing and named-step queries passed on
+Linux. The earlier workflow did report the native build failure; no erroneous successful Mac result is claimed.
+The downloaded redacted bundle/logs are under ignored `artifacts/github-39087041160/`.

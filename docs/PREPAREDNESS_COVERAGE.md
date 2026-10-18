@@ -17,7 +17,7 @@ October 17 revision. These are records of preparation, never a safety score or c
 | Water utility / well-test planning | Municipal: named usable waterUtility phone contact. Private well: recorded testing-contact/instructions plan; no potable-water claim | Contact / well-plan record | Water/flood / S24 |
 | Pet essentials | Applicable when pets recorded; supplies/location | Supplies | Relocation / S53 |
 | Trusted/out-of-area contact | Structured name and usable recorded phone; a name alone is incomplete | Contacts | Reconnection / S52 |
-| Near-home / backup meetup | Separate saved-place purposes, with readable label/address/instructions; indoor annotations alone do not substitute a geographic record | Shared place selector | Fire / displacement / S52 |
+| Near-home / backup meetup | Separate saved-place purposes, with readable label/address/instructions; a verified named local landmark is migrated to a text-only place; a generic marker alone is incomplete | Shared place selector | Fire / displacement / S52 |
 | Helpers | Relevant assistance need and explicit helper ID; no duty to re-enter danger | Family | Fire / relocation / S19 |
 | Usable transport | A recorded vehicle or agreed alternative, with confirmed wheelchair access when applicable; shared with exercise transport eligibility | Household travel | Relocation / S52 |
 | Essential power support | Exact device's recorded compatible source, source setup, generator placement/solar outage prerequisites, output/shared-load allocation and positive documented runtime; same allocator as the exercise. Source setup never claims a per-device test. Unknown W/Wh remain optional for an unshared load with documented runtime | Shared equipment/backup form | Outage / S25 |
