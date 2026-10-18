@@ -55,7 +55,12 @@ struct HomeConfirmationView: View {
             labelText = ""; widthText = ""; interiorRoomID = nil; operable = nil; stepFree = nil
             previewConnectorDestination = false; shelterSpaceID = nil; notice = nil
             if let step = steps.first {
-                if let room = home.space(step.elementID) { labelText = room.label; labelKind = room.kind }
+                if let room = home.space(step.elementID) {
+                    labelKind = room.kind
+                    // A scanned "Room 2" the scanner recognised as a bedroom starts as "Bedroom"; the person still saves it.
+                    labelText = room.kind != .other && room.sourceScanRoomID != nil && room.label.hasPrefix("Room ")
+                        ? DisplayNames.name(room.kind.rawValue, localizer: model.localizer) : room.label
+                }
                 if let portal = home.portal(step.elementID) {
                     operable = portal.operable.value; stepFree = portal.stepFree.value
                     widthText = portal.clearWidthMeters.value.map { String($0) } ?? ""

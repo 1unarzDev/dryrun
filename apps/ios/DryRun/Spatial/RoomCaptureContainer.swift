@@ -4,7 +4,7 @@ import ARKit
 import AVFoundation
 import DryRunCore
 
-// RoomPlan capture for SwiftUI. AUTHORED, NOT COMPILED/DEVICE-TESTED in this environment.
+// RoomPlan capture for SwiftUI. Compiles and installs on an iPhone 16 Pro (October 18, 2026); a real multiroom scan is not yet verified.
 // - Gated by RoomCaptureSession.isSupported (LiDAR), independent of every other capability.
 // - Multiroom: one shared ARSession, one capture view/session with immutable delegate identity per room. Between rooms we call
 //   stop(pauseARSession: false) so the next room continues in the same world frame, then merge with
@@ -44,8 +44,9 @@ final class RoomCaptureController: NSObject, ObservableObject {
         let arSession: ARSession
         if let existing = sharedARSession { arSession = existing }
         else {
+            // RoomCaptureSession runs this session with its own configuration (as in Apple's multiroom sample);
+            // running plain world tracking first would only make it reconfigure the camera mid-start.
             arSession = ARSession()
-            arSession.run(ARWorldTrackingConfiguration())
             sharedARSession = arSession
         }
         let view = RoomCaptureView(frame: .zero, arSession: arSession)

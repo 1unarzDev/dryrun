@@ -387,7 +387,10 @@ struct SpatialRehearsalScene: View {
             } else { Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary) }
             DisclosureGroup(s("Room list")) { HomeRoomListView(home: home, spatialState: state, selectedRoute: route) }
             DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
-                if show3D { DollhouseView(home: home, routes: currentPaths, floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230) }
+                if show3D {
+                    DollhouseView(home: home, routes: currentPaths, floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230)
+                    DollhouseKey(home: home, spatialState: state, selectedRoute: route, hasRoutes: !currentPaths.isEmpty)
+                }
             }
         }
         .onChange(of: personID) { _, _ in selectedFloorID = nil }

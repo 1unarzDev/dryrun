@@ -45,8 +45,11 @@ public struct ScanRoom: Codable, Sendable, Hashable {
     public var story: Int
     public var surfaces: [ScanSurface]
     public var objects: [ScanObject]
-    public init(id: String, story: Int = 0, surfaces: [ScanSurface], objects: [ScanObject] = []) {
-        self.id = id; self.story = story; self.surfaces = surfaces; self.objects = objects
+    /// Room type the scanner recognised (RoomPlan sections). Only a pre-fill for the person to confirm: it never
+    /// marks the name confirmed and never affects routes.
+    public var suggestedKind: SpaceKind? = nil
+    public init(id: String, story: Int = 0, surfaces: [ScanSurface], objects: [ScanObject] = [], suggestedKind: SpaceKind? = nil) {
+        self.id = id; self.story = story; self.surfaces = surfaces; self.objects = objects; self.suggestedKind = suggestedKind
     }
 }
 
@@ -129,7 +132,7 @@ public enum ScanImport {
             }
             if Geometry.signedArea(outline) < 0 { outline.reverse() }
             let lowConfidence = room.surfaces.contains { $0.confidence == .low }
-            spaces.append(Space(id: spaceID, floorID: fid, label: "Room \(ri + 1)", kind: .other, polygon: outline,
+            spaces.append(Space(id: spaceID, floorID: fid, label: "Room \(ri + 1)", kind: room.suggestedKind ?? .other, polygon: outline,
                                 labelConfirmed: false, needsMeasurement: hullFallback || lowConfidence || outline.count < 3))
             spaces[spaces.count - 1].sourceScanRoomID = room.id
             for w in room.surfaces where w.category == .wall {

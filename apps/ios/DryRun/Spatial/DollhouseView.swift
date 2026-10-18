@@ -4,7 +4,7 @@ import DryRunCore
 
 // Neutral "dollhouse": floor slabs, low cut-away walls, simple markers, and route segments built from
 // the SAME canonical RoutePath points as the 2D plan (one box per segment, no smoothed ribbon).
-// iOS 18 RealityView. AUTHORED, NOT COMPILED/DEVICE-TESTED in this environment.
+// iOS 18 RealityView. Rendered on an iPhone 16 Pro (iOS 26.6.1) with the example homes, October 18, 2026; not yet with a real scan.
 // Mapping: floor plane (x, y) → RealityKit (x, elevation, -y), metres.
 
 struct DollhouseView: View {
@@ -61,7 +61,7 @@ struct DollhouseView: View {
 
 @MainActor
 enum DollhouseBuilder {
-    static let wallHeight: Float = 0.9   // cut-away height
+    static let wallHeight: Float = 0.6   // cut-away height: low enough that a small room's floor and name stay visible
     static let slab: Float = 0.05
     private static var meshCache: [String: MeshResource] = [:]
 
@@ -165,17 +165,66 @@ enum DollhouseBuilder {
                 }
             }
         }
+        // Room names lie flat on each floor, like the 2D plan, so the model can be read without tapping.
+        let labelMat = UnlitMaterial(color: .init(white: 0.15, alpha: 1))
+        for room in home.spaces where floors.contains(where: { $0.id == room.floorID }) {
+            let blockers = home.obstacles.filter { $0.floorID == room.floorID }.map(\.polygon)
+            if let spot = labelSpot(room.polygon, avoiding: blockers),
+               let label = roomLabel(room.label, polygon: room.polygon, material: labelMat) {
+                label.position = p3(spot, room.floorID, lift: 0.02)
+                root.addChild(label)
+            }
+        }
         // Frame the model for the default camera. Built at true scale around the origin, a 12 m home would surround
-        // the camera and be seen edge-on. Scale it to about 1.5 m across and tilt its top toward the viewer; orbit
+        // the camera and be seen edge-on. Scale it to about 1.8 m across and tilt its top toward the viewer; orbit
         // controls then start from a readable three-quarter view. Display only: no coordinates are read back from this.
         let spanX = Float((pts.map(\.x).max() ?? 0) - (pts.map(\.x).min() ?? 0))
         let spanY = Float((pts.map(\.y).max() ?? 0) - (pts.map(\.y).min() ?? 0))
         let extent = max(spanX, spanY, 1)
-        root.scale = SIMD3<Float>(repeating: 1.5 / extent)
-        root.orientation = simd_quatf(angle: .pi / 5, axis: SIMD3<Float>(1, 0, 0))
+        root.scale = SIMD3<Float>(repeating: 1.8 / extent)
+        root.orientation = simd_quatf(angle: 0.95, axis: SIMD3<Float>(1, 0, 0))
         let framed = Entity()
         framed.addChild(root)
         return framed
+    }
+
+    /// The room's centroid, or the nearest nearby point that is inside the room and clear of furniture (a kitchen
+    /// island at the centre would otherwise cover the name). Nil when no candidate is clear.
+    static func labelSpot(_ polygon: [Vec2], avoiding blockers: [[Vec2]]) -> Vec2? {
+        let c = Geometry.centroid(polygon)
+        let w = (polygon.map(\.x).max() ?? 0) - (polygon.map(\.x).min() ?? 0)
+        let d = (polygon.map(\.y).max() ?? 0) - (polygon.map(\.y).min() ?? 0)
+        let steps: [(Double, Double)] = [(0, 0), (0, 0.25), (0, -0.25), (0.25, 0), (-0.25, 0), (0, 0.35), (0, -0.35), (0.25, 0.25), (-0.25, 0.25), (0.25, -0.25), (-0.25, -0.25)]
+        return steps.map { c + Vec2($0.0 * w, $0.1 * d) }.first { p in
+            Geometry.contains(polygon, p) && Geometry.distanceToBoundary(polygon, p) > 0.35
+                && blockers.allSatisfy { !Geometry.contains($0, p) && Geometry.distanceToBoundary($0, p) > 0.45 }
+        }
+    }
+
+    /// Flat text centred on the chosen spot, shrunk to fit the room and dropped (never drawn across a wall) when it
+    /// would be unreadably small.
+    static func roomLabel(_ text: String, polygon: [Vec2], material: UnlitMaterial) -> Entity? {
+        guard !text.isEmpty else { return nil }
+        let key = "text:" + text
+        let mesh: MeshResource
+        if let cached = meshCache[key] { mesh = cached }
+        else {
+            mesh = .generateText(text, extrusionDepth: 0.001, font: .systemFont(ofSize: 0.32, weight: .semibold),
+                                 containerFrame: .zero, alignment: .center, lineBreakMode: .byTruncatingTail)
+            cache(mesh, key: key)
+        }
+        let bounds = mesh.bounds
+        let width = Double(polygon.map(\.x).max()! - polygon.map(\.x).min()!)
+        let depth = Double(polygon.map(\.y).max()! - polygon.map(\.y).min()!)
+        let fit = Float(min(1, width * 0.8 / Double(max(bounds.extents.x, 0.001)), depth * 0.5 / Double(max(bounds.extents.y, 0.001))))
+        guard fit >= 0.45 else { return nil }
+        let entity = ModelEntity(mesh: mesh, materials: [material])
+        entity.position = -bounds.center
+        let holder = Entity()
+        holder.addChild(entity)
+        holder.scale = SIMD3(repeating: fit)
+        holder.orientation = simd_quatf(angle: -.pi / 2, axis: SIMD3(1, 0, 0))   // lie on the floor, reading toward the viewer
+        return holder
     }
 
     /// Box spanning a segment on the floor plane.
@@ -204,7 +253,14 @@ enum DollhouseBuilder {
         guard let triangles = Geometry.triangulate(polygon) else { return nil }
         var desc = MeshDescriptor(name: "slab")
         desc.positions = MeshBuffers.Positions(verts)
-        let idx = triangles.flatMap { $0.map(UInt32.init) }
+        // RoomPlan outlines arrive in either winding. Back faces are culled, so a clockwise outline would face the
+        // ground and its floor would vanish from above: wind every triangle to face up and give it an up normal.
+        let idx = triangles.flatMap { t -> [UInt32] in
+            let a = verts[t[0]], b = verts[t[1]], c = verts[t[2]]
+            let up = simd_cross(b - a, c - a).y >= 0
+            return (up ? t : [t[0], t[2], t[1]]).map(UInt32.init)
+        }
+        desc.normals = MeshBuffers.Normals(Array(repeating: SIMD3<Float>(0, 1, 0), count: verts.count))
         desc.primitives = .triangles(idx)
         guard let mesh = try? MeshResource.generate(from: [desc]) else { return nil }
         cache(mesh, key: key)
@@ -213,5 +269,76 @@ enum DollhouseBuilder {
     private static func cache(_ mesh: MeshResource, key: String) {
         if meshCache.count >= 512 { meshCache.removeAll(keepingCapacity: true) }
         meshCache[key] = mesh
+    }
+}
+
+/// Key for the 3D colours, listing only what this scene actually draws. Same wording as the 2D plan and printed key.
+struct DollhouseKey: View {
+    @Environment(AppModel.self) private var model
+    let home: HomeModel
+    var spatialState: SpatialExerciseState? = nil
+    var selectedRoute: RouteResult? = nil
+    var hasRoutes = false
+
+    /// Mirrors DollhouseBuilder's material choice per opening and marker, so the key never lists a colour that is
+    /// not on screen or misses one that is.
+    private var items: [(key: String, color: Color, shape: String)] {
+        let l = model.localizer
+        var drawn: Set<String> = []
+        for p in home.portals {
+            let status = HomeScenePresentation.openingStatus(p, in: home, state: spatialState, request: selectedRoute?.request)
+            if status == .unavailable { drawn.insert("blocked") }
+            else if p.kind == .window { drawn.insert("window") }
+            else if status == .availableExit { drawn.insert("exit") }
+            else if status != .confirmedConnection { drawn.insert("unconfirmed") }
+        }
+        var out: [(String, Color, String)] = []
+        if drawn.contains("exit") { out.append((l("pdf.legend.exit"), .green, "rectangle.fill")) }
+        if drawn.contains("window") { out.append((l("pdf.legend.window"), spatialState?.hazard == .tornado ? .purple : .teal, "rectangle.fill")) }
+        if drawn.contains("unconfirmed") { out.append((l("pdf.legend.unconfirmed"), .orange, "rectangle.fill")) }
+        if drawn.contains("blocked") { out.append((l("pdf.legend.blocked"), .red, "xmark")) }
+        if hasRoutes { out.append((l("pdf.legend.primary"), .blue, "line.diagonal")) }
+        if !(spatialState?.affectedSpaceIDs.isEmpty ?? true) {
+            out.append((l("pdf.legend.affected"), spatialState?.hazard == .flashFlood ? .blue : .orange, "square.fill"))
+        }
+        if spatialState?.destinationSpaceID != nil || !(spatialState?.exposedSpaceIDs?.isEmpty ?? true) {
+            out.append((l(spatialState?.destinationSpaceID != nil ? "pdf.legend.shelter" : "pdf.legend.exposed"), .purple, "square"))
+        }
+        if selectedRoute != nil, HomeScenePresentation.startingRoom(in: home, route: selectedRoute) != nil { out.append((l("pdf.legend.start"), .blue, "circle.fill")) }
+        let floorIDs = Set(home.floors.map(\.id))
+        let kinds = Set(home.annotations.filter { $0.position != nil && $0.floorID.map(floorIDs.contains) == true }.map(\.kind))
+        let safety = [AnnotationKind.smokeAlarm, .coAlarm, .fireExtinguisher].filter(kinds.contains)
+        if !safety.isEmpty { out.append((safety.map { l("pdf.legend.\($0.rawValue)") }.joined(separator: ", "), .red, "circle.fill")) }
+        if kinds.contains(.outsideMeetingPoint) { out.append((l("pdf.legend.meetup"), .green, "circle.fill")) }
+        let others = kinds.subtracting(safety + [.outsideMeetingPoint]).sorted { $0.rawValue < $1.rawValue }
+            .compactMap { DiagramLegendKey.key($0) }.map { l($0) }
+        if !others.isEmpty { out.append((Array(Set(others)).sorted().joined(separator: ", "), Color(white: 0.35), "circle.fill")) }
+        if !home.obstacles.isEmpty { out.append((l("pdf.legend.furniture"), Color(white: 0.35), "square.fill")) }
+        return out
+    }
+
+    var body: some View {
+        let l = model.localizer
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(items, id: \.key) { row($0, l).fixedSize(horizontal: false, vertical: true) }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .font(.caption)
+        .accessibilityElement(children: .combine)
+    }
+    private func row(_ item: (key: String, color: Color, shape: String), _ l: Localizer) -> some View {
+        Label { Text(item.key).foregroundStyle(.secondary) } icon: { Image(systemName: item.shape).foregroundStyle(item.color) }
+    }
+}
+
+/// Printed-key wording for the neutral grey 3D markers; nil for kinds that have no key entry.
+enum DiagramLegendKey {
+    static func key(_ kind: AnnotationKind) -> String? {
+        switch kind {
+        case .utilityShutoffWater, .utilityShutoffGas, .utilityShutoffElectric: "pdf.legend.shutoff"
+        case .supplies: "pdf.legend.supplies"
+        case .medicalEquipment: "pdf.legend.medicalEquipment"
+        default: nil
+        }
     }
 }

@@ -140,6 +140,19 @@ struct GeometryTests {
         if let p = r2.primary { #expect(RouteGeometryAudit.violations(p, in: confirmed).isEmpty) }
     }
 
+    @Test func recognisedRoomTypeIsOnlyAnUnconfirmedPrefill() throws {
+        var capture = Self.capture
+        capture.rooms[0].suggestedKind = .bedroom
+        let home = try ScanImport.importCapture(capture, homeID: "home-scan-kind").home
+        let rooms = home.spaces.sorted { $0.id < $1.id }
+        #expect(rooms.map(\.kind) == [.bedroom, .other])
+        #expect(rooms.allSatisfy { !$0.labelConfirmed })
+        // The suggestion changes no geometry: same rooms, openings and outlines as without it.
+        let plain = try ScanImport.importCapture(Self.capture, homeID: "home-scan-kind").home
+        #expect(plain.spaces.map(\.polygon) == home.spaces.map(\.polygon))
+        #expect(plain.portals == home.portals)
+    }
+
     @Test func independentlyScannedRoomsAreNeverPlacedByGuessing() {
         var c = Self.capture
         c.sharedCoordinateFrame = false

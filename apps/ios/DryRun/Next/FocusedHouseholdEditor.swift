@@ -17,6 +17,9 @@ struct FocusedHouseholdEditor: View {
     @State private var saveFailed = false
     @State private var removingPersonID: String?
     @State private var confirmingPersonRemoval = false
+    /// People whose details are open in the whole-family editor. Everyone starts collapsed to name + summary so
+    /// "Add family member" stays reachable; a newly added person opens.
+    @State private var expandedPeople: Set<String> = []
 
     var body: some View {
         let l = model.localizer
@@ -129,6 +132,37 @@ struct FocusedHouseholdEditor: View {
                 if let i = draft?.people.firstIndex(where: { $0.id == person.id }) {
                     Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
                         TextField(l("family.name"), text: binding(\.people[i].alias)).accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
+                        if personID != nil { personDetails(i) }
+                        else {
+                            DisclosureGroup(isExpanded: Binding(get: { expandedPeople.contains(person.id) }, set: { open in
+                                if open { expandedPeople.insert(person.id) } else { expandedPeople.remove(person.id) }
+                            })) { personDetails(i) } label: { Text(personSummary(draft!.people[i])).font(.subheadline).foregroundStyle(.secondary) }
+                                .accessibilityIdentifier("family.personDetails.\(person.id)")
+                        }
+                    }
+                }
+            }
+            if personID == nil {
+            Section {
+                Button(l("family.add"), systemImage: "person.badge.plus") {
+                    let id = UUID().uuidString
+                    draft!.people.append(Person(id: id, alias: "", ageBand: .unknown))
+                    expandedPeople.insert(id)
+                }.accessibilityIdentifier("family.addPerson")
+            }
+            preparationFields("reconnect")
+            Section(l("family.review")) {
+                Toggle(l("family.reviewedTogether"), isOn: Binding(get: { draft?.preparedness?.jointlyReviewedAt != nil }, set: { reviewed in
+                    if draft?.preparedness == nil { draft?.preparedness = PreparednessRecord() }
+                    draft?.preparedness?.jointlyReviewedAt = reviewed ? Date() : nil
+                }))
+                if let date = draft?.preparedness?.jointlyReviewedAt { Text(date, style: .date) }
+            }
+            }
+        }
+    }
+    @ViewBuilder private func personDetails(_ i: Int) -> some View {
+        let l = model.localizer
                         Picker(l("family.relationship"), selection: binding(\.people[i].relationship)) {
                             Text(l("family.unknown")).tag(FamilyRelationship?.none)
                             ForEach(FamilyRelationship.allCases, id: \.self) { relationship in
@@ -166,25 +200,12 @@ struct FocusedHouseholdEditor: View {
                                 confirmingPersonRemoval = true
                             }.accessibilityIdentifier("family.removePerson.\(draft!.people[i].id)")
                         }
-                    }
-                }
-            }
-            if personID == nil {
-            Section {
-                Button(l("family.add"), systemImage: "person.badge.plus") {
-                    draft!.people.append(Person(id: UUID().uuidString, alias: "", ageBand: .unknown))
-                }.accessibilityIdentifier("family.addPerson")
-            }
-            preparationFields("reconnect")
-            Section(l("family.review")) {
-                Toggle(l("family.reviewedTogether"), isOn: Binding(get: { draft?.preparedness?.jointlyReviewedAt != nil }, set: { reviewed in
-                    if draft?.preparedness == nil { draft?.preparedness = PreparednessRecord() }
-                    draft?.preparedness?.jointlyReviewedAt = reviewed ? Date() : nil
-                }))
-                if let date = draft?.preparedness?.jointlyReviewedAt { Text(date, style: .date) }
-            }
-            }
-        }
+    }
+    /// "Older adult · uses a wheelchair, cannot use stairs": what the collapsed row needs to tell people apart.
+    private func personSummary(_ person: Person) -> String {
+        let l = model.localizer
+        let parts = [DisplayNames.name(person.ageBand.rawValue, localizer: l)] + person.needs.map { l("common.need.\($0.rawValue)") }
+        return parts.joined(separator: " · ")
     }
     private var contactFields: some View {
         let l = model.localizer

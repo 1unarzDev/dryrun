@@ -64,7 +64,25 @@ enum RoomPlanMapping {
 
     static func room(_ r: CapturedRoom) -> ScanRoom {
         let surfaces = (r.floors + r.walls + r.doors + r.windows + r.openings).compactMap(surface)
-        return projectedRoom(identifier: r.identifier, story: r.story, surfaces: surfaces, objects: r.objects.map(object))
+        var room = projectedRoom(identifier: r.identifier, story: r.story, surfaces: surfaces, objects: r.objects.map(object))
+        room.suggestedKind = suggestedKind(r.sections.map(\.label))
+        return room
+    }
+
+    /// One recognised room type pre-fills the confirmation step. Mixed or unidentified sections (an open-plan
+    /// kitchen and living room) suggest nothing rather than a guess.
+    static func suggestedKind(_ labels: [CapturedRoom.Section.Label]) -> SpaceKind? {
+        let kinds = Set(labels.compactMap { label -> SpaceKind? in
+            switch label {
+            case .bedroom: return .bedroom
+            case .bathroom: return .bathroom
+            case .kitchen: return .kitchen
+            case .livingRoom: return .livingRoom
+            case .diningRoom: return .dining
+            default: return nil
+            }
+        })
+        return kinds.count == 1 ? kinds.first : nil
     }
 
     /// StructureBuilder can reorder rooms. Only the SDK's originating identifier is identity evidence;

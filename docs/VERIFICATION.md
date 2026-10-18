@@ -1,5 +1,33 @@
 # Verification record — October 17 revision
 
+## Physical iPhone pass — October 18, 2026 (Claude, owner's iPhone)
+
+Device: iPhone 16 Pro (LiDAR), iOS 26.6.1, Developer Mode on, signed with the owner's free Personal Team through
+`scripts/mac/device.sh` (bundle `com.dryrun.dev.<team>`). Xcode 27.0. The phone is in dark mode, so these are the first
+dark-mode checks; earlier simulator tours were light mode.
+
+| Check | Result |
+|---|---|
+| Signed device build, install, launch | **Passes** (first launch needed the developer to be trusted on the phone, as expected for a new team) |
+| App unit tests (DryRunTests) on device | **42 / 42 passed**, including encrypted vault and PDF export on real hardware |
+| Demo journeys on device | **7 / 7 device-applicable passed** after one fix (below). The encrypted-vault relaunch journey is simulator-only by design (`#if targetEnvironment(simulator)`) |
+| Screens on device | home 2D/3D, rehearsal scenes (fire, tornado, flood), family editor, Plan tab, card, Prepare, share: captured in `artifacts/screens-20261018-*` (ignored) and inspected |
+| Simulator regression after these changes | DryRunTests 42/42, DemoJourneyUITests 8/8 (iPhone 17e); core `swift test` 320 / 51 suites |
+| Real RoomPlan multiroom scan | **Not yet run**: needs the owner to scan rooms by hand |
+
+Found on the device and fixed:
+1. **Family editor buried "Add family member"** under ~50 rows for a four-person household; on real hardware the UI test
+   could not even scroll to it. Each person is now a name field plus a one-line summary (age · needs) that expands;
+   a newly added person opens expanded; single-person editing is unchanged.
+2. **3D view**: room names added (flat on each floor, moved clear of furniture, dropped rather than drawn across a
+   wall); cut-away walls lowered from 0.9 m to 0.6 m so small rooms and their names stay visible; model framed larger.
+   Floor slabs now always face up with explicit normals regardless of outline winding.
+3. **3D key**: a key under the 3D view (Home and Rehearse) that mirrors the builder's colour choices, listing only what is
+   drawn, with the printed plan's wording.
+4. **Scanning**: the shared ARSession is no longer started with plain world tracking before RoomPlan configures it
+   (matching Apple's multiroom sample). RoomPlan's recognised room type (single unambiguous section label) pre-fills
+   the room type and name in confirmation; it is never marked confirmed and changes no geometry (core test added).
+
 ## Native Mac pass — October 17–18, 2026 (Claude, owner's Mac)
 
 **Status: native build passes; simulator tests run; physical iPhone/LiDAR testing not yet done (no device connected).**

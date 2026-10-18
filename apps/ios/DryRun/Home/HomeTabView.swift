@@ -63,6 +63,7 @@ struct HomeTabView: View {
                             .frame(height: 320)
                             .listRowInsets(EdgeInsets())
                             .accessibilityIdentifier("home.scene")
+                        DollhouseKey(home: home)
                     case .rooms:
                         HomeRoomListView(home: home)
                     }
