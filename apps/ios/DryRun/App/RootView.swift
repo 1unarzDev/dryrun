@@ -49,6 +49,8 @@ struct RootView: View {
         let l = model.localizer
         return TabView(selection: $tab) {
             NavigationStack { NextStepsView(openRehearse: { tab = .rehearse }).toolbar { settingsButton } }
+                // A new household (replacing the example one) gets a fresh stack: top of the page, large title.
+                .id(model.household?.id)
                 .tabItem { Label(l("common.tab.prepare"), systemImage: "checklist") }
                 .tag(Tab.prepare)
             NavigationStack(path: $rehearsePath) { RehearseTabView().toolbar { settingsButton } }
@@ -65,6 +67,16 @@ struct RootView: View {
             tab = .rehearse
             rehearsePath = [id]
             model.pendingScenarioID = nil
+        }
+        .onChange(of: model.pendingTab, initial: true) { _, raw in
+            guard let raw, let target = Tab(rawValue: raw) else { return }
+            tab = target
+            if target != .rehearse { rehearsePath = [] }
+            model.pendingTab = nil
+        }
+        // After "Delete everything", the next household starts on Prepare, not on whatever tab was open before.
+        .onChange(of: model.phase) { _, phase in
+            if phase == .onboarding { tab = .prepare; rehearsePath = [] }
         }
     }
 

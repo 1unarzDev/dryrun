@@ -73,6 +73,22 @@ struct FamilyPreparationRevisionTests {
         #expect(with.sections.contains { $0.id == "contacts" })
         #expect(with.sections.contains { $0.id == "outsideMeetingPoint" })
     }
+    @Test("Deselected clinical content is one neutral line that never counts as missing")
+    func deselectedCriticalSectionIsNotMissing() throws {
+        let h = SampleHouseholds.oak
+        let l = try PlanBuilderTests.localizer("en")
+        let off = try #require(FamilyEmergencyCardBuilder.page(household: h, localizer: l).sections.first { $0.id == "critical" })
+        #expect(off.lines.count == 1)
+        #expect(off.lines[0].parts?.isMissing == false)
+        #expect(off.lines[0].text == l("family.criticalNotShared"))
+        // Selected but empty for someone: that person's line reads as missing; people with records do not.
+        var sparse = h; sparse.people[0].emergencyInformation = nil
+        let on = try #require(FamilyEmergencyCardBuilder.page(household: sparse, localizer: l, selection: .init(includeCriticalInformation: true))
+            .sections.first { $0.id == "critical" })
+        #expect(on.lines.count == sparse.people.count)
+        #expect(on.lines.contains { $0.parts?.isMissing == true && $0.text.hasSuffix(l("family.notProvidedSelected")) })
+        #expect(on.lines.contains { $0.parts?.isMissing != true })
+    }
     @Test func legacyLabelsAndOriginalMedicineAnswersSurviveMigration() throws {
         let old = PoweredEquipment(id: "old", purpose: .oxygenConcentrator, label: "Oxygen concentrator")
         let decoded = try JSONDecoder().decode(PoweredEquipment.self, from: JSONEncoder().encode(old))

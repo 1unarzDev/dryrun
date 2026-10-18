@@ -299,7 +299,9 @@ final class AppModel {
     /// ready state.
     @discardableResult
     func useSampleHouseholdIfNoHome(_ candidateHousehold: HouseholdProfile) async -> Bool {
-        guard household == nil else {
+        // A fictional example household is replaced outright ("Set up my household" from the demo debrief):
+        // nothing about the made-up family, its sample home or its places carries over.
+        guard household == nil || household?.isFictional == true else {
             let saved = await updateHousehold(candidateHousehold)
             if saved { locale = candidateHousehold.preferredLocale }
             return saved
@@ -311,6 +313,9 @@ final class AppModel {
         household = candidateHousehold
         home = nil
         savedPlaces = []
+        savedPlan = nil
+        // Clinical card content is opt-in for a real family, whatever the example household showed.
+        cardSelection = FamilyCardSelection()
         configureRegionalResources()
         invalidateDerived()
         locale = candidateHousehold.preferredLocale
@@ -320,10 +325,16 @@ final class AppModel {
 
     /// Set by "See how it works": the root view opens this rehearsal once the tabs are up, then clears it.
     var pendingScenarioID: String?
+    /// Set by flows that end somewhere else (e.g. the debrief's "See what to prepare next"): the root view switches
+    /// to this tab, pops the Rehearse stack, then clears it.
+    var pendingTab: String?
 
     /// One tap from onboarding to the flagship rehearsal: the Oak household's freeze with power loss.
     func startDemo() async {
         await useSampleHousehold(SampleHouseholds.oak)
+        // The example family's card shows everything it can, so the demo card is readable at a glance. A real
+        // household created afterwards resets this to the opt-in default (see `useSampleHouseholdIfNoHome`).
+        cardSelection = FamilyCardSelection(includeCriticalInformation: true, includeMedication: true, includeResponderInstructions: true, includeContacts: true)
         pendingScenarioID = "freeze-power-loss"
     }
 
@@ -734,6 +745,7 @@ final class AppModel {
             LocalReviewReminderScheduler.shared.cancel()
             TemporaryExports.purgeAll()
             household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
+            cardSelection = FamilyCardSelection()
             runGate.invalidate(); planGate.invalidate(); nextGate.invalidate()
             phase = .onboarding
             return true

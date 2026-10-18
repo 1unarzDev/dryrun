@@ -51,6 +51,7 @@ struct SettingsView: View {
                 Button(t("deleteEverything"), role: .destructive) {
                     Task { if await model.deleteAllPrivateData() { dismiss() } }
                 }
+                Button(model.localizer("ui.cancel"), role: .cancel) {}
             }
         }
     }

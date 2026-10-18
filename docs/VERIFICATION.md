@@ -1,5 +1,19 @@
 # Verification record — October 17 revision
 
+## First-run usability pass — October 18, 2026 (Claude, simulator)
+
+Scope: onboarding, the one-tap demo, the freeze rehearsal's first screen and decision feedback, the debrief's exit,
+household creation, and the card/Plan summary. Changes and findings are tabled in UI_AUDIT ("First-run pass").
+
+| Check | Result |
+|---|---|
+| Xcode 27 build for testing (iOS 27 simulator SDK) | Passes, no new warnings in changed files |
+| Core `swift test` (card builder change) | 320 tests / 51 suites passed |
+| Public-api locale tests incl. translation drift | 68 / 68 passed after re-recording the baseline for 9 re-translated and 22 new keys |
+| DryRunTests + DemoJourneyUITests, iPhone 18 Pro | 42 + 8 passed on each of three runs during the pass (identifiers `setup.finishLater`, `onboarding.create`, `plan.familyCard`, `card.page` kept) |
+| Running-app walk-throughs, iPhone 17e, in-memory store | Three passes by an independent reviewer agent: initial findings, then two re-checks confirming each fix on screen (intro card, immediate "You chose" card, debrief exits, sticky save with keyboard hidden, finish-card checklist, Plan summary with Grandpa first and no false "missing") |
+| Not done | VoiceOver/Reduce Motion/large text on the new screens; physical device; ES/VI copy is still a draft |
+
 ## Physical iPhone pass — October 18, 2026 (Claude, owner's iPhone)
 
 Device: iPhone 16 Pro (LiDAR), iOS 26.6.1, Developer Mode on, signed with the owner's free Personal Team through

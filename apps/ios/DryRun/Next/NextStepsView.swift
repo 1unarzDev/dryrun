@@ -6,16 +6,30 @@ import DryRunCore
 struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
+    @State private var finishSheet: FinishSheet?
     var openRehearse: () -> Void = {}
+
+    /// The card essentials a new household fills in from Prepare, each in its focused editor.
+    enum FinishSheet: Identifiable {
+        case contact, meetup(SavedPlacePurpose)
+        var id: String {
+            switch self {
+            case .contact: "contact"
+            case .meetup(let purpose): "meetup-\(purpose.rawValue)"
+            }
+        }
+    }
 
     var body: some View {
         let l = model.localizer
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 header
-                if let summary = model.nextSteps {
+                finishCard
+                quickActions
+                // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
+                if let summary = model.nextSteps, model.nextStepResults != nil {
                     toDo(summary)
-                    quickActions
                     questions(summary)
                     recorded(summary)
                     done(summary)
@@ -35,7 +49,60 @@ struct NextStepsView: View {
         .background(Theme.background)
         .navigationTitle(l("common.tab.prepare"))
         .navigationDestination(for: NextStep.self) { PreparationTaskEditor(step: $0) }
+        .sheet(item: $finishSheet) { which in
+            switch which {
+            case .contact: NavigationStack { FocusedHouseholdEditor(focus: .newContact(.other)) }
+            case .meetup(let purpose): MeetingPlaceChooser(purpose: purpose)
+            }
+        }
         .task(id: model.currentKey) { await model.refreshNextSteps() }
+    }
+
+    /// Three concrete steps to a card worth printing: a contact with a phone number and the two meeting places.
+    /// Shown until all three exist; the 25-item preparation list is not where a new family should start.
+    @ViewBuilder private var finishCard: some View {
+        let l = model.localizer
+        if let h = model.household {
+            let places = model.savedPlaces.filter { $0.homeID == h.stableHomeID }
+            let items: [(sheet: FinishSheet, title: String, done: Bool)] = [
+                (.contact, l("ui.card.finishContact"), h.contacts.contains(where: \.hasUsablePhone)),
+                (.meetup(.outsideMeetingPoint), l("ui.card.finishNearMeetup"), places.contains { $0.purpose == .outsideMeetingPoint }),
+                (.meetup(.backupMeetingPlace), l("ui.card.finishBackupMeetup"), places.contains { $0.purpose == .backupMeetingPlace }),
+            ]
+            let done = items.filter(\.done).count
+            if done < items.count {
+                SectionCard(title: l("ui.card.finishTitle"), systemImage: "person.text.rectangle.fill") {
+                    Text(l("ui.card.finishProgress", ["done": "\(done)", "total": "\(items.count)"])).font(.footnote).foregroundStyle(.secondary)
+                    ForEach(items, id: \.sheet.id) { item in
+                        Button { finishSheet = item.sheet } label: {
+                            HStack(spacing: Theme.Space.m) {
+                                Image(systemName: item.done ? "checkmark.circle.fill" : "circle")
+                                    .font(.title3)
+                                    .foregroundStyle(item.done ? Theme.success : Theme.accent)
+                                    .accessibilityHidden(true)
+                                Text(item.title).font(.body.weight(item.done ? .regular : .semibold))
+                                    .foregroundStyle(item.done ? .secondary : .primary)
+                                    .multilineTextAlignment(.leading)
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
+                            }
+                            .frame(minHeight: Theme.minTap)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityValue(item.done ? l("ui.next.done") : "")
+                        .accessibilityIdentifier("next.finish.\(item.sheet.id)")
+                    }
+                    NavigationLink { OutageCardView() } label: {
+                        Label(l("ui.card.openCard"), systemImage: "arrow.right").font(.callout.weight(.semibold))
+                    }
+                    .frame(minHeight: Theme.minTap)
+                    .accessibilityIdentifier("next.finish.open")
+                }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("next.finishCard")
+            }
+        }
     }
 
     private var header: some View {
