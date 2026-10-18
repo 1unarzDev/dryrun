@@ -94,10 +94,10 @@ struct OnboardingView: View {
     private func summary(_ h: HouseholdProfile) -> String {
         let l = model.localizer
         var parts = [l("ui.onboarding.people", ["count": "\(h.people.count)"])]
-        if let eq = h.equipment.first { parts.append(eq.label.lowercased()) }
-        parts.append(h.housing.homeType.displayName.lowercased())
+        if let eq = h.equipment.first { parts.append(eq.localizedLabel(l)) }
+        parts.append(DisplayNames.name(h.housing.homeType.rawValue, localizer: l))
         if !h.transport.hasVehicle { parts.append(l("ui.onboarding.noCar")) }
-        if h.housing.waterSource == .privateWell { parts.append(DisplayNames.name("privateWell").lowercased()) }
+        if h.housing.waterSource == .privateWell { parts.append(DisplayNames.name("privateWell", localizer: l)) }
         return parts.joined(separator: " · ")
     }
 }
@@ -113,6 +113,8 @@ struct HouseholdSetupView: View {
     @State private var draft: HouseholdProfile = HouseholdSetupView.blank()
     @State private var step = 0
     @State private var loaded = false
+    @State private var saving = false
+    @State private var saveFailed = false
 
     enum Step: Int, CaseIterable { case area, people, medical, backup, home, contacts, travel }
 
@@ -120,30 +122,35 @@ struct HouseholdSetupView: View {
         let l = model.localizer
         let current = Step(rawValue: step) ?? .area
         Form {
-            Section {
-                VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    Text(l("ui.setup.stepOf", ["n": "\(step + 1)", "total": "\(Step.allCases.count)"]))
-                        .font(.caption.weight(.semibold)).foregroundStyle(Theme.accent)
-                    ProgressView(value: Double(step + 1), total: Double(Step.allCases.count)).tint(Theme.accent)
-                        .accessibilityHidden(true)
-                    Text(l("ui.setup.\(current).question")).font(.title2.weight(.bold))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
-                    Text(l("ui.setup.\(current).why")).font(.callout).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+            if mode == .create {
+                Section(l("family.you")) {
+                    TextField(l("family.name"), text: $draft.people[0].alias)
+                    Text(l("family.unknown")).font(.footnote).foregroundStyle(.secondary)
                 }
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
+                areaStep
+                Section {
+                    Button(l("family.add"), systemImage: "person.badge.plus") {
+                        draft.people.append(Person(id: UUID().uuidString, alias: "", ageBand: .unknown))
+                    }
+                    ForEach(Array(draft.people.indices.dropFirst()), id: \.self) { i in
+                        TextField(l("family.name"), text: $draft.people[i].alias)
+                    }
+                    Button(l("family.finishLater")) { save() }
+                        .disabled(saving)
+                        .accessibilityIdentifier("setup.finishLater")
+                }
+            } else {
+                switch current {
+                case .area: areaStep
+                case .people: peopleStep
+                case .medical: equipmentStep
+                case .backup: backupStep
+                case .home: housingStep
+                case .contacts: contactsStep
+                case .travel: transportStep; petsStep; suppliesStep
+                }
             }
-            switch current {
-            case .area: areaStep
-            case .people: peopleStep
-            case .medical: equipmentStep
-            case .backup: backupStep
-            case .home: housingStep
-            case .contacts: contactsStep
-            case .travel: transportStep; petsStep; suppliesStep
-            }
+            if saveFailed { Text(model.lastError ?? l("ui.tryFailed")).foregroundStyle(Theme.caution) }
         }
         .scrollContentBackground(.hidden)
         .background(Theme.background)
@@ -152,18 +159,18 @@ struct HouseholdSetupView: View {
         .toolbar {
             if mode == .edit {
                 ToolbarItem(placement: .cancellationAction) { Button(l("ui.cancel")) { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) { Button(l("ui.save")) { save() } }
+                ToolbarItem(placement: .confirmationAction) { Button(l("ui.save")) { save() }.disabled(saving) }
             }
         }
         .safeAreaInset(edge: .bottom) {
             AdaptiveStack(spacing: Theme.Space.s) {
-                if step > 0 {
+                if mode == .edit && step > 0 {
                     Button { withAnimation { step -= 1 } } label: { Label(l("ui.back"), systemImage: "chevron.left") }
                         .buttonStyle(.secondary)
                         .frame(maxWidth: 140)
                         .accessibilityIdentifier("setup.back")
                 }
-                if step < Step.allCases.count - 1 {
+                if mode == .edit && step < Step.allCases.count - 1 {
                     Button { withAnimation { step += 1 } } label: { Label(l("ui.next"), systemImage: "chevron.right") }
                         .buttonStyle(.primary)
                         .accessibilityIdentifier("setup.next")
@@ -171,6 +178,7 @@ struct HouseholdSetupView: View {
                     Button { save() } label: { Label(l("ui.setup.finish"), systemImage: "checkmark") }
                         .buttonStyle(.primary)
                         .accessibilityIdentifier("setup.save")
+                        .disabled(saving)
                 }
             }
             .padding(.horizontal).padding(.vertical, Theme.Space.s)
@@ -193,11 +201,17 @@ struct HouseholdSetupView: View {
                 Text("English").tag("en"); Text("Español").tag("es"); Text("Tiếng Việt").tag("vi")
             }
             .onChange(of: draft.preferredLocale) { _, new in model.locale = new }
-            Picker(l("ui.setup.county"), selection: $draft.regionID) {
-                ForEach(Self.regions, id: \.id) { Text($0.name).tag($0.id) }
-            }
+            TextField(l("family.location"), text: Binding(get: { draft.privateLocation?.addressLine ?? "" }, set: { value in
+                if draft.privateLocation == nil { draft.privateLocation = PrivateLocation() }
+                draft.privateLocation?.addressLine = value
+            }))
+            .textContentType(.fullStreetAddress)
+            TextField(l("family.unit"), text: Binding(get: { draft.privateLocation?.unit ?? "" }, set: { value in
+                if draft.privateLocation == nil { draft.privateLocation = PrivateLocation() }
+                draft.privateLocation?.unit = value
+            }))
         } footer: {
-            Text(l("ui.setup.countyFooter"))
+            Text(l("family.addressPrivacy"))
         }
     }
 
@@ -208,7 +222,7 @@ struct HouseholdSetupView: View {
                 Section(person.alias.isEmpty ? l("ui.person") : person.alias) {
                     TextField(l("ui.setup.nickname"), text: $person.alias)
                     Picker(l("ui.setup.age"), selection: $person.ageBand) {
-                        ForEach(AgeBand.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                        ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
                     }
                     ForEach(AssistanceNeed.allCases, id: \.self) { need in
                         Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(
@@ -220,7 +234,7 @@ struct HouseholdSetupView: View {
             .onDelete { idx in if draft.people.count > idx.count { draft.people.remove(atOffsets: idx) } }
             Section {
                 Button(l("ui.setup.addPerson"), systemImage: "person.badge.plus") {
-                    draft.people.append(Person(id: "p-\(UUID().uuidString.prefix(8))", alias: "", ageBand: .adult))
+                    draft.people.append(Person(id: "p-\(UUID().uuidString.prefix(8))", alias: "", ageBand: .unknown))
                 }
             }
         }
@@ -231,22 +245,14 @@ struct HouseholdSetupView: View {
         return Group {
             ForEach($draft.equipment) { $eq in
                 Section {
-                    Picker(l("ui.medical.purpose"), selection: $eq.purpose) {
-                        ForEach(EquipmentPurpose.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                    }
-                    TextField(l("ui.medical.label"), text: $eq.label)
-                    Picker(l("ui.medical.usedBy"), selection: $eq.personID) {
-                        Text(l("ui.notSure")).tag(String?.none)
-                        ForEach(draft.people) { Text($0.alias.isEmpty ? l("ui.person") : $0.alias).tag(Optional($0.id)) }
-                    }
-                    Toggle(l("ui.medical.refrigeration"), isOn: $eq.needsRefrigeration)
+                    EquipmentEditorFields(equipment: $eq, people: draft.people)
                 }
             }
             .onDelete { draft.equipment.remove(atOffsets: $0) }
             Section {
                 Button(l("ui.card.addDevice"), systemImage: "plus") {
                     draft.equipment.append(PoweredEquipment(id: "eq-\(UUID().uuidString.prefix(8).lowercased())", purpose: .oxygenConcentrator,
-                                                            label: EquipmentPurpose.oxygenConcentrator.displayName, personID: draft.people.first?.id))
+                                                            label: "", personID: draft.people.first?.id))
                 }
                 .accessibilityIdentifier("setup.addDevice")
             } footer: {
@@ -260,17 +266,15 @@ struct HouseholdSetupView: View {
         return Group {
             ForEach($draft.backupPower) { $backup in
                 Section {
-                    TextField(l("ui.medical.backupName"), text: $backup.label)
-                    Picker(l("ui.medical.backupKind"), selection: $backup.kind) {
-                        ForEach(BackupPowerKind.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                    }
-                    TriStateRow(title: l("ui.medical.tested"), value: $backup.setupConfirmed)
+                    BackupEditorFields(backup: $backup, onKindChanged: { draft.invalidateBackupCompatibility(for: $0) })
                     ForEach($draft.equipment) { $eq in
-                        Toggle(l("ui.medical.worksWith", ["device": eq.label.isEmpty ? l("ui.medical.thisDevice") : eq.label]), isOn: Binding(
-                            get: { eq.compatibleBackupIDs.contains(backup.id) },
-                            set: { on in
-                                if on { eq.compatibleBackupIDs.append(backup.id) } else { eq.compatibleBackupIDs.removeAll { $0 == backup.id } }
-                            }))
+                        if eq.requiresElectricalPower {
+                            Toggle(l("family.compatibility", ["device": eq.localizedLabel(l)]), isOn: Binding(
+                                get: { eq.compatibleBackupIDs.contains(backup.id) },
+                                set: { on in
+                                    if on { eq.compatibleBackupIDs.append(backup.id) } else { eq.compatibleBackupIDs.removeAll { $0 == backup.id } }
+                                }))
+                        }
                     }
                 }
             }
@@ -278,7 +282,7 @@ struct HouseholdSetupView: View {
             Section {
                 Button(l("ui.medical.addBackup"), systemImage: "plus") {
                     draft.backupPower.append(BackupPowerSource(id: "bk-\(UUID().uuidString.prefix(8).lowercased())", kind: .portableBatteryStation,
-                                                               label: BackupPowerKind.portableBatteryStation.displayName))
+                                                               label: ""))
                 }
             } footer: {
                 Text(l("ui.medical.backupFooter"))
@@ -290,23 +294,23 @@ struct HouseholdSetupView: View {
         let l = model.localizer
         return Group {
             Section {
-                Picker(l("ui.setup.homeType"), selection: $draft.housing.homeType) { ForEach(HomeType.allCases, id: \.self) { Text($0.displayName).tag($0) } }
-                Picker(l("ui.setup.tenancy"), selection: $draft.housing.tenancy) { ForEach(Tenancy.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.homeType"), selection: $draft.housing.homeType) { ForEach(HomeType.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
+                Picker(l("ui.setup.tenancy"), selection: $draft.housing.tenancy) { ForEach(Tenancy.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 Stepper(l("ui.setup.floors", ["count": "\(draft.housing.floorCount)"]), value: $draft.housing.floorCount, in: 1...4)
             }
             Section {
-                Picker(l("ui.setup.heat"), selection: $draft.housing.heatingFuel) { ForEach(HeatingFuel.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.heat"), selection: $draft.housing.heatingFuel) { ForEach(HeatingFuel.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 TriStateRow(title: l("ui.setup.heatNeedsPower"), value: $draft.housing.heatingNeedsElectricity)
-                Picker(l("ui.setup.cooling"), selection: $draft.housing.cooling) { ForEach(CoolingKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.cooling"), selection: $draft.housing.cooling) { ForEach(CoolingKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
             } footer: {
                 Text(l("ui.setup.heatFooter"))
             }
             Section {
-                Picker(l("ui.setup.water"), selection: $draft.housing.waterSource) { ForEach(WaterSourceKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.water"), selection: $draft.housing.waterSource) { ForEach(WaterSourceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 if draft.housing.waterSource == .privateWell {
                     TriStateRow(title: l("ui.setup.wellPump"), value: $draft.housing.wellPumpElectric)
                 }
-                Picker(l("ui.setup.sanitation"), selection: $draft.housing.sanitation) { ForEach(SanitationKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.sanitation"), selection: $draft.housing.sanitation) { ForEach(SanitationKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
             }
         }
     }
@@ -363,7 +367,7 @@ struct HouseholdSetupView: View {
         let l = model.localizer
         return Section(l("ui.setup.pets")) {
             ForEach($draft.pets) { $pet in
-                Picker(l("ui.medical.backupKind"), selection: $pet.kind) { ForEach(PetKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.medical.backupKind"), selection: $pet.kind) { ForEach(PetKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 Stepper(l("ui.setup.petCount", ["count": "\(pet.count)"]), value: $pet.count, in: 1...20)
                 TriStateRow(title: l("ui.setup.carrier"), value: $pet.carrierAvailable)
             }
@@ -374,7 +378,7 @@ struct HouseholdSetupView: View {
     private var suppliesStep: some View {
         let l = model.localizer
         return Section(l("ui.setup.supplies")) {
-            NumberEvidenceRow(title: l("ui.setup.water.gallons"), value: $draft.supplies.storedWaterGallons, unit: "gal")
+            WaterStorageEvidenceRow(value: $draft.supplies.storedWaterGallons, countryCode: draft.privateLocation?.countryCode)
             NumberEvidenceRow(title: l("ui.setup.food.days"), value: $draft.supplies.shelfStableFoodDays, unit: "d")
             Toggle(l("ui.setup.limitedSpace"), isOn: $draft.supplies.limitedStorageSpace)
             Toggle(l("ui.setup.limitedBudget"), isOn: $draft.supplies.limitedBudget)
@@ -382,29 +386,31 @@ struct HouseholdSetupView: View {
     }
 
     private func save() {
+        guard !saving else { return }
         draft.contacts.removeAll { $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && ($0.phone ?? "").isEmpty }
-        for i in draft.equipment.indices where draft.equipment[i].label.trimmingCharacters(in: .whitespaces).isEmpty {
-            draft.equipment[i].label = draft.equipment[i].purpose.displayName
-        }
+        if draft.displayName.isEmpty { draft.displayName = model.localizer("family.personal") }
+        let candidate = draft
+        saving = true
         Task {
             let saved: Bool
             if mode == .create {
-                saved = await model.useSampleHouseholdIfNoHome(draft)
+                saved = await model.useSampleHouseholdIfNoHome(candidate)
             } else {
-                let d = draft
-                saved = await model.updateHousehold { $0 = d }
+                saved = await model.updateHousehold(candidate)
                 // The language chosen here is the app's language; without this it only changed after a relaunch.
-                if saved { model.locale = d.preferredLocale }
+                if saved { model.locale = candidate.preferredLocale }
             }
+            saving = false
+            saveFailed = !saved
             if saved { dismiss() }
         }
     }
 
     static func blank() -> HouseholdProfile {
         HouseholdProfile(
-            id: "hh-\(UUID().uuidString.prefix(8))", displayName: "My household", regionID: "48143",
-            people: [Person(id: "p-1", alias: "Me", ageBand: .adult)],
-            housing: Housing(homeType: .singleFamily, tenancy: .owner, heatingFuel: .unknown, cooling: .unknown, waterSource: .unknown),
+            id: "hh-\(UUID().uuidString.prefix(8))", displayName: "", regionID: "",
+            people: [Person(id: "p-1", alias: "", ageBand: .unknown, isSelf: true)],
+            housing: Housing(homeType: .other, tenancy: .other, heatingFuel: .unknown, cooling: .unknown, waterSource: .unknown),
             transport: Transport(), supplies: Supplies())
     }
 

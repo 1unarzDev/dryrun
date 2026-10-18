@@ -127,5 +127,8 @@
   "card.gap.runtimeUnknown": "Registre cuánto tiempo funciona este equipo con el respaldo, según el fabricante o el plan de atención.",
   "card.gap.noCareContact": "Agregue el teléfono del proveedor del equipo o del equipo de atención.",
   "card.gap.noOutOfAreaContact": "Agregue un contacto fuera del área al que todos puedan llamar o enviar mensajes.",
-  "card.gap.noConfirmedDestination": "Acuerden un lugar con electricidad adonde podrían ir y confírmenlo con quien los recibiría."
+  "card.gap.noConfirmedDestination": "Acuerden un lugar con electricidad adonde podrían ir y confírmenlo con quien los recibiría.",
+  "plan.help.localUnknown": "Número local de emergencias no registrado. Verifícalo para tu país antes de una emergencia.",
+  "plan.meeting.near": "Encuentro exterior cerca de casa",
+  "plan.meeting.backup": "Encuentro alternativo fuera del vecindario"
 }

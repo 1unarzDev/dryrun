@@ -32,8 +32,7 @@ Each entry: decision → reason → consequence. Material deviations from the br
 7. **Phone exercise assumptions.** Handset runtime defaults to an explicit exercise assumption (18 h) labeled
    `.assumed`, never presented as a measurement.
 
-8. **New households start with the fictional sample home** until the user builds or scans their own, labeled
-   "Sample home (fictional)". → Avoids a blank Home tab; must not be mistaken for the user's home (labeled).
+8. **Personal households start without geometry (October 17 supersedes the fictional starter).** The vault explicitly distinguishes intentional absence from corruption. Family preparations/card work without a scan; example households are an explicit fictional path.
 
 9. **Temporary PDF exports in the app temp dir** with complete protection + backup exclusion, purged on preview
    dismissal, app background, and delete-all. The vault also provides `makeExportFile`; unifying on it is in BACKLOG.
@@ -51,8 +50,7 @@ Each entry: decision → reason → consequence. Material deviations from the br
     the household revision or discard the on-screen rehearsal. Facts a preparation changes (for example, a confirmed
     backup) are edited through household setup, which does invalidate results.
 
-14. **One definition of "ground floor"**: `level == 0` and elevation within tolerance, shared by the planner and the
-    confirmation pass. Basement walkout exits are therefore never walking exits yet (BACKLOG).
+14. **Captured story and actual exterior grade differ (October 17).** Scanned grade starts unknown and needs confirmation. Ground/above/below/walkout evidence gates discharge; no lowest-scanned-floor ground assumption. Legacy manual/sample behavior is preserved; scan imports use conservative explicit unknown grade.
 
 15. **Prohibition styling comes from the source-language text**, so translated prohibitions keep their emphasis.
     An explicit per-key style marker would be more robust (BACKLOG).
@@ -73,3 +71,13 @@ Each entry: decision → reason → consequence. Material deviations from the br
     is the working path, and model output can never be promoted to reviewed content automatically.
 
 Lane-specific decisions are recorded in `docs/lanes/agent-a.md`, `agent-b.md`, `agent-c.md`.
+
+
+## October 17 superseding product decisions
+
+General family preparation is address-optional and outside the supported-region backend. No county-first setup,
+foreign Texas fallback, device-only card requirement, or blanket ban on illustrative hazard states remains.
+Family card selection applies across exports; routes/clinical facts remain deterministic and sourced. Public
+region allowlists, encrypted local storage, iOS18 minimum and honest exercise uncertainty remain constraints.
+Native proof is pending; source parsing is not SDK verification. Completion is subject/fingerprint scoped and
+follows saved factual records, never a generic button certifying compatibility or an escape path.

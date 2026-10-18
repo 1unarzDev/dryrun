@@ -100,8 +100,8 @@ public enum ScanImport {
         }
         let base = floorElev[stories.first!] ?? 0
         let floors = stories.map { st in
-            Floor(id: "fl-\(st)", level: st - stories.first!, label: st == stories.first! ? "Scanned floor" : "Scanned floor \(st - stories.first! + 1)",
-                  elevationMeters: (floorElev[st] ?? base) - base)
+            Floor(id: "fl-\(st)", level: st, label: "Captured story \(st)",
+                  elevationMeters: (floorElev[st] ?? base) - base, exteriorGrade: .unknown, capturedStory: st)
         }
 
         var spaces: [Space] = []
@@ -169,20 +169,15 @@ public enum ScanImport {
             if case .unknown = sideB { incomplete = true }
         }
 
-        // Stairs: a connector is only proposed when the other story's space containing the stairs is known.
-        var connectors: [FloorConnector] = []
-        for (o, fid) in stairsObjects {
-            let c = RigidTransform3D.projectToFloor(o.transform.translation)
-            let here = spaces.first { $0.floorID == fid && Geometry.contains($0.polygon, c) }
-            let other = spaces.first { $0.floorID != fid && Geometry.contains($0.polygon, c) }
-            if let here, let other {
-                connectors.append(FloorConnector(id: "cn-\(o.id)", kind: .stairs, fromSpaceID: here.id, toSpaceID: other.id,
-                                                 fromPoint: c, toPoint: c, verification: .proposed))
-            } else {
-                incomplete = true
-                notes.append("Stairs detected; the floor they connect to was not captured. Confirm the connection before routes can use it.")
-            }
+        // A vertically overlapping room is not evidence of a stair endpoint or landing.
+        // Retain detected stairs as reviewable obstacles; the household adds confirmed endpoints explicitly.
+        let connectors: [FloorConnector] = []
+        for (object, floorID) in stairsObjects {
+            obstacles.append(Obstacle(id: "stairs-\(object.id)", floorID: floorID, label: "Stairs — confirm both landings", polygon: footprint(object)))
+            incomplete = true
+            notes.append("Stairs detected. Choose both landings; overlapping rooms do not establish a connection.")
         }
+        notes.append("Confirm each captured floor's relation to exterior ground. The lowest captured story is not necessarily ground level.")
 
         let area = spaces.reduce(0) { $0 + abs(Geometry.signedArea($1.polygon)) }
         if area > recommendedMaxAreaSquareMeters {

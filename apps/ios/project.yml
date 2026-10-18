@@ -64,6 +64,17 @@ targets:
         # side is already gated by `#if canImport(FoundationModels)` and `#available(iOS 26.0, *)`.
         "OTHER_LDFLAGS[sdk=iphoneos26*]": "$(inherited) -weak_framework FoundationModels"
         "OTHER_LDFLAGS[sdk=iphonesimulator26*]": "$(inherited) -weak_framework FoundationModels"
+  DryRunTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [DryRunTests]
+    dependencies:
+      - target: DryRun
+      - package: DryRunCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: $(DRYRUN_BUNDLE_ID).tests
   DryRunUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -81,4 +92,4 @@ schemes:
       targets:
         DryRun: all
     test:
-      targets: [DryRunUITests]
+      targets: [DryRunTests, DryRunUITests]

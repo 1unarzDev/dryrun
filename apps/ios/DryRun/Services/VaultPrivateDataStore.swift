@@ -19,13 +19,13 @@ struct VaultPrivateDataStore: PrivateDataStore {
     func load() async -> PrivateLoadResult {
         do {
             guard let payload = try await repository.load() else { return .empty }
-            guard let household = payload.household, let home = payload.home else {
+            guard let household = payload.household, payload.hasValidHouseholdLayoutState else {
                 // A vault file existed but is incomplete: never treat as a fresh start that the next save would overwrite.
                 return .needsRecovery("The saved data is incomplete. It was kept unchanged.")
             }
             let plan = payload.retainedPlans.max { $0.generatedAt < $1.generatedAt }
                 .flatMap { try? DryRunJSON.decoder().decode(PlanDocument.self, from: $0.document) }
-            return .loaded(PrivateSnapshot(household: household, home: home, savedPlan: plan,
+            return .loaded(PrivateSnapshot(household: household, home: payload.home, savedPlan: plan,
                                            savedPlaces: payload.savedPlaces))
         } catch {
             switch error {
@@ -53,7 +53,8 @@ struct VaultPrivateDataStore: PrivateDataStore {
                                       document: try DryRunJSON.encoder().encode(plan)))
         }
         try await repository.save(VaultPayload(household: snapshot.household, home: snapshot.home,
-                                               retainedPlans: plans, savedPlaces: snapshot.savedPlaces))
+                                               retainedPlans: plans, savedPlaces: snapshot.savedPlaces,
+                                               homeGeometryIntentionallyAbsent: snapshot.home == nil))
     }
 
     func deleteAll() async throws {

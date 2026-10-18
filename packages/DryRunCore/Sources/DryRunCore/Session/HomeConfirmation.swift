@@ -4,7 +4,7 @@ import Foundation
 /// exits, inspect unknown openings, confirm stairs, choose a meeting point, and mark shelter/measurement needs.
 /// Nothing becomes verified except through an explicit `ConfirmationAnswer`.
 public enum ConfirmationStepKind: String, Codable, Sendable, Hashable {
-    case labelSpace, confirmPortal, confirmConnector, meetingPoint, shelterSpot
+    case confirmFloor, labelSpace, confirmPortal, confirmConnector, meetingPoint, shelterSpot
 }
 
 public struct ConfirmationStep: Codable, Sendable, Hashable, Identifiable {
@@ -16,6 +16,8 @@ public struct ConfirmationStep: Codable, Sendable, Hashable, Identifiable {
 }
 
 public enum ConfirmationAnswer: Codable, Sendable, Hashable {
+    case higherRefuge(spaceID: String, hasWayOutAndIsNotClosedAttic: Bool)
+    case floorGrade(floorID: String, grade: ExteriorGrade)
     case labelSpace(spaceID: String, label: String, kind: SpaceKind)
     /// Assign the first unresolved side of a proposed interior opening to a selected room.
     /// This intentionally does not verify the opening or its operability; those remain separate answers.
@@ -45,6 +47,10 @@ public enum HomeConfirmation {
     /// Ordered steps for everything not yet confirmed. Deterministic order: rooms, openings, stairs, meeting point, shelter.
     public static func steps(for home: HomeModel) -> [ConfirmationStep] {
         var out: [ConfirmationStep] = []
+        for floor in home.floors.sorted(by: { $0.id < $1.id }) where floor.exteriorGrade == .unknown || (home.source == .roomPlanScan && floor.exteriorGrade == nil) {
+            out.append(ConfirmationStep(kind: .confirmFloor, elementID: floor.id,
+                prompt: "Where is this captured floor in relation to outside ground? Capture order does not establish ground level."))
+        }
         for s in home.spaces.sorted(by: { $0.id < $1.id }) where !s.labelConfirmed {
             out.append(ConfirmationStep(kind: .labelSpace, elementID: s.id, prompt: "What is this room called?"))
         }
@@ -78,6 +84,12 @@ public enum HomeConfirmation {
         var h = home
         func portalIndex(_ id: String) -> Int? { h.portals.firstIndex { $0.id == id } }
         switch answer {
+        case .higherRefuge(let spaceID, let suitable):
+            guard let index = h.spaces.firstIndex(where: { $0.id == spaceID }) else { return home }
+            h.spaces[index].higherRefugeConfirmed = .confirmed(suitable, verifiedAt: date)
+        case .floorGrade(let floorID, let grade):
+            guard let index = h.floors.firstIndex(where: { $0.id == floorID }) else { return home }
+            h.floors[index].exteriorGrade = grade
         case .labelSpace(let id, let label, let kind):
             guard let i = h.spaces.firstIndex(where: { $0.id == id }) else { return home }
             h.spaces[i].label = label
@@ -131,7 +143,8 @@ public enum HomeConfirmation {
             guard let i = h.spaces.firstIndex(where: { $0.id == spaceID }) else { return home }
             // Shelter spots must be on the lowest floor.
             let lowest = h.floors.map(\.level).min()
-            guard h.floors.first(where: { $0.id == h.spaces[i].floorID })?.level == lowest else { return home }
+            guard h.floors.first(where: { $0.id == h.spaces[i].floorID })?.level == lowest,
+                  h.floors.first(where: { $0.id == h.spaces[i].floorID })?.exteriorGrade != .unknown else { return home }
             h.spaces[i].interiorNoWindowsConfirmed = .confirmed(interior, verifiedAt: date)
             h.annotations.removeAll { $0.kind == .tornadoShelterCandidate }
             if interior {
@@ -164,7 +177,7 @@ public enum HomeConfirmation {
         // Windows never become walking exits through the generic door answer.
         guard h.portals[i].kind != .window else { return home }
         // One shared definition of "ground" with the planner; upper floors and basements are not walking exits here.
-        guard let floor = h.floors.first(where: { $0.id == h.portals[i].floorID }), Graph.isGround(floor, .standard) else { return home }
+        guard let floor = h.floors.first(where: { $0.id == h.portals[i].floorID }), Graph.isGround(floor, .standard), !(h.source == .roomPlanScan && floor.exteriorGrade == nil) else { return home }
         // An exterior answer must still identify the room the household exits from. A completely unresolved
         // opening cannot become a route merely because the user selected "outside".
         func isSpace(_ destination: PortalDestination) -> Bool {

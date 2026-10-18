@@ -6,47 +6,48 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var confirmDelete = false
 
+    private func t(_ key: String) -> String { model.localizer("native.\(key)") }
+
     var body: some View {
         NavigationStack {
             List {
-                Section("Language") {
+                Section(t("language")) {
                     // Through selectLocale so the choice is saved with the household and survives a relaunch.
-                    Picker("Language", selection: Binding(get: { model.locale },
+                    Picker(t("language"), selection: Binding(get: { model.locale },
                                                           set: { new in Task { await model.selectLocale(new) } })) {
-                        Text("English").tag("en"); Text("Español").tag("es"); Text("Tiếng Việt").tag("vi")
+                        ForEach(model.localizer.availableLocales, id: \.self) { code in
+                            Text(model.content?.localeManifest?.entry(code)?.nativeName ?? code).tag(code)
+                        }
                     }
-                    Text("Spanish and Vietnamese text is a draft translation awaiting language review, and is labeled wherever it appears.")
+                    Text(t("translationNotice"))
                         .font(.footnote)
                 }
-                Section("Privacy") {
+                Section(t("privacy")) {
                     Text(model.localizer("common.privacy.promise"))
-                    Text("Household details are encrypted on this iPhone with a key that stays on this device. They are not synced to iCloud and are excluded from device backups, so they cannot be restored on a new phone. Sharing or printing a plan creates a copy outside Dry Run.")
+                    Text(t("privateStorage"))
                         .font(.footnote)
-                    Text("Public information (alerts and directories) is requested by county only. Those requests reveal your network address and selected county to the service providers.")
+                    Text(t("publicBoundary"))
                         .font(.footnote)
                 }
-                Section("Device capabilities") {
-                    LabeledContent("Room scanning (LiDAR)", value: model.capabilities.roomCaptureSupported ? "Supported" : "Not supported")
-                    LabeledContent("On-device explanations", value: availabilityText(model.capabilities.explanationModel))
-                    LabeledContent("Network", value: model.capabilities.isOnline ? "Online" : "Offline")
+                Section(t("capabilities")) {
+                    LabeledContent(t("roomScan"), value: model.capabilities.roomCaptureSupported ? t("supported") : t("notSupported"))
+                    LabeledContent(t("explanations"), value: availabilityText(model.capabilities.explanationModel))
+                    LabeledContent(t("network"), value: model.capabilities.isOnline ? t("online") : t("offline"))
                 }
                 Section {
-                    Button("Delete all household data", role: .destructive) { confirmDelete = true }
+                    Button(t("delete"), role: .destructive) { confirmDelete = true }
                 } footer: {
-                    Text("Removes the household, home layout, results, saved plans, temporary exports, and the encryption key from this iPhone. It cannot recall copies you already shared.")
+                    Text(t("deleteFooter"))
                 }
-                if let issues = model.content?.issues, !issues.isEmpty {
-                    Section("Content diagnostics") { ForEach(issues, id: \.self) { Text($0.description).font(.caption) } }
-                }
-                Section("About") {
-                    Text("Content version \(model.content?.contentVersion ?? "?"). Prototype: safety content and translations are pending expert review.")
+                Section(t("about")) {
+                    Text(t("prototype"))
                         .font(.footnote)
                 }
             }
-            .navigationTitle("Settings")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
-            .confirmationDialog("Delete all household data from this iPhone?", isPresented: $confirmDelete, titleVisibility: .visible) {
-                Button("Delete everything", role: .destructive) {
+            .navigationTitle(t("settings"))
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(t("done")) { dismiss() } } }
+            .confirmationDialog(t("deleteConfirm"), isPresented: $confirmDelete, titleVisibility: .visible) {
+                Button(t("deleteEverything"), role: .destructive) {
                     Task { await model.deleteAllPrivateData(); dismiss() }
                 }
             }
@@ -55,8 +56,8 @@ struct SettingsView: View {
 
     private func availabilityText(_ a: ExplanationAvailability) -> String {
         switch a {
-        case .available: "Available (optional)"
-        case .unavailable: "Not available — templates are used"
+        case .available: t("optionalAvailable")
+        case .unavailable: t("notAvailable")
         }
     }
 }

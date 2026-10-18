@@ -1,0 +1,156 @@
+[
+  {
+    "file": "output/pdf/card-en-a4.pdf",
+    "pages": 1,
+    "textCharacters": 1304,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/card-en-letter.pdf",
+    "pages": 1,
+    "textCharacters": 1304,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  },
+  {
+    "file": "output/pdf/card-es-a4.pdf",
+    "pages": 1,
+    "textCharacters": 1460,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/card-es-letter.pdf",
+    "pages": 1,
+    "textCharacters": 1460,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  },
+  {
+    "file": "output/pdf/card-large-long-vi-a4.pdf",
+    "pages": 5,
+    "textCharacters": 14612,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/card-large-long-vi-letter.pdf",
+    "pages": 5,
+    "textCharacters": 14612,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  },
+  {
+    "file": "output/pdf/card-vi-a4.pdf",
+    "pages": 1,
+    "textCharacters": 1407,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/card-vi-letter.pdf",
+    "pages": 1,
+    "textCharacters": 1407,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  },
+  {
+    "file": "output/pdf/full-en-a4.pdf",
+    "pages": 18,
+    "textCharacters": 13134,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/full-en-letter.pdf",
+    "pages": 19,
+    "textCharacters": 13196,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  },
+  {
+    "file": "output/pdf/full-es-a4.pdf",
+    "pages": 18,
+    "textCharacters": 14550,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/full-es-letter.pdf",
+    "pages": 20,
+    "textCharacters": 14674,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  },
+  {
+    "file": "output/pdf/full-vi-a4.pdf",
+    "pages": 18,
+    "textCharacters": 13632,
+    "paperPoints": [
+      0.0,
+      0.0,
+      595.2756,
+      841.8898
+    ]
+  },
+  {
+    "file": "output/pdf/full-vi-letter.pdf",
+    "pages": 20,
+    "textCharacters": 13756,
+    "paperPoints": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ]
+  }
+]

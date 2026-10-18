@@ -1,13 +1,14 @@
 import SwiftUI
 import DryRunCore
 
-/// Medical power-outage card: one card per essential device, readable in about 15 seconds by a neighbor or a
-/// dispatcher. Built by `OutageCardBuilder` from household-recorded facts only; gaps link to the editor that fixes them.
+/// Universal household emergency card, with intentionally selected clinical information.
+/// The legacy type name remains for existing entry points; device continuity is supporting content.
 struct OutageCardView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     /// One sheet slot: two `.sheet` modifiers on one view fail to present the second right after the first closes.
     @State private var sheet: ActiveSheet?
+    @State private var selection = FamilyCardSelection()
 
     enum ActiveSheet: Identifiable {
         case edit(String)
@@ -22,15 +23,29 @@ struct OutageCardView: View {
 
     var body: some View {
         let l = model.localizer
-        let doc = model.outageCard()
+        let doc = model.outageCard(selection: selection)
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
+                SectionCard(title: l("family.selected"), systemImage: "checklist") {
+                    Toggle(l("family.critical"), isOn: $selection.includeCriticalInformation)
+                    Toggle(l("family.medication"), isOn: $selection.includeMedication)
+                    Toggle(l("family.instructions"), isOn: $selection.includeResponderInstructions)
+                    Toggle(l("family.contacts"), isOn: $selection.includeContacts)
+                    Text(l("family.selectedWhy")).font(.footnote).foregroundStyle(.secondary)
+                }
                 if let banner = doc?.draftTranslationBanner {
                     Label(banner, systemImage: "character.bubble").font(.footnote.weight(.semibold)).foregroundStyle(Theme.caution)
                 }
                 if let doc, !doc.pages.isEmpty {
                     ForEach(doc.pages) { page in
                         CardPageView(page: page) { if case .outageCard(let id) = page.kind { sheet = .edit(id) } }
+                    }
+                    if selection.includeContacts {
+                        ForEach(model.household?.contacts ?? []) { contact in
+                            if let url = contact.telephoneURL {
+                                Link(destination: url) { Label(contact.alias + " · " + (contact.phone ?? ""), systemImage: "phone") }
+                            }
+                        }
                     }
                     Button { share(doc) } label: { Label(l("ui.card.printShare"), systemImage: "printer") }
                         .buttonStyle(.primary)
@@ -55,7 +70,7 @@ struct OutageCardView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { sheet = .edit(MedicalSetupView.newDeviceID) } label: {
                         Label(l("ui.card.addDevice"), systemImage: "plus")
-                    }
+                    }.accessibilityIdentifier("card.addDevice")
                 }
             }
         }
@@ -74,7 +89,7 @@ struct OutageCardView: View {
     private func share(_ doc: PlanDocument) {
         let output = PlanPDFRenderer().render(doc)
         do {
-            let url = try TemporaryExports.write(output.data, name: "DryRun-outage-card-\(doc.locale).pdf")
+            let url = try TemporaryExports.write(output.data, name: "DryRun-family-card-\(doc.locale).pdf")
             TemporaryExports.hasActiveExport = true
             sheet = .preview(url)
         } catch {
@@ -147,23 +162,7 @@ struct CardLine: View {
                 Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary).accessibilityLabel("Shown in English")
             }
             Spacer(minLength: 0)
-            if line.style == .contact, let number = PhoneLink.firstNumber(in: line.text), let url = PhoneLink.url(number) {
-                Link(destination: url) {
-                    Image(systemName: "phone.fill").font(.body)
-                        .frame(width: Theme.minTap, height: Theme.minTap)
-                        .background(Theme.accent.opacity(0.12), in: Circle())
-                }
-                .accessibilityLabel("Call \(number)")
-            }
-        }
-    }
-}
 
-extension PhoneLink {
-    /// The first dialable number in a line of text: 555-555-0100, 2-1-1, or 911.
-    static func firstNumber(in text: String) -> String? {
-        let pattern = #"\b(\d{3}-\d{3}-\d{4}|\d-\d-\d|911)\b"#
-        guard let range = text.range(of: pattern, options: .regularExpression) else { return nil }
-        return String(text[range])
+        }
     }
 }

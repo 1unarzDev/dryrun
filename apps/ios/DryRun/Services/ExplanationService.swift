@@ -35,7 +35,12 @@ enum ExplanationService {
     /// Evidence bundle = IDs and template text that the deterministic engine already produced.
     static func explain(templateText: String, recommendation: Recommendation, locale: String) async -> String? {
         // Only English prose in the first build; other locales use reviewed/draft templates, never live translation.
-        guard locale == "en", availability() == .available else { return nil }
+        // The optional prose seam receives only unparameterized, noncritical authored text. Person/device names,
+        // clinical notes, address, contacts, geometry and route decisions are never model inputs, including locally.
+        guard locale == "en", recommendation.tier == .general,
+              recommendation.subjectID == nil, recommendation.templateValues.isEmpty,
+              Localizer.placeholders(in: templateText).isEmpty,
+              availability() == .available else { return nil }
         #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
             let instructions = """

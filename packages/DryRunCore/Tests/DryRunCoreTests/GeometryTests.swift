@@ -109,6 +109,8 @@ struct GeometryTests {
 
         // After the confirmation pass the same geometry routes cleanly.
         var confirmed = home
+        #expect(confirmed.floors.allSatisfy { $0.exteriorGrade == .unknown })
+        confirmed = HomeConfirmation.apply(.floorGrade(floorID: confirmed.floors[0].id, grade: .ground), to: confirmed)
         confirmed.edit { h in
             for i in h.portals.indices where h.portals[i].kind == .door {
                 h.portals[i].verification = .verified

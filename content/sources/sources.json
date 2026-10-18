@@ -422,6 +422,46 @@
       "reviewState": "needsReview",
       "category": "geography",
       "scopeNote": "Coordinate matched the official Hood County office address against an OSM object. OSM attribution applies; this is a browsing pin, not proof of access or activation."
+    },
+    {
+      "id": "S52",
+      "publisher": "American Red Cross",
+      "title": "Make a plan",
+      "url": "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/make-a-plan.html",
+      "checkedAt": "2026-10-17",
+      "reviewState": "needsReview",
+      "category": "preparedness",
+      "scopeNote": "Family meeting places, contacts, and coordination. Retrieved during implementation; no qualified human content endorsement."
+    },
+    {
+      "id": "S53",
+      "publisher": "American Red Cross",
+      "title": "Home fire preparedness",
+      "url": "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/fire/home-fire-preparedness.html",
+      "checkedAt": "2026-10-17",
+      "reviewState": "needsReview",
+      "category": "preparedness",
+      "scopeNote": "Smoke alarms, escape practice, fire extinguisher training and preparedness supplies. Retrieved during implementation; no qualified human content endorsement."
+    },
+    {
+      "id": "S54",
+      "publisher": "FDA",
+      "title": "Safe drug use after a natural disaster",
+      "url": "https://www.fda.gov/drugs/emergency-preparedness-drugs/safe-drug-use-after-natural-disaster",
+      "checkedAt": "2026-10-17",
+      "reviewState": "needsReview",
+      "category": "preparedness",
+      "scopeNote": "Follow medicine-specific labeling and pharmacist guidance; no generated storage deadlines. Retrieved during implementation; no qualified human content endorsement."
+    },
+    {
+      "id": "S55",
+      "publisher": "National Weather Service",
+      "title": "Flood safety week",
+      "url": "https://www.weather.gov/pah/FloodSafetyWeek",
+      "checkedAt": "2026-10-17",
+      "reviewState": "needsReview",
+      "category": "preparedness",
+      "scopeNote": "Flood refuge and closed attic precautions; local educational assumptions do not predict flooding. Retrieved during implementation; no qualified human content endorsement."
     }
   ]
 }

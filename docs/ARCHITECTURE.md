@@ -4,7 +4,7 @@
 
 ```
 apps/ios/DryRun/                SwiftUI app (iOS 18+). Thin: views, adapters, platform services.
-  App/                          AppModel (@Observable, run-ID guarded async work), RootView (4 tabs), Theme
+  App/                          AppModel (@Observable, run-ID guarded async work), RootView (Prepare / Rehearse / Plan), Theme
   Rehearse/                     Scenario picker, stepped timeline, decision cards, debrief, before/after comparison
   Home/                         Home tab, progressive household setup
   Spatial/            (Agent B) RoomPlan capture adapter, 2D floor plan, RealityKit dollhouse, room list, manual editor
@@ -67,7 +67,7 @@ is no longer current, so a late result can never overwrite newer state.
    verification, operability, clearance, step-free evidence, and scenario exclusions. Hard exclusions apply before
    Dijkstra. Alternatives must use a different exit and avoid the primary route's chokepoints.
 
-The fire scenario is the only place they meet: the engine passes authored blocked spaces/portals to the planner.
+Fire, flood, and tornado share deterministic spatial exercise snapshots. The engine supplies authored exclusions and explicit outdoor-egress, interior-shelter, or higher-refuge destinations; the same validated graph serves each purpose.
 
 ## Private / public boundary
 
@@ -77,9 +77,9 @@ The fire scenario is the only place they meet: the engine passes authored blocke
 
 - No household endpoint exists. The public client builds URLs only through `PublicQueryBuilder`
   (allowlisted endpoints and region IDs; rejects unexpected keys). The backend also rejects unknown query keys and bodies.
-- Exact address/location stays local; geocoding/directions through Apple only on explicit user action (future).
+- Address search, nearby discovery, snapshots and directions use Apple adapters. Home confirmation starts bounded nearby discovery; current GPS is requested only by its control. These inputs never go to the public DryRun service.
 - Plaintext leaves the vault only for an explicit PDF preview/share/print; temporary exports are protected,
-  excluded from backup, and purged on dismiss, background, and delete-all.
+  excluded from backup, and purged on dismiss, background, and delete-all after active share/print leases finish.
 
 ## Adapter interfaces (platform seams)
 
@@ -91,3 +91,34 @@ The fire scenario is the only place they meet: the engine passes authored blocke
 | `PrivateDataStore` | app | `VaultPrivateDataStore` (maps VaultError → locked / needsRecovery) |
 | `ScanImport` input structs | DryRunCore | RoomPlan adapter maps CapturedRoom/CapturedStructure surfaces |
 | `ExplanationService` | app | Optional `SystemLanguageModel`; template fallback always available |
+
+## October 17 family-preparedness integration
+
+Personal household identity is independent of geometry: `HouseholdProfile.homeID/stableHomeID` links places and
+plans before a scan exists. `PrivateSnapshot.home` is optional. Vault schema 1 adds an explicit
+`homeGeometryIntentionallyAbsent` flag; legacy missing layout remains a recovery condition, distinct from a
+successfully saved layoutless household. Additive optional fields preserve old contacts/custom labels/places.
+
+`AppModel` publishes candidate snapshots only after private saves succeed and excludes overlapping writes.
+Completion and generated plans follow that transaction rule. Async generations carry epochs/revisions. A prior
+saved scenario plan is retained as labeled stale history; `currentPlan` rebuilds the live card from current facts.
+
+`BaselinePreparedness` merges household/home facts with deterministic scenario gaps before any rehearsal.
+Recommendation identity is action plus explicit subject; `PreparationCompletion` fingerprints only relevant
+records. Factual tasks follow saved facts, physical checks require recorded evidence. Device electrical support
+and medicine cold storage are independent; ownership never confirms compatibility or runtime.
+
+`FamilyEmergencyCardBuilder` supplies every household's selected-content card, including no medical equipment or
+home. `PlanBuilder` accepts optional geometry and saved places. Its plain visual snapshot contains canonical
+layout, exact qualified route legs, place records and revisions. App-layer adapters render native PDFs and
+transient attributed Apple snapshots; Core has no MapKit/UI dependency. Linked outside meetup annotations have
+`savedPlaceID`; geographic coordinates never become indoor metres.
+
+`SpatialExerciseState` is the stage/person/seed contract for routing, 2D, 3D and export. Current routes are separate
+from snapshot history. Floor capture story is separate from confirmed grade; scan lowest floor is not ground.
+`CaptureCallbackGate` identifies the originating capture generation. Native SDK and physical coordinate validation
+remain pending; see CLAUDE_NATIVE_HANDOFF and VERIFICATION.
+
+Locales use the existing versioned content Localizer, extended with native/spatial domains. Stable model IDs stay
+untranslated; user names, addresses and critical notes are retained. ES/VI strings remain drafts requiring human
+review. No optional automatic clinical translation or default reminder campaign was introduced.

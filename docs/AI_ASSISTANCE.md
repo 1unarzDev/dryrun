@@ -53,3 +53,19 @@ owner's brief PDF in `docs/`). Specifically AI-written content that needs human 
 
 For every later change, record: who (student / AI tool + model), which files, what was generated vs. written,
 and what the student verified or tested themselves. Do not relabel AI-written code as student work.
+
+## Family-preparedness revision (2026-10-17)
+
+Codex (GPT-6-based agent, Linux) integrated optional layout/vault migration, three-destination navigation,
+transactional persistence, private boundaries, task/plan contracts, tests, evidence and Mac handoff. Parallel
+AI lanes owned core/preparation/family card; maps/plan/export; scan/rehearsal/spatial behavior. Each lane independently
+source-reviewed another lane. Findings included stale form writes, hidden geometry in card exports, unsupported
+meeting-task blank screens, closed-attic refuge and scan processing interruption. Source-review findings led to
+implementation changes; source review is not native screenshot/device verification.
+
+EN/ES/VI additions and fictional test/reference artifacts are AI-generated drafts. Portable PDF examples use a
+ReportLab reference renderer of actual Core PlanDocument JSON, not the iOS CoreText renderer. Exact current test
+results and limits are in VERIFICATION. No native SDK build, simulator/device run, measured household usability,
+professional clinical/fire review or human translation review occurred in this pass. A Claude session on the
+owner's Mac is expected to continue native verification via CLAUDE_NATIVE_HANDOFF. Do not attribute future results
+until that session supplies them. No student contribution, recruitment, partner feedback or endorsement is implied.

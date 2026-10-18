@@ -4,6 +4,8 @@ import DryRunCore
 /// Guided confirmation pass, one question at a time. Answers go through `HomeConfirmation.apply`, the only way a
 /// scan-proposed element becomes verified. "Not sure" leaves it unknown and out of every route.
 struct HomeConfirmationView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     @State var home: HomeModel
     let onFinish: (HomeModel) -> Void
     @State private var labelText = ""
@@ -14,6 +16,7 @@ struct HomeConfirmationView: View {
     @State private var interiorRoomID: String?
     @State private var meetingText = ""
     @State private var shelterSpaceID: String?
+    @State private var undo: [HomeModel] = []
 
     /// Pending steps, minus the ones set aside in this session. `HomeConfirmation.steps` is rebuilt from the home in a
     /// fixed order and "Not sure" does not change the home, so without this filter a skipped item stays first forever.
@@ -23,62 +26,83 @@ struct HomeConfirmationView: View {
         Form {
             if let step = steps.first {
                 Section {
-                    Text("\(steps.count) left").font(.footnote).foregroundStyle(.secondary)
-                    Text(step.prompt).font(.headline)
+                    Text(model.localizer("spatial.items-left", ["count": "\(steps.count)"])).font(.footnote).foregroundStyle(.secondary)
+                    Text(model.localizer("spatial.question." + step.kind.rawValue)).font(.headline)
                     if let about = subject(of: step) { Text(about).font(.callout) }
                     if let notice { Text(notice).font(.footnote).foregroundStyle(Theme.caution) }
                 }
-                FloorPlanView(home: home, routes: [], highlightedFloorID: floorID(for: step))
+                FloorPlanView(home: home, routes: [], highlightedFloorID: floorID(for: step), highlightedElementID: step.elementID)
                     .frame(height: 220)
                     .accessibilityLabel("Floor plan. The item being confirmed is \(step.elementID).")
                 stepControls(step)
             } else if !skipped.isEmpty {
                 Section {
-                    Label("\(skipped.count) left as not sure.", systemImage: "questionmark.circle")
-                    Text("Those items stay unconfirmed and out of every practice route. You can come back to them from the Home tab.")
+                    Label(model.localizer("spatial.items-unknown", ["count": "\(skipped.count)"]), systemImage: "questionmark.circle")
+                    Text(s("Those items stay unconfirmed and out of every practice route. You can come back to them from the Home tab."))
                         .font(.footnote)
                 }
             } else {
                 Section {
-                    Label("Everything that needs your confirmation is done.", systemImage: "checkmark.seal")
-                    Text("Practice routes now use only the doors and exits you confirmed. Re-check after changes to the home.")
+                    Label(s("Review answers saved"), systemImage: "checkmark.seal")
+                    Text(s("Routes still depend on complete geometry, usable connections and the person’s needs. Remaining validation issues appear in your home review."))
                         .font(.footnote)
                 }
             }
         }
-        .navigationTitle("Confirm your home")
+        .navigationTitle(s("Confirm your home"))
+        .onChange(of: steps.first?.id, initial: true) { _, _ in
+            labelText = ""; widthText = ""; interiorRoomID = nil; operable = nil; stepFree = nil
+            if let step = steps.first {
+                if let room = home.space(step.elementID) { labelText = room.label; labelKind = room.kind }
+                if let portal = home.portal(step.elementID) {
+                    operable = portal.operable.value; stepFree = portal.stepFree.value
+                    widthText = portal.clearWidthMeters.value.map { String($0) } ?? ""
+                }
+            }
+        }
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) { Button("Save") { onFinish(home) } }
+            ToolbarItem(placement: .cancellationAction) { Button(s("Undo")) { if let previous = undo.popLast() { home = previous; skipped.removeAll() } }.disabled(undo.isEmpty) }
+            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { onFinish(home) } }
         }
     }
 
     @ViewBuilder
     private func stepControls(_ step: ConfirmationStep) -> some View {
         switch step.kind {
+        case .confirmFloor:
+            Section {
+                ForEach([ExteriorGrade.ground, .aboveGround, .belowGround, .walkout], id: \.self) { grade in
+                    Button(s(grade == .ground ? "Ground level" : grade == .aboveGround ? "Above ground" : grade == .belowGround ? "Below ground" : "Walkout level — exterior ground at an exit")) {
+                        answer(.floorGrade(floorID: step.elementID, grade: grade), for: step)
+                    }
+                }
+                Button(s("Not sure — decide later")) { answer(.skip(elementID: step.elementID), for: step) }
+                Text(s("A walkout level still needs each exterior opening checked. Stairs need both landings confirmed.")).font(.footnote)
+            }
         case .labelSpace:
             Section {
-                TextField("Room name", text: $labelText)
-                Picker("Room type", selection: $labelKind) { ForEach(SpaceKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
-                Button("Save name") { answer(.labelSpace(spaceID: step.elementID, label: labelText.isEmpty ? "Room" : labelText, kind: labelKind), for: step) }
-                Button("Room needs measuring") { answer(.needsMeasurement(spaceID: step.elementID), for: step) }
+                TextField(s("Room name"), text: $labelText)
+                Picker(s("Room type"), selection: $labelKind) { ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) } }
+                Button(s("Save name")) { answer(.labelSpace(spaceID: step.elementID, label: labelText.isEmpty ? "Room" : labelText, kind: labelKind), for: step) }
+                Button(s("Room needs measuring")) { answer(.needsMeasurement(spaceID: step.elementID), for: step) }
             }
         case .confirmPortal:
             let portal = home.portal(step.elementID)
             let unknownSide = portal.map { $0.sideA == .unknown || $0.sideB == .unknown } ?? true
             Section {
-                Picker("Opens without a key or tool", selection: $operable) {
-                    Text("Yes").tag(Bool?.some(true))
-                    Text("No").tag(Bool?.some(false))
-                    Text("Not sure").tag(Bool?.none)
+                Picker(s("Opens without a key or tool"), selection: $operable) {
+                    Text(s("Yes")).tag(Bool?.some(true))
+                    Text(s("No")).tag(Bool?.some(false))
+                    Text(s("Not sure")).tag(Bool?.none)
                 }
-                Picker("Threshold", selection: $stepFree) {
-                    Text("Step-free").tag(Bool?.some(true)); Text("Has a step").tag(Bool?.some(false)); Text("Not sure").tag(Bool?.none)
+                Picker(s("Threshold"), selection: $stepFree) {
+                    Text(s("Step-free")).tag(Bool?.some(true)); Text(s("Has a step")).tag(Bool?.some(false)); Text(s("Not sure")).tag(Bool?.none)
                 }
-                TextField("Clear width in meters (optional)", text: $widthText).keyboardType(.decimalPad)
+                TextField(s("Clear width in meters (optional)"), text: $widthText).keyboardType(.decimalPad)
                 if unknownSide {
                     if portal?.kind != .window {
-                        Picker("This opening also leads to", selection: $interiorRoomID) {
-                            Text("Choose a room").tag(String?.none)
+                        Picker(s("This opening also leads to"), selection: $interiorRoomID) {
+                            Text(s("Choose a room")).tag(String?.none)
                             ForEach(home.spaces.filter { room in
                                 guard room.floorID == portal?.floorID else { return false }
                                 guard let portal else { return true }
@@ -87,13 +111,16 @@ struct HomeConfirmationView: View {
                                 Text(room.label).tag(String?.some(room.id))
                             }
                         }
-                        Button("Connect to this room") {
+                        Button(s("Connect to this room")) {
                             if let roomID = interiorRoomID {
-                                answer(.assignPortalInterior(portalID: step.elementID, spaceID: roomID), for: step)
+                                let connected = HomeConfirmation.apply(.assignPortalInterior(portalID: step.elementID, spaceID: roomID), to: home)
+                                undo.append(home)
+                                home = HomeConfirmation.apply(.confirmPortalEvidence(portalID: step.elementID, operable: operable, stepFree: stepFree, clearWidthMeters: parsedWidth), to: connected)
+                                notice = nil
                             }
                         }
                         .disabled(interiorRoomID == nil)
-                        Button("It leads outside (ground level)") {
+                        Button(s("It leads outside (ground level)")) {
                             answer(.markPortalExteriorEvidence(portalID: step.elementID, operable: operable,
                                                               stepFree: stepFree, clearWidthMeters: parsedWidth), for: step)
                         }
@@ -105,34 +132,34 @@ struct HomeConfirmationView: View {
                                for: step)
                     }
                 }
-                Button("Not usable", role: .destructive) { answer(.rejectPortal(portalID: step.elementID), for: step) }
-                Button("Not sure — leave it out of routes") { answer(.skip(elementID: step.elementID), for: step) }
+                Button(s("Not usable"), role: .destructive) { answer(.rejectPortal(portalID: step.elementID), for: step) }
+                Button(s("Not sure — leave it out of routes")) { answer(.skip(elementID: step.elementID), for: step) }
             }
         case .confirmConnector:
             Section {
-                Button("Yes, these stairs are usable") { answer(.confirmConnector(connectorID: step.elementID, usable: true), for: step) }
-                Button("Not usable", role: .destructive) { answer(.confirmConnector(connectorID: step.elementID, usable: false), for: step) }
-                Button("Not sure — decide later") { answer(.skip(elementID: step.elementID), for: step) }
+                Button(s("Yes, these stairs are usable")) { answer(.confirmConnector(connectorID: step.elementID, usable: true), for: step) }
+                Button(s("Not usable"), role: .destructive) { answer(.confirmConnector(connectorID: step.elementID, usable: false), for: step) }
+                Button(s("Not sure — decide later")) { answer(.skip(elementID: step.elementID), for: step) }
             }
         case .meetingPoint:
             Section {
-                TextField("For example: the neighbor's mailbox", text: $meetingText)
-                Button("Set meeting point") { answer(.meetingPoint(label: meetingText), for: step) }
+                TextField(s("For example: the neighbor's mailbox"), text: $meetingText)
+                Button(s("Set meeting point")) { answer(.meetingPoint(label: meetingText), for: step) }
                     .disabled(meetingText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                Button("Not sure — decide later") { answer(.skip(elementID: step.elementID), for: step) }
+                Button(s("Not sure — decide later")) { answer(.skip(elementID: step.elementID), for: step) }
             }
         case .shelterSpot:
             Section {
-                Picker("Room", selection: $shelterSpaceID) {
-                    Text("Choose").tag(String?.none)
+                Picker(s("Room"), selection: $shelterSpaceID) {
+                    Text(s("Choose")).tag(String?.none)
                     ForEach(home.spaces) { Text($0.label).tag(String?.some($0.id)) }
                 }
                 if let id = shelterSpaceID {
-                    Button("Interior, lowest floor, no windows") { answer(.shelterSpot(spaceID: id, interiorNoWindows: true), for: step) }
+                    Button(s("Interior, lowest floor, no windows")) { answer(.shelterSpot(spaceID: id, interiorNoWindows: true), for: step) }
                 }
-                Button("No such room, or not sure — decide later") { answer(.skip(elementID: step.elementID), for: step) }
+                Button(s("No such room, or not sure — decide later")) { answer(.skip(elementID: step.elementID), for: step) }
             } footer: {
-                Text("A household-chosen spot is not an engineered safe room. Manufactured homes need a sturdy building planned in advance.")
+                Text(s("A household-chosen spot is not an engineered safe room. Manufactured homes need a sturdy building planned in advance."))
             }
         }
     }
@@ -158,6 +185,7 @@ struct HomeConfirmationView: View {
             }
             notice = nil
         }
+        if home != updated { undo.append(home) }
         home = updated
         labelText = ""; widthText = ""; interiorRoomID = nil; meetingText = ""; operable = nil; stepFree = nil; shelterSpaceID = nil
     }
@@ -183,10 +211,12 @@ struct HomeConfirmationView: View {
             return home.space(step.elementID).map { "Currently shown as: \($0.label)" }
         case .confirmPortal:
             guard let p = home.portal(step.elementID) else { return nil }
-            return "\(p.kind.rawValue.capitalized) between: \(name(p.sideA)) and \(name(p.sideB))"
+            return "\(DisplayNames.name(p.kind.rawValue, localizer: model.localizer)) between: \(name(p.sideA)) and \(name(p.sideB))"
         case .confirmConnector:
             guard let c = home.connectors.first(where: { $0.id == step.elementID }) else { return nil }
             return "Between: \(home.space(c.fromSpaceID)?.label ?? "a room") and \(home.space(c.toSpaceID)?.label ?? "a room")"
+        case .confirmFloor:
+            return home.floors.first(where: { $0.id == step.elementID })?.label
         case .meetingPoint, .shelterSpot:
             return nil
         }
@@ -194,6 +224,7 @@ struct HomeConfirmationView: View {
 
     private func floorID(for step: ConfirmationStep) -> String? {
         switch step.kind {
+        case .confirmFloor: step.elementID
         case .confirmPortal: home.portal(step.elementID)?.floorID
         case .labelSpace: home.space(step.elementID)?.floorID
         default: home.floors.first?.id

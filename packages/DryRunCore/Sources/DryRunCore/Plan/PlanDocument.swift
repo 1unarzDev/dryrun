@@ -69,6 +69,8 @@ public struct PlanDocument: Codable, Sendable, Hashable {
     public var contentReviewBanner: String?
     public var footer: String
     public var sourceIDs: [String]
+    /// Plain-value render inputs, kept separate from geographic map coordinates. Absent in legacy documents.
+    public var visualSnapshot: PlanVisualSnapshot? = nil
 
     public var revisionKey: RevisionKey {
         RevisionKey(householdID: householdID, householdRevision: householdRevision, homeID: homeID,
@@ -76,9 +78,13 @@ public struct PlanDocument: Codable, Sendable, Hashable {
     }
 
     /// True when the plan was built from older household/home/content than `current`.
-    public func isStale(household: HouseholdProfile, home: HomeModel, contentVersion: String) -> Bool {
-        household.id != householdID || household.revision != householdRevision || home.id != homeID
-            || home.revision != homeRevision || contentVersion != self.contentVersion
+    public func isStale(household: HouseholdProfile, home: HomeModel?, contentVersion: String, savedPlaces: [SavedPlace]? = nil) -> Bool {
+        if household.id != householdID || household.revision != householdRevision || (home?.id ?? household.stableHomeID) != homeID
+            || (home?.revision ?? 0) != homeRevision || contentVersion != self.contentVersion { return true }
+        if let savedPlaces {
+            return visualSnapshot?.savedPlaces.sorted { $0.id < $1.id } != savedPlaces.filter { $0.homeID == homeID }.sorted { $0.id < $1.id }
+        }
+        return false
     }
 }
 
@@ -126,5 +132,22 @@ public enum PlanValidator {
             }
         }
         return issues
+    }
+}
+
+/// Canonical geometry and exact route legs for app-layer rendering. No MapKit/UIKit dependencies.
+public struct PlanVisualSnapshot: Codable, Sendable, Hashable {
+    public var home: HomeModel?
+    public var routes: [RouteResult]
+    public var savedPlaces: [SavedPlace]
+    public var routeScenarioIDs: [String]? = nil
+    public var personLabels: [String: String]? = nil
+    public var scenarioLabels: [String: String]? = nil
+    public var homeCoordinate: GeographicCoordinate?
+    public var fictional: Bool
+    public init(home: HomeModel?, routes: [RouteResult], savedPlaces: [SavedPlace], homeCoordinate: GeographicCoordinate?, fictional: Bool, routeScenarioIDs: [String]? = nil, personLabels: [String: String]? = nil, scenarioLabels: [String: String]? = nil) {
+        self.home = home; self.routes = routes; self.savedPlaces = savedPlaces
+        self.homeCoordinate = homeCoordinate; self.fictional = fictional; self.routeScenarioIDs = routeScenarioIDs
+        self.personLabels = personLabels; self.scenarioLabels = scenarioLabels
     }
 }

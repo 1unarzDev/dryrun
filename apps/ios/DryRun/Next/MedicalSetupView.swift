@@ -11,24 +11,29 @@ struct MedicalSetupView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var draft: HouseholdProfile?
     @State private var deviceID = ""
+    @State private var saving = false
+    @State private var saveFailed = false
 
     var body: some View {
         let l = model.localizer
         Form {
             if let index = deviceIndex {
                 deviceSection(index)
-                backupSection(index)
-                runtimeSection(index)
+                if draft?.equipment[index].requiresElectricalPower == true {
+                    backupSection(index)
+                    runtimeSection(index)
+                }
                 contactsSection
                 destinationSection
             }
+            if saveFailed { Text(model.lastError ?? l("ui.tryFailed")).foregroundStyle(Theme.caution) }
         }
         .navigationTitle(equipmentID == Self.newDeviceID ? l("ui.card.addDevice") : l("ui.medical.title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button(l("ui.cancel")) { dismiss() } }
             ToolbarItem(placement: .confirmationAction) {
-                Button(l("ui.save")) { save() }.accessibilityIdentifier("medical.save")
+                Button(l("ui.save")) { save() }.disabled(saving).accessibilityIdentifier("medical.save")
             }
         }
         .onAppear(perform: load)
@@ -58,20 +63,7 @@ struct MedicalSetupView: View {
         let l = model.localizer
         let eq = binding(\.equipment[i])
         return Section {
-            Picker(l("ui.medical.purpose"), selection: eq.purpose) {
-                ForEach(EquipmentPurpose.allCases, id: \.self) { Text($0.displayName).tag($0) }
-            }
-            .onChange(of: eq.wrappedValue.purpose) { old, new in
-                // Keep a typed label; fill an empty or default one from the purpose.
-                if eq.wrappedValue.label.isEmpty || eq.wrappedValue.label == old.displayName { eq.wrappedValue.label = new.displayName }
-            }
-            TextField(l("ui.medical.label"), text: eq.label)
-                .accessibilityIdentifier("medical.label")
-            Picker(l("ui.medical.usedBy"), selection: eq.personID) {
-                Text(l("ui.notSure")).tag(String?.none)
-                ForEach(draft?.people ?? []) { Text($0.alias.isEmpty ? l("ui.person") : $0.alias).tag(Optional($0.id)) }
-            }
-            Toggle(l("ui.medical.refrigeration"), isOn: eq.needsRefrigeration)
+            EquipmentEditorFields(equipment: eq, people: draft?.people ?? [])
         } header: {
             Text(l("ui.medical.device"))
         } footer: {
@@ -85,11 +77,8 @@ struct MedicalSetupView: View {
         return Section {
             ForEach(binding(\.backupPower)) { $backup in
                 VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    TextField(l("ui.medical.backupName"), text: $backup.label).font(.body.weight(.semibold))
-                    Picker(l("ui.medical.backupKind"), selection: $backup.kind) {
-                        ForEach(BackupPowerKind.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                    }
-                    Toggle(l("ui.medical.worksWith", ["device": eq.wrappedValue.label.isEmpty ? l("ui.medical.thisDevice") : eq.wrappedValue.label]),
+                    BackupEditorFields(backup: $backup, onKindChanged: { draft?.invalidateBackupCompatibility(for: $0) })
+                    Toggle(l("family.compatibility", ["device": DisplayNames.equipment(eq.wrappedValue, localizer: l)]),
                            isOn: Binding(
                             get: { eq.wrappedValue.compatibleBackupIDs.contains(backup.id) },
                             set: { on in
@@ -97,15 +86,14 @@ struct MedicalSetupView: View {
                                 else { eq.wrappedValue.compatibleBackupIDs.removeAll { $0 == backup.id } }
                             }))
                     .accessibilityIdentifier("medical.worksWith")
-                    TriStateRow(title: l("ui.medical.tested"), value: $backup.setupConfirmed)
                 }
                 .padding(.vertical, Theme.Space.xs)
             }
             Button(l("ui.medical.addBackup"), systemImage: "plus") {
                 let id = "bk-\(UUID().uuidString.prefix(8).lowercased())"
                 draft?.backupPower.append(BackupPowerSource(id: id, kind: .portableBatteryStation,
-                                                            label: BackupPowerKind.portableBatteryStation.displayName))
-                draft?.equipment[i].compatibleBackupIDs.append(id)
+                                                            label: ""))
+
             }
             .accessibilityIdentifier("medical.addBackup")
         } header: {
@@ -169,7 +157,7 @@ struct MedicalSetupView: View {
                 VStack(alignment: .leading, spacing: Theme.Space.s) {
                     TextField(l("ui.place.name"), text: $d.label)
                     Picker(l("ui.place.kind"), selection: $d.kind) {
-                        ForEach(DestinationKind.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                        ForEach(DestinationKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
                     }
                     TriStateRow(title: l("ui.place.confirmed"), value: $d.conditionsConfirmed)
                 }
@@ -189,17 +177,17 @@ struct MedicalSetupView: View {
     }
 
     private func save() {
-        guard var d = draft else { return dismiss() }
+        guard !saving, var d = draft else { return }
         // Drop empty rows instead of saving blank names.
         d.contacts.removeAll { $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && ($0.phone ?? "").isEmpty }
         d.transport.destinations.removeAll { $0.label.trimmingCharacters(in: .whitespaces).isEmpty }
-        if let i = d.equipment.firstIndex(where: { $0.id == deviceID }), d.equipment[i].label.trimmingCharacters(in: .whitespaces).isEmpty {
-            d.equipment[i].label = d.equipment[i].purpose.displayName
-        }
         let final = d
+        saving = true
         Task {
-            await model.updateHousehold { $0 = final }
-            dismiss()
+            let saved = await model.updateHousehold(final)
+            saving = false
+            saveFailed = !saved
+            if saved { dismiss() }
         }
     }
 }

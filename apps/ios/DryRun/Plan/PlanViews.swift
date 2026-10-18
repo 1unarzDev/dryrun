@@ -1,121 +1,101 @@
 import SwiftUI
 import UIKit
 import PDFKit
+import MapKit
 import DryRunCore
 
 struct PlanTabView: View {
     @Environment(AppModel.self) private var model
-    @State private var selected: Set<String> = ["home-fire", "freeze-power-loss"]
     @State private var includePrivateNotes = false
+    @State private var selection = FamilyCardSelection()
     @State private var exportURL: URL?
-    @State private var showPreview = false
-    @State private var exportNote: String?
-
+    @State private var showingMap = false
+    @State private var showingAddress = false
+    @State private var showingContacts = false
+    @State private var selectedScenarios: Set<String> = []
+    @State private var showingExport = false
+    @State private var exporting = false
+    @State private var paper: PlanPDFRenderer.Paper = .letter
+    private func t(_ key: String) -> String { model.localizer("map.\(key)") }
     var body: some View {
-        let l = model.localizer
         List {
-            Section(l("common.plan.language")) {
-                // Through selectLocale so the choice is saved with the household and survives a relaunch.
-                Picker("Plan language", selection: Binding(get: { model.locale },
-                                                           set: { new in Task { await model.selectLocale(new) } })) {
-                    ForEach(languages, id: \.code) { lang in
-                        Text(lang.label).tag(lang.code)
-                    }
-                }
-                if model.locale != "en" {
-                    Label(l("common.draftTranslation"), systemImage: "character.bubble").foregroundStyle(Theme.caution)
-                }
-            }
-            Section(l("common.plan.scenarioPages")) {
-                ForEach(RehearseTabView.scenarioIDs, id: \.self) { id in
-                    Toggle(l("common.scenario.\(id)"), isOn: Binding(
-                        get: { selected.contains(id) },
-                        set: { if $0 { selected.insert(id) } else { selected.remove(id) } }))
-                }
-                Toggle(l("common.plan.includePrivate"), isOn: $includePrivateNotes)
-            }
-            if let home = model.home {
-                Section("Private meeting places") {
-                    let places = model.savedPlaces.filter { $0.homeID == home.id && $0.purpose == .outsideMeetingPoint }
-                    if places.isEmpty {
-                        Text("No geographic meeting point saved. A text-only meeting point can still be kept in Home.")
-                            .font(.callout).foregroundStyle(.secondary)
-                    } else {
-                        ForEach(places) { place in
-                            VStack(alignment: .leading, spacing: 3) {
-                                Label(place.label, systemImage: "mappin.and.ellipse")
-                                if let address = place.addressText { Text(address).font(.caption).foregroundStyle(.secondary) }
-                                Text("Private planning point; it does not certify a safe outdoor route.")
-                                    .font(.caption2).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-            }
-            Section {
-                Button {
-                    Task { await model.generatePlan(scenarioIDs: Array(selected), includePrivateNotes: includePrivateNotes) }
-                } label: {
-                    if model.isWorking { ProgressView().tint(Theme.onAccent) } else {
-                        Label(l("common.plan.generate"), systemImage: "doc.badge.gearshape")
-                    }
-                }
-                .buttonStyle(.primary)
-                .disabled(selected.isEmpty || model.isWorking)
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-                .accessibilityIdentifier("plan.generate")
-            }
-            if let plan = model.savedPlan {
+            if let doc = model.currentPlan(selection: selection, includePrivateNotes: includePrivateNotes) {
                 Section {
-                    if model.planIsStale {
-                        Label(l("common.plan.stale"),
-                              systemImage: "exclamationmark.arrow.circlepath")
-                            .foregroundStyle(Theme.caution)
-                    }
-                    NavigationLink(l("common.plan.viewSaved", ["count": "\(plan.pages.count)"])) { PlanDocumentView(doc: plan) }
-                        .accessibilityIdentifier("plan.viewSaved")
-                    Button(l("common.action.share") + " / " + l("common.action.print"), systemImage: "square.and.arrow.up") {
-                        let output = PlanPDFRenderer().render(plan)
-                        do {
-                            exportURL = try TemporaryExports.write(output.data, name: "DryRun-plan-\(plan.locale).pdf")
-                            TemporaryExports.hasActiveExport = true
-                            exportNote = output.continuedPageIDs.isEmpty ? nil : l("common.plan.continued")
-                            showPreview = true
-                        } catch {
-                            model.lastError = String(describing: error)
-                        }
-                    }
-                } footer: {
-                    Text(l("common.privacy.shareBoundary"))
-                }
-            }
-            if let h = model.household {
-                Section(l("common.plan.preparations")) {
-                    if h.completedPreparations.isEmpty { Text(l("common.plan.noneCompleted")) }
-                    ForEach(h.completedPreparations, id: \.actionID) { p in
-                        Label(model.actionTitle(p.actionID), systemImage: "checkmark.circle.fill")
+                    NavigationLink { OutageCardView() } label: { Label(model.localizer("family.title"), systemImage: "person.text.rectangle") }
+                        .accessibilityIdentifier("plan.familyCard")
+                    ForEach(doc.pages.first?.sections.prefix(2) ?? []) { section in
+                        VStack(alignment: .leading, spacing: 5) { Text(section.heading).font(.headline); ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in Text(line.text).font(.callout) } }
                     }
                 }
-            }
+                Section { Button(model.localizer("family.contacts")) { showingContacts = true } }
+                Section(t("home")) {
+                    if let home = model.home {
+                        if home.source == .sample { Label(model.localizer("family.example"), systemImage: "sparkles").font(.caption) }
+                        FloorPlanView(home: home, routes: [], highlightedFloorID: nil).frame(minHeight: 240)
+                        NavigationLink(t("editHome")) { HomeTabView() }
+                    } else { Text(t("layoutMissing")).foregroundStyle(.secondary); NavigationLink(t("editHome")) { HomeTabView() } }
+                    Button(t("homeAddress")) { showingAddress = true }.accessibilityIdentifier("plan.address")
+                }
+                Section(t("neighborhood")) {
+                    if let snapshot = doc.visualSnapshot, snapshot.homeCoordinate != nil || snapshot.savedPlaces.contains(where: { $0.coordinate != nil }) { NeighborhoodPlanPreview(snapshot: snapshot).frame(height: 190) }
+                    else { Text(t("noHome")).font(.callout).foregroundStyle(.secondary) }
+                    ForEach(model.savedPlaces) { place in
+                        VStack(alignment: .leading) { Text(place.label).font(.headline); if let address = place.addressText { Text(address) }; if let instructions = place.findingInstructions { Text(instructions).font(.caption) } }
+                    }
+                    Button(t("choosePlaces")) { showingMap = true }.accessibilityIdentifier("plan.map")
+                }
+                Section(t("selectedContent")) {
+                    Text(t("diagramScope")).font(.caption).foregroundStyle(.secondary)
+                    Toggle(model.localizer("family.critical"), isOn: $selection.includeCriticalInformation)
+                    Toggle(model.localizer("family.medication"), isOn: $selection.includeMedication)
+                    Toggle(model.localizer("family.instructions"), isOn: $selection.includeResponderInstructions)
+                    Toggle(model.localizer("family.contacts"), isOn: $selection.includeContacts)
+                    Toggle(model.localizer("common.plan.includePrivate"), isOn: $includePrivateNotes)
+                    Picker(t("paper"), selection: $paper) { Text("Letter").tag(PlanPDFRenderer.Paper.letter); Text("A4").tag(PlanPDFRenderer.Paper.a4) }
+                    DisclosureGroup(model.localizer("common.plan.scenarioPages")) {
+                        ForEach(RehearseTabView.scenarioIDs, id: \.self) { id in Toggle(model.localizer("common.scenario.\(id)"), isOn: Binding(get: { selectedScenarios.contains(id) }, set: { if $0 { selectedScenarios.insert(id) } else { selectedScenarios.remove(id) } })) }
+                        Button(model.localizer("common.plan.generate")) { Task { await model.generatePlan(scenarioIDs: Array(selectedScenarios), includePrivateNotes: includePrivateNotes, selection: selection) } }.disabled(model.isWorking || selectedScenarios.isEmpty || model.home == nil)
+                    }
+                    NavigationLink(t("selectedPreview")) { PlanDocumentView(doc: doc) }.accessibilityIdentifier("plan.viewSaved")
+                    Button(model.localizer("common.action.share") + " / " + model.localizer("common.action.print"), systemImage: "square.and.arrow.up") { export(doc) }.disabled(exporting)
+                }
+                Section { NavigationLink(t("official")) { HelpTabView() } }
+                if let saved = model.savedPlan, !saved.scenarioIDs.isEmpty {
+                    Section {
+                        if model.planIsStale { Label(model.localizer("common.plan.stale"), systemImage: "exclamationmark.arrow.circlepath").foregroundStyle(Theme.caution) }
+                        NavigationLink(model.localizer("common.plan.viewSaved", ["count": "\(saved.pages.count)"])) { PlanDocumentView(doc: saved) }
+                    }
+                }
+            } else { Text(t("noHousehold")) }
         }
-        .navigationTitle(l("common.tab.plan"))
-        .sheet(isPresented: $showPreview, onDismiss: {
-            TemporaryExports.hasActiveExport = false
-            TemporaryExports.purgeAll()
-            exportURL = nil
-        }) {
-            if let exportURL { PDFPreviewSheet(url: exportURL, note: exportNote) }
+        .navigationTitle(model.localizer("common.tab.plan"))
+        .sheet(isPresented: $showingMap) {
+            if let store = model.regionalResources { MapPlanningView(store: store) }
+            else if let content = model.content { MapPlanningView(content: content, client: model.publicClient, regionID: model.household?.regionID ?? "") }
         }
+        .sheet(isPresented: $showingContacts) { NavigationStack { FocusedHouseholdEditor(focus: .contacts) } }
+        .sheet(isPresented: $showingAddress) { HomeAddressEditorView() }
+        .sheet(isPresented: $showingExport, onDismiss: { TemporaryExports.hasActiveExport = false; TemporaryExports.purgeAll(); exportURL = nil }) { if let exportURL { PDFPreviewSheet(url: exportURL, note: nil) } }
     }
-
-    private var languages: [(code: String, label: String)] {
-        [("en", "English"), ("es", "Español"), ("vi", "Tiếng Việt")]
+    private func export(_ doc: PlanDocument) {
+        exporting = true
+        Task { @MainActor in
+            defer { exporting = false }
+            var panels: [PlanMapPanel] = []
+            if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: t("neighborhood")) }
+            guard model.household?.revision == doc.householdRevision, model.locale == doc.locale,
+                  (model.home?.id ?? model.household?.stableHomeID) == doc.homeID, (model.home?.revision ?? 0) == doc.homeRevision,
+                  model.savedPlaces.filter({ $0.homeID == doc.homeID }).sorted(by: { $0.id < $1.id }) == (doc.visualSnapshot?.savedPlaces ?? []).sorted(by: { $0.id < $1.id }) else { return }
+            let result = PlanPDFRenderer().render(doc, paper: paper, mapPanels: panels)
+            do { exportURL = try TemporaryExports.write(result.data, name: "DryRun-family-plan-\(doc.locale).pdf"); TemporaryExports.hasActiveExport = true; showingExport = true }
+            catch { model.lastError = String(describing: error) }
+        }
     }
 }
 
 /// Native, accessible rendering of the same PlanDocument used for the PDF.
 struct PlanDocumentView: View {
+    @Environment(AppModel.self) private var model
     let doc: PlanDocument
 
     var body: some View {
@@ -125,6 +105,14 @@ struct PlanDocumentView: View {
             }
             if let note = doc.fallbackNote { Text(note).font(.footnote) }
             if let content = doc.contentReviewBanner { Text(content).font(.footnote).foregroundStyle(.secondary) }
+            if let snapshot = doc.visualSnapshot {
+                if let home = snapshot.home {
+                    Section(home.label) { FloorPlanView(home: home, routes: [], highlightedFloorID: nil).frame(minHeight: 260) }
+                }
+                if snapshot.savedPlaces.contains(where: { $0.coordinate != nil }) || snapshot.homeCoordinate != nil {
+                    Section(model.localizer("map.neighborhood")) { NeighborhoodPlanPreview(snapshot: snapshot).frame(height: 220); Text(model.localizer("map.offline")).font(.caption) }
+                }
+            }
             ForEach(doc.pages) { page in
                 Section {
                     ForEach(page.sections) { section in
@@ -136,7 +124,7 @@ struct PlanDocumentView: View {
                                     Text(line.text).font(line.style == .prohibition ? .body.weight(.semibold) : .body)
                                     if line.isFallback {
                                         Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary)
-                                            .accessibilityLabel("Shown in English")
+                                            .accessibilityLabel(model.localizer("plan.fallbackNote"))
                                     }
                                 }
                             }
@@ -149,7 +137,8 @@ struct PlanDocumentView: View {
             }
             Section { Text(doc.footer).font(.footnote) }
         }
-        .navigationTitle("Plan")
+        .navigationTitle(model.localizer("common.tab.plan"))
+        .toolbar { PlanShareButton(doc: doc) }
     }
 
     private func icon(_ style: PlanLineStyle) -> String {
@@ -163,6 +152,8 @@ struct PlanDocumentView: View {
 }
 
 struct PDFPreviewSheet: View {
+    @Environment(AppModel.self) private var model
+    @State private var showingActivity = false
     let url: URL
     let note: String?
     @Environment(\.dismiss) private var dismiss
@@ -171,20 +162,21 @@ struct PDFPreviewSheet: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if let note { Text(note).font(.footnote).padding(8) }
-                PDFKitView(url: url)
+                PDFKitView(url: url).accessibilityIdentifier("pdf.preview")
             }
-            .navigationTitle("Plan preview")
+            .navigationTitle(model.localizer("map.selectedPreview"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(model.localizer("map.done")) { dismiss() } }
                 ToolbarItemGroup(placement: .bottomBar) {
                     // Explicit user actions only; sharing moves a copy outside the vault.
-                    ShareLink(item: url) { Label("Share", systemImage: "square.and.arrow.up") }
+                    Button { showingActivity = true } label: { Label(model.localizer("common.action.share"), systemImage: "square.and.arrow.up") }
                     Spacer()
-                    Button("Print", systemImage: "printer") { Printing.print(url: url) }
+                    Button(model.localizer("common.action.print"), systemImage: "printer") { Printing.print(url: url) }
                 }
             }
         }
+        .sheet(isPresented: $showingActivity) { ExportActivityView(url: url) { showingActivity = false } }
     }
 }
 
@@ -211,6 +203,74 @@ enum Printing {
         info.jobName = "Dry Run plan"
         controller.printInfo = info
         controller.printingItem = url
-        controller.present(animated: true, completionHandler: nil)
+        let lease = ExportActivityView.Coordinator()
+        lease.retain()
+        let presented = controller.present(animated: true) { _, _, _ in Task { @MainActor in lease.release() } }
+        if !presented { lease.release() }
+    }
+}
+
+/// Live map only; saved text remains the offline alternative. Indoor coordinates are never overlaid here.
+struct NeighborhoodPlanPreview: View {
+    @Environment(AppModel.self) private var model
+    let snapshot: PlanVisualSnapshot
+    var body: some View {
+        Map {
+            if let coordinate = snapshot.homeCoordinate { Marker(model.localizer("map.home"), systemImage: "house.fill", coordinate: coordinate.cl) }
+            ForEach(Array(snapshot.savedPlaces.enumerated()), id: \.element.id) { index, place in
+                if let coordinate = place.coordinate { Marker("\(index + 1). \(place.label)", coordinate: coordinate.cl).tint(place.purpose == .outsideMeetingPoint ? .green : .orange) }
+            }
+        }.mapStyle(.standard(pointsOfInterest: .excludingAll))
+            .accessibilityLabel(snapshot.savedPlaces.map(\.label).joined(separator: ", "))
+    }
+}
+
+
+/// Holds a protected file lease until the system activity actually finishes/cancels.
+struct ExportActivityView: UIViewControllerRepresentable {
+    let url: URL
+    let onComplete: @MainActor @Sendable () -> Void
+    @MainActor final class Coordinator {
+        var retained = false
+        func retain() { guard !retained else { return }; retained = true; TemporaryExports.retainActivity() }
+        func release() { guard retained else { return }; retained = false; TemporaryExports.releaseActivity() }
+    }
+    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        context.coordinator.retain()
+        let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        let coordinator = context.coordinator
+        let completed = onComplete
+        controller.completionWithItemsHandler = { _, _, _, _ in
+            Task { @MainActor in coordinator.release(); completed() }
+        }
+        return controller
+    }
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) { }
+    static func dismantleUIViewController(_ controller: UIActivityViewController, coordinator: Coordinator) { coordinator.release() }
+}
+
+
+struct PlanShareButton: View {
+    @Environment(AppModel.self) private var model
+    let doc: PlanDocument
+    @State private var url: URL?
+    @State private var preview = false
+    @State private var working = false
+    var body: some View {
+        Button {
+            let startingKey = model.currentKey; let startingPlaces = model.savedPlaces; let startingLocale = model.locale
+            working = true; Task { @MainActor in
+            defer { working = false }
+            var panels: [PlanMapPanel] = []
+            if let snapshot = doc.visualSnapshot { panels = await PlanMapSnapshotRenderer().panels(for: snapshot, title: model.localizer("map.neighborhood")) }
+            guard model.currentKey == startingKey, model.savedPlaces == startingPlaces, model.locale == startingLocale else { return }
+            do {
+                url = try TemporaryExports.write(PlanPDFRenderer().render(doc, mapPanels: panels).data, name: "DryRun-preview-\(UUID().uuidString).pdf")
+                TemporaryExports.hasActiveExport = true; preview = true
+            } catch { model.lastError = String(describing: error) }
+        } } label: { Label(model.localizer("common.action.share"), systemImage: working ? "hourglass" : "square.and.arrow.up") }
+            .disabled(working)
+            .sheet(isPresented: $preview, onDismiss: { TemporaryExports.hasActiveExport = false; TemporaryExports.purgeAll(); url = nil }) { if let url { PDFPreviewSheet(url: url, note: nil) } }
     }
 }

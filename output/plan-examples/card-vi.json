@@ -1,0 +1,280 @@
+{
+  "contentReviewBanner" : "Nội dung an toàn bản mẫu - đang chờ chuyên gia duyệt",
+  "contentVersion" : "2026.10.0",
+  "draftTranslationBanner" : "Bản dịch nháp - đang chờ duyệt ngôn ngữ / Draft translation - language review pending",
+  "footer" : "Kế hoạch luyện tập Dry Run. Các buổi diễn tập là bài tập theo giả định đã nêu; chúng không xác minh một tình huống khẩn cấp thật sẽ diễn ra thế nào.",
+  "generatedAt" : "2026-10-09T15:00:00Z",
+  "homeID" : "home-sample-ranch",
+  "homeRevision" : 0,
+  "householdID" : "hh-oak",
+  "householdRevision" : 1,
+  "includesPrivateNotes" : false,
+  "locale" : "vi",
+  "pages" : [
+    {
+      "id" : "family-card",
+      "kind" : {
+        "essentials" : {
+
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Gia đình bạn",
+          "id" : "identity",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Oak household (fictional)",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Nhà mẫu hư cấu",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "123 Example Lane, Fictional Town",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thông tin quan trọng",
+          "id" : "critical",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A: Dị ứng nghiêm trọng: FICTIONAL EXAMPLE: severe peanut allergy; FICTIONAL EXAMPLE: use the recorded communication board",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B: Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Kid: Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Grandpa: đi lại khó khăn; nhạy cảm với lạnh",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Liên hệ khẩn cấp",
+          "id" : "contacts",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Điểm gặp bên ngoài gần nhà",
+          "id" : "outsideMeetingPoint",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Điểm gặp dự phòng ngoài khu phố",
+          "id" : "backupMeetingPlace",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thông tin duy trì chăm sóc và vật dụng bổ sung",
+          "id" : "continuity",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S52"
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Lần xem lại gần nhất",
+          "id" : "review",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Chưa xem lại",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Thẻ khẩn cấp gia đình"
+    }
+  ],
+  "scenarioIDs" : [
+
+  ],
+  "schemaVersion" : 1,
+  "sourceIDs" : [
+    "S19",
+    "S26",
+    "S52"
+  ]
+}

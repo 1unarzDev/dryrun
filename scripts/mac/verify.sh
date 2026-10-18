@@ -65,9 +65,13 @@ fi
 
 # 4. UI journeys, screenshot tour, plan PDFs
 if [ "$NO_UI" = 1 ]; then
-  skip_step ui-journeys "build failed, no simulator, or disabled"; skip_step screenshot-tour "build failed, no simulator, or disabled"
+  skip_step app-integration-tests "build failed, no simulator, or disabled"; skip_step ui-journeys "build failed, no simulator, or disabled"; skip_step screenshot-tour "build failed, no simulator, or disabled"
   skip_step plan-pdfs "build failed, no simulator, or disabled"
 else
+  step app-integration-tests xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
+    -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
+    -only-testing:DryRunTests -resultBundlePath "$OUT/app-tests.xcresult"
+  result_summary "$OUT/app-tests.xcresult" "$OUT/app-tests-summary.json"
   step ui-journeys xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
     -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
     -only-testing:DryRunUITests/DemoJourneyUITests -resultBundlePath "$OUT/journeys.xcresult"

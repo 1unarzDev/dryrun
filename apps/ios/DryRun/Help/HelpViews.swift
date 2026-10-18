@@ -11,7 +11,7 @@ struct HelpTabView: View {
 
     var body: some View {
         let l = model.localizer
-        let regionID = model.household?.regionID ?? "tx-statewide"
+        let regionID = model.household?.regionID ?? ""
         let resources = model.regionalResources?.resources(for: regionID)
             ?? model.content?.resources(forRegion: regionID) ?? []
         let region = model.regionalResources?.regionInfo(for: regionID)
@@ -19,12 +19,16 @@ struct HelpTabView: View {
         List {
             Section {
                 // A number shown as text with an explicit call button; nothing dials on its own.
-                PhoneRow(label: l("common.help.call911"), number: "911", systemImage: "phone.fill")
-                    .listRowBackground(Theme.critical.opacity(0.08))
+                if ["US", "CA"].contains(model.household?.privateLocation?.countryCode?.uppercased() ?? "") {
+                    PhoneRow(label: l("common.help.call911"), number: "911", systemImage: "phone.fill")
+                        .listRowBackground(Theme.critical.opacity(0.08))
+                } else {
+                    Text(l("plan.help.localUnknown"))
+                }
                 if !model.capabilities.isOnline {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
                 }
-                if let h = model.household, !OutageCardBuilder.devices(in: h).isEmpty {
+                if model.household != nil {
                     Button { showCard = true } label: { Label(l("ui.card.open"), systemImage: "bolt.heart.fill") }
                         .foregroundStyle(Theme.critical)
                         .accessibilityIdentifier("help.outageCard")
@@ -43,12 +47,16 @@ struct HelpTabView: View {
                     Text("Browse verified directory places by county, search Apple Maps explicitly, and preview an ordinary trip. Location access is optional.")
                 }
             }
-            if let contacts = model.household?.contacts.filter({ $0.phone != nil }), !contacts.isEmpty {
+            if let contacts = model.household?.contacts.filter({ $0.hasUsablePhone }), !contacts.isEmpty {
                 Section(l("plan.section.contacts")) {
                     ForEach(contacts) { c in PhoneRow(label: "\(c.alias) · \(l("ui.contact.role.\(c.role.rawValue)"))", number: c.phone ?? "") }
                 }
             }
-            AlertsSection(regionID: regionID)
+            if PublicDataPolicy.isAllowedRegionID(regionID) {
+                AlertsSection(regionID: regionID)
+            } else {
+                Section { Text(l("native.localHelp")) }
+            }
             if let region {
                 Section {
                     Text("\(region.name): \(coverageText(region.coverage))").font(.footnote)

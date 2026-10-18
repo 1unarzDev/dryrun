@@ -1,5 +1,60 @@
 # Verification record
 
+## Family-preparedness revision (2026-10-17) — current evidence
+
+**Implementation prepared; native build and device test pending.** Starting checkout: main at
+`2a8ab385a113cbcebcb8dc5a594d8ed8bacdd5b3`. Current source revision is the commit introducing
+CLAUDE_NATIVE_HANDOFF.md; use `git log -1 --format='%H %s' -- docs/CLAUDE_NATIVE_HANDOFF.md` to identify it.
+The owner's two untracked audit/handoff files were read and preserved, not committed.
+
+Actual platform: Linux x86_64, Docker `swift:6.2`, Swift Testing 6.2.4; Node/pnpm. No Xcode/iOS SDK,
+simulator, physical iPhone or LiDAR capture was available. Owner offered a Mac through a separate Claude session;
+CLAUDE_NATIVE_HANDOFF.md gives commands and evidence gates. This pass cannot say Ready for iPhone testing.
+
+| Executed command/check | Current result |
+|---|---|
+| `DRYRUN_SCRATCH=revision-final scripts/swift.sh packages/DryRunCore test` | **181 tests / 27 suites passed** |
+| `DRYRUN_SCRATCH=revision-final scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
+| `cd services/public-api && pnpm test && pnpm typecheck` | **68 tests / 4 files passed**, TypeScript clean |
+| Docker Swift6.2 `swiftc -parse`, all app, app-test and UI-test Swift sources | Passed; **syntax only**, no native SDK typecheck |
+| `git diff --check`, shell syntax, Python artifact scripts compile | Passed |
+| `DRYRUN_DUMP=1 DRYRUN_SCRATCH=preview scripts/swift.sh packages/DryRunCore test --filter PlanDemoDump` | 1 opt-in generation test passed, seven fictional document JSON snapshots |
+| Portable reference PDFs | 14 Letter/A4 artifacts, text extraction and rendered reference QA; **not native CoreText/PDFKit output**. See output/README.md |
+| Native build, current simulator UI/integration tests, live Apple search/directions/snapshot | **Not run** |
+| Physical scan/review/assignment/relaunch/rehearse/export, interruption and unsupported hardware | **Not run** |
+| Real-household usability, safety expert or human translation review | **Not performed** |
+
+Fresh baseline was actually established before edits: core149/23, vault33/5, backend68/4 and typecheck passed.
+The final suites add meaningful no-layout migration, family/clinical selection, subject identity, cold-only/mixed
+support, saved-meetup link, stale routes, grade/refuge/window/callback tests. SpatialRevisionTests reuse13 layout
+configurations (studio/concave/basement/walkout/split/incomplete/duplicate/narrow/obstructed/offset landings/apartment/
+ranch/two-storey), enumerating fire origins with representative starts and flood/tornado destination/access cases.
+These fixtures do not establish all houses or real emergencies safe. Old tests were reconciled to current typed
+no-refuge/current-route semantics; no safety gate was disabled to force a route. Fixture regeneration now requires
+`DRYRUN_WRITE_FIXTURES=1`; ordinary empty environment no longer rewrites expected outcomes.
+
+Independent lane source reviews found and fixed stale whole-household form writes, unsupported meeting-task blank
+screens, hidden geometry in card-only exports, cross-page sensitive selection leaks, old route history in exports,
+false home markers/resource meetup defaults, closed-attic refuge eligibility and processing-generation invalidation.
+Final type-switch regressions verify that custom names survive while old compatibility/setup/runtime evidence is
+cleared; the app and both test targets were syntax-parsed again and vault tests rerun after this change.
+They did **not** inspect native screenshots. Local logs are in `artifacts/revision-20261017/logs` (ignored build
+artifacts). Portable PDF audit/results are retained with fictional examples; no real home data was collected.
+
+Native tests are authored and wired into project/scheme/verify script: 7 AppPersistenceTests, 3 MapRequestTests,
+4 PlanExportTests; 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
+in this pass. The fresh-install UI test uses in-memory storage; real vault force-quit/relaunch remains a separate
+native/device gate. Source parsing cannot establish their selectors or SDK concurrency correctness.
+
+Material unverified/limited work: real SDK RoomPlan categories/transforms/story/shared-frame alignment, actual
+MapKit failures/attribution, share/print lifecycle, small phone/large text/VoiceOver/Reduce Motion, EN/ES/VI end-to-end
+rendering and human translations. Manual edits support contextual corrections but arbitrary scan polygon resizing
+and unmatched stair landing creation remain limited. Reminders are not scheduled; some preparedness details use
+household-authored notes rather than tailored questionnaires. Dynamic validation text still has English fallbacks.
+Do not characterize this revision as fully complete or device verified. See REVISION_EVIDENCE.md for the mapping.
+
+## Historical records below — do not apply them to the current build
+
 ## MapKit and RoomPlan integration pass (2026-10-16)
 
 **Platform actually used:** Linux x86_64 checkout `/home/lunarz/dryrun`; portable Swift commands ran in the repository's

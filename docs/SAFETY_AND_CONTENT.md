@@ -19,7 +19,7 @@ simulation's implementation. Plans print "Prototype safety content - expert revi
 Rule semantics live in Swift (`Simulation/HazardRules.swift`, `DependencyModel.swift`); packs supply timing, choices,
 exclusions, advisories, and text keys only. See `docs/lanes/agent-a.md` for rule-by-rule detail.
 
-## Actions (`content/actions/actions.json`, 22 actions)
+## Actions and baseline preparedness
 
 Ranked lexicographically: (1) unmet essential power/assistance/exit/shelter requirement, (2) unknown fact that blocks
 dependable preparation, (3) scenario supply/continuity gap, (4) multi-scenario preparation, (5) general; ties broken by
@@ -36,8 +36,10 @@ included (meeting point, helper assignment, alert enrollment, practice drill, ut
 
 ## Claims explicitly excluded
 
-Not modeled and never displayed: fire spread, smoke tenability or concentrations, CO concentrations, structural
-failure, injury or survival probability, indoor temperature forecasts, medical safety deadlines, "safest real-time
+Authored, topology-aware fire/smoke, indoor-water and window-exposure visuals are educational exercise states;
+they do not simulate physical fire dynamics, hydraulic forecasts or structural failure. They share the deterministic
+routing exclusions and never determine route validity from pixels. Not modeled: smoke tenability/concentrations,
+CO concentrations, injury or survival probability, indoor temperature forecasts, medical safety deadlines, "safest real-time
 route", seconds-to-escape countdowns, engineered tornado-shelter certification, current flood depth at the home,
 road safety from map data, readiness percentages or survival scores, lives or money saved.
 
@@ -54,5 +56,31 @@ lines "[EN]"; public-directory data (English source text) is marked as English i
 
 ## Sources
 
-`content/sources/sources.json` lists S01–S31 with publisher, URL, check date, and review state. Regional directory
+`content/sources/sources.json` lists source IDs including the October 17 additions S52–S55 with publisher, URL, check date, and review state. Regional directory
 entries and which were verified against official pages are recorded in `docs/lanes/agent-c.md`.
+
+## October 17 changes
+
+The family card is household-level and optional clinical selections are explicit. Empty fields say not provided,
+not no conditions. Contacts use stored structured numbers; unknown foreign location gets no Texas contacts or
+assumed emergency number. Core/general planning has no supported-county prerequisite.
+
+Electrical equipment and medicine cold storage have distinct requirements (both may apply). Refrigerator
+instructions, compatibility, setup and duration must be supplied/confirmed by the household or provider; no
+patient-safe interruption or medicine-storage limit is inferred. Adding a backup establishes ownership only.
+
+Baseline coverage, inputs, direct editors, completion and citations are in PREPAREDNESS_COVERAGE. Alarm presence,
+location and physical functional check are distinct; a confirmed marker does not establish coverage/test success.
+Priority uses one deterministic lexicographic order; effort never outranks an essential dependency. Subject IDs
+and relevant fingerprints prevent one person's/device's completion from applying to another. A hypothetical
+comparison never changes factual preparation records.
+
+Confirmed destinations/grade/access are routing gates. Window inventory does not certify escape; exposed start
+rooms remain affected. Flood exercise assumptions are separate from regional flood forecasts; higher refuge is
+not a universal evacuation instruction. Tornado shelter is a household-confirmed planning choice, never an
+engineered safe-room/building certification. No helper re-entry is modeled as a successful rescue route.
+
+References S52 Red Cross family planning, S53 Red Cross fire preparedness, S54 FDA medicine guidance, S55 NWS
+flood safety were fetched successfully in this pass. Fetching sources is not professional safety review. EN/ES/VI
+native/spatial additions remain AI drafts, including untranslated source titles and user-authored notes retained
+verbatim. All safety wording and translations need qualified human review; no participants or endorsements exist.

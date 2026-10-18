@@ -78,11 +78,14 @@ struct RouteTests {
         #expect(r2.primary == nil)
         #expect(r2.exclusions.contains { $0.elementID == "pt-win-bed1" && $0.reason == "windowOperabilityUnconfirmed" })
 
-        // Household confirms it opens: usable as an emergency window exit for walkers only, with a verification note.
+        // Opening it is still insufficient. Explicit escape suitability is a separate household check.
         home.edit { h in
             let i = h.portals.firstIndex { $0.id == "pt-win-bed1" }!
             h.portals[i].operable = .confirmed(true)
         }
+        let openingOnly = plan(home, from: "sp-bed1", blockPortals: ["pt-front", "pt-back"])
+        #expect(openingOnly.primary == nil)
+        home.portals[home.portals.firstIndex { $0.id == "pt-win-bed1" }!].emergencyEscapeConfirmed = true
         let r3 = plan(home, from: "sp-bed1", blockPortals: ["pt-front", "pt-back"])
         #expect(r3.primary?.exitPortalID == "pt-win-bed1")
         #expect(r3.primary?.verificationNeeded.contains("pt-win-bed1.windowEscapeEveryPerson") == true)
@@ -235,7 +238,7 @@ struct RouteTests {
         let f = "fl-1"
         let home = HomeModel(
             id: "home-test-thick", label: "thick", source: .roomPlanScan,
-            floors: [Floor(id: f, level: 0, label: "G")],
+            floors: [Floor(id: f, level: 0, label: "G", exteriorGrade: .ground)],
             spaces: [Space(id: "sp-a", floorID: f, label: "A", kind: .other, polygon: SampleHomes.rect(0, 0, 4, 4)),
                      Space(id: "sp-b", floorID: f, label: "B", kind: .other, polygon: SampleHomes.rect(4.15, 0, 8, 4))],
             portals: [

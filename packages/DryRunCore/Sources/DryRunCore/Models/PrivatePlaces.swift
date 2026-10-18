@@ -24,6 +24,8 @@ public struct SavedPlace: Codable, Sendable, Hashable, Identifiable {
     public var label: String
     public var coordinate: GeographicCoordinate?
     public var addressText: String?
+    /// Household-authored directions for finding a landmark; useful without map tiles.
+    public var findingInstructions: String?
     public var provenance: SavedPlaceProvenance
     public var sourceResourceID: String?
     public var createdAt: Date
@@ -31,7 +33,7 @@ public struct SavedPlace: Codable, Sendable, Hashable, Identifiable {
 
     public init(id: String = UUID().uuidString, homeID: String, purpose: SavedPlacePurpose,
                 label: String, coordinate: GeographicCoordinate? = nil, addressText: String? = nil,
-                provenance: SavedPlaceProvenance = .userSelected, sourceResourceID: String? = nil,
+                findingInstructions: String? = nil, provenance: SavedPlaceProvenance = .userSelected, sourceResourceID: String? = nil,
                 createdAt: Date = Date(), updatedAt: Date = Date()) {
         self.id = id
         self.homeID = homeID
@@ -39,6 +41,7 @@ public struct SavedPlace: Codable, Sendable, Hashable, Identifiable {
         self.label = label
         self.coordinate = coordinate
         self.addressText = addressText
+        self.findingInstructions = findingInstructions
         self.provenance = provenance
         self.sourceResourceID = sourceResourceID
         self.createdAt = createdAt

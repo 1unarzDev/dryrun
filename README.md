@@ -4,10 +4,10 @@ Dry Run is an iOS app for families to rehearse the first minutes and the next 72
 household. The rehearsals show how one failure causes others, let the family compare preparations, and leave them
 with a plan they can open offline.
 
-> **Status: AI-assisted first-review prototype (2026-10-09).** The core engine, routing, vault, and backend are
-> tested. The iOS app builds with Xcode 27 and passes its UI journeys and the 42-screen tour on the iOS 27 simulator;
-> it has not been run on a physical iPhone. All safety content and translations are unreviewed drafts. See
-> `docs/VERIFICATION.md` and `docs/AI_ASSISTANCE.md`.
+> **October 17 revision: Implementation prepared; native build and device test pending.**
+> Portable core/vault/backend verification is recorded in [VERIFICATION](docs/VERIFICATION.md).
+> Earlier native results predate this revision. Continue native testing with
+> [CLAUDE_NATIVE_HANDOFF](docs/CLAUDE_NATIVE_HANDOFF.md). Safety text/translations remain unreviewed drafts.
 
 ## What runs today
 
@@ -16,7 +16,7 @@ with a plan they can open offline.
 | `packages/DryRunCore`: models, simulation, ranking, routing, plan builder (Foundation-only) | `scripts/swift.sh packages/DryRunCore test` (Swift 6.2 in Docker) or `swift test` on macOS | Tested |
 | `packages/DryRunVault`: encrypted vault, public pack cache | `scripts/swift.sh packages/DryRunVault test` | Tested (Linux uses swift-crypto; Keychain/file protection need a device) |
 | `services/public-api`: Hono public-data Worker | `cd services/public-api && pnpm install && pnpm test` · local: `pnpm dev` | Tested locally, not deployed |
-| `apps/ios`: SwiftUI app | `cd apps/ios && xcodegen && open DryRun.xcodeproj` · `scripts/mac/verify.sh` | Builds; UI tests pass on the simulator (not yet on a device) |
+| `apps/ios`: SwiftUI app | `cd apps/ios && xcodegen && open DryRun.xcodeproj` · `scripts/mac/verify.sh` | Current native build/UI/device checks pending |
 
 ### Requirements
 - Core/vault: Docker (the `swift:6.2` image) **or** Swift 6 / Xcode 26 on macOS.
@@ -24,22 +24,19 @@ with a plan they can open offline.
   RoomPlan scanning needs a LiDAR iPhone; everything else works without LiDAR.
 - Backend: Node 22+ and pnpm. No API keys are needed: the app runs fully on bundled data.
 
-## Try the demo (once the app builds)
+## Core journey
 
-1. Launch → **Try a fictional household**, then choose **Oak household**. This is a rural well, electric heat, an
-   oxygen concentrator, and a battery station nobody has confirmed works.
-2. **Rehearse → Freeze with power loss.** Step through: power out → heat stops → well pump stops → taps dry →
-   the concentrator has no confirmed backup. Answer the two decisions; unsafe options are never rewarded.
-3. **Debrief** → open "Confirm a backup that works with Oxygen concentrator" → **Try this change**. The same exercise
-   replays with only that change: the critical outage event disappears and the requirement is resolved. Your household
-   is not changed unless you tap **Mark preparation completed**.
-4. **Rehearse → Home fire.** The kitchen is blocked (an authored exercise condition), and the practice route
-   switches to the other exit. Routes appear in text and on the 2D plan.
-5. **Plan** → choose Tiếng Việt → **Generate plan** → view, share, or print the PDF. Untranslated lines are marked
-   [EN], and the draft-translation banner is visible.
-6. **Help**: shows the 911, 2-1-1 Texas, and STEAR (opt-in) contacts as text. It works without map tiles.
+Prepare → add family/contact information → optionally establish home and meeting places → rehearse a short
+scenario → resolve one practical preparation → share/print the live plan. No scan, account, address, or medical
+equipment is needed for the family emergency card. Example homes remain explicitly fictional.
 
-Airplane mode: everything above still works. Alerts say current conditions are unavailable.
+The three destinations are **Prepare, Rehearse, Plan**; settings/language are in the toolbar. All six hazards remain,
+with shared deterministic fire/flood/tornado spatial states. Live Apple maps/search/directions are online planning
+aids. Contacts, saved places, retained plans and home geometry remain local/offline.
+
+See [DEMO_SCRIPT](docs/DEMO_SCRIPT.md) for the current fictional journey and
+[REVISION_EVIDENCE](docs/REVISION_EVIDENCE.md) for implementation/verification limits. This native SwiftUI app cannot
+run in Expo Go; use Xcode and `scripts/mac/device.sh` for iPhone installation.
 
 ## Fictional data only
 Every household, home, and phone number (555-01xx) in `fixtures/` and `content/` is fictional.

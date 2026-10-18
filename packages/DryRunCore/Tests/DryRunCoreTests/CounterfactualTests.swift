@@ -91,7 +91,7 @@ struct CounterfactualTests {
         ]
         for (name, actual) in cases {
             let url = SimFixtures.repoRoot.appendingPathComponent("fixtures/scenarios/\(name)")
-            if ProcessInfo.processInfo.environment["DRYRUN_WRITE_FIXTURES"] != nil {
+            if ProcessInfo.processInfo.environment["DRYRUN_WRITE_FIXTURES"] == "1" {
                 try DryRunJSON.encoder().encode(actual).write(to: url)
             }
             let expected = try DryRunJSON.decoder().decode(Expected.self, from: Data(contentsOf: url))

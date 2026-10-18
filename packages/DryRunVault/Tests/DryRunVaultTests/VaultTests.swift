@@ -368,3 +368,27 @@ final class VerifyFailingProtection: FileProtectionApplying, @unchecked Sendable
     func protect(_ url: URL) throws {}
     func isProtected(_ url: URL) throws -> Bool { false }
 }
+
+@Suite("Intentional layout absence")
+struct LayoutAbsenceTests {
+    @Test func personalHouseholdWithoutLayoutPersistsWithoutFictionalGeometry() async throws {
+        let f = Fixture()
+        var household = SampleHouseholds.oak
+        household.isFictional = false
+        let payload = VaultPayload(household: household, home: nil, homeGeometryIntentionallyAbsent: true)
+        try await f.repo.save(payload)
+        let loaded = try #require(await f.repo.load())
+        #expect(loaded.home == nil)
+        #expect(loaded.hasValidHouseholdLayoutState)
+        #expect(loaded.household == household)
+    }
+
+    @Test func legacyMissingGeometryDoesNotBecomeAValidPersonalLayout() throws {
+        let payload = VaultPayload(household: SampleHouseholds.oak)
+        let loaded = try DryRunJSON.decoder().decode(VaultPayload.self, from: DryRunJSON.encoder().encode(payload))
+        #expect(!loaded.homeGeometryIntentionallyAbsent)
+        #expect(!loaded.hasValidHouseholdLayoutState)
+        #expect(VaultPayload(household: SampleHouseholds.oak, home: SampleHomes.ranch).hasValidHouseholdLayoutState)
+        #expect(!VaultPayload(homeGeometryIntentionallyAbsent: true).hasValidHouseholdLayoutState)
+    }
+}

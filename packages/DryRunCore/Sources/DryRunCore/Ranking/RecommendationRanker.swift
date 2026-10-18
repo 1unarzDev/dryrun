@@ -33,12 +33,21 @@ public enum ActionRules {
             var notes = def.feasibilityNotes
             if h.housing.tenancy == .renter, !def.renterFriendly { notes.append("feasibility.renter-permission") }
             if h.supplies.limitedBudget, def.effort == .moderate || def.effort == .high { notes.append("feasibility.budget") }
+            func subject(_ prefix: String, ids: [String]) -> String? {
+                // IDs may contain dots. Match declared subjects, preferring the longest exact prefix.
+                ids.sorted { ($0.count, $0) > ($1.count, $1) }.first { id in
+                    facts.contains { $0 == "\(prefix).\(id)" || $0.hasPrefix("\(prefix).\(id).") }
+                }.map { "\(prefix).\($0)" }
+            }
+            let subjectID = values["device"] != nil ? subject("equipment", ids: h.equipment.map(\.id))
+                : (values["person"] != nil ? subject("person", ids: h.people.map(\.id))
+                   : (values["backup"] != nil ? subject("backup", ids: h.backupPower.map(\.id)) : nil))
             out.append(Recommendation(
                 actionID: id, tier: tier, titleKey: "action.\(id).title", whyKey: "action.\(id).why" + (whySuffix.map { ".\($0)" } ?? ""), templateValues: values,
                 matchedFactIDs: facts, causeEventIDs: Array(Set(causeIDs)).sorted(), scenarioIDs: def.scenarioIDs,
                 tryIntervention: def.simulates != nil ? Intervention(actionID: id, parameters: tryParams ?? [:]) : nil,
                 modeledEffectKey: def.simulates != nil ? "action.\(id).effect" : nil, effort: def.effort,
-                feasibilityNotes: notes, unconfirmed: unconfirmed, sourceIDs: def.sourceIDs, verificationStatus: status))
+                feasibilityNotes: notes, unconfirmed: unconfirmed, sourceIDs: def.sourceIDs, verificationStatus: status, subjectID: subjectID))
         }
 
         // Essential powered equipment.
@@ -186,27 +195,27 @@ public enum RecommendationRanker {
     public static func rank(_ recs: [Recommendation]) -> [Recommendation] {
         var merged: [String: Recommendation] = [:]
         for r in recs {
-            if var existing = merged[r.actionID] {
+            if var existing = merged[r.id] {
                 if r.tier < existing.tier {
                     var keep = r
                     keep.matchedFactIDs = Array(Set(existing.matchedFactIDs + r.matchedFactIDs)).sorted()
                     keep.causeEventIDs = Array(Set(existing.causeEventIDs + r.causeEventIDs)).sorted()
-                    merged[r.actionID] = keep
+                    merged[r.id] = keep
                 } else {
                     existing.matchedFactIDs = Array(Set(existing.matchedFactIDs + r.matchedFactIDs)).sorted()
                     existing.causeEventIDs = Array(Set(existing.causeEventIDs + r.causeEventIDs)).sorted()
                     for (k, v) in r.templateValues where existing.templateValues[k] == nil { existing.templateValues[k] = v }
-                    merged[r.actionID] = existing
+                    merged[r.id] = existing
                 }
             } else {
                 var r2 = r
                 r2.matchedFactIDs = Array(Set(r.matchedFactIDs)).sorted()
-                merged[r.actionID] = r2
+                merged[r.id] = r2
             }
         }
         return merged.values.sorted { a, b in
-            (a.tier.rawValue, effortRank(a.effort), -a.scenarioIDs.count, a.actionID)
-                < (b.tier.rawValue, effortRank(b.effort), -b.scenarioIDs.count, b.actionID)
+            (a.tier.rawValue, effortRank(a.effort), -a.scenarioIDs.count, a.id)
+                < (b.tier.rawValue, effortRank(b.effort), -b.scenarioIDs.count, b.id)
         }
     }
 }

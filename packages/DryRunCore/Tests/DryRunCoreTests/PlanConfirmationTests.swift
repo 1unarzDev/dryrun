@@ -8,7 +8,7 @@ struct PlanConfirmationTests {
     static func scanned() -> HomeModel {
         HomeModel(
             id: "home-scan", label: "Scan", source: .roomPlanScan,
-            floors: [Floor(id: "f0", level: 0, label: "Ground")],
+            floors: [Floor(id: "f0", level: 0, label: "Ground", exteriorGrade: .ground)],
             spaces: [
                 Space(id: "s1", floorID: "f0", label: "Room 1", kind: .other,
                       polygon: [Vec2(0, 0), Vec2(4, 0), Vec2(4, 3), Vec2(0, 3)], labelConfirmed: false),

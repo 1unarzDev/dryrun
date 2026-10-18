@@ -4,6 +4,7 @@ public enum HomeIssueKind: String, Codable, Sendable, Hashable, CaseIterable {
     case invalidPolygon
     case duplicateID
     case unknownFloor
+    case exteriorGradeUnknown
     case portalUnverified
     case portalDestinationUnknown
     case portalSpaceMissing
@@ -51,6 +52,10 @@ public enum HomeValidator {
             out.append(HomeIssue(kind: .duplicateID, severity: .blocking, elementID: id, message: "ID \(id) is used more than once."))
         }
 
+        for floor in home.floors where floor.exteriorGrade == .unknown || (home.source == .roomPlanScan && floor.exteriorGrade == nil) {
+            out.append(HomeIssue(kind: .exteriorGradeUnknown, severity: .needsConfirmation, elementID: floor.id,
+                message: "Confirm how \(floor.label) relates to exterior ground; captured story order cannot establish a walking exit."))
+        }
         for s in home.spaces {
             if floors[s.floorID] == nil { out.append(HomeIssue(kind: .unknownFloor, severity: .blocking, elementID: s.id, message: "\(s.label) refers to a missing floor.")) }
             if !Geometry.isSimplePolygon(s.polygon) {
@@ -76,7 +81,7 @@ public enum HomeValidator {
             guard let floor = floors[p.floorID] else {
                 out.append(HomeIssue(kind: .unknownFloor, severity: .blocking, elementID: p.id, message: "Opening refers to a missing floor.")); continue
             }
-            let ground = Graph.isGround(floor, tolerance)
+            let ground = Graph.isGround(floor, tolerance) && !(home.source == .roomPlanScan && floor.exteriorGrade == nil)
             for side in [p.sideA, p.sideB] {
                 switch side {
                 case .unknown:

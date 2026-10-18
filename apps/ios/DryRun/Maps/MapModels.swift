@@ -65,7 +65,7 @@ enum MapRegionCatalog {
                                  spanLatitude: region.mapSpanLatitude ?? 0.8,
                                  spanLongitude: region.mapSpanLongitude ?? 1.0)
         }
-        return fallback[region?.id ?? "tx-statewide"] ?? fallback["tx-statewide"] ?? MapRegionHint(latitude: 0, longitude: 0, spanLatitude: 1, spanLongitude: 1)
+        return region.flatMap { fallback[$0.id] } ?? MapRegionHint(latitude: 0, longitude: 0, spanLatitude: 140, spanLongitude: 300)
     }
 }
 
@@ -115,6 +115,7 @@ final class RegionalResourcesStore {
 
     /// Returns the current validated snapshot for an explicit region without changing the user's browsing county.
     func resources(for regionID: String) -> [PublicResource] {
+        guard regionIDs.contains(regionID) else { return [] }
         var byID: [String: PublicResource] = [:]
         // Keep the old ContentLibrary order while allowing a newer validated
         // pack to replace obsolete records with the same ID.
@@ -135,6 +136,7 @@ final class RegionalResourcesStore {
 
     func refresh() async {
         let regionID = selectedRegionID
+        guard regionIDs.contains(regionID) else { freshness = .unavailable; return }
         generation += 1
         let ticket = generation
         isRefreshing = true
@@ -167,6 +169,8 @@ struct AppleMapSearchResult: Identifiable, Hashable, Sendable {
     let coordinate: GeographicCoordinate
     let address: String?
     let category: String?
+    var phone: String? = nil
+    var website: String? = nil
     var selectionID: String { MapSelectionID.apple(id) }
 }
 

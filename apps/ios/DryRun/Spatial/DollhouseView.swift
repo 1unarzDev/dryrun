@@ -8,15 +8,18 @@ import DryRunCore
 // Mapping: floor plane (x, y) → RealityKit (x, elevation, -y), metres.
 
 struct DollhouseView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     let home: HomeModel
     let routes: [RoutePath]
     let floorID: String?
+    let spatialState: SpatialExerciseState?
     @State private var visible = false
 
-    init(home: HomeModel, routes: [RoutePath], floorID: String?) {
+    init(home: HomeModel, routes: [RoutePath], floorID: String?, spatialState: SpatialExerciseState? = nil) {
         self.home = home
         self.routes = routes
-        self.floorID = floorID
+        self.floorID = floorID; self.spatialState = spatialState
     }
 
     /// Rebuild only when the inputs change, never per frame. Includes the home's CONTENT fingerprint (an edit without
@@ -25,20 +28,20 @@ struct DollhouseView: View {
         let routePoints = routes.map { r in
             r.legs.map { leg in "\(leg.floorID):" + leg.points.map { "\($0.x),\($0.y)" }.joined(separator: ";") }.joined(separator: "|")
         }.joined(separator: "#")
-        return "\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)"
+        return "\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)#\(spatialState?.stageID ?? "")#\(spatialState?.hazard.rawValue ?? "")#\(spatialState?.affectedSpaceIDs.joined(separator: ",") ?? "")#\(spatialState?.exposedSpaceIDs?.joined(separator: ",") ?? "")#\(spatialState?.destinationSpaceID ?? "")"
     }
 
     var body: some View {
         ZStack {
             if visible {
                 RealityView { content in
-                    let root = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID)
+                    let root = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID, spatialState: spatialState)
                     root.name = sceneKey
                     content.add(root)
                 } update: { content in
                     guard let root = content.entities.first, root.name != sceneKey else { return }
                     content.remove(root)
-                    let fresh = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID)
+                    let fresh = DollhouseBuilder.build(home: home, routes: routes, floorID: floorID, spatialState: spatialState)
                     fresh.name = sceneKey
                     content.add(fresh)
                 }
@@ -59,8 +62,9 @@ struct DollhouseView: View {
 enum DollhouseBuilder {
     static let wallHeight: Float = 0.9   // cut-away height
     static let slab: Float = 0.05
+    private static var meshCache: [String: MeshResource] = [:]
 
-    static func build(home: HomeModel, routes: [RoutePath], floorID: String?) -> Entity {
+    static func build(home: HomeModel, routes: [RoutePath], floorID: String?, spatialState: SpatialExerciseState? = nil) -> Entity {
         let root = Entity()
         let floors = home.floors.filter { floorID == nil || $0.id == floorID }
         // uniquingKeysWith, not uniqueKeysWithValues: a duplicate floor ID is a reportable data problem
@@ -92,16 +96,37 @@ enum DollhouseBuilder {
                 root.addChild(ModelEntity(mesh: mesh, materials: [s.kind == .hallway ? hallMat : floorMat]))
             }
         }
-        for w in ManualLayout.derivedWalls(home) where floors.contains(where: { $0.id == w.floorID }) {
+        for w in HomeRenderGeometry.wallSegments(home) where floors.contains(where: { $0.id == w.floorID }) {
             root.addChild(bar(from: p3(w.a, w.floorID), to: p3(w.b, w.floorID), height: wallHeight,
                               thickness: Float(max(w.thicknessMeters, 0.06)), material: wallMat))
         }
         for p in home.portals where floors.contains(where: { $0.id == p.floorID }) {
-            guard p.kind != .window || p.verification == .verified else { continue }
+
             let exit = p.leadsToExterior && p.verification == .verified && p.kind != .window
-            let mat = exit ? exitMat : (p.verification == .verified ? wallMat : unverifiedMat)
+            let mat = p.kind == .window ? SimpleMaterial(color: spatialState?.hazard == .tornado ? .systemPurple : .systemTeal, isMetallic: false) : exit ? exitMat : (p.verification == .verified ? wallMat : unverifiedMat)
             // A thin threshold marker in the opening (doors are gaps in the cut-away walls visually).
             root.addChild(bar(from: p3(p.a, p.floorID, lift: 0.01), to: p3(p.b, p.floorID, lift: 0.01), height: 0.03, thickness: 0.25, material: mat))
+        }
+        for obstacle in home.obstacles where floors.contains(where: { $0.id == obstacle.floorID }) {
+            if let mesh = polygonMesh(obstacle.polygon.map { p3($0, obstacle.floorID, lift: 0.08) }) {
+                root.addChild(ModelEntity(mesh: mesh, materials: [SimpleMaterial(color: .darkGray, isMetallic: false)]))
+            }
+        }
+        for connector in home.connectors {
+            guard let from = home.space(connector.fromSpaceID), let to = home.space(connector.toSpaceID),
+                  floors.contains(where: { $0.id == from.floorID || $0.id == to.floorID }) else { continue }
+            let a = p3(connector.fromPoint, from.floorID, lift: 0.08), b = p3(connector.toPoint, to.floorID, lift: 0.08)
+            for index in 0...8 {
+                let t = Float(index) / 8
+                let step = ModelEntity(mesh: .generateBox(width: 0.7, height: 0.06, depth: 0.22), materials: [wallMat])
+                step.position = a + (b - a) * t
+                root.addChild(step)
+            }
+        }
+        for room in home.spaces where spatialState?.affectedSpaceIDs.contains(room.id) == true && floors.contains(where: { $0.id == room.floorID }) {
+            if let mesh = polygonMesh(room.polygon.map { p3($0, room.floorID, lift: 0.10) }) {
+                root.addChild(ModelEntity(mesh: mesh, materials: [SimpleMaterial(color: spatialState?.hazard == .flashFlood ? .systemBlue : .systemOrange, isMetallic: false)]))
+            }
         }
         for a in home.annotations {
             guard let pos = a.position, let fid = a.floorID, floors.contains(where: { $0.id == fid }) else { continue }
@@ -135,7 +160,11 @@ enum DollhouseBuilder {
     static func bar(from a: SIMD3<Float>, to b: SIMD3<Float>, height: Float, thickness: Float, material: SimpleMaterial) -> ModelEntity {
         let d = b - a
         let len = max(simd_length(SIMD2(d.x, d.z)), 0.001)
-        let e = ModelEntity(mesh: .generateBox(width: len, height: height, depth: thickness), materials: [material])
+        let key = "box:\(len),\(height),\(thickness)"
+        let mesh: MeshResource
+        if let cached = meshCache[key] { mesh = cached }
+        else { mesh = .generateBox(width: len, height: height, depth: thickness); cache(mesh, key: key) }
+        let e = ModelEntity(mesh: mesh, materials: [material])
         e.position = (a + b) / 2 + SIMD3(0, height / 2, 0)
         e.orientation = simd_quatf(angle: atan2(-d.z, d.x), axis: SIMD3(0, 1, 0))
         return e
@@ -146,6 +175,8 @@ enum DollhouseBuilder {
     /// in the review UI rather than drawing a reassuring floor.
     static func polygonMesh(_ verts: [SIMD3<Float>]) -> MeshResource? {
         guard verts.count >= 3 else { return nil }
+        let key = "polygon:" + verts.map { "\($0.x),\($0.y),\($0.z)" }.joined(separator: ";")
+        if let cached = meshCache[key] { return cached }
         // Dollhouse maps the canonical floor's y coordinate to RealityKit's -z axis.
         let polygon = verts.map { Vec2(Double($0.x), Double(-$0.z)) }
         guard let triangles = Geometry.triangulate(polygon) else { return nil }
@@ -153,6 +184,12 @@ enum DollhouseBuilder {
         desc.positions = MeshBuffers.Positions(verts)
         let idx = triangles.flatMap { $0.map(UInt32.init) }
         desc.primitives = .triangles(idx)
-        return try? MeshResource.generate(from: [desc])
+        guard let mesh = try? MeshResource.generate(from: [desc]) else { return nil }
+        cache(mesh, key: key)
+        return mesh
+    }
+    private static func cache(_ mesh: MeshResource, key: String) {
+        if meshCache.count >= 512 { meshCache.removeAll(keepingCapacity: true) }
+        meshCache[key] = mesh
     }
 }

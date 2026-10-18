@@ -127,5 +127,8 @@
   "card.gap.runtimeUnknown": "Record how long this device runs on backup, from the manufacturer or care plan.",
   "card.gap.noCareContact": "Add the equipment supplier or care team phone number.",
   "card.gap.noOutOfAreaContact": "Add an out-of-area contact everyone can call or text.",
-  "card.gap.noConfirmedDestination": "Agree on a place with power you could go to, and confirm it with the host."
+  "card.gap.noConfirmedDestination": "Agree on a place with power you could go to, and confirm it with the host.",
+  "plan.help.localUnknown": "Local emergency number not recorded. Verify the number for your country before an emergency.",
+  "plan.meeting.near": "Outside meetup near home",
+  "plan.meeting.backup": "Backup meetup outside neighborhood"
 }

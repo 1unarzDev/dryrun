@@ -43,7 +43,7 @@ public struct RehearsalCursor: Sendable, Equatable {
     }
 
     public var snapshotAtCursor: SimulationSnapshot? {
-        result.snapshots.last { $0.simMinute <= currentMinute } ?? result.snapshots.first
+        result.snapshots.last { ($0.revealedEventCount.map { $0 <= revealed } ?? ($0.simMinute <= currentMinute)) } ?? result.snapshots.first
     }
 }
 

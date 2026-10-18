@@ -40,7 +40,7 @@ public struct RehearsalEngine: Sendable {
         try run.execute()
         let recs = RecommendationRanker.rank(ActionRules.evaluate(run.summary(), catalog: actions))
         return RehearsalResult(input: input, events: run.events, snapshots: run.snapshots, decisions: run.decisions,
-                               routes: run.routes, recommendations: recs, unknowns: run.unknowns.sorted(),
+                               routes: run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }, recommendations: recs, unknowns: run.unknowns.sorted(),
                                engineVersion: Self.engineVersion)
     }
 
@@ -123,6 +123,7 @@ struct RunState {
     var stickyUnmet: Set<String> = []
     var idCounts: [String: Int] = [:]
     var currentRoutes: [String: RouteResult] = [:]
+    var spatialState: SpatialExerciseState?
     var onBackup: Set<String> = []
     var phaseID: String
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
@@ -322,7 +323,7 @@ struct RunState {
                 emitServiceChange(node: node, state: new, trigger: trigger)
             }
             // Running on backup is a distinct, explained state (not just "operational").
-            for eq in household.equipment.sorted(by: { $0.id < $1.id }) where !eq.needsRefrigeration {
+            for eq in household.equipment.sorted(by: { $0.id < $1.id }) where eq.requiresElectricalPower {
                 let a = assignments[Load.equipment(eq.id)]
                 let ob = merged[Svc.device(eq.id)] == .operational && merged[Svc.homePower] != .operational && !relocated
                     && a?.state == .operational && a?.sourceID != nil
@@ -395,7 +396,7 @@ struct RunState {
             if !h.housing.wellPressureTankGallons.isConfirmed { unknowns.insert("housing.wellPressureTankGallons") }
         }
         if !h.supplies.storedWaterGallons.isConfirmed { unknowns.insert("supplies.storedWaterGallons") }
-        for eq in h.equipment where eq.isEssential && !eq.needsRefrigeration {
+        for eq in h.equipment where eq.isEssential && eq.requiresElectricalPower {
             if eq.compatibleBackupIDs.isEmpty { unknowns.insert("equipment.\(eq.id).backup") }
         }
         for b in h.backupPower where !b.setupConfirmed.isConfirmed { unknowns.insert("backup.\(b.id).setupConfirmed") }
@@ -421,8 +422,9 @@ struct RunState {
         for eq in household.equipment where eq.isEssential {
             let s = services[Svc.device(eq.id)] ?? .unknown
             if s == .unavailable || s == .unknown {
-                unmet.insert(eq.needsRefrigeration ? "req.refrigeration.\(eq.id)" : "req.power.\(eq.id)")
-            } else if s == .degraded, eq.needsRefrigeration {
+                if eq.requiresColdStorage { unmet.insert("req.refrigeration.\(eq.id)") }
+                if eq.requiresElectricalPower { unmet.insert("req.power.\(eq.id)") }
+            } else if s == .degraded, eq.requiresColdStorage {
                 unmet.insert("req.refrigeration.\(eq.id)")
             }
         }
@@ -444,13 +446,17 @@ struct RunState {
             "res.handset.powerBankCharges": ResourceQuantity(amount: powerBankCharges, unit: "charges"),
         ]
         for (sid, e) in backupEnergy { res["res.backup.\(sid)"] = ResourceQuantity(amount: e.map(Fmt.round2), unit: "Wh") }
-        for (eid, r) in deviceRuntime where household.equipment.contains(where: { $0.id == eid && !$0.needsRefrigeration }) {
+        for (eid, r) in deviceRuntime where household.equipment.contains(where: { $0.id == eid && $0.requiresElectricalPower }) {
             res["res.device.\(eid).runtime"] = ResourceQuantity(amount: r.map(Fmt.round2), unit: "h")
         }
         let fired = events.filter { $0.simMinute == minute }.map(\.id)
+        let sceneTriggerCount: Int
+        if let scene = spatialState, scene != snapshots.last?.spatialState,
+           let trigger = events.firstIndex(where: { $0.id == scene.stageID }) { sceneTriggerCount = trigger + 1 }
+        else { sceneTriggerCount = events.count }
         let snap = SimulationSnapshot(simMinute: minute, services: services, resources: res, unmetRequirements: currentUnmet.sorted(),
-                                      unknowns: unknowns.sorted(), firedEventIDs: fired)
-        if let last = snapshots.last, last.simMinute == minute { snapshots[snapshots.count - 1] = snap } else { snapshots.append(snap) }
+                                      unknowns: unknowns.sorted(), firedEventIDs: fired, spatialState: spatialState, revealedEventCount: sceneTriggerCount)
+        snapshots.append(snap)
     }
 
     // MARK: Emission

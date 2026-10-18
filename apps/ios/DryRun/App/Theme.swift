@@ -279,8 +279,9 @@ struct PhoneRow: View {
 enum PhoneLink {
     /// tel: URL from the digits of a displayed number ("2-1-1" → tel:211). Nil when there are no digits.
     static func url(_ number: String) -> URL? {
-        let digits = number.filter(\.isNumber)
-        return digits.isEmpty ? nil : URL(string: "tel:\(digits)")
+        let digits = number.filter { $0.isASCII && $0.isNumber }
+        guard (3...15).contains(digits.count) else { return nil }
+        return URL(string: "tel:\(number.trimmingCharacters(in: .whitespaces).hasPrefix("+") ? "+" : "")\(digits)")
     }
 }
 

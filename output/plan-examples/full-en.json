@@ -1,0 +1,4608 @@
+{
+  "contentReviewBanner" : "Prototype safety content - expert review pending",
+  "contentVersion" : "2026.10.0",
+  "footer" : "Dry Run practice plan. Rehearsals are exercises under stated assumptions; they do not verify how a real emergency will go.",
+  "generatedAt" : "2026-10-09T15:00:00Z",
+  "homeID" : "home-sample-ranch",
+  "homeRevision" : 1,
+  "householdID" : "hh-oak",
+  "householdRevision" : 1,
+  "includesPrivateNotes" : false,
+  "locale" : "en",
+  "pages" : [
+    {
+      "id" : "family-card",
+      "kind" : {
+        "essentials" : {
+
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Your household",
+          "id" : "identity",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Oak household (fictional)",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Fictional example home",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "123 Example Lane, Fictional Town",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Critical information",
+          "id" : "critical",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A: Severe allergies: FICTIONAL EXAMPLE: severe peanut allergy; FICTIONAL EXAMPLE: use the recorded communication board",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B: Not provided or not selected for this export",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Kid: Not provided or not selected for this export",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Grandpa: limited mobility; cold-sensitive; Oxygen concentrator",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Emergency contacts",
+          "id" : "contacts",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Outside meeting place near home",
+          "id" : "outsideMeetingPoint",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Backup meeting place outside the neighborhood",
+          "id" : "backupMeetingPlace",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Additional continuity and supplies",
+          "id" : "continuity",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Grandpa · Oxygen concentrator: No backup is recorded as working with this device. Runtime on backup: unknown — confirm with the manufacturer or care plan",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S52"
+              ],
+              "style" : "normal",
+              "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Last reviewed",
+          "id" : "review",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Not reviewed yet",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Family emergency card"
+    },
+    {
+      "id" : "essentials",
+      "kind" : {
+        "essentials" : {
+
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Who lives here",
+          "id" : "people",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A — Not provided or not selected for this export",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B — Not provided or not selected for this export",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Kid — Not provided or not selected for this export",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Grandpa — limited mobility, cold-sensitive",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Outside meeting point",
+          "id" : "meeting",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.meeting",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Backup meetup outside neighborhood: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.meeting",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Outside meetup near home: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Neighborhood and meeting places",
+          "id" : "neighborhood",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.savedPlace",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "1. Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.savedPlace",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "2. Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "People to contact",
+          "id" : "contacts",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.contact.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Example trusted contact: +1 202 555 0148",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Essential equipment",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Oxygen concentrator: backup not confirmed. Runtime on backup: unknown — confirm with the manufacturer or care plan.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Getting somewhere else",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Stored water",
+          "id" : "water",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.water.target",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Storage target for 4 people for 3 days: 12 gallons (CDC storage target of 1 gallon per person per day, before pet needs). Stored now: 5 gallons.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.water.pets",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Add extra water for pets.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Plan dates",
+          "id" : "dates",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.dates.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Plan generated 2026-10-09. Household information revision 1; home revision 1; content version 2026.10.0.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.dates.notReviewed",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Not yet reviewed by the household.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Household essentials"
+    },
+    {
+      "id" : "scenario-home-fire",
+      "kind" : {
+        "scenario" : {
+          "_0" : "home-fire"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Do this first",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.1",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "prohibition",
+              "text" : "Get out and stay out. Never go back inside for people, pets, or belongings.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.2",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Use your second way out if smoke or fire blocks the first. Crawl low under smoke.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.3",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Go to the outside meeting point, then call 911 from outside.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.4",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "If you cannot get out, close the door, cover vents and cracks, call 911, and signal from a window.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Practice route in your home",
+          "id" : "homeplan",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "From Parent A — Main bedroom: Main bedroom → Hallway → Living room → outside.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "No independent second way out from Parent A — Main bedroom is confirmed in the home model.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "From Parent B — Main bedroom: Main bedroom → Hallway → Living room → outside.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "No independent second way out from Parent B — Main bedroom is confirmed in the home model.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "From Kid — Kid's bedroom: Kid's bedroom → Hallway → Living room → outside.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "No independent second way out from Kid — Kid's bedroom is confirmed in the home model.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "From Grandpa — Living room: Living room → outside.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "No independent second way out from Grandpa — Living room is confirmed in the home model.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.meeting.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Meet at: Mailbox at the end of the driveway (fictional)",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.caveat",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Practice route under these assumptions only. It is not a real-time safest route; check your actual doors and windows.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Who helps whom",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Top preparations for this household",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.relocation.arrange.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Arrange a place to go and a way to get there",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.fire.verify-second-exit.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Check that every room has a second way out",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.pets.carrier-plan.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S19",
+                "S20"
+              ],
+              "style" : "normal",
+              "text" : "Plan how your pets leave with you",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "If this happens: Home fire"
+    },
+    {
+      "id" : "scenario-tornado",
+      "kind" : {
+        "scenario" : {
+          "_0" : "tornado"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Do this first",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.1",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "At a tornado warning, go immediately to your shelter spot: lowest floor, interior room, away from windows.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.2",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Cover your head and neck. Help anyone who needs assistance to get there.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.3",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Keep a way to receive warnings at night, such as phone alerts or a weather radio.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.4",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "prohibition",
+              "text" : "Do not try to travel to a distant shelter once a warning is issued unless officials direct it and you planned it in advance.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Shelter spot",
+          "id" : "shelter",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.shelter.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Shelter spot: Hall closet (lowest floor, interior, away from windows, as confirmed by the household).",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.shelter.notCertified",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "This is a household-chosen spot, not an engineered safe room.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "From Parent A — Main bedroom: Main bedroom → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "From Parent B — Main bedroom: Main bedroom → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "From Kid — Kid's bedroom: Kid's bedroom → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "From Grandpa — Living room: Living room → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Who helps whom",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Essential equipment",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Oxygen concentrator: backup not confirmed. Runtime on backup: unknown — confirm with the manufacturer or care plan.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Top preparations for this household",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Make an outage plan for Oxygen concentrator with your supplier or care team",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Confirm a backup that works with Oxygen concentrator",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.water.store-3day.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Store 12 gallons of water",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "If this happens: Tornado"
+    },
+    {
+      "id" : "scenario-flash-flood",
+      "kind" : {
+        "scenario" : {
+          "_0" : "flash-flood"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Do this first",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.1",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "prohibition",
+              "text" : "Turn around, don't drown: never walk, swim, or drive through flood water.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.2",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "normal",
+              "text" : "Move to higher ground right away when told to, or when water is rising. Follow official instructions.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.3",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "prohibition",
+              "text" : "Never drive around barricades. Map directions do not show whether a road is flooded.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.4",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "normal",
+              "text" : "If you have no car, contact your agreed ride or local officials early, before roads close.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Getting somewhere else",
+          "id" : "transport",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Who helps whom",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Essential equipment",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Oxygen concentrator: backup not confirmed. Runtime on backup: unknown — confirm with the manufacturer or care plan.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Top preparations for this household",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Make an outage plan for Oxygen concentrator with your supplier or care team",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Confirm a backup that works with Oxygen concentrator",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.water.store-3day.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Store 12 gallons of water",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "If this happens: Flash flood"
+    },
+    {
+      "id" : "scenario-freeze-power-loss",
+      "kind" : {
+        "scenario" : {
+          "_0" : "freeze-power-loss"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Do this first",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.1",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "If an essential device loses power, follow its care plan and the backup you arranged. In an emergency, call 911.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.2",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Never use an oven, stove, grill, or camp heater to heat your home.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.3",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Use a generator only outdoors, at least 20 feet from windows, doors, and vents. Never run one in a home or garage.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.4",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "If heat stays off, go early to the warm place you agreed on, while travel is still possible.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.5",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Keep the refrigerator and freezer closed. Use stored water first.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Getting somewhere else",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Who helps whom",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Essential equipment",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Oxygen concentrator: backup not confirmed. Runtime on backup: unknown — confirm with the manufacturer or care plan.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Stored water",
+          "id" : "water",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.water.target",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Storage target for 4 people for 3 days: 12 gallons (CDC storage target of 1 gallon per person per day, before pet needs). Stored now: 5 gallons.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.water.pets",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Add extra water for pets.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Top preparations for this household",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.relocation.arrange.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Arrange a place to go and a way to get there",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Make an outage plan for Oxygen concentrator with your supplier or care team",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Confirm a backup that works with Oxygen concentrator",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "If this happens: Freeze with power loss"
+    },
+    {
+      "id" : "scenario-heat-grid-strain",
+      "kind" : {
+        "scenario" : {
+          "_0" : "heat-grid-strain"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Do this first",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.1",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Move to your agreed cooled place before the home heats up, especially anyone who is heat-sensitive.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.2",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "A fan alone may not prevent heat illness in extreme heat.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.3",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Call 911 for signs of heat stroke, such as confusion, fainting, or a very high body temperature.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.4",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "prohibition",
+              "text" : "Ask the care provider in advance how heat or a power outage affects medicines and equipment. Do not change medicines on your own.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Getting somewhere else",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Who helps whom",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Essential equipment",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Oxygen concentrator: backup not confirmed. Runtime on backup: unknown — confirm with the manufacturer or care plan.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Top preparations for this household",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.relocation.arrange.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S20",
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Arrange a place to go and a way to get there",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Make an outage plan for Oxygen concentrator with your supplier or care team",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Confirm a backup that works with Oxygen concentrator",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "If this happens: Heat wave with grid strain"
+    },
+    {
+      "id" : "scenario-water-outage",
+      "kind" : {
+        "scenario" : {
+          "_0" : "water-outage"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Do this first",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.1",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Follow the exact advisory from your water utility. Different advisories need different actions.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.2",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Boil water advisory: use bottled or stored water, or bring tap water to a rolling boil for 1 minute (3 minutes above 6,500 feet), as your utility advises.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.3",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Do not drink advisory: do not drink the tap water and do not boil it. Boiling does not remove chemicals.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.4",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Do not use advisory: do not use tap water for any purpose. Use stored or bottled water.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Getting somewhere else",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Vehicle: 5 seats.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Who helps whom",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A helps Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B helps Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Stored water",
+          "id" : "water",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.water.target",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Storage target for 4 people for 3 days: 12 gallons (CDC storage target of 1 gallon per person per day, before pet needs). Stored now: 5 gallons.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.water.pets",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Add extra water for pets.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Top preparations for this household",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.water.store-3day.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Store 12 gallons of water",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.alerts.enroll-local.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S17",
+                "S27"
+              ],
+              "style" : "normal",
+              "text" : "Sign up for local emergency alerts",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "action.act.water.save-utility-contact.title",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+                "S24"
+              ],
+              "style" : "normal",
+              "text" : "Save your water utility's contact and advisory sign-up",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Help lines (save these numbers)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "en",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Emergency: call 911 when someone is in danger.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "If this happens: Water outage"
+    }
+  ],
+  "scenarioIDs" : [
+    "freeze-power-loss",
+    "heat-grid-strain",
+    "tornado",
+    "flash-flood",
+    "home-fire",
+    "water-outage"
+  ],
+  "schemaVersion" : 1,
+  "sourceIDs" : [
+    "S17",
+    "S18",
+    "S19",
+    "S20",
+    "S21",
+    "S22",
+    "S23",
+    "S24",
+    "S25",
+    "S26",
+    "S27",
+    "S52"
+  ],
+  "visualSnapshot" : {
+    "fictional" : true,
+    "home" : {
+      "annotations" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-hall",
+          "kind" : "smokeAlarm",
+          "label" : "Smoke alarm",
+          "position" : {
+            "x" : 6,
+            "y" : 5.6
+          },
+          "spaceID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-bed1",
+          "kind" : "smokeAlarm",
+          "label" : "Smoke alarm",
+          "position" : {
+            "x" : 2.2,
+            "y" : 8.1
+          },
+          "spaceID" : "sp-bed1",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-bed2",
+          "kind" : "smokeAlarm",
+          "label" : "Smoke alarm",
+          "position" : {
+            "x" : 9.5,
+            "y" : 8.1
+          },
+          "spaceID" : "sp-bed2",
+          "verification" : "proposed"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-co-hall",
+          "kind" : "coAlarm",
+          "label" : "CO alarm",
+          "position" : {
+            "x" : 3,
+            "y" : 5.6
+          },
+          "spaceID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-extinguisher",
+          "kind" : "fireExtinguisher",
+          "label" : "Fire extinguisher",
+          "position" : {
+            "x" : 7.4,
+            "y" : 4.5
+          },
+          "spaceID" : "sp-kitchen",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-shutoff-water",
+          "kind" : "utilityShutoffWater",
+          "label" : "Water shutoff",
+          "position" : {
+            "x" : 11.6,
+            "y" : 4.6
+          },
+          "spaceID" : "sp-kitchen",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-shutoff-elec",
+          "kind" : "utilityShutoffElectric",
+          "label" : "Breaker panel",
+          "position" : {
+            "x" : 11.6,
+            "y" : 5.6
+          },
+          "spaceID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-supplies",
+          "kind" : "supplies",
+          "label" : "Emergency supplies",
+          "position" : {
+            "x" : 5.75,
+            "y" : 6.8
+          },
+          "spaceID" : "sp-closet",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-medical",
+          "kind" : "medicalEquipment",
+          "label" : "Oxygen concentrator",
+          "position" : {
+            "x" : 6.4,
+            "y" : 0.6
+          },
+          "spaceID" : "sp-living",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-tornado",
+          "kind" : "tornadoShelterCandidate",
+          "label" : "Interior closet (shelter candidate)",
+          "position" : {
+            "x" : 5.75,
+            "y" : 6.8
+          },
+          "spaceID" : "sp-closet",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-hydrant",
+          "kind" : "exteriorHydrant",
+          "label" : "Street hydrant",
+          "position" : {
+            "x" : 14.5,
+            "y" : -4
+          },
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-meeting",
+          "kind" : "outsideMeetingPoint",
+          "label" : "Mailbox at the end of the driveway (fictional)",
+          "position" : {
+            "x" : 3.45,
+            "y" : -8
+          },
+          "verification" : "verified"
+        }
+      ],
+      "completeness" : "complete",
+      "connectors" : [
+
+      ],
+      "floors" : [
+        {
+          "elevationMeters" : 0,
+          "id" : "fl-ground",
+          "label" : "Ground floor",
+          "level" : 0,
+          "toCommon" : {
+            "rotationRadians" : 0,
+            "translation" : {
+              "x" : 0,
+              "y" : 0
+            }
+          }
+        }
+      ],
+      "frame" : {
+        "handedness" : "right",
+        "note" : "Hand-authored fictional layout; x east, y north, metres.",
+        "sourceUpAxis" : "y",
+        "units" : "meters"
+      },
+      "id" : "home-sample-ranch",
+      "isFictional" : true,
+      "label" : "Sample ranch home (fictional)",
+      "obstacles" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "ob-sofa",
+          "label" : "Sofa",
+          "polygon" : [
+            {
+              "x" : 1,
+              "y" : 3.4
+            },
+            {
+              "x" : 4,
+              "y" : 3.4
+            },
+            {
+              "x" : 4,
+              "y" : 4.3
+            },
+            {
+              "x" : 1,
+              "y" : 4.3
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "ob-island",
+          "label" : "Kitchen island",
+          "polygon" : [
+            {
+              "x" : 8.8,
+              "y" : 2
+            },
+            {
+              "x" : 10.4,
+              "y" : 2
+            },
+            {
+              "x" : 10.4,
+              "y" : 3
+            },
+            {
+              "x" : 8.8,
+              "y" : 3
+            }
+          ]
+        }
+      ],
+      "portals" : [
+        {
+          "a" : {
+            "x" : 3,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 3.9,
+            "y" : 0
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-front",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 2
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 2.9
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-back",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-kitchen"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 1
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 2.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 1.2
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-living-kitchen",
+          "kind" : "opening",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-kitchen"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 5.9,
+            "y" : 5
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-living-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 8,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 8.86,
+            "y" : 5
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-kitchen-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-kitchen"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 3,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 3.85,
+            "y" : 6.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed1-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed1"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 9,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 9.86,
+            "y" : 6.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed2-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed2"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5.2,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 5.9,
+            "y" : 6.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.7
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-closet-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-closet"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 8
+          },
+          "b" : {
+            "x" : 4.5,
+            "y" : 8.75
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.75
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed1-bath",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed1"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-bath"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 1.5,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 2.5,
+            "y" : 10
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-bed1",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed1"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : 9.5,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 10.5,
+            "y" : 10
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-bed2",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed2"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : 0.8,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 2,
+            "y" : 0
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-living",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        }
+      ],
+      "revision" : 1,
+      "schemaVersion" : 1,
+      "source" : "sample",
+      "spaces" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-living",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "livingRoom",
+          "label" : "Living room",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 7,
+              "y" : 0
+            },
+            {
+              "x" : 7,
+              "y" : 5
+            },
+            {
+              "x" : 0,
+              "y" : 5
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-kitchen",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "kitchen",
+          "label" : "Kitchen",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 0
+            },
+            {
+              "x" : 12,
+              "y" : 0
+            },
+            {
+              "x" : 12,
+              "y" : 5
+            },
+            {
+              "x" : 7,
+              "y" : 5
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-hall",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "hallway",
+          "label" : "Hallway",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "x" : 12,
+              "y" : 5
+            },
+            {
+              "x" : 12,
+              "y" : 6.2
+            },
+            {
+              "x" : 0,
+              "y" : 6.2
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-bed1",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "bedroom",
+          "label" : "Main bedroom",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 6.2
+            },
+            {
+              "x" : 4.5,
+              "y" : 6.2
+            },
+            {
+              "x" : 4.5,
+              "y" : 10
+            },
+            {
+              "x" : 0,
+              "y" : 10
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-closet",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "kind" : "closet",
+          "label" : "Hall closet",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4.5,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 7.4
+            },
+            {
+              "x" : 4.5,
+              "y" : 7.4
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-bath",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "bathroom",
+          "label" : "Bathroom",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4.5,
+              "y" : 7.4
+            },
+            {
+              "x" : 7,
+              "y" : 7.4
+            },
+            {
+              "x" : 7,
+              "y" : 10
+            },
+            {
+              "x" : 4.5,
+              "y" : 10
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-bed2",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "bedroom",
+          "label" : "Kid's bedroom",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 12,
+              "y" : 6.2
+            },
+            {
+              "x" : 12,
+              "y" : 10
+            },
+            {
+              "x" : 7,
+              "y" : 10
+            }
+          ]
+        }
+      ],
+      "walls" : [
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 0
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-s",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-e",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-n",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-w",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 5
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-living-kitchen",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 5
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-south-hall",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 6.2
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-hall-north",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 4.5,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-bed1-east",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 7.4
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 7.4
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-closet-bath",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-bed2-west",
+          "thicknessMeters" : 0.12
+        }
+      ]
+    },
+    "homeCoordinate" : {
+      "latitude" : 32.2,
+      "longitude" : -98.2
+    },
+    "personLabels" : {
+      "p-oak-1" : "Parent A",
+      "p-oak-2" : "Parent B",
+      "p-oak-3" : "Kid",
+      "p-oak-4" : "Grandpa"
+    },
+    "routeScenarioIDs" : [
+      "tornado",
+      "tornado",
+      "tornado",
+      "tornado",
+      "flash-flood",
+      "flash-flood",
+      "flash-flood",
+      "flash-flood",
+      "home-fire",
+      "home-fire",
+      "home-fire",
+      "home-fire"
+    ],
+    "routes" : [
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 6.041313210583903,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 6.041313210583903,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 9.499999999999998,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 7.381688671857704,
+          "portalSequence" : [
+            "pt-bed2-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed2",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 3.5,
+                  "y" : 2.5
+                },
+                {
+                  "x" : 4.646532742524277,
+                  "y" : 3.2060401772427167
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 5.278534333793319,
+          "portalSequence" : [
+            "pt-living-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-living",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 11.275212711360151,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 11.275212711360151,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 9.499999999999998,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 12.80477708115619,
+          "portalSequence" : [
+            "pt-bed2-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed2",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 3.5,
+                  "y" : 2.5
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 3.050609665440988,
+          "portalSequence" : [
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      }
+    ],
+    "savedPlaces" : [
+      {
+        "addressText" : "456 Fictional Road, Another Town",
+        "createdAt" : "2026-10-09T15:00:00Z",
+        "findingInstructions" : "Call the example contact before going",
+        "homeID" : "home-sample-ranch",
+        "id" : "example-backup",
+        "label" : "Example relative's home",
+        "provenance" : "userSelected",
+        "purpose" : "backupMeetingPlace",
+        "updatedAt" : "2026-10-09T15:00:00Z"
+      },
+      {
+        "addressText" : "Outside 123 Example Lane",
+        "createdAt" : "2026-10-09T15:00:00Z",
+        "findingInstructions" : "Fictional landmark beside the driveway",
+        "homeID" : "home-sample-ranch",
+        "id" : "example-near",
+        "label" : "Example mailbox",
+        "provenance" : "userSelected",
+        "purpose" : "outsideMeetingPoint",
+        "updatedAt" : "2026-10-09T15:00:00Z"
+      }
+    ],
+    "scenarioLabels" : {
+      "flash-flood" : "Flash flood",
+      "freeze-power-loss" : "Freeze with power loss",
+      "heat-grid-strain" : "Heat wave with grid strain",
+      "home-fire" : "Home fire",
+      "tornado" : "Tornado",
+      "water-outage" : "Water outage"
+    }
+  }
+}

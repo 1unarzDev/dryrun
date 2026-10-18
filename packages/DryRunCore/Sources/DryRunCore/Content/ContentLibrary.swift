@@ -39,6 +39,7 @@ public struct ContentLibrary: Sendable {
 
     /// Statewide resources plus resources for this region, deterministic order.
     public func resources(forRegion regionID: String) -> [PublicResource] {
+        guard PublicDataPolicy.isAllowedRegionID(regionID) else { return [] }
         var order: [String] = []
         var byID: [String: PublicResource] = [:]
         for pack in regionPacks {

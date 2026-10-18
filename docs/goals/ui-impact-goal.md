@@ -1,4 +1,6 @@
-# Goal: Dry Run — Congressional App Challenge build (UI redesign + 3 impact features)
+# Historical goal — Goal: Dry Run — Congressional App Challenge build (UI redesign + 3 impact features)
+
+Superseded by the October 17 family-preparedness revision. Retained as historical context; see REVISION_EVIDENCE and CLAUDE_NATIVE_HANDOFF for current work.
 
 ## Mission
 Make Dry Run the app a family with a medically dependent member opens once and walks away from with a working

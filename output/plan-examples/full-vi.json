@@ -1,0 +1,4609 @@
+{
+  "contentReviewBanner" : "Nội dung an toàn bản mẫu - đang chờ chuyên gia duyệt",
+  "contentVersion" : "2026.10.0",
+  "draftTranslationBanner" : "Bản dịch nháp - đang chờ duyệt ngôn ngữ / Draft translation - language review pending",
+  "footer" : "Kế hoạch luyện tập Dry Run. Các buổi diễn tập là bài tập theo giả định đã nêu; chúng không xác minh một tình huống khẩn cấp thật sẽ diễn ra thế nào.",
+  "generatedAt" : "2026-10-09T15:00:00Z",
+  "homeID" : "home-sample-ranch",
+  "homeRevision" : 1,
+  "householdID" : "hh-oak",
+  "householdRevision" : 1,
+  "includesPrivateNotes" : false,
+  "locale" : "vi",
+  "pages" : [
+    {
+      "id" : "family-card",
+      "kind" : {
+        "essentials" : {
+
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Gia đình bạn",
+          "id" : "identity",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Oak household (fictional)",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Nhà mẫu hư cấu",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "123 Example Lane, Fictional Town",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thông tin quan trọng",
+          "id" : "critical",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A: Dị ứng nghiêm trọng: FICTIONAL EXAMPLE: severe peanut allergy; FICTIONAL EXAMPLE: use the recorded communication board",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B: Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Kid: Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Grandpa: đi lại khó khăn; nhạy cảm với lạnh; Máy tạo oxy",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Liên hệ khẩn cấp",
+          "id" : "contacts",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Example trusted contact · Family friend · +1 202 555 0148",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Điểm gặp bên ngoài gần nhà",
+          "id" : "outsideMeetingPoint",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Điểm gặp dự phòng ngoài khu phố",
+          "id" : "backupMeetingPlace",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thông tin duy trì chăm sóc và vật dụng bổ sung",
+          "id" : "continuity",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Grandpa · Máy tạo oxy: Chưa ghi nhận nguồn dự phòng nào dùng được với thiết bị này. Thời gian chạy bằng nguồn dự phòng: chưa rõ — hãy xác nhận với nhà sản xuất hoặc kế hoạch chăm sóc",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S52"
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Lần xem lại gần nhất",
+          "id" : "review",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "family.recorded",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Chưa xem lại",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Thẻ khẩn cấp gia đình"
+    },
+    {
+      "id" : "essentials",
+      "kind" : {
+        "essentials" : {
+
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Những người sống ở đây",
+          "id" : "people",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A — Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B — Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Kid — Chưa cung cấp hoặc chưa chọn cho bản xuất này",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Grandpa — đi lại khó khăn, nhạy cảm với lạnh",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Điểm hẹn bên ngoài",
+          "id" : "meeting",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.meeting",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Điểm gặp dự phòng ngoài khu phố: Example relative's home — 456 Fictional Road, Another Town — Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.meeting",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Điểm gặp ngoài trời gần nhà: Example mailbox — Outside 123 Example Lane — Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Khu phố và điểm gặp",
+          "id" : "neighborhood",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.savedPlace",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "1. Example relative's home · 456 Fictional Road, Another Town · Call the example contact before going",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : false,
+              "isFallback" : false,
+              "key" : "private.savedPlace",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "2. Example mailbox · Outside 123 Example Lane · Fictional landmark beside the driveway",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Người cần liên lạc",
+          "id" : "contacts",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.contact.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Example trusted contact: +1 202 555 0148",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thiết bị thiết yếu",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Máy tạo oxy: nguồn dự phòng chưa xác nhận. Thời gian chạy bằng nguồn dự phòng: chưa rõ — hãy xác nhận với nhà sản xuất hoặc kế hoạch chăm sóc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đi đến nơi khác",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Nước dự trữ",
+          "id" : "water",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.water.target",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon (mục tiêu dự trữ của CDC là 1 gallon mỗi người mỗi ngày, chưa tính vật nuôi). Hiện đang có: 5 gallon.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.water.pets",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Thêm nước cho vật nuôi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ngày của kế hoạch",
+          "id" : "dates",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.dates.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Kế hoạch tạo ngày 2026-10-09. Phiên bản thông tin gia đình 1; phiên bản nhà 1; phiên bản nội dung 2026.10.0.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.dates.notReviewed",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Gia đình chưa xem lại.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Những điều thiết yếu của gia đình"
+    },
+    {
+      "id" : "scenario-home-fire",
+      "kind" : {
+        "scenario" : {
+          "_0" : "home-fire"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Làm việc này trước",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.1",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "prohibition",
+              "text" : "Ra ngoài và ở ngoài. Không bao giờ quay vào trong vì người, vật nuôi hay đồ đạc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.2",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Dùng lối thoát thứ hai nếu khói hoặc lửa chặn lối thứ nhất. Bò thấp dưới làn khói.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.3",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Đến điểm hẹn bên ngoài, rồi gọi 911 từ bên ngoài.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.home-fire.immediate.4",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Nếu không thể ra ngoài, hãy đóng cửa, bịt lỗ thông gió và khe hở, gọi 911, và ra hiệu từ cửa sổ.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Lối thoát luyện tập trong nhà",
+          "id" : "homeplan",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Từ Parent A — Main bedroom: Main bedroom → Hallway → Living room → ra ngoài.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Mô hình ngôi nhà chưa xác nhận lối thoát thứ hai độc lập nào từ Parent A — Main bedroom.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Từ Parent B — Main bedroom: Main bedroom → Hallway → Living room → ra ngoài.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Mô hình ngôi nhà chưa xác nhận lối thoát thứ hai độc lập nào từ Parent B — Main bedroom.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Từ Kid — Kid's bedroom: Kid's bedroom → Hallway → Living room → ra ngoài.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Mô hình ngôi nhà chưa xác nhận lối thoát thứ hai độc lập nào từ Kid — Kid's bedroom.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Từ Grandpa — Living room: Living room → ra ngoài.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.altNone",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Mô hình ngôi nhà chưa xác nhận lối thoát thứ hai độc lập nào từ Grandpa — Living room.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.meeting.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Gặp nhau tại: Mailbox at the end of the driveway (fictional)",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.caveat",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Lối thoát luyện tập chỉ theo các giả định này. Đây không phải lối an toàn nhất theo thời gian thực; hãy kiểm tra cửa ra vào và cửa sổ thật.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ai giúp ai",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Những việc chuẩn bị quan trọng nhất cho gia đình này",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.relocation.arrange.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Sắp xếp nơi để đến và cách để đi",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.fire.verify-second-exit.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19"
+              ],
+              "style" : "normal",
+              "text" : "Kiểm tra mỗi phòng có lối thoát thứ hai",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.pets.carrier-plan.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S19",
+                "S20"
+              ],
+              "style" : "normal",
+              "text" : "Lên kế hoạch đưa vật nuôi đi cùng",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Nếu điều này xảy ra: Cháy nhà"
+    },
+    {
+      "id" : "scenario-tornado",
+      "kind" : {
+        "scenario" : {
+          "_0" : "tornado"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Làm việc này trước",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.1",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Khi có cảnh báo lốc xoáy (tornado warning), lập tức đến chỗ trú ẩn: tầng thấp nhất, phòng bên trong, tránh xa cửa sổ.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.2",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Che đầu và cổ. Giúp người cần hỗ trợ đến đó.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.3",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Có cách nhận cảnh báo vào ban đêm, như cảnh báo trên điện thoại hoặc radio thời tiết.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.tornado.immediate.4",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "prohibition",
+              "text" : "Đừng cố đi đến nơi trú ẩn ở xa khi cảnh báo đã được ban hành, trừ khi chính quyền hướng dẫn và bạn đã lên kế hoạch trước.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Chỗ trú ẩn",
+          "id" : "shelter",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.shelter.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Chỗ trú ẩn: Hall closet (tầng thấp nhất, phòng bên trong, tránh xa cửa sổ, theo xác nhận của gia đình).",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.shelter.notCertified",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "caveat",
+              "text" : "Đây là chỗ do gia đình chọn, không phải phòng trú ẩn được thiết kế kỹ thuật.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Từ Parent A — Main bedroom: Main bedroom → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Từ Parent B — Main bedroom: Main bedroom → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Từ Kid — Kid's bedroom: Kid's bedroom → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.route.from",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S22"
+              ],
+              "style" : "normal",
+              "text" : "Từ Grandpa — Living room: Living room → Hallway → Hall closet.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ai giúp ai",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thiết bị thiết yếu",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Máy tạo oxy: nguồn dự phòng chưa xác nhận. Thời gian chạy bằng nguồn dự phòng: chưa rõ — hãy xác nhận với nhà sản xuất hoặc kế hoạch chăm sóc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Những việc chuẩn bị quan trọng nhất cho gia đình này",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Lập kế hoạch khi mất điện cho Máy tạo oxy cùng nhà cung cấp hoặc nhóm chăm sóc",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Xác nhận nguồn dự phòng dùng được với Máy tạo oxy",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.water.store-3day.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ 12 gallon nước",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Nếu điều này xảy ra: Lốc xoáy"
+    },
+    {
+      "id" : "scenario-flash-flood",
+      "kind" : {
+        "scenario" : {
+          "_0" : "flash-flood"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Làm việc này trước",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.1",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "prohibition",
+              "text" : "Hãy quay lại, đừng để chết đuối: không bao giờ đi bộ, bơi, hoặc lái xe qua nước lũ.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.2",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "normal",
+              "text" : "Di chuyển lên chỗ cao ngay khi được yêu cầu hoặc khi nước đang dâng. Làm theo hướng dẫn chính thức.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.3",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "prohibition",
+              "text" : "Không bao giờ lái xe vòng qua rào chắn. Chỉ đường trên bản đồ không cho biết đường có bị ngập hay không.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.flash-flood.immediate.4",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S23",
+                "S18"
+              ],
+              "style" : "normal",
+              "text" : "Nếu không có xe, hãy liên lạc sớm với người chở đã thỏa thuận hoặc chính quyền địa phương, trước khi đường bị đóng.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đi đến nơi khác",
+          "id" : "transport",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ai giúp ai",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thiết bị thiết yếu",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Máy tạo oxy: nguồn dự phòng chưa xác nhận. Thời gian chạy bằng nguồn dự phòng: chưa rõ — hãy xác nhận với nhà sản xuất hoặc kế hoạch chăm sóc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Những việc chuẩn bị quan trọng nhất cho gia đình này",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Lập kế hoạch khi mất điện cho Máy tạo oxy cùng nhà cung cấp hoặc nhóm chăm sóc",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Xác nhận nguồn dự phòng dùng được với Máy tạo oxy",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.water.store-3day.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ 12 gallon nước",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Nếu điều này xảy ra: Lũ quét"
+    },
+    {
+      "id" : "scenario-freeze-power-loss",
+      "kind" : {
+        "scenario" : {
+          "_0" : "freeze-power-loss"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Làm việc này trước",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.1",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Nếu một thiết bị thiết yếu mất điện, hãy làm theo kế hoạch chăm sóc và nguồn dự phòng bạn đã sắp xếp. Khi khẩn cấp, gọi 911.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.2",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Không bao giờ dùng lò nướng, bếp, vỉ nướng hoặc máy sưởi cắm trại để sưởi ấm nhà.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.3",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Chỉ dùng máy phát điện ở ngoài trời, cách cửa sổ, cửa ra vào và lỗ thông gió ít nhất 20 feet. Không bao giờ chạy máy trong nhà hoặc trong garage.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.4",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Nếu vẫn không có sưởi, hãy đi sớm đến nơi ấm áp đã thỏa thuận, khi việc đi lại còn được.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.freeze-power-loss.immediate.5",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S25",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Giữ tủ lạnh và tủ đông đóng kín. Dùng nước dự trữ trước.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đi đến nơi khác",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ai giúp ai",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thiết bị thiết yếu",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Máy tạo oxy: nguồn dự phòng chưa xác nhận. Thời gian chạy bằng nguồn dự phòng: chưa rõ — hãy xác nhận với nhà sản xuất hoặc kế hoạch chăm sóc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Nước dự trữ",
+          "id" : "water",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.water.target",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon (mục tiêu dự trữ của CDC là 1 gallon mỗi người mỗi ngày, chưa tính vật nuôi). Hiện đang có: 5 gallon.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.water.pets",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Thêm nước cho vật nuôi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Những việc chuẩn bị quan trọng nhất cho gia đình này",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.relocation.arrange.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Sắp xếp nơi để đến và cách để đi",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Lập kế hoạch khi mất điện cho Máy tạo oxy cùng nhà cung cấp hoặc nhóm chăm sóc",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Xác nhận nguồn dự phòng dùng được với Máy tạo oxy",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Nếu điều này xảy ra: Giá rét kèm mất điện"
+    },
+    {
+      "id" : "scenario-heat-grid-strain",
+      "kind" : {
+        "scenario" : {
+          "_0" : "heat-grid-strain"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Làm việc này trước",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.1",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Đến nơi mát đã thỏa thuận trước khi nhà nóng lên, nhất là người nhạy cảm với nóng.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.2",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Chỉ dùng quạt có thể không ngăn được bệnh do nóng khi trời cực nóng.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.3",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Gọi 911 khi có dấu hiệu say nắng nặng (sốc nhiệt), như lú lẫn, ngất xỉu, hoặc thân nhiệt rất cao.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.heat-grid-strain.immediate.4",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S21"
+              ],
+              "style" : "prohibition",
+              "text" : "Hỏi trước người chăm sóc y tế xem nắng nóng hoặc mất điện ảnh hưởng thế nào đến thuốc và thiết bị. Không tự ý thay đổi thuốc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đi đến nơi khác",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ai giúp ai",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Thiết bị thiết yếu",
+          "id" : "equipment",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.equipment.line",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Máy tạo oxy: nguồn dự phòng chưa xác nhận. Thời gian chạy bằng nguồn dự phòng: chưa rõ — hãy xác nhận với nhà sản xuất hoặc kế hoạch chăm sóc.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Những việc chuẩn bị quan trọng nhất cho gia đình này",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.relocation.arrange.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S20",
+                "S21"
+              ],
+              "style" : "normal",
+              "text" : "Sắp xếp nơi để đến và cách để đi",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.medical.continuity-plan.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Lập kế hoạch khi mất điện cho Máy tạo oxy cùng nhà cung cấp hoặc nhóm chăm sóc",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.backup.confirm-medical-backup.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S25"
+              ],
+              "style" : "normal",
+              "text" : "Xác nhận nguồn dự phòng dùng được với Máy tạo oxy",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Nếu điều này xảy ra: Nắng nóng khi lưới điện quá tải"
+    },
+    {
+      "id" : "scenario-water-outage",
+      "kind" : {
+        "scenario" : {
+          "_0" : "water-outage"
+        }
+      },
+      "sections" : [
+        {
+          "heading" : "Làm việc này trước",
+          "id" : "immediate",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.1",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Làm đúng theo thông báo của công ty cấp nước. Mỗi loại thông báo cần cách xử lý khác nhau.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.2",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Thông báo đun sôi nước: dùng nước đóng chai hoặc nước dự trữ, hoặc đun nước máy sôi sùng sục trong 1 phút (3 phút nếu ở độ cao trên 6,500 feet), theo hướng dẫn của công ty cấp nước.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.3",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Thông báo không được uống: không uống nước máy và không đun sôi để uống. Đun sôi không loại bỏ được hóa chất.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.scenario.water-outage.immediate.4",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S24",
+                "S26"
+              ],
+              "style" : "prohibition",
+              "text" : "Thông báo không được sử dụng: không dùng nước máy cho bất kỳ việc gì. Dùng nước dự trữ hoặc nước đóng chai.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đi đến nơi khác",
+          "id" : "transport",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.transport.vehicle",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Xe: 5 chỗ ngồi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Ai giúp ai",
+          "id" : "assistance",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent A giúp Kid",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.person.helper",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "normal",
+              "text" : "Parent B giúp Grandpa",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Nước dự trữ",
+          "id" : "water",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.water.target",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon (mục tiêu dự trữ của CDC là 1 gallon mỗi người mỗi ngày, chưa tính vật nuôi). Hiện đang có: 5 gallon.",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.water.pets",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Thêm nước cho vật nuôi.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Những việc chuẩn bị quan trọng nhất cho gia đình này",
+          "id" : "preparations",
+          "isSafetyCritical" : false,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.water.store-3day.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S26"
+              ],
+              "style" : "normal",
+              "text" : "Dự trữ 12 gallon nước",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.alerts.enroll-local.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S17",
+                "S27"
+              ],
+              "style" : "normal",
+              "text" : "Đăng ký nhận cảnh báo khẩn cấp địa phương",
+              "unfilledPlaceholders" : [
+
+              ]
+            },
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "action.act.water.save-utility-contact.title",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+                "S24"
+              ],
+              "style" : "normal",
+              "text" : "Lưu liên lạc của công ty cấp nước và đăng ký nhận thông báo",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        },
+        {
+          "heading" : "Đường dây trợ giúp (hãy lưu các số này)",
+          "id" : "help",
+          "isSafetyCritical" : true,
+          "lines" : [
+            {
+              "isDraftTranslation" : true,
+              "isFallback" : false,
+              "key" : "plan.help.911",
+              "resolvedLocale" : "vi",
+              "sourceIDs" : [
+
+              ],
+              "style" : "contact",
+              "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
+              "unfilledPlaceholders" : [
+
+              ]
+            }
+          ]
+        }
+      ],
+      "title" : "Nếu điều này xảy ra: Mất nước"
+    }
+  ],
+  "scenarioIDs" : [
+    "freeze-power-loss",
+    "heat-grid-strain",
+    "tornado",
+    "flash-flood",
+    "home-fire",
+    "water-outage"
+  ],
+  "schemaVersion" : 1,
+  "sourceIDs" : [
+    "S17",
+    "S18",
+    "S19",
+    "S20",
+    "S21",
+    "S22",
+    "S23",
+    "S24",
+    "S25",
+    "S26",
+    "S27",
+    "S52"
+  ],
+  "visualSnapshot" : {
+    "fictional" : true,
+    "home" : {
+      "annotations" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-hall",
+          "kind" : "smokeAlarm",
+          "label" : "Smoke alarm",
+          "position" : {
+            "x" : 6,
+            "y" : 5.6
+          },
+          "spaceID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-bed1",
+          "kind" : "smokeAlarm",
+          "label" : "Smoke alarm",
+          "position" : {
+            "x" : 2.2,
+            "y" : 8.1
+          },
+          "spaceID" : "sp-bed1",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-bed2",
+          "kind" : "smokeAlarm",
+          "label" : "Smoke alarm",
+          "position" : {
+            "x" : 9.5,
+            "y" : 8.1
+          },
+          "spaceID" : "sp-bed2",
+          "verification" : "proposed"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-co-hall",
+          "kind" : "coAlarm",
+          "label" : "CO alarm",
+          "position" : {
+            "x" : 3,
+            "y" : 5.6
+          },
+          "spaceID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-extinguisher",
+          "kind" : "fireExtinguisher",
+          "label" : "Fire extinguisher",
+          "position" : {
+            "x" : 7.4,
+            "y" : 4.5
+          },
+          "spaceID" : "sp-kitchen",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-shutoff-water",
+          "kind" : "utilityShutoffWater",
+          "label" : "Water shutoff",
+          "position" : {
+            "x" : 11.6,
+            "y" : 4.6
+          },
+          "spaceID" : "sp-kitchen",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-shutoff-elec",
+          "kind" : "utilityShutoffElectric",
+          "label" : "Breaker panel",
+          "position" : {
+            "x" : 11.6,
+            "y" : 5.6
+          },
+          "spaceID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-supplies",
+          "kind" : "supplies",
+          "label" : "Emergency supplies",
+          "position" : {
+            "x" : 5.75,
+            "y" : 6.8
+          },
+          "spaceID" : "sp-closet",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-medical",
+          "kind" : "medicalEquipment",
+          "label" : "Oxygen concentrator",
+          "position" : {
+            "x" : 6.4,
+            "y" : 0.6
+          },
+          "spaceID" : "sp-living",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-tornado",
+          "kind" : "tornadoShelterCandidate",
+          "label" : "Interior closet (shelter candidate)",
+          "position" : {
+            "x" : 5.75,
+            "y" : 6.8
+          },
+          "spaceID" : "sp-closet",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-hydrant",
+          "kind" : "exteriorHydrant",
+          "label" : "Street hydrant",
+          "position" : {
+            "x" : 14.5,
+            "y" : -4
+          },
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-meeting",
+          "kind" : "outsideMeetingPoint",
+          "label" : "Mailbox at the end of the driveway (fictional)",
+          "position" : {
+            "x" : 3.45,
+            "y" : -8
+          },
+          "verification" : "verified"
+        }
+      ],
+      "completeness" : "complete",
+      "connectors" : [
+
+      ],
+      "floors" : [
+        {
+          "elevationMeters" : 0,
+          "id" : "fl-ground",
+          "label" : "Ground floor",
+          "level" : 0,
+          "toCommon" : {
+            "rotationRadians" : 0,
+            "translation" : {
+              "x" : 0,
+              "y" : 0
+            }
+          }
+        }
+      ],
+      "frame" : {
+        "handedness" : "right",
+        "note" : "Hand-authored fictional layout; x east, y north, metres.",
+        "sourceUpAxis" : "y",
+        "units" : "meters"
+      },
+      "id" : "home-sample-ranch",
+      "isFictional" : true,
+      "label" : "Sample ranch home (fictional)",
+      "obstacles" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "ob-sofa",
+          "label" : "Sofa",
+          "polygon" : [
+            {
+              "x" : 1,
+              "y" : 3.4
+            },
+            {
+              "x" : 4,
+              "y" : 3.4
+            },
+            {
+              "x" : 4,
+              "y" : 4.3
+            },
+            {
+              "x" : 1,
+              "y" : 4.3
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "ob-island",
+          "label" : "Kitchen island",
+          "polygon" : [
+            {
+              "x" : 8.8,
+              "y" : 2
+            },
+            {
+              "x" : 10.4,
+              "y" : 2
+            },
+            {
+              "x" : 10.4,
+              "y" : 3
+            },
+            {
+              "x" : 8.8,
+              "y" : 3
+            }
+          ]
+        }
+      ],
+      "portals" : [
+        {
+          "a" : {
+            "x" : 3,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 3.9,
+            "y" : 0
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-front",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 2
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 2.9
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-back",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-kitchen"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 1
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 2.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 1.2
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-living-kitchen",
+          "kind" : "opening",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-kitchen"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 5.9,
+            "y" : 5
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-living-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 8,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 8.86,
+            "y" : 5
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-kitchen-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-kitchen"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 3,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 3.85,
+            "y" : 6.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed1-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed1"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 9,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 9.86,
+            "y" : 6.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed2-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed2"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5.2,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 5.9,
+            "y" : 6.2
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.7
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-closet-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-closet"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-hall"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 8
+          },
+          "b" : {
+            "x" : 4.5,
+            "y" : 8.75
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.75
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed1-bath",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed1"
+            }
+          },
+          "sideB" : {
+            "space" : {
+              "_0" : "sp-bath"
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 1.5,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 2.5,
+            "y" : 10
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-bed1",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed1"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : 9.5,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 10.5,
+            "y" : 10
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-bed2",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-bed2"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : 0.8,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 2,
+            "y" : 0
+          },
+          "clearWidthMeters" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-living",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : {
+            "space" : {
+              "_0" : "sp-living"
+            }
+          },
+          "sideB" : {
+            "exterior" : {
+
+            }
+          },
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        }
+      ],
+      "revision" : 1,
+      "schemaVersion" : 1,
+      "source" : "sample",
+      "spaces" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-living",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "livingRoom",
+          "label" : "Living room",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 7,
+              "y" : 0
+            },
+            {
+              "x" : 7,
+              "y" : 5
+            },
+            {
+              "x" : 0,
+              "y" : 5
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-kitchen",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "kitchen",
+          "label" : "Kitchen",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 0
+            },
+            {
+              "x" : 12,
+              "y" : 0
+            },
+            {
+              "x" : 12,
+              "y" : 5
+            },
+            {
+              "x" : 7,
+              "y" : 5
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-hall",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "hallway",
+          "label" : "Hallway",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "x" : 12,
+              "y" : 5
+            },
+            {
+              "x" : 12,
+              "y" : 6.2
+            },
+            {
+              "x" : 0,
+              "y" : 6.2
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-bed1",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "bedroom",
+          "label" : "Main bedroom",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 6.2
+            },
+            {
+              "x" : 4.5,
+              "y" : 6.2
+            },
+            {
+              "x" : 4.5,
+              "y" : 10
+            },
+            {
+              "x" : 0,
+              "y" : 10
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-closet",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "kind" : "closet",
+          "label" : "Hall closet",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4.5,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 7.4
+            },
+            {
+              "x" : 4.5,
+              "y" : 7.4
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-bath",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "bathroom",
+          "label" : "Bathroom",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4.5,
+              "y" : 7.4
+            },
+            {
+              "x" : 7,
+              "y" : 7.4
+            },
+            {
+              "x" : 7,
+              "y" : 10
+            },
+            {
+              "x" : 4.5,
+              "y" : 10
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "sp-bed2",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "bedroom",
+          "label" : "Kid's bedroom",
+          "labelConfirmed" : true,
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 12,
+              "y" : 6.2
+            },
+            {
+              "x" : 12,
+              "y" : 10
+            },
+            {
+              "x" : 7,
+              "y" : 10
+            }
+          ]
+        }
+      ],
+      "walls" : [
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 0
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-s",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-e",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-n",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-w",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 5
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-living-kitchen",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 5
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-south-hall",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 6.2
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-hall-north",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 4.5,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-bed1-east",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 7.4
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 7.4
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-closet-bath",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-bed2-west",
+          "thicknessMeters" : 0.12
+        }
+      ]
+    },
+    "homeCoordinate" : {
+      "latitude" : 32.2,
+      "longitude" : -98.2
+    },
+    "personLabels" : {
+      "p-oak-1" : "Parent A",
+      "p-oak-2" : "Parent B",
+      "p-oak-3" : "Kid",
+      "p-oak-4" : "Grandpa"
+    },
+    "routeScenarioIDs" : [
+      "tornado",
+      "tornado",
+      "tornado",
+      "tornado",
+      "flash-flood",
+      "flash-flood",
+      "flash-flood",
+      "flash-flood",
+      "home-fire",
+      "home-fire",
+      "home-fire",
+      "home-fire"
+    ],
+    "routes" : [
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 6.041313210583903,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 6.041313210583903,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 9.499999999999998,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 7.381688671857704,
+          "portalSequence" : [
+            "pt-bed2-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed2",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 3.5,
+                  "y" : 2.5
+                },
+                {
+                  "x" : 4.646532742524277,
+                  "y" : 3.2060401772427167
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 5.278534333793319,
+          "portalSequence" : [
+            "pt-living-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-living",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 11.275212711360151,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 11.275212711360151,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 9.499999999999998,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 12.80477708115619,
+          "portalSequence" : [
+            "pt-bed2-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed2",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/1",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 3.5,
+                  "y" : 2.5
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 3.050609665440988,
+          "portalSequence" : [
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      }
+    ],
+    "savedPlaces" : [
+      {
+        "addressText" : "456 Fictional Road, Another Town",
+        "createdAt" : "2026-10-09T15:00:00Z",
+        "findingInstructions" : "Call the example contact before going",
+        "homeID" : "home-sample-ranch",
+        "id" : "example-backup",
+        "label" : "Example relative's home",
+        "provenance" : "userSelected",
+        "purpose" : "backupMeetingPlace",
+        "updatedAt" : "2026-10-09T15:00:00Z"
+      },
+      {
+        "addressText" : "Outside 123 Example Lane",
+        "createdAt" : "2026-10-09T15:00:00Z",
+        "findingInstructions" : "Fictional landmark beside the driveway",
+        "homeID" : "home-sample-ranch",
+        "id" : "example-near",
+        "label" : "Example mailbox",
+        "provenance" : "userSelected",
+        "purpose" : "outsideMeetingPoint",
+        "updatedAt" : "2026-10-09T15:00:00Z"
+      }
+    ],
+    "scenarioLabels" : {
+      "flash-flood" : "Lũ quét",
+      "freeze-power-loss" : "Giá rét kèm mất điện",
+      "heat-grid-strain" : "Nắng nóng khi lưới điện quá tải",
+      "home-fire" : "Cháy nhà",
+      "tornado" : "Lốc xoáy",
+      "water-outage" : "Mất nước"
+    }
+  }
+}

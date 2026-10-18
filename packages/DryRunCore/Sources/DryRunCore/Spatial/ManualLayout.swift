@@ -14,7 +14,29 @@ public enum ManualLayout {
         case wallTooShort(available: Double)
     }
 
-    /// An empty manual home with one starting room.
+    /// A manual draft without invented rooms, openings or exterior-grade facts. Adding the first room is an
+    /// explicit household edit; saving a draft does not make it a reviewed layout.
+    public static func emptyHome(id: String) -> HomeModel {
+        HomeModel(id: id, label: "My home", source: .manual,
+                  frame: CoordinateFrame(note: "Manual layout entered by the household; dimensions are estimates until measured."),
+                  floors: [Floor(id: "fl-1", level: 0, label: "Level 1", exteriorGrade: .unknown)],
+                  spaces: [], portals: [], completeness: .incomplete,
+                  completenessNote: "Add the rooms and confirm the floor's relationship to the ground before reviewing routes.")
+    }
+
+    /// Explicitly creates the first room from household-entered dimensions. Exterior grade remains unknown.
+    @discardableResult
+    public static func addFirstRoom(to home: inout HomeModel, label: String, kind: SpaceKind,
+                                    width: Double, depth: Double) throws -> Space {
+        guard width.isFinite, depth.isFinite, width > 0.3, depth > 0.3 else { throw LayoutError.invalidSize }
+        guard home.spaces.isEmpty, let floor = home.floors.first else { throw LayoutError.unknownSpace("first-room") }
+        let space = Space(id: "sp-1", floorID: floor.id, label: label, kind: kind,
+                          polygon: SampleHomes.rect(0, 0, width, depth), labelConfirmed: true, needsMeasurement: true)
+        home.edit { $0.spaces.append(space) }
+        return space
+    }
+
+    /// Legacy convenience for callers that explicitly want a provisional starting room.
     public static func newHome(id: String, firstRoomLabel: String = "Living room", width: Double = 5, depth: Double = 4) -> HomeModel {
         HomeModel(id: id, label: "My home", source: .manual,
                   frame: CoordinateFrame(note: "Manual layout entered by the household; dimensions are estimates until measured."),

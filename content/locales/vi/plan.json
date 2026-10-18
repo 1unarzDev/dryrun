@@ -127,5 +127,8 @@
   "card.gap.runtimeUnknown": "Ghi lại thiết bị này chạy được bao lâu bằng nguồn dự phòng, theo nhà sản xuất hoặc kế hoạch chăm sóc.",
   "card.gap.noCareContact": "Thêm số điện thoại của nhà cung cấp thiết bị hoặc nhóm chăm sóc.",
   "card.gap.noOutOfAreaContact": "Thêm một người liên lạc ở xa mà mọi người có thể gọi hoặc nhắn tin.",
-  "card.gap.noConfirmedDestination": "Thống nhất một nơi có điện mà gia đình có thể đến, và xác nhận với chủ nhà."
+  "card.gap.noConfirmedDestination": "Thống nhất một nơi có điện mà gia đình có thể đến, và xác nhận với chủ nhà.",
+  "plan.help.localUnknown": "Chưa ghi số khẩn cấp địa phương. Xác minh số ở quốc gia bạn trước khi có khẩn cấp.",
+  "plan.meeting.near": "Điểm gặp ngoài trời gần nhà",
+  "plan.meeting.backup": "Điểm gặp dự phòng ngoài khu phố"
 }

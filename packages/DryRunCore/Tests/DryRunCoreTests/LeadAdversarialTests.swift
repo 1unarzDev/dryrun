@@ -44,7 +44,7 @@ struct LeadAdversarialTests {
         let d = try plan(h, ["home-fire"], locale: "en")
         let routeLines = lines(d, page: "scenario-home-fire", section: "homeplan").filter { $0.key == "plan.route.from" || $0.key == "plan.route.none" }
         let r = try SimFixtures.run(h, "home-fire")
-        let usual = r.routes.filter { $0.request.exclusions == .none }
+        let usual = r.routes
         let distinct = Set(usual.map { "\($0.request.startSpaceID)|\($0.request.mobility.requiresStepFree)" })
         #expect(routeLines.count == distinct.count)
     
@@ -53,7 +53,7 @@ struct LeadAdversarialTests {
     @Test("No English words injected into translated route lines without a fallback flag")
     func outsideWordNotLocalized() throws {
         let d = try plan(SampleHouseholds.oak, ["home-fire"], locale: "vi")
-        let from = lines(d, page: "scenario-home-fire", section: "homeplan").filter { $0.key == "plan.route.from" }
+        let from = lines(d, page: "scenario-home-fire", section: "homeplan").filter { $0.key == "plan.route.from" || $0.key == "plan.route.none" }
         #expect(!from.isEmpty)
         #expect(from.allSatisfy { !$0.text.contains("outside") || $0.isFallback })
     

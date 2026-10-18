@@ -6,15 +6,21 @@ import DryRunCore
 // AUTHORED, NOT COMPILED in this environment.
 
 struct FloorPlanView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     let home: HomeModel
     let routes: [RoutePath]
     let highlightedFloorID: String?
+    var highlightedElementID: String?
+    var spatialState: SpatialExerciseState?
+    var onSelect: ((String) -> Void)?
     @State private var selectedFloorID: String?
 
-    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?) {
+    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, onSelect: ((String) -> Void)? = nil) {
         self.home = home
         self.routes = routes
         self.highlightedFloorID = highlightedFloorID
+        self.highlightedElementID = highlightedElementID; self.spatialState = spatialState; self.onSelect = onSelect
     }
 
     private var floorID: String? { selectedFloorID ?? highlightedFloorID ?? home.floors.first?.id }
@@ -22,7 +28,7 @@ struct FloorPlanView: View {
     var body: some View {
         VStack(spacing: 6) {
             if home.floors.count > 1 && highlightedFloorID == nil || routeFloors.count > 1 {
-                Picker("Floor", selection: Binding(get: { floorID ?? "" }, set: { selectedFloorID = $0 })) {
+                Picker(s("Floor"), selection: Binding(get: { floorID ?? "" }, set: { selectedFloorID = $0 })) {
                     ForEach(home.floors) { f in
                         Text(routeFloors.contains(f.id) ? "\(f.label) (route)" : f.label).tag(f.id)
                     }
@@ -30,13 +36,17 @@ struct FloorPlanView: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
             }
-            Canvas { context, size in
-                draw(in: &context, size: size)
+            GeometryReader { geometry in
+                Canvas { context, size in draw(in: &context, size: size) }
+                    .contentShape(Rectangle())
+                    .onTapGesture { point in
+                        if let id = hitTest(point, size: geometry.size) { onSelect?(id) }
+                    }
             }
             .background(PlanColors.background)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilitySummary)
-            .accessibilityHint("The room list gives the same information as text.")
+            .accessibilityHint(s("The room list gives the same information as text."))
             legend
         }
         .onChange(of: highlightedFloorID) { _, _ in selectedFloorID = nil }
@@ -46,9 +56,9 @@ struct FloorPlanView: View {
 
     private var legend: some View {
         HStack(spacing: 12) {
-            Label("Verified exit", systemImage: "door.left.hand.open").foregroundStyle(PlanColors.exit)
-            Label("Unconfirmed", systemImage: "questionmark.diamond").foregroundStyle(PlanColors.unverified)
-            if !routes.isEmpty { Label("Practice route", systemImage: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(PlanColors.route) }
+            Label(s("Verified exit"), systemImage: "door.left.hand.open").foregroundStyle(PlanColors.exit)
+            Label(s("Unconfirmed"), systemImage: "questionmark.diamond").foregroundStyle(PlanColors.unverified)
+            if !routes.isEmpty { Label(s("Practice route"), systemImage: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(PlanColors.route) }
         }
         .font(.caption2)
         .labelStyle(.titleAndIcon)
@@ -99,6 +109,13 @@ struct FloorPlanView: View {
         for s in spaces {
             ctx.fill(path(s.polygon, f, closed: true), with: .color(s.kind == .hallway ? PlanColors.hall : PlanColors.room))
         }
+        for room in spaces where spatialState?.affectedSpaceIDs.contains(room.id) == true {
+            ctx.fill(path(room.polygon, f, closed: true), with: .color(spatialState?.hazard == .flashFlood ? .blue.opacity(0.22) : .orange.opacity(0.25)))
+            ctx.draw(Text(spatialState?.hazard == .flashFlood ? "≈" : "!").font(.title.bold()), at: f.pt(Geometry.centroid(room.polygon)))
+        }
+        for room in spaces where spatialState?.exposedSpaceIDs?.contains(room.id) == true {
+            ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple.opacity(0.6)), style: StrokeStyle(lineWidth: 3, dash: [4, 3]))
+        }
         for o in home.obstacles where o.floorID == fid {
             ctx.fill(path(o.polygon, f, closed: true), with: .color(PlanColors.obstacle))
         }
@@ -113,11 +130,34 @@ struct FloorPlanView: View {
             let style: StrokeStyle = p.verification == .verified ? StrokeStyle(lineWidth: 3) : StrokeStyle(lineWidth: 2, dash: [3, 3])
             let color: Color = p.kind == .window ? PlanColors.window : verifiedExit ? PlanColors.exit : p.verification == .verified ? PlanColors.door : PlanColors.unverified
             ctx.stroke(line, with: .color(color), style: style)
-            if verifiedExit {
-                ctx.draw(Text("EXIT").font(.system(size: 9, weight: .bold)).foregroundStyle(PlanColors.exit), at: f.pt(p.center), anchor: .center)
-            } else if p.verification != .verified && p.kind != .window {
-                ctx.draw(Text("?").font(.system(size: 11, weight: .bold)).foregroundStyle(PlanColors.unverified), at: f.pt(p.center), anchor: .center)
+            if p.kind == .window && spatialState?.hazard == .tornado {
+                // Static cue also serves Reduce Motion. It illustrates exposure, not predicted structural damage.
+                ctx.draw(Text("×").font(.system(size: 18, weight: .bold)).foregroundStyle(.purple), at: f.pt(p.center))
             }
+            if verifiedExit {
+                ctx.draw(Text(s("EXIT")).font(.system(size: 9, weight: .bold)).foregroundStyle(PlanColors.exit), at: f.pt(p.center), anchor: .center)
+            } else if p.verification != .verified && p.kind != .window {
+                ctx.draw(Text(s("?")).font(.system(size: 11, weight: .bold)).foregroundStyle(PlanColors.unverified), at: f.pt(p.center), anchor: .center)
+            }
+        }
+        for connector in home.connectors {
+            let room = home.space(connector.fromSpaceID)
+            let other = home.space(connector.toSpaceID)
+            if room?.floorID == fid { ctx.draw(Text(Image(systemName: "stairs")).font(.caption), at: f.pt(connector.fromPoint)) }
+            if other?.floorID == fid { ctx.draw(Text(Image(systemName: "stairs")).font(.caption), at: f.pt(connector.toPoint)) }
+        }
+        if let id = highlightedElementID {
+            if let room = home.space(id), room.floorID == fid { ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }
+            if let opening = home.portal(id), opening.floorID == fid {
+                ctx.stroke(path([opening.a, opening.b], f, closed: false), with: .color(.purple), lineWidth: 9)
+            }
+            if let connector = home.connectors.first(where: { $0.id == id }) {
+                let points = [(home.space(connector.fromSpaceID)?.floorID, connector.fromPoint), (home.space(connector.toSpaceID)?.floorID, connector.toPoint)]
+                for (floor, point) in points where floor == fid {
+                    ctx.stroke(Path(ellipseIn: CGRect(origin: f.pt(point), size: .zero).insetBy(dx: -12, dy: -12)), with: .color(.purple), lineWidth: 5)
+                }
+            }
+            if let obstacle = home.obstacles.first(where: { $0.id == id && $0.floorID == fid }) { ctx.stroke(path(obstacle.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }
         }
         let bounds = CGRect(origin: .zero, size: size).insetBy(dx: 10, dy: 10)
         var markers: [CGPoint] = []
@@ -159,6 +199,22 @@ struct FloorPlanView: View {
                 }
             }
         }
+    }
+
+    private func hitTest(_ point: CGPoint, size: CGSize) -> String? {
+        guard let fid = floorID, let fit = fit(size, fid) else { return nil }
+        let local = Vec2((point.x - fit.offset.x) / fit.scale + fit.minX, fit.maxY - (point.y - fit.offset.y) / fit.scale)
+        let tolerance = 18 / fit.scale
+        if let portal = home.portals.filter({ $0.floorID == fid }).min(by: {
+            Geometry.distancePointSegment(local, $0.a, $0.b) < Geometry.distancePointSegment(local, $1.a, $1.b)
+        }), Geometry.distancePointSegment(local, portal.a, portal.b) <= tolerance { return portal.id }
+        if let connector = home.connectors.first(where: { connector in
+            (home.space(connector.fromSpaceID)?.floorID == fid && connector.fromPoint.distance(to: local) <= tolerance)
+            || (home.space(connector.toSpaceID)?.floorID == fid && connector.toPoint.distance(to: local) <= tolerance)
+        }) { return connector.id }
+        if let annotation = home.annotations.first(where: { $0.floorID == fid && ($0.position?.distance(to: local) ?? .infinity) <= tolerance }) { return annotation.id }
+        if let obstacle = home.obstacles.first(where: { $0.floorID == fid && Geometry.contains($0.polygon, local) }) { return obstacle.id }
+        return home.spaces.first(where: { $0.floorID == fid && Geometry.contains($0.polygon, local) })?.id
     }
 
     static func symbol(_ k: AnnotationKind) -> String {

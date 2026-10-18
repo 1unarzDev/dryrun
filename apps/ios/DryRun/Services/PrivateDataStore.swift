@@ -4,11 +4,11 @@ import DryRunCore
 /// What the app keeps privately. Everything here lives only inside the encrypted vault.
 struct PrivateSnapshot: Sendable, Equatable {
     var household: HouseholdProfile
-    var home: HomeModel
+    var home: HomeModel?
     var savedPlan: PlanDocument?
     var savedPlaces: [SavedPlace]
 
-    init(household: HouseholdProfile, home: HomeModel, savedPlan: PlanDocument? = nil,
+    init(household: HouseholdProfile, home: HomeModel? = nil, savedPlan: PlanDocument? = nil,
          savedPlaces: [SavedPlace] = []) {
         self.household = household
         self.home = home

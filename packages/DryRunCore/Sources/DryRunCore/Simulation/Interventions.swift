@@ -21,7 +21,7 @@ public enum InterventionApplier {
         case "act.backup.confirm-medical-backup":
             let targets = h.equipment.indices.filter { idx in
                 let eq = h.equipment[idx]
-                return eq.isEssential && !eq.needsRefrigeration && (i.parameters["equipment"].map { $0 == eq.id } ?? true)
+                return eq.isEssential && eq.requiresElectricalPower && (i.parameters["equipment"].map { $0 == eq.id } ?? true)
             }
             for idx in targets {
                 // Prefer an existing battery station the household owns; otherwise a hypothetical compatible one.

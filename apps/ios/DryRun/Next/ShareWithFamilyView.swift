@@ -10,6 +10,7 @@ struct ShareWithFamilyView: View {
     @State private var includePlan = true
     @State private var includeCard = true
     @State private var includePrivateNotes = false
+    @State private var selection = FamilyCardSelection()
     @State private var exportURL: URL?
     @State private var showPreview = false
     @State private var preparing = false
@@ -18,23 +19,27 @@ struct ShareWithFamilyView: View {
 
     var body: some View {
         let l = model.localizer
-        let hasDevices = !(model.household.map(OutageCardBuilder.devices(in:)) ?? []).isEmpty
         let gaps = readinessGaps
         Form {
             Section {
                 Toggle(isOn: $includePlan) { Label(l("ui.share.plan"), systemImage: "doc.text") }
                     .accessibilityIdentifier("share.includePlan")
-                if hasDevices {
+                Group {
                     Toggle(isOn: $includeCard) { Label(l("ui.card.title"), systemImage: "bolt.heart") }
                         .accessibilityIdentifier("share.includeCard")
                 }
+                Toggle(l("family.critical"), isOn: $selection.includeCriticalInformation)
+                Toggle(l("family.medication"), isOn: $selection.includeMedication)
+                Toggle(l("family.instructions"), isOn: $selection.includeResponderInstructions)
+                Toggle(l("family.contacts"), isOn: $selection.includeContacts)
                 Toggle(l("common.plan.includePrivate"), isOn: $includePrivateNotes)
+                Text(l("family.selectedWhy")).font(.footnote)
             } header: {
                 Text(l("ui.share.what"))
             }
             Section {
                 if gaps.isEmpty {
-                    Label(l("ui.share.nothingMissing"), systemImage: "checkmark.circle").foregroundStyle(Theme.success)
+                    Text(l("ui.share.readyFooter")).foregroundStyle(.secondary)
                 }
                 ForEach(gaps, id: \.self) { Label($0, systemImage: "questionmark.circle").foregroundStyle(.primary) }
             } header: {
@@ -51,7 +56,7 @@ struct ShareWithFamilyView: View {
                 .buttonStyle(.primary)
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
-                .disabled(preparing || (!includePlan && !(includeCard && hasDevices)))
+                .disabled(preparing || (!includePlan && !includeCard))
                 .accessibilityIdentifier("share.preview")
             } footer: {
                 Text(l("common.privacy.shareBoundary"))
@@ -77,13 +82,13 @@ struct ShareWithFamilyView: View {
         if includeCard {
             for eq in OutageCardBuilder.devices(in: h) {
                 for gap in OutageCardBuilder.gaps(for: eq, in: h) {
-                    out.append("\(eq.label): \(l("card.gap.\(gap.rawValue)"))")
+                    out.append("\(eq.localizedLabel(l)): \(l("card.gap.\(gap.rawValue)"))")
                 }
             }
         }
         if includePlan {
-            if model.home?.meetingPoint == nil { out.append(l("plan.meeting.missing")) }
-            if h.contacts.isEmpty { out.append(l("plan.contact.none")) }
+            if !model.savedPlaces.contains(where: { $0.purpose == .outsideMeetingPoint && $0.homeID == h.stableHomeID }) { out.append(l("family.meetupMissing")) }
+            if !h.contacts.contains(where: \.isComplete) { out.append(l("plan.contact.none")) }
         }
         return Array(NSOrderedSet(array: out)) as? [String] ?? out
     }
@@ -94,18 +99,15 @@ struct ShareWithFamilyView: View {
         var pages: [PlanPage] = []
         var base: PlanDocument?
         if includePlan {
-            if model.savedPlan == nil || model.planIsStale || model.savedPlan?.includesPrivateNotes != includePrivateNotes {
-                let scenarios = model.savedPlan?.scenarioIDs.isEmpty == false ? model.savedPlan!.scenarioIDs : Self.defaultPlanScenarios
-                await model.generatePlan(scenarioIDs: scenarios, includePrivateNotes: includePrivateNotes)
-            }
-            if let plan = model.savedPlan, plan.locale == model.locale {
-                base = plan
-                pages += plan.pages
-            }
+            await model.generatePlan(scenarioIDs: model.savedPlan?.scenarioIDs ?? [], includePrivateNotes: includePrivateNotes, selection: selection)
+            guard !model.planIsStale, let plan = model.savedPlan, plan.locale == model.locale else { return }
+            base = plan
+            pages = plan.pages.filter { $0.id != "family-card" || includeCard }
+
         }
-        if includeCard, let card = model.outageCard(includePrivateNotes: includePrivateNotes), !card.pages.isEmpty {
+        if includeCard, let card = model.outageCard(includePrivateNotes: includePrivateNotes, selection: selection), !card.pages.isEmpty {
             // The card goes first: it is the page someone needs in a hurry.
-            pages = card.pages + pages
+            pages = card.pages + pages.filter { $0.id != "family-card" }
             if var merged = base {
                 merged.draftTranslationBanner = merged.draftTranslationBanner ?? card.draftTranslationBanner
                 merged.fallbackNote = merged.fallbackNote ?? card.fallbackNote

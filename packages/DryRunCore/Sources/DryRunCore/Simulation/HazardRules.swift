@@ -54,6 +54,10 @@ extension RunState {
         case RuleID.tornadoWarning: tornadoWarning(cause: id)
         case RuleID.recoveryDisplacement: displacement(cause: id)
         case RuleID.floodWarning: floodWarning(cause: id)
+        case RuleID.setExternal:
+            if scenario.hazard == .flashFlood && e.params["service"] == Svc.roads && e.params["state"] == ServiceState.unavailable.rawValue {
+                advanceFloodScene(cause: id)
+            }
         case RuleID.waterAdvisory:
             if flags.contains("advisory.chemical") {
                 emit("evt.\(scenario.id).advisory.boil-not-remedy", title: "scenario.common.advisory.boil-not-remedy", severity: .critical,
@@ -155,7 +159,7 @@ extension RunState {
         // A missing or stale assignment is an explicit unknown. Never silently start a person in
         // the living room (or the first scanned room), which can make a rehearsal claim a route
         // from the wrong place.
-        guard let s = p.sleepingSpaceID, home.space(s) != nil else { return "unknown" }
+        guard let s = input.effectiveSpatialOptions.startingSpaceIDs[p.id] ?? p.sleepingSpaceID, home.space(s) != nil else { return "unknown" }
         return s
     }
 
@@ -198,6 +202,7 @@ extension RunState {
             flags.insert("fire.smokeAlarmsUnverified")
         }
         if !household.pets.isEmpty { flags.insert("fire.pets") }
+        updateSpatialScene(stage: cause, affected: [], assumption: "Exercise: routes before the authored smoke blockage. Starting rooms are recorded household assignments.")
     }
 
     /// Applies authored blockage. `originKind` blocks every space of that kind (the authored fire origin);
@@ -211,12 +216,23 @@ extension RunState {
             blockedPortals.formUnion(r.request.exclusions.blockedPortalIDs)
         }
         if let kindRaw = e.params["originKind"], let kind = SpaceKind(rawValue: kindRaw) {
-            let origin = home.spaces.filter { $0.kind == kind }.map(\.id)
-            if origin.isEmpty {
-                unknowns.insert("home.fireOrigin.(kindRaw)")
-                flags.insert("fire.originUnresolved")
+            // One actual origin, selected explicitly or by a stable seeded choice among matching rooms.
+            var neighbors: Set<String> = []
+            for portal in home.portals where portal.verification == .verified {
+                if case .space(let a) = portal.sideA, case .space(let b) = portal.sideB {
+                    if blockedSpaces.contains(a) { neighbors.insert(b) }
+                    if blockedSpaces.contains(b) { neighbors.insert(a) }
+                }
+            }
+            let candidates = home.spaces.filter { $0.kind == kind && (spatialState?.originSpaceID == nil || neighbors.contains($0.id)) }.sorted { $0.id < $1.id }
+            let selected = spatialState?.originSpaceID == nil ? input.effectiveSpatialOptions.originSpaceID.flatMap(home.space) : nil
+            let origin = selected ?? (candidates.isEmpty ? nil : candidates[Int(input.seed % UInt64(candidates.count))])
+            if let origin {
+                blockedSpaces.insert(origin.id)
+                if spatialState?.originSpaceID == nil { spatialState?.originSpaceID = origin.id }
             } else {
-                blockedSpaces.formUnion(origin)
+                unknowns.insert("home.fireOrigin.\(kindRaw)")
+                flags.insert("fire.originUnresolved")
             }
         }
         if e.params["mode"] == "currentRoutes" {
@@ -226,9 +242,7 @@ extension RunState {
         for p in household.people.sorted(by: { $0.id < $1.id }) {
             let previous = currentRoutes[p.id]?.primary
             // A person who starts in a blocked room keeps that start; nobody is ever routed back in (no re-entry).
-            var exP = ex
-            exP.blockedSpaceIDs.removeAll { $0 == startSpace(for: p) }
-            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: exP), in: home)
+            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: ex), in: home)
             currentRoutes[p.id] = r
             routes.append(r)
             if let path = r.primary {
@@ -249,6 +263,7 @@ extension RunState {
             }
             if r.primary != nil, r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
         }
+        updateSpatialScene(stage: cause, affected: blockedSpaces.sorted(), portals: blockedPortals.sorted(), assumption: "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.")
         helperReachCheck(blockedSpaces: blockedSpaces, blockedPortals: blockedPortals, cause: cause)
     }
 
@@ -273,8 +288,8 @@ extension RunState {
     }
 
     static func reachable(from: String, to: String, home: HomeModel, blockedSpaces: Set<String>, blockedPortals: Set<String>) -> Bool {
+        if blockedSpaces.contains(from) || blockedSpaces.contains(to) { return false }
         if from == to { return true }
-        if blockedSpaces.contains(to) { return false }
         var adj: [String: Set<String>] = [:]
         for pt in home.portals where pt.verification == .verified && pt.kind != .window && !blockedPortals.contains(pt.id) {
             guard case .space(let a) = pt.sideA, case .space(let b) = pt.sideB else { continue }
@@ -320,7 +335,7 @@ extension RunState {
         let lowestFloors = Set(home.floors.filter { $0.level == lowest }.map(\.id))
         let annotated = home.annotations.filter { $0.kind == .tornadoShelterCandidate && $0.verification == .verified }.compactMap(\.spaceID)
         return home.spaces.sorted { $0.id < $1.id }.first { s in
-            lowestFloors.contains(s.floorID) && (annotated.contains(s.id) || s.interiorNoWindowsConfirmed.confirmedValue == true)
+            lowestFloors.contains(s.floorID) && home.floors.first(where: { $0.id == s.floorID })?.exteriorGrade != .unknown && home.floors.first(where: { $0.id == s.floorID })?.exteriorGrade != .aboveGround && !(home.source == .roomPlanScan && home.floors.first(where: { $0.id == s.floorID })?.exteriorGrade == nil) && (annotated.contains(s.id) || s.interiorNoWindowsConfirmed.confirmedValue == true)
         }
     }
 
@@ -352,12 +367,32 @@ extension RunState {
                 requireSticky("req.alerts.night", cause: cause)
             }
         }
+        if household.housing.homeType != .manufacturedHome, let shelter = shelterSpace {
+            routeToInterior(shelter, purpose: .interiorShelter, exclusions: .none)
+        } else { recordUnavailableInterior(purpose: .interiorShelter, exclusions: .none) }
+        updateSpatialScene(stage: cause, affected: [], destination: shelterSpace?.id,
+                           assumption: "Exercise: household-chosen interior shelter, not an engineered safe room. Windows indicate exposure; opening windows does not help.")
         assistanceCheck(cause: cause, rule: "rule.tornado.assistance", sources: ["S22"])
     }
 
     // MARK: Flood
 
     mutating func floodWarning(cause: String) {
+        let affected = input.effectiveSpatialOptions.floodAffectedSpaceIDs.filter { home.space($0) != nil }.sorted()
+        recordUnavailableInterior(purpose: .higherRefuge, exclusions: ScenarioExclusions(blockedSpaceIDs: affected))
+        if let refugeID = input.effectiveSpatialOptions.refugeSpaceID, let refuge = home.space(refugeID),
+           let targetFloor = home.floors.first(where: { $0.id == refuge.floorID }), targetFloor.exteriorGrade != .unknown,
+           affected.allSatisfy({ id in
+               guard let room = home.space(id), let floor = home.floors.first(where: { $0.id == room.floorID }),
+                     floor.exteriorGrade != nil, floor.exteriorGrade != .unknown else { return false }
+               return floor.elevationMeters < targetFloor.elevationMeters
+           }), !affected.isEmpty, refuge.kind != .closet {
+            routeToInterior(refuge, purpose: .higherRefuge, exclusions: ScenarioExclusions(blockedSpaceIDs: affected))
+        }
+        updateSpatialScene(stage: cause, affected: affected, destination: input.effectiveSpatialOptions.refugeSpaceID,
+                           assumption: input.effectiveSpatialOptions.floodIsHouseholdLeak ? "Exercise: a local household leak affects only the selected spaces. This is separate from regional flood evacuation guidance. Keep away from water near electrical equipment; no route through the affected space is established."
+                           : affected.isEmpty ? "Exercise: regional flood warning. Indoor water location is unknown; follow official instructions and act early. No indoor route is established."
+                           : "Exercise: selected water-affected spaces are excluded. Higher refuge is considered only with recorded floor relationships; never cross water or enter a closed attic.")
         // Mapped hazard or map directions never establish that a road is passable.
         emit("evt.flash-flood.no-crossing", title: "scenario.flash-flood.no-crossing", severity: .critical,
              rule: "rule.flood.never-through-water", facts: [], causedBy: cause, sources: ["S23"])
@@ -367,6 +402,69 @@ extension RunState {
             emit("evt.flash-flood.well-quality-unknown", title: "scenario.flash-flood.well-quality-unknown", severity: .caution,
                  rule: "rule.flood.well-quality", facts: ["housing.waterSource"], causedBy: cause, sources: ["S24"])
         }
+    }
+
+    mutating func advanceFloodScene(cause: String) {
+        guard var scene = spatialState, !scene.affectedSpaceIDs.isEmpty,
+              !input.effectiveSpatialOptions.floodIsHouseholdLeak else { return }
+        let affected = Set(scene.affectedSpaceIDs)
+        var expanded = affected
+        for portal in home.portals where portal.verification == .verified {
+            guard case .space(let a) = portal.sideA, case .space(let b) = portal.sideB else { continue }
+            for (from, to) in [(a,b), (b,a)] where affected.contains(from) {
+                guard let source = home.space(from), let target = home.space(to),
+                      let sourceFloor = home.floors.first(where: { $0.id == source.floorID }),
+                      let targetFloor = home.floors.first(where: { $0.id == target.floorID }),
+                      sourceFloor.exteriorGrade != nil, sourceFloor.exteriorGrade != .unknown,
+                      targetFloor.exteriorGrade != nil, targetFloor.exteriorGrade != .unknown,
+                      targetFloor.elevationMeters <= sourceFloor.elevationMeters else { continue }
+                expanded.insert(to)
+            }
+        }
+        let exclusions = ScenarioExclusions(blockedSpaceIDs: expanded.sorted())
+        recordUnavailableInterior(purpose: .higherRefuge, exclusions: exclusions)
+        if let destinationID = scene.destinationSpaceID, let destination = home.space(destinationID),
+           !expanded.contains(destinationID), let targetFloor = home.floors.first(where: { $0.id == destination.floorID }),
+           expanded.allSatisfy({ id in
+               guard let room = home.space(id), let floor = home.floors.first(where: { $0.id == room.floorID }) else { return false }
+               return floor.elevationMeters < targetFloor.elevationMeters
+           }) { routeToInterior(destination, purpose: .higherRefuge, exclusions: exclusions) }
+        scene.stageID = cause; scene.affectedSpaceIDs = expanded.sorted()
+        scene.routes = currentRoutes.keys.sorted().compactMap { currentRoutes[$0] }
+        scene.assumption = "Exercise: a later authored stage excludes connected lower spaces. This topology illustration is not a flood depth or arrival-time prediction."
+        scene.assumptionKey = "spatial.assumption.flood-later"
+        spatialState = scene
+    }
+
+    mutating func recordUnavailableInterior(purpose: RoutePurpose, exclusions: ScenarioExclusions) {
+        for person in household.people.sorted(by: { $0.id < $1.id }) {
+            currentRoutes[person.id] = planner.plan(RouteRequest(personID: person.id, startSpaceID: startSpace(for: person),
+                mobility: mobility(for: person), exclusions: exclusions, purpose: purpose), in: home)
+        }
+    }
+
+    mutating func routeToInterior(_ destination: Space, purpose: RoutePurpose, exclusions: ScenarioExclusions) {
+        for person in household.people.sorted(by: { $0.id < $1.id }) {
+            currentRoutes[person.id] = planner.plan(RouteRequest(personID: person.id, startSpaceID: startSpace(for: person),
+                mobility: mobility(for: person), exclusions: exclusions, purpose: purpose, destinationSpaceID: destination.id), in: home)
+        }
+    }
+
+    mutating func updateSpatialScene(stage: String, affected: [String], portals: [String] = [], destination: String? = nil, assumption: String) {
+        let origin = spatialState?.originSpaceID ?? affected.first
+        let assumptionKey: String
+        switch scenario.hazard {
+        case .homeFire: assumptionKey = affected.isEmpty ? "spatial.assumption.fire-before" : "spatial.assumption.fire-blocked"
+        case .tornado: assumptionKey = "spatial.assumption.tornado"
+        case .flashFlood: assumptionKey = input.effectiveSpatialOptions.floodIsHouseholdLeak ? "spatial.assumption.leak" : affected.isEmpty ? "spatial.assumption.flood-unknown" : "spatial.assumption.flood-selected"
+        default: assumptionKey = "spatial.assumption.unknown"
+        }
+        let exposed = scenario.hazard == .tornado ? home.portals.filter { $0.kind == .window }.flatMap { portal in
+            [portal.sideA, portal.sideB].compactMap { side -> String? in if case .space(let id) = side { return id }; return nil }
+        } : []
+        spatialState = SpatialExerciseState(hazard: scenario.hazard, seed: input.seed, stageID: stage, originSpaceID: origin,
+            affectedSpaceIDs: affected, affectedPortalIDs: portals, destinationSpaceID: destination,
+            routes: currentRoutes.keys.sorted().compactMap { currentRoutes[$0] }, assumption: assumption, assumptionKey: assumptionKey, exposedSpaceIDs: Array(Set(exposed)).sorted())
     }
 
     // MARK: Choices

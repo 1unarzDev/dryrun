@@ -97,7 +97,7 @@ public struct BackupAllocator: Sendable {
             out[load] = BackupAssignment(loadID: load, sourceID: nil, state: lastState, reason: lastReason)
         }
 
-        for eq in h.equipment.sorted(by: { $0.id < $1.id }) where !eq.needsRefrigeration {
+        for eq in h.equipment.sorted(by: { $0.id < $1.id }) where eq.requiresElectricalPower {
             tryAssign(load: Load.equipment(eq.id), candidates: eq.compatibleBackupIDs, watts: eq.powerWatts.confirmedValue)
         }
         for b in h.backupPower.sorted(by: { $0.id < $1.id }) where b.kind == .standbyGenerator {

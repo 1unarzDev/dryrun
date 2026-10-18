@@ -171,13 +171,14 @@ public struct DependencyModel: Sendable {
 
         // Essential equipment: power from grid/home circuits OR an allocated, confirmed compatible backup.
         for eq in h.equipment.sorted(by: { $0.id < $1.id }) {
-            let req: Requirement
-            if eq.needsRefrigeration {
-                req = .any([.service(Svc.refrigeration), .service(Svc.relocatedPower), .partialFact(h.supplies.coolerAndIcePacks.confirmedValue)])
-            } else {
-                // After relocation to a destination with confirmed conditions, the device can use power there.
-                req = .any([.service(Svc.homePower), .backupSupply(loadID: Load.equipment(eq.id)), .service(Svc.relocatedPower)])
+            var requirements: [Requirement] = []
+            if eq.requiresColdStorage {
+                requirements.append(.any([.service(Svc.refrigeration), .service(Svc.relocatedPower), .partialFact(h.supplies.coolerAndIcePacks.confirmedValue)]))
             }
+            if eq.requiresElectricalPower {
+                requirements.append(.any([.service(Svc.homePower), .backupSupply(loadID: Load.equipment(eq.id)), .service(Svc.relocatedPower)]))
+            }
+            let req: Requirement = .all(requirements)
             nodes.append(DependencyNode(id: Svc.device(eq.id), requirement: req,
                                         factIDs: ["equipment.\(eq.id)"] + eq.compatibleBackupIDs.map { "backup.\($0).setupConfirmed" },
                                         ruleID: "rule.dependency.device"))

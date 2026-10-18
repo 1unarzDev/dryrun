@@ -92,7 +92,7 @@ struct PlanIntegrationTests {
                                             contentVersion: e.content.contentVersion, generatedAt: LeadTestSupport.fixedDate)
                 let issues = PlanValidator.validate(doc, household: h)
                 #expect(issues.isEmpty, "\(h.id)/\(locale): \(issues)")
-                #expect(doc.pages.count == 7)
+                #expect(doc.pages.count == 8)
                 let lines = doc.pages.flatMap(\.sections).flatMap(\.lines)
                 #expect(lines.contains { $0.text.contains("911") })
                 if locale != "en" {

@@ -1,12 +1,10 @@
 # Frontend handoff
 
-The work and decisions that most constrain or enable UI development. The UI layer builds with Xcode 27 and passes its UI journeys and the
-42-screen tour on the iOS 27 simulator (`docs/VERIFICATION.md`, macOS run). It has not run on a physical iPhone or an
-iOS 18 runtime, and RoomPlan capture and the MapKit view have not been exercised.
+Current direction (October 17): **Prepare, Rehearse, Plan**, focused factual editors, universal family card and optional home geometry. Native build, simulator and physical-device verification of this revision are pending; see CLAUDE_NATIVE_HANDOFF and REVISION_EVIDENCE. Historical October 14 screenshots do not verify changed flows. Older guidance below is subordinate to the current revision brief and architecture.
 
 ## 1. The UI is a thin client over a tested core
 
-All behavior lives in `packages/DryRunCore` (Foundation-only, 133 tests). Views should render core results and call
+All behavior lives in `packages/DryRunCore` (Foundation-only; current counts in VERIFICATION). Views should render core results and call
 `AppModel` intents. They should never compute safety logic, routes, priorities, or text themselves. If a design needs
 new information, add it to the core result with a test, then render it.
 
@@ -15,7 +13,7 @@ new information, add it to the core result with a test, then render it.
 | State | Meaning |
 |---|---|
 | `phase` | `.loading / .onboarding / .ready / .vaultLocked / .vaultNeedsRecovery / .contentFailed`. Each needs a designed screen; locked and recovery must never look like an empty fresh start. |
-| `household`, `home` | The current private data. Every edit bumps a revision; derived results are dropped automatically. |
+| `household`, `home` | The current private data. Home may be intentionally absent. Facts bump revisions; live previews update and old saved scenario output is retained as labeled stale history. |
 | `rehearsal: RehearsalCursor?` | The step-through cursor: `visibleEvents`, `currentMinute`, `pendingDecision`, `snapshotAtCursor`, `isFinished`. |
 | `comparison: RehearsalComparison?` | "Try this change" result: baseline, modified, and a structured `diff`. |
 | `savedPlan`, `planIsStale` | The localized `PlanDocument`. |

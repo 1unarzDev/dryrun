@@ -14,15 +14,21 @@ enum ServiceNames {
         "svc.wellPump.mechanical": "Well pump (equipment)", "svc.internet": "Internet",
     ]
     /// Device and backup IDs become the labels the household gave them; raw IDs never reach the screen.
-    static func name(_ id: String, household: HouseholdProfile?) -> String {
+    static func name(_ id: String, household: HouseholdProfile?, localizer: Localizer? = nil) -> String {
+        if let localizer {
+            let value = localizer.text("spatial.service." + id)
+            if !value.isMissing { return value.text }
+        }
         if let n = names[id] { return n }
-        if id.hasPrefix("svc.device.") { return HouseholdLabels.equipment(String(id.dropFirst("svc.device.".count)), in: household) }
+        if id.hasPrefix("svc.device.") { return HouseholdLabels.equipment(String(id.dropFirst("svc.device.".count)), in: household, localizer: localizer) }
         if id.hasPrefix("res.backup.") {
-            return "Backup energy: \(HouseholdLabels.backup(String(id.dropFirst("res.backup.".count)), in: household))"
+            let name = HouseholdLabels.backup(String(id.dropFirst("res.backup.".count)), in: household, localizer: localizer)
+            return localizer?("spatial.backup-energy", ["name": name]) ?? "Backup energy: \(name)"
         }
         if id.hasPrefix("res.device."), id.hasSuffix(".runtime") {
             let eid = String(id.dropFirst("res.device.".count).dropLast(".runtime".count))
-            return "\(HouseholdLabels.equipment(eid, in: household)) runtime"
+            let name = HouseholdLabels.equipment(eid, in: household, localizer: localizer)
+            return localizer?("spatial.device-runtime", ["name": name]) ?? "\(name) runtime"
         }
         return UnknownNames.fallback(id)
     }
@@ -38,11 +44,15 @@ enum ServiceNames {
 
 /// Household-given names for equipment and backup sources, looked up by ID.
 enum HouseholdLabels {
-    static func equipment(_ id: String, in household: HouseholdProfile?) -> String {
-        household?.equipment.first { $0.id == id }?.label ?? "Essential device"
+    static func equipment(_ id: String, in household: HouseholdProfile?, localizer: Localizer? = nil) -> String {
+        guard let equipment = household?.equipment.first(where: { $0.id == id }) else { return localizer?("family.equipment") ?? "Essential device" }
+        if !equipment.label.isEmpty { return equipment.label }
+        return localizer.map { DisplayNames.name(equipment.purpose.rawValue, localizer: $0) } ?? equipment.purpose.displayName
     }
-    static func backup(_ id: String, in household: HouseholdProfile?) -> String {
-        household?.backupPower.first { $0.id == id }?.label ?? "backup power source"
+    static func backup(_ id: String, in household: HouseholdProfile?, localizer: Localizer? = nil) -> String {
+        guard let backup = household?.backupPower.first(where: { $0.id == id }) else { return localizer?("family.backup") ?? "backup power source" }
+        if !backup.label.isEmpty { return backup.label }
+        return localizer.map { DisplayNames.name(backup.kind.rawValue, localizer: $0) } ?? backup.kind.displayName
     }
 }
 
@@ -74,33 +84,40 @@ enum UnknownNames {
         "communications.routerOnBackup": "Whether your internet router has backup power",
     ]
 
-    static func describe(_ id: String, household: HouseholdProfile?) -> String {
+    static func describe(_ id: String, household: HouseholdProfile?, localizer: Localizer? = nil) -> String {
+        if let localizer {
+            let value = localizer.text("spatial.fact." + id)
+            if !value.isMissing { return value.text }
+        }
+        func fact(_ key: String, _ name: String, _ fallback: String) -> String {
+            localizer?("spatial.fact." + key, ["name": name]) ?? fallback
+        }
         if let n = names[id] { return n }
         let parts = id.split(separator: ".", maxSplits: 2).map(String.init)
         if parts.count >= 2, parts[0] == "equipment" {
-            let device = HouseholdLabels.equipment(parts[1], in: household)
+            let device = HouseholdLabels.equipment(parts[1], in: household, localizer: localizer)
             switch parts.count > 2 ? parts[2] : "" {
-            case "backup": return "A backup that works with \(device)"
-            case "runtime", "documentedBackupRuntimeHours": return "How long \(device) runs on its backup"
-            case "backupOutcome": return "Whether \(device)'s backup lasts through the outage"
+            case "backup": return fact("equipment.backup", device, "A backup that works with \(device)")
+            case "runtime", "documentedBackupRuntimeHours": return fact("equipment.runtime", device, "How long \(device) runs on its backup")
+            case "backupOutcome": return fact("equipment.backupOutcome", device, "Whether \(device)'s backup lasts through the outage")
             default: return device
             }
         }
         if parts.count >= 2, parts[0] == "backup" {
-            let backup = HouseholdLabels.backup(parts[1], in: household)
+            let backup = HouseholdLabels.backup(parts[1], in: household, localizer: localizer)
             switch parts.count > 2 ? parts[2] : "" {
-            case "setupConfirmed": return "Whether \(backup) is set up and tested"
-            case "usableEnergyWh": return "How much energy \(backup) holds"
-            case "safeOutdoorPlacementConfirmed": return "A safe outdoor spot for \(backup)"
+            case "setupConfirmed": return fact("backup.setup", backup, "Whether \(backup) is set up and tested")
+            case "usableEnergyWh": return fact("backup.energy", backup, "How much energy \(backup) holds")
+            case "safeOutdoorPlacementConfirmed": return fact("backup.outdoor", backup, "A safe outdoor spot for \(backup)")
             default: return backup
             }
         }
         if parts.count >= 2, parts[0] == "person" {
             let name = household?.people.first { $0.id == parts[1] }?.alias ?? "A household member"
             switch parts.count > 2 ? parts[2] : "" {
-            case "sleepingSpaceID": return "Where \(name) sleeps"
-            case "helperPersonID": return "Who helps \(name)"
-            case "needs": return "What \(name) needs"
+            case "sleepingSpaceID": return fact("person.start", name, "Where \(name) sleeps")
+            case "helperPersonID": return fact("person.helper", name, "Who helps \(name)")
+            case "needs": return fact("person.needs", name, "What \(name) needs")
             default: return name
             }
         }

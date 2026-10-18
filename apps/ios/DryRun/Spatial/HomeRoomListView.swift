@@ -6,6 +6,8 @@ import DryRunCore
 // AUTHORED, NOT COMPILED in this environment.
 
 struct HomeRoomListView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     let home: HomeModel
 
     init(home: HomeModel) { self.home = home }
@@ -20,13 +22,13 @@ struct HomeRoomListView: View {
                 Text(floor.label).font(.headline)
             }
         }
-        DisclosureGroup("Exits and outside openings") {
+        DisclosureGroup(s("Exits and outside openings")) {
             let exterior = home.portals.filter { $0.leadsToExterior || isCommonArea($0) }
-            if exterior.isEmpty { Text("No outside doors recorded yet.") }
+            if exterior.isEmpty { Text(s("No outside doors recorded yet.")) }
             ForEach(exterior) { portalRow($0) }
         }
         if !home.connectors.isEmpty {
-            DisclosureGroup("Stairs and floor connections") {
+            DisclosureGroup(s("Stairs and floor connections")) {
                 ForEach(home.connectors) { c in
                     VStack(alignment: .leading) {
                         Text("\(c.kind.rawValue.capitalized): \(label(c.fromSpaceID)) ↔ \(label(c.toSpaceID))")
@@ -36,9 +38,9 @@ struct HomeRoomListView: View {
                 }
             }
         }
-        DisclosureGroup("Safety markers") {
+        DisclosureGroup(s("Safety markers")) {
             let markers = home.annotations.sorted { priority($0.kind) < priority($1.kind) }
-            if markers.isEmpty { Text("No markers yet. Add smoke alarms and a meeting point.") }
+            if markers.isEmpty { Text(s("No markers yet. Add smoke alarms and a meeting point.")) }
             ForEach(markers) { a in
                 Label {
                     VStack(alignment: .leading) {
@@ -73,12 +75,12 @@ struct HomeRoomListView: View {
     private func portalRow(_ p: Portal) -> some View {
         let inside = [p.sideA, p.sideB].compactMap { if case .space(let id) = $0 { return label(id) }; return nil }.first ?? "?"
         var facts: [String] = [stateText(p.verification)]
-        if p.kind == .window { facts.append("window — not counted as an exit") }
-        if isCommonArea(p) { facts.append("opens to a shared building area that is not modelled") }
+        if p.kind == .window { facts.append(s("window — not counted as an exit")) }
+        if isCommonArea(p) { facts.append(s("opens to a shared building area that is not modelled")) }
         if let w = p.clearWidthMeters.value { facts.append(String(format: "%.2f m wide%@", w, p.clearWidthMeters.isConfirmed ? "" : " (scanned, unconfirmed)")) }
-        else if p.kind != .window { facts.append("width not measured") }
-        if let sf = p.stepFree.value { facts.append(sf ? "step-free" : "has a step") }
-        if p.operable.value == nil && p.kind != .opening { facts.append("opening not confirmed") }
+        else if p.kind != .window { facts.append(s("width not measured")) }
+        if let sf = p.stepFree.value { facts.append(s(sf ? "step-free" : "has a step")) }
+        if p.operable.value == nil && p.kind != .opening { facts.append(s("opening not confirmed")) }
         return VStack(alignment: .leading, spacing: 2) {
             Text("\(p.note ?? p.kind.rawValue.capitalized) (from \(inside))")
             Text(facts.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
@@ -94,9 +96,9 @@ struct HomeRoomListView: View {
         let other = p.sideA == .space(id) ? p.sideB : p.sideA
         switch other {
         case .space(let sid): return label(sid)
-        case .exterior: return "outside"
-        case .commonArea: return "building corridor"
-        case .unknown: return "unknown"
+        case .exterior: return s("outside")
+        case .commonArea: return s("building corridor")
+        case .unknown: return s("unknown")
         }
     }
 
@@ -104,10 +106,10 @@ struct HomeRoomListView: View {
 
     private func stateText(_ v: VerificationState) -> String {
         switch v {
-        case .verified: return "Confirmed"
-        case .proposed: return "Needs confirmation"
-        case .unknown: return "Unknown"
-        case .rejected: return "Marked not usable"
+        case .verified: return s("Confirmed")
+        case .proposed: return s("Needs confirmation")
+        case .unknown: return s("Unknown")
+        case .rejected: return s("Marked not usable")
         }
     }
 

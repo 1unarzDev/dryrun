@@ -56,7 +56,7 @@ struct RankingTests {
     func catalogFileMatches() throws {
         let url = SimFixtures.repoRoot.appendingPathComponent("content/actions/actions.json")
         let data = try DryRunJSON.encoder().encode(ActionCatalog.builtIn)
-        if ProcessInfo.processInfo.environment["DRYRUN_WRITE_FIXTURES"] != nil { try data.write(to: url) }
+        if ProcessInfo.processInfo.environment["DRYRUN_WRITE_FIXTURES"] == "1" { try data.write(to: url) }
         let onDisk = try DryRunJSON.decoder().decode(ActionCatalog.self, from: Data(contentsOf: url))
         #expect(onDisk == ActionCatalog.builtIn)
     }

@@ -2,6 +2,7 @@ import SwiftUI
 import DryRunCore
 
 struct RehearseTabView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     static let scenarioIDs = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
     static let symbols = ["freeze-power-loss": "snowflake", "heat-grid-strain": "thermometer.sun", "tornado": "tornado",
@@ -17,6 +18,15 @@ struct RehearseTabView: View {
                     .font(.footnote).foregroundStyle(.secondary)
                 if !model.capabilities.isOnline {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote).foregroundStyle(.secondary)
+                }
+                if let home = model.home {
+                    SectionCard(title: home.label, systemImage: "house") {
+                        if home.isFictional { Label(s("Example home"), systemImage: "sparkles").font(.caption) }
+                        FloorPlanView(home: home, routes: [], highlightedFloorID: nil).frame(height: 210)
+                    }
+                } else {
+                    Label(s("Add and review a home layout to practice spatial routes. Other scenarios remain available."), systemImage: "house")
+                        .font(.callout).foregroundStyle(.secondary)
                 }
                 Text(l("common.chooseScenario")).font(.headline).padding(.top, Theme.Space.s)
                 ForEach(Self.scenarioIDs, id: \.self) { id in
@@ -34,6 +44,7 @@ struct RehearseTabView: View {
 }
 
 struct ScenarioCard: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let id: String
 
@@ -64,10 +75,16 @@ struct ScenarioCard: View {
 /// One rehearsal, one step at a time. The newest event is the hero; the decision (when one is pending) comes right
 /// after it; only the services that just changed are shown, with the full list one tap away.
 struct RehearsalView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     let scenarioID: String
     @Environment(AppModel.self) private var model
     @State private var showDebrief = false
     @State private var showAllServices = false
+    @State private var originID = ""
+    @State private var waterEntryID = ""
+    @State private var refugeID = ""
+    @State private var householdLeak = false
+    @State private var daytimeStarts: [String: String] = [:]
 
     var body: some View {
         let l = model.localizer
@@ -80,6 +97,12 @@ struct RehearsalView: View {
                     if let session { clock(session) }
                 }
                 if let session {
+                    if ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
+                        sceneOptions(session)
+                        SpatialRehearsalScene(home: session.result.input.home, household: session.result.input.household,
+                                              state: session.snapshotAtCursor?.spatialState)
+                            .accessibilityIdentifier("rehearsal.scene")
+                    }
                     let events = session.visibleEvents
                     if let latest = events.last {
                         EventCard(event: latest, isCurrent: true, result: session.result)
@@ -93,7 +116,7 @@ struct RehearsalView: View {
                         }
                         .id("decision")
                     }
-                    if session.isFinished && !session.result.routes.isEmpty {
+                    if session.isFinished && !["home-fire", "flash-flood", "tornado"].contains(scenarioID) && !session.result.routes.isEmpty {
                         RouteSummaryView(routes: session.result.routes)
                     }
                     if let snapshot = session.snapshotAtCursor {
@@ -143,6 +166,46 @@ struct RehearsalView: View {
         .sheet(isPresented: $showDebrief) { NavigationStack { DebriefView() } }
     }
 
+    private func sceneOptions(_ session: RehearsalCursor) -> some View {
+        DisclosureGroup(s("Exercise starting assumptions")) {
+            let home = session.result.input.home
+            if scenarioID == "home-fire" {
+                Picker(s("Fire starts in one room"), selection: $originID) {
+                    Text(s("Use the authored default")).tag("")
+                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                }
+            }
+            if scenarioID == "flash-flood" {
+                Toggle(s("Local household leak exercise"), isOn: $householdLeak)
+                Picker(s("Water-affected room (optional)"), selection: $waterEntryID) {
+                    Text(s("Regional warning; indoor extent unknown")).tag("")
+                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                }
+                Picker(s("Higher refuge to review (optional)"), selection: $refugeID) {
+                    Text(s("No refuge established")).tag("")
+                    ForEach(home.spaces.filter { $0.kind != .closet }) { Text($0.label).tag($0.id) }
+                }
+            }
+            ForEach(session.result.input.household.people) { person in
+                Picker(model.localizer("spatial.start-person", ["name": person.alias]), selection: Binding(get: { daytimeStarts[person.id] ?? "" }, set: { daytimeStarts[person.id] = $0 })) {
+                    Text(s("Use recorded assignment")).tag("")
+                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                }
+            }
+            Button(s("Restart with these assumptions")) {
+                var variants = session.result.input.variants.filter { !$0.hasPrefix("origin:") && !$0.hasPrefix("waterEntry:") && !$0.hasPrefix("refuge:") && !$0.hasPrefix("start:") && $0 != "householdLeak" }
+                if !originID.isEmpty { variants.append("origin:\(originID)") }
+                if !waterEntryID.isEmpty { variants.append("waterEntry:\(waterEntryID)") }
+                if !refugeID.isEmpty { variants.append("refuge:\(refugeID)") }
+                if householdLeak { variants.append("householdLeak") }
+                for key in daytimeStarts.keys.sorted() { if let room = daytimeStarts[key], !room.isEmpty { variants.append("start:\(key)|\(room)") } }
+                Task { await model.startRehearsal(scenarioID: scenarioID, variants: variants) }
+            }
+        }
+        .font(.callout)
+        .accessibilityIdentifier("rehearsal.assumptions")
+    }
+
     private func clock(_ session: RehearsalCursor) -> some View {
         let minute = session.currentMinute
         let text = String(format: "+%dh %02dm", minute / 60, minute % 60)
@@ -161,7 +224,7 @@ struct RehearsalView: View {
                 ForEach(event.serviceChanges.keys.sorted(), id: \.self) { id in
                     let state = event.serviceChanges[id] ?? .unknown
                     HStack {
-                        Text(ServiceNames.name(id, household: model.household))
+                        Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                         Spacer()
                         StatusPill(text: l("common.status.\(state.rawValue)"), systemImage: Theme.symbol(for: state),
                                    tint: Theme.color(for: state))
@@ -207,7 +270,67 @@ struct RehearsalView: View {
     }
 }
 
+struct SpatialRehearsalScene: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
+    let home: HomeModel
+    let household: HouseholdProfile
+    let state: SpatialExerciseState?
+    @State private var personID: String?
+    @State private var show3D = false
+    @State private var selectedFloorID: String?
+    private var route: RouteResult? { state?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
+
+    var body: some View {
+        SectionCard(title: "Current exercise scene", systemImage: "house") {
+            if home.isFictional { Label(s("Example home"), systemImage: "sparkles").font(.caption.weight(.semibold)) }
+            if household.people.count > 1 {
+                Picker(s("Person"), selection: Binding(get: { personID ?? household.people.first?.id ?? "" }, set: { personID = $0 })) {
+                    ForEach(household.people) { Text($0.alias).tag($0.id) }
+                }
+                .accessibilityIdentifier("rehearsal.person")
+            }
+            if home.floors.count > 1 {
+                Picker(model.localizer("spatial.floor"), selection: Binding(get: { sceneFloorID ?? "" }, set: { selectedFloorID = $0 })) {
+                    ForEach(home.floors) { Text($0.label).tag($0.id) }
+                }.accessibilityIdentifier("rehearsal.floor")
+            }
+            FloorPlanView(home: home, routes: route?.primary.map { [$0] } ?? [], highlightedFloorID: sceneFloorID,
+                          highlightedElementID: state?.destinationSpaceID, spatialState: state).frame(height: 260)
+            if let state {
+                Text(state.assumptionKey.map { model.localizer($0) } ?? state.assumption).font(.footnote).foregroundStyle(.secondary)
+                if !state.affectedSpaceIDs.isEmpty {
+                    Label(state.affectedSpaceIDs.compactMap { home.space($0)?.label }.joined(separator: ", "), systemImage: "exclamationmark.triangle")
+                        .font(.callout)
+                }
+            }
+            if let exposed = state?.exposedSpaceIDs, !exposed.isEmpty {
+                Label(model.localizer("spatial.window-exposure", ["rooms": exposed.compactMap { home.space($0)?.label }.joined(separator: ", ")]), systemImage: "window.vertical.closed")
+                    .font(.footnote)
+            }
+            if let route {
+                if let path = route.primary {
+                    Text(path.spaceSequence.compactMap { id in
+                        guard let room = home.space(id) else { return nil }
+                        let floor = home.floors.first(where: { $0.id == room.floorID })?.label ?? ""
+                        return home.floors.count > 1 ? "\(room.label) (\(floor))" : room.label
+                    }.joined(separator: " → ")).font(.callout.weight(.semibold))
+                    if !path.verificationNeeded.isEmpty { Text(s("Some opening measurements still need confirmation.")).font(.footnote) }
+                } else {
+                    Label(route.noRouteReason == .blockedByScenario ? "No supported route: the starting room or a required connection is affected." : "No supported route from the recorded starting room. Review the layout, destination and this person's access needs.", systemImage: "exclamationmark.triangle")
+                        .font(.callout)
+                }
+            } else { Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary) }
+            DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
+                if show3D { DollhouseView(home: home, routes: route?.primary.map { [$0] } ?? [], floorID: nil, spatialState: state).frame(height: 230) }
+            }
+        }
+    }
+}
+
 struct PracticeBanner: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     let text: String
     var body: some View {
         Label(text, systemImage: "figure.walk.motion")
@@ -220,6 +343,7 @@ struct PracticeBanner: View {
 }
 
 struct ServiceStateGrid: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let snapshot: SimulationSnapshot
 
@@ -228,15 +352,15 @@ struct ServiceStateGrid: View {
         // Problems first, then unknowns, then working: what needs attention is at the top.
         let rank: [ServiceState: Int] = [.unavailable: 0, .degraded: 1, .unknown: 2, .operational: 3]
         let ids = snapshot.services.keys.sorted {
-            (rank[snapshot.services[$0] ?? .unknown] ?? 9, ServiceNames.name($0, household: model.household))
-                < (rank[snapshot.services[$1] ?? .unknown] ?? 9, ServiceNames.name($1, household: model.household))
+            (rank[snapshot.services[$0] ?? .unknown] ?? 9, ServiceNames.name($0, household: model.household, localizer: model.localizer))
+                < (rank[snapshot.services[$1] ?? .unknown] ?? 9, ServiceNames.name($1, household: model.household, localizer: model.localizer))
         }
         VStack(alignment: .leading, spacing: Theme.Space.s) {
             ForEach(ids, id: \.self) { id in
                 let state = snapshot.services[id] ?? .unknown
                 HStack {
                     Image(systemName: Theme.symbol(for: state)).foregroundStyle(Theme.color(for: state)).accessibilityHidden(true)
-                    Text(ServiceNames.name(id, household: model.household))
+                    Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                     Spacer()
                     Text(l("common.status.\(state.rawValue)")).foregroundStyle(.secondary)
                 }
@@ -247,7 +371,7 @@ struct ServiceStateGrid: View {
                 let q = snapshot.resources[id]!
                 HStack {
                     Image(systemName: "shippingbox").foregroundStyle(.secondary).accessibilityHidden(true)
-                    Text(ServiceNames.name(id, household: model.household))
+                    Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                     Spacer()
                     Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit) } ?? l("common.status.unknown"))
                         .foregroundStyle(.secondary)
@@ -262,6 +386,7 @@ struct ServiceStateGrid: View {
 /// An event. The current one is large; earlier ones use `TimelineRow`. "Why did this happen?" names the household
 /// facts, the events that caused it, and the sources — never raw rule or fact IDs.
 struct EventCard: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let event: SimulationEvent
     var isCurrent = false
@@ -287,7 +412,7 @@ struct EventCard: View {
             DisclosureGroup(l("common.whyHappened"), isExpanded: $expanded) {
                 VStack(alignment: .leading, spacing: 4) {
                     if !event.evidence.factIDs.isEmpty {
-                        Text(l("ui.basedOn", ["facts": event.evidence.factIDs.map { UnknownNames.describe($0, household: model.household) }.joined(separator: "; ")]))
+                        Text(l("ui.basedOn", ["facts": event.evidence.factIDs.map { UnknownNames.describe($0, household: model.household, localizer: model.localizer) }.joined(separator: "; ")]))
                     }
                     let causes = event.evidence.causedByEventIDs.compactMap { id in result?.events.first { $0.id == id } }
                     if !causes.isEmpty {
@@ -316,6 +441,7 @@ struct EventCard: View {
 }
 
 struct TimelineRow: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let event: SimulationEvent
     var result: RehearsalResult?
@@ -343,6 +469,7 @@ struct TimelineRow: View {
 }
 
 struct DecisionCard: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let decision: DecisionPoint
     let onChoose: (String) -> Void
@@ -370,6 +497,7 @@ struct DecisionCard: View {
 }
 
 struct RouteSummaryView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let routes: [RouteResult]
 
@@ -405,6 +533,7 @@ struct RouteSummaryView: View {
 }
 
 struct DebriefView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     @State private var showAll = false
@@ -448,7 +577,7 @@ struct DebriefView: View {
                     if !result.unknowns.isEmpty {
                         SectionCard(title: l("common.unconfirmed"), systemImage: "questionmark.circle", tint: Theme.caution) {
                             ForEach(result.unknowns, id: \.self) {
-                                IconRow(systemImage: "questionmark", tint: Theme.caution, title: UnknownNames.describe($0, household: model.household))
+                                IconRow(systemImage: "questionmark", tint: Theme.caution, title: UnknownNames.describe($0, household: model.household, localizer: model.localizer))
                             }
                         }
                     }
@@ -463,6 +592,7 @@ struct DebriefView: View {
 }
 
 struct RecommendationRow: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let recommendation: Recommendation
     var body: some View {
@@ -487,90 +617,45 @@ struct RecommendationDetailView: View {
     @Environment(AppModel.self) private var model
     let recommendation: Recommendation
     @State private var showComparison = false
-    @State private var tryFailed = false
-    @State private var trying = false
-    @State private var explanation: String?
+    @State private var comparing = false
+
+    private var preparation: NextStep? {
+        let canonical = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
+            "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water", "act.fire.meeting-point": "prep.nearMeetup",
+            "act.fire.smoke-alarms": "prep.smokeAlarms", "act.assist.assign-helper": "prep.helper"][recommendation.actionID] ?? recommendation.actionID
+        guard let summary = model.nextSteps else { return nil }
+        return (summary.toDo + summary.completed).first {
+            $0.recommendation.id == recommendation.id
+                || ($0.recommendation.actionID == canonical && $0.recommendation.subjectID == recommendation.subjectID)
+        }
+    }
 
     var body: some View {
-        let l = model.localizer
-        let r = recommendation
-        let completed = model.household?.completedPreparations.contains { $0.actionID == r.actionID } ?? false
-        ScrollView {
-            VStack(alignment: .leading, spacing: Theme.Space.l) {
-                Text(l(r.titleKey, r.templateValues)).font(.title2.weight(.bold))
-                SectionCard(title: l("common.why"), systemImage: "lightbulb") {
-                    Text(l(r.whyKey, r.templateValues))
-                    if let explanation { Text(explanation).font(.callout).foregroundStyle(.secondary) }
-                    if !r.matchedFactIDs.isEmpty {
-                        Text(l("ui.basedOn", ["facts": r.matchedFactIDs.map { UnknownNames.describe($0, household: model.household) }.joined(separator: "; ")]))
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                    let causes = r.causeEventIDs.compactMap { id in model.rehearsal?.result.events.first { $0.id == id } }
-                    if !causes.isEmpty {
-                        Text(l("ui.causedBy", ["events": causes.map { l($0.titleKey, $0.templateValues) }.joined(separator: "; ")]))
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                }
-                if let effect = r.modeledEffectKey {
-                    SectionCard(title: l("common.whatChanges"), systemImage: "arrow.triangle.2.circlepath") { Text(l(effect, r.templateValues)) }
-                }
-                if !r.unconfirmed.isEmpty || !r.feasibilityNotes.isEmpty {
-                    SectionCard(title: l("common.unconfirmed"), systemImage: "questionmark.circle", tint: Theme.caution) {
-                        ForEach(r.unconfirmed, id: \.self) { Text(UnknownNames.describe($0, household: model.household)) }
-                        ForEach(r.feasibilityNotes, id: \.self) { Text(l($0)) }
-                    }
-                }
-                SourcesCard(sourceIDs: r.sourceIDs)
-                VStack(spacing: Theme.Space.s) {
-                    if let intervention = r.tryIntervention {
-                        Button {
-                            trying = true
-                            Task {
-                                await model.tryChange(intervention)
-                                trying = false
-                                // Only open the sheet for a comparison that was actually produced.
-                                tryFailed = model.comparison == nil
-                                showComparison = model.comparison != nil
-                            }
-                        } label: {
-                            if trying { ProgressView().tint(Theme.onAccent) } else {
-                                Label(l("common.action.tryChange"), systemImage: "wand.and.stars")
-                            }
-                        }
-                        .buttonStyle(.primary)
-                        .disabled(trying)
-                        .accessibilityIdentifier("recommendation.tryChange")
-                        if tryFailed {
-                            // Shown here because the app-wide error alert cannot appear over this sheet.
-                            Text(l("ui.tryFailed")).font(.footnote).foregroundStyle(Theme.caution)
+        if let preparation {
+            PreparationTaskEditor(step: preparation)
+                .toolbar {
+                    if preparation.recommendation.tryIntervention != nil {
+                        ToolbarItem(placement: .bottomBar) {
+                            Button(model.localizer("common.action.tryChange")) {
+                                comparing = true
+                                Task { showComparison = await model.tryChange(for: preparation); comparing = false }
+                            }.disabled(comparing)
                         }
                     }
-                    Button {
-                        Task { await model.markPreparationCompleted(r.actionID) }
-                    } label: {
-                        Label(completed ? l("common.completed") : l("common.action.markDone"),
-                              systemImage: completed ? "checkmark.seal.fill" : "checkmark.seal")
-                    }
-                    .buttonStyle(SecondaryButtonStyle(tint: Theme.success))
-                    .disabled(completed)
-                    .accessibilityIdentifier("recommendation.markDone")
-                    Text(l("common.tryVsDone")).font(.footnote).foregroundStyle(.secondary)
                 }
-            }
-            .padding()
+                .sheet(isPresented: $showComparison) { NavigationStack { ComparisonView() } }
         }
-        .background(Theme.background)
-        .navigationTitle(l("common.preparation"))
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showComparison) { NavigationStack { ComparisonView() } }
-        .task {
-            explanation = await ExplanationService.explain(templateText: l(r.whyKey, r.templateValues), recommendation: r, locale: model.locale)
+        else {
+            // A changed household can resolve an old rehearsal gap. The real facts remain editable;
+            // a generic Done button never certifies a route or medical compatibility.
+            FocusedHouseholdEditor(focus: .supplies)
         }
     }
 }
 
 /// Before and after "Try this change": the same scenario with one change. Hypothetical; the household is unchanged.
 struct ComparisonView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
 
@@ -593,7 +678,7 @@ struct ComparisonView: View {
                             let states = d.serviceChanges[id] ?? []
                             if states.count == 2 {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(ServiceNames.name(id, household: model.household)).font(.body.weight(.semibold))
+                                    Text(ServiceNames.name(id, household: model.household, localizer: model.localizer)).font(.body.weight(.semibold))
                                     HStack(spacing: Theme.Space.s) {
                                         StatusPill(text: l("common.status.\(states[0].rawValue)"), systemImage: Theme.symbol(for: states[0]), tint: Theme.color(for: states[0]))
                                         Image(systemName: "arrow.right").foregroundStyle(.secondary).accessibilityLabel("becomes")
@@ -606,14 +691,14 @@ struct ComparisonView: View {
                         ForEach(d.resourceChanges.keys.sorted(), id: \.self) { id in
                             let q = d.resourceChanges[id] ?? []
                             if q.count == 2 {
-                                Text("\(ServiceNames.name(id, household: model.household)): \(q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit) } ?? l("common.status.unknown")) → \(q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit) } ?? l("common.status.unknown"))")
+                                Text("\(ServiceNames.name(id, household: model.household, localizer: model.localizer)): \(q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit) } ?? l("common.status.unknown")) → \(q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit) } ?? l("common.status.unknown"))")
                             }
                         }
                         ForEach(d.resolvedRequirements, id: \.self) {
-                            IconRow(systemImage: "checkmark", tint: Theme.success, title: l("common.resolved", ["item": UnknownNames.describe($0, household: model.household)]))
+                            IconRow(systemImage: "checkmark", tint: Theme.success, title: l("common.resolved", ["item": UnknownNames.describe($0, household: model.household, localizer: model.localizer)]))
                         }
                         ForEach(d.newRequirements, id: \.self) {
-                            IconRow(systemImage: "exclamationmark.triangle", tint: Theme.caution, title: l("common.newGap", ["item": UnknownNames.describe($0, household: model.household)]))
+                            IconRow(systemImage: "exclamationmark.triangle", tint: Theme.caution, title: l("common.newGap", ["item": UnknownNames.describe($0, household: model.household, localizer: model.localizer)]))
                         }
                     }
                     if !d.removedEventIDs.isEmpty || !d.addedEventIDs.isEmpty {

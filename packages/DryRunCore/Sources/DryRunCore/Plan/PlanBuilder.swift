@@ -4,14 +4,16 @@ import Foundation
 /// One essentials page plus one page per selected scenario (never six hazards squeezed onto one page).
 public enum PlanBuilder {
     public struct Options: Sendable {
+        public var familyCardSelection: FamilyCardSelection
         public var includePrivateNotes: Bool
         public var maxPreparationsPerScenario: Int
         public var reviewedAt: Date?
         /// Calendar days in the plan ("generated", "reviewed") are the household's local days. Defaults to UTC so a
         /// build stays deterministic; the app passes the device's time zone.
         public var timeZone: TimeZone
-        public init(includePrivateNotes: Bool = false, maxPreparationsPerScenario: Int = 3, reviewedAt: Date? = nil,
+        public init(includePrivateNotes: Bool = false, familyCardSelection: FamilyCardSelection = FamilyCardSelection(), maxPreparationsPerScenario: Int = 3, reviewedAt: Date? = nil,
                     timeZone: TimeZone = TimeZone(identifier: "UTC")!) {
+            self.familyCardSelection = familyCardSelection
             self.includePrivateNotes = includePrivateNotes
             self.maxPreparationsPerScenario = maxPreparationsPerScenario
             self.reviewedAt = reviewedAt
@@ -21,7 +23,8 @@ public enum PlanBuilder {
 
     public static func build(
         household: HouseholdProfile,
-        home: HomeModel,
+        home: HomeModel?,
+        savedPlaces: [SavedPlace] = [],
         results: [RehearsalResult],
         localizer l: Localizer,
         resources: [PublicResource],
@@ -30,15 +33,17 @@ public enum PlanBuilder {
         options: Options = Options()
     ) -> PlanDocument {
         let b = Builder(l: l)
-        var pages: [PlanPage] = [essentialsPage(b, household, home, resources, contentVersion, generatedAt, options)]
-        for result in results.sorted(by: { order($0.input.scenarioID) < order($1.input.scenarioID) }) {
-            pages.append(scenarioPage(b, result, household, home, resources, options))
+        let matchingPlaces = savedPlaces.filter { $0.homeID == (home?.id ?? household.stableHomeID) }
+        var pages: [PlanPage] = [FamilyEmergencyCardBuilder.page(household: household, savedPlaces: matchingPlaces, localizer: l, selection: options.familyCardSelection), essentialsPage(b, household, home, matchingPlaces, resources, contentVersion, generatedAt, options)]
+        for result in (home == nil ? [] : results).sorted(by: { order($0.input.scenarioID) < order($1.input.scenarioID) }) {
+            pages.append(scenarioPage(b, result, household, home!, resources, options))
         }
+        b.sourceIDs.append(contentsOf: pages.flatMap(\.sections).flatMap(\.lines).flatMap(\.sourceIDs))
         let anyDraft = b.usedDraft
         let anyFallback = b.usedFallback
         return PlanDocument(
             schemaVersion: PlanDocument.schemaVersion, locale: l.locale, householdID: household.id,
-            householdRevision: household.revision, homeID: home.id, homeRevision: home.revision,
+            householdRevision: household.revision, homeID: home?.id ?? household.stableHomeID, homeRevision: home?.revision ?? 0,
             contentVersion: contentVersion, generatedAt: generatedAt, reviewedAt: options.reviewedAt,
             scenarioIDs: results.map(\.input.scenarioID), includesPrivateNotes: options.includePrivateNotes,
             pages: pages,
@@ -46,7 +51,10 @@ public enum PlanBuilder {
             fallbackNote: anyFallback ? l.text("plan.fallbackNote").text : nil,
             contentReviewBanner: l.text("plan.contentDraftBanner").text,
             footer: l.text("plan.footer.practice").text,
-            sourceIDs: Array(Set(b.sourceIDs)).sorted()
+            sourceIDs: Array(Set(b.sourceIDs)).sorted(),
+            visualSnapshot: PlanVisualSnapshot(home: exportHome(home, options: options), routes: results.flatMap { currentRoutes($0) }, savedPlaces: matchingPlaces.sorted { $0.id < $1.id }, homeCoordinate: household.privateLocation.flatMap { location in
+                guard let lat = location.latitude, let lon = location.longitude else { return nil }; return GeographicCoordinate(latitude: lat, longitude: lon)
+            }, fictional: household.isFictional || home?.source == .sample || home?.isFictional == true, routeScenarioIDs: results.flatMap { result in currentRoutes(result).map { _ in result.input.scenarioID } }, personLabels: Dictionary(uniqueKeysWithValues: household.people.map { ($0.id, $0.localizedLabel(l)) }), scenarioLabels: Dictionary(uniqueKeysWithValues: Set(results.map { $0.input.scenarioID }).map { ($0, l("common.scenario.\($0)")) }))
         )
     }
 
@@ -62,32 +70,39 @@ public enum PlanBuilder {
 
     // MARK: - Pages
 
-    private static func essentialsPage(_ b: Builder, _ h: HouseholdProfile, _ home: HomeModel, _ resources: [PublicResource],
+    private static func essentialsPage(_ b: Builder, _ h: HouseholdProfile, _ home: HomeModel?, _ places: [SavedPlace], _ resources: [PublicResource],
                                        _ contentVersion: String, _ generatedAt: Date, _ options: Options) -> PlanPage {
         var sections: [PlanSection] = []
 
         // People and assistance (needs as plain labels, no diagnosis).
         var people: [PlanLine] = h.people.map { p in
-            let needs = p.needs.isEmpty ? b.l("plan.person.noNeeds") : p.needs.map { b.l("common.need.\($0.rawValue)") }.joined(separator: ", ")
-            return b.line("plan.person.line", ["alias": p.alias, "needs": needs])
+            let needs = (!options.familyCardSelection.includeCriticalInformation || p.needs.isEmpty) ? b.l("family.notProvidedSelected") : p.needs.map { b.l("common.need.\($0.rawValue)") }.joined(separator: ", ")
+            return b.line("plan.person.line", ["alias": p.localizedLabel(b.localizer), "needs": needs])
         }
-        for p in h.people {
+        for p in h.people where options.familyCardSelection.includeCriticalInformation {
             if let helperID = p.helperPersonID, let helper = h.people.first(where: { $0.id == helperID }) {
-                people.append(b.line("plan.person.helper", ["helper": helper.alias, "alias": p.alias]))
+                people.append(b.line("plan.person.helper", ["helper": helper.localizedLabel(b.localizer), "alias": p.localizedLabel(b.localizer)]))
             }
         }
         sections.append(b.section("people", "plan.section.people", people, critical: false))
 
-        sections.append(b.section("meeting", "plan.section.meeting", [meetingLine(b, home)], critical: true))
+        sections.append(b.section("meeting", "plan.section.meeting", meetingLines(b, home, places), critical: true))
+        if !places.isEmpty {
+            let lines = places.sorted { $0.id < $1.id }.enumerated().map { index, place in
+                let coordinate = place.coordinate.map { "\($0.latitude), \($0.longitude)" }
+                return PlanLine(text: "\(index + 1). " + [place.label, place.addressText, place.findingInstructions, coordinate].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "), style: .normal, key: "private.savedPlace", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: [])
+            }
+            sections.append(b.section("neighborhood", "map.neighborhood", lines, critical: false))
+        }
 
         let contacts: [PlanLine] = h.contacts.isEmpty ? [b.line("plan.contact.none")] : h.contacts.map { c in
             c.phone.map { b.line("plan.contact.line", ["alias": c.alias, "phone": $0], style: .contact) }
                 ?? b.line("plan.contact.noPhone", ["alias": c.alias])
         }
-        sections.append(b.section("contacts", "plan.section.contacts", contacts, critical: true))
-        sections.append(b.section("help", "plan.section.help", helpLines(b, resources), critical: true))
+        if options.familyCardSelection.includeContacts { sections.append(b.section("contacts", "plan.section.contacts", contacts, critical: true)) }
+        sections.append(b.section("help", "plan.section.help", helpLines(b, resources, countryCode: h.privateLocation?.countryCode), critical: true))
 
-        if !h.equipment.isEmpty {
+        if !h.equipment.isEmpty && (options.familyCardSelection.includeCriticalInformation || options.familyCardSelection.includeMedication || options.includePrivateNotes), !equipmentLines(b, h, options).isEmpty {
             sections.append(b.section("equipment", "plan.section.equipment", equipmentLines(b, h, options), critical: true))
         }
         sections.append(b.section("transport", "plan.section.transport", transportLines(b, h), critical: false))
@@ -95,7 +110,7 @@ public enum PlanBuilder {
 
         var dates = [b.line("plan.dates.line", [
             "generated": isoDay(generatedAt, options.timeZone), "householdRevision": "\(h.revision)",
-            "homeRevision": "\(home.revision)", "contentVersion": contentVersion,
+            "homeRevision": "\(home?.revision ?? 0)", "contentVersion": contentVersion,
         ])]
         dates.append(options.reviewedAt.map { b.line("plan.dates.reviewed", ["reviewed": isoDay($0, options.timeZone)]) } ?? b.line("plan.dates.notReviewed"))
         sections.append(b.section("dates", "plan.section.dates", dates, critical: false))
@@ -126,16 +141,16 @@ public enum PlanBuilder {
             if id == "tornado" {
                 if h.housing.homeType == .manufacturedHome {
                     homePlan.append(b.line("plan.shelter.manufactured", style: .prohibition, sources: ["S22"]))
-                } else if let shelter = verifiedShelter(home) {
-                    let label = shelter.spaceID.flatMap { home.space($0)?.label } ?? shelter.label
-                    homePlan.append(b.line("plan.shelter.line", ["label": label], sources: ["S22"]))
+                } else if let shelter = currentShelter(r, home: home) {
+                    homePlan.append(b.line("plan.shelter.line", ["label": shelter.label], sources: ["S22"]))
                     homePlan.append(b.line("plan.shelter.notCertified", style: .caveat))
                 } else {
                     homePlan.append(b.line("plan.shelter.missing"))
                 }
+                homePlan.append(contentsOf: routeLines(b, currentRoutes(r), home, h))
                 sections.append(b.section("shelter", "plan.section.shelter", homePlan, critical: true))
             } else if id == "home-fire" {
-                homePlan.append(contentsOf: routeLines(b, r.routes, home, h))
+                homePlan.append(contentsOf: routeLines(b, currentRoutes(r), home, h))
                 homePlan.append(meetingLine(b, home))
                 homePlan.append(b.line("plan.route.caveat", style: .caveat))
                 sections.append(b.section("homeplan", "plan.section.homeplan", homePlan, critical: true))
@@ -147,24 +162,32 @@ public enum PlanBuilder {
         }
 
         let assists = h.people.compactMap { p -> PlanLine? in
+            guard options.familyCardSelection.includeCriticalInformation else { return nil }
             guard let helperID = p.helperPersonID, let helper = h.people.first(where: { $0.id == helperID }) else { return nil }
-            return b.line("plan.person.helper", ["helper": helper.alias, "alias": p.alias])
+            return b.line("plan.person.helper", ["helper": helper.localizedLabel(b.localizer), "alias": p.localizedLabel(b.localizer)])
         }
         if !assists.isEmpty { sections.append(b.section("assistance", "plan.section.assistance", assists, critical: true)) }
 
-        if !h.equipment.isEmpty && ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood"].contains(id) {
+        if (options.familyCardSelection.includeCriticalInformation || options.familyCardSelection.includeMedication || options.includePrivateNotes) && !h.equipment.isEmpty && ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood"].contains(id), !equipmentLines(b, h, options).isEmpty {
             sections.append(b.section("equipment", "plan.section.equipment", equipmentLines(b, h, options), critical: true))
         }
         if id == "water-outage" || id == "freeze-power-loss" {
             sections.append(b.section("water", "plan.section.water", waterLines(b, h), critical: false))
         }
 
-        let preps = r.recommendations.prefix(options.maxPreparationsPerScenario).map { rec in
-            b.line(rec.titleKey, rec.templateValues, sources: rec.sourceIDs)
+        let selectedRecommendations = r.recommendations.filter { rec in
+            guard !options.familyCardSelection.includeCriticalInformation else { return true }
+            let subject = rec.subjectID ?? ""
+            let sensitiveSubject = ["person.", "equipment.", "backup."].contains { subject.hasPrefix($0) }
+            let sensitiveValues = !Set(rec.templateValues.keys).isDisjoint(with: ["person", "device", "helper", "backup"])
+            return !sensitiveSubject && !sensitiveValues && !rec.actionID.contains("medical") && !rec.actionID.contains("assist") && !rec.actionID.contains("backup")
+        }
+        let preps = selectedRecommendations.prefix(options.maxPreparationsPerScenario).map { rec in
+            b.line(rec.titleKey, rec.localizedTemplateValues(household: h, localizer: b.localizer), sources: rec.sourceIDs)
         }
         if !preps.isEmpty { sections.append(b.section("preparations", "plan.section.preparations", Array(preps), critical: false)) }
 
-        sections.append(b.section("help", "plan.section.help", helpLines(b, resources), critical: true))
+        sections.append(b.section("help", "plan.section.help", helpLines(b, resources, countryCode: h.privateLocation?.countryCode), critical: true))
 
         let title = b.l("plan.title.scenario", ["scenario": b.l("common.scenario.\(id)")])
         return PlanPage(id: "scenario-\(id)", kind: .scenario(id), title: title, sections: sections)
@@ -172,15 +195,56 @@ public enum PlanBuilder {
 
     // MARK: - Shared sections
 
-    /// Only a household-verified shelter spot in a space on the lowest floor is printed.
-    static func verifiedShelter(_ home: HomeModel) -> Annotation? {
-        let lowest = home.floors.map(\.level).min()
-        return home.annotations.filter { $0.kind == .tornadoShelterCandidate && $0.verification == .verified }
-            .sorted { $0.id < $1.id }
-            .first { a in
-                guard let sid = a.spaceID, let space = home.space(sid) else { return false }
-                return home.floors.first { $0.id == space.floorID }?.level == lowest
-            }
+    /// Export the exercise's actual supported destination, never independently select a shelter from annotations.
+    /// Old results without a canonical scene cannot establish which candidate the exercise accepted.
+    static func currentShelter(_ result: RehearsalResult, home: HomeModel) -> Space? {
+        guard let state = result.snapshots.last(where: { $0.spatialState != nil })?.spatialState,
+              state.hazard == .tornado, let id = state.destinationSpaceID,
+              let destination = home.space(id),
+              state.routes.contains(where: {
+                  $0.homeID == home.id && $0.homeRevision == home.revision &&
+                  $0.request.purpose == .interiorShelter && $0.request.destinationSpaceID == id && $0.primary != nil
+              }),
+              EgressPlanner().plan(RouteRequest(startSpaceID: id, purpose: .interiorShelter, destinationSpaceID: id), in: home).primary != nil
+        else { return nil }
+        return destination
+    }
+
+    /// Legacy results could retain route history. Prefer the final canonical stage, including an empty/no-route stage.
+    static func currentRoutes(_ result: RehearsalResult) -> [RouteResult] {
+        if let state = result.snapshots.last(where: { $0.spatialState != nil })?.spatialState { return state.routes }
+        var seen = Set<String>()
+        return result.routes.reversed().filter { route in
+            seen.insert("\(route.request.personID ?? "")|\(route.request.startSpaceID)|\(route.request.mobility.requiresStepFree)|\(route.request.purpose?.rawValue ?? "outdoorEgress")").inserted
+        }.reversed()
+    }
+
+    /// User-authored room names remain part of the selected home diagram. Annotation free text is omitted
+    /// unless its corresponding critical-information control is selected; private-notes consent is independent.
+    private static func exportHome(_ home: HomeModel?, options: Options) -> HomeModel? {
+        guard var home else { return nil }
+        if !options.familyCardSelection.includeCriticalInformation {
+            home.annotations.removeAll { $0.kind == .medicalEquipment || $0.kind == .supplies }
+        }
+        // Notes are not drawn but are also removed from the shared render snapshot.
+        for i in home.annotations.indices {
+            home.annotations[i].note = nil
+            if !options.familyCardSelection.includeCriticalInformation { home.annotations[i].label = "" }
+        }
+        for i in home.portals.indices { home.portals[i].note = nil }
+        return home
+    }
+
+    private static func meetingLines(_ b: Builder, _ home: HomeModel?, _ places: [SavedPlace]) -> [PlanLine] {
+        let selected = places.filter { $0.homeID == (home?.id ?? "") || home == nil }
+            .filter { $0.purpose == .outsideMeetingPoint || $0.purpose == .backupMeetingPlace }
+            .sorted { $0.purpose.rawValue == $1.purpose.rawValue ? $0.id < $1.id : $0.purpose.rawValue < $1.purpose.rawValue }
+        if !selected.isEmpty { return selected.map { place in
+            let purpose = b.l(place.purpose == .outsideMeetingPoint ? "plan.meeting.near" : "plan.meeting.backup")
+            let detail = [place.label, place.addressText, place.findingInstructions].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " — ")
+            return PlanLine(text: "\(purpose): \(detail)", style: .normal, key: "private.meeting", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: ["S19"])
+        } }
+        return [home.map { meetingLine(b, $0) } ?? b.line("plan.meeting.missing", sources: ["S19"])]
     }
 
     private static func meetingLine(_ b: Builder, _ home: HomeModel) -> PlanLine {
@@ -190,8 +254,9 @@ public enum PlanBuilder {
         return b.line("plan.meeting.missing", sources: ["S19"])
     }
 
-    static func helpLines(_ b: Builder, _ resources: [PublicResource]) -> [PlanLine] {
-        var lines = [b.line("plan.help.911", style: .contact)]
+    static func helpLines(_ b: Builder, _ resources: [PublicResource], countryCode: String? = nil) -> [PlanLine] {
+        // US/Canada 911 only with explicit country metadata; unknown countries need a local number recorded.
+        var lines = [b.line(["US", "CA"].contains(countryCode?.uppercased() ?? "") ? "plan.help.911" : "plan.help.localUnknown", style: .contact)]
         let phoneTypes: Set<ResourceServiceType> = [.assistanceLine, .emergencyManagement, .electricUtility, .waterProvider, .assistanceRegistry]
         for r in resources where phoneTypes.contains(r.serviceType) {
             guard let phone = r.contact.phone else { continue }
@@ -211,6 +276,18 @@ public enum PlanBuilder {
     private static func equipmentLines(_ b: Builder, _ h: HouseholdProfile, _ options: Options) -> [PlanLine] {
         var lines: [PlanLine] = []
         for eq in h.equipment where eq.isEssential {
+            let includeDevice = eq.purpose == .refrigeratedMedication ? options.familyCardSelection.includeMedication : options.familyCardSelection.includeCriticalInformation
+            guard includeDevice else {
+                if options.includePrivateNotes, let note = eq.carePlanNotes, !note.isEmpty {
+                    lines.append(PlanLine(text: note, style: .normal, key: "private.carePlanNotes", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: []))
+                }
+                continue
+            }
+            if eq.requiresColdStorage {
+                let storage = eq.storageInstructions?.isEmpty == false ? eq.storageInstructions! : b.l("family.providerPrompt")
+                lines.append(PlanLine(text: eq.localizedLabel(b.localizer) + ": " + storage, style: .normal, key: "private.storageInstructions", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: ["S54"]))
+            }
+            guard eq.requiresElectricalPower else { continue }
             let confirmedBackups = eq.compatibleBackupIDs.filter { id in
                 h.backupPower.first(where: { $0.id == id })?.setupConfirmed.confirmedValue == true
             }
@@ -221,7 +298,7 @@ public enum PlanBuilder {
             let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
                 b.l("plan.equipment.runtimeKnown", ["hours": formatNumber($0)])
             } ?? b.l("plan.equipment.runtimeUnknown")
-            lines.append(b.line("plan.equipment.line", ["label": eq.label, "backupState": state, "runtime": runtime], sources: ["S25"]))
+            lines.append(b.line("plan.equipment.line", ["label": eq.localizedLabel(b.localizer), "backupState": state, "runtime": runtime], sources: ["S25"]))
             if let notes = eq.carePlanNotes, !notes.isEmpty, options.includePrivateNotes {
                 lines.append(PlanLine(text: notes, style: .normal, key: "private.carePlanNotes", resolvedLocale: b.localizer.locale,
                                       isFallback: false, isDraftTranslation: false, sourceIDs: []))
@@ -253,19 +330,20 @@ public enum PlanBuilder {
         return lines
     }
 
-    /// Usual (no exercise blockage) practice routes, one line per person so different mobility needs are never merged.
+    /// Current routes from the recorded scenario stage, one per person. Historical paths are not revived.
     private static func routeLines(_ b: Builder, _ routes: [RouteResult], _ home: HomeModel, _ h: HouseholdProfile) -> [PlanLine] {
         var lines: [PlanLine] = []
         var seen = Set<String>()
-        let usual = routes.filter { $0.request.exclusions == .none }
-        for route in usual {
-            let dedupe = "\(route.request.personID ?? "-")|\(route.request.startSpaceID)|\(route.request.mobility.requiresStepFree)"
+        for route in routes {
+            let dedupe = "\(route.request.personID ?? "-")|\(route.request.startSpaceID)|\(route.request.mobility.requiresStepFree)|\(route.request.purpose?.rawValue ?? "outdoorEgress")"
             guard seen.insert(dedupe).inserted else { continue }
             let start = home.space(route.request.startSpaceID)?.label ?? b.l("plan.route.unknownRoom")
-            let person = route.request.personID.flatMap { id in h.people.first { $0.id == id }?.alias }
+            let person = route.request.personID.flatMap { id in h.people.first { $0.id == id }?.localizedLabel(b.localizer) }
             let who = person.map { "\($0) — \(start)" } ?? start
             if let primary = route.primary {
-                lines.append(b.line("plan.route.from", ["start": who, "steps": steps(b, primary, home)], sources: ["S19"]))
+                let outdoor = route.request.purpose == nil || route.request.purpose == .outdoorEgress
+                lines.append(b.line("plan.route.from", ["start": who, "steps": steps(b, primary, home, outdoor: outdoor)], sources: [outdoor ? "S19" : "S22"]))
+                guard outdoor else { continue }
                 switch route.alternativeStatus {
                 case .independent:
                     if let alt = route.alternative {
@@ -301,8 +379,8 @@ public enum PlanBuilder {
         return b.l("plan.route.unknownRoom")
     }
 
-    private static func steps(_ b: Builder, _ path: RoutePath, _ home: HomeModel) -> String {
-        (path.spaceSequence.map { home.space($0)?.label ?? b.l("plan.route.unknownRoom") } + [b.l("plan.route.outside")])
+    private static func steps(_ b: Builder, _ path: RoutePath, _ home: HomeModel, outdoor: Bool = true) -> String {
+        (path.spaceSequence.map { home.space($0)?.label ?? b.l("plan.route.unknownRoom") } + (outdoor ? [b.l("plan.route.outside")] : []))
             .joined(separator: " → ")
     }
 

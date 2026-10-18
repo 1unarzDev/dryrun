@@ -1,48 +1,67 @@
-# MapKit and RoomPlan integration
+# MapKit and RoomPlan integration — October 17
 
-This integration pass keeps Dry Run's five-tab navigation, iOS 18 deployment target, encrypted local vault, and deterministic rehearsal engine. The map is opened from **Help** and the same map flow is available as a meeting-place picker from **Home**. RoomPlan remains an optional capture path; manual and sample homes work when LiDAR, camera access, network access, or Apple services are unavailable.
+Three destinations: Prepare, Rehearse, Plan. Native iOS 18 deployment baseline, encrypted local vault and
+pure deterministic engine remain. A personal household may intentionally have no layout; basic preparations,
+contacts and family card still work. Fictional examples never become evidence about a personal home.
 
-## Architecture
+## Home-centered planning
 
-- `MapPlanningView` owns map/list parity, county browsing, category filtering, selection sheets, search presentation, route-preview state, and private-place confirmation.
-- `RegionalResourcesStore` exposes one validated snapshot to Help, map/list views, and plan generation. Bundled packs are immediate; a validated cached or refreshed region pack replaces matching resource IDs. A county refresh cannot overwrite a newer county selection.
-- `AppleMapSearchService`, `AppleMapDirectionsService`, and `OptionalLocationService` keep MapKit and Core Location objects in the app layer. They return plain values to the view, are explicitly started by user actions, and cancel or ignore stale work.
-- Public coordinates use `GeographicCoordinate` (degrees) and are never represented as indoor `Vec2` metres. County centers and spans are browsing context, not resource positions or alert polygons.
-- `RoomCaptureController` owns one RoomPlan session for a multi-room visit. Processed callbacks are accepted only for the matching finish operation. Cancellation, duplicate callbacks, background interruption, and a retry with a different AR frame cannot publish an unearned complete home.
-- `HomeConfirmation` is the gate between proposed scan geometry and verified routing. It supports interior portal assignment, measured exterior width, and unknown operability/step-free evidence. `AppModel.updateHome` writes the complete candidate snapshot before publishing the replacement home.
+The shared MapPlanningView opens from Plan, Home and meeting preparations. Home/private saved annotations are
+independent of selection sheets. Places include text-only landmarks, dropped coordinates, purpose, finding
+instructions, provenance and check date. Primary nearby and backup/out-of-neighborhood meetup purposes differ.
+Saving a resource suggestion does not silently make it a meetup. Geographic meetup links use savedPlaceID and
+never invent local indoor geometry.
 
-## Data and privacy boundaries
+HomeAddressEditorView supplies Apple completion, manual location/pin correction, separate unit/derived metadata,
+and explicit correction versus moving home. Typed planning does not require GPS. One bounded nearby discovery
+batch searches hospitals, pharmacies and groceries using independent requests; generation checks reject old
+address/category results. Discovery is cancellable/retryable; rural radius expansion/search-area controls exist.
+Directions start at saved home by default, with current location/other saved places and mode choices.
 
-| Boundary | Data that crosses it | Data that stays out |
-| --- | --- | --- |
-| Dry Run public service | Allowlisted region ID and public content/resource requests; validated public packs and alerts | Home address, exact coordinates, search text, household, people, medical information, contacts, and indoor models |
-| Apple Maps services | Explicit Apple Maps search text, map/directions endpoints, and an optional current-location origin after the user asks for it | Dry Run household records and private vault contents are not sent to the Dry Run service; Apple Maps has its own privacy policy and may receive the requested map inputs |
-| Encrypted local vault | Household, home geometry, plans, text meeting annotation, and `SavedPlace` coordinates | No account or household backend is required; the app does not upload these values |
+Unknown/foreign addresses do not substitute a Texas region. RegionalResourcesStore and the public backend retain
+allowlisted Texas coverage only; Apple/local planning is independent. County names are not trusted region IDs.
+Apple results do not establish emergency department capability, opening/stock, activated shelter status, safe
+arrival, or wheelchair-accessible disaster routes. Saved text details remain available without map tiles.
 
-Directory pins carry source IDs and coordinate check dates. A pin does not establish activation, capacity, accessibility, pet acceptance, or safe arrival. Apple route previews are ordinary travel planning aids and are not evacuation, flood-avoidance, or wheelchair-accessibility certifications. Indoor practice routes continue to use the local egress planner.
+## Plans, imagery and privacy
 
-## Coverage and provenance
+PlanBuilder accepts optional home and savedPlaces. Its plain snapshot carries canonical layout, selected places,
+qualified current routes and revisions. The family card is useful without map/scan. Live plan updates after edits;
+retained scenario output is labeled stale when facts change. Publish follows successful protected save.
 
-The bundled state pack provides statewide contacts and a deliberate Texas browsing frame. The county pack provides frames for all 13 supported counties. Curated physical pins in this pass are the Erath County office (`32.2201556, -98.2023049`, OSM way `119041755`, source `S50`) and Hood County office (`32.4441111, -97.8063216`, OSM way `855408462`, source `S51`). The remaining county records have no verified physical resource pin; the list remains useful and the map reports that gap rather than inventing a marker. Tarrant has a frame for the Lake demo household but no mapped local resource.
+PlanMapSnapshotRenderer uses transient MKMapSnapshotter images, adds intended symbols at snapshot coordinates,
+keeps Apple's full legal/attribution image and separates distant destinations into panels. Timeout/failure leaves
+text and the home diagram. No tile cache or imagery is retained in the vault; explicit temporary PDFs are protected.
+Apple documentation and Maps agreement were consulted (Attachment 6, 2.1 attribution and 2.5 limited caching);
+this is not a legal certification of every downstream distribution use. Inspect native exports before release.
 
-## Offline and failure behavior
+| Service | Allowed requested inputs | Excluded |
+|---|---|---|
+| DryRun public service | Allowlisted public region/content queries | Address, search text, coordinates, people, clinical/contact records, scans |
+| Apple services | Chosen address/search area/endpoints, optional requested GPS, map snapshot extent | Indoor scan, medical information, contact names |
+| Local vault | Household, optional home, private places, retained document | No account/upload required |
 
-The bundled directory and private plans open without a backend URL, location permission, or network. A failed refresh keeps the last known-good cached pack; an invalid, oversized, mismatched, or late response is rejected. Apple search and directions show an unavailable state and leave directory contacts, saved places, home geometry, rehearsals, and plans usable. No alert data is treated as an all-clear.
+Offline essentials are contacts, place text/coordinates, saved home and plan. Live search, fresh alerts, directions
+and arbitrary Apple tiles are not promised offline. Optional model explanations are restricted to unparameterized
+general authored text; routes and clinical instructions remain deterministic/sourced.
 
-## Vault compatibility and save failures
+## RoomPlan and correction
 
-`VaultPayload` still uses schema version 1. Decoding an older payload with no `savedPlaces` key supplies an empty array, so existing households are not reset. A place, household edit, or home replacement is encoded as one complete candidate snapshot and is published only after the vault save succeeds. A linked-place edit clears the derived plan document so the Plan tab cannot present a document that predates the private place; the household can regenerate it. If a save fails, the previous committed state remains observable and the draft remains in its editor. Replacing a home clears resident room IDs that do not exist in the new geometry; an unresolved person start is reported as unknown by the rehearsal engine instead of falling back to a different room.
+Native capture uses RoomCaptureSession support independently of network/location/intelligence. The controller
+retains connected rooms in a shared AR frame and processes them with StructureBuilder. Callback generations bind
+to originating sessions; cancellation/retry/interruption and repeated Finish must reject stale publication.
+Captured floor story is preserved separately from user-confirmed ground/above/below/walkout grade. Stair endpoints
+are not guessed by vertical overlap. Windows need explicit emergency-escape suitability, not inventory confirmation.
 
-## Physical RoomPlan checklist
+The same HomeModel drives confirmation, manual canvas, room list, 2D/3D, routes and PDF. Contextual edits preserve
+unrelated width/operability. Save is transactional; same-home rescans normalize to stable identity and preserve
+geographic places, clearing only room IDs no longer found. Moving is a separate confirmed reset of home-specific
+geometry/places/checks while family/contact/equipment records persist.
 
-The Linux checkout cannot run Xcode, the iOS simulator, or a LiDAR device. On a supported iPhone, verify with fictional/demo data and a consenting test space:
+## Evidence limits
 
-1. Grant camera access only after tapping **Start scanning**; scan one room, finish, and inspect the proposed 2D/3D geometry.
-2. Continue into a second room in the same visit, finish processing, and check relative placement, duplicate door merging, and floor/portal labels.
-3. Finish with a failed/interrupted capture, background the app, cancel, repeat finish taps, and retry. Confirm no late callback adds a room and incomplete work stays incomplete.
-4. In review, assign an unresolved interior opening, record a measured exterior width, leave operability or step-free status unknown, and verify unknown evidence stays out of routes.
-5. Assign every resident to an explicit room (or leave it unresolved), save the replacement, relaunch, and confirm the same model appears in 2D, 3D, route output, and plan generation.
-6. Start a fire rehearsal and verify each person starts in the selected room; a missing/stale assignment reports an unknown start rather than using the living room.
-7. Test an unsupported/non-LiDAR phone or denied camera permission: manual/sample homes, map planning, plans, and rehearsals must remain available.
-
-The integration pass has no simulator screenshots or physical-device results to report from this environment; those checks remain open until a Mac/Xcode and LiDAR-capable iPhone are available.
+Core tests exercise plain import, grade, route purposes, openings, stage state and callback gates. Native tests for
+map request isolation and private transactions are authored. **No current native compile, simulator run, Apple
+search/snapshot, or physical scan occurred here.** RoomPlan categories/transforms/story/structure assumptions
+require installed-SDK build and consenting measured-space verification. Follow CLAUDE_NATIVE_HANDOFF and
+DEVICE_CHECKLIST; do not call source parsing device readiness.

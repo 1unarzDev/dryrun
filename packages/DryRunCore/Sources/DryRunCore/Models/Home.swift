@@ -60,14 +60,20 @@ public enum VerificationState: String, Codable, Sendable, Hashable, CaseIterable
     case rejected
 }
 
+public enum ExteriorGrade: String, Codable, Sendable, Hashable, CaseIterable { case unknown, ground, aboveGround, belowGround, walkout }
+
 public struct Floor: Codable, Sendable, Hashable, Identifiable {
     public var id: String
     public var level: Int
     public var label: String
     public var elevationMeters: Double
     public var toCommon: Transform2D
-    public init(id: String, level: Int, label: String, elevationMeters: Double = 0, toCommon: Transform2D = .identity) {
+    /// Captured story is not exterior grade. nil preserves pre-migration manual/sample semantics.
+    public var exteriorGrade: ExteriorGrade?
+    public var capturedStory: Int?
+    public init(id: String, level: Int, label: String, elevationMeters: Double = 0, toCommon: Transform2D = .identity, exteriorGrade: ExteriorGrade? = nil, capturedStory: Int? = nil) {
         self.id = id; self.level = level; self.label = label; self.elevationMeters = elevationMeters; self.toCommon = toCommon
+        self.exteriorGrade = exteriorGrade; self.capturedStory = capturedStory
     }
 }
 
@@ -87,11 +93,13 @@ public struct Space: Codable, Sendable, Hashable, Identifiable {
     /// Interior room with no exterior windows on the lowest floor, as declared by the household.
     /// A candidate is NOT an engineered safe room.
     public var interiorNoWindowsConfirmed: EvidenceValue<Bool>
+    /// An explicitly reviewed higher refuge has a way out and is not a closed attic. Unknown is not suitable.
+    public var higherRefugeConfirmed: EvidenceValue<Bool>?
     public init(id: String, floorID: String, label: String, kind: SpaceKind, polygon: [Vec2], labelConfirmed: Bool = true,
-                needsMeasurement: Bool = false, interiorNoWindowsConfirmed: EvidenceValue<Bool> = .unknown) {
+                needsMeasurement: Bool = false, interiorNoWindowsConfirmed: EvidenceValue<Bool> = .unknown, higherRefugeConfirmed: EvidenceValue<Bool>? = nil) {
         self.id = id; self.floorID = floorID; self.label = label; self.kind = kind; self.polygon = polygon
         self.labelConfirmed = labelConfirmed; self.needsMeasurement = needsMeasurement
-        self.interiorNoWindowsConfirmed = interiorNoWindowsConfirmed
+        self.interiorNoWindowsConfirmed = interiorNoWindowsConfirmed; self.higherRefugeConfirmed = higherRefugeConfirmed
     }
 }
 
@@ -133,10 +141,13 @@ public struct Portal: Codable, Sendable, Hashable, Identifiable {
     /// Step-free threshold (user-confirmed).
     public var stepFree: EvidenceValue<Bool>
     public var verification: VerificationState
+    /// Window inventory alone never establishes an emergency escape option.
+    public var emergencyEscapeConfirmed: Bool?
     public var note: String?
     public init(id: String, floorID: String, kind: PortalKind, a: Vec2, b: Vec2, sideA: PortalDestination, sideB: PortalDestination,
                 clearWidthMeters: EvidenceValue<Double> = .unknown, operable: EvidenceValue<Bool> = .unknown,
-                stepFree: EvidenceValue<Bool> = .unknown, verification: VerificationState = .proposed, note: String? = nil) {
+                stepFree: EvidenceValue<Bool> = .unknown, verification: VerificationState = .proposed, note: String? = nil, emergencyEscapeConfirmed: Bool? = nil) {
+        self.emergencyEscapeConfirmed = emergencyEscapeConfirmed
         self.id = id; self.floorID = floorID; self.kind = kind; self.a = a; self.b = b; self.sideA = sideA; self.sideB = sideB
         self.clearWidthMeters = clearWidthMeters; self.operable = operable; self.stepFree = stepFree
         self.verification = verification; self.note = note
@@ -187,8 +198,11 @@ public struct Annotation: Codable, Sendable, Hashable, Identifiable {
     public var label: String
     public var verification: VerificationState
     public var note: String?
+    /// Explicit link to a privately saved geographic place; its coordinates never become indoor metres.
+    public var savedPlaceID: String?
     public init(id: String, kind: AnnotationKind, floorID: String? = nil, spaceID: String? = nil, position: Vec2? = nil,
-                label: String, verification: VerificationState = .proposed, note: String? = nil) {
+                label: String, verification: VerificationState = .proposed, note: String? = nil, savedPlaceID: String? = nil) {
+        self.savedPlaceID = savedPlaceID
         self.id = id; self.kind = kind; self.floorID = floorID; self.spaceID = spaceID; self.position = position
         self.label = label; self.verification = verification; self.note = note
     }
@@ -253,12 +267,18 @@ public struct ScenarioExclusions: Codable, Sendable, Hashable {
     public static let none = ScenarioExclusions()
 }
 
+public enum RoutePurpose: String, Codable, Sendable, Hashable { case outdoorEgress, interiorShelter, higherRefuge }
+
 public struct RouteRequest: Codable, Sendable, Hashable {
     public var personID: String?
     public var startSpaceID: String
     public var mobility: MobilityProfile
     public var exclusions: ScenarioExclusions
-    public init(personID: String? = nil, startSpaceID: String, mobility: MobilityProfile = .walking, exclusions: ScenarioExclusions = .none) {
+    /// nil on legacy routes means outdoor egress.
+    public var purpose: RoutePurpose?
+    public var destinationSpaceID: String?
+    public init(personID: String? = nil, startSpaceID: String, mobility: MobilityProfile = .walking, exclusions: ScenarioExclusions = .none, purpose: RoutePurpose = .outdoorEgress, destinationSpaceID: String? = nil) {
+        self.purpose = purpose; self.destinationSpaceID = destinationSpaceID
         self.personID = personID; self.startSpaceID = startSpaceID; self.mobility = mobility; self.exclusions = exclusions
     }
 }
