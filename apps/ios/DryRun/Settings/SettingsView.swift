@@ -15,7 +15,7 @@ struct SettingsView: View {
                     // Through selectLocale so the choice is saved with the household and survives a relaunch.
                     Picker(t("language"), selection: Binding(get: { model.locale },
                                                           set: { new in Task { await model.selectLocale(new) } })) {
-                        ForEach(model.localizer.availableLocales, id: \.self) { code in
+                        ForEach(model.localizer.selectableLocales, id: \.self) { code in
                             Text(model.content?.localeManifest?.entry(code)?.nativeName ?? code).tag(code)
                         }
                     }

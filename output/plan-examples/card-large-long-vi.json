@@ -39,7 +39,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -74,7 +74,7 @@
           "isSafetyCritical" : true,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -88,7 +88,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -102,7 +102,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -116,7 +116,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -130,7 +130,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -144,7 +144,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -158,7 +158,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -172,7 +172,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -186,7 +186,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -200,7 +200,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -214,7 +214,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -228,7 +228,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -249,7 +249,7 @@
           "isSafetyCritical" : true,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -312,7 +312,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -326,7 +326,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -340,7 +340,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -354,7 +354,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -368,7 +368,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -382,7 +382,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -396,7 +396,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -410,7 +410,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -424,7 +424,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -445,7 +445,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",

@@ -6,7 +6,7 @@ Every household, note, phone number, address and layout is fictional. Do not use
 
 `plan-examples/` contains seven JSON documents: English, Spanish and Vietnamese family cards/full plans, plus a
 12-person Vietnamese card with a roughly 12,000-character note. `pdf/` contains each in Letter and A4 (14 PDFs).
-Basic cards are two pages; the long card is five pages on both paper sizes. Full plans are 19 pages on A4 and 20 on Letter because
+Basic cards are two pages; the long card is five pages on both paper sizes. Full plans are 19 pages on A4 for EN/VI, 20 on A4 for ES, and 20 on Letter for all three languages because
 the reference renderer puts each qualified scenario/person diagram on its own page. This is not a page-count
 prediction for the native app. Missing Apple imagery is shown as text destinations; no map tiles are retained.
 
@@ -27,12 +27,12 @@ replacement characters, and the long-note END marker. Text extraction alone cann
 
 ## Visual review actually performed
 
-Current English Letter, Spanish A4 and Vietnamese Letter card first pages were inspected at full rendered size.
+After this selected-language/unit follow-up, current English Letter, Spanish A4 and Vietnamese Letter card first pages were inspected at full rendered size.
 Current EN Letter, ES A4 and VI Letter full-plan contact sheets were inspected, with English Letter meeting-place
 page 3 and route diagram page 16 also opened at full size. Not every full-plan page was inspected at full size.
 
 After moving oversized instructions after the main card, the regenerated large Vietnamese card was inspected:
-Letter pages 1, 2, 3 and 5, and A4 pages 1 and 5. Contacts and both meetups precede the unchanged full instruction
+Letter pages 1, 3 and 5, and A4 pages 1 and 5; Letter page 2 and A4 continuation were also inspected. Contacts and both meetups precede the unchanged full instruction
 text; the continuation heading and END marker are visible. No overlap, missing glyphs or clipping was found in
 those inspected pages. The five-page reference layout keeps a spacious main-card/continuation separation.
 Translations remain AI drafts; user-entered example notes/proper names are intentionally preserved, and some

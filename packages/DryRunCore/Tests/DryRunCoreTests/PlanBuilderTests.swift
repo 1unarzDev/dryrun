@@ -69,8 +69,8 @@ struct PlanBuilderTests {
         let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: Self.tinyHome(), results: [], localizer: l,
                                     resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
         let water = doc.pages.first { $0.id == "essentials" }!.sections.first { $0.id == "water" }!.lines[0].text
-        #expect(water.contains("12 gallons"))
-        #expect(water.contains("storage target"))
+        #expect(water.contains("45.4 L"), "unknown country presents metric without assuming the US")
+        #expect(water.contains("Storage target"))
     }
 
     @Test("Plan dates are the household's local calendar day, not the UTC day")
@@ -120,7 +120,7 @@ struct PlanBuilderTests {
                                         localizer: l, resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
             let all = doc.pages.flatMap(\.sections).flatMap(\.lines)
             #expect(!all.contains { $0.key == "plan.help.911" })
-            #expect(all.contains { $0.text.contains("12") }, "water target number survives in \(locale)")
+            #expect(all.contains { $0.text.contains("45,4 L") }, "metric water target survives in \(locale) without an assumed US country")
             #expect(PlanValidator.validate(doc, household: SampleHouseholds.oak).isEmpty, "\(locale): \(PlanValidator.validate(doc, household: SampleHouseholds.oak))")
             if all.contains(where: { $0.resolvedLocale == locale }) {
                 #expect(doc.draftTranslationBanner != nil, "AI-drafted \(locale) text must carry the draft banner")

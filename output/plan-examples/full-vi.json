@@ -39,7 +39,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -74,7 +74,7 @@
           "isSafetyCritical" : true,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -88,7 +88,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -102,7 +102,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -116,7 +116,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -137,7 +137,7 @@
           "isSafetyCritical" : true,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -200,7 +200,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -214,7 +214,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -228,7 +228,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -242,7 +242,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -256,7 +256,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -270,7 +270,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -284,7 +284,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -298,7 +298,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -312,7 +312,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -326,7 +326,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -347,7 +347,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "vi",
@@ -566,7 +566,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
@@ -632,7 +632,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon (mục tiêu dự trữ của CDC là 1 gallon mỗi người mỗi ngày, chưa tính vật nuôi). Hiện đang có: 5 gallon.",
+              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon Mỹ (mục tiêu dự trữ của CDC, chưa tính vật nuôi; không phải chỉ định lượng nước uống y tế). Hiện có: 5 gallon Mỹ.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1006,7 +1006,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
@@ -1279,7 +1279,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Dự trữ 12 gallon nước",
+              "text" : "Dự trữ 12 gallon Mỹ nước",
               "unfilledPlaceholders" : [
 
               ]
@@ -1297,7 +1297,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
@@ -1504,7 +1504,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Dự trữ 12 gallon nước",
+              "text" : "Dự trữ 12 gallon Mỹ nước",
               "unfilledPlaceholders" : [
 
               ]
@@ -1522,7 +1522,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
@@ -1721,7 +1721,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon (mục tiêu dự trữ của CDC là 1 gallon mỗi người mỗi ngày, chưa tính vật nuôi). Hiện đang có: 5 gallon.",
+              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon Mỹ (mục tiêu dự trữ của CDC, chưa tính vật nuôi; không phải chỉ định lượng nước uống y tế). Hiện có: 5 gallon Mỹ.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1803,7 +1803,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
@@ -2025,7 +2025,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",
@@ -2183,7 +2183,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon (mục tiêu dự trữ của CDC là 1 gallon mỗi người mỗi ngày, chưa tính vật nuôi). Hiện đang có: 5 gallon.",
+              "text" : "Mục tiêu dự trữ cho 4 người trong 3 ngày: 12 gallon Mỹ (mục tiêu dự trữ của CDC, chưa tính vật nuôi; không phải chỉ định lượng nước uống y tế). Hiện có: 5 gallon Mỹ.",
               "unfilledPlaceholders" : [
 
               ]
@@ -2218,7 +2218,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Dự trữ 12 gallon nước",
+              "text" : "Dự trữ 12 gallon Mỹ nước",
               "unfilledPlaceholders" : [
 
               ]
@@ -2251,7 +2251,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "vi",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Khẩn cấp: gọi 911 khi có người gặp nguy hiểm.",

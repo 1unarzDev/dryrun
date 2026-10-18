@@ -105,3 +105,9 @@ preparations, never a supported refuge/route, completed evacuation, safe drinkin
 Location-only edits preserve known ownership. Rendering unavailable/balcony/blocked openings as ordinary exits
 was removed using shared presentation semantics; route decisions still belong to the deterministic planner.
 New EN/ES/VI prose remains AI draft content with existing source/review status.
+
+Selected-language follow-up removes unconditional 911/211 Texas wording from fire rehearsal content. Rehearsals refer to local emergency services; plan instructions use 911 only with explicit US/CA metadata. The official Government of Canada health-care page was fetched successfully and its emergency-services transcript checked; new S56 records that scope and remains needsReview. CRTC/911.gov fetches were denied and other candidate URLs failed; no successful review is claimed for them. No new public backend country coverage was added.
+
+Water is a CDC storage planning target, not a clinical prescription. Only displayed quantities convert from canonical US gallons to litres outside US; storage facts and simulation outcomes do not change. Card translation provenance and source lists now include composed labels and long-note continuation without altering user-authored instructions. All new translation/safety wording remains AI draft content pending human review.
+
+The independent follow-up source review found four further issues and fixes: empty default event subjects now resolve by longest exact evidence ID (including dotted IDs), mixed power/cold-storage card wording no longer denies electrical requirements, composed water-unit fallbacks reach document provenance, and official English alert text has a fallback label. Core regressions cover subject/default/custom-name retention, route reasons, unit fallback and mixed card sections; native interaction remains pending.

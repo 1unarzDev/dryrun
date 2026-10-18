@@ -150,6 +150,7 @@ struct CardPageView: View {
 }
 
 struct CardLine: View {
+    @Environment(AppModel.self) private var model
     let line: PlanLine
 
     var body: some View {
@@ -159,7 +160,7 @@ struct CardLine: View {
                 .foregroundStyle(line.style == .caveat ? .secondary : .primary)
                 .fixedSize(horizontal: false, vertical: true)
             if line.isFallback {
-                Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary).accessibilityLabel("Shown in English")
+                Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary).accessibilityLabel(model.localizer("common.fallbackShown"))
             }
             Spacer(minLength: 0)
 

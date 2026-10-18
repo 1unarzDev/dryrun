@@ -96,8 +96,11 @@ public enum NextSteps {
 extension Recommendation {
     /// Type labels follow the selected language; personal names and custom model names remain unchanged.
     public func localizedTemplateValues(household: HouseholdProfile?, localizer: Localizer) -> [String: String] {
-        guard let household else { return templateValues }
         var values = templateValues
+        if actionID == "act.water.store-3day" || actionID == "prep.water" {
+            values = PlanningMeasurements.waterValues(values, keys: ["target", "stored"], countryCode: household?.privateLocation?.countryCode, localizer: localizer)
+        }
+        guard let household else { return values }
         if let subjectID, subjectID.hasPrefix("equipment."), let equipment = household.equipment.first(where: { "equipment.\($0.id)" == subjectID }) {
             values["device"] = equipment.localizedLabel(localizer)
             if actionID == "prep.medication" { values["person"] = equipment.localizedLabel(localizer) }

@@ -3,6 +3,11 @@ import DryRunCore
 /// Native controls use the existing versioned locale packs. User labels and notes never pass through this table.
 enum SpatialStrings {
     private static let keys: [String: String] = [
+        "Scan session did not finish; parts of the home may be missing.": "spatial.scan-note.incomplete-session",
+        "Stairs detected. Choose both landings; overlapping rooms do not establish a connection.": "spatial.scan-note.stair-landings",
+        "Confirm each captured floor's relation to exterior ground. The lowest captured story is not necessarily ground level.": "spatial.scan-note.floor-grade",
+        "Scanned area exceeds Apple's published multiroom recommendation; check for missing or misplaced rooms.": "spatial.scan-note.large-area",
+        "Scanned doors and openings are proposals. Confirm each connection and choose your exterior exits.": "spatial.scan-note.proposed-openings",
         "Start with one room you know. Add only rooms and connections that describe your home.": "spatial.start-empty-layout",
         "Open Settings": "spatial.open-settings",
         "Add layout manually": "spatial.add-layout-manually",
@@ -196,6 +201,27 @@ enum SpatialStrings {
         guard let key = keys[english] else { return english }
         let resolved = localizer.text(key)
         return resolved.isMissing ? english : resolved.text
+    }
+
+    /// Only ScanImportResult.notes goes through this adapter. User notes and SDK error descriptions remain exact.
+    /// The importer currently emits plain English diagnostics; recognize its complete known forms without
+    /// changing the stored scan proposal, provenance or confirmation requirements.
+    static func scanImportNote(_ note: String, localizer: Localizer) -> String {
+        let roomPrefix = "Room "
+        let roomSuffix = ": no floor outline; using the outline of its walls. Needs measurement."
+        if note.hasPrefix(roomPrefix), note.hasSuffix(roomSuffix), note.count > roomPrefix.count + roomSuffix.count {
+            let numberText = String(note.dropFirst(roomPrefix.count).dropLast(roomSuffix.count))
+            if let number = Int(numberText), number > 0, String(number) == numberText {
+                return localizer("spatial.scan-note.missing-floor", ["number": PlanFormatting.number(Double(number), locale: localizer.locale)])
+            }
+        }
+        let openingPrefix = "Opening "
+        let openingSuffix = " is near more than two rooms; confirm where it leads."
+        if note.hasPrefix(openingPrefix), note.hasSuffix(openingSuffix), note.count > openingPrefix.count + openingSuffix.count {
+            // Surface identifiers are internal; the focused confirmation step highlights the actual opening.
+            return localizer("spatial.scan-note.ambiguous-opening")
+        }
+        return text(note, localizer: localizer)
     }
 
     static func issue(_ issue: HomeIssue, in home: HomeModel, localizer: Localizer) -> String {

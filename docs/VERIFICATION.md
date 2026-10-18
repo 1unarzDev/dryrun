@@ -13,10 +13,10 @@ CLAUDE_NATIVE_HANDOFF.md gives commands and evidence gates. This pass cannot say
 
 | Executed command/check | Current result |
 |---|---|
-| `DRYRUN_SCRATCH=oct17-current-core scripts/swift.sh packages/DryRunCore test` | **246 tests / 36 suites passed** |
-| `DRYRUN_SCRATCH=oct17-current-vault scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
+| `DRYRUN_SCRATCH=oct17-localization-final scripts/swift.sh packages/DryRunCore test` | **262 tests / 39 suites passed** |
+| `DRYRUN_SCRATCH=oct17-localization-final scripts/swift.sh packages/DryRunVault test` | **35 tests / 6 suites passed** |
 | `cd services/public-api && pnpm test && pnpm typecheck` | **68 tests / 4 files passed**, TypeScript clean |
-| Docker Swift6.2 `swiftc -parse`, all app, app-test and UI-test Swift sources | Passed; **syntax only**, no native SDK typecheck |
+| Docker Swift6.2 `swiftc -parse`, all 53 app, app-test and UI-test Swift sources | Passed; **syntax only**, no native SDK typecheck |
 | `git diff --check`, shell syntax, Python artifact scripts compile | Passed |
 | `DRYRUN_DUMP=1 DRYRUN_SCRATCH=preview scripts/swift.sh packages/DryRunCore test --filter PlanDemoDump` | 1 opt-in generation test passed, seven fictional document JSON snapshots |
 | Portable reference PDFs | 14 Letter/A4 artifacts, text extraction and rendered reference QA; **not native CoreText/PDFKit output**. See output/README.md |
@@ -42,7 +42,7 @@ They did **not** inspect native screenshots. Local logs are in `artifacts/revisi
 artifacts). Portable PDF audit/results are retained with fictional examples; no real home data was collected.
 
 Native tests are authored and wired into project/scheme/verify script: 8 AppPersistenceTests, 3 MapRequestTests,
-4 PlanExportTests, 5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 3 RehearsalNamesTests (29 total); 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
+4 PlanExportTests, 5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 7 RehearsalNamesTests (33 total); 5 current DemoJourneyUITests plus the EN/ES/VI screenshot tour. **Zero executed native tests**
 in this pass. The fresh-install UI test uses in-memory storage; real vault force-quit/relaunch remains a separate
 native/device gate. Source parsing cannot establish their selectors or SDK concurrency correctness.
 
@@ -279,3 +279,13 @@ yet) · PARTIAL · BLOCKED.
 - Responsiveness on the oldest supported iPhone.
 - Human safety-content review; ES and VI language review.
 - A synthetic home fixture is not evidence that scanning works.
+
+## Selected-language follow-up — current portable closure
+
+Settled source: **262 core tests / 39 suites**, **35 vault tests / 6 suites**, **68 backend tests / 4 files**, TypeScript clean. Seven additional XCTest presentation checks ran through the actual app Names/DisplayNames/SpatialLocalization files in a temporary Linux SwiftPM harness (only module import/content-root adapted). These do not count as native test execution. All **53** app/test/UI Swift files syntax-parsed; no SDK typecheck.
+
+New gates cover complete selectable packs/placeholder policy, spatial enum/default marker localization, country distance/water/time formatting, unchanged evidence, water consistency across task/event/plan, local emergency-number gating and Canadian source provenance, localized validation, source-language fallback, private-note preservation, export redaction and card provenance. Older numeric tests expected English decimals, gallons or unconditional 911; expectations were reconciled to selected-language/country behavior. An intermediate new-test build used the wrong referenceDate argument; it was corrected before the passing full run. No tests were disabled.
+
+Local closure logs: /tmp/dryrun-localization-{core,vault,backend,syntax}-closure.log and /tmp/dryrun-names-presentation-water-closure.log; copied under ignored artifacts/revision-20261017/logs for local retention. Fictional snapshots and all 14 reference PDFs regenerated, text/paper/long-note audit passed, representative rendered pages inspected (output/README). No current simulator, native app XCTest/UI test, physical scan, live Apple request, system share/Print, VoiceOver interaction or human translation/safety/usability review was run. The status remains Implementation prepared; native build and device test pending.
+
+The independent follow-up source review found four further issues and fixes: empty default event subjects now resolve by longest exact evidence ID (including dotted IDs), mixed power/cold-storage card wording no longer denies electrical requirements, composed water-unit fallbacks reach document provenance, and official English alert text has a fallback label. Core regressions cover subject/default/custom-name retention, route reasons, unit fallback and mixed card sections; native interaction remains pending.

@@ -150,3 +150,9 @@ HomeScenePresentation supplies renderer/list status and floor/start/selection ge
 RehearsalDiff resolvedRecommendations now carries exact recommendation IDs, preserving subject context.
 ContactRole.waterUtility is additive; old enum values and household data are retained. Public coverage is the
 explicit bundled county/aggregate set; a Texas-shaped number alone does not establish coverage.
+
+## Selected language and measurement follow-up (October 17)
+
+The existing Localizer remains the single text bridge. selectableLocales requires every bundled English domain/key, nonempty strings and matching placeholders; it does not promote AI drafts to human-reviewed content. UI pickers, default marker labels, Help, scan review and rehearsal clocks use stable IDs and selected-language strings. Personal notes/proper names stay exact. FamilyEmergencyCard and PlanBuilder share provenance tracking; card fallback/draft notices and source IDs reach the document. Validation exposes localized privacy-preserving descriptions separately from diagnostic IDs.
+
+PlanningMeasurements formats Apple distance/time estimates and canonical-US-gallon water values for display only: US water uses gallons, other/unknown countries litres; map distances use miles for US/GB and metric elsewhere. Recommendation/event presentation, comparisons and full-plan water lines share this conversion. The deterministic engine, evidence values, indoor metres and saved facts are unchanged. Explicit CA emergency-number lines cite S56; unknown/unsupported countries retain the local-number prompt, with no public-region substitution.

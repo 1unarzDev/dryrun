@@ -462,6 +462,16 @@
       "reviewState": "needsReview",
       "category": "preparedness",
       "scopeNote": "Flood refuge and closed attic precautions; local educational assumptions do not predict flooding. Retrieved during implementation; no qualified human content endorsement."
+    },
+    {
+      "id": "S56",
+      "publisher": "Government of Canada — Immigration, Refugees and Citizenship Canada",
+      "title": "Health care in Canada — emergency services",
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/new-immigrants/new-life-canada/health-care.html",
+      "checkedAt": "2026-10-17",
+      "reviewState": "needsReview",
+      "category": "preparedness",
+      "scopeNote": "Official page transcript says to call 911 when someone is in immediate danger or there is an emergency. Used only with explicit CA country metadata; does not extend Texas public coverage. Retrieved during implementation; no qualified human content endorsement."
     }
   ]
 }

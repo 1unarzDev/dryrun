@@ -187,7 +187,7 @@ struct RehearsalView: View {
                 }
             }
             ForEach(session.result.input.household.people) { person in
-                Picker(model.localizer("spatial.start-person", ["name": person.alias]), selection: Binding(get: { daytimeStarts[person.id] ?? "" }, set: { daytimeStarts[person.id] = $0 })) {
+                Picker(model.localizer("spatial.start-person", ["name": person.localizedLabel(model.localizer)]), selection: Binding(get: { daytimeStarts[person.id] ?? "" }, set: { daytimeStarts[person.id] = $0 })) {
                     Text(s("Use recorded assignment")).tag("")
                     ForEach(home.spaces) { Text($0.label).tag($0.id) }
                 }
@@ -208,11 +208,11 @@ struct RehearsalView: View {
 
     private func clock(_ session: RehearsalCursor) -> some View {
         let minute = session.currentMinute
-        let text = String(format: "+%dh %02dm", minute / 60, minute % 60)
+        let text = RehearsalPresentation.compactTime(minutes: minute, localizer: model.localizer)
         return Label(model.localizer("common.simClock", ["time": text]), systemImage: "clock")
             .font(.subheadline.weight(.semibold).monospacedDigit())
             .foregroundStyle(.secondary)
-            .accessibilityLabel("Exercise time \(minute / 60) hours \(minute % 60) minutes after the scenario starts")
+            .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: minute, localizer: model.localizer))
     }
 
     /// Services and resources the newest event changed, as status pills.
@@ -384,7 +384,7 @@ struct ServiceStateGrid: View {
                     Image(systemName: "shippingbox").foregroundStyle(.secondary).accessibilityHidden(true)
                     Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                     Spacer()
-                    Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit, localizer: l) } ?? l("common.status.unknown"))
+                    Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit, localizer: l, countryCode: model.household?.privateLocation?.countryCode) } ?? l("common.status.unknown"))
                         .foregroundStyle(.secondary)
                 }
                 .font(.callout)
@@ -409,17 +409,18 @@ struct EventCard: View {
         let tint = Theme.color(for: event.severity)
         VStack(alignment: .leading, spacing: Theme.Space.s) {
             HStack(spacing: Theme.Space.s) {
-                Text(String(format: "+%dh %02dm", event.simMinute / 60, event.simMinute % 60))
+                Text(RehearsalPresentation.compactTime(minutes: event.simMinute, localizer: model.localizer))
+                    .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: event.simMinute, localizer: model.localizer))
                     .font(.caption.weight(.semibold).monospacedDigit()).foregroundStyle(.secondary)
                 if event.severity != .info {
                     StatusPill(text: event.severity == .critical ? l("common.critical") : l("common.caution"),
                                systemImage: Theme.symbol(for: event.severity), tint: tint)
                 }
             }
-            Text(l(event.titleKey, event.templateValues))
+            Text(l(event.titleKey, event.localizedTemplateValues(household: model.household, localizer: model.localizer)))
                 .font(isCurrent ? .title3.weight(.bold) : .body.weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
-            if let detail = event.detailKey { Text(l(detail, event.templateValues)).font(.callout) }
+            if let detail = event.detailKey { Text(l(detail, event.localizedTemplateValues(household: model.household, localizer: model.localizer))).font(.callout) }
             DisclosureGroup(l("common.whyHappened"), isExpanded: $expanded) {
                 VStack(alignment: .leading, spacing: 4) {
                     if !event.evidence.factIDs.isEmpty {
@@ -427,7 +428,7 @@ struct EventCard: View {
                     }
                     let causes = event.evidence.causedByEventIDs.compactMap { id in result?.events.first { $0.id == id } }
                     if !causes.isEmpty {
-                        Text(l("ui.causedBy", ["events": causes.map { l($0.titleKey, $0.templateValues) }.joined(separator: "; ")]))
+                        Text(l("ui.causedBy", ["events": causes.map { l($0.titleKey, $0.localizedTemplateValues(household: model.household, localizer: l)) }.joined(separator: "; ")]))
                     }
                     let sources = event.evidence.sourceIDs.compactMap { model.content?.source($0) }
                     if !sources.isEmpty {
@@ -461,18 +462,20 @@ struct TimelineRow: View {
     var body: some View {
         Button { expanded.toggle() } label: {
             HStack(alignment: .firstTextBaseline, spacing: Theme.Space.m) {
-                Text(String(format: "+%dh %02dm", event.simMinute / 60, event.simMinute % 60))
+                Text(RehearsalPresentation.compactTime(minutes: event.simMinute, localizer: model.localizer))
+                    .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: event.simMinute, localizer: model.localizer))
                     .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-                    .frame(width: 64, alignment: .leading)
+                    .frame(minWidth: 64, alignment: .leading)
+                    .fixedSize(horizontal: true, vertical: false)
                 Image(systemName: Theme.symbol(for: event.severity)).font(.caption).foregroundStyle(Theme.color(for: event.severity))
                     .accessibilityHidden(true)
-                Text(model.localizer(event.titleKey, event.templateValues)).font(.callout).multilineTextAlignment(.leading)
+                Text(model.localizer(event.titleKey, event.localizedTemplateValues(household: model.household, localizer: model.localizer))).font(.callout).multilineTextAlignment(.leading)
                 Spacer(minLength: 0)
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Shows details")
+        .accessibilityHint(model.localizer(expanded ? "spatial.hide-details" : "spatial.show-details"))
         if expanded {
             EventCard(event: event, result: result)
         }
@@ -517,7 +520,7 @@ struct RouteSummaryView: View {
         SectionCard(title: l("common.practiceRoutes"), systemImage: "figure.walk.departure") {
             if let home = model.home {
                 ForEach(Array(routes.enumerated()), id: \.offset) { _, route in
-                    let start = home.space(route.request.startSpaceID)?.label ?? route.request.startSpaceID
+                    let start = RehearsalPresentation.startingRoom(route.request.startSpaceID, in: home, localizer: l)
                     VStack(alignment: .leading, spacing: 4) {
                         if let p = route.primary {
                             Text(l("ui.route.from", ["start": start, "steps": p.spaceSequence.compactMap { home.space($0)?.label }.joined(separator: " → ")]))
@@ -536,7 +539,7 @@ struct RouteSummaryView: View {
                 FloorPlanView(home: home, routes: routes.compactMap(\.primary), highlightedFloorID: home.floors.first?.id)
                     .frame(height: 260)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.control))
-                    .accessibilityLabel("Floor plan with practice routes. The route is also described in text above.")
+                    .accessibilityLabel(l("spatial.route-scene-summary"))
             }
             Text(l("plan.route.caveat")).font(.caption).foregroundStyle(.secondary)
         }
@@ -692,7 +695,7 @@ struct ComparisonView: View {
                                     Text(ServiceNames.name(id, household: model.household, localizer: model.localizer)).font(.body.weight(.semibold))
                                     HStack(spacing: Theme.Space.s) {
                                         StatusPill(text: l("common.status.\(states[0].rawValue)"), systemImage: Theme.symbol(for: states[0]), tint: Theme.color(for: states[0]))
-                                        Image(systemName: "arrow.right").foregroundStyle(.secondary).accessibilityLabel("becomes")
+                                        Image(systemName: "arrow.right").foregroundStyle(.secondary).accessibilityLabel(l("spatial.becomes"))
                                         StatusPill(text: l("common.status.\(states[1].rawValue)"), systemImage: Theme.symbol(for: states[1]), tint: Theme.color(for: states[1]))
                                     }
                                 }
@@ -702,7 +705,11 @@ struct ComparisonView: View {
                         ForEach(d.resourceChanges.keys.sorted(), id: \.self) { id in
                             let q = d.resourceChanges[id] ?? []
                             if q.count == 2 {
-                                Text("\(ServiceNames.name(id, household: model.household, localizer: model.localizer)): \(q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit, localizer: l) } ?? l("common.status.unknown")) → \(q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit, localizer: l) } ?? l("common.status.unknown"))")
+                                let name = ServiceNames.name(id, household: model.household, localizer: l)
+                                let before = q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit, localizer: l, countryCode: model.household?.privateLocation?.countryCode) } ?? l("common.status.unknown")
+                                let after = q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit, localizer: l, countryCode: model.household?.privateLocation?.countryCode) } ?? l("common.status.unknown")
+                                Text("\(name): \(before) → \(after)")
+                                    .accessibilityLabel(RehearsalPresentation.transition(name: name, before: before, after: after, localizer: l))
                             }
                         }
                         ForEach(d.resolvedRequirements, id: \.self) {
@@ -716,12 +723,12 @@ struct ComparisonView: View {
                         SectionCard(title: l("common.events"), systemImage: "list.bullet") {
                             ForEach(d.removedEventIDs, id: \.self) { id in
                                 if let e = c.baseline.events.first(where: { $0.id == id }) {
-                                    IconRow(systemImage: "minus.circle", tint: Theme.success, title: l(e.titleKey, e.templateValues), subtitle: l("ui.compare.noLonger"))
+                                    IconRow(systemImage: "minus.circle", tint: Theme.success, title: l(e.titleKey, e.localizedTemplateValues(household: model.household, localizer: l)), subtitle: l("ui.compare.noLonger"))
                                 }
                             }
                             ForEach(d.addedEventIDs, id: \.self) { id in
                                 if let e = c.modified.events.first(where: { $0.id == id }) {
-                                    IconRow(systemImage: "plus.circle", tint: Theme.caution, title: l(e.titleKey, e.templateValues), subtitle: l("ui.compare.new"))
+                                    IconRow(systemImage: "plus.circle", tint: Theme.caution, title: l(e.titleKey, e.localizedTemplateValues(household: model.household, localizer: l)), subtitle: l("ui.compare.new"))
                                 }
                             }
                         }

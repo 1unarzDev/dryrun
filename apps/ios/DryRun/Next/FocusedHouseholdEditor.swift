@@ -192,7 +192,7 @@ struct FocusedHouseholdEditor: View {
         return Group {
             if let draft {
                 let page = FamilyEmergencyCardBuilder.page(household: draft, savedPlaces: model.savedPlaces.filter { $0.homeID == (model.home?.id ?? draft.stableHomeID) },
-                    localizer: l, selection: .init(includeCriticalInformation: true, includeMedication: true, includeResponderInstructions: true))
+                    localizer: l, selection: .init(includeCriticalInformation: true, includeMedication: true, includeResponderInstructions: true), timeZone: .current)
                 ForEach(page.sections) { section in
                     Section(section.heading) { ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in Text(line.text) } }
                 }
@@ -232,7 +232,7 @@ struct FocusedHouseholdEditor: View {
         return Group {
             Section(l("prep.water.title")) {
                 WaterStorageEvidenceRow(value: waterQuantity, countryCode: draft?.privateLocation?.countryCode)
-                Text(l("prep.water.why", ["target": String((draft?.people.count ?? 1) * 3), "litres": String(Int((Double((draft?.people.count ?? 1) * 3) * 3.78541).rounded()))])).font(.footnote)
+                Text(l("prep.water.why", ["target": PlanningMeasurements.water(gallons: Double((draft?.people.count ?? 1) * 3), countryCode: draft?.privateLocation?.countryCode, localizer: l)])).font(.footnote)
             }
             TextField(l("family.locationOfItem"), text: fact("water").location, axis: .vertical)
             TextField(l("family.notes"), text: fact("water").notes, axis: .vertical)

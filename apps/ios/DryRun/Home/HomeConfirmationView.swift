@@ -92,7 +92,7 @@ struct HomeConfirmationView: View {
             Section {
                 TextField(s("Room name"), text: $labelText)
                 Picker(s("Room type"), selection: $labelKind) { ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) } }
-                Button(s("Save name")) { answer(.labelSpace(spaceID: step.elementID, label: labelText.isEmpty ? "Room" : labelText, kind: labelKind), for: step) }
+                Button(s("Save name")) { answer(.labelSpace(spaceID: step.elementID, label: labelText.isEmpty ? s("Room") : labelText, kind: labelKind), for: step) }
                 Button(s("Room needs measuring")) { answer(.needsMeasurement(spaceID: step.elementID), for: step) }
             }
         case .confirmPortal:
@@ -135,7 +135,7 @@ struct HomeConfirmationView: View {
                         }
                     }
                 } else {
-                    Button(portal?.leadsToExterior == true ? "Yes, this is correct" : "Yes, it connects these rooms") {
+                    Button(model.localizer(portal?.leadsToExterior == true ? "spatial.confirm-opening-correct" : "spatial.confirm-opening-connects")) {
                         answer(.confirmPortalEvidence(portalID: step.elementID, operable: operable, stepFree: stepFree,
                                               clearWidthMeters: parsedWidth),
                                for: step)

@@ -148,8 +148,8 @@ struct ManualHomeEditorView: View {
                     ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) }
                 }
                 TextField(s("New room name"), text: $roomLabel)
-                Stepper(model.localizer("spatial.width-value", ["value": roomWidth.formatted()]), value: $roomWidth, in: 1...15, step: 0.5)
-                Stepper(model.localizer("spatial.depth-value", ["value": roomDepth.formatted()]), value: $roomDepth, in: 1...15, step: 0.5)
+                Stepper(model.localizer("spatial.width-value", ["value": roomWidth.formatted(.number.locale(Locale(identifier: model.locale)))]), value: $roomWidth, in: 1...15, step: 0.5)
+                Stepper(model.localizer("spatial.depth-value", ["value": roomDepth.formatted(.number.locale(Locale(identifier: model.locale)))]), value: $roomDepth, in: 1...15, step: 0.5)
                 if draft.spaces.contains(where: { $0.floorID == roomFloorID }) {
                     Picker(s("Next to"), selection: $anchorID) {
                         ForEach(draft.spaces.filter { $0.floorID == roomFloorID }) { Text($0.label).tag($0.id) }
@@ -209,7 +209,7 @@ struct ManualHomeEditorView: View {
             }
             Section(s("Safety markers")) {
                 ForEach(draft.annotations) { a in
-                    Button("\(a.label) — \(a.spaceID.flatMap { draft.space($0)?.label } ?? s("outside"))") { selectedID = a.id }
+                    Button("\(a.localizedLabel(model.localizer)) — \(a.spaceID.flatMap { draft.space($0)?.label } ?? s("outside"))") { selectedID = a.id }
                 }
                 .onDelete { idx in draft.edit { $0.annotations.remove(atOffsets: idx) } }
                 Picker(s("Marker"), selection: $markerKind) {
@@ -607,7 +607,7 @@ struct ManualHomeEditorView: View {
         draft.edit { h in
             h.annotations.append(Annotation(id: "an-\(UUID().uuidString.prefix(6).lowercased())", kind: markerKind, floorID: space.floorID,
                                             spaceID: space.id, position: Geometry.centroid(space.polygon),
-                                            label: markerKind.rawValue, verification: .verified))
+                                            label: "", verification: .verified))
         }
     }
 

@@ -86,7 +86,7 @@ Manually verify these connected journeys (record exact results and errors):
    time to first useful card and a rehearsal; 90 seconds and 2–4 minutes are targets, not measured claims.
 
 Follow-up native gates authored but not run: 8 AppPersistenceTests, 3 MapRequestTests, 4 PlanExportTests and
-5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 3 RehearsalNamesTests (29 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
+5 ReviewReminderTests, 3 PlanGenerationPrivacyTests, 3 MapDirectionsRequestTests and 7 RehearsalNamesTests (33 total), plus 5 DemoJourneyUITests and screenshot tours. The reminder fake tests suspend
 authorization/add, cancel as Delete Everything does, then resume to check no late reminder remains. Exercise actual
 system permission denied/granted, one-time delivery, relaunch, cancellation and successful/failed Delete Everything.
 No permission request or schedule is allowed merely by opening Settings/review.
@@ -123,9 +123,9 @@ hardware/human limits. Safety and translation professional review remain pending
 
 ## Latest integrated fixes to exercise on the Mac
 
-Portable settled-source result: 246 core / 36 suites, 35 vault / 6 suites, 68 backend / 4 files; TypeScript and
-all app/test Swift syntax checks pass. Three extra Linux presentation-helper checks passed in a temporary harness.
-None of the 29 native XCTest methods or 5 UI journeys has executed on iOS in this revision.
+Portable settled-source result: 262 core / 39 suites, 35 vault / 6 suites, 68 backend / 4 files; TypeScript and
+all app/test Swift syntax checks pass. Seven extra Linux presentation-helper checks passed in a temporary harness.
+None of the 33 native XCTest methods or 5 UI journeys has executed on iOS in this revision.
 
 - Prepare Add contact opens a new contact even when others exist. Out-of-area/water-utility tasks preselect the
   correct role. Utility contacts do not close the trusted-contact task. Helpers retain their exact person.
@@ -148,6 +148,12 @@ None of the 29 native XCTest methods or 5 UI journeys has executed on iOS in thi
 - EN/ES/VI fact/service explanations receive the selected localizer. Dotted IDs retain names; unknown facts use
   a readable generic fallback; quantities use localized plurals/decimal separators without rewriting stored units.
 
-The reference examples now span two-page cards, 19-page A4/20-page Letter full plans and a five-page long-note
+The reference examples now span two-page cards, 19–20-page A4/20-page Letter full plans and a five-page long-note
 card. Their intentionally spacious portable layout is not a native page-count target. Inspect native PDFs and
 phone previews independently; do not reuse those reference artifacts as native evidence.
+
+## Selected-language follow-up to verify
+
+Current portable closure is 262 core / 39 suites, 35 vault / 6 suites, 68 backend / 4 files and clean TypeScript; 53 app/test/UI sources parse. Seven actual Names/DisplayNames/SpatialLocalization helper tests ran in Linux, not iOS. Native inventory is **33 XCTest methods + 5 UI journeys**, all unrun here.
+
+Exercise EN/ES/VI controls and selected values in Help, contact calls, room/opening/marker pickers, scan coaching, exercise clock/VoiceOver/plurals, validation and card/PDF dates/decimals. Personal notes/names must stay unchanged. English official-source text needs a visible fallback label. Only structurally complete packs are offered; translations remain drafts. Compare US versus VN/FR/unknown-country water in editor → Prepare → rehearsal event/resource/comparison → full plan: gallons only for US, litres otherwise; stored evidence remains canonical. Check US/GB map miles versus metric elsewhere. Inspect explicit US/CA emergency numbers (CA cites S56) and local-number prompt elsewhere; no Texas resources for unsupported regions. Test fallback/draft notices on family-card composed labels and long instruction continuation. Native CoreText pagination must be checked independently from the newly regenerated 19–20-page portable full-plan references.

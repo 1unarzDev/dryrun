@@ -206,6 +206,12 @@ public struct Annotation: Codable, Sendable, Hashable, Identifiable {
     public var note: String?
     /// Explicit link to a privately saved geographic place; its coordinates never become indoor metres.
     public var savedPlaceID: String?
+    /// Empty labels and old machine-generated raw case names use the type in the selected language.
+    /// A household's own label is retained exactly, including when the language changes.
+    public func localizedLabel(_ localizer: Localizer) -> String {
+        label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || label == kind.rawValue
+            ? localizer("enum.\(kind.rawValue)") : label
+    }
     public init(id: String, kind: AnnotationKind, floorID: String? = nil, spaceID: String? = nil, position: Vec2? = nil,
                 label: String, verification: VerificationState = .proposed, note: String? = nil, savedPlaceID: String? = nil) {
         self.savedPlaceID = savedPlaceID

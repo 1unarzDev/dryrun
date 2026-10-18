@@ -39,7 +39,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -74,7 +74,7 @@
           "isSafetyCritical" : true,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -88,7 +88,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -102,7 +102,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -116,7 +116,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -137,7 +137,7 @@
           "isSafetyCritical" : true,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -200,7 +200,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -214,7 +214,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -228,7 +228,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -242,7 +242,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -256,7 +256,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -270,7 +270,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -284,7 +284,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -298,7 +298,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -312,7 +312,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -326,7 +326,7 @@
               ]
             },
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -347,7 +347,7 @@
           "isSafetyCritical" : false,
           "lines" : [
             {
-              "isDraftTranslation" : false,
+              "isDraftTranslation" : true,
               "isFallback" : false,
               "key" : "family.recorded",
               "resolvedLocale" : "es",
@@ -566,7 +566,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",
@@ -632,7 +632,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Meta de almacenamiento para 4 personas por 3 días: 12 galones (meta de almacenamiento de los CDC de 1 galón por persona por día, sin contar mascotas). Almacenado ahora: 5 galones.",
+              "text" : "Meta de almacenamiento para 4 personas durante 3 días: 12 galones estadounidenses (meta de almacenamiento de los CDC, sin incluir mascotas; no es una prescripción clínica). Reserva actual: 5 galones estadounidenses.",
               "unfilledPlaceholders" : [
 
               ]
@@ -741,7 +741,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Vaya al punto de reunión afuera y luego llame al 911 desde afuera.",
+              "text" : "Vaya al punto de reunión afuera y luego llame a 911 desde afuera.",
               "unfilledPlaceholders" : [
 
               ]
@@ -755,7 +755,7 @@
                 "S19"
               ],
               "style" : "normal",
-              "text" : "Si no puede salir, cierre la puerta, tape las ventilaciones y rendijas, llame al 911 y haga señas desde una ventana.",
+              "text" : "Si no puede salir, cierre la puerta, tape las ventilaciones y rendijas, llame a 911 y haga señas desde una ventana.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1006,7 +1006,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",
@@ -1279,7 +1279,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Almacene 12 galones de agua",
+              "text" : "Almacene 12 galones estadounidenses de agua",
               "unfilledPlaceholders" : [
 
               ]
@@ -1297,7 +1297,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",
@@ -1504,7 +1504,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Almacene 12 galones de agua",
+              "text" : "Almacene 12 galones estadounidenses de agua",
               "unfilledPlaceholders" : [
 
               ]
@@ -1522,7 +1522,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",
@@ -1559,7 +1559,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Si un equipo esencial se queda sin electricidad, siga su plan de cuidado y el respaldo que acordó. En una emergencia, llame al 911.",
+              "text" : "Si un equipo esencial se queda sin electricidad, siga su plan de cuidado y el respaldo que acordó. En una emergencia, llame a 911.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1721,7 +1721,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Meta de almacenamiento para 4 personas por 3 días: 12 galones (meta de almacenamiento de los CDC de 1 galón por persona por día, sin contar mascotas). Almacenado ahora: 5 galones.",
+              "text" : "Meta de almacenamiento para 4 personas durante 3 días: 12 galones estadounidenses (meta de almacenamiento de los CDC, sin incluir mascotas; no es una prescripción clínica). Reserva actual: 5 galones estadounidenses.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1803,7 +1803,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",
@@ -1866,7 +1866,7 @@
                 "S21"
               ],
               "style" : "normal",
-              "text" : "Llame al 911 ante señales de golpe de calor, como confusión, desmayo o temperatura corporal muy alta.",
+              "text" : "Llame a 911 ante señales de golpe de calor, como confusión, desmayo o temperatura corporal muy alta.",
               "unfilledPlaceholders" : [
 
               ]
@@ -2025,7 +2025,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",
@@ -2183,7 +2183,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Meta de almacenamiento para 4 personas por 3 días: 12 galones (meta de almacenamiento de los CDC de 1 galón por persona por día, sin contar mascotas). Almacenado ahora: 5 galones.",
+              "text" : "Meta de almacenamiento para 4 personas durante 3 días: 12 galones estadounidenses (meta de almacenamiento de los CDC, sin incluir mascotas; no es una prescripción clínica). Reserva actual: 5 galones estadounidenses.",
               "unfilledPlaceholders" : [
 
               ]
@@ -2218,7 +2218,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Almacene 12 galones de agua",
+              "text" : "Almacene 12 galones estadounidenses de agua",
               "unfilledPlaceholders" : [
 
               ]
@@ -2251,7 +2251,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "es",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergencia: llame al 911 cuando alguien esté en peligro.",

@@ -2,7 +2,7 @@ import Foundation
 import DryRunCore
 
 /// Readable names for core enums shown in pickers and summaries, so raw case names ("singleFamily") never reach the
-/// screen. English only, like the rest of the setup forms; `common.*` locale keys are used where they exist.
+/// screen. Native forms supply their selected localizer; the no-localizer overload is an English fallback.
 enum DisplayNames {
     /// Cases whose de-camel-cased name reads wrong (acronyms, awkward phrasing).
     static let overrides: [String: String] = [

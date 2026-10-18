@@ -565,7 +565,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",
@@ -631,7 +631,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Storage target for 4 people for 3 days: 12 gallons (CDC storage target of 1 gallon per person per day, before pet needs). Stored now: 5 gallons.",
+              "text" : "Storage target for 4 people for 3 days: 12 US gallons (CDC storage planning target, before pet needs; not a clinical drinking prescription). Stored now: 5 US gallons.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1005,7 +1005,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",
@@ -1278,7 +1278,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Store 12 gallons of water",
+              "text" : "Store 12 US gallons of water",
               "unfilledPlaceholders" : [
 
               ]
@@ -1296,7 +1296,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",
@@ -1503,7 +1503,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Store 12 gallons of water",
+              "text" : "Store 12 US gallons of water",
               "unfilledPlaceholders" : [
 
               ]
@@ -1521,7 +1521,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",
@@ -1720,7 +1720,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Storage target for 4 people for 3 days: 12 gallons (CDC storage target of 1 gallon per person per day, before pet needs). Stored now: 5 gallons.",
+              "text" : "Storage target for 4 people for 3 days: 12 US gallons (CDC storage planning target, before pet needs; not a clinical drinking prescription). Stored now: 5 US gallons.",
               "unfilledPlaceholders" : [
 
               ]
@@ -1802,7 +1802,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",
@@ -2024,7 +2024,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",
@@ -2182,7 +2182,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Storage target for 4 people for 3 days: 12 gallons (CDC storage target of 1 gallon per person per day, before pet needs). Stored now: 5 gallons.",
+              "text" : "Storage target for 4 people for 3 days: 12 US gallons (CDC storage planning target, before pet needs; not a clinical drinking prescription). Stored now: 5 US gallons.",
               "unfilledPlaceholders" : [
 
               ]
@@ -2217,7 +2217,7 @@
                 "S26"
               ],
               "style" : "normal",
-              "text" : "Store 12 gallons of water",
+              "text" : "Store 12 US gallons of water",
               "unfilledPlaceholders" : [
 
               ]
@@ -2250,7 +2250,7 @@
               "key" : "plan.help.911",
               "resolvedLocale" : "en",
               "sourceIDs" : [
-
+                "S19"
               ],
               "style" : "contact",
               "text" : "Emergency: call 911 when someone is in danger.",

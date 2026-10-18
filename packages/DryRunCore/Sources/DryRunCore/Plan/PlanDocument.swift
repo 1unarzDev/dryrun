@@ -107,6 +107,22 @@ public enum PlanValidationIssue: Sendable, Hashable, CustomStringConvertible {
         case .privateNotesLeaked(let id): "private care-plan notes for \(id) included without consent"
         }
     }
+
+    /// User-facing validation text follows the selected app language. The diagnostic description
+    /// above retains exact keys/IDs for local development; private note contents never enter this text.
+    public func localizedDescription(_ localizer: Localizer) -> String {
+        let key: String
+        switch self {
+        case .missingEssentialsPage: key = "plan.validation.missingEssentialsPage"
+        case .emptySafetySection: key = "plan.validation.emptySafetySection"
+        case .unresolvedKey: key = "plan.validation.unresolvedKey"
+        case .unfilledPlaceholder: key = "plan.validation.unfilledPlaceholder"
+        case .draftWithoutBanner: key = "plan.validation.draftWithoutBanner"
+        case .fallbackWithoutNote: key = "plan.validation.fallbackWithoutNote"
+        case .privateNotesLeaked: key = "plan.validation.privateNotesLeaked"
+        }
+        return localizer(key)
+    }
 }
 
 public enum PlanValidator {

@@ -15,12 +15,20 @@ struct FamilyPreparationRevisionTests {
         #expect(!baseline.contains { $0.actionID == "prep.medicalBackup" })
         #expect(baseline.contains { $0.actionID == "prep.coldStorage" })
     }
-    @Test func mixedRequirementsTrackPowerAndColdStorage() {
+    @Test func mixedRequirementsTrackPowerAndColdStorage() throws {
         let eq = PoweredEquipment(id: "mixed", purpose: .refrigeratedMedication, label: "", refrigeratedStorage: .confirmed(true), electricalRequirement: .confirmed(true))
         var h = SampleHouseholds.oak; h.equipment = [eq]; h.supplies.coolerAndIcePacks = .unknown
         let tasks = BaselinePreparedness.evaluate(household: h)
         #expect(tasks.contains { $0.id == "prep.medicalBackup|equipment.mixed" })
         #expect(tasks.contains { $0.id == "prep.coldStorage|equipment.mixed" })
+        for locale in ["en", "es", "vi"] {
+            let l = try PlanBuilderTests.localizer(locale)
+            let card = OutageCardBuilder.build(household: h, homeID: "none", homeRevision: 0, localizer: l, resources: [], contentVersion: "test", generatedAt: LeadTestSupport.fixedDate)
+            let sections = card.pages.flatMap(\.sections)
+            #expect(sections.contains { $0.id == "storage" } && sections.contains { $0.id == "backup" })
+            let storage = try #require(sections.flatMap(\.lines).first { $0.key == "card.device.needsRefrigeration" })
+            #expect(!storage.text.contains("rather than needing power") && !storage.text.contains("no necesita electricidad") && !storage.text.contains("không cần điện"))
+        }
     }
     @Test func legacyNonMedicationStorageCanBeClarifiedWithoutChangingItsPowerRequirement() throws {
         let old = PoweredEquipment(id: "legacy", purpose: .other, label: "Recorded item", needsRefrigeration: true)

@@ -186,7 +186,7 @@ struct FamilyPlanExportRequestTests {
                     #expect(lines.contains { $0.contains(location) && $0.contains(localizer("family.haveItem") + ": " + localizer("ui.yes")) })
                 }
                 let water = try #require(lines.first { $0.contains("WATER-SHELF") })
-                let quantity = country == "US" ? "4" : PlanBuilder.formatNumber(4 * 3.785411784)
+                let quantity = country == "US" ? "4" : (locale == "en" ? "15.1" : "15,1")
                 #expect(water.contains(localizer(country == "US" ? "ui.setup.water.gallons" : "family.waterLitres") + ": " + quantity))
                 #expect(!BaselinePreparedness.evaluate(household: household).contains { ["prep.firstAid", "prep.food", "prep.flashlight"].contains($0.actionID) })
             }

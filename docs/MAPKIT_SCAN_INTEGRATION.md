@@ -78,3 +78,5 @@ map panels and fails closed on a newly requested plan save failure; no old conse
 Cards retain dropped-pin coordinates and contact roles as text. Scan review disables accidental dismissal;
 explicit save/Finish later retain drafts on failed writes. Shared 2D/3D/list opening status includes actual
 blockage, operability, grade and relevant mobility evidence; unknown/no-route starts keep a recorded room marker.
+
+Selected-language follow-up: MapPlanningView uses shared country-aware distance and selected-language travel-time formatting, including unknown invalid estimates, and structured PhoneLink for calling. Resource categories/statuses and source-language fallback labels are localized. Scan-import note forms, floor/opening/marker selected values and default annotation labels now resolve in all three packs without rewriting custom room/annotation text. Locale completeness tests are portable; installed SDK, live Apple calls and actual capture remain pending.

@@ -73,8 +73,8 @@ struct OnboardingView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        ForEach([("en", "English"), ("es", "Español"), ("vi", "Tiếng Việt")], id: \.0) { code, name in
-                            Button(name) { model.locale = code }
+                        ForEach(l.selectableLocales, id: \.self) { code in
+                            Button(model.content?.localeManifest?.entry(code)?.nativeName ?? code) { model.locale = code }
                         }
                     } label: {
                         Label(l("common.plan.language"), systemImage: "globe")
@@ -198,7 +198,9 @@ struct HouseholdSetupView: View {
         let l = model.localizer
         return Section {
             Picker(l("common.plan.language"), selection: $draft.preferredLocale) {
-                Text("English").tag("en"); Text("Español").tag("es"); Text("Tiếng Việt").tag("vi")
+                ForEach(l.selectableLocales, id: \.self) { code in
+                    Text(model.content?.localeManifest?.entry(code)?.nativeName ?? code).tag(code)
+                }
             }
             .onChange(of: draft.preferredLocale) { _, new in model.locale = new }
             TextField(l("family.location"), text: Binding(get: { draft.privateLocation?.addressLine ?? "" }, set: { value in

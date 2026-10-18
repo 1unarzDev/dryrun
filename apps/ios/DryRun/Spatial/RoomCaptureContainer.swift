@@ -228,7 +228,7 @@ struct RoomScanFlowView: View {
                     Button(s("Cancel")) { startGeneration += 1; buildGeneration += 1; controller.cancel(); onFinish(nil) }
                 }
             }
-            .alert("Scan problem", isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
+            .alert(model.localizer("spatial.scan-problem"), isPresented: Binding(get: { errorText != nil }, set: { if !$0 { errorText = nil } })) {
                 Button(s("OK"), role: .cancel) {}
             } message: { Text(errorText ?? "") }
             .onChange(of: controller.phase) { _, phase in
@@ -309,7 +309,7 @@ struct RoomScanFlowView: View {
                 LabeledContent(s("Windows (not exits)"), value: "\(r.home.portals.filter { $0.kind == .window }.count)")
             }
             Section(s("Before routes can use this scan")) {
-                ForEach(r.notes, id: \.self) { Text($0) }
+                ForEach(r.notes, id: \.self) { Text(SpatialStrings.scanImportNote($0, localizer: model.localizer)) }
             }
             Section {
                 Button(s("Continue to confirmation")) { onFinish(r.home) }

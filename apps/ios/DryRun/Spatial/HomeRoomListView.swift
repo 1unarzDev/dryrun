@@ -48,7 +48,7 @@ struct HomeRoomListView: View {
             ForEach(markers) { a in
                 Label {
                     VStack(alignment: .leading) {
-                        Text(a.label)
+                        Text(a.localizedLabel(model.localizer))
                         Text([a.spaceID.map(label) ?? s("Outside"), stateText(a.verification)].joined(separator: " · "))
                             .font(.caption).foregroundStyle(.secondary)
                         if let note = a.note { Text(note).font(.caption).foregroundStyle(.secondary) }

@@ -409,7 +409,7 @@ final class AppModel {
         let fromComparison = comparison?.baseline.recommendations.first(where: { $0.actionID == actionID })
         let fromRehearsal = rehearsal?.result.recommendations.first(where: { $0.actionID == actionID })
         if let rec = fromComparison ?? fromRehearsal {
-            return localizer(rec.titleKey, rec.templateValues)
+            return localizer(rec.titleKey, rec.localizedTemplateValues(household: household, localizer: localizer))
         }
         // No values available: never show a raw {placeholder} to the user.
         return localizer("action.\(actionID).title")

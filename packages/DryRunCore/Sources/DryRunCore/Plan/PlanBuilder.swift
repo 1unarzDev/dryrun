@@ -34,7 +34,7 @@ public enum PlanBuilder {
     ) -> PlanDocument {
         let b = Builder(l: l)
         let matchingPlaces = savedPlaces.filter { $0.homeID == (home?.id ?? household.stableHomeID) }
-        var pages: [PlanPage] = [FamilyEmergencyCardBuilder.page(household: household, savedPlaces: matchingPlaces, localizer: l, selection: options.familyCardSelection), essentialsPage(b, household, home, matchingPlaces, resources, contentVersion, generatedAt, options)]
+        var pages: [PlanPage] = [FamilyEmergencyCardBuilder.page(household: household, savedPlaces: matchingPlaces, builder: b, selection: options.familyCardSelection, timeZone: options.timeZone), essentialsPage(b, household, home, matchingPlaces, resources, contentVersion, generatedAt, options)]
         for result in (home == nil ? [] : results).sorted(by: { order($0.input.scenarioID) < order($1.input.scenarioID) }) {
             pages.append(scenarioPage(b, result, household, home!, resources, options))
         }
@@ -52,7 +52,7 @@ public enum PlanBuilder {
             contentReviewBanner: l.text("plan.contentDraftBanner").text,
             footer: l.text("plan.footer.practice").text,
             sourceIDs: Array(Set(b.sourceIDs)).sorted(),
-            visualSnapshot: PlanVisualSnapshot(home: exportHome(home, options: options), routes: results.flatMap { currentRoutes($0) }, savedPlaces: matchingPlaces.sorted { $0.id < $1.id }, homeCoordinate: household.privateLocation.flatMap { location in
+            visualSnapshot: PlanVisualSnapshot(home: exportHome(home, options: options, localizer: l), routes: results.flatMap { currentRoutes($0) }, savedPlaces: matchingPlaces.sorted { $0.id < $1.id }, homeCoordinate: household.privateLocation.flatMap { location in
                 guard let lat = location.latitude, let lon = location.longitude else { return nil }; return GeographicCoordinate(latitude: lat, longitude: lon)
             }, fictional: household.isFictional || home?.source == .sample || home?.isFictional == true, routeScenarioIDs: results.flatMap { result in currentRoutes(result).map { _ in result.input.scenarioID } }, personLabels: Dictionary(uniqueKeysWithValues: household.people.map { ($0.id, $0.localizedLabel(l)) }), scenarioLabels: Dictionary(uniqueKeysWithValues: Set(results.map { $0.input.scenarioID }).map { ($0, l("common.scenario.\($0)")) }))
         )
@@ -131,7 +131,10 @@ public enum PlanBuilder {
             // Classify from the source-language text so a prohibition keeps its emphasis in every locale.
             let source = b.localizer.with(locale: b.localizer.sourceLocale).text(key).text.lowercased()
             let style: PlanLineStyle = (source.contains("never") || source.contains("do not") || source.contains("don't")) ? .prohibition : .normal
-            immediate.append(b.line(key, style: style, sources: sources))
+            let emergencyNumber = ["US", "CA"].contains(h.privateLocation?.countryCode?.uppercased() ?? "")
+                ? "911" : b.l("plan.help.emergencyNumber.local")
+            let numberSources = source.contains("{emergencynumber}") && h.privateLocation?.countryCode?.uppercased() == "CA" ? ["S56"] : []
+            immediate.append(b.line(key, ["emergencyNumber": emergencyNumber], style: style, sources: sources + numberSources))
             i += 1
         }
         sections.append(b.section("immediate", "plan.section.immediate", immediate, critical: true))
@@ -221,7 +224,7 @@ public enum PlanBuilder {
 
     /// User-authored room names remain part of the selected home diagram. Annotation free text is omitted
     /// unless its corresponding critical-information control is selected; private-notes consent is independent.
-    private static func exportHome(_ home: HomeModel?, options: Options) -> HomeModel? {
+    private static func exportHome(_ home: HomeModel?, options: Options, localizer: Localizer) -> HomeModel? {
         guard var home else { return nil }
         if !options.familyCardSelection.includeCriticalInformation {
             home.annotations.removeAll { $0.kind == .medicalEquipment || $0.kind == .supplies }
@@ -229,7 +232,9 @@ public enum PlanBuilder {
         // Notes are not drawn but are also removed from the shared render snapshot.
         for i in home.annotations.indices {
             home.annotations[i].note = nil
-            if !options.familyCardSelection.includeCriticalInformation { home.annotations[i].label = "" }
+            if options.familyCardSelection.includeCriticalInformation {
+                home.annotations[i].label = home.annotations[i].localizedLabel(localizer)
+            } else { home.annotations[i].label = "" }
         }
         for i in home.portals.indices { home.portals[i].note = nil }
         return home
@@ -249,14 +254,16 @@ public enum PlanBuilder {
 
     private static func meetingLine(_ b: Builder, _ home: HomeModel) -> PlanLine {
         if let m = home.meetingPoint, m.verification == .verified {
-            return b.line("plan.meeting.line", ["label": m.label], sources: ["S19"])
+            return b.line("plan.meeting.line", ["label": m.localizedLabel(b.localizer)], sources: ["S19"])
         }
         return b.line("plan.meeting.missing", sources: ["S19"])
     }
 
     static func helpLines(_ b: Builder, _ resources: [PublicResource], countryCode: String? = nil) -> [PlanLine] {
         // US/Canada 911 only with explicit country metadata; unknown countries need a local number recorded.
-        var lines = [b.line(["US", "CA"].contains(countryCode?.uppercased() ?? "") ? "plan.help.911" : "plan.help.localUnknown", style: .contact)]
+        let country = countryCode?.uppercased() ?? ""
+        let sources = country == "CA" ? ["S56"] : (country == "US" ? ["S19"] : [])
+        var lines = [b.line(["US", "CA"].contains(country) ? "plan.help.911" : "plan.help.localUnknown", style: .contact, sources: sources)]
         let phoneTypes: Set<ResourceServiceType> = [.assistanceLine, .emergencyManagement, .electricUtility, .waterProvider, .assistanceRegistry]
         for r in resources where phoneTypes.contains(r.serviceType) {
             guard let phone = r.contact.phone else { continue }
@@ -296,7 +303,7 @@ public enum PlanBuilder {
             else if eq.compatibleBackupIDs.isEmpty && h.backupPower.isEmpty { state = b.l("plan.equipment.backup.none") }
             else { state = b.l("plan.equipment.backup.unconfirmed") }
             let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
-                b.l("plan.equipment.runtimeKnown", ["hours": formatNumber($0)])
+                b.l("plan.equipment.runtimeKnown", ["hours": formatNumber($0, locale: b.localizer.locale)])
             } ?? b.l("plan.equipment.runtimeUnknown")
             lines.append(b.line("plan.equipment.line", ["label": eq.localizedLabel(b.localizer), "backupState": state, "runtime": runtime], sources: ["S25"]))
             if let notes = eq.carePlanNotes, !notes.isEmpty, options.includePrivateNotes {
@@ -322,10 +329,10 @@ public enum PlanBuilder {
     }
 
     private static func waterLines(_ b: Builder, _ h: HouseholdProfile) -> [PlanLine] {
-        let target = WaterTarget.storageTargetGallons(people: h.people.count, days: 3)
-        let stored = h.supplies.storedWaterGallons.confirmedValue.map { b.l("plan.water.storedGallons", ["gallons": formatNumber($0)]) }
-            ?? b.l("plan.water.storedUnknown")
-        var lines = [b.line("plan.water.target", ["people": "\(h.people.count)", "targetGallons": formatNumber(target), "storedGallons": stored], sources: ["S26"])]
+        let target = PlanningMeasurements.waterText(gallons: WaterTarget.storageTargetGallons(people: h.people.count, days: 3), countryCode: h.privateLocation?.countryCode, localizer: b.localizer)
+        let stored = h.supplies.storedWaterGallons.confirmedValue.map { PlanningMeasurements.waterText(gallons: $0, countryCode: h.privateLocation?.countryCode, localizer: b.localizer) }
+            ?? b.localizer.text("plan.water.storedUnknown")
+        var lines = [b.line("plan.water.target", ["people": "\(h.people.count)", "targetGallons": target.text, "storedGallons": stored.text], sources: ["S26"], composed: [target, stored])]
         if !h.pets.isEmpty { lines.append(b.line("plan.water.pets", sources: ["S26"])) }
         return lines
     }
@@ -384,8 +391,23 @@ public enum PlanBuilder {
             .joined(separator: " → ")
     }
 
-    static func formatNumber(_ v: Double) -> String {
-        v == v.rounded() ? String(Int(v)) : String(format: "%.1f", v)
+    static func formatNumber(_ v: Double, locale: String = "en_US_POSIX") -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: locale)
+        formatter.numberStyle = .decimal
+        formatter.usesGroupingSeparator = false
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 1
+        return formatter.string(from: NSNumber(value: v)) ?? String(v)
+    }
+
+    static func displayDate(_ date: Date, locale: String, timeZone: TimeZone) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: locale)
+        formatter.timeZone = timeZone
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
     }
 
     static func isoDay(_ d: Date, _ timeZone: TimeZone) -> String {
@@ -414,12 +436,13 @@ public enum PlanBuilder {
             return t
         }
 
-        func line(_ key: String, _ values: [String: String] = [:], style: PlanLineStyle = .normal, sources: [String] = []) -> PlanLine {
+        func line(_ key: String, _ values: [String: String] = [:], style: PlanLineStyle = .normal, sources: [String] = [], composed: [LocalizedText] = []) -> PlanLine {
+            for value in composed { track(value) }
             let t = track(localizer.text(key, values))
             sourceIDs.append(contentsOf: sources)
             return PlanLine(text: t.text, style: style, key: key, resolvedLocale: t.resolvedLocale,
-                            isFallback: t.isFallback, isDraftTranslation: t.needsDraftLabel, sourceIDs: sources,
-                            unfilledPlaceholders: t.unfilledPlaceholders)
+                            isFallback: t.isFallback || composed.contains(where: \.isFallback), isDraftTranslation: t.needsDraftLabel || composed.contains(where: \.needsDraftLabel), sourceIDs: sources,
+                            unfilledPlaceholders: Array(Set(t.unfilledPlaceholders + composed.flatMap(\.unfilledPlaceholders))).sorted())
         }
 
         func section(_ id: String, _ headingKey: String, _ lines: [PlanLine], critical: Bool) -> PlanSection {

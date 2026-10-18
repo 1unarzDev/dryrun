@@ -94,7 +94,12 @@ struct PlanIntegrationTests {
                 #expect(issues.isEmpty, "\(h.id)/\(locale): \(issues)")
                 #expect(doc.pages.count == 8)
                 let lines = doc.pages.flatMap(\.sections).flatMap(\.lines)
-                #expect(lines.contains { $0.text.contains("911") })
+                if ["US", "CA"].contains(h.privateLocation?.countryCode?.uppercased() ?? "") {
+                    #expect(lines.contains { $0.key == "plan.help.911" })
+                } else {
+                    #expect(lines.contains { $0.key == "plan.help.localUnknown" })
+                    #expect(!lines.contains { $0.key == "plan.help.911" })
+                }
                 if locale != "en" {
                     #expect(doc.draftTranslationBanner != nil, "\(locale) plan must carry the draft-translation banner")
                 }

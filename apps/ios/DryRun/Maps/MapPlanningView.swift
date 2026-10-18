@@ -70,7 +70,7 @@ struct MapPlanningView: View {
                 if showingList { placeList } else { map }
                 if let route {
                     HStack {
-                        Text("\(t(route.mode.rawValue)): \(Measurement(value: route.distanceMeters, unit: UnitLength.meters).formatted(.measurement(width: .abbreviated, usage: .road))) · \(Int((route.expectedTravelTime / 60).rounded(.up))) min")
+                        Text(model.localizer("map.routeSummary", ["mode": t(route.mode.rawValue), "distance": distance(route.distanceMeters), "duration": PlanningMeasurements.duration(seconds: route.expectedTravelTime, localizer: model.localizer)]))
                         Spacer(); Button(t("clear")) { routeRequest.cancel(clearPreview: true) }
                     }.font(.caption).padding(10)
                 }
@@ -158,13 +158,13 @@ struct MapPlanningView: View {
                 ForEach(discovery.results) { result in
                     Button { selected = result } label: { VStack(alignment: .leading) {
                         Text(result.name).font(.headline); Text(t(["hospital", "pharmacy", "grocery"].contains(result.category ?? "") ? result.category! : "suggestion")); if let address = result.address { Text(address).font(.caption) }
-                        if let homeCoordinate { Text(Measurement(value: homeCoordinate.clLocation.distance(from: result.coordinate.clLocation), unit: UnitLength.meters).formatted(.measurement(width: .abbreviated, usage: .road))).font(.caption) }
+                        if let homeCoordinate { Text(distance(homeCoordinate.clLocation.distance(from: result.coordinate.clLocation))).font(.caption) }
                     } }.buttonStyle(.plain)
                 }
             }
             if store.regionInfo(for: model.household?.regionID ?? "") != nil {
                 Section(t("official")) { ForEach(store.resources(for: model.household?.regionID ?? "")) { resource in
-                    VStack(alignment: .leading) { Text(resource.name).font(.headline); Text(resource.summary).font(.caption); if let phone = resource.contact.phone { Text(phone) }; if let address = resource.contact.address { Text(address) }; Text("\(resource.publisher) · \(resource.checkedAt)").font(.caption2) }
+                    VStack(alignment: .leading) { Text(resource.name).font(.headline); Text(resource.summary).font(.caption); if model.locale != "en" { Text(model.localizer("common.fallbackShown")).font(.caption) }; if let phone = resource.contact.phone { Text(phone) }; if let address = resource.contact.address { Text(address) }; Text("\(resource.publisher) · \(resource.checkedAt)").font(.caption2) }
                 } }
             }
             Section { Text(t("offline")).font(.footnote) }
@@ -175,7 +175,7 @@ struct MapPlanningView: View {
         NavigationStack {
             Form {
                 Section { Text(result.name).font(.headline); if let address = result.address { Text(address) }; Text(t("suggestionNote")).font(.caption) }
-                if let phone = result.phone, let url = URL(string: "tel:" + phone.filter { $0.isNumber || $0 == "+" }) {
+                if let phone = result.phone, let url = PhoneLink.url(phone) {
                     Section(t("contact")) { Link(destination: url) { Label(phone, systemImage: "phone") } }
                 }
                 if let website = result.website, let url = URL(string: website) { Link(t("website"), destination: url) }
@@ -203,6 +203,9 @@ struct MapPlanningView: View {
     private func discover() async {
         guard discovery.enabled, let hint else { message = t("noHome"); return }
         await discovery.search(region: hint, locale: model.locale)
+    }
+    private func distance(_ meters: Double) -> String {
+        PlanningMeasurements.distance(meters: meters, countryCode: model.household?.privateLocation?.countryCode, localizer: model.localizer)
     }
     private func newPlace(coordinate: GeographicCoordinate?, label: String = "", address: String? = nil, provenance: SavedPlaceProvenance = .userSelected) {
         guard let household = model.household else { return }

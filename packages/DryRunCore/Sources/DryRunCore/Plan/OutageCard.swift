@@ -84,7 +84,7 @@ public enum OutageCardBuilder {
         var sections: [PlanSection] = []
 
         // Who and what.
-        var device = [user.map { b.line("card.device.usedBy", ["device": eq.localizedLabel(b.localizer), "person": $0.alias]) }
+        var device = [user.map { b.line("card.device.usedBy", ["device": eq.localizedLabel(b.localizer), "person": $0.localizedLabel(b.localizer)]) }
                       ?? b.line("card.device.line", ["device": eq.localizedLabel(b.localizer)])]
         if eq.requiresColdStorage { device.append(b.line("card.device.needsRefrigeration")) }
         if let notes = eq.carePlanNotes, !notes.isEmpty, options.includePrivateNotes {
@@ -101,7 +101,7 @@ public enum OutageCardBuilder {
         }
         if backups.isEmpty { power.append(b.line("card.backup.none", sources: ["S25"])) }
         let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
-            b.l("plan.equipment.runtimeKnown", ["hours": PlanBuilder.formatNumber($0)])
+            b.l("plan.equipment.runtimeKnown", ["hours": PlanBuilder.formatNumber($0, locale: b.localizer.locale)])
         } ?? b.l("plan.equipment.runtimeUnknown")
         power.append(b.line("card.backup.runtime", ["runtime": runtime], sources: ["S25"]))
         sections.append(b.section("backup", "card.section.backup", power, critical: true))
@@ -122,7 +122,7 @@ public enum OutageCardBuilder {
             steps.append(b.line("card.steps.callCare", ["contact": first.alias]))
         }
         if let helperID = user?.helperPersonID, let helper = h.people.first(where: { $0.id == helperID }), let user {
-            steps.append(b.line("plan.person.helper", ["helper": helper.alias, "alias": user.alias]))
+            steps.append(b.line("plan.person.helper", ["helper": helper.localizedLabel(b.localizer), "alias": user.localizedLabel(b.localizer)]))
         }
         sections.append(b.section("steps", "card.section.steps", steps, critical: true))
 
@@ -141,7 +141,7 @@ public enum OutageCardBuilder {
             : destinations.map { b.line("card.goTo.confirmed", ["place": $0.label]) }
         sections.append(b.section("goTo", "card.section.goTo", goTo, critical: false))
 
-        sections.append(b.section("help", "plan.section.help", PlanBuilder.helpLines(b, resources), critical: true))
+        sections.append(b.section("help", "plan.section.help", PlanBuilder.helpLines(b, resources, countryCode: h.privateLocation?.countryCode), critical: true))
 
         let gapLines = gaps(for: eq, in: h).map { b.line("card.gap.\($0.rawValue)", style: .caveat) }
         if !gapLines.isEmpty { sections.append(b.section("gaps", "card.section.gaps", gapLines, critical: false)) }

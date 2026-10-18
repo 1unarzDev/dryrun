@@ -101,7 +101,7 @@ struct HomeTabView: View {
                 }
                 Section(s("Outside meeting place")) {
                     if let annotation = home.meetingPoint {
-                        Label(annotation.label, systemImage: "mappin.and.ellipse")
+                        Label(annotation.localizedLabel(model.localizer), systemImage: "mappin.and.ellipse")
                         Text(s("This text note is kept separate from indoor floor-plan coordinates."))
                             .font(.footnote).foregroundStyle(.secondary)
                     } else {

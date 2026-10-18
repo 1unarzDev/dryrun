@@ -74,6 +74,8 @@ D3 Reduce Motion: equivalent static hazard scene; light/dark/non-color statuses 
 D4 EN/ES/VI selected values/errors/unit/labels and diacritics; no silent critical translation:
 D5 Very long responder note follows the main contact/meetup card without rewriting; END retained, large family all listed:
 D6 Time to first useful card / rehearsal duration (record observed seconds; no target claims):
+D7 US/FR/VN/unknown water units agree in task/editor/event/comparison/plan; US/CA local numbers sourced, no foreign default 911:
+D8 Card date/timezone/decimal and fallback/source labels correct; user notes unchanged:
 ```
 
 A successful source parse or simulator render does not satisfy B. Report exact device/OS/SHA and incomplete

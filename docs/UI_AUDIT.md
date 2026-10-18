@@ -42,4 +42,6 @@ subjects, permanent preparation loops, unreachable Reopen, broad Add contact for
 route requests outliving selected destinations, missing scene-floor selection, invalid exit styling, missing
 no-route occupant markers, scan-review dismissal and mismatched highlights. Typed focused editors and exact
 subject captions now connect those facts to current tasks/cards. These are source/core findings, not observed
-native usability results. The 29 native tests and current tours remain unrun; no screenshot-based review is claimed.
+native usability results. The 33 native tests and current tours remain unrun; no screenshot-based review is claimed.
+
+The selected-language follow-up closes source-level picker values, marker defaults, Help controls/statuses, phone actions, scan coaching, exercise clock/plurals, route facts, validation messages and export dates/decimals/provenance. All offered packs pass structural completeness, but ES/VI remain drafts. Official English resource text is identified; unknown SDK diagnostics and personal notes stay unchanged. Country water units now agree across the focused editor, tasks, rehearsal quantities/events/comparison and plan. New EN/ES/VI portable card/full-plan references were inspected as recorded in output/README; they do not verify native phone layouts. Seven app presentation-helper tests ran in a Linux harness, not an iOS test host.

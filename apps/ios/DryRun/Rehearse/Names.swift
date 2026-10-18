@@ -34,7 +34,8 @@ enum ServiceNames {
     }
 
     /// Localized presentation only. Evidence keeps its original stable unit string.
-    static func quantity(_ amount: Double, unit: String, localizer: Localizer) -> String {
+    static func quantity(_ amount: Double, unit: String, localizer: Localizer, countryCode: String? = nil) -> String {
+        if unit == "gal" { return PlanningMeasurements.water(gallons: amount, countryCode: countryCode, localizer: localizer) }
         guard amount.isFinite else { return localizer("common.status.unknown") }
         let number = PlanFormatting.number(amount, locale: localizer.locale)
         if unit.isEmpty { return number }
@@ -42,6 +43,7 @@ enum ServiceNames {
         switch unit {
         case "gal": key = "gallons"
         case "h", "hours": key = "hours"
+        case "min", "minutes": key = "minutes"
         case "charges": key = "charges"
         case "days": key = "days"
         case "people": key = "people"
@@ -51,6 +53,34 @@ enum ServiceNames {
         }
         guard let key else { return localizer("spatial.quantity.unspecified", ["number": number]) }
         return localizer("spatial.quantity.\(key).\(amount == 1 ? "one" : "other")", ["number": number])
+    }
+}
+
+/// Presentation of authored exercise time and comparisons. No time here represents a safety deadline.
+enum RehearsalPresentation {
+    static func compactTime(minutes: Int, localizer: Localizer) -> String {
+        localizer("spatial.exercise-time-short", [
+            "hours": PlanFormatting.number(Double(minutes / 60), locale: localizer.locale),
+            "minutes": (minutes % 60).formatted(.number.precision(.integerLength(2)).locale(Locale(identifier: localizer.locale)))
+        ])
+    }
+
+    static func spokenTime(minutes: Int, localizer: Localizer) -> String {
+        localizer("spatial.exercise-time-spoken", [
+            "hours": ServiceNames.quantity(Double(minutes / 60), unit: "h", localizer: localizer),
+            "minutes": ServiceNames.quantity(Double(minutes % 60), unit: "min", localizer: localizer)
+        ])
+    }
+
+    static func transition(name: String, before: String, after: String, localizer: Localizer) -> String {
+        localizer("spatial.comparison-transition", ["name": name, "before": before, "after": after])
+    }
+
+    static func startingRoom(_ roomID: String, in home: HomeModel, localizer: Localizer) -> String {
+        guard let room = home.space(roomID), !room.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return localizer("spatial.unknown-start-room")
+        }
+        return room.label
     }
 }
 
@@ -107,6 +137,14 @@ enum UnknownNames {
             localizer?("spatial.fact." + key, ["name": name]) ?? fallback
         }
         if let n = names[id] { return n }
+        if let localizer {
+            for (prefix, key) in [("home.fireOrigin.", "spatial.fact.home.fireOrigin"), ("home.portal.", "spatial.fact.home.portal")] where id.hasPrefix(prefix) {
+                return localizer(key)
+            }
+            if let definition = BaselinePreparedness.definitions.first(where: { id == "preparedness." + $0.id || id == "preparedness." + $0.id + ".checkedAt" }) {
+                return localizer("spatial.fact.preparation", ["item": localizer("prep." + definition.id + ".title")])
+            }
+        }
         if let subject = subject(in: id, prefix: "equipment", knownIDs: household?.equipment.map(\.id) ?? []) {
             let device = HouseholdLabels.equipment(subject.id, in: household, localizer: localizer)
             switch subject.suffix {
@@ -136,6 +174,8 @@ enum UnknownNames {
             case "sleepingSpaceID": return fact("person.start", name, "Where \(name) starts")
             case "helperPersonID": return fact("person.helper", name, "Who helps \(name)")
             case "needs": return fact("person.needs", name, "What \(name) needs")
+            case "essentialMedication": return fact("person.medication", name, "Essential medication recorded for \(name)")
+            case let suffix where suffix.hasPrefix("needs."): return fact("person.needs", name, "What \(name) needs")
             default: return fallback(id, localizer: localizer)
             }
         }

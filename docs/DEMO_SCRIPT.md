@@ -24,3 +24,5 @@ Open Home via Prepare's Your home; there is no Home/Help top-level tab. Settings
 Target an understandable 2–3 minute recording. Time to useful card (~90 seconds) and exercise length (2–4 minutes)
 are usability targets, not measured outcomes. Use USABILITY_PROTOCOL and results template with consenting testers;
 no testers, reviews, partnerships, endorsements or injury-reduction outcomes have been invented.
+
+Language/unit demonstration after native verification: switch EN/ES/VI with the same fictional household and show localized selected room/device values, exercise time, card date/decimal, and unchanged proper names/notes. Compare a separate fictional non-US/unknown-location setup for litres and local-emergency-number prompt without changing the canonical rehearsal evidence. Human translation review is still pending.
