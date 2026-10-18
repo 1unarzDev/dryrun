@@ -147,7 +147,7 @@ struct MapPlanningView: View {
             }
             if let route { MapPolyline(coordinates: route.coordinates.map(\.cl)).stroke(.blue, lineWidth: 4) }
         }
-        .mapStyle(.standard(pointsOfInterest: .includingAll))
+        .mapStyle(.standard(pointsOfInterest: .all))
         .mapControls { MapCompass(); MapScaleView() }
         .onMapCameraChange(frequency: .onEnd) { context in cameraCenter = GeographicCoordinate(latitude: context.region.center.latitude, longitude: context.region.center.longitude) }
         .overlay(alignment: .bottom) { if homeCoordinate == nil && places.isEmpty && discovery.results.isEmpty { Text(t("noHome")).font(.callout).padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12)).padding() } }

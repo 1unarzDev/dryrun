@@ -32,17 +32,27 @@ final class AppleMapSearchService: MapSearching {
         let search = MKLocalSearch(request: request)
         activeSearch = search
         defer { if activeSearch === search { activeSearch = nil } }
-        let response = try await search.start()
-        return response.mapItems.compactMap { item in
-            let coordinate = item.placemark.coordinate
-            guard let c = GeographicCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude) else { return nil }
-            let id = item.placemark.title.map { "\($0)|\(c.latitude)|\(c.longitude)" } ?? "\(c.latitude)|\(c.longitude)"
-            let address = [item.placemark.subThoroughfare, item.placemark.thoroughfare,
-                           item.placemark.locality, item.placemark.administrativeArea]
-                .compactMap { $0 }.joined(separator: " ")
-            return AppleMapSearchResult(id: id, name: item.name ?? item.placemark.name ?? trimmed,
-                                        coordinate: c, address: address.isEmpty ? nil : address,
-                                        category: item.pointOfInterestCategory?.rawValue, phone: item.phoneNumber, website: item.url?.absoluteString)
+        return try await withCheckedThrowingContinuation { continuation in
+            // Apple documents that start(completionHandler:) invokes this on the main thread.
+            // Consume the non-Sendable response here and resume only plain core values.
+            search.start { response, error in
+                MainActor.assumeIsolated {
+                    if let error { continuation.resume(throwing: error); return }
+                    guard let response else { continuation.resume(throwing: MapResponseError.missingResponse); return }
+                    let results: [AppleMapSearchResult] = response.mapItems.compactMap { item in
+                        let coordinate = item.placemark.coordinate
+                        guard let c = GeographicCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude) else { return nil }
+                        let id = item.placemark.title.map { "\($0)|\(c.latitude)|\(c.longitude)" } ?? "\(c.latitude)|\(c.longitude)"
+                        let address = [item.placemark.subThoroughfare, item.placemark.thoroughfare,
+                                       item.placemark.locality, item.placemark.administrativeArea]
+                            .compactMap { $0 }.joined(separator: " ")
+                        return AppleMapSearchResult(id: id, name: item.name ?? item.placemark.name ?? trimmed,
+                                                    coordinate: c, address: address.isEmpty ? nil : address,
+                                                    category: item.pointOfInterestCategory?.rawValue, phone: item.phoneNumber, website: item.url?.absoluteString)
+                    }
+                    continuation.resume(returning: results)
+                }
+            }
         }
     }
 }
@@ -66,15 +76,22 @@ final class AppleMapDirectionsService {
         let directions = MKDirections(request: request)
         activeDirections = directions
         defer { if activeDirections === directions { activeDirections = nil } }
-        let response = try await directions.calculate()
-        guard let route = response.routes.first else { throw MapDirectionsError.noRoute }
-        let points = route.polyline.points()
-        let coordinates = (0..<route.polyline.pointCount).compactMap { index in
-            let p = points[index].coordinate
-            return GeographicCoordinate(latitude: p.latitude, longitude: p.longitude)
+        return try await withCheckedThrowingContinuation { continuation in
+            // calculate(completionHandler:) also documents main-thread delivery.
+            directions.calculate { response, error in
+                MainActor.assumeIsolated {
+                    if let error { continuation.resume(throwing: error); return }
+                    guard let route = response?.routes.first else { continuation.resume(throwing: MapDirectionsError.noRoute); return }
+                    let points = route.polyline.points()
+                    let coordinates = (0..<route.polyline.pointCount).compactMap { index in
+                        let p = points[index].coordinate
+                        return GeographicCoordinate(latitude: p.latitude, longitude: p.longitude)
+                    }
+                    continuation.resume(returning: MapTravelPreview(distanceMeters: route.distance, expectedTravelTime: route.expectedTravelTime,
+                        coordinates: coordinates, mode: mode))
+                }
+            }
         }
-        return MapTravelPreview(distanceMeters: route.distance, expectedTravelTime: route.expectedTravelTime,
-                                coordinates: coordinates, mode: mode)
     }
 }
 
@@ -233,11 +250,24 @@ final class AddressCompletionService: NSObject, @preconcurrency MKLocalSearchCom
         activeResolution?.cancel(); activeResolution = search
         let timeout = Task { @MainActor in do { try await Task.sleep(for: .seconds(8)); search.cancel() } catch { } }
         defer { timeout.cancel(); if activeResolution === search { activeResolution = nil } }
-        let response = try await search.start()
-        guard ticket == generation, let placemark = response.mapItems.first?.placemark else { throw CancellationError() }
-        return PrivateLocation(addressLine: [suggestion.title, suggestion.subtitle].filter { !$0.isEmpty }.joined(separator: ", "),
-                               latitude: placemark.coordinate.latitude, longitude: placemark.coordinate.longitude,
-                               city: placemark.locality, administrativeArea: placemark.administrativeArea,
-                               postalCode: placemark.postalCode, countryCode: placemark.isoCountryCode)
+        let addressLine = [suggestion.title, suggestion.subtitle].filter { !$0.isEmpty }.joined(separator: ", ")
+        let location: PrivateLocation = try await withCheckedThrowingContinuation { continuation in
+            search.start { response, error in
+                MainActor.assumeIsolated {
+                    if let error { continuation.resume(throwing: error); return }
+                    guard let placemark = response?.mapItems.first?.placemark else {
+                        continuation.resume(throwing: MapResponseError.missingResponse); return
+                    }
+                    continuation.resume(returning: PrivateLocation(addressLine: addressLine,
+                        latitude: placemark.coordinate.latitude, longitude: placemark.coordinate.longitude,
+                        city: placemark.locality, administrativeArea: placemark.administrativeArea,
+                        postalCode: placemark.postalCode, countryCode: placemark.isoCountryCode))
+                }
+            }
+        }
+        guard ticket == generation else { throw CancellationError() }
+        return location
     }
 }
+
+private enum MapResponseError: Error { case missingResponse }

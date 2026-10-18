@@ -130,3 +130,16 @@ Helper regressions, core306, vault35, backend68/typecheck passed. The optional c
 compiled; app build next failed on Swift6 isolation of the async non-Sendable MKMapSnapshotter.Snapshot return.
 App/UI/screenshot/PDF gates were skipped. The renderer is being changed to callback-owned rendering rather
 than treating the SDK object as Sendable. Downloaded evidence: ignored `artifacts/github-39087653478/`.
+
+## Fourth hosted native attempt — run 39088100904 (compile only)
+
+Exact SHA `68f4278f9333fec70cceb9685360b997003f7aec`:
+https://github.com/1unarzDev/dryrun/actions/runs/39088100904
+Helper regressions passed; simulator build and unsigned iphoneos build failed. Package/backend/UI tests were
+intentionally skipped in build-only mode. The snapshot callback fix passed its previous diagnostic; compiler
+now found the same non-Sendable async response pattern in local search/directions/address resolution and the
+unsupported SwiftUI POI spelling `.includingAll`. Those adapters now consume responses inside Apple's documented
+main-thread completion handlers and return plain values; the map uses documented `.all` categories. No global
+Sendable override or concurrency relaxation was added. Apple documentation for start(completionHandler:),
+calculate(completionHandler:) and PointOfInterestCategories was rechecked directly on October17 local time.
+These corrections await the next SDK run. Evidence: ignored `artifacts/github-39088100904/`.
