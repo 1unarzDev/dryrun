@@ -49,7 +49,12 @@ final class RoomCaptureController: NSObject, ObservableObject {
             sharedARSession = arSession
         }
         let view = RoomCaptureView(frame: .zero, arSession: arSession)
-        let session = view.captureSession
+        guard let session = view.captureSession else {
+            callbackGate.invalidate()
+            callbackGeneration = callbackGate.generation
+            phase = .failed("spatial.scan-interrupted")
+            return
+        }
         let delegate = CaptureGenerationDelegate(generation: callbackGeneration, owner: self)
         delegates.append(delegate)
         view.delegate = delegate

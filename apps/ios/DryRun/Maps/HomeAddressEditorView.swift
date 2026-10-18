@@ -31,8 +31,8 @@ struct HomeAddressEditorView: View {
                 Section { Text(t("addressPrivacy")).font(.caption); TextField(t("addressOptional"), text: Binding(get: { address }, set: { value in
                         invalidateResolution(); address = value
                         draft = PrivateLocation(addressLine: value, unit: unit); completion.update(value)
-                    })).textContentType(.fullStreetAddress)
-                    TextField(t("unit"), text: $unit)
+                    })).textContentType(.fullStreetAddress).accessibilityIdentifier("address.line")
+                    TextField(t("unit"), text: $unit).accessibilityIdentifier("address.unit")
                 }
                 if !completion.suggestions.isEmpty {
                     Section(t("suggestions")) {
@@ -51,8 +51,8 @@ struct HomeAddressEditorView: View {
                     }
                 }
                 Section(t("manualPin")) {
-                    TextField(t("latitude"), text: Binding(get: { draft.latitude.map { String($0) } ?? "" }, set: { invalidateResolution(); draft.latitude = Double($0) })).keyboardType(.numbersAndPunctuation)
-                    TextField(t("longitude"), text: Binding(get: { draft.longitude.map { String($0) } ?? "" }, set: { invalidateResolution(); draft.longitude = Double($0) })).keyboardType(.numbersAndPunctuation)
+                    TextField(t("latitude"), text: Binding(get: { draft.latitude.map { String($0) } ?? "" }, set: { invalidateResolution(); draft.latitude = Double($0) })).keyboardType(.numbersAndPunctuation).accessibilityIdentifier("address.latitude")
+                    TextField(t("longitude"), text: Binding(get: { draft.longitude.map { String($0) } ?? "" }, set: { invalidateResolution(); draft.longitude = Double($0) })).keyboardType(.numbersAndPunctuation).accessibilityIdentifier("address.longitude")
                     TextField(t("countryCode"), text: Binding(get: { draft.countryCode ?? "" }, set: { invalidateResolution(); draft.countryCode = $0.uppercased() })).textInputAutocapitalization(.characters)
                     Text(t("unknownMetadata")).font(.caption)
                 }
@@ -66,7 +66,7 @@ struct HomeAddressEditorView: View {
             }.navigationTitle(t("homeAddress"))
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button(t("cancel")) { dismiss() } }
-                    ToolbarItem(placement: .confirmationAction) { Button(t("save")) { if moving { confirmingMove = true } else { save() } }.disabled(saving || resolving) }
+                    ToolbarItem(placement: .confirmationAction) { Button(t("save")) { if moving { confirmingMove = true } else { save() } }.disabled(saving || resolving).accessibilityIdentifier("address.save") }
                 }
                 .task {
                     guard !initialized else { return }; initialized = true

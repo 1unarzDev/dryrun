@@ -110,3 +110,14 @@ This source fix awaits the next native run. The tabular verification-status dete
 nonportable escaped-tab grep to an actual-column awk query; PASS/SKIP/failing and named-step queries passed on
 Linux. The earlier workflow did report the native build failure; no erroneous successful Mac result is claimed.
 The downloaded redacted bundle/logs are under ignored `artifacts/github-39087041160/`.
+
+## Second hosted native attempt — run 39087330893
+
+Exact SHA `a4550a138f5962b593ecd6bbbd758153058b47ea`, same Xcode16.4/iOS18.5 hosted environment:
+https://github.com/1unarzDev/dryrun/actions/runs/39087330893
+Core306, vault35, backend68/typecheck passed again. App build failed because this SDK exposes
+`RoomCaptureView.captureSession` as optional; native app/UI/PDF gates were skipped. The controller now checks
+for a session before assigning its delegate/running, retaining a retryable failure otherwise. This correction,
+stable captured-room UUID projection, one additional native regression and a connected UI journey await rerun.
+The simulator picker now prefers a runtime no newer than the selected SDK; portable mock harness tests passed.
+Downloaded evidence: ignored `artifacts/github-39087330893/`.

@@ -99,7 +99,11 @@ struct SpatialIdentityAndAssistanceTests {
         let reordered = try ScanImport.importCapture(capture, homeID: "stable-home").home
         #expect(original.sourceCaptureFrameID == "shared-capture-frame")
         #expect(original.spaces[0].sourceScanRoomID == "A")
-        #expect(HomeRoomAssociations.remappedRoomID("sp-scan-1", from: original, to: reordered) == "sp-scan-2")
+        let remappedID = HomeRoomAssociations.remappedRoomID("sp-scan-1", from: original, to: reordered)
+        #expect(remappedID == "sp-scan-2")
+        let remapped = try #require(remappedID.flatMap(reordered.space))
+        #expect(remapped.sourceScanRoomID == "A" && remapped.polygon == original.spaces[0].polygon)
+        #expect(reordered.space("sp-scan-1")?.sourceScanRoomID == "B")
         capture.coordinateFrameID = "unrelated-capture-frame"
         let unrelated = try ScanImport.importCapture(capture, homeID: "stable-home").home
         #expect(HomeRoomAssociations.remappedRoomID("sp-scan-1", from: original, to: unrelated) == nil)

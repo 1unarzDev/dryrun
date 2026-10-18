@@ -62,7 +62,7 @@ struct MapPlanningView: View {
                     Menu(t("more")) {
                         Button(t("expand")) { radius = min(radius * 2, 80000); Task { await discover() } }
                         Button(t("dropPin")) { newPlace(coordinate: cameraCenter ?? homeCoordinate) }
-                        Button(t("textPlace")) { newPlace(coordinate: nil) }
+                        Button(t("textPlace")) { newPlace(coordinate: nil) }.accessibilityIdentifier("map.addText")
                         Button(t("disableDiscovery")) { discovery.cancel(); discovery.enabled = false }
                         Button(t("enableDiscovery")) { discovery.enabled = true; Task { await discover() } }
                     }
@@ -79,7 +79,7 @@ struct MapPlanningView: View {
             }
             .navigationTitle(t("title"))
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button(t("done")) { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(t("done")) { dismiss() }.accessibilityIdentifier("map.done") }
                 ToolbarItem(placement: .primaryAction) { Button { showingSearch = true } label: { Label(t("search"), systemImage: "magnifyingglass") }.accessibilityIdentifier("map.search") }
             }
             .sheet(isPresented: $showingSearch, onDismiss: { if let pendingSearchResult { select(pendingSearchResult); self.pendingSearchResult = nil } }) {
@@ -161,7 +161,7 @@ struct MapPlanningView: View {
                         VStack(alignment: .leading) { Text(place.label).font(.headline); Text(t(place.purpose.rawValue)).font(.caption); if let address = place.addressText { Text(address) }; if let instructions = place.findingInstructions { Text(instructions) } }
                     }.buttonStyle(.plain)
                 }
-                Button(t("textPlace")) { newPlace(coordinate: nil) }
+                Button(t("textPlace")) { newPlace(coordinate: nil) }.accessibilityIdentifier("map.addText")
             }
             Section(t("suggestions")) {
                 if discovery.results.isEmpty { Text(discovery.isLoading ? t("searching") : t("empty")).foregroundStyle(.secondary) }
@@ -302,7 +302,7 @@ struct PlaceEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section { TextField(t("label"), text: $place.label); Picker(t("purpose"), selection: $place.purpose) { ForEach(SavedPlacePurpose.allCases, id: \.self) { Text(t($0.rawValue)).tag($0) } }; TextField(t("address"), text: Binding(get: { place.addressText ?? "" }, set: { place.addressText = $0 })); TextField(t("instructions"), text: Binding(get: { place.findingInstructions ?? "" }, set: { place.findingInstructions = $0 }), axis: .vertical) }
+                Section { TextField(t("label"), text: $place.label).accessibilityIdentifier("place.name"); Picker(t("purpose"), selection: $place.purpose) { ForEach(SavedPlacePurpose.allCases, id: \.self) { Text(t($0.rawValue)).tag($0) } }.accessibilityIdentifier("place.purpose"); TextField(t("address"), text: Binding(get: { place.addressText ?? "" }, set: { place.addressText = $0 })).accessibilityIdentifier("place.address"); TextField(t("instructions"), text: Binding(get: { place.findingInstructions ?? "" }, set: { place.findingInstructions = $0 }), axis: .vertical).accessibilityIdentifier("place.instructions") }
                 if let coordinate = place.coordinate { Section(t("pin")) { Text("\(coordinate.latitude), \(coordinate.longitude)").font(.caption); Button(t("directions")) { onDirections?(place); dismiss() }.disabled(onDirections == nil) } }
                 if place.provenance == .officialDirectory || place.provenance == .appleMapsSearch {
                     Section(t("contact")) {
@@ -321,7 +321,7 @@ struct PlaceEditorView: View {
             }.navigationTitle(t("save"))
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button(t("cancel")) { dismiss() } }
-                    ToolbarItem(placement: .confirmationAction) { Button(t("save")) { saving = true; place.updatedAt = Date(); Task { if await model.savePlace(place) { onSaved?(); dismiss() } else { error = t("saveError") }; saving = false } }.disabled(saving || place.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) }
+                    ToolbarItem(placement: .confirmationAction) { Button(t("save")) { saving = true; place.updatedAt = Date(); Task { if await model.savePlace(place) { onSaved?(); dismiss() } else { error = t("saveError") }; saving = false } }.disabled(saving || place.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty).accessibilityIdentifier("place.save") }
                 }
                 .confirmationDialog(t("delete"), isPresented: $confirmingDelete, titleVisibility: .visible) { Button(t("delete"), role: .destructive) { Task { await model.deletePlace(id: place.id); if !model.savedPlaces.contains(where: { $0.id == place.id }) { dismiss() } else { error = t("saveError") } } } }
         }

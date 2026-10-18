@@ -29,6 +29,8 @@ new_run mac
 "$(dirname "$0")/doctor.sh" "$OUT/environment.md" >/dev/null
 redact_file "$OUT/environment.md"
 
+step verification-helper-tests bash "$ROOT/scripts/tests/mac-helpers.sh"
+
 # 1. Swift packages, native macOS (vault uses CryptoKit here, not swift-crypto)
 step core-tests swift test --package-path "$ROOT/packages/DryRunCore" --scratch-path "$ROOT/.build-mac/core"
 step vault-tests swift test --package-path "$ROOT/packages/DryRunVault" --scratch-path "$ROOT/.build-mac/vault"
