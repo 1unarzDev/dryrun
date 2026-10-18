@@ -180,5 +180,13 @@
   "pdf.mapFrame": "Dữ liệu và hình ảnh bản đồ: Apple Maps. Số khớp với danh sách bên dưới.",
   "pdf.meetingPlaces": "Điểm hẹn",
   "pdf.otherPlaces": "Địa điểm đã lưu khác (thông tin đã lưu không xác nhận nơi đó đang mở cửa)",
-  "pdf.sameAsPage": "Giống trang {page}."
+  "pdf.sameAsPage": "Giống trang {page}.",
+  "pdf.noPin": "chưa lưu vị trí trên bản đồ",
+  "pdf.legend.furniture": "Đồ đạc hoặc vật cản",
+  "pdf.legend.smokeAlarm": "Báo khói",
+  "pdf.legend.coAlarm": "Báo khí CO",
+  "pdf.legend.fireExtinguisher": "Bình chữa cháy",
+  "pdf.legend.shutoff": "Van/cầu dao tổng",
+  "pdf.legend.supplies": "Đồ dùng khẩn cấp",
+  "pdf.legend.medicalEquipment": "Thiết bị y tế"
 }

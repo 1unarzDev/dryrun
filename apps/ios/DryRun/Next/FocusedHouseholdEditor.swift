@@ -41,6 +41,8 @@ struct FocusedHouseholdEditor: View {
         }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        // Pushed or presented, the form has exactly two ways out: Cancel (discard) and Save. No third Back button.
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button(l("ui.cancel")) { dismiss() } }
             ToolbarItem(placement: .confirmationAction) {

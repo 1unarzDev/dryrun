@@ -72,7 +72,9 @@ struct FamilyPlanExportRequestTests {
         let a = SavedPlace(id: "a-backup", homeID: household.stableHomeID, purpose: .backupMeetingPlace, label: "Fictional library")
         let document = PlanBuilder.build(household: household, home: nil, savedPlaces: [z, a], results: [],
             localizer: try PlanBuilderTests.localizer("en"), resources: [], contentVersion: "test", generatedAt: LeadTestSupport.fixedDate)
-        #expect(document.visualSnapshot?.savedPlaces.map(\.id) == [a.id, z.id])
+        // Canonical display order is near meetup, then backup, regardless of insertion order or IDs, so the map,
+        // the text list and the PDF key share one numbering.
+        #expect(document.visualSnapshot?.savedPlaces.map(\.id) == [z.id, a.id])
         #expect(!document.isStale(household: household, home: nil, contentVersion: "test", savedPlaces: [z, a]))
         #expect(!document.isStale(household: household, home: nil, contentVersion: "test", savedPlaces: [a, z]))
         var edited = a; edited.findingInstructions = "New entrance"

@@ -29,6 +29,22 @@ final class AppModel {
     var savedPlaces: [SavedPlace] = []
     var locale: String = "en" { didSet { if locale != oldValue { invalidatePlans() } } }
     var savedPlan: PlanDocument?
+    /// The family's choice of what the card shows, shared by the card view, Plan, Share/Print and saved plans so the
+    /// preview always matches what is sent. Only these on/off choices are kept (in UserDefaults), never any content.
+    var cardSelection: FamilyCardSelection = AppModel.storedCardSelection() {
+        didSet { if cardSelection != oldValue { AppModel.storeCardSelection(cardSelection) } }
+    }
+    private static let cardSelectionKey = "familyCardSelection.v1"
+    static func storedCardSelection() -> FamilyCardSelection {
+        guard !ProcessInfo.processInfo.arguments.contains("-uiTestingInMemory"),
+              let data = UserDefaults.standard.data(forKey: cardSelectionKey),
+              let value = try? JSONDecoder().decode(FamilyCardSelection.self, from: data) else { return FamilyCardSelection() }
+        return value
+    }
+    static func storeCardSelection(_ value: FamilyCardSelection) {
+        guard !ProcessInfo.processInfo.arguments.contains("-uiTestingInMemory") else { return }
+        UserDefaults.standard.set(try? JSONEncoder().encode(value), forKey: cardSelectionKey)
+    }
     /// Every scenario run once with default choices, for the Next steps screen. Tied to the household/home revision
     /// like other derived results; completions are applied on read, so marking one done does not re-run anything.
     var nextStepResults: [RehearsalResult]?
@@ -113,7 +129,7 @@ final class AppModel {
         guard d.isActive, let sample = SampleHouseholds.all.first(where: { $0.id == d.householdID }) else { return }
         await useSampleHousehold(sample)
         if let l = d.locale { locale = l }
-        if !d.planScenarios.isEmpty { await generatePlan(scenarioIDs: d.planScenarios, includePrivateNotes: false) }
+        if !d.planScenarios.isEmpty { await generatePlan(scenarioIDs: d.planScenarios, includePrivateNotes: false, selection: cardSelection) }
         #if DEBUG
         if d.writePlanPDFs { await writeDemoPlanArtifacts() }
         #endif
@@ -507,7 +523,8 @@ final class AppModel {
     /// Builds a plan for the selected scenarios by running each deterministically, then saves it in the vault.
     /// Returns only this request's committed document. A retained older plan is never a successful result.
     @discardableResult
-    func generatePlan(scenarioIDs: [String], includePrivateNotes: Bool, selection: FamilyCardSelection = FamilyCardSelection()) async -> PlanDocument? {
+    func generatePlan(scenarioIDs: [String], includePrivateNotes: Bool, selection explicitSelection: FamilyCardSelection? = nil) async -> PlanDocument? {
+        let selection = explicitSelection ?? cardSelection
         guard let household, let content, let scenarios, let engine, let key = planKey else { return nil }
         let ticket = planGate.begin(for: key)
         let locale = self.locale

@@ -38,6 +38,28 @@ public struct RehearsalCursor: Sendable, Equatable {
         revealed += 1
     }
 
+    /// One "Next" in the default rehearsal: reveals informational events together and stops at the next caution or
+    /// critical event, at an unanswered decision, or at the end. Nothing is skipped: every revealed event stays in
+    /// the timeline. This keeps an exercise to its key moments without hiding what happened between them.
+    public mutating func advanceToNextKeyEvent() {
+        guard pendingDecision == nil, revealed < result.events.count else { return }
+        repeat { revealed += 1 }
+        while pendingDecision == nil && revealed < result.events.count && result.events[revealed - 1].severity == .info
+    }
+
+    /// Key moments in this result (caution/critical events, plus a final informational event), for "Step k of n".
+    public var keyMomentCount: Int {
+        let key = result.events.filter { $0.severity != .info }.count
+        return max(1, key + (result.events.last?.severity == .info ? 1 : 0))
+    }
+
+    /// How many key moments have been revealed so far.
+    public var keyMomentsRevealed: Int {
+        let key = result.events.prefix(revealed).filter { $0.severity != .info }.count
+        let finalInfo = revealed == result.events.count && result.events.last?.severity == .info ? 1 : 0
+        return min(keyMomentCount, key + finalInfo)
+    }
+
     public mutating func advanceUntilDecisionOrEnd() {
         while pendingDecision == nil && revealed < result.events.count { revealed += 1 }
     }

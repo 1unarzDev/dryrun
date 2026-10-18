@@ -1,5 +1,7 @@
 # October 17 requirement-to-evidence map
 
+**Update Oct 18:** native builds pass, 42 app tests and the simulator journeys/tours ran (VERIFICATION, top section). Device rows below remain pending.
+
 **Continuation handoff, not completion.** Read the owner's complete original
 [goal prompt](goals/2026-10-17-family-preparedness.md) before accepting any row. Claude is explicitly asked to
 find omissions, improve PDF/map/home/rehearsal visuals with ideators and inspect running UI/navigation.

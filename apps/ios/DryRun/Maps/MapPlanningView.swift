@@ -15,7 +15,6 @@ struct MapPlanningView: View {
     @State private var pendingSearchResult: AppleMapSearchResult?
     @State private var deferredPlace: SavedPlace?
     @State private var editedPlace: SavedPlace?
-    @State private var showingEditor = false
     @State private var contextualSaveFinished = false
     @State private var deferredDestination: MapPlanningDestination?
     private let initialPurpose: SavedPlacePurpose?
@@ -90,6 +89,7 @@ struct MapPlanningView: View {
                 if let message { Text(message).font(.caption).padding(10) }
             }
             .navigationTitle(t("title"))
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if embedInNavigation {
                     ToolbarItem(placement: .cancellationAction) { Button(t("done")) { dismiss() }.accessibilityIdentifier("map.done") }
@@ -99,15 +99,16 @@ struct MapPlanningView: View {
             .sheet(isPresented: $showingSearch, onDismiss: { if let pendingSearchResult { select(pendingSearchResult); self.pendingSearchResult = nil } }) {
                 MapSearchSheet(region: hint, onSelect: { pendingSearchResult = $0; showingSearch = false })
             }
-            .sheet(item: $selected, onDismiss: { if let deferredPlace { editedPlace = deferredPlace; self.deferredPlace = nil; showingEditor = true } }) { result in destinationSheet(result) }
-            .sheet(isPresented: $showingEditor, onDismiss: {
+            .sheet(item: $selected, onDismiss: { if let deferredPlace { editedPlace = deferredPlace; self.deferredPlace = nil } }) { result in destinationSheet(result) }
+            // Presented from the place itself: a separate flag could show the sheet before the place was set (blank sheet).
+            .sheet(item: $editedPlace, onDismiss: {
                 if contextualSaveFinished && dismissAfterSave { contextualSaveFinished = false; dismiss() }
                 else if let deferredDestination { selected = deferredDestination; self.deferredDestination = nil }
-            }) {
-                if let editedPlace { PlaceEditorView(place: editedPlace, onSaved: { contextualSaveFinished = true }, onDirections: { place in
+            }) { place in
+                PlaceEditorView(place: place, onSaved: { contextualSaveFinished = true }, onDirections: { place in
                     guard place.coordinate != nil else { return }
                     deferredDestination = MapPlanningDestination(place: place)
-                }) }
+                })
             }
             .task(id: homeCoordinate) {
                 discovery.cancel(clearResults: true); invalidateChangedRouteEndpoints(); cameraCenter = nil
@@ -140,7 +141,7 @@ struct MapPlanningView: View {
             ForEach(places) { place in
                 if let coordinate = place.coordinate {
                     Annotation(place.label, coordinate: coordinate.cl) {
-                        Button { editedPlace = place; showingEditor = true } label: { Image(systemName: place.purpose.mapSymbol).font(.title).foregroundStyle(place.purpose.mapColor).background(.background, in: Circle()) }
+                        Button { editedPlace = place } label: { Image(systemName: place.purpose.mapSymbol).font(.title).foregroundStyle(place.purpose.mapColor).background(.background, in: Circle()) }
                             .accessibilityLabel(place.label)
                     }
                 }
@@ -171,7 +172,7 @@ struct MapPlanningView: View {
             if let address = model.household?.privateLocation?.addressLine { Section(t("home")) { Text(address) } }
             Section(t("saved")) {
                 ForEach(places) { place in
-                    Button { editedPlace = place; showingEditor = true } label: {
+                    Button { editedPlace = place } label: {
                         VStack(alignment: .leading) { Text(place.label).font(.headline); Text(t(place.purpose.rawValue)).font(.caption); if let address = place.addressText { Text(address) }; if let instructions = place.findingInstructions { Text(instructions) } }
                     }.buttonStyle(.plain)
                 }
@@ -263,12 +264,12 @@ struct MapPlanningView: View {
         let place = SavedPlace.appleSuggestion(sourceID: result.id, name: result.name, coordinate: result.coordinate,
             address: result.address, phone: result.phone, website: result.website, homeID: household.stableHomeID,
             purpose: initialPurpose ?? .fallbackDestination)
-        if choosingMeetup { editedPlace = place; showingEditor = true } else { selected = MapPlanningDestination(place: place) }
+        if choosingMeetup { editedPlace = place } else { selected = MapPlanningDestination(place: place) }
     }
     private func select(_ resource: PublicResource) {
         guard let household = model.household else { return }
         let place = SavedPlace.officialResource(resource, homeID: household.stableHomeID, purpose: initialPurpose ?? .fallbackDestination)
-        if choosingMeetup { editedPlace = place; showingEditor = true } else { selected = MapPlanningDestination(place: place, officialResource: resource) }
+        if choosingMeetup { editedPlace = place } else { selected = MapPlanningDestination(place: place, officialResource: resource) }
     }
     private func discover() async {
         guard discovery.enabled, let hint else { message = t("noHome"); return }
@@ -281,7 +282,7 @@ struct MapPlanningView: View {
         guard let household = model.household else { return }
         let place = SavedPlace(homeID: household.stableHomeID, purpose: initialPurpose ?? .fallbackDestination, label: label, coordinate: coordinate, addressText: address, provenance: provenance)
         if selected != nil { deferredPlace = place; selected = nil }
-        else { editedPlace = place; showingEditor = true }
+        else { editedPlace = place }
     }
     private func preview(_ destination: MapPlanningDestination) {
         guard let coordinate = destination.place.coordinate else { return }

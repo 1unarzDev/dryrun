@@ -1,5 +1,73 @@
 # Verification record — October 17 revision
 
+## Native Mac pass — October 17–18, 2026 (Claude, owner's Mac)
+
+**Status: native build passes; simulator tests run; physical iPhone/LiDAR testing not yet done (no device connected).**
+Started from `8373597` (origin/main). Changes are in the commits that follow it on `main`.
+
+Environment: Mac14,2, macOS 27.0.1, Xcode 27.0 (27A266a), iOS 27.0 SDK and simulator runtime, deployment target
+iOS 18.0 (unchanged). Simulators: iPhone 18 Pro and iPhone 17e (small phone). No iOS 18 runtime is installed on this
+Mac, so nothing here was executed on iOS 18 itself. No physical iPhone was connected, and no signing identity exists
+(`security find-identity` reports 0).
+
+| Check | Command | Result |
+|---|---|---|
+| Native simulator build | `xcodebuild … -destination 'platform=iOS Simulator,…' build-for-testing` | **Passes** after three Swift 6.4 region-isolation fixes (below) |
+| Unsigned device build | `xcodebuild … -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO` | **Passes** (RoomPlan/ARKit code compiled for iphoneos) |
+| Core tests | `swift test --package-path packages/DryRunCore` | **319 tests / 51 suites passed** (317 inherited + 2 new) |
+| Vault tests | `swift test --package-path packages/DryRunVault` | **35 passed** |
+| Backend | `pnpm test` in services/public-api (after re-recording the ES/VI translation baseline) | **68 passed / 4 files** |
+| App unit tests (DryRunTests) | `test-without-building -only-testing:DryRunTests` | **42 / 42 passed** on iPhone 18 Pro simulator |
+| UI journeys (DemoJourneyUITests) | `-only-testing:DryRunUITests/DemoJourneyUITests` | **8 / 8 passed** in one final run (`.build-mac/results/final2-*`), including fresh install → contact → card → share preview, encrypted-vault relaunch, the connected address → meetup → recorded preparation → fire rehearsal → updated card → Share preview journey, and all three spatial hazards starting with the scene visible |
+| Screenshot tour, small phone EN | `TOUR_LOCALES=en`, iPhone 17e | **Passed**, 28 screens captured and inspected |
+| Screenshot tour, small phone ES + VI | `TOUR_LOCALES=es,vi`, iPhone 17e | **Passed**, inspected; remaining English is fictional sample data (room names, place names) stored like proper names |
+| Screenshot tour, AX XXL text | `TOUR_XXL=1`, iPhone 17e, 9 main screens | **Passed**; inspected; two layout defects found and fixed (below) |
+| Native PDFs | `-demoWritePlanPDFs` (fictional Oak, Lake, Pine), EN/ES/VI, Letter + A4 | Inspected page by page; validator issues: none. Oak full plan: 27 pages Letter / 25 A4, 1.3 MB (was 4.7 MB before icon caching and JPEG maps); card 2 pages, 48–60 KB. Copies in ignored `artifacts/claude-native-20261017/` |
+| Physical RoomPlan capture, install, Share/Print on device | — | **Not run**: no iPhone connected |
+
+### Native failures found and fixed
+
+1. `PlanMapSnapshotRenderer.swift:61` — `sending 'snapshot' risks causing data races`. The snapshot is consumed in the
+   completion handler without hopping to the main actor; only the finished `UIImage` leaves the closure.
+2. `MapKitAdapters.swift:84` — the same pattern for directions, search and address resolution.
+3. `MapKitAdapters.swift:193` (the hosted CI blocker) — the region checker could not analyse the task group. Each
+   nearby category now runs as its own `Task` that owns its own service, so cancel-previous on one category still
+   cannot cancel another, and the stale-generation guard is unchanged. No `@unchecked Sendable` or relaxed checking.
+4. `PlanExportTests` long-note test failed for Vietnamese A4 only: Core Text wrapped the marker at a hyphen and PDFKit
+   reported a line break inside it. The note was complete; the assertion now ignores line breaks.
+5. UI journeys: one test swipe started on the Plan tab's map preview and panned the map instead of scrolling. That was
+   also a user trap, so the preview map is now static (the full map opens from "Open map"). The place editor was
+   presented with a separate flag and could appear blank; it is now presented from the place itself.
+6. XXL text: the card's phone number forced the column wider than the screen, and the rehearsal key overflowed the scene
+   frame. Phone numbers now scale down on one line; the key keeps its space and caps its size.
+
+### Independent review (AI reviewer, read-only) and what changed
+
+A separate reviewer inspected the 28 small-phone screenshots, all native PDFs and the navigation code. Findings fixed:
+card selection differed between the in-app card (critical info off) and Share (on). Now there is one stored selection
+for card, Plan, Share/Print and saved plans. Also fixed: the Vietnamese footer was truncated; A4 "Same as page N" used
+the wrong page; a room label was drawn into a neighbouring room; route and badges covered room names on the phone;
+the map key said "numbers match" while the near meetup had no pin; onboarding still described the old outage-only
+product; "Ground floor" was untranslated; one-line diagram notes spilled onto their own page; raw source IDs were shown
+without publishers; Debrief → comparison was a sheet on a sheet; pushed editors showed Back, Cancel and Save; the
+"starting room not recorded" line contradicted later stages; rehearsals took 37–40 taps. "Next" now advances to the
+next key moment (caution/critical event, decision or end). No event is skipped (core test), so fire is 6 steps and
+tornado 17. Not changed: one diagram page per person per hazard (person-specific routes are a requirement), and
+lowercase assistance-need labels.
+
+### What this does not establish
+
+Simulator results are not device results. RoomPlan capture, camera denial, tracking loss, shared-session merging,
+real-scale measurements, Data Protection, AirPrint, the system share sheet's completion on a device, live Apple search
+and directions in real locations, VoiceOver navigation order and Reduce Motion on a device were **not** tested here.
+ES/VI strings are draft translations; no professional translation or safety review has taken place. Timing targets
+(90 s to a useful card, 2–4 min rehearsal) have not been measured with people.
+
+---
+
+## Earlier record (Linux / hosted CI, before this pass)
+
+
 **Implementation handed off for continued goal work; native build failing and device verification pending.**
 Current source follows `4a3bd60`; evidence below records exact tested commits. The original revision baseline
 was `2a8ab385a113cbcebcb8dc5a594d8ed8bacdd5b3`. The owner's two untracked root audit/handoff documents

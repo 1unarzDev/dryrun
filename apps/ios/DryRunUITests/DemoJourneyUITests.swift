@@ -21,13 +21,19 @@ final class DemoJourneyUITests: XCTestCase {
         _ = control.waitForExistence(timeout: 3)
         for _ in 0..<12 {
             if control.exists && control.isHittable && !underTabBar(control, in: app) { return control }
-            app.swipeUp(velocity: .slow)
+            scroll(app, up: true)
         }
         for _ in 0..<6 {
             if control.exists && control.isHittable && !underTabBar(control, in: app) { return control }
-            app.swipeDown(velocity: .slow)
+            scroll(app, up: false)
         }
         return control
+    }
+    /// Drags near the leading edge so the gesture never starts on a map or canvas inside the page.
+    private func scroll(_ app: XCUIApplication, up: Bool) {
+        let low = app.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.72))
+        let high = app.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.38))
+        if up { low.press(forDuration: 0.05, thenDragTo: high) } else { high.press(forDuration: 0.05, thenDragTo: low) }
     }
     private func underTabBar(_ control: XCUIElement, in app: XCUIApplication) -> Bool {
         let bar = app.tabBars.firstMatch
@@ -186,9 +192,11 @@ final class DemoJourneyUITests: XCTestCase {
 
         // A saved destination closes its own real preparation before any rehearsal is completed.
         app.tabBars.buttons.element(boundBy: 0).tap()
-        let recorded = element("next.recorded.prep.backupMeetup", in: app)
-        for _ in 0..<10 where !recorded.exists { app.swipeUp() }
-        XCTAssertTrue(recorded.exists)
+        let recorded = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'next.recorded.prep.backupMeetup'")).firstMatch
+        // Prepare recomputes after the edit; give it time, then scroll to the recorded list.
+        _ = element("next.recordedSection", in: app).waitForExistence(timeout: 20)
+        for _ in 0..<16 where !recorded.waitForExistence(timeout: 1) { scroll(app, up: true) }
+        XCTAssertTrue(recorded.exists, "The saved backup meetup should appear as a recorded preparation")
         app.tabBars.buttons.element(boundBy: 1).tap()
         tap("scenario.home-fire", in: app)
         XCTAssertTrue(element("rehearsal.scene", in: app).waitForExistence(timeout: 15))

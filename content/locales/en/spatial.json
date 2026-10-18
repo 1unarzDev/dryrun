@@ -415,5 +415,6 @@
   "spatial.confirm-opening-connects": "Yes, it connects these rooms",
   "spatial.window-person-question": "Who has checked that they can use this window as an escape option?",
   "spatial.window-person-note": "Select each person separately after checking exterior access and their ability to use the opening. A window marker alone does not establish an escape route.",
-  "spatial.leak-location-unknown": "Leak location not recorded"
+  "spatial.leak-location-unknown": "Leak location not recorded",
+  "spatial.floor.ground": "Ground floor"
 }

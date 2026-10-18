@@ -225,7 +225,7 @@ struct RehearsalView: View {
     /// "Step 2 of 6": progress through the exercise. Exercise minutes are not shown up front, so nothing reads as a
     /// countdown or a prediction of how much time a household has.
     private func stepLabel(_ session: RehearsalCursor) -> some View {
-        Label(model.localizer("ui.rehearse.step", ["step": "\(max(session.revealed, 1))", "total": "\(max(session.result.events.count, 1))"]), systemImage: "list.number")
+        Label(model.localizer("ui.rehearse.step", ["step": "\(max(session.keyMomentsRevealed, 1))", "total": "\(session.keyMomentCount)"]), systemImage: "list.number")
             .font(.subheadline.weight(.semibold).monospacedDigit())
             .foregroundStyle(.secondary)
             .accessibilityIdentifier("rehearsal.step")
@@ -276,7 +276,7 @@ struct RehearsalView: View {
             .accessibilityLabel(l("common.action.replay"))
             .accessibilityIdentifier("rehearsal.replay")
             // Both stay visible so the next step is always obvious: "Next" until the end, then "Debrief".
-            Button { model.rehearsal?.advance() } label: {
+            Button { model.rehearsal?.advanceToNextKeyEvent() } label: {
                 Label(session.pendingDecision != nil ? l("ui.rehearse.chooseAbove") : l("common.action.advance"),
                       systemImage: session.pendingDecision != nil ? "hand.point.up" : "forward.frame")
             }
@@ -357,7 +357,10 @@ struct SpatialRehearsalScene: View {
             if let room = HomeScenePresentation.startingRoom(in: home, route: route) {
                 Label(model.localizer("spatial.recorded-start-room", ["room": room.label]), systemImage: "person.crop.circle")
                     .font(.footnote)
-            } else { Text(model.localizer("spatial.start-room-unknown")).font(.footnote) }
+            } else if route != nil {
+                // Only when this stage has a route request: before the first route there is nothing to contradict later.
+                Text(model.localizer("spatial.start-room-unknown")).font(.footnote)
+            }
             if let state {
                 Text(state.assumptionKey.map { model.localizer($0) } ?? state.assumption).font(.footnote).foregroundStyle(.secondary)
                 if !state.affectedSpaceIDs.isEmpty {
@@ -710,7 +713,8 @@ struct RecommendationDetailView: View {
                         }
                     }
                 }
-                .sheet(isPresented: $showComparison) { NavigationStack { ComparisonView() } }
+                // Pushed within the debrief stack: a comparison never opens as a sheet on top of a sheet.
+                .navigationDestination(isPresented: $showComparison) { ComparisonView() }
         }
         else {
             // A changed household can resolve an old rehearsal gap. The real facts remain editable;

@@ -1,5 +1,21 @@
 # UI audit — October 17 revision
 
+## Native simulator audit — October 18 (Claude)
+
+Structure after this pass (each primary editor is at most one transition from its tab root):
+
+| Tab | Root shows | Direct entries |
+|---|---|---|
+| Prepare | Household, example badge, "Do next (n)" with the top item emphasized and two more, then tiles | Each task row → its focused editor (meetup → map set to that purpose, no nested stack); Your family; Your home; Family emergency card |
+| Rehearse | Home diagram, fire/tornado/flood first, all six hazards | Scenario → scene first, "Step k of n" key moments, what changed this step, one decision, Debrief → comparison pushed in the same sheet |
+| Plan | Living card summary with missing items, two fixed meetup slots, contacts, static map preview, home diagram | Card; meetup slot → map with purpose (save returns to Plan); Add contact; Home address; Open map; one Share / Print sheet whose preview is pushed inside it |
+
+Removed: ShareWithFamilyView (third share path), the duplicate onboarding save button, the stacked Back/Cancel/Save
+in pushed editors, the panning map inside the scrolling Plan page, and the exercise clock (replaced by step counts).
+Verified by the DemoJourneyUITests and the screenshot tours listed in VERIFICATION. Not verified: VoiceOver order
+walk-through, Reduce Motion, iPad, and anything on a physical device.
+
+
 **Current native status: authored and source-reviewed; not simulator/device verified.** October 14 screenshots
 and UI passes are historical evidence only. New journeys and screenshot tours target three destinations.
 No timing, VoiceOver, real Maps, camera, Print, or share-lifecycle claim is established by this Linux pass.

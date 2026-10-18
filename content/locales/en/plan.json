@@ -180,5 +180,13 @@
   "pdf.mapFrame": "Map data and imagery: Apple Maps. Numbers match the list below.",
   "pdf.meetingPlaces": "Meeting places",
   "pdf.otherPlaces": "Other saved places (saved details do not confirm they are open)",
-  "pdf.sameAsPage": "Same as page {page}."
+  "pdf.sameAsPage": "Same as page {page}.",
+  "pdf.noPin": "no map pin saved",
+  "pdf.legend.furniture": "Furniture or obstacle",
+  "pdf.legend.smokeAlarm": "Smoke alarm",
+  "pdf.legend.coAlarm": "CO alarm",
+  "pdf.legend.fireExtinguisher": "Fire extinguisher",
+  "pdf.legend.shutoff": "Utility shutoff",
+  "pdf.legend.supplies": "Emergency supplies",
+  "pdf.legend.medicalEquipment": "Medical equipment"
 }

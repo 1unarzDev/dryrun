@@ -120,7 +120,10 @@ struct NextStepsView: View {
                     }
                     .accessibilityIdentifier("next.recorded.\(step.id)")
                 }
-            }.accessibilityIdentifier("next.recordedSection")
+            }
+            // .contain keeps each row's own identifier and label; a bare container identifier would replace them.
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("next.recordedSection")
         }
     }
 

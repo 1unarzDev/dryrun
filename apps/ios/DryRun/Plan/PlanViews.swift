@@ -26,7 +26,7 @@ struct PlanTabView: View {
         let l = model.localizer
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
-                if let household = model.household, let doc = model.currentPlan(selection: FamilyCardSelection(includeCriticalInformation: true, includeMedication: true, includeContacts: true)) {
+                if let household = model.household, let doc = model.currentPlan(selection: model.cardSelection) {
                     header(household)
                     cardSummary(doc)
                     meetups(household)
@@ -116,7 +116,8 @@ struct PlanTabView: View {
         let places = model.savedPlaces.filter { $0.homeID == household.stableHomeID }
         return SectionCard(title: l("pdf.meetingPlaces"), systemImage: "figure.2") {
             ForEach([SavedPlacePurpose.outsideMeetingPoint, .backupMeetingPlace], id: \.self) { purpose in
-                let place = places.first { $0.purpose == purpose }
+                let chosen = places.filter { $0.purpose == purpose }
+                let place = chosen.first
                 Button { sheet = .meetup(purpose) } label: {
                     HStack(alignment: .top, spacing: Theme.Space.m) {
                         Text(purpose == .outsideMeetingPoint ? "1" : "2")
@@ -125,10 +126,13 @@ struct PlanTabView: View {
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(l(purpose == .outsideMeetingPoint ? "family.nearMeetup" : "family.backupMeetup")).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                            if let place {
-                                Text(place.label).font(.body.weight(.semibold))
-                                if let address = place.addressText, !address.isEmpty { Text(address).font(.footnote) }
-                                if let instructions = place.findingInstructions, !instructions.isEmpty { Text(instructions).font(.footnote).foregroundStyle(.secondary) }
+                            if place != nil {
+                                // Every saved place for this purpose is listed; none is hidden behind the first.
+                                ForEach(chosen) { place in
+                                    Text(place.label).font(.body.weight(.semibold))
+                                    if let address = place.addressText, !address.isEmpty { Text(address).font(.footnote) }
+                                    if let instructions = place.findingInstructions, !instructions.isEmpty { Text(instructions).font(.footnote).foregroundStyle(.secondary) }
+                                }
                             } else {
                                 Text(l("ui.plan.chooseMeetup")).font(.body.weight(.semibold)).foregroundStyle(Theme.accent)
                             }
@@ -222,7 +226,6 @@ struct FamilyPlanShareView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var includePlan = true
     @State private var includePrivateNotes = false
-    @State private var selection = FamilyCardSelection(includeCriticalInformation: true, includeContacts: true)
     @State private var selectedScenarios: Set<String> = []
     @State private var paper: PlanPDFRenderer.Paper = Locale.current.region?.identifier == "US" ? .letter : .a4
     @State private var preparing = false
@@ -230,14 +233,17 @@ struct FamilyPlanShareView: View {
     @State private var showingPreview = false
     @State private var failed = false
 
+    private var selection: FamilyCardSelection { model.cardSelection }
+
     var body: some View {
         let l = model.localizer
+        @Bindable var model = model
         Form {
             Section {
-                Toggle(l("family.critical"), isOn: $selection.includeCriticalInformation)
-                Toggle(l("family.medication"), isOn: $selection.includeMedication)
-                Toggle(l("family.instructions"), isOn: $selection.includeResponderInstructions)
-                Toggle(l("family.contacts"), isOn: $selection.includeContacts)
+                Toggle(l("family.critical"), isOn: $model.cardSelection.includeCriticalInformation)
+                Toggle(l("family.medication"), isOn: $model.cardSelection.includeMedication)
+                Toggle(l("family.instructions"), isOn: $model.cardSelection.includeResponderInstructions)
+                Toggle(l("family.contacts"), isOn: $model.cardSelection.includeContacts)
                 Text(l("family.selectedWhy")).font(.footnote).foregroundStyle(.secondary)
             } header: { Text(l("family.selected")) }
             Section {
@@ -369,23 +375,13 @@ struct PlanDocumentView: View {
         .toolbar { PlanShareButton(doc: doc, paper: paper) }
     }
 
+    /// Same section vocabulary as the card and the PDF: banded boxes, critical sections inverted.
     private func pageSection(_ page: PlanPage) -> some View {
         Section {
             ForEach(page.sections) { section in
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(section.heading).font(.headline)
-                    ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in
-                        HStack(alignment: .firstTextBaseline) {
-                            Image(systemName: icon(line.style)).accessibilityHidden(true)
-                            Text(line.text).font(line.style == .prohibition ? .body.weight(.semibold) : .body)
-                            if line.isFallback {
-                                Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary)
-                                    .accessibilityLabel(model.localizer("plan.fallbackNote"))
-                            }
-                        }
-                    }
-                }
-                .padding(.vertical, 4)
+                CardSectionView(section: section)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
+                    .listRowSeparator(.hidden)
             }
         } header: {
             Text(page.title).font(.title3.weight(.bold)).textCase(nil)
@@ -483,7 +479,8 @@ struct NeighborhoodPlanPreview: View {
             ForEach(PlanMapSelection.extents(homeCoordinate: snapshot.homeCoordinate, places: snapshot.savedPlaces)) { extent in
                 VStack(alignment: .leading, spacing: 5) {
                     Text(extent.title(neighborhood: model.localizer("map.neighborhood"))).font(.caption.weight(.semibold))
-                    Map {
+                    // A static preview: scrolling the plan never gets caught panning a map. "Open map" is interactive.
+                    Map(interactionModes: []) {
                         if let coordinate = extent.homeCoordinate { Marker(model.localizer("map.home"), systemImage: "house.fill", coordinate: coordinate.cl) }
                         ForEach(extent.places, id: \.place.id) { entry in
                             if let coordinate = entry.place.coordinate {

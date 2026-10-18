@@ -180,5 +180,13 @@
   "pdf.mapFrame": "Datos e imágenes del mapa: Apple Maps. Los números coinciden con la lista de abajo.",
   "pdf.meetingPlaces": "Puntos de encuentro",
   "pdf.otherPlaces": "Otros lugares guardados (los datos guardados no confirman que estén abiertos)",
-  "pdf.sameAsPage": "Igual que en la página {page}."
+  "pdf.sameAsPage": "Igual que en la página {page}.",
+  "pdf.noPin": "sin punto guardado en el mapa",
+  "pdf.legend.furniture": "Mueble u obstáculo",
+  "pdf.legend.smokeAlarm": "Alarma de humo",
+  "pdf.legend.coAlarm": "Alarma de CO",
+  "pdf.legend.fireExtinguisher": "Extintor",
+  "pdf.legend.shutoff": "Llave de corte de servicios",
+  "pdf.legend.supplies": "Suministros de emergencia",
+  "pdf.legend.medicalEquipment": "Equipo médico"
 }

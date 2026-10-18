@@ -44,6 +44,7 @@ struct FloorPlanView: View {
                         if let id = hitTest(point, size: geometry.size) { onSelect?(id) }
                     }
             }
+            .frame(minHeight: 140)
             .background(PlanColors.background)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilitySummary)
@@ -78,6 +79,10 @@ struct FloorPlanView: View {
         .labelStyle(.titleAndIcon)
         .padding(.horizontal, 6)
         .padding(.bottom, 4)
+        // The key keeps its space inside a fixed-height scene (the drawing gives way) and stays compact at the largest
+        // text sizes; every item is also in the room list and the VoiceOver summary.
+        .dynamicTypeSize(...DynamicTypeSize.xLarge)
+        .layoutPriority(1)
     }
 
     private var accessibilitySummary: String {
@@ -157,7 +162,7 @@ struct FloorPlanView: View {
                 while x < box.maxX { lines.move(to: CGPoint(x: x, y: box.maxY)); lines.addLine(to: CGPoint(x: x + box.height, y: box.minY)); x += 7 }
                 clipped.stroke(lines, with: .color(Color(.label).opacity(isOrigin ? 0.25 : 0.4)), lineWidth: 1)
             }
-            badges.append((f.pt(Geometry.centroid(room.polygon)), isOrigin ? (water ? "water.waves" : "flame.fill") : (water ? "water.waves" : "smoke.fill")))
+            badges.append((CGPoint(x: box.maxX - 13, y: box.minY + 27), isOrigin ? (water ? "water.waves" : "flame.fill") : (water ? "water.waves" : "smoke.fill")))
         }
         for room in spaces where spatialState?.exposedSpaceIDs?.contains(room.id) == true {
             ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple.opacity(0.75)), style: StrokeStyle(lineWidth: 3, dash: [1.5, 3.5]))
@@ -166,7 +171,8 @@ struct FloorPlanView: View {
             let shape = path(shelter.polygon, f, closed: true)
             ctx.stroke(shape, with: .color(PlanColors.exit), lineWidth: 6)
             ctx.stroke(shape, with: .color(PlanColors.background), lineWidth: 2)
-            badges.append((f.pt(Geometry.centroid(shelter.polygon)), "shield.lefthalf.filled"))
+            let sb = shape.boundingRect
+            badges.append((CGPoint(x: sb.maxX - 13, y: sb.minY + 27), "shield.lefthalf.filled"))
         }
         for o in home.obstacles where o.floorID == fid {
             ctx.fill(path(o.polygon, f, closed: true), with: .color(PlanColors.obstacle))
@@ -236,28 +242,6 @@ struct FloorPlanView: View {
             markers.append(pinned)
             ctx.draw(Text(Image(systemName: Self.symbol(a.kind))).font(.system(size: 13)).foregroundStyle(Self.color(a.kind)), at: pinned, anchor: .center)
         }
-        for s in spaces {
-            // A label that does not fit its room is shrunk, then dropped rather than drawn across a neighbour; the
-            // room list and the VoiceOver summary name every room.
-            let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
-            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
-            for font in [Font.caption2, .system(size: 8)] {
-                let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
-                let need = text.measure(in: CGSize(width: room.width, height: .infinity))
-                if need.width <= room.width && need.height <= room.height {
-                    // Safety markers often sit at the room centre: move the name above one rather than cover it.
-                    var c = f.pt(Geometry.centroid(s.polygon))
-                    if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
-                        c.y = max(c.y - need.height / 2 - 9, (ys.min() ?? c.y) + need.height / 2 + 1)
-                    }
-                    let rect = CGRect(x: c.x - need.width / 2, y: c.y - need.height / 2, width: need.width, height: need.height)
-                    ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
-                             with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
-                    ctx.draw(text, in: rect)
-                    break
-                }
-            }
-        }
         for (point, symbol) in badges {
             let disc = CGRect(origin: point, size: .zero).insetBy(dx: -11, dy: -11).offsetBy(dx: 0, dy: -14)
             ctx.fill(Path(ellipseIn: disc), with: .color(PlanColors.background))
@@ -293,6 +277,33 @@ struct FloorPlanView: View {
             ctx.fill(Path(ellipseIn: disc), with: .color(Color(.label)))
             ctx.stroke(Path(ellipseIn: disc.insetBy(dx: -2, dy: -2)), with: .color(exposedStart ? PlanColors.alarm : Color(.label)), lineWidth: exposedStart ? 3 : 1)
             ctx.draw(Text(Image(systemName: "person.fill")).font(.system(size: 13, weight: .bold)).foregroundStyle(PlanColors.background), at: c)
+        }
+        // Labels last, kept clear of the person marker, so routes and badges never hide a room's name.
+        if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid,
+           let position = HomeScenePresentation.startingRoomPosition(in: home, route: selectedRoute) {
+            markers.append(f.pt(position))
+        }
+        for s in spaces {
+            // A label that does not fit its room is shrunk, then dropped rather than drawn across a neighbour; the
+            // room list and the VoiceOver summary name every room.
+            let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
+            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
+            for font in [Font.caption2, .system(size: 8)] {
+                let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
+                let need = text.measure(in: CGSize(width: room.width, height: .infinity))
+                if need.width <= room.width && need.height <= room.height {
+                    // Safety markers often sit at the room centre: move the name above one rather than cover it.
+                    var c = f.pt(Geometry.centroid(s.polygon))
+                    if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
+                        c.y = max(c.y - need.height / 2 - 9, (ys.min() ?? c.y) + need.height / 2 + 1)
+                    }
+                    let rect = CGRect(x: c.x - need.width / 2, y: c.y - need.height / 2, width: need.width, height: need.height)
+                    ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                             with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
+                    ctx.draw(text, in: rect)
+                    break
+                }
+            }
         }
     }
 

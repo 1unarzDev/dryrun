@@ -8,7 +8,6 @@ struct OutageCardView: View {
     @Environment(\.dismiss) private var dismiss
     /// One sheet slot: two `.sheet` modifiers on one view fail to present the second right after the first closes.
     @State private var sheet: ActiveSheet?
-    @State private var selection = FamilyCardSelection()
     /// Shown only when presented modally; when pushed, the back button is the way out.
     var showsDone = false
 
@@ -25,7 +24,8 @@ struct OutageCardView: View {
 
     var body: some View {
         let l = model.localizer
-        let doc = model.outageCard(selection: selection)
+        let doc = model.outageCard(selection: model.cardSelection)
+        @Bindable var model = model
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 if let banner = doc?.draftTranslationBanner {
@@ -36,10 +36,10 @@ struct OutageCardView: View {
                         CardPageView(page: page) { if case .outageCard(let id) = page.kind { sheet = .edit(id) } }
                     }
                     SectionCard(title: l("family.selected"), systemImage: "checklist") {
-                        Toggle(l("family.critical"), isOn: $selection.includeCriticalInformation)
-                        Toggle(l("family.medication"), isOn: $selection.includeMedication)
-                        Toggle(l("family.instructions"), isOn: $selection.includeResponderInstructions)
-                        Toggle(l("family.contacts"), isOn: $selection.includeContacts)
+                        Toggle(l("family.critical"), isOn: $model.cardSelection.includeCriticalInformation)
+                        Toggle(l("family.medication"), isOn: $model.cardSelection.includeMedication)
+                        Toggle(l("family.instructions"), isOn: $model.cardSelection.includeResponderInstructions)
+                        Toggle(l("family.contacts"), isOn: $model.cardSelection.includeContacts)
                         Text(l("family.selectedWhy")).font(.footnote).foregroundStyle(.secondary)
                     }
                     Button { share(doc) } label: { Label(l("ui.card.printShare"), systemImage: "printer") }
@@ -185,8 +185,13 @@ struct CardLine: View {
                 structured(parts)
             } else {
                 HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
+                    if line.style != .normal {
+                        Image(systemName: line.style == .prohibition ? "exclamationmark.triangle.fill" : line.style == .contact ? "phone.fill" : "info.circle")
+                            .font(.footnote).foregroundStyle(line.style == .prohibition ? Theme.critical : .secondary)
+                            .accessibilityHidden(true)
+                    }
                     Text(line.text)
-                        .font(line.style == .caveat ? .callout : .body)
+                        .font(line.style == .caveat ? .callout : line.style == .prohibition ? .body.weight(.semibold) : .body)
                         .foregroundStyle(line.style == .caveat ? .secondary : .primary)
                         .fixedSize(horizontal: false, vertical: true)
                     if line.isFallback {
@@ -198,20 +203,29 @@ struct CardLine: View {
         }
     }
 
+    @ViewBuilder private func phoneView(_ parts: PlanLineParts) -> some View {
+        if let phone = parts.phone {
+            Group {
+                if let url = PhoneLink.url(phone) {
+                    Link(destination: url) { Label(phone, systemImage: "phone.fill") }
+                        .accessibilityHint(model.localizer("common.help.call"))
+                } else {
+                    Text(phone)
+                }
+            }
+            .font(.body.monospacedDigit().weight(.semibold))
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
+        }
+    }
+
     @ViewBuilder private func structured(_ parts: PlanLineParts) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             if let subject = parts.subject {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(subject).font(.headline)
-                    Spacer(minLength: 8)
-                    if let phone = parts.phone {
-                        if let url = PhoneLink.url(phone) {
-                            Link(destination: url) { Label(phone, systemImage: "phone.fill").font(.body.monospacedDigit().weight(.semibold)) }
-                                .accessibilityHint(model.localizer("common.help.call"))
-                        } else {
-                            Text(phone).font(.body.monospacedDigit().weight(.semibold))
-                        }
-                    }
+                // Name and number side by side when they fit; otherwise the number gets its own line, never split.
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline) { Text(subject).font(.headline); Spacer(minLength: 8); phoneView(parts) }
+                    VStack(alignment: .leading, spacing: 2) { Text(subject).font(.headline); phoneView(parts) }
                 }
             }
             if let detail = parts.detail { Text(detail).font(.footnote).foregroundStyle(.secondary) }

@@ -18,7 +18,7 @@ struct OnboardingView: View {
                     Text(l("ui.onboarding.headline")).font(.largeTitle.weight(.bold))
                     Text(l("ui.onboarding.body")).font(.title3)
                     VStack(alignment: .leading, spacing: Theme.Space.m) {
-                        IconRow(systemImage: "bolt.slash.fill", tint: Theme.critical, title: l("ui.onboarding.point1"))
+                        IconRow(systemImage: "figure.walk.motion", tint: Theme.critical, title: l("ui.onboarding.point1"))
                         IconRow(systemImage: "list.bullet.clipboard.fill", tint: Theme.accent, title: l("ui.onboarding.point2"))
                         IconRow(systemImage: "lock.fill", tint: Theme.success, title: l("common.privacy.promise"))
                     }

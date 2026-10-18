@@ -3,6 +3,14 @@ import Foundation
 /// Keeps the family's coordinate-bearing meeting destinations ahead of optional resource pins.
 /// Original document ordinals survive prioritization so map symbols still match the text plan.
 public enum PlanMapSelection {
+    /// One numbering for every view: near-home meetup first, then the backup meetup, then other places.
+    /// The text list, map markers and PDF key all number places in this order.
+    public static func displayOrder(_ places: [SavedPlace]) -> [SavedPlace] {
+        func priority(_ p: SavedPlace) -> Int {
+            switch p.purpose { case .outsideMeetingPoint: 0; case .backupMeetingPlace: 1; default: 2 }
+        }
+        return places.sorted { (priority($0), $0.id) < (priority($1), $1.id) }
+    }
     public struct Entry: Sendable, Hashable {
         public let number: Int
         public let place: SavedPlace

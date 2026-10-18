@@ -415,5 +415,6 @@
   "spatial.confirm-opening-connects": "Đúng, lối mở nối các phòng này",
   "spatial.window-person-question": "Ai đã kiểm tra rằng mình có thể dùng cửa sổ này làm lối thoát?",
   "spatial.window-person-note": "Chọn riêng từng người sau khi kiểm tra lối ra bên ngoài và khả năng sử dụng ô cửa của họ. Chỉ đánh dấu cửa sổ không có nghĩa là đã xác lập lối thoát.",
-  "spatial.leak-location-unknown": "Chưa ghi vị trí rò rỉ"
+  "spatial.leak-location-unknown": "Chưa ghi vị trí rò rỉ",
+  "spatial.floor.ground": "Tầng trệt"
 }

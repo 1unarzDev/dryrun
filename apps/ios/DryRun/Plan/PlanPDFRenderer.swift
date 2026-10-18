@@ -255,7 +255,8 @@ struct PlanPDFRenderer {
             PlanPDFRenderer.draw(right, in: CGRect(x: x + width - rightWidth, y: top, width: rightWidth, height: 24))
             let left = NSAttributedString(string: doc.footer, attributes: [.font: Style.footer, .foregroundColor: Style.secondary,
                 .paragraphStyle: { let p = NSMutableParagraphStyle(); p.lineBreakMode = .byWordWrapping; return p }()])
-            PlanPDFRenderer.draw(left, in: CGRect(x: x, y: top, width: width - rightWidth - 12, height: 24))
+            // The safety footer wraps (up to three lines) rather than being cut off in longer languages.
+            PlanPDFRenderer.draw(left, in: CGRect(x: x, y: top, width: width - rightWidth - 12, height: 40))
             pageIsOpen = false
         }
 
@@ -321,6 +322,7 @@ struct PlanPDFRenderer {
             let bandH = bandHeight(heading, width: width)
             let firstHeight = rows.first.map { min($0.height(width: inner), 60) } ?? 0
             ensure(bandH + firstHeight + 8, id: pageID)
+            sectionStartPage = pageCount
             var top = y
             y += band(heading, symbol: PlanPDFRenderer.symbol(for: id), critical: critical, at: CGPoint(x: x, y: y), width: width)
             y += 2
@@ -374,7 +376,8 @@ struct PlanPDFRenderer {
             openPage(title: page.title, isFirst: true)
             if isCard { renderCard(page) } else { renderGeneric(page) }
             if page.id == doc.pages.last?.id, !doc.sourceIDs.isEmpty {
-                let row = Row(body: Style.text(doc.sourceIDs.joined(separator: ", "), Style.meta, Style.secondary), padding: 4, separator: false)
+                let names = doc.sourceIDs.map { id in PlanPDFRenderer.bundledContent?.source(id).map { "\($0.publisher) (\(id))" } ?? id }
+                let row = Row(body: Style.text(names.joined(separator: " · "), Style.meta, Style.secondary), padding: 4, separator: false)
                 section(id: "sources", heading: PlanPDFRenderer.exportText("sources", locale: doc.locale), rows: [row], critical: false, pageID: page.id)
             }
             if page.kind == .essentials, page.id != "family-card", let snapshot = doc.visualSnapshot {
@@ -480,6 +483,7 @@ struct PlanPDFRenderer {
 
         /// Section content already printed, by page, so repeated blocks (help lines, helpers, equipment) print once.
         var printedSections: [String: Int] = [:]
+        var sectionStartPage = 0
 
         func renderGeneric(_ page: PlanPage) {
             for section in page.sections {
@@ -490,8 +494,8 @@ struct PlanPDFRenderer {
                                  critical: false, pageID: page.id)
                     continue
                 }
-                printedSections[key] = pageCount
                 self.section(id: section.id, heading: section.heading, rows: rows(for: section), critical: section.isSafetyCritical && section.lines.contains { $0.style == .prohibition }, pageID: page.id)
+                printedSections[key] = sectionStartPage
             }
         }
 
@@ -506,7 +510,9 @@ struct PlanPDFRenderer {
                 let imageWidth = imageHeight * panel.image.size.width / max(panel.image.size.height, 1)
                 let rect = CGRect(x: x + (width - imageWidth) / 2, y: y, width: imageWidth, height: imageHeight)
                 // Apple's whole image, including its logo and legal attribution, is drawn unaltered.
-                panel.image.draw(in: rect)
+                // JPEG keeps a map page to a few hundred kilobytes; Apple's attribution stays part of the image.
+                let mapImage = panel.image.jpegData(compressionQuality: 0.82).flatMap(UIImage.init(data:)) ?? panel.image
+                mapImage.draw(in: rect)
                 let frame = UIBezierPath(rect: rect.insetBy(dx: -0.5, dy: -0.5)); frame.lineWidth = 0.75; Style.rule.setStroke(); frame.stroke()
                 y = rect.maxY + 6
                 y += PlanPDFRenderer.drawText(t("pdf.mapFrame", fallback: "Map data and imagery: Apple Maps. Numbers match the list below."), at: CGPoint(x: x, y: y), font: Style.meta, width: width, color: Style.secondary) + 8
@@ -522,6 +528,15 @@ struct PlanPDFRenderer {
                         rows.append(Row(left: NSAttributedString(string: " "), body: Style.text(line, Style.meta, Style.secondary), leftWidth: 22, separator: false))
                     }
                 }
+                // Meeting places saved as text only keep their number in the key, marked as having no map pin.
+                if panel.showsHome, let snapshot = doc.visualSnapshot {
+                    for (index, place) in snapshot.savedPlaces.enumerated() where place.coordinate == nil
+                        && (place.purpose == .outsideMeetingPoint || place.purpose == .backupMeetingPlace) {
+                        let text = [place.label, place.findingInstructions].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+                            + " — " + t("pdf.noPin", fallback: "no map pin saved")
+                        rows.append(Row(left: PlanPDFRenderer.markerLabel(.meetup, "\(index + 1)"), body: Style.text(text), leftWidth: 22))
+                    }
+                }
                 if !rows.isEmpty {
                     section(id: "places", heading: t("pdf.legend", fallback: "Key"), rows: rows, critical: false, pageID: "map-legend")
                 }
@@ -532,15 +547,24 @@ struct PlanPDFRenderer {
 
         func renderHomePanels() {
             guard doc.pages.contains(where: { $0.id != "family-card" }), let snapshot = doc.visualSnapshot, let home = snapshot.home else { return }
+            var seenNoRoute: Set<String> = []
             for panel in snapshot.homePanels {
+                // Several people with the same "no route established" stage would print identical pages: print one.
+                if let route = panel.route, route.primary == nil, route.alternative == nil {
+                    let key = [panel.scenarioID ?? "", panel.floorID, panel.spatialState?.stageID ?? "", route.noRouteReason?.rawValue ?? "", route.request.startSpaceID].joined(separator: "|")
+                    if !seenNoRoute.insert(key).inserted { continue }
+                }
                 if pageIsOpen { closePage(continues: false) }
                 let title = panel.title(in: snapshot)
                 basePageTitle = title
                 openPage(title: title, isFirst: false)
                 let detailText = snapshot.panelDetails?[panel.id] ?? panel.details(in: snapshot, localizer: l)
-                let detailHeight = detailText.reduce(CGFloat(34)) { $0 + measure(Style.text($1), width - 16 - Row.symbolWidth) + 6 }
-                // The diagram gives way to its notes (legend ~60pt), but never shrinks below a readable size.
-                let diagramHeight = max(min(width * 0.72, footerTop - 14 - y - detailHeight - 100), min(220, width * 0.45))
+                let detailHeight = detailText.reduce(CGFloat(40)) { $0 + measure(Style.text($1), width - 16 - Row.symbolWidth) + 6 }
+                // Measure what the diagram will show (drawn offscreen), so its key and notes fit on the same page.
+                let probeUsed = PlanPDFRenderer.elementsDrawn(home, floorID: panel.floorID, routes: panel.paths, state: panel.spatialState, selectedRoute: panel.route)
+                let legendHeight = legend(probeUsed, draw: false)
+                // The diagram gives way to its key and notes, but never shrinks below a readable size.
+                let diagramHeight = max(min(width * 0.72, footerTop - 14 - y - 8 - legendHeight - 6 - detailHeight), min(200, width * 0.4))
                 let rect = CGRect(x: x, y: y, width: width, height: diagramHeight)
                 let frame = UIBezierPath(rect: rect); frame.lineWidth = 0.75; Style.rule.setStroke(); frame.stroke()
                 let used = PlanPDFRenderer.drawHome(home, floorID: panel.floorID, routes: panel.paths, state: panel.spatialState,
@@ -557,20 +581,30 @@ struct PlanPDFRenderer {
         }
 
         /// A key generated from what the diagram actually drew; never a fixed list.
-        func legend(_ used: Set<DiagramElement>) -> CGFloat {
-            let order: [DiagramElement] = [.wall, .door, .window, .unconfirmed, .blocked, .exit, .primary, .alternative, .affected, .exposed, .shelter, .stairs, .start]
+        /// Lays out the key in rows of three; with `draw: false` it only measures, so the diagram can be sized first.
+        @discardableResult
+        func legend(_ used: Set<DiagramElement>, draw: Bool = true) -> CGFloat {
+            let order: [DiagramElement] = [.wall, .door, .window, .unconfirmed, .blocked, .exit, .primary, .alternative, .affected, .exposed, .shelter, .stairs, .start, .furniture,
+                                           .smokeAlarm, .coAlarm, .fireExtinguisher, .shutoff, .supplies, .medicalEquipment]
             let items = order.filter(used.contains)
             guard !items.isEmpty else { return 0 }
             let columns = 3
             let columnWidth = width / CGFloat(columns)
-            let rowHeight: CGFloat = 18
-            for (i, item) in items.enumerated() {
-                let cx = x + CGFloat(i % columns) * columnWidth
-                let cy = y + CGFloat(i / columns) * rowHeight
-                PlanPDFRenderer.drawLegendSample(item, in: CGRect(x: cx, y: cy + 3, width: 26, height: 11))
-                _ = PlanPDFRenderer.drawText(t("pdf.legend.\(item.rawValue)", fallback: item.rawValue), at: CGPoint(x: cx + 32, y: cy + 1), font: Style.meta, width: columnWidth - 36)
+            var rowTop: CGFloat = 0
+            for start in stride(from: 0, to: items.count, by: columns) {
+                let row = Array(items[start..<min(start + columns, items.count)])
+                let labels = row.map { Style.text(t("pdf.legend.\($0.rawValue)", fallback: $0.rawValue), Style.meta) }
+                let h = max(16, labels.map { measure($0, columnWidth - 36) }.max() ?? 0) + 3
+                if draw {
+                    for (i, item) in row.enumerated() {
+                        let cx = x + CGFloat(i) * columnWidth
+                        PlanPDFRenderer.drawLegendSample(item, in: CGRect(x: cx, y: y + rowTop + 3, width: 26, height: 11))
+                        PlanPDFRenderer.draw(labels[i], in: CGRect(x: cx + 32, y: y + rowTop + 1, width: columnWidth - 36, height: h))
+                    }
+                }
+                rowTop += h
             }
-            return CGFloat((items.count + columns - 1) / columns) * rowHeight
+            return rowTop
         }
     }
 
@@ -612,11 +646,20 @@ struct PlanPDFRenderer {
 
     /// Symbols are rasterized at 4x before drawing. Drawn directly into a PDF context they are embedded as a private
     /// glyph font that some viewers and printers show as solid squares.
+    /// Rasterized symbols are cached so a PDF embeds each icon once rather than once per use (keeps files small).
+    private static var symbolCache: [String: UIImage] = [:]
+
     static func drawSymbol(_ name: String, in rect: CGRect, color: UIColor = .black) {
-        let config = UIImage.SymbolConfiguration(pointSize: rect.height * 4, weight: .semibold)
-        guard let symbol = UIImage(systemName: name, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal) else { return }
-        let format = UIGraphicsImageRendererFormat(); format.scale = 1; format.opaque = false
-        let bitmap = UIGraphicsImageRenderer(size: symbol.size, format: format).image { _ in symbol.draw(at: .zero) }
+        let pointSize = (rect.height * 4).rounded()
+        let key = "\(name)|\(pointSize)|\(color == .white ? "w" : "k")"
+        let bitmap: UIImage
+        if let cached = symbolCache[key] { bitmap = cached } else {
+            let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: .semibold)
+            guard let symbol = UIImage(systemName: name, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal) else { return }
+            let format = UIGraphicsImageRendererFormat(); format.scale = 1; format.opaque = false
+            bitmap = UIGraphicsImageRenderer(size: symbol.size, format: format).image { _ in symbol.draw(at: .zero) }
+            symbolCache[key] = bitmap
+        }
         let scale = min(rect.width / bitmap.size.width, rect.height / bitmap.size.height)
         let size = CGSize(width: bitmap.size.width * scale, height: bitmap.size.height * scale)
         bitmap.draw(in: CGRect(x: rect.midX - size.width / 2, y: rect.midY - size.height / 2, width: size.width, height: size.height))
@@ -659,7 +702,29 @@ func measure(_ s: NSAttributedString, _ width: CGFloat) -> CGFloat {
 
 /// What a home diagram actually drew, so its key lists only those symbols.
 enum DiagramElement: String, Hashable, CaseIterable {
-    case wall, door, window, unconfirmed, blocked, exit, primary, alternative, affected, exposed, shelter, stairs, start
+    case wall, door, window, unconfirmed, blocked, exit, primary, alternative, affected, exposed, shelter, stairs, start, furniture
+    case smokeAlarm, coAlarm, fireExtinguisher, shutoff, supplies, medicalEquipment
+    init?(_ kind: AnnotationKind) {
+        switch kind {
+        case .smokeAlarm: self = .smokeAlarm
+        case .coAlarm: self = .coAlarm
+        case .fireExtinguisher: self = .fireExtinguisher
+        case .utilityShutoffGas, .utilityShutoffWater, .utilityShutoffElectric: self = .shutoff
+        case .supplies: self = .supplies
+        case .medicalEquipment: self = .medicalEquipment
+        default: return nil
+        }
+    }
+    var symbol: String? {
+        switch self {
+        case .smokeAlarm, .coAlarm: "sensor.fill"
+        case .fireExtinguisher: "fire.extinguisher.fill"
+        case .shutoff: "bolt.fill"
+        case .supplies: "shippingbox.fill"
+        case .medicalEquipment: "cross.case.fill"
+        default: nil
+        }
+    }
 }
 
 extension PlanPDFRenderer {
@@ -689,6 +754,8 @@ extension PlanPDFRenderer {
         case .shelter: drawSymbol("shield.lefthalf.filled", in: CGRect(x: r.minX + 7, y: r.minY - 1, width: 13, height: 13))
         case .stairs: drawSymbol("stairs", in: CGRect(x: r.minX + 7, y: r.minY - 1, width: 13, height: 13))
         case .start: drawSymbol("person.crop.circle.fill", in: CGRect(x: r.minX + 7, y: r.minY - 1, width: 13, height: 13))
+        case .furniture: UIColor(white: 0.85, alpha: 1).setFill(); UIRectFill(CGRect(x: r.minX + 4, y: r.minY, width: 18, height: r.height))
+        default: if let symbol = element.symbol { drawSymbol(symbol, in: CGRect(x: r.minX + 7, y: r.minY - 1, width: 13, height: 13)) }
         }
     }
 
@@ -768,7 +835,7 @@ extension PlanPDFRenderer {
             if affected.contains(room.id) { hatch(path, fill: UIColor(white: 0.82, alpha: 1)); used.insert(.affected) }
             else { UIColor.white.setFill(); path.fill() }
         }
-        for obstacle in home.obstacles where obstacle.floorID == floorID { UIColor(white: 0.78, alpha: 1).setFill(); polygon(obstacle.polygon).fill() }
+        for obstacle in home.obstacles where obstacle.floorID == floorID { UIColor(white: 0.85, alpha: 1).setFill(); polygon(obstacle.polygon).fill(); used.insert(.furniture) }
         // 2. Walls.
         for room in rooms {
             let path = polygon(room.polygon); path.lineWidth = 2.5; path.lineJoinStyle = .miter; UIColor.black.setStroke(); path.stroke()
@@ -807,8 +874,12 @@ extension PlanPDFRenderer {
                 let len = max(hypot(normal.dx, normal.dy), 0.001)
                 let start = CGPoint(x: mid.x + normal.dx / len * 4, y: mid.y + normal.dy / len * 4)
                 exitArrow(at: start, direction: normal); used.insert(.exit)
-                let labelPoint = CGPoint(x: mid.x + normal.dx / len * 20 - 14, y: mid.y + normal.dy / len * 20 - 6)
-                drawText(exitLabel, at: labelPoint, font: .systemFont(ofSize: 8.5, weight: .heavy), width: 44)
+                // The word sits beyond the arrow tip so the two never overprint.
+                let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 8.5, weight: .heavy)]
+                let w = (exitLabel as NSString).size(withAttributes: attrs).width
+                let ux = normal.dx / len, uy = normal.dy / len
+                let anchor = CGPoint(x: mid.x + ux * (19 + w / 2 * abs(ux)), y: mid.y + uy * (19 + 5 * abs(uy)))
+                (exitLabel as NSString).draw(at: CGPoint(x: anchor.x - w / 2, y: anchor.y - 5), withAttributes: attrs)
             }
         }
         // 4. Routes: exact legs. Primary solid black with an arrowhead; alternative dashed gray.
@@ -841,6 +912,7 @@ extension PlanPDFRenderer {
             UIColor.white.setFill(); UIBezierPath(ovalIn: disc).fill()
             drawSymbol(annotationSymbol(annotation.kind), in: disc.insetBy(dx: 2.5, dy: 2.5))
             markers.append(disc)
+            if let element = DiagramElement(annotation.kind) { used.insert(element) }
         }
         // A failed route still has a recorded starting room. Match the phone's illustrative marker;
         // never substitute a path endpoint or imply a measured/live occupant position.
@@ -859,9 +931,14 @@ extension PlanPDFRenderer {
             let label = room.label
             let attrs: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 10, weight: .semibold), .foregroundColor: UIColor.black]
             let size = (label as NSString).boundingRect(with: CGSize(width: 110, height: 40), options: [.usesLineFragmentOrigin], attributes: attrs, context: nil).size
-            var box = CGRect(x: min(max(center.x - size.width / 2, rect.minX), rect.maxX - size.width), y: center.y - size.height / 2, width: ceil(size.width), height: ceil(size.height))
-            for _ in 0..<3 where markers.contains(where: { $0.intersects(box.insetBy(dx: -2, dy: -2)) }) {
-                box.origin.y -= 14
+            let base = CGRect(x: min(max(center.x - size.width / 2, rect.minX), rect.maxX - size.width), y: center.y - size.height / 2, width: ceil(size.width), height: ceil(size.height))
+            // Stay inside this room: try small offsets clear of markers, never a neighbouring room.
+            let shape = polygon(room.polygon)
+            var box = base
+            for dy in [0, 13, -13, 26, -26] as [CGFloat] {
+                let candidate = base.offsetBy(dx: 0, dy: dy)
+                let inside = shape.contains(CGPoint(x: candidate.midX, y: candidate.minY + 1)) && shape.contains(CGPoint(x: candidate.midX, y: candidate.maxY - 1))
+                if inside && !markers.contains(where: { $0.intersects(candidate.insetBy(dx: -2, dy: -2)) }) { box = candidate; break }
             }
             UIColor(white: 1, alpha: 0.9).setFill(); UIBezierPath(roundedRect: box.insetBy(dx: -2, dy: -1), cornerRadius: 2).fill()
             (label as NSString).draw(with: box, options: [.usesLineFragmentOrigin], attributes: attrs, context: nil)
@@ -885,14 +962,21 @@ extension PlanPDFRenderer {
         }
     }
 
+    /// The elements `drawHome` would draw, found by drawing once offscreen (sizes only affect placement).
+    static func elementsDrawn(_ home: HomeModel, floorID: String, routes: [RoutePath], state: SpatialExerciseState?, selectedRoute: RouteResult?) -> Set<DiagramElement> {
+        var used: Set<DiagramElement> = []
+        _ = UIGraphicsImageRenderer(size: CGSize(width: 500, height: 360)).image { _ in
+            used = drawHome(home, floorID: floorID, routes: routes, state: state, selectedRoute: selectedRoute, rect: CGRect(x: 0, y: 0, width: 500, height: 360))
+        }
+        return used
+    }
+
     static func annotationSymbol(_ kind: AnnotationKind) -> String {
         switch kind {
         case .smokeAlarm, .coAlarm: "sensor.fill"
         case .fireExtinguisher: "fire.extinguisher.fill"
         case .exteriorHydrant: "drop.fill"
-        case .utilityShutoffWater: "spigot.fill"
-        case .utilityShutoffGas: "flame"
-        case .utilityShutoffElectric: "bolt.fill"
+        case .utilityShutoffWater, .utilityShutoffGas, .utilityShutoffElectric: "bolt.fill"
         case .supplies: "shippingbox.fill"
         case .medicalEquipment: "cross.case.fill"
         case .tornadoShelterCandidate: "shield.lefthalf.filled"

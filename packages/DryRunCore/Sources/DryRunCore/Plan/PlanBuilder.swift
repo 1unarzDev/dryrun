@@ -39,7 +39,7 @@ public enum PlanBuilder {
             pages.append(scenarioPage(b, result, household, home, resources, options))
         }
         b.sourceIDs.append(contentsOf: pages.flatMap(\.sections).flatMap(\.lines).flatMap(\.sourceIDs))
-        var visualSnapshot = PlanVisualSnapshot(home: exportHome(home, options: options, localizer: l), routes: results.flatMap { currentRoutes($0) }, savedPlaces: matchingPlaces.sorted { $0.id < $1.id }, homeCoordinate: household.privateLocation.flatMap { location in
+        var visualSnapshot = PlanVisualSnapshot(home: exportHome(home, options: options, localizer: l), routes: results.flatMap { currentRoutes($0) }, savedPlaces: PlanMapSelection.displayOrder(matchingPlaces), homeCoordinate: household.privateLocation.flatMap { location in
                 guard let lat = location.latitude, let lon = location.longitude else { return nil }; return GeographicCoordinate(latitude: lat, longitude: lon)
             }, fictional: household.isFictional || home?.source == .sample || home?.isFictional == true, routeScenarioIDs: results.flatMap { result in currentRoutes(result).map { _ in result.input.scenarioID } }, personLabels: Dictionary(uniqueKeysWithValues: household.people.map { ($0.id, $0.localizedLabel(l)) }), scenarioLabels: scenarioLabels(results, localizer: l), exerciseStates: results.compactMap { result in
                 guard let state = result.snapshots.last(where: { $0.spatialState != nil })?.spatialState else { return nil }
@@ -107,7 +107,7 @@ public enum PlanBuilder {
 
         sections.append(b.section("meeting", "plan.section.meeting", meetingLines(b, home, places), critical: true))
         if !places.isEmpty {
-            let lines = places.sorted { $0.id < $1.id }.enumerated().flatMap { index, place in
+            let lines = PlanMapSelection.displayOrder(places).enumerated().flatMap { index, place in
                 PlanPlacePresentation.lines(for: place, number: index + 1, localizer: b.localizer)
             }
             b.usedFallback = b.usedFallback || lines.contains(where: \.isFallback)
@@ -271,6 +271,11 @@ public enum PlanBuilder {
             } else { home.annotations[i].label = "" }
         }
         for i in home.portals.indices { home.portals[i].note = nil }
+        // The machine default level name is shown in the plan's language; a household's own name is kept exactly.
+        for i in home.floors.indices where home.floors[i].label == "Ground floor" {
+            let ground = localizer.text("spatial.floor.ground")
+            if !ground.isMissing { home.floors[i].label = ground.text }
+        }
         return home
     }
 

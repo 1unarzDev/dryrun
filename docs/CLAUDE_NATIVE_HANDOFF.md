@@ -1,6 +1,6 @@
 # Native verification handoff — October 17 revision
 
-Status: **Claude continuation requested; implementation is not complete. Native build failing; physical test pending.**
+Status (Oct 18): **Native simulator and unsigned iphoneos builds pass on Xcode 27; app unit tests, UI journeys and screenshot tours have run on simulators — see the top of VERIFICATION. Physical iPhone/LiDAR testing is still pending: no device was connected.** Earlier status, kept for history: Claude continuation requested; native build failing.
 Authorized GitHub macOS CI has Xcode16.4/iOS18.5 and is exposing SDK issues, which are being fixed rather than
 handed off as successful. See VERIFICATION for exact commits/runs. The owner confirmed this existing Mac
 checkout will have a LiDAR-capable iPhone Pro and an Xcode signing account. No physical scan or installation

@@ -117,6 +117,26 @@ struct LeadAdversarialTests {
     
     }
 
+    @Test("Key-moment stepping skips no event and still stops at every decision and warning")
+    func keyMoments() throws {
+        for scenario in ["home-fire", "tornado", "flash-flood", "freeze-power-loss", "heat-grid-strain", "water-outage"] {
+            let r = try SimFixtures.engine.run(SimFixtures.input(SampleHouseholds.oak, scenario))
+            var fine = RehearsalCursor(result: r), keyed = RehearsalCursor(result: r)
+            var stops = 0
+            while !keyed.isFinished && keyed.pendingDecision == nil && stops < 500 {
+                let before = keyed.revealed
+                keyed.advanceToNextKeyEvent(); stops += 1
+                // Every event between stops is revealed (nothing hidden), and only the last one may be a warning.
+                let span = r.events[before..<keyed.revealed]
+                #expect(span.dropLast().allSatisfy { $0.severity == .info }, "\(scenario): a warning was passed over")
+            }
+            fine.advanceUntilDecisionOrEnd()
+            // Both reach the same place: the first unanswered decision (or the end).
+            #expect(keyed.revealed == fine.revealed && keyed.pendingDecision?.id == fine.pendingDecision?.id, "\(scenario)")
+            #expect(stops <= r.events.count && keyed.keyMomentsRevealed <= keyed.keyMomentCount)
+        }
+    }
+
     @Test("Cursor finishes cleanly when all decisions are answered")
     func cursorAnswered() throws {
         var input = SimFixtures.input(SampleHouseholds.oak, "water-outage")
