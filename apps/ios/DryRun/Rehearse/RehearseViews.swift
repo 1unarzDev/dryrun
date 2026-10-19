@@ -29,6 +29,26 @@ struct RehearseTabView: View {
                     Label(s("Add and review a home layout to practice spatial routes. Other scenarios remain available."), systemImage: "house")
                         .font(.callout).foregroundStyle(.secondary)
                 }
+                NavigationLink(value: "practice:check") {
+                    HStack(spacing: Theme.Space.m) {
+                        Image(systemName: "checklist.checked").font(.title2).foregroundStyle(Theme.accent)
+                            .frame(width: 52, height: 52)
+                            .background(Theme.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l("practice.title")).font(.body.weight(.semibold))
+                            Text(l("practice.cardDetail")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
+                    }
+                    .padding(Theme.Space.m)
+                    .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+                    .contentShape(Rectangle())
+                    .accessibilityElement(children: .combine)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("practice.open")
                 Text(l("common.chooseScenario")).font(.headline).padding(.top, Theme.Space.s)
                 ForEach(Self.scenarioIDs, id: \.self) { id in
                     NavigationLink(value: id) { ScenarioCard(id: id) }
@@ -43,6 +63,7 @@ struct RehearseTabView: View {
         .navigationDestination(for: String.self) { id in
             // "adaptive:<scenario>" opens the incremental exercise of the same scenario, inside the same stack.
             if id.hasPrefix("adaptive:") { AdaptiveRehearsalView(scenarioID: String(id.dropFirst("adaptive:".count))) }
+            else if id == "practice:check" { PracticeCheckView() }
             else { RehearsalView(scenarioID: id) }
         }
     }

@@ -139,6 +139,7 @@ struct AdaptiveRehearsalView: View {
                     }
                 }
             }
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("adaptive.youDid")
         }
     }
@@ -176,6 +177,7 @@ struct AdaptiveRehearsalView: View {
             SectionCard(title: l("adaptive.whatNow"), systemImage: "arrow.triangle.branch") {
                 Text(l("adaptive.whatNowDetail")).font(.callout)
             }
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("adaptive.whatNow")
         }
     }
@@ -199,6 +201,7 @@ struct AdaptiveRehearsalView: View {
             .buttonStyle(.primary)
             .accessibilityIdentifier("adaptive.prepareNext")
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("adaptive.finishedCard")
     }
 
@@ -243,61 +246,23 @@ struct AdaptiveRehearsalView: View {
                     Label(l("adaptive.otherActions"), systemImage: "plus.bubble").font(.subheadline.weight(.semibold))
                 }
             }
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("adaptive.otherActions")
         }
     }
 
-    private struct ActionOption: Sendable { let title: String; let symbol: String; let commands: [SessionCommand] }
+    private typealias ActionOption = ExerciseActions.Option
 
     private func refreshAccepted() async {
-        guard let exercise = model.adaptive, exercise.session.initial.scenarioID == scenarioID else { return }
-        let candidates = availableActions(exercise)
-        guard let result = await model.acceptedAdaptiveActions(candidates.map(\.commands)),
-              result.revision == model.adaptive?.session.revision else { return }
-        accepted = zip(candidates, result.accepted).filter { $0.1 }.map(\.0)
-        acceptedRevision = result.revision
+        guard let exercise = model.adaptive, exercise.session.initial.scenarioID == scenarioID, let library = model.scenarios else { return }
+        let options = await ExerciseActions.accepted(availableActions(exercise), session: exercise.session, library: library)
+        guard model.adaptive?.session.revision == exercise.session.revision else { return }
+        accepted = options
+        acceptedRevision = exercise.session.revision
     }
 
     private func availableActions(_ exercise: AppModel.AdaptiveExercise) -> [ActionOption] {
-        let l = model.localizer
-        let h = exercise.session.initial.household
-        var out: [ActionOption] = []
-        if exercise.receipt.snapshot.resources["res.water.stored"] != nil {
-            out.append(.init(title: l("adaptive.water.essential"), symbol: "drop", commands: [.init(kind: "useStoredWater", value: "essential")]))
-            out.append(.init(title: l("adaptive.water.all"), symbol: "drop.fill", commands: [.init(kind: "useStoredWater", value: "all")]))
-        }
-        for equipment in h.equipment where !equipment.compatibleBackupIDs.isEmpty {
-            let device = HouseholdLabels.equipment(equipment.id, in: h, localizer: l)
-            for backup in equipment.compatibleBackupIDs {
-                out.append(.init(title: l("adaptive.power", ["device": device, "backup": HouseholdLabels.backup(backup, in: h, localizer: l)]),
-                                 symbol: "bolt", commands: [.init(kind: "allocatePower", target: equipment.id, value: backup)]))
-            }
-            out.append(.init(title: l("adaptive.powerNone", ["device": device]), symbol: "bolt.slash",
-                             commands: [.init(kind: "allocatePower", target: equipment.id, value: "none")]))
-        }
-        for contact in h.contacts where contact.isComplete {
-            out.append(.init(title: l("adaptive.contact", ["contact": contact.alias]), symbol: "phone",
-                             commands: [.init(kind: "contact", target: contact.id)]))
-        }
-        for person in h.people where !person.needs.isEmpty {
-            for helper in h.people where helper.id != person.id && helper.needs.isEmpty {
-                out.append(.init(title: l("adaptive.helper", ["helper": helper.localizedLabel(l), "person": person.localizedLabel(l)]),
-                                 symbol: "figure.2", commands: [.init(kind: "assignHelper", target: person.id, value: helper.id)]))
-            }
-        }
-        if scenarioID == "home-fire", let home = exercise.session.initial.home {
-            for portal in home.portals where portal.kind == .door {
-                let rooms = [portal.sideA, portal.sideB].compactMap { side -> String? in
-                    if case .space(let id) = side { return HomeScenePresentation.roomLabel(id, in: home) }
-                    return nil
-                }
-                for person in h.people {
-                    out.append(.init(title: l("adaptive.closeDoor", ["person": person.localizedLabel(l), "rooms": rooms.joined(separator: " / ")]),
-                                     symbol: "door.left.hand.closed", commands: [.init(kind: "closeDoor", target: portal.id, value: person.id)]))
-                }
-            }
-        }
-        return out
+        ExerciseActions.candidates(session: exercise.session, receipt: exercise.receipt, localizer: model.localizer)
     }
 
     private func moveCommand(_ exercise: AppModel.AdaptiveExercise) -> SessionCommand? {

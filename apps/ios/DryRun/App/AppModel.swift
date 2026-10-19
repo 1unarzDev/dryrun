@@ -90,7 +90,8 @@ final class AppModel {
     /// The score's inputs: household/home/content plus confirmed inventory and practice attempts.
     var scoreKey: RevisionKey? {
         guard var key = currentKey, let rubric else { return nil }
-        key.algorithmVersion = "score/\(rubric.version)/inv\(aiState.inventory.revision)/practice\(aiState.practiceAttempts.count)"
+        let answers = aiState.practiceAttempts.reduce(0) { $0 + ($1.observations?.count ?? $1.answers.count) }
+        key.algorithmVersion = "score/\(rubric.version)/inv\(aiState.inventory.revision)/practice\(aiState.practiceAttempts.count)-\(answers)"
         return key
     }
 
@@ -799,19 +800,6 @@ final class AppModel {
         return (try? exercise.session.preview(commit, library: scenarios)) != nil
     }
 
-    /// Which candidate user actions the host accepts at the current revision, previewed off the main actor.
-    func acceptedAdaptiveActions(_ candidates: [[SessionCommand]]) async -> (revision: Int, accepted: [Bool])? {
-        guard let exercise = adaptive, let scenarios else { return nil }
-        let session = exercise.session, library = scenarios
-        let accepted = await Task.detached(priority: .userInitiated) {
-            candidates.map { commands in
-                !commands.isEmpty && (try? session.preview(SessionCommit(id: "preview", actor: "user", baseRevision: session.revision,
-                                                                          commands: commands), library: library)) != nil
-            }
-        }.value
-        return (session.revision, accepted)
-    }
-
     /// Commit → save session with the household snapshot → publish. A failed save leaves the exercise unchanged.
     @discardableResult
     private func commitAdaptive(director: DirectorSource?, narration: String?,
@@ -831,7 +819,9 @@ final class AppModel {
             if state.sessions.count > Self.retainedSessions {
                 // Drop the oldest exercises first; the open one is always kept.
                 let overflow = state.sessions.count - Self.retainedSessions
-                let removable = state.sessions.filter { $0.id != session.id }.prefix(overflow).map(\.id)
+                // Practice sources are frozen evidence for recorded answers; they are never trimmed.
+                let practice = Set(state.practiceAttempts.flatMap { ($0.phaseSources ?? []) + ($0.source.map { [$0] } ?? []) }.map(\.sessionID))
+                let removable = state.sessions.filter { $0.id != session.id && !practice.contains($0.id) }.prefix(overflow).map(\.id)
                 state.sessions.removeAll { removable.contains($0.id) }
             }
             guard adaptive?.session.id == exercise.session.id, adaptive?.session.revision == exercise.session.revision else { return false }
@@ -844,6 +834,64 @@ final class AppModel {
         } catch {
             lastError = String(describing: error)
             return false
+        }
+    }
+
+    // MARK: - Practice check (four frozen situations, graded before feedback)
+
+    /// The newest check, complete or not. A newer incomplete check is the current practice result.
+    var latestPracticeCheck: PracticeAttempt? {
+        aiState.practiceAttempts.filter { $0.phaseSources != nil && $0.archivedUnverified != true }.max { $0.sequence < $1.sequence }
+    }
+
+    /// The next frozen situation and its competency, or nil when the check is complete.
+    func practiceStep() -> (attempt: PracticeAttempt, session: SimulationSession, competency: String)? {
+        guard let attempt = latestPracticeCheck, let scenarios,
+              let session = try? aiState.activePracticeCheckSession(attemptID: attempt.id, library: scenarios) else { return nil }
+        let order = IntegratedAIState.practiceOrder(attempt.variantID)
+        let index = attempt.observations?.count ?? 0
+        guard order.indices.contains(index) else { return nil }
+        return (attempt, session, order[index])
+    }
+
+    /// Builds the four situations from the current household and home and freezes them with the attempt in one save.
+    /// An unfinished check is resumed instead; nothing is re-rolled.
+    @discardableResult
+    func beginPracticeCheck() async -> Bool {
+        guard let household, let content, let scenarios else { return false }
+        if let latest = latestPracticeCheck, (latest.observations?.count ?? 0) < 4 { return true }
+        let home = self.home, library = scenarios, contentVersion = content.contentVersion
+        let variant = PracticeCheckSources.variant(previousAttempts: aiState.practiceAttempts.count)
+        let id = "check-\(UUID().uuidString)"
+        workInFlight += 1
+        defer { workInFlight -= 1 }
+        let build = Task.detached(priority: .userInitiated) {
+            try PracticeCheckSources.prepare(attemptID: id, variantID: variant, household: household, home: home,
+                                             contentVersion: contentVersion, library: library)
+        }
+        guard let sources = try? await build.value else { lastError = localizer("practice.unavailable"); return false }
+        return await updateAIState { state, _ in
+            state.sessions.append(contentsOf: sources)
+            try state.beginPracticeCheck(id: id, variantID: variant, sessionIDs: sources.map(\.id), library: library)
+        }
+    }
+
+    /// Records the family's first answer for the current situation before any feedback. Returns the stored observation.
+    func submitPracticeAnswer(_ command: SessionCommand) async -> PracticeObservation? {
+        guard let step = practiceStep(), let scenarios else { return nil }
+        let commit = SessionCommit(id: "answer-\(UUID().uuidString)", actor: "user", baseRevision: step.session.revision, commands: [command])
+        var observation: PracticeObservation?
+        let saved = await updateAIState { state, _ in
+            observation = try state.submitPracticeAction(attemptID: step.attempt.id, competencyID: step.competency, commit: commit, library: scenarios)
+        }
+        return saved ? observation : nil
+    }
+
+    /// Feedback is recorded as revealed (never changing the answer) before the screen shows it.
+    @discardableResult
+    func revealPracticeFeedback(attemptID: String, actionID: String) async -> Bool {
+        await updateAIState { state, _ in
+            _ = try state.revealPracticeFeedback(attemptID: attemptID, actionID: actionID)
         }
     }
 

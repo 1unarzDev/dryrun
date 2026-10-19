@@ -829,5 +829,22 @@
   "inventory.gapShort": "Thiếu {amount}",
   "inventory.gapCovered": "Số lượng đã ghi đạt mức tối thiểu {amount}",
   "inventory.managedThere": "Nước được ghi từng món trong “Những gì bạn đã có”",
-  "inventory.notSure": "Không chắc"
+  "inventory.notSure": "Không chắc",
+  "practice.title": "Bài kiểm tra luyện tập",
+  "practice.cardDetail": "Bốn câu hỏi ngắn trong chính ngôi nhà của bạn. Câu trả lời đầu tiên được tính vào phần luyện tập của điểm.",
+  "practice.banner": "Bài kiểm tra luyện tập",
+  "practice.intro": "Bốn tình huống luyện tập ngắn và riêng biệt: một đám cháy bắt đầu, một lối ra bị chặn, liên lạc với người thân khi mất nước, và dùng nước dự trữ. Hãy trả lời như bạn sẽ thực sự làm.",
+  "practice.rules": "Câu trả lời đầu tiên cho mỗi tình huống được lưu trước khi bạn thấy nhận xét, và nhận xét không bao giờ thay đổi nó. Bạn cứ thong thả; thời gian không được đo. Phần này cộng tối đa 10 điểm và không phải là xếp hạng an toàn.",
+  "practice.needsHome": "Hãy thêm sơ đồ nhà trước. Các tình huống cháy dùng chính các phòng của bạn.",
+  "practice.start": "Bắt đầu 4 câu hỏi",
+  "practice.progress": "Câu {number} trên {total}",
+  "practice.separate": "Mỗi tình huống là riêng biệt và chỉ để luyện tập.",
+  "practice.chooseOne": "Chọn việc bạn sẽ làm. Chỉ có những hành động bài luyện tập này mô phỏng được.",
+  "practice.recorded": "Câu trả lời của bạn đã được lưu trước nhận xét này.",
+  "practice.next": "Tiếp theo",
+  "practice.done": "Đã xong bài kiểm tra luyện tập",
+  "practice.result": "Luyện tập {score}/100 · {assessed}/4 đã đánh giá",
+  "practice.doneBody": "Những tình huống ứng dụng không thể đánh giá cho gia đình bạn vẫn chưa được đánh giá; chúng không bị tính là sai. Bạn có thể luyện tập thoải mái trong bất kỳ bài tập nào; bài kiểm tra mới sẽ bắt đầu lại từ đầu.",
+  "practice.again": "Bắt đầu bài kiểm tra mới",
+  "practice.unavailable": "Bài kiểm tra luyện tập cần sơ đồ nhà và một tình huống nước được hỗ trợ."
 }

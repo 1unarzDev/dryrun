@@ -829,5 +829,22 @@
   "inventory.gapShort": "Faltan {amount}",
   "inventory.gapCovered": "La cantidad registrada cumple el mínimo de {amount}",
   "inventory.managedThere": "El agua se registra artículo por artículo en “Lo que ya tiene”",
-  "inventory.notSure": "No sé"
+  "inventory.notSure": "No sé",
+  "practice.title": "Prueba de práctica",
+  "practice.cardDetail": "Cuatro preguntas cortas en su propia casa. Sus primeras respuestas cuentan para la parte de práctica de la puntuación.",
+  "practice.banner": "Prueba de práctica",
+  "practice.intro": "Cuatro situaciones de práctica cortas y separadas: un incendio que empieza, una salida bloqueada, comunicarse con su contacto durante un corte de agua y usar el agua guardada. Responda como actuaría de verdad.",
+  "practice.rules": "Su primera respuesta a cada una se guarda antes de ver cualquier comentario, y el comentario nunca la cambia. Tómese el tiempo que necesite; no se mide el tiempo. Suma como máximo 10 puntos y no es una calificación de seguridad.",
+  "practice.needsHome": "Primero agregue el plano de su casa. Las situaciones de incendio usan sus propias habitaciones.",
+  "practice.start": "Empezar las 4 preguntas",
+  "practice.progress": "Pregunta {number} de {total}",
+  "practice.separate": "Cada situación es independiente y solo de práctica.",
+  "practice.chooseOne": "Elija lo que haría. Solo aparecen acciones que esta práctica puede modelar.",
+  "practice.recorded": "Su respuesta se guardó antes de este comentario.",
+  "practice.next": "Siguiente",
+  "practice.done": "Prueba de práctica terminada",
+  "practice.result": "Práctica {score}/100 · {assessed}/4 evaluadas",
+  "practice.doneBody": "Las situaciones que esta app no puede evaluar para su hogar quedan sin evaluar; no cuentan como incorrectas. Puede practicar libremente en cualquier ejercicio; una prueba nueva empieza desde cero.",
+  "practice.again": "Empezar una prueba nueva",
+  "practice.unavailable": "La prueba de práctica necesita el plano de su casa y una situación de agua compatible."
 }

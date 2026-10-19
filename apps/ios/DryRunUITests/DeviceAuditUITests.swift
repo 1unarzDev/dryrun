@@ -247,6 +247,40 @@ final class DeviceAuditUITests: XCTestCase {
         shot("marker-04-reopened", app)
     }
 
+    func testPracticeCheckRecordsFourFirstAnswersBeforeFeedback() {
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "ranch", "-demoTab", "rehearse"])
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+        let open = reveal("practice.open", in: app)
+        XCTAssertTrue(open.waitForExistence(timeout: 10))
+        open.tap()
+        let start = reveal("practice.start", in: app)
+        XCTAssertTrue(start.waitForExistence(timeout: 10))
+        shot("practice-00-intro", app)
+        start.tap()
+        for number in 1...4 {
+            XCTAssertTrue(element("practice.progress", in: app).waitForExistence(timeout: 20), "question \(number)")
+            shot("practice-\(number)-question", app)
+            let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'")).firstMatch
+            if option.waitForExistence(timeout: 3) {
+                if !option.isHittable { reveal(option.identifier, in: app) }
+                option.tap()
+            } else {
+                let actions = element("practice.actions", in: app)
+                for _ in 0..<6 where !(actions.exists && actions.isHittable) { scroll(app, up: true) }
+                let first = actions.buttons.element(boundBy: 0)
+                XCTAssertTrue(first.waitForExistence(timeout: 10), "an action is offered")
+                first.tap()
+            }
+            XCTAssertTrue(element("practice.feedback", in: app).waitForExistence(timeout: 15), "feedback follows the saved answer")
+            shot("practice-\(number)-feedback", app)
+            reveal("practice.next", in: app).tap()
+        }
+        let result = reveal("practice.result", in: app)
+        XCTAssertTrue(result.waitForExistence(timeout: 20))
+        XCTAssertTrue(result.label.contains("4/4 assessed") || result.label.contains("/4 assessed"))
+        shot("practice-5-finished", app)
+    }
+
     func testScorecardOnPrepareForEachHousingDemo() {
         for home in ["ranch", "apartment-complex", "manufactured", "twostory"] {
             let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home])

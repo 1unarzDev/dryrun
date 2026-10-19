@@ -829,5 +829,22 @@
   "inventory.gapShort": "Short by {amount}",
   "inventory.gapCovered": "Recorded amount meets the {amount} minimum",
   "inventory.managedThere": "Water is recorded item by item in “What you already have”",
-  "inventory.notSure": "Not sure"
+  "inventory.notSure": "Not sure",
+  "practice.title": "Practice check",
+  "practice.cardDetail": "Four short questions in your own home. Your first answers count toward the practice part of the score.",
+  "practice.banner": "Practice check",
+  "practice.intro": "Four short, separate practice situations: a fire starting, a blocked way out, reaching your contact during a water outage, and using stored water. Answer as you would really act.",
+  "practice.rules": "Your first answer to each is saved before you see any feedback, and feedback never changes it. Take as long as you need; time is not measured. It adds at most 10 points and is not a safety rating.",
+  "practice.needsHome": "Add your home layout first. The fire situations use your own rooms.",
+  "practice.start": "Start the 4 questions",
+  "practice.progress": "Question {number} of {total}",
+  "practice.separate": "Each situation is separate and practice only.",
+  "practice.chooseOne": "Choose what you would do. Only actions this practice can model are listed.",
+  "practice.recorded": "Your answer was saved before this feedback.",
+  "practice.next": "Next",
+  "practice.done": "Practice check finished",
+  "practice.result": "Practice {score}/100 · {assessed}/4 assessed",
+  "practice.doneBody": "Situations this app cannot judge for your household stay unassessed; they are not counted as wrong. You can practice freely in any exercise; a new check starts fresh.",
+  "practice.again": "Start a new check",
+  "practice.unavailable": "The practice check needs your home layout and a supported water situation."
 }
