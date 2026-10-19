@@ -145,6 +145,8 @@ public struct SimulationSession: Codable, Sendable {
                         guard let personID = command.target, let p = run.household.people.firstIndex(where: { $0.id == personID }),
                               let dest = command.value, let home = run.home else { throw SessionError.invalidCommand }
                         let person = run.household.people[p]
+                        let currentObjective=run.currentRoutes[personID]?.request
+                        let objective=(currentObjective?.purpose == .interiorShelter || currentObjective?.purpose == .higherRefuge) ? currentObjective : nil
                         let route = EgressPlanner().plan(RouteRequest(personID: personID, startSpaceID: run.startSpace(for: person), mobility: run.mobility(for: person),
                             exclusions: ScenarioExclusions(blockedSpaceIDs: run.spatialState?.affectedSpaceIDs ?? [], blockedPortalIDs: run.spatialState?.affectedPortalIDs ?? []), purpose: .helperReach, destinationSpaceID: dest), in: home)
                         run.currentRoutes[personID] = route
@@ -153,7 +155,12 @@ public struct SimulationSession: Codable, Sendable {
                             var options = run.input.effectiveSpatialOptions
                             options.startingSpaceIDs[personID] = dest
                             run.input.spatialOptions = options
-                            run.currentRoutes[personID] = EgressPlanner().plan(RouteRequest(personID:personID,startSpaceID:dest,mobility:run.mobility(for:person),exclusions:route.request.exclusions),in:home)
+                            run.currentRoutes[personID] = EgressPlanner().plan(RouteRequest(personID:personID,startSpaceID:dest,mobility:run.mobility(for:person),exclusions:route.request.exclusions,
+                                purpose:objective?.purpose ?? .outdoorEgress,destinationSpaceID:objective?.destinationSpaceID),in:home)
+                        } else if let objective {
+                            // An infeasible move does not turn a recorded shelter/refuge objective
+                            // into the attempted helper-reach route or an exterior escape overlay.
+                            run.currentRoutes[personID]=EgressPlanner().plan(objective,in:home)
                         }
                     default: throw SessionError.invalidCommand
                     }

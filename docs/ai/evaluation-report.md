@@ -9,7 +9,7 @@ This is an implemented, synthetic-tested integration package, **not a production
 | Check | Actual result |
 |---|---|
 | Existing baseline Core | 333 tests passed before changes |
-| Final Core | 383 tests / 68 suites passed, Swift 6.2 Docker |
+| Final Core | 384 tests / 69 suites passed, Swift 6.2 Docker |
 | Vault | 36 tests / 7 suites passed, including legacy/additive encrypted sidecar roundtrip |
 | Private gateway | 39 tests / 5 files passed; TypeScript check passed |
 | Unchanged public API | 68 tests passed; TypeScript check passed |
@@ -136,3 +136,13 @@ The actual synthetic-only HTTP /v1/intents route also passed a live request and 
 ## Follow-up: committed helper consequences
 
 Current exercise helper assignments now drive deterministic helper-to-person reach and dependency inspection; reassignment from an unreachable helper to a reachable helper resolves the current reach requirement while retaining history. Shared simultaneous capacity remains explicitly unknown, with no invented clinical/load limit or scoring rule. See [helper reach](helper-reach.md) and retained synthetic helper-reassignment.json. Core passed **383 tests / 68 suites**, the headless paired assignment fixture passed, and original adaptive/spatial plus final-policy pipeline receipts still replay exactly. Native and live-model helper interaction remain pending.
+
+## Follow-up: consistency and localization diagnostics
+
+The live [council consistency probe](council-invariance.md) completed eight variations of one development case in 32 calls (estimated $0.06329825). Raw council criterion agreement ranged 42.86%–78.57%, with eight correlated critical false-pass observations across variants. Reconciled accepted assessments and deterministic scores stayed identical in every variant. This is not a statistical bias estimate, independent-household validation or proof of council quality. Spanish/Vietnamese variations affect evidence notes only, not the entire localized assessment.
+
+Reanalysis of the retained six synthetic vision cases now reports localization (no new model calls). Routine Flash-lite: positive category recall 3/4, localization at IoU>=0.5 2/4, false-positive negatives 2/2. Stronger Flash: category recall 4/4, localization 3/4, false-positive negatives 1/2. Four positives are variations of one diagram, not independent real rooms. See vision-localization.json; image boxes cannot establish home-graph association or route safety.
+
+The movement audit corrected a shelter/refuge overlay regression: after a committed interior move, the host preserves the recorded interior objective instead of replacing it with exterior egress; an infeasible move preserves that objective too. Core passed **384 tests / 69 suites**, including tornado shelter movement/replay and 24 frozen authored-run hashes. Native scene animation and failed-attempt feedback remain phone checks.
+
+Inventory-image follow-up used three programmatic synthetic bottle-label diagrams in four cases: readable 2 L, unreadable quantity, duplicate images of one physical bottle, and adversarial instructions printed in the image. All four matched the development expectations in four live Gemini calls; unknown stayed null, the duplicate counted once, and injected text did not change the quantity. inventory-image-evaluation.json retains the outputs/usage; make-inventory-image-fixtures.py reproduces inputs. This is deliberately simple diagram/OCR evidence, not real packaging, expiry-label, camera or household-photo validation. Confirmation remains required before ledger facts change.

@@ -46,3 +46,5 @@ Director policy/spatial checks: `pnpm exec tsx scripts/spatial-policy-eval.ts`, 
 Local pre-feedback practice capture: `pnpm exec tsx scripts/practice-capture-eval.ts`; integration and migration in `../../docs/ai/practice-capture.md`. This runs against Swift and does not call Gemini or send local AI state to the gateway.
 
 Optional submitted action interpretation: `/v1/intents` (synthetic-only); `scripts/intent-eval.ts`, `DRYRUN_LIVE_INTENT=1` for real synthetic Gemini and `DRYRUN_REPLAY_INTENT=1` for retained replay. See `../../docs/ai/user-action-intents.md`. Keep exact source/input binding and commit through Swift before any director continuation.
+
+Additional diagnostics: `scripts/council-invariance-eval.ts` (32 live calls; run sequentially), `scripts/inventory-image-eval.ts` (four live synthetic-label cases), and `scripts/vision-localization-eval.ts` (offline reanalysis of retained boxes). Read evaluation-report.md for actual failures/limits; raw council and vision results are not accepted household facts.

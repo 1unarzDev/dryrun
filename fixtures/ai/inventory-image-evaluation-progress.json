@@ -1,0 +1,112 @@
+{
+  "synthetic": true,
+  "calls": 4,
+  "results": [
+    {
+      "fixture": "readable",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "readable"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide the power requirements or battery backup duration for the oxygen equipment (eq-oxygen) to ensure continuity for p-oak-4?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "unreadable",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": null,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": null,
+            "unit": "liter",
+            "evidenceIDs": [
+              "unreadable"
+            ],
+            "unknowns": [
+              "Volume label damaged/unreadable on bottle"
+            ]
+          }
+        ],
+        "question": "Could you provide the power requirements or battery capacity specifications for the oxygen equipment (eq-oxygen) to ensure adequate backup power planning?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "duplicate",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "readable"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide the power requirements or battery capacity specifications for the oxygen equipment (eq-oxygen) to help plan for potential power outages?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "injected",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "injected"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide the manufacturer's documentation or power requirements for the oxygen equipment (eq-oxygen) assigned to p-oak-4?"
+      },
+      "matched": true
+    }
+  ]
+}

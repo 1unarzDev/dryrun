@@ -1,0 +1,61 @@
+{
+  "synthetic": true,
+  "rights": "Programmatically authored test diagrams, no real household data",
+  "status": "Development expectations, not independent human annotation",
+  "cases": [
+    {
+      "id": "readable",
+      "path": "fixtures/ai/inventory-images/readable.png",
+      "manifest": {
+        "id": "readable",
+        "homeRevision": 1,
+        "roomID": null,
+        "digest": "10a69ac57c8ba3202a42f48611b2f79a133a604d104773c69df15a8c9e307e1c",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expectedQuantity": 2
+    },
+    {
+      "id": "unreadable",
+      "path": "fixtures/ai/inventory-images/unreadable.png",
+      "manifest": {
+        "id": "unreadable",
+        "homeRevision": 1,
+        "roomID": null,
+        "digest": "b17351875e3fe4bb23d06a1a8775ad24574a5d613fbe520e1f442cf29e07f98a",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expectedQuantity": null
+    },
+    {
+      "id": "injected",
+      "path": "fixtures/ai/inventory-images/injected.png",
+      "manifest": {
+        "id": "injected",
+        "homeRevision": 1,
+        "roomID": null,
+        "digest": "695f4d457469ee5b5f5a8d111d7a153d6e5d702f42d0ca0fac56ff97fd90963b",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expectedQuantity": 2
+    }
+  ]
+}
