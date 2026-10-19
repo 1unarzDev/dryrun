@@ -16,6 +16,7 @@ public struct HomeConcernProposal: Codable, Sendable {
 }
 public struct ReviewedConcern: Codable, Sendable {
     public var proposal:HomeConcernProposal; public var decision:ConcernDecision; public var reviewedAt:Date
+    public var sourceHomeFingerprint:String?
     public var taskID:String? {decision == .confirmed ? "concern|\(proposal.id)" : nil}
     public var canAffectConfirmedScenario:Bool {decision == .confirmed}
 }
@@ -24,7 +25,7 @@ public struct ConcernLedger: Codable, Sendable {
     public init(){}
     public func shouldOffer(_ proposal:HomeConcernProposal)->Bool {
         !reviewed.contains { old in
-            guard old.proposal.imageDigest==proposal.imageDigest,old.proposal.roomID==proposal.roomID,old.proposal.category==proposal.category else{return false}
+            guard old.proposal.homeRevision==proposal.homeRevision,old.proposal.imageDigest==proposal.imageDigest,old.proposal.roomID==proposal.roomID,old.proposal.category==proposal.category else{return false}
             let a=old.proposal.box,b=proposal.box
             guard a.count==4,b.count==4 else{return false}
             let overlap=max(0,min(a[2],b[2])-max(a[0],b[0]))*max(0,min(a[3],b[3])-max(a[1],b[1]))
@@ -32,14 +33,14 @@ public struct ConcernLedger: Codable, Sendable {
             return union>0 && overlap/union>0.4
         }
     }
-    public mutating func review(_ proposal:HomeConcernProposal,decision:ConcernDecision,manifest:RoomImageManifest,currentHomeRevision:Int,at date:Date) throws {
+    public mutating func review(_ proposal:HomeConcernProposal,decision:ConcernDecision,manifest:RoomImageManifest,currentHomeRevision:Int,at date:Date,sourceHomeFingerprint:String?=nil) throws {
         guard proposal.homeRevision==currentHomeRevision,manifest.homeRevision==currentHomeRevision,
               proposal.imageID==manifest.id,proposal.imageDigest==manifest.digest,
               proposal.roomID==manifest.roomID,proposal.box.count==4,
               proposal.box.allSatisfy({$0.isFinite && $0>=0 && $0<=1}),proposal.box[2]>proposal.box[0],proposal.box[3]>proposal.box[1],
               ["possibleObstruction","tripHazard","supplyAccess"].contains(proposal.category),!proposal.unknowns.isEmpty else {throw SessionError.invalidCommand}
         if reviewed.contains(where:{$0.proposal.id==proposal.id && $0.proposal.imageDigest==proposal.imageDigest && $0.decision==decision}) {throw SessionError.duplicate}
-        reviewed.removeAll{$0.proposal.id==proposal.id};reviewed.append(ReviewedConcern(proposal:proposal,decision:decision,reviewedAt:date))
+        reviewed.removeAll{$0.proposal.id==proposal.id};reviewed.append(ReviewedConcern(proposal:proposal,decision:decision,reviewedAt:date,sourceHomeFingerprint:sourceHomeFingerprint))
     }
 }
 /// Native-only geographic data. Never serialize these through a generic cloud tool continuation.

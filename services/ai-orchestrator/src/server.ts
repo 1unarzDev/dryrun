@@ -1,3 +1,4 @@
+import {normalizeHomeReview} from './home-review.js';
 import {IntentInterpreter,intentRequest} from './intents.js';
 import {PublicEvidenceTools} from './evidence.js';
 import {createServer} from 'node:http';
@@ -26,7 +27,7 @@ createServer(async(req,res)=>{
  const key=owner+':'+r.requestID;if(seen.has(key)||seen.size>=100)throw new Error('replay_or_quota');seen.add(key);
  const controller=new AbortController();req.on('aborted',()=>controller.abort());res.on('close',()=>{if(!res.writableEnded)controller.abort()});
  const proposal=r.role==='council'?await features.council(r.context,controller.signal):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(60000)]),r.images);
- res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,proposal}));return;
+ res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,proposal,...(r.role==='home'?{reviewProposals:normalizeHomeReview(proposal,r.context)}:{})}));return;
  }
  const result=req.url==='/v1/operations'?await gateway.start(owner,input):req.url==='/v1/continue'?await gateway.resume(owner,input):req.url==='/v1/cancel'&&typeof input==='object'&&input!==null&&'token'in input&&typeof input.token==='string'?gateway.cancel(owner,input.token):{status:'rejected',reason:'unknown_endpoint'};
  res.end(JSON.stringify(result));}catch{res.statusCode=400;res.end(JSON.stringify({status:'rejected',reason:'invalid_or_unauthorized_request'}));}

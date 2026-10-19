@@ -39,7 +39,7 @@ public extension SimulationSession {
                 guard let home=initial.home else {throw SessionError.invalidCommand}
                 routeRequest.exclusions.blockedSpaceIDs=Array(Set(routeRequest.exclusions.blockedSpaceIDs+(receipt.snapshot.spatialState?.affectedSpaceIDs ?? []))).sorted()
                 routeRequest.exclusions.blockedPortalIDs=Array(Set(routeRequest.exclusions.blockedPortalIDs+(receipt.snapshot.spatialState?.affectedPortalIDs ?? []))).sorted()
-                result.route=EgressPlanner().plan(routeRequest,in:home)
+                result.route=ConcernRoutePlanner(portalIDs:concernSeed?.selectedPortalIDs ?? []).plan(routeRequest,in:home)
             }
         case .inspectDependencies:result.dependencies=dependencyInspection(receipt:receipt)
         case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory)

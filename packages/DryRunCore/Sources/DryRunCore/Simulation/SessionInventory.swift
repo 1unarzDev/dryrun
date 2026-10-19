@@ -69,7 +69,7 @@ struct SessionSupplyLedger {
                     if run.spatialState?.affectedSpaceIDs.contains(location)==true {access=false}
                     else if let home=run.home,home.space(location) != nil {
                         let reachable=reachableLocations[location] ?? run.household.people.contains{person in
-                            EgressPlanner().plan(RouteRequest(personID:person.id,startSpaceID:run.startSpace(for:person),mobility:run.mobility(for:person),exclusions:ScenarioExclusions(blockedSpaceIDs:run.spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:run.spatialState?.affectedPortalIDs ?? []),purpose:.helperReach,destinationSpaceID:location),in:home).primary != nil
+                            run.planner.plan(RouteRequest(personID:person.id,startSpaceID:run.startSpace(for:person),mobility:run.mobility(for:person),exclusions:ScenarioExclusions(blockedSpaceIDs:run.spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:run.spatialState?.affectedPortalIDs ?? []),purpose:.helperReach,destinationSpaceID:location),in:home).primary != nil
                         }
                         reachableLocations[location]=reachable
                         if !reachable {access=false}

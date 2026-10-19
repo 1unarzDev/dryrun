@@ -5,7 +5,7 @@ public enum PracticeEvaluator {
     public static func evaluate(competencyID:String,actionID:String,session:SimulationSession,library:ScenarioLibrary) throws -> PracticeAnswer {
         guard let index=session.commits.firstIndex(where:{$0.id==actionID && $0.actor=="user"}),
               session.commits[index].commands.count==1 else {throw SessionError.invalidCommand}
-        var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy)
+        var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)
         for commit in session.commits.prefix(index) {try prefix.commit(commit,library:library)}
         let before=try prefix.query(library:library)
         let action=session.commits[index]

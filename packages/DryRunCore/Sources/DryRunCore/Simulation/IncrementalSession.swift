@@ -46,16 +46,17 @@ public struct SimulationSession: Codable, Sendable {
     public let id: String
     public let initial: RehearsalInput
     public let inventory:SessionInventorySeed?
+    public let concernSeed:ConcernExerciseSeed?
     public let directorPolicy:DirectorPolicy?
     public private(set) var commits: [SessionCommit]
-    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil,directorPolicy:DirectorPolicy?=nil) {
-        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory;self.directorPolicy=directorPolicy; self.commits = []
+    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil,directorPolicy:DirectorPolicy?=nil,concernSeed:ConcernExerciseSeed?=nil) {
+        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory;self.directorPolicy=directorPolicy;self.concernSeed=concernSeed; self.commits = []
     }
     /// New native exercises freeze an explicit policy. The initializer also decodes legacy snapshots
     /// whose absent policy must keep their historical replay behavior.
-    public static func initialize(id:String,initial:RehearsalInput,library:ScenarioLibrary,inventory:SessionInventorySeed?=nil)throws->SimulationSession {
+    public static func initialize(id:String,initial:RehearsalInput,library:ScenarioLibrary,inventory:SessionInventorySeed?=nil,concernSeed:ConcernExerciseSeed?=nil)throws->SimulationSession {
         guard let scenario=library.scenario(initial.scenarioID),scenario.version==initial.scenarioVersion else {throw SessionError.invalidCommand}
-        let session=SimulationSession(id:id,initial:initial,inventory:inventory,directorPolicy:.reviewed(scenario))
+        let session=SimulationSession(id:id,initial:initial,inventory:inventory,directorPolicy:.reviewed(scenario),concernSeed:concernSeed)
         _=try session.query(library:library)
         return session
     }
@@ -80,10 +81,11 @@ public struct SimulationSession: Codable, Sendable {
     public func query(library: ScenarioLibrary) throws -> SessionReceipt {
         guard commits.count<=128, let scenario = library.scenario(initial.scenarioID), scenario.version == initial.scenarioVersion else { throw SessionError.invalidCommand }
         try directorPolicy?.validate(in:scenario)
+        try concernSeed?.validate(home:initial.home,scenarioID:initial.scenarioID)
         let horizon=min(scenario.durationMinutes,directorPolicy?.schedulingHorizonMinutes ?? scenario.durationMinutes)
         var directorState=directorPolicy.map{_ in DirectorRuntimeState(activeIncidentCount:0)}
         let prepared = InterventionApplier.apply(initial.interventions, household: initial.household, home: initial.home)
-        var run = RunState(scenario: scenario, input: initial, household: prepared.0, home: prepared.1, planner: EgressPlanner())
+        var run = RunState(scenario: scenario, input: initial, household: prepared.0, home: prepared.1, planner:ConcernRoutePlanner(portalIDs:concernSeed?.selectedPortalIDs ?? []))
         var supplies=try inventory.map(SessionSupplyLedger.init)
         try supplies?.synchronize(&run)
         try SessionTransitionReducer.initialize(&run)
@@ -147,7 +149,7 @@ public struct SimulationSession: Codable, Sendable {
                         let person = run.household.people[p]
                         let currentObjective=run.currentRoutes[personID]?.request
                         let objective=(currentObjective?.purpose == .interiorShelter || currentObjective?.purpose == .higherRefuge) ? currentObjective : nil
-                        let route = EgressPlanner().plan(RouteRequest(personID: personID, startSpaceID: run.startSpace(for: person), mobility: run.mobility(for: person),
+                        let route = run.planner.plan(RouteRequest(personID: personID, startSpaceID: run.startSpace(for: person), mobility: run.mobility(for: person),
                             exclusions: ScenarioExclusions(blockedSpaceIDs: run.spatialState?.affectedSpaceIDs ?? [], blockedPortalIDs: run.spatialState?.affectedPortalIDs ?? []), purpose: .helperReach, destinationSpaceID: dest), in: home)
                         run.currentRoutes[personID] = route
                         if route.primary != nil {
@@ -155,12 +157,12 @@ public struct SimulationSession: Codable, Sendable {
                             var options = run.input.effectiveSpatialOptions
                             options.startingSpaceIDs[personID] = dest
                             run.input.spatialOptions = options
-                            run.currentRoutes[personID] = EgressPlanner().plan(RouteRequest(personID:personID,startSpaceID:dest,mobility:run.mobility(for:person),exclusions:route.request.exclusions,
+                            run.currentRoutes[personID] = run.planner.plan(RouteRequest(personID:personID,startSpaceID:dest,mobility:run.mobility(for:person),exclusions:route.request.exclusions,
                                 purpose:objective?.purpose ?? .outdoorEgress,destinationSpaceID:objective?.destinationSpaceID),in:home)
                         } else if let objective {
                             // An infeasible move does not turn a recorded shelter/refuge objective
                             // into the attempted helper-reach route or an exterior escape overlay.
-                            run.currentRoutes[personID]=EgressPlanner().plan(objective,in:home)
+                            run.currentRoutes[personID]=run.planner.plan(objective,in:home)
                         }
                     default: throw SessionError.invalidCommand
                     }
@@ -193,12 +195,17 @@ public struct SimulationSession: Codable, Sendable {
                 }
             }
         }
+        if let concernSeed,var scene=run.spatialState {
+            scene.affectedPortalIDs=Array(Set(scene.affectedPortalIDs+concernSeed.selectedPortalIDs)).sorted()
+            scene.assumption += " Additional user-selected opening exclusions come from a reviewed concern; this exercise does not project image pixels or certify the obstruction."
+            run.spatialState=scene
+        }
         if directorPolicy != nil {run.spatialState?.routes=run.currentRoutes.keys.sorted().compactMap{run.currentRoutes[$0]}}
         let assistance=directorPolicy != nil && commits.contains(where:{$0.commands.contains(where:{$0.kind=="assignHelper"})}) ? run.sessionAssistance() : nil
         run.snapshot()
         let snapshot = run.snapshots.last!
         let routes = run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }
-        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory,directorPolicy:directorPolicy,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance)))
+        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory,directorPolicy:directorPolicy,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance,concernSeed:concernSeed)))
         return SessionReceipt(sessionID: id, revision: revision, eventSequence: run.events.count, contextDigest: digest,
                               snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state,directorState:directorState,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance)
     }
@@ -206,7 +213,7 @@ public struct SimulationSession: Codable, Sendable {
         SessionCommit(id: "fallback-\(revision)", actor: "director", baseRevision: revision, commands: [SessionCommand(kind: "requestDecision")])
     }
 }
-private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed?;var directorPolicy:DirectorPolicy?;var closedPortalIDs:[String]?;var assistance:[ExerciseAssistance]? }
+private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed?;var directorPolicy:DirectorPolicy?;var closedPortalIDs:[String]?;var assistance:[ExerciseAssistance]?;var concernSeed:ConcernExerciseSeed? }
 public enum StableDigest {
     /// Stable non-cryptographic replay identity; gateway uses SHA-256 for authorization/token binding.
     public static func of(_ data: Data) -> String {

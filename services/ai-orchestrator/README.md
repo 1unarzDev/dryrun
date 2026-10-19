@@ -48,3 +48,5 @@ Local pre-feedback practice capture: `pnpm exec tsx scripts/practice-capture-eva
 Optional submitted action interpretation: `/v1/intents` (synthetic-only); `scripts/intent-eval.ts`, `DRYRUN_LIVE_INTENT=1` for real synthetic Gemini and `DRYRUN_REPLAY_INTENT=1` for retained replay. See `../../docs/ai/user-action-intents.md`. Keep exact source/input binding and commit through Swift before any director continuation.
 
 Additional diagnostics: `scripts/council-invariance-eval.ts` (32 live calls; run sequentially), `scripts/inventory-image-eval.ts` (four live synthetic-label cases), and `scripts/vision-localization-eval.ts` (offline reanalysis of retained boxes). Read evaluation-report.md for actual failures/limits; raw council and vision results are not accepted household facts.
+
+Home review transport and portable task/scenario links: `scripts/concern-eval.ts`; read `../../docs/ai/concern-integration.md`. The fixture reuses retained synthetic Gemini vision output and real Swift route computations. New home responses include reviewProposals bound to exact manifest digests/home revisions; confirmation and hypothetical opening selection stay in the local host.

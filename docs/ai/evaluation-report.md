@@ -9,9 +9,9 @@ This is an implemented, synthetic-tested integration package, **not a production
 | Check | Actual result |
 |---|---|
 | Existing baseline Core | 333 tests passed before changes |
-| Final Core | 384 tests / 69 suites passed, Swift 6.2 Docker |
+| Final Core | 387 tests / 70 suites passed, Swift 6.2 Docker |
 | Vault | 36 tests / 7 suites passed, including legacy/additive encrypted sidecar roundtrip |
-| Private gateway | 39 tests / 5 files passed; TypeScript check passed |
+| Private gateway | 41 tests / 6 files passed; TypeScript check passed |
 | Unchanged public API | 68 tests passed; TypeScript check passed |
 | Frozen rubric cases | 60/60 predicate/arithmetic cases passed: 40 development, 20 locked holdout |
 | Recorded live-session replay | Both all-use and essential-only logs recomputed their original digest/snapshot offline |
@@ -146,3 +146,7 @@ Reanalysis of the retained six synthetic vision cases now reports localization (
 The movement audit corrected a shelter/refuge overlay regression: after a committed interior move, the host preserves the recorded interior objective instead of replacing it with exterior egress; an infeasible move preserves that objective too. Core passed **384 tests / 69 suites**, including tornado shelter movement/replay and 24 frozen authored-run hashes. Native scene animation and failed-attempt feedback remain phone checks.
 
 Inventory-image follow-up used three programmatic synthetic bottle-label diagrams in four cases: readable 2 L, unreadable quantity, duplicate images of one physical bottle, and adversarial instructions printed in the image. All four matched the development expectations in four live Gemini calls; unknown stayed null, the duplicate counted once, and injected text did not change the quantity. inventory-image-evaluation.json retains the outputs/usage; make-inventory-image-fixtures.py reproduces inputs. This is deliberately simple diagram/OCR evidence, not real packaging, expiry-label, camera or household-photo validation. Confirmation remains required before ledger facts change.
+
+## Follow-up: concern review integration
+
+The [concern transaction](concern-integration.md) now validates source home/image/task/scenario identity, persists review atomically, deduplicates repeated observations and exposes confirmed preparation links. Explicit user-selected adjacent opening IDs can seed a fresh hypothetical exercise; uncertain evidence requires separate permission. Pixel boxes never become geometry. Routes, movement, helper reach, supply access and spatial overlays share the same selected exclusions; source facts and score predicates stay unchanged. The headless fixture uses a retained live synthetic vision observation and passes review → task link → hypothetical route exclusion → scene synchronization → exact replay → dismissal. Core **387 tests / 70 suites**, gateway **41 tests / 6 files**, and typechecking passed. Legacy reviews need source re-review; native UI/photo/opening-selection and real-data validation remain pending.

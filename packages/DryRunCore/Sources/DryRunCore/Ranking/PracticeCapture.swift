@@ -100,7 +100,7 @@ public extension IntegratedAIState {
                   Set(observations.map(\.actionID)).count==observations.count,
                   observations.map(\.acceptedRevision)==observations.map(\.acceptedRevision).sorted(),
                   observations.map(\.competencyID)==Array(Self.practiceOrder(attempt.variantID).prefix(observations.count)) else {throw SessionError.invalidCommand}
-            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy)
+            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)
             var found=0
             let initialReceipt=try prefix.query(library:library)
             guard source.startingRevision>=0,source.startingRevision<=session.revision else {throw SessionError.invalidCommand}
@@ -130,9 +130,10 @@ public extension IntegratedAIState {
         var initial:RehearsalInput
         var inventory:SessionInventorySeed?
         var directorPolicy:DirectorPolicy?
+        var concernSeed:ConcernExerciseSeed?
     }
     private static func practiceSourceDigest(_ session:SimulationSession)throws->String {
-        StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy)))
+        StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)))
     }
     private static func practiceOrder(_ variantID:String)->[String] {
         switch variantID {
