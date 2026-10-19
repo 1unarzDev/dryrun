@@ -52,6 +52,13 @@ struct HelpTabView: View {
                     ForEach(contacts) { c in PhoneRow(label: "\(c.alias) · \(l("ui.contact.role.\(c.role.rawValue)"))", number: c.phone ?? "") }
                 }
             }
+            if model.household != nil {
+                Section {
+                    CountyPicker(selection: Binding(get: { regionID }, set: { new in
+                        Task { await model.updateHousehold { $0.regionID = new } }
+                    }))
+                } footer: { Text(l("ui.county.why")) }
+            }
             if PublicDataPolicy.isAllowedRegionID(regionID) {
                 AlertsSection(regionID: regionID)
             } else {
@@ -112,7 +119,6 @@ struct ResourceRow: View {
                 // Phone numbers are always shown as text so they remain useful offline and in print.
                 HStack {
                     Text(phone).font(.callout.monospacedDigit()).textSelection(.enabled)
-                    if let note = resource.contact.phoneNote { Text(note).font(.caption).foregroundStyle(.secondary) }
                     Spacer()
                     if let url = PhoneLink.url(phone) {
                         Link(destination: url) { Label(l("common.help.call"), systemImage: "phone") }
@@ -122,6 +128,8 @@ struct ResourceRow: View {
                     }
                 }
             }
+            // Shown with or without a number: some notes are the instructions (e.g. "your physician submits the form").
+            if let note = resource.contact.phoneNote { Text(note).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
             if let site = resource.contact.url, let url = URL(string: site) {
                 Link(destination: url) { Label(l("common.help.website"), systemImage: "safari") }.font(.callout)
                     .accessibilityLabel(l("help.action.websiteFor", ["name": resource.name]))
@@ -229,5 +237,25 @@ private struct AlertRow: View {
                 .font(.caption).foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// "Your county": the only way a household gets local emergency numbers. Apple's place names are never trusted as
+/// coverage, so the family picks from the counties Dry Run has a reviewed directory for. Tarrant is listed first.
+struct CountyPicker: View {
+    @Environment(AppModel.self) private var model
+    @Binding var selection: String
+
+    var body: some View {
+        let l = model.localizer
+        let counties = (model.content?.regionPacks.flatMap(\.regions) ?? [])
+            .filter { $0.kind == "county" && PublicDataPolicy.isAllowedRegionID($0.id) }
+            .sorted { ($0.id == "48439" ? 0 : 1, $0.name) < ($1.id == "48439" ? 0 : 1, $1.name) }
+        Picker(l("ui.county.label"), selection: $selection) {
+            Text(l("ui.county.notSet")).tag("")
+            ForEach(counties) { Text($0.name).tag($0.id) }
+            if !PublicDataPolicy.isAllowedRegionID(selection), !selection.isEmpty { Text(l("ui.county.notSet")).tag(selection) }
+        }
+        .accessibilityIdentifier("county.picker")
     }
 }

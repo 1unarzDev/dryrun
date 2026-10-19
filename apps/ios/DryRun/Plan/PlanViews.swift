@@ -38,6 +38,7 @@ struct PlanTabView: View {
                         .accessibilityIdentifier("plan.share")
                     NavigationLink { HelpTabView() } label: { Label(t("official"), systemImage: "building.columns") }
                         .frame(minHeight: Theme.minTap)
+                        .accessibilityIdentifier("plan.help")
                     if let saved = model.savedPlan, !saved.scenarioIDs.isEmpty {
                         NavigationLink { PlanDocumentView(doc: saved) } label: {
                             Label(l("common.plan.viewSaved", ["count": "\(saved.pages.count)"]), systemImage: "doc.richtext")

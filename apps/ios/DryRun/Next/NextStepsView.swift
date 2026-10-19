@@ -7,6 +7,8 @@ struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
     @State private var finishSheet: FinishSheet?
+    @State private var briefing: FamilyBriefingService.Briefing?
+    @State private var writingBriefing = false
     var openRehearse: () -> Void = {}
 
     /// The card essentials a new household fills in from Prepare, each in its focused editor.
@@ -29,6 +31,7 @@ struct NextStepsView: View {
                 quickActions
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
+                    familyBriefing(summary)
                     toDo(summary)
                     questions(summary)
                     recorded(summary)
@@ -56,6 +59,62 @@ struct NextStepsView: View {
             }
         }
         .task(id: model.currentKey) { await model.refreshNextSteps() }
+        .task(id: briefingKey) { await writeBriefing() }
+    }
+
+    // MARK: For your family (optional, on-device)
+
+    private var topSteps: [NextStep] { Array((model.nextStepResults == nil ? [] : model.nextSteps?.toDo ?? []).prefix(PlanBriefing.maxSteps)) }
+
+    /// Rewritten only when the top steps, the household or the language change.
+    private var briefingKey: String {
+        "\(topSteps.map(\.id).joined(separator: ","))|\(model.household?.revision ?? 0)|\(model.locale)"
+    }
+
+    private func writeBriefing() async {
+        guard let h = model.household, !topSteps.isEmpty, FamilyBriefingService.canWrite(locale: model.locale) else {
+            briefing = nil; writingBriefing = false; return
+        }
+        defer { if !Task.isCancelled { writingBriefing = false } }
+        let l = model.localizer
+        let texts = topSteps.map { step -> FamilyBriefingService.StepText in
+            let r = step.recommendation
+            let values = r.localizedTemplateValues(household: h, localizer: l)
+            return .init(id: step.id, title: l(r.titleKey, values), why: l(r.whyKey, values))
+        }
+        let regionName = model.content?.region(h.regionID)?.name
+        writingBriefing = true
+        let result = await FamilyBriefingService.write(steps: texts, household: h, regionName: regionName, locale: model.locale)
+        guard !Task.isCancelled else { return }
+        writingBriefing = false
+        briefing = result
+    }
+
+    @ViewBuilder private func familyBriefing(_ summary: NextStepsSummary) -> some View {
+        let l = model.localizer
+        if writingBriefing || briefing != nil {
+            SectionCard(title: l("ui.brief.title"), systemImage: "sparkles") {
+                if writingBriefing && briefing == nil {
+                    HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
+                }
+                if let overview = briefing?.overview { Text(overview).font(.body) }
+                ForEach(topSteps.filter { briefing?.notes[$0.id] != nil }) { step in
+                    let r = step.recommendation
+                    NavigationLink(value: step) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.callout.weight(.semibold))
+                            Text(briefing?.notes[step.id] ?? "").font(.callout).foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                Text(l("ui.brief.note")).font(.caption).foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("next.briefing")
+        }
     }
 
     /// Three concrete steps to a card worth printing: a contact with a phone number and the two meeting places.

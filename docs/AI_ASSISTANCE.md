@@ -131,3 +131,15 @@ on NearbyDiscovery's task-group closure; all native app/UI/device checks remain 
 LiDAR iPhone Pro and signing account will be available on the existing Mac; no device model, OS or test result
 is invented. Source content was versioned2026.10.2 and fictional portable references regenerated/audited;
 these remain interim reference designs for Claude. No messages were sent to a Claude session or third party.
+
+## On-device LLM and Tarrant County pass (2026-10-18)
+
+Claude Opus 5.5 (Claude Code, owner's Mac, worktree branch `worktree-llm-tarrant-polish`) wrote: `HouseholdIntake`
+(proposal type, EN/ES/VI keyword reader, merge rules) and `PlanBriefing` (redaction, family facts, acceptance) in
+DryRunCore with tests; the app's `IntakeAssistant`, `FamilyBriefingService`, `DescribeHouseholdSection`/review sheet,
+"For your family" card, County picker and resource-note fix; 26 EN/ES/VI strings (ES/VI are AI drafts); and seven
+Tarrant County resources quoted from official pages fetched on 2026-10-18 (Tarrant County OEM and Tarrant Ready,
+Oncor outage line and critical-care rule text, Atmos emergency line, Fort Worth water and alert status). It also
+committed the earlier first-run pass by the Xcode agent after correcting its address-privacy copy. The model's
+actual on-device output quality has not been measured with real families; no human reviewed the resources or
+translations.

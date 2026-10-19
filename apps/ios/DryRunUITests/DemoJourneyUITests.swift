@@ -49,6 +49,16 @@ final class DemoJourneyUITests: XCTestCase {
     private func hasText(_ text: String, in app: XCUIApplication) -> Bool {
         app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch.waitForExistence(timeout: 5)
     }
+    /// Lazy list rows exist only once scrolled near, so look while scrolling down.
+    private func scrollToText(_ text: String, in app: XCUIApplication) -> Bool {
+        let match = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+        for _ in 0..<25 {
+            if match.exists { return true }
+            scroll(app, up: true)
+        }
+        let shot = XCTAttachment(screenshot: app.screenshot()); shot.lifetime = .keepAlways; add(shot)
+        return match.exists
+    }
     private func openPlan(_ app: XCUIApplication) {
         app.tabBars.buttons.element(boundBy: 2).tap()
         for _ in 0..<6 { app.swipeDown() }
@@ -81,6 +91,42 @@ final class DemoJourneyUITests: XCTestCase {
         XCTAssertTrue(hasText("Example trusted contact", in: app))
         tap("card.share", in: app)
         XCTAssertTrue(element("pdf.preview", in: app).waitForExistence(timeout: 15))
+    }
+
+    /// "Describe your household" → review → add; then County → Tarrant shows county help. Works with or without
+    /// Apple Intelligence on the host (model or keyword reader).
+    func testDescribeHouseholdReviewThenTarrantCountyHelp() {
+        let app = launch()
+        XCTAssertTrue(app.buttons["onboarding.create"].waitForExistence(timeout: 20))
+        app.buttons["onboarding.create"].tap()
+        let text = reveal("intake.text", in: app)
+        XCTAssertTrue(text.waitForExistence(timeout: 10))
+        text.tap()
+        text.typeText("My mom lives with us and uses oxygen. We rent an apartment and have a dog.")
+        if app.toolbars.buttons["Done"].exists { app.toolbars.buttons["Done"].tap() }
+        tap("intake.read", in: app)
+        if !element("intake.add", in: app).waitForExistence(timeout: 60) {
+            let shot = XCTAttachment(screenshot: app.screenshot()); shot.lifetime = .keepAlways; add(shot)
+            XCTFail("No proposal to review")
+            return
+        }
+        XCTAssertTrue(hasText("Oxygen concentrator", in: app))
+        XCTAssertTrue(hasText("Dog", in: app))
+        // The model once proposed a wheelchair nobody mentioned; grounding must keep that off the review sheet.
+        XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", "wheelchair")).firstMatch.exists)
+        tap("intake.add", in: app)
+        XCTAssertTrue(hasText("Mother", in: app), "Added person's relationship is shown under the name")
+        tap("county.picker", in: app)
+        let tarrant = app.buttons["Tarrant County"].firstMatch
+        XCTAssertTrue(tarrant.waitForExistence(timeout: 5))
+        tarrant.tap()
+        tap("setup.finishLater", in: app)
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15))
+        openPlan(app)
+        tap("plan.help", in: app)
+        XCTAssertTrue(scrollToText("Tarrant County Emergency Management", in: app))
+        XCTAssertTrue(scrollToText("Tarrant Ready Alerts", in: app))
+        XCTAssertTrue(scrollToText("888-313-4747", in: app))
     }
 
     func testPersonalLayoutAbsentShowsManualHomePath() {

@@ -136,6 +136,7 @@ struct HouseholdSetupView: View {
     @State private var resolvingAddress = false
     /// Which create-form field has the keyboard. The floating Save bar hides while typing so it never covers a field.
     @FocusState private var focus: Field?
+    @State private var intakeReview: DescribeHouseholdSection.Review?
 
     enum Step: Int, CaseIterable { case area, people, medical, backup, home, contacts, travel }
     enum Field: Hashable { case name, person(Int), contactName, contactPhone, address, unit }
@@ -147,19 +148,25 @@ struct HouseholdSetupView: View {
             if mode == .create {
                 // Short on purpose: a name is enough. The one extra ask is a contact, because a card without a
                 // phone number is not useful to anyone. Everything else is reachable from Prepare afterwards.
+                // Optional fastest path: describe the household once and confirm what was understood.
+                DescribeHouseholdSection(draft: $draft, review: $intakeReview)
                 Section {
                     TextField(l("family.name"), text: $draft.people[0].alias)
                         .textContentType(.givenName)
                         .focused($focus, equals: .name)
                         .accessibilityIdentifier("setup.name")
+                    personSummary(draft.people[0])
                     ForEach(Array(draft.people.indices.dropFirst()), id: \.self) { i in
-                        TextField(l("family.name"), text: $draft.people[i].alias)
+                        TextField(draft.people[i].relationship.map { DisplayNames.name($0.rawValue, localizer: l) } ?? l("family.name"),
+                                  text: $draft.people[i].alias)
                             .focused($focus, equals: .person(i))
+                        personSummary(draft.people[i])
                     }
                     Button(l("family.add"), systemImage: "person.badge.plus") {
                         draft.people.append(Person(id: UUID().uuidString, alias: "", ageBand: .unknown))
                     }
                 } header: { Text(l("family.you")) } footer: { Text(l("ui.setup.nameHint")) }
+                addedFromDescription
                 Section {
                     TextField(l("ui.contact.name"), text: $draft.contacts[0].alias)
                         .textContentType(.name)
@@ -186,6 +193,11 @@ struct HouseholdSetupView: View {
         }
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
+        .sheet(item: $intakeReview) { review in
+            NavigationStack {
+                IntakeReviewView(proposal: review.proposal) { accepted in HouseholdIntake.apply(accepted, to: &draft) }
+            }
+        }
         .background(Theme.background)
         .navigationTitle(mode == .create ? l("ui.setup.titleCreate") : l("ui.setup.titleEdit"))
         .navigationBarTitleDisplayMode(.inline)
@@ -248,6 +260,50 @@ struct HouseholdSetupView: View {
         }
     }
 
+    /// "Mother · Older adult · Uses a wheelchair · Oxygen concentrator" under a name, once anything beyond the name is known.
+    @ViewBuilder private func personSummary(_ person: Person) -> some View {
+        let l = model.localizer
+        let parts = [person.relationship.map { DisplayNames.name($0.rawValue, localizer: l) },
+                     person.ageBand == .unknown ? nil : DisplayNames.name(person.ageBand.rawValue, localizer: l)].compactMap { $0 }
+            + person.needs.map { DisplayNames.name($0.rawValue, localizer: l) }
+            + draft.equipment.filter { $0.personID == person.id }.map { DisplayNames.equipment($0, localizer: l) }
+        if !parts.isEmpty {
+            Text(parts.joined(separator: " · ")).font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+
+    /// Equipment nobody was named for, pets and home details from "Describe your household", each removable here.
+    @ViewBuilder private var addedFromDescription: some View {
+        let l = model.localizer
+        let unassigned = draft.equipment.filter { e in e.personID == nil || !draft.people.contains { $0.id == e.personID } }
+        let housing = [draft.housing.homeType == .other ? nil : draft.housing.homeType.rawValue,
+                       draft.housing.tenancy == .other ? nil : draft.housing.tenancy.rawValue,
+                       draft.housing.heatingFuel == .unknown ? nil : draft.housing.heatingFuel.rawValue,
+                       draft.housing.cooling == .unknown ? nil : draft.housing.cooling.rawValue,
+                       draft.housing.waterSource == .unknown ? nil : draft.housing.waterSource.rawValue].compactMap { $0 }
+        if !unassigned.isEmpty || !draft.pets.isEmpty || !housing.isEmpty {
+            Section(l("ui.intake.alsoAdded")) {
+                ForEach(unassigned) { e in
+                    HStack {
+                        Text(DisplayNames.equipment(e, localizer: l))
+                        Spacer()
+                        Button(l("ui.remove"), role: .destructive) { draft.equipment.removeAll { $0.id == e.id } }.buttonStyle(.borderless)
+                    }
+                }
+                ForEach(draft.pets) { pet in
+                    HStack {
+                        Text("\(DisplayNames.name(pet.kind.rawValue, localizer: l)) × \(pet.count)")
+                        Spacer()
+                        Button(l("ui.remove"), role: .destructive) { draft.pets.removeAll { $0.id == pet.id } }.buttonStyle(.borderless)
+                    }
+                }
+                if !housing.isEmpty {
+                    Text(housing.map { DisplayNames.name($0, localizer: l) }.joined(separator: " · ")).font(.callout)
+                }
+            }
+        }
+    }
+
     private func dismissKeyboard() {
         focus = nil
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -264,6 +320,7 @@ struct HouseholdSetupView: View {
                 }
             }
             .onChange(of: draft.preferredLocale) { _, new in model.locale = new }
+            CountyPicker(selection: $draft.regionID)
             TextField(l("family.location"), text: Binding(get: { draft.privateLocation?.addressLine ?? "" }, set: { value in
                 let unit = draft.privateLocation?.unit
                 // Typing again replaces any earlier resolved pin: an old coordinate never stays with a new address.
@@ -478,7 +535,10 @@ struct HouseholdSetupView: View {
         // The draft keeps its blank rows (the form binds to them); only the candidate is cleaned up.
         var candidate = draft
         candidate.contacts.removeAll { $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && ($0.phone ?? "").isEmpty }
-        candidate.people.removeAll { !($0.isSelf ?? false) && $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && $0.ageBand == .unknown && $0.needs.isEmpty }
+        candidate.people.removeAll { person in
+            !(person.isSelf ?? false) && person.alias.trimmingCharacters(in: .whitespaces).isEmpty && person.ageBand == .unknown
+                && person.needs.isEmpty && person.relationship == nil && !candidate.equipment.contains { $0.personID == person.id }
+        }
         if candidate.displayName.isEmpty { candidate.displayName = model.localizer("family.personal") }
         saving = true
         Task {

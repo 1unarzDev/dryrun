@@ -472,6 +472,76 @@
       "reviewState": "needsReview",
       "category": "preparedness",
       "scopeNote": "Official page transcript says to call 911 when someone is in immediate danger or there is an emergency. Used only with explicit CA country metadata; does not extend Texas public coverage. Retrieved during implementation; no qualified human content endorsement."
+    },
+    {
+      "id": "S57",
+      "publisher": "Tarrant County",
+      "title": "Emergency Management",
+      "url": "https://www.tarrantcountytx.gov/en/emergency-management.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "Office line 817-884-1804, tcoem@tarrantcountytx.gov, 100 E. Weatherford, Fort Worth 76196, Mon-Fri 9am-5pm; names Tarrant Ready Alerts as the county's official mass notification system."
+    },
+    {
+      "id": "S58",
+      "publisher": "Tarrant County",
+      "title": "Tarrant Ready Emergency Notifications",
+      "url": "https://www.tarrantcountytx.gov/en/emergency-management/emergency-notifications.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "Opt-in, free; cell phone, landline, email, text. Sign-up button links to the county's Everbridge member portal. Page does not state alert languages."
+    },
+    {
+      "id": "S59",
+      "publisher": "Oncor Electric Delivery",
+      "title": "Frequently asked questions: outages",
+      "url": "https://www.oncor.com/content/oncorwww/us/en/home/faqs/faq-meter.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "Report outage 888.313.4747, 24/7; text OUT to 66267 if enrolled in MyOncor Alerts; text REG to 66267 to enroll. Downed lines: leave the area and call 911."
+    },
+    {
+      "id": "S60",
+      "publisher": "Oncor Electric Delivery / Public Utility Commission of Texas",
+      "title": "Chronic Condition, Critical Care, Critical Load (16 TAC §25.497 as posted by Oncor)",
+      "url": "https://www.oncor.com/content/oncorwww/us/en/home/about-us/regulatory/chronic-condition-critical-care-critical-load.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "Rule text (Oncor-hosted 25.497.pdf, fetched 2026-10-18): critical care designation = person dependent on an electric-powered medical device to sustain life, effective two years; chronic condition generally 90 days; physician submits the commission form to the TDU; qualifies for notification of interruptions and certain disconnection protections; designation does not guarantee the uninterrupted supply of electricity."
+    },
+    {
+      "id": "S61",
+      "publisher": "Atmos Energy",
+      "title": "Safety",
+      "url": "https://www.atmosenergy.com/safety",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "Site lists Emergency Contact 866.322.8667 and Customer Service 888.286.6700. The fetched page did not include gas-odor instructions; Dry Run's wording on leaving and calling from a safe place is not attributed to this page."
+    },
+    {
+      "id": "S62",
+      "publisher": "City of Fort Worth Water Department",
+      "title": "About us",
+      "url": "https://www.fortworthtexas.gov/departments/water/about-us",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "817-392-4477 (24/7 for water emergencies, select option 1); call center 7am-7pm Mon-Fri excluding city holidays."
+    },
+    {
+      "id": "S63",
+      "publisher": "City of Fort Worth",
+      "title": "Emergency alert system",
+      "url": "https://www.fortworthtexas.gov/residents/my-services/Emergency-Alerts",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "Notice dated 2025-11-13: vendor Crisis24 suspended access to the legacy CodeRED software; the city still sends Wireless Emergency Alerts and posts on social media (#FWOEM) and local media. Contact emo@fortworthtexas.gov. No replacement sign-up was named on 2026-10-18."
     }
   ]
 }

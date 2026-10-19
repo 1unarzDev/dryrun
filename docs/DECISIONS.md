@@ -81,3 +81,27 @@ Family card selection applies across exports; routes/clinical facts remain deter
 region allowlists, encrypted local storage, iOS18 minimum and honest exercise uncertainty remain constraints.
 Native proof is pending; source parsing is not SDK verification. Completion is subject/fingerprint scoped and
 follows saved factual records, never a generic button certifying compatibility or an escape path.
+
+## October 18 on-device language model decisions (owner request: tailor prep to each family with an LLM)
+
+19. **Only Apple's on-device model, never a cloud model.** `SystemLanguageModel` (Foundation Models, iOS 26+ with
+    Apple Intelligence) runs on the phone, works offline and costs nothing per family. The iOS 27 SDK's
+    `PrivateCloudComputeLanguageModel` and third-party APIs were not used: household and medical facts would leave the
+    phone, and an API key cannot be shipped safely in an app.
+20. **The ranker still decides; the model explains.** Which preparations matter, their order, every number, route and
+    instruction stay in DryRunCore (tested). The "For your family" card restates at most the top three steps. Inputs
+    are built by `PlanBriefing` (enum-derived household facts; names, custom labels and contacts redacted; no notes,
+    address or phone). Each sentence must pass `PlanBriefing.accept` (no new numbers, links, phone numbers, or
+    clinical/certainty/time words, stem-matched in EN/ES); otherwise the authored text stands alone. Vietnamese has no
+    validator yet, so the card is not shown in Vietnamese.
+21. **Supersedes part of the ExplanationService rule** ("person names and clinical notes are never model inputs, even
+    locally") for one feature only: "Describe your household". The family's own typed or dictated description is
+    read on-device into an `IntakeProposal` of existing structured choices (age band, relationship, assistance
+    needs, equipment purpose, pets, housing). The text is never stored; nothing is applied until the family reviews
+    each item; nothing is marked confirmed; existing entries are never overwritten. Without the model (older phones,
+    Apple Intelligence off, unsupported language) a tested EN/ES/VI keyword reader produces the same kind of proposal,
+    so the feature works on every supported iPhone.
+22. **County is chosen, not inferred.** Real households previously never received a region ID, so no county
+    resources were reachable. A County picker (setup and Help) is the only way to set it; Apple place names are still
+    not trusted as coverage. Tarrant County (48439) now has seven official resources (checked 2026-10-18,
+    `needsReview`).
