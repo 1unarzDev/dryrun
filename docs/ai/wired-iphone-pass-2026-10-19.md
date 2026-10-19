@@ -68,14 +68,23 @@ Evidence categories used below: **phone** (ran on the wired iPhone, screenshots 
   "until the next checkpoint at 24 hours" while the committed receipt stayed at minute 900.
 - Mac, live synthetic, native request: the Swift-built fire request first failed validation (defect 10); after
   `director/8` Gemini returned a valid `advanceIncident` + `advance` + `requestDecision` tool preview.
-- Phone: after Local Network permission, six `/v1/operations` requests reached the gateway (HTTP 200). From
-  14:24 UTC (the first phone run) both `gemini-3.1-flash-lite` and `gemini-3.8-flash` returned **503 "high demand"** for every call, so
-  every turn fell back to the on-device director, which the app stated on screen. **A completed Gemini-directed,
-  host-validated commit on the phone is still pending** (provider capacity, not app or contract).
+- Phone, first attempts: after Local Network permission, requests reached the gateway, but from 14:24 UTC both
+  models returned **503 "high demand"** and the original key was free tier (20/day on 3.8-flash, exhausted). Every
+  turn fell back to the on-device director, which the app stated on screen. Two replacement keys failed with 402
+  "prepayment credits depleted" (a billed AI Studio project is not funded by Google Cloud trial credit) and 403
+  "requests … are blocked" (API restriction). A free-tier key on a project without prepaid billing worked.
+- **Phone, live (19:16 UTC, `gemini-3.1-flash-lite`, fictional apartment complex, home fire, capped at 2 turns):
+  passed.** Family answered "get out" → Gemini's tool preview first proposed `startIncident` again, the `director/8`
+  repair corrected it to `advanceIncident` → the phone executed the preview through Core and continued → Gemini's
+  final proposal `advanceIncident(fire-origin@1), advance(2), requestDecision` was validated by
+  `DirectorProposal.commit` and saved. The scene showed each person's route via the shared corridor/stairs "still
+  clear in this exercise", "No separate second exit is modelled", and paused for the family. The same journey also
+  passed on the iOS 27 simulator (19:13 UTC). Gemini's narration is shown only as labelled unverified text.
+- Requests used: about 6 Gemini calls across both runs; well within the free allowance.
 
 ## Remaining, not done in this pass
 
-- Phone-side Gemini commit (above); feature roles (preparation, resources, home review, council) are not wired
+- Feature roles (preparation, resources, home review, council) are not wired
   natively; `/v1/features` is untouched on device.
 - Nearby-resource strategy with MapKit (outcome 2), image capture/redaction/concern review (outcome 4), site hazard
   editing UI (objective 4): not integrated natively in this pass.

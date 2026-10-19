@@ -110,13 +110,18 @@ final class DeviceAuditUITests: XCTestCase {
         if (toggle.value as? String) != "1" { toggle.switches.firstMatch.exists ? toggle.switches.firstMatch.tap() : toggle.tap() }
         shot("gemini-\(scenario)-00-optin", app)
         var turn = 1, geminiTurns = 0
-        for _ in 0..<7 {
+        // AIMAXTURNS keeps a free-tier run inside its daily request allowance (each turn is about 2-3 requests).
+        let maxGeminiTurns = Int(env["AIMAXTURNS"] ?? "") ?? 7
+        for _ in 0..<7 where geminiTurns < maxGeminiTurns {
             let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'"))
             if option.firstMatch.exists {
                 // Vary the family's answers so different committed actions reach the director.
                 let pick = option.count > 1 && turn % 2 == 0 ? option.element(boundBy: 1) : option.firstMatch
-                if !pick.isHittable { reveal(pick.identifier, in: app) }
+                // The option must sit above the bottom control bar, or the tap lands on the bar instead.
+                let bar = element("adaptive.next", in: app)
+                for _ in 0..<8 where !(pick.isHittable && (!bar.exists || pick.frame.maxY < bar.frame.minY - 8)) { scroll(app, up: true) }
                 pick.tap()
+                XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15), "the family's answer was committed")
                 shot(String(format: "gemini-\(scenario)-%02d-answered", turn), app)
             }
             let next = element("adaptive.next", in: app)
