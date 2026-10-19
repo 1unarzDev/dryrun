@@ -11,7 +11,7 @@ export async function executeDirectorTool(host:Host,state:any,binding:any,call:{
  const routes=tool.receipt.routes.map((r:any)=>({personID:r.request.personID,primary:path(r.primary),alternative:path(r.alternative),alternativeStatus:r.alternativeStatus,sharedChokepoints:r.sharedChokepoints,noRouteReason:r.noRouteReason}));
  const result:any={binding,snapshot:minimizedSnapshot(tool.receipt),contextDigest:tool.receipt.contextDigest};
  switch(call.name){
- case 'evaluateCandidateAction':{const s=tool.receipt.snapshot.spatialState;result.preview={routes,directorState:tool.receipt.directorState,...(s?{spatial:{hazard:s.hazard,stageID:s.stageID,originSpaceID:s.originSpaceID,affectedSpaceIDs:s.affectedSpaceIDs,affectedPortalIDs:s.affectedPortalIDs,destinationSpaceID:s.destinationSpaceID,assumptionKey:s.assumptionKey}}:{})};break;}
+ case 'evaluateCandidateAction':{const s=tool.receipt.snapshot.spatialState;result.preview={routes,assistance:tool.receipt.assistance?.map((a:any)=>({personID:a.personID,helperID:a.helperID,reachStatus:a.reachStatus,sharedWithPersonIDs:a.sharedWithPersonIDs,simultaneousCapacity:a.simultaneousCapacity})),directorState:tool.receipt.directorState,...(s?{spatial:{hazard:s.hazard,stageID:s.stageID,originSpaceID:s.originSpaceID,affectedSpaceIDs:s.affectedSpaceIDs,affectedPortalIDs:s.affectedPortalIDs,destinationSpaceID:s.destinationSpaceID,assumptionKey:s.assumptionKey}}:{})};break;}
  case 'inspectScene':result.observation={kind:call.name,...(tool.scene?{scene:tool.scene}:{})};break;
  case 'evaluateResources':result.observation={kind:call.name};break;
  case 'queryRoutes':result.observation={kind:call.name,routes};break;

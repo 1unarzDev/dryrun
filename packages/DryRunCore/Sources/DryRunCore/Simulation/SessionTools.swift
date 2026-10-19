@@ -54,9 +54,14 @@ public extension SimulationSession {
             let subjects=h.equipment.filter{$0.compatibleBackupIDs.contains(source.id)}.map(\.id)
             if subjects.count>1 {result.append(.init(id:"backup|\(source.id)",kind:"sharedPower",subjectIDs:subjects,evidenceIDs:["backupPower.\(source.id)",receipt.contextDigest],status:"shared; capacity must be computed by allocator"))}
         }
-        let assignments=Dictionary(grouping:h.people.filter{$0.helperPersonID != nil},by:{$0.helperPersonID!})
+        let assignedPeople=receipt.assistance==nil ? h.people.filter{$0.helperPersonID != nil}.map{($0.id,$0.helperPersonID!)} : (receipt.assistance ?? []).compactMap{state in state.helperID.map{(state.personID,$0)}}
+        let assignments=Dictionary(grouping:assignedPeople,by:{$0.1})
         for (helper,people) in assignments where people.count>1 {
-            result.append(.init(id:"helper|\(helper)",kind:"sharedHelper",subjectIDs:people.map(\.id),evidenceIDs:["people.helperPersonID"],status:"possible simultaneous conflict; not a confirmed inability"))
+            result.append(.init(id:"helper|\(helper)",kind:"sharedHelper",subjectIDs:people.map{$0.0}.sorted(),evidenceIDs:["people.helperPersonID"],status:"possible simultaneous conflict; not a confirmed inability"))
+        }
+        for state in receipt.assistance ?? [] {
+            result.append(.init(id:"helperReach|\(state.personID)",kind:"helperReach",subjectIDs:[state.personID]+(state.helperID.map{[$0]} ?? []),
+                evidenceIDs:[receipt.contextDigest],status:"committed exercise reach: \(state.reachStatus.rawValue); shared simultaneous capacity: \(state.simultaneousCapacity)"))
         }
         if !h.contacts.isEmpty {result.append(.init(id:"contact|channel",kind:"contactChannel",subjectIDs:h.contacts.map(\.id),evidenceIDs:[receipt.contextDigest],status:receipt.snapshot.services[Svc.handset] == .operational && receipt.snapshot.services[Svc.cellular] == .operational ? "recorded handset and cellular operational in exercise" : "channel unavailable or unknown in exercise"))}
         for route in receipt.routes where !route.sharedChokepoints.isEmpty {

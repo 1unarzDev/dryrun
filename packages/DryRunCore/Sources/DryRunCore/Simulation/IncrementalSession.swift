@@ -36,6 +36,7 @@ public struct SessionReceipt: Codable, Sendable, Equatable {
     public var inventory:ExerciseInventory?
     public var directorState:DirectorRuntimeState?
     public var closedPortalIDs:[String]?
+    public var assistance:[ExerciseAssistance]?
 }
 
 /// Serializable event-sourced session. Replay executes existing RunState, allocator, hazard and route rules.
@@ -186,18 +187,19 @@ public struct SimulationSession: Codable, Sendable {
             }
         }
         if directorPolicy != nil {run.spatialState?.routes=run.currentRoutes.keys.sorted().compactMap{run.currentRoutes[$0]}}
+        let assistance=directorPolicy != nil && commits.contains(where:{$0.commands.contains(where:{$0.kind=="assignHelper"})}) ? run.sessionAssistance() : nil
         run.snapshot()
         let snapshot = run.snapshots.last!
         let routes = run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }
-        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory,directorPolicy:directorPolicy,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted())))
+        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory,directorPolicy:directorPolicy,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance)))
         return SessionReceipt(sessionID: id, revision: revision, eventSequence: run.events.count, contextDigest: digest,
-                              snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state,directorState:directorState,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted())
+                              snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state,directorState:directorState,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance)
     }
     public func fallback() -> SessionCommit {
         SessionCommit(id: "fallback-\(revision)", actor: "director", baseRevision: revision, commands: [SessionCommand(kind: "requestDecision")])
     }
 }
-private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed?;var directorPolicy:DirectorPolicy?;var closedPortalIDs:[String]? }
+private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed?;var directorPolicy:DirectorPolicy?;var closedPortalIDs:[String]?;var assistance:[ExerciseAssistance]? }
 public enum StableDigest {
     /// Stable non-cryptographic replay identity; gateway uses SHA-256 for authorization/token binding.
     public static func of(_ data: Data) -> String {

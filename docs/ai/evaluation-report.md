@@ -9,7 +9,7 @@ This is an implemented, synthetic-tested integration package, **not a production
 | Check | Actual result |
 |---|---|
 | Existing baseline Core | 333 tests passed before changes |
-| Final Core | 381 tests / 67 suites passed, Swift 6.2 Docker |
+| Final Core | 383 tests / 68 suites passed, Swift 6.2 Docker |
 | Vault | 36 tests / 7 suites passed, including legacy/additive encrypted sidecar roundtrip |
 | Private gateway | 39 tests / 5 files passed; TypeScript check passed |
 | Unchanged public API | 68 tests passed; TypeScript check passed |
@@ -132,3 +132,7 @@ The host now freezes practice source/variant before capture, atomically commits 
 [Intent contracts](user-action-intents.md) add source/input-bound interpretation, single-question ambiguity handling, user-only commands and an actual host commit before director continuation. Core rejects stale/mismatched/forbidden effects, preserves atomicity for infeasible compound attempts, and does not retain the raw transcript. Gateway tests cover unknown IDs, invented patches, bounded repair and cancellation. Live synthetic evaluation passed three input types (clear conservation, ambiguous identity/destination, impossible action) in three interpretation calls; a three-call director continuation then used dependency inspection and a real candidate preview, committed the full envelope, and paused at minute 360. Both deterministic and live fixtures replay exactly. These are small development checks, not semantic-accuracy estimates. The final full Core suite totals **381 tests / 67 suites**, gateway **39 tests / 5 files**, and Vault **36 tests / 7 suites**; native speech/consent/timing and human review are still pending.
 
 The actual synthetic-only HTTP /v1/intents route also passed a live request and rejected unauthorized credentials, a duplicate request ID and non-synthetic input (user-intent-http-live.json). No bearer credential is retained in that artifact.
+
+## Follow-up: committed helper consequences
+
+Current exercise helper assignments now drive deterministic helper-to-person reach and dependency inspection; reassignment from an unreachable helper to a reachable helper resolves the current reach requirement while retaining history. Shared simultaneous capacity remains explicitly unknown, with no invented clinical/load limit or scoring rule. See [helper reach](helper-reach.md) and retained synthetic helper-reassignment.json. Core passed **383 tests / 68 suites**, the headless paired assignment fixture passed, and original adaptive/spatial plus final-policy pipeline receipts still replay exactly. Native and live-model helper interaction remain pending.

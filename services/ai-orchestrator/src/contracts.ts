@@ -42,7 +42,8 @@ export const toolObservation=z.discriminatedUnion('kind',[
  z.object({kind:z.literal('inspectDependencies'),dependencies:z.array(dependency).max(100)}).strict(),
  z.object({kind:z.literal('runCounterfactual'),scope:z.literal('initial_household_with_selected_profiles'),failed:z.boolean(),criterionID:toolID,dependencyIDs:z.array(toolID).max(100),baseline:snapshot}).strict(),
 ]);
-export const previewConsequences=z.object({routes:z.array(route).max(100),directorState:directorState.optional(),spatial:z.object({hazard,stageID:toolID,originSpaceID:toolID.optional(),affectedSpaceIDs:z.array(toolID).max(100),affectedPortalIDs:z.array(toolID).max(200),destinationSpaceID:toolID.optional(),assumptionKey:toolID.optional()}).strict().optional()}).strict();
+export const exerciseAssistance=z.object({personID:toolID,helperID:toolID.optional(),reachStatus:z.enum(['reachable','unreachable','unknown','missingHelper']),sharedWithPersonIDs:z.array(toolID).max(20),simultaneousCapacity:z.enum(['notAssessed','unknown'])}).strict();
+export const previewConsequences=z.object({assistance:z.array(exerciseAssistance).max(20).optional(),routes:z.array(route).max(100),directorState:directorState.optional(),spatial:z.object({hazard,stageID:toolID,originSpaceID:toolID.optional(),affectedSpaceIDs:z.array(toolID).max(100),affectedPortalIDs:z.array(toolID).max(200),destinationSpaceID:toolID.optional(),assumptionKey:toolID.optional()}).strict().optional()}).strict();
 export const toolResult=z.object({binding,snapshot,contextDigest:z.string().max(128),observation:toolObservation.optional(),preview:previewConsequences.optional()}).strict();
 export const operationRequest=z.object({contractVersion:z.literal(version),requestID:z.string().min(1).max(120),role:z.literal('director'),synthetic:z.literal(true),context:directorContext}).strict();
 export const continuationRequest=z.object({token:z.string(),binding,callID:z.string(),result:toolResult}).strict();
