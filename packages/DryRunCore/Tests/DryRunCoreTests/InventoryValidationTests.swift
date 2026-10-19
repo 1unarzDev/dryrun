@@ -91,6 +91,28 @@ import Testing
         try ledger.confirm([water,shared],baseRevision:2,at:date)
         let mixed=try ledger.waterGap(people:people.count,personIDs:people,at:date)
         #expect(mixed.scopeUnsupported==true);#expect(mixed.deficit==0)
+        var resolved=mixed;resolved.scopeUnsupported=nil
+        let pendingKey=try ResourceStrategyKey.normalized(gaps:[mixed],tasks:[],transport:"unknown",limitedBudget:false,regionID:"synthetic")
+        let resolvedKey=try ResourceStrategyKey.normalized(gaps:[resolved],tasks:[],transport:"unknown",limitedBudget:false,regionID:"synthetic")
+        #expect(pendingKey != resolvedKey)
+    }
+
+    @Test func genericRequirementsRespectReservedStockEvenWithoutNamedSubjects()throws {
+        var reserved=item("recorded-care",amount:6,unit:.count)
+        reserved.subjectIDs=["person-a"]
+        var ledger=InventoryLedger()
+        try ledger.confirm([reserved],baseRevision:0,at:date)
+        var requirement=RecordedSupplyRequirement(id:"recorded-instructions",category:reserved.category,quantity:4,unit:.count,sourceIDs:["recorded-instructions"])
+        let unnamed=try ledger.gap(for:requirement,at:date)
+        #expect(unnamed.confirmedUsable==0);#expect(unnamed.deficit==nil);#expect(unnamed.scopeUnsupported==true)
+        requirement.subjectIDs=["person-a"]
+        #expect(try ledger.gap(for:requirement,at:date).deficit==0)
+        requirement.subjectIDs=["person-b"]
+        #expect(try ledger.gap(for:requirement,at:date).scopeUnsupported==true)
+        requirement.subjectIDs=["person-a","person-a"]
+        #expect(throws:SessionError.invalidCommand){try ledger.gap(for:requirement,at:date)}
+        requirement.subjectIDs=[""]
+        #expect(throws:SessionError.invalidCommand){try ledger.gap(for:requirement,at:date)}
     }
 
 }

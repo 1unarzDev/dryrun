@@ -1,4 +1,4 @@
-> Latest handoff status: see [acceptance ledger](acceptance-audit.md) and [assessment policy](assessment-policy.md). The original app goal remains open for native/iPhone and external review. Latest portable results are 411 Core, 36 Vault, 42 gateway and 68 public-API tests passed; historical counts below describe earlier slices. Historical source-derived scores are preserved and separately reassessed under policy/4.
+> Latest handoff status: see [acceptance ledger](acceptance-audit.md) and [assessment policy](assessment-policy.md). The original app goal remains open for native/iPhone and external review. Latest portable results are 412 Core, 36 Vault, 42 gateway and 68 public-API tests passed; historical counts below describe earlier slices. Historical source-derived scores are preserved and separately reassessed under policy/4.
 
 # Integrated Gemini evaluation — 2026-10-19
 
@@ -202,3 +202,8 @@ Policy/4 inventory acceptance update: run `pnpm --dir services/ai-orchestrator e
 
 
 Final policy/4 offline rerun: `scripts/verify-ai-portable.sh` completed successfully on Linux. Core **411 tests / 74 suites**, Vault **36 / 7**, gateway **42 / 6**, public API **68 / 4**, TypeScript typecheck, 60 rubric cases, 60 source regressions, contract generation, inventory validation, adaptive/spatial replay, conserved inventory, concern links, resource refresh, practice capture, helpers, executable stress, score stability and fail-closed startup all passed. Historical pipeline receipt/full-card equality passed for both households, with separate current policy/4 reassessment. The three independent score hosts retained the identical published hash. This rerun made **zero new model calls**. Earlier live-model evidence and its failures remain as documented; no phone or human review is implied.
+
+
+Recorded-requirement scope follow-through: generic `gap(for:at:)` now shares the household scope rule. An unnamed requirement cannot consume person-reserved stock. Matching named instructions may use it; another person’s requirement cannot. Empty/duplicate requirement subject IDs reject. Core regression also checks that a scope-only change invalidates the resource strategy key. Test these reserved-care-supply semantics in native confirmation and explanations without inventing care instructions.
+
+Follow-up reserved-stock verification passed **412 Core tests / 74 suites**, plus inventory-validation, all 60 source regressions, inventory-session conservation/replay and resource-refresh headless evaluations. No new model calls. The earlier full offline run above remains the evidence for unaffected gateway/Vault/public suites. An initial build attempt was discarded because this session edited its test input during compilation; a clean subsequent run passed.

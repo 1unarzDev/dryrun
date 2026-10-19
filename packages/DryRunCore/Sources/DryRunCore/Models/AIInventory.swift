@@ -149,10 +149,16 @@ public extension InventoryLedger {
     func gap(for requirement:RecordedSupplyRequirement,at date:Date)throws->SupplyGap {
         guard !requirement.id.isEmpty,!requirement.category.isEmpty,requirement.quantity.isFinite,
               requirement.quantity>=0,!requirement.sourceIDs.isEmpty,
+              Set(requirement.subjectIDs).count==requirement.subjectIDs.count,requirement.subjectIDs.allSatisfy({!$0.isEmpty}),
               Set(items.map(\.id)).count==items.count,Set(items.map(\.physicalID)).count==items.count else {throw SessionError.invalidCommand}
         try validate(at:date)
-        let relevant=items.filter{$0.category==requirement.category && ($0.subjectIDs.isEmpty || Set(requirement.subjectIDs).isSubset(of:Set($0.subjectIDs)))}
-        var usable=0.0,unknown=relevant.isEmpty
+        let categoryItems=items.filter{$0.category==requirement.category}
+        let relevant=categoryItems.filter{Self.coversHousehold($0,personIDs:requirement.subjectIDs)}
+        let scopeUnsupported=categoryItems.contains{item in
+            !Self.coversHousehold(item,personIDs:requirement.subjectIDs) && item.expiresAt.map{$0<=date} != true
+                && item.accessible.confirmedValue != false && item.quantity.confirmedValue != 0 && item.usableQuantity.confirmedValue != 0
+        }
+        var usable=0.0,unknown=relevant.isEmpty || scopeUnsupported
         for item in relevant {
             if item.expiresAt.map({$0<=date})==true || item.accessible.confirmedValue==false || item.quantity.confirmedValue==0 || item.usableQuantity.confirmedValue==0 {continue}
             guard item.accessible.confirmedValue==true,let amount=item.usableQuantity.confirmedValue else {unknown=true;continue}
@@ -168,6 +174,6 @@ public extension InventoryLedger {
         }
         return SupplyGap(category:requirement.category,required:requirement.quantity,confirmedUsable:usable,
                          deficit:usable>=requirement.quantity ? 0 : unknown ? nil : requirement.quantity-usable,
-                         unit:requirement.unit.rawValue,unknown:unknown,sourceIDs:requirement.sourceIDs)
+                         unit:requirement.unit.rawValue,unknown:unknown,sourceIDs:requirement.sourceIDs,scopeUnsupported:scopeUnsupported ? true:nil)
     }
 }
