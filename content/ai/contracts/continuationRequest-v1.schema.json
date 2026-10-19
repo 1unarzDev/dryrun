@@ -1066,6 +1066,11 @@
                   "type": "string",
                   "const": "initial_household_with_selected_profiles"
                 },
+                "sourceConcernDigest": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
                 "failed": {
                   "type": "boolean"
                 },

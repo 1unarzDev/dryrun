@@ -37,7 +37,7 @@ public enum HouseholdAssessment {
         append("review",["currentPlan":h.preparedness?.reviewedAt.map{date.timeIntervalSince($0)>=0 && date.timeIntervalSince($0)<180*86400}],evidence:["preparedness.reviewedAt"])
         // Approved graph robustness envelope only. Hypothetical depletion/closures cannot rewrite real supplies.
         let householdDigest=StableDigest.of(try DryRunJSON.encoder().encode(h))
-        for finding in stressFindings where finding.criterionID=="escape" && finding.sourceHouseholdDigest==householdDigest && finding.sourceHomeFingerprint==home.map(HomeFingerprint.of) {
+        for finding in stressFindings where finding.sourceConcernDigest==nil && finding.criterionID=="escape" && finding.sourceHouseholdDigest==householdDigest && finding.sourceHomeFingerprint==home.map(HomeFingerprint.of) {
             guard finding.baseline.routes.contains(where:{!$0.sharedChokepoints.isEmpty}),let index=results.firstIndex(where:{$0.criterionID=="escape"}) else {continue}
             results[index].predicates["independentAlternative"]=false
             results[index].evidenceIDs=Array(Set(results[index].evidenceIDs+[finding.baseline.contextDigest])).sorted()

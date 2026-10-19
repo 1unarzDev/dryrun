@@ -16,7 +16,7 @@ export async function executeDirectorTool(host:Host,state:any,binding:any,call:{
  case 'evaluateResources':result.observation={kind:call.name};break;
  case 'queryRoutes':result.observation={kind:call.name,routes};break;
  case 'inspectDependencies':result.observation={kind:call.name,dependencies:tool.dependencies};break;
- case 'runCounterfactual':result.observation={kind:call.name,scope:'initial_household_with_selected_profiles',failed:tool.counterfactual.failed,criterionID:tool.counterfactual.criterionID,dependencyIDs:tool.counterfactual.dependencyIDs,baseline:minimizedSnapshot(tool.counterfactual.baseline)};break;
+ case 'runCounterfactual':result.observation={kind:call.name,scope:'initial_household_with_selected_profiles',failed:tool.counterfactual.failed,criterionID:tool.counterfactual.criterionID,dependencyIDs:tool.counterfactual.dependencyIDs,sourceConcernDigest:tool.counterfactual.sourceConcernDigest,baseline:minimizedSnapshot(tool.counterfactual.baseline)};break;
  }
  return {result:toolResult.parse(result),receipt:tool.receipt};
 }

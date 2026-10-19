@@ -9,7 +9,7 @@ This is an implemented, synthetic-tested integration package, **not a production
 | Check | Actual result |
 |---|---|
 | Existing baseline Core | 333 tests passed before changes |
-| Final Core | 392 tests / 71 suites passed, Swift 6.2 Docker |
+| Final Core | 393 tests / 71 suites passed, Swift 6.2 Docker |
 | Vault | 36 tests / 7 suites passed, including legacy/additive encrypted sidecar roundtrip |
 | Private gateway | 41 tests / 6 files passed; TypeScript check passed |
 | Unchanged public API | 68 tests passed; TypeScript check passed |
@@ -154,3 +154,5 @@ The [concern transaction](concern-integration.md) now validates source home/imag
 ## Follow-up: relevant resource refresh
 
 [Normalized refresh inputs](resource-refresh.md) now include actual gap quantities/unknowns, canonical resource-task prerequisites and explicit dependencies, while excluding wording/order and unrelated household edits. Debounce invalidates stale work immediately and preserves useful plans. Returning to accepted inputs cancels newer pending work, fixing an overwrite race. Acceptance rejects wrong tasks, no-car driving, negative expansion and nonfinite ranges. Core **392 tests / 71 suites** and an actual inventory→arithmetic→key headless fixture passed; no new model call. Native timing/geographic fingerprints/MapKit cancellation remain pending.
+
+Concern stress follow-up: frozen selected-opening assumptions now survive stress baseline, controlled retest and read-only counterfactual tools. sourceConcernDigest identifies this hypothetical scope; HouseholdAssessment excludes it from the scored robustness envelope. The integrated fixture and permission mutation test passed, source facts and score stayed unchanged, and Core totals **393 tests / 71 suites**. Existing stress, adaptive/spatial and final-policy pipeline replays remain unchanged.

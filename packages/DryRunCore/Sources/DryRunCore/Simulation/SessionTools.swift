@@ -42,7 +42,7 @@ public extension SimulationSession {
                 result.route=ConcernRoutePlanner(portalIDs:concernSeed?.selectedPortalIDs ?? []).plan(routeRequest,in:home)
             }
         case .inspectDependencies:result.dependencies=dependencyInspection(receipt:receipt)
-        case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory)
+        case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory,concernSeed:concernSeed)
         default:break
         }
         return result

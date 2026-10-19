@@ -52,6 +52,36 @@ import Testing
         let restored=try DryRunJSON.decoder().decode(SimulationSession.self,from:DryRunJSON.encoder().encode(exercise))
         #expect(try restored.query(library:SimFixtures.library)==b)
     }
+    @Test func controlledConcernStressPreservesAssumptionsButCannotAlterScorePredicates()throws {
+        var local=IntegratedAIState();try review(&local,decision:.uncertain)
+        let portal=try #require(SimFixtures.home.portals.first{$0.sideA == .space("sp-living") && $0.sideB == .exterior || $0.sideB == .space("sp-living") && $0.sideA == .exterior})
+        let seed=try local.concernExerciseSeed(concernID:"concern",scenarioID:"home-fire",selectedPortalIDs:[portal.id],allowHypothetical:true,home:SimFixtures.home)
+        let input=SimFixtures.input(SampleHouseholds.oak,"home-fire")
+        let finding=try PlanStressTester.execute(initial:input,profileIDs:["evt.home-fire.alarm"],library:SimFixtures.library,intervention:.init(actionID:"act.water.store-3day"),concernSeed:seed)
+        #expect(finding.sourceConcernDigest != nil)
+        #expect(finding.id.contains("|concern|"))
+        #expect(finding.baseline.routes.allSatisfy{!($0.primary?.portalSequence.contains(portal.id) ?? false)})
+        #expect(finding.controlledRetest?.routes.allSatisfy{!($0.primary?.portalSequence.contains(portal.id) ?? false)}==true)
+        #expect(finding.baseline.snapshot.spatialState?.affectedPortalIDs.contains(portal.id)==true)
+        let without=try HouseholdAssessment.assess(household:input.household,home:input.home,inventory:nil,at:date)
+        let with=try HouseholdAssessment.assess(household:input.household,home:input.home,inventory:nil,stressFindings:[finding],at:date)
+        #expect(try DryRunJSON.encoder().encode(without)==DryRunJSON.encoder().encode(with))
+        // Deliberate permission mutation: even a reported shared geometry ID must not let
+        // a concern-scoped trace enter the scored envelope. This is not a new geometry fixture.
+        var adversarial=finding;adversarial.criterionID="escape"
+        adversarial.baseline.routes[0].sharedChokepoints=[portal.id]
+        let protected=try HouseholdAssessment.assess(household:input.household,home:input.home,inventory:nil,stressFindings:[adversarial],at:date)
+        #expect(try DryRunJSON.encoder().encode(protected)==DryRunJSON.encoder().encode(without))
+        adversarial.sourceConcernDigest=nil
+        let envelopeControl=try HouseholdAssessment.assess(household:input.household,home:input.home,inventory:nil,stressFindings:[adversarial],at:date)
+        #expect(try DryRunJSON.encoder().encode(envelopeControl) != DryRunJSON.encoder().encode(without))
+        let session=try SimulationSession.initialize(id:"concern-tool",initial:input,library:SimFixtures.library,concernSeed:seed)
+        let original=try session.query(library:SimFixtures.library)
+        let tool=try session.executeTool(.init(kind:.runCounterfactual,baseRevision:0,profileIDs:["evt.home-fire.alarm"]),library:SimFixtures.library)
+        #expect(tool.counterfactual?.sourceConcernDigest==finding.sourceConcernDigest)
+        #expect(try session.query(library:SimFixtures.library)==original)
+        #expect(input==session.initial)
+    }
     @Test func staleUnknownTaskRedactionAndPersistenceFailWithoutPublishing()throws {
         var local=IntegratedAIState();let original=try DryRunJSON.encoder().encode(local)
         var bad=sample().1;bad.actionID="model-invented-action"

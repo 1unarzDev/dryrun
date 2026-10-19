@@ -30,8 +30,13 @@ try{
  if(!exercise.receipt.snapshot.spatialState.affectedPortalIDs.includes(portal.id))throw new Error('scene_mismatch');
  if(JSON.stringify(exercise.session.initial)!==source||JSON.stringify(baseline.session.initial)!==source)throw new Error('real_facts_changed');
  const replay=await host.request({op:'query',session:exercise.session});if(JSON.stringify(replay.receipt)!==JSON.stringify(exercise.receipt))throw new Error('replay_mismatch');
+ const stress=await host.request({op:'stress',session:hypothetical.session,profileIDs:['evt.home-fire.alarm'],intervention:{actionID:'act.water.store-3day',parameters:{}}});
+ if(!stress.stress.sourceConcernDigest||!stress.stress.controlledRetest)throw new Error('concern_stress_scope_lost');
+ const plainScore=await host.request({op:'assess',session:state.session,rubric});
+ const concernScore=await host.request({op:'assess',session:state.session,rubric,stressFindings:[stress.stress]});
+ if(JSON.stringify(plainScore.scorecard)!==JSON.stringify(concernScore.scorecard))throw new Error('hypothesis_changed_score');
  const dismissed=await host.request({op:'reviewConcern',session:state.session,aiState:confirmed.aiState,concernProposal:proposal,imageManifest:manifest,concernDecision:'dismissed',rubric});
  if(dismissed.concernTasks.length)throw new Error('dismissed_task_retained');
- await writeFile('../../fixtures/ai/concern-integration.json',JSON.stringify({synthetic:true,newModelCalls:0,recordedVisionModel:vision.model,annotation:'Recorded synthetic image interpretation; explicitly fixture-selected opening, never inferred from pixels',proposal,manifest,uncertain:uncertain.aiState,permissionRejected,manualSelectedPortalID:portal.id,task:confirmed.concernTasks[0],hypotheticalSession:exercise.session,baselineReceipt:baseline.receipt,exerciseReceipt:exercise.receipt,dismissed:dismissed.aiState},null,2)+'\n');
- console.log(JSON.stringify({status:'passed',recordedVision:true,uncertainPermission:true,taskLinked:true,openingExcluded:true,sceneSynced:true,replay:true,sourceUnchanged:true}));
+ await writeFile('../../fixtures/ai/concern-integration.json',JSON.stringify({synthetic:true,newModelCalls:0,recordedVisionModel:vision.model,annotation:'Recorded synthetic image interpretation; explicitly fixture-selected opening, never inferred from pixels',proposal,manifest,uncertain:uncertain.aiState,permissionRejected,manualSelectedPortalID:portal.id,task:confirmed.concernTasks[0],hypotheticalSession:exercise.session,baselineReceipt:baseline.receipt,exerciseReceipt:exercise.receipt,controlledStress:stress.stress,scoreUnchanged:true,dismissed:dismissed.aiState},null,2)+'\n');
+ console.log(JSON.stringify({status:'passed',recordedVision:true,uncertainPermission:true,taskLinked:true,openingExcluded:true,sceneSynced:true,replay:true,sourceUnchanged:true,controlledStress:true,scoreUnchanged:true}));
 }finally{host.close();}
