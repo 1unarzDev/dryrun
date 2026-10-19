@@ -16,3 +16,9 @@ Small consent-based usability protocol (suggested 5–8 adult household coordina
 6. Optionally follow up on whether one real preparation was completed; record actual completion only with their agreement, without inferring emergency safety outcomes.
 
 Report denominators, missing responses and household-level results. Do not invent adoption, reduced injury, endorsement or competition outcomes. Real household/photo validation, native privacy/retention and audience compliance remain release prerequisites.
+
+Current source-policy packet: household-assessment-v3.json, assessment-policy.md, source-assessment-cases-v1.json plus its hash lock, assessment-policy.json and source-council-evaluation.json when present. Distinguish the five independently specified source-criterion references from the original explicit-predicate arithmetic fixtures. A passing source cohort or reconciled council is not human adjudication.
+
+Review the draft assistance/care applicability rules carefully: a mobility or hearing need does not establish physical incapacity or prove that a personal helper is the only suitable arrangement. Check what evidence should support independent, accessible alerting/evacuation arrangements and confirmed non-applicability before releasing these criteria. Do not infer clinical capacity or alter a family’s facts from a score.
+
+Review S64 and the food horizon: Red Cross distinguishes three-day evacuation supplies from two weeks at home. DryRun's existing three-day draft criterion is a limited horizon, not full home-kit adequacy. Check household-day recording, dietary needs, expiry/access, subject-restricted stock and whether the native quantity review clearly prevents estimating days from package counts. Confirmed shelter planning choices likewise must not be called engineered safe rooms; verify mobility clearance and unknown routing language.
