@@ -9,7 +9,8 @@ public struct SessionToolRequest:Codable,Sendable {
     public var profileIDs:[String]?
     public var intervention:Intervention?
     public var routeRequest:RouteRequest?
-    public init(kind:SessionToolKind,baseRevision:Int,command:SessionCommand?=nil,commands:[SessionCommand]?=nil,profileIDs:[String]?=nil,intervention:Intervention?=nil,routeRequest:RouteRequest?=nil){self.kind=kind;self.baseRevision=baseRevision;self.command=command;self.commands=commands;self.profileIDs=profileIDs;self.intervention=intervention;self.routeRequest=routeRequest}
+    public var retestPlan:StressRetestPlan?
+    public init(kind:SessionToolKind,baseRevision:Int,command:SessionCommand?=nil,commands:[SessionCommand]?=nil,profileIDs:[String]?=nil,intervention:Intervention?=nil,routeRequest:RouteRequest?=nil,retestPlan:StressRetestPlan?=nil){self.kind=kind;self.baseRevision=baseRevision;self.command=command;self.commands=commands;self.profileIDs=profileIDs;self.intervention=intervention;self.routeRequest=routeRequest;self.retestPlan=retestPlan}
 }
 public struct SessionToolResponse:Codable,Sendable {
     public var receipt:SessionReceipt
@@ -42,7 +43,7 @@ public extension SimulationSession {
                 result.route=ConcernRoutePlanner(portalIDs:concernSeed?.selectedPortalIDs ?? []).plan(routeRequest,in:home)
             }
         case .inspectDependencies:result.dependencies=try dependencyInspection(receipt:receipt,library:library)
-        case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory,concernSeed:concernSeed,dependencyPolicy:dependencyPolicy)
+        case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory,concernSeed:concernSeed,dependencyPolicy:dependencyPolicy,retestPlan:request.retestPlan)
         default:break
         }
         return result

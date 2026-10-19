@@ -1179,6 +1179,166 @@
                     "unknowns"
                   ],
                   "additionalProperties": false
+                },
+                "controlledRetest": {
+                  "type": "object",
+                  "properties": {
+                    "firedEventIDs": {
+                      "maxItems": 5000,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 200
+                      }
+                    },
+                    "simMinute": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "resources": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "unit": {
+                            "type": "string",
+                            "enum": [
+                              "gal",
+                              "Wh",
+                              "h",
+                              "charges",
+                              "day"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "unit"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "services": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "operational",
+                          "degraded",
+                          "unavailable",
+                          "unknown"
+                        ]
+                      }
+                    },
+                    "unmetRequirements": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "unknowns": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "simMinute",
+                    "resources",
+                    "services",
+                    "unmetRequirements",
+                    "unknowns"
+                  ],
+                  "additionalProperties": false
+                },
+                "comparison": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "const": "dryrun.stress-comparison/1"
+                    },
+                    "baselineMinute": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 4320
+                    },
+                    "retestMinute": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 4320
+                    },
+                    "commonHorizonReached": {
+                      "type": "boolean"
+                    },
+                    "resolvedRequirementIDs": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "remainingRequirementIDs": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "newlyUnmetRequirementIDs": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "remainingUnknownIDs": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "baselineMinute",
+                    "retestMinute",
+                    "commonHorizonReached",
+                    "resolvedRequirementIDs",
+                    "remainingRequirementIDs",
+                    "newlyUnmetRequirementIDs",
+                    "remainingUnknownIDs"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [

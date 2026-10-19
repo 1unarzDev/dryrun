@@ -5081,6 +5081,22 @@
         "unmetRequirements": []
       }
     },
+    "comparison": {
+      "baselineMinute": 4320,
+      "commonHorizonReached": true,
+      "newlyUnmetRequirementIDs": [],
+      "remainingRequirementIDs": [],
+      "remainingUnknownIDs": [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "home.smokeAlarms",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "resolvedRequirementIDs": [],
+      "retestMinute": 4320,
+      "version": "dryrun.stress-comparison/1"
+    },
     "controlledRetest": {
       "contextDigest": "d623cc44e9ab38cf",
       "eventSequence": 3,
@@ -6099,6 +6115,10 @@
     "failed": false,
     "id": "stress|home-fire|evt.home-fire.alarm|concern|f35805d8f35fa1f5",
     "objectiveID": "advisory",
+    "retestIntervention": {
+      "actionID": "act.water.store-3day",
+      "parameters": {}
+    },
     "schedule": [
       {
         "kind": "schedule",

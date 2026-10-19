@@ -9,7 +9,7 @@ Revisit reference section 10 when integrating this seam. `services/ai-orchestrat
 | queryRoutes | `{}` | `observation: { kind: "queryRoutes", routes: [...] }` |
 | evaluateResources | `{}` | `observation: { kind: "evaluateResources" }`; current balances/unknowns are in snapshot |
 | inspectDependencies | `{}` | `observation: { kind: "inspectDependencies", dependencies: [...] }` |
-| runCounterfactual | `{ "profileIDs": ["supplied-reviewed-profile-id"] }` | `observation: { kind: "runCounterfactual", scope: "initial_household_with_selected_profiles", failed, criterionID, dependencyIDs, baseline: MinimizedSnapshot }` |
+| runCounterfactual | `{ "profileIDs": ["supplied-reviewed-profile-id"], "retestPlan"?: StressRetestPlan }` | `observation: { kind: "runCounterfactual", scope: "initial_household_with_selected_profiles", failed, criterionID, dependencyIDs, baseline: MinimizedSnapshot, controlledRetest?: MinimizedSnapshot, comparison?: StressRetestComparison }` |
 
 `queryRoutes` exposes **current computed occupant routes**, including committed hazard exclusions. It does not accept model-authored geometry or select arbitrary destinations. Each summary contains optional personID/primary/alternative, alternativeStatus, sharedChokepoints and optional noRouteReason. Paths expose only space/portal/connector ID sequences and verificationNeeded. Coordinates, names and raw native map data do not leave the host. Local general route requests remain available through `SessionToolRequest.routeRequest`; adding those arguments to the cloud contract requires another reviewed schema slice.
 
@@ -30,3 +30,5 @@ DRYRUN_LIVE_TOOLS=1 pnpm --dir services/ai-orchestrator exec tsx scripts/directo
 The offline evaluation executes all six tools against the running Swift NDJSON host, verifies read-only behavior, drives a deterministic provider through two continuations, commits and verifies replay. The live variant uses Gemini with the same synthetic household and records a separate artifact. These checks do not establish native integration or exhaustive live tool selection coverage.
 
 The later [policy and actions slice](director-policy-and-actions.md) adds applied spatial batch previews, required command fields, one bounded tool repair, policy/runtime context and wait predicates. A spatial schedule alone is rejected as an unapplied preview.
+
+Controlled preparation plans are specified in [stress-retest.md](stress-retest.md). They execute existing validated user actions only inside a separate initial-state copy before the same external schedule. The optional typed comparison retains remaining requirements and unknowns; it never resolves real tasks or modifies the current exercise.

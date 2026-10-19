@@ -34,13 +34,18 @@ export const directorContext=z.object({binding,snapshot,directorPolicy:directorP
 export type DirectorContext=z.infer<typeof directorContext>;
 export const toolArgs=z.object({command:command.optional(),commands:z.array(command).min(1).max(8).optional()}).strict();
 const toolID=z.string().min(1).max(120);
+export const stressRetestPlan=z.object({version:z.literal('dryrun.stress-retest/1'),commands:z.array(z.union([
+ ...['moveTo','takeSupply','transferSupply','assignHelper','closeDoor','allocatePower'].map(kind=>z.object({kind:z.literal(kind),target:toolID,value:toolID}).strict()),
+ z.object({kind:z.literal('useStoredWater'),value:z.enum(['essential','all'])}).strict(),
+])).min(1).max(8)}).strict();
+export const stressRetestComparison=z.object({version:z.literal('dryrun.stress-comparison/1'),baselineMinute:minute,retestMinute:minute,commonHorizonReached:z.boolean(),resolvedRequirementIDs:z.array(toolID).max(100),remainingRequirementIDs:z.array(toolID).max(100),newlyUnmetRequirementIDs:z.array(toolID).max(100),remainingUnknownIDs:z.array(toolID).max(100)}).strict();
 export const directorToolSchemas={
  evaluateCandidateAction:toolArgs,
  inspectScene:z.object({}).strict(),
  queryRoutes:z.object({}).strict(),
  evaluateResources:z.object({}).strict(),
  inspectDependencies:z.object({}).strict(),
- runCounterfactual:z.object({profileIDs:z.array(toolID).min(1).max(8)}).strict(),
+ runCounterfactual:z.object({profileIDs:z.array(toolID).min(1).max(8),retestPlan:stressRetestPlan.optional()}).strict(),
 };
 const dependency=z.object({id:toolID,kind:toolID,subjectIDs:z.array(toolID).max(100),evidenceIDs:z.array(z.string().max(128)).max(100),status:z.string().max(300)}).strict();
 const path=z.object({spaceSequence:z.array(toolID).max(100),portalSequence:z.array(toolID).max(200),connectorSequence:z.array(toolID).max(50),verificationNeeded:z.array(toolID).max(200)}).strict();
@@ -50,7 +55,7 @@ export const toolObservation=z.discriminatedUnion('kind',[
  z.object({kind:z.literal('queryRoutes'),routes:z.array(route).max(100)}).strict(),
  z.object({kind:z.literal('evaluateResources')}).strict(),
  z.object({kind:z.literal('inspectDependencies'),dependencies:z.array(dependency).max(100)}).strict(),
- z.object({kind:z.literal('runCounterfactual'),scope:z.literal('initial_household_with_selected_profiles'),sourceConcernDigest:z.string().min(1).max(128).optional(),failed:z.boolean(),criterionID:toolID,dependencyIDs:z.array(toolID).max(100),baseline:snapshot}).strict(),
+ z.object({kind:z.literal('runCounterfactual'),scope:z.literal('initial_household_with_selected_profiles'),sourceConcernDigest:z.string().min(1).max(128).optional(),failed:z.boolean(),criterionID:toolID,dependencyIDs:z.array(toolID).max(100),baseline:snapshot,controlledRetest:snapshot.optional(),comparison:stressRetestComparison.optional()}).strict(),
 ]);
 export const exerciseAssistance=z.object({personID:toolID,helperID:toolID.optional(),reachStatus:z.enum(['reachable','unreachable','unknown','missingHelper']),sharedWithPersonIDs:z.array(toolID).max(20),simultaneousCapacity:z.enum(['notAssessed','unknown'])}).strict();
 export const previewConsequences=z.object({assistance:z.array(exerciseAssistance).max(20).optional(),routes:z.array(route).max(100),directorState:directorState.optional(),spatial:z.object({hazard,stageID:toolID,originSpaceID:toolID.optional(),affectedSpaceIDs:z.array(toolID).max(100),affectedPortalIDs:z.array(toolID).max(200),destinationSpaceID:toolID.optional(),assumptionKey:toolID.optional()}).strict().optional()}).strict();

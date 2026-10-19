@@ -1,0 +1,17 @@
+{
+  "version": "dryrun.stress-retest/1",
+  "comparisonVersion": "dryrun.stress-comparison/1",
+  "maximumPreparationCommands": 8,
+  "permittedCommands": ["takeSupply", "transferSupply", "moveTo", "assignHelper", "closeDoor", "allocatePower", "useStoredWater"],
+  "rules": [
+    "Apply preparation to a copied initial exercise through the existing user-action reducer.",
+    "Use the exact same external incident schedule for baseline and retest.",
+    "No command time, duration or hazard fields; no resource grants or director actions as preparation.",
+    "Reject unknown versions, invalid preparation or invalid recorded references.",
+    "Preserve the source, proposed preparation, intervention, schedule and receipts for replay.",
+    "Compare final requirements and unknowns explicitly; inspect event history for earlier failures.",
+    "Preserving a resource or delaying its depletion does not establish full plan resolution.",
+    "Read-only counterfactual outer receipt remains the unchanged current exercise.",
+    "Never promote hypothetical actions to real household facts, tasks, inventory or scores."
+  ]
+}

@@ -38,6 +38,7 @@ struct HostRequest: Decodable {
     var profileIDs: [String]?
     var stressFindings:[StressTestFinding]?
     var intervention: Intervention?
+    var retestPlan: StressRetestPlan?
     var tool:SessionToolRequest?
 }
 struct HostResponse: Encodable {
@@ -141,7 +142,7 @@ while let line = readLine() {
             else {scorecard = try ScoreCompiler.compile(rubric:rubric,assessments:assessments!,attempts:request.attempts ?? [])}
         }
         if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = try inventory.preparationGaps(personIDs:session.initial.household.people.map(\.id),at:date)}
-        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)}
+        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,retestPlan:request.retestPlan)}
         var resourceStrategyKey:ResourceStrategyKey?
         if request.op=="resourceKey" {
             guard let inventory=request.inventory ?? session.inventory?.ledger,let tasks=request.resourceTasks else {throw SessionError.invalidCommand}
