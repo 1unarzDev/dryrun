@@ -96,4 +96,24 @@ import Testing
         #expect(throws:SessionError.persistence){try local.reviewConcern(fixture.1,decision:.confirmed,manifest:fixture.0,home:SimFixtures.home,household:SampleHouseholds.oak,rubric:rubric,library:SimFixtures.library,at:date,persist:{_ in throw SessionError.persistence})}
         #expect(try DryRunJSON.encoder().encode(local)==original)
     }
+    @Test func unchangedImageDoesNotRepeatDismissedReviewAfterHomeRevision()throws {
+        var local=IntegratedAIState();try review(&local,decision:.dismissed)
+        var proposal=sample().1
+        proposal.id="new-model-id";proposal.homeRevision+=1
+        proposal.visibleEvidence="Paraphrased description of the same pixels"
+        #expect(!local.concerns.shouldOffer(proposal))
+        // The duplicate decision survives persistence and a model's minor box adjustment.
+        let restored=try DryRunJSON.decoder().decode(IntegratedAIState.self,from:DryRunJSON.encoder().encode(local))
+        proposal.box=[0.11,0.21,0.41,0.51]
+        #expect(!restored.concerns.shouldOffer(proposal))
+        // New submitted evidence and genuinely separate regions are reviewable.
+        proposal.imageDigest=String(repeating:"b",count:64)
+        #expect(restored.concerns.shouldOffer(proposal))
+        proposal.imageDigest=sample().1.imageDigest;proposal.box=[0.7,0.7,0.9,0.9]
+        #expect(restored.concerns.shouldOffer(proposal))
+        // A native user can explicitly reopen the existing concern to change their decision.
+        try review(&local,decision:.confirmed)
+        #expect(local.concernTasks(currentHome:SimFixtures.home).count==1)
+    }
+
 }

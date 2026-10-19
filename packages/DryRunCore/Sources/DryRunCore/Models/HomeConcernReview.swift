@@ -25,7 +25,10 @@ public struct ConcernLedger: Codable, Sendable {
     public init(){}
     public func shouldOffer(_ proposal:HomeConcernProposal)->Bool {
         !reviewed.contains { old in
-            guard old.proposal.homeRevision==proposal.homeRevision,old.proposal.imageDigest==proposal.imageDigest,old.proposal.roomID==proposal.roomID,old.proposal.category==proposal.category else{return false}
+            // A geometry/metadata revision is not new photographic evidence. Preserve the
+            // family's review of identical submitted pixels even if a model assigns a new ID.
+            // Task/scenario applicability is separately bound to the current home fingerprint.
+            guard old.proposal.imageDigest==proposal.imageDigest,old.proposal.roomID==proposal.roomID,old.proposal.category==proposal.category else{return false}
             let a=old.proposal.box,b=proposal.box
             guard a.count==4,b.count==4 else{return false}
             let overlap=max(0,min(a[2],b[2])-max(a[0],b[0]))*max(0,min(a[3],b[3])-max(a[1],b[1]))

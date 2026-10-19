@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {readFile,writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {normalizeHomeReview} from '../src/home-review.js';
@@ -37,6 +38,11 @@ try{
  if(JSON.stringify(plainScore.scorecard)!==JSON.stringify(concernScore.scorecard))throw new Error('hypothesis_changed_score');
  const dismissed=await host.request({op:'reviewConcern',session:state.session,aiState:confirmed.aiState,concernProposal:proposal,imageManifest:manifest,concernDecision:'dismissed',rubric});
  if(dismissed.concernTasks.length)throw new Error('dismissed_task_retained');
- await writeFile('../../fixtures/ai/concern-integration.json',JSON.stringify({synthetic:true,newModelCalls:0,recordedVisionModel:vision.model,annotation:'Recorded synthetic image interpretation; explicitly fixture-selected opening, never inferred from pixels',proposal,manifest,uncertain:uncertain.aiState,permissionRejected,manualSelectedPortalID:portal.id,task:confirmed.concernTasks[0],hypotheticalSession:exercise.session,baselineReceipt:baseline.receipt,exerciseReceipt:exercise.receipt,controlledStress:stress.stress,scoreUnchanged:true,dismissed:dismissed.aiState},null,2)+'\n');
- console.log(JSON.stringify({status:'passed',recordedVision:true,uncertainPermission:true,taskLinked:true,openingExcluded:true,sceneSynced:true,replay:true,sourceUnchanged:true,controlledStress:true,scoreUnchanged:true}));
+ const revisedSession=structuredClone(state.session);revisedSession.initial.home.revision+=1;
+ const revisedProposal={...proposal,id:'same-pixels-new-model-id',homeRevision:revisedSession.initial.home.revision};
+ const revisedManifest={...manifest,homeRevision:revisedSession.initial.home.revision};
+ await assert.rejects(host.request({op:'reviewConcern',session:revisedSession,aiState:dismissed.aiState,concernProposal:revisedProposal,imageManifest:revisedManifest,concernDecision:'confirmed',rubric}),/duplicate/);
+
+ await writeFile('../../fixtures/ai/concern-integration.json',JSON.stringify({synthetic:true,newModelCalls:0,recordedVisionModel:vision.model,annotation:'Recorded synthetic image interpretation; explicitly fixture-selected opening, never inferred from pixels',proposal,manifest,uncertain:uncertain.aiState,permissionRejected,manualSelectedPortalID:portal.id,task:confirmed.concernTasks[0],hypotheticalSession:exercise.session,baselineReceipt:baseline.receipt,exerciseReceipt:exercise.receipt,controlledStress:stress.stress,scoreUnchanged:true,dismissed:dismissed.aiState,unchangedEvidenceAfterHomeRevisionRejected:true},null,2)+'\n');
+ console.log(JSON.stringify({status:'passed',recordedVision:true,uncertainPermission:true,taskLinked:true,openingExcluded:true,sceneSynced:true,replay:true,sourceUnchanged:true,controlledStress:true,scoreUnchanged:true,unchangedEvidenceAfterHomeRevisionRejected:true}));
 }finally{host.close();}
