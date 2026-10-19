@@ -76,7 +76,7 @@ struct SupplyInventoryView: View {
                         .keyboardType(.decimalPad)
                         .focused($editingQuantity)
                         .accessibilityIdentifier("inventory.quantity")
-                    Text(l("inventory.unit.\(kind.unit.rawValue)")).foregroundStyle(.secondary)
+                    Text(unitLabel(kind.unit.rawValue)).foregroundStyle(.secondary)
                 }
                 Text(l("inventory.quantityHint")).font(.caption).foregroundStyle(.secondary)
                 triState(l("inventory.ready"), $ready, id: "inventory.ready")
@@ -240,13 +240,21 @@ struct SupplyInventoryView: View {
         quantityText = ""; ready = nil; reachable = nil; editingQuantity = false
     }
 
+    /// Counted items carry no unit word (and no empty translation, which would mark a language incomplete).
+    private func unitLabel(_ unit: String) -> String {
+        unit == InventoryUnit.count.rawValue ? "" : model.localizer("inventory.unit.\(unit)")
+    }
+
     private func amount(_ value: Double, unit: String) -> String {
         let l = model.localizer
         switch unit {
         case "usGallon", "gal": return ServiceNames.quantity(value, unit: "gal", localizer: l, countryCode: model.household?.privateLocation?.countryCode)
         // Core computes the water requirement in litres; shown in the household's usual units.
         case "liter": return ServiceNames.quantity(value / 3.785411784, unit: "gal", localizer: l, countryCode: model.household?.privateLocation?.countryCode)
-        default: return "\(PlanFormatting.number(value, locale: model.locale)) \(l("inventory.unit.\(unit)"))"
+        default:
+            let number = PlanFormatting.number(value, locale: model.locale)
+            let label = unitLabel(unit)
+            return label.isEmpty ? number : "\(number) \(label)"
         }
     }
 }

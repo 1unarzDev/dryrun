@@ -281,6 +281,30 @@ final class DeviceAuditUITests: XCTestCase {
         shot("practice-5-finished", app)
     }
 
+    /// The new screens at an accessibility text size (AX2), for visual review of wrapping, truncation and reachability.
+    func testNewScreensAtAccessibilityTextSize() {
+        let large = ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityL"]
+        var app = launch(["-demoHousehold", "hh-oak", "-demoHome", "apartment-complex"] + large)
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+        let card = reveal("score.card", in: app, steps: 14)
+        XCTAssertTrue(card.waitForExistence(timeout: 30))
+        shot("ax-score", app)
+        scroll(app, up: true); shot("ax-score-2", app)
+        app.terminate()
+        app = launch(["-demoHousehold", "hh-oak", "-demoHome", "apartment-complex", "-demoScenario", "home-fire", "-demoAdaptive"] + large)
+        XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30))
+        shot("ax-adaptive-top", app)
+        for index in 1...3 { scroll(app, up: true); shot("ax-adaptive-\(index)", app) }
+        XCTAssertTrue(element("adaptive.next", in: app).exists, "the bottom controls stay on screen at large text")
+        app.terminate()
+        app = launch(["-demoHousehold", "hh-oak", "-demoTab", "rehearse"] + large)
+        let practice = reveal("practice.open", in: app)
+        XCTAssertTrue(practice.waitForExistence(timeout: 20))
+        practice.tap()
+        XCTAssertTrue(reveal("practice.start", in: app).waitForExistence(timeout: 10))
+        shot("ax-practice-intro", app)
+    }
+
     func testScorecardOnPrepareForEachHousingDemo() {
         for home in ["ranch", "apartment-complex", "manufactured", "twostory"] {
             let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home])

@@ -77,12 +77,10 @@ struct AdaptiveRehearsalView: View {
         let minute = exercise.receipt.snapshot.simMinute
         return VStack(alignment: .leading, spacing: Theme.Space.xs) {
             Label(l("adaptive.title"), systemImage: "point.3.connected.trianglepath.dotted").font(.headline)
-            HStack(spacing: Theme.Space.m) {
-                Label(l("common.simClock", ["time": RehearsalPresentation.compactTime(minutes: minute, localizer: l)]), systemImage: "clock")
-                    .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: minute, localizer: l))
-                if let director = exercise.lastDirector {
-                    Label(l("adaptive.director.\(director.rawValue)"), systemImage: director == .gemini ? "sparkles" : "iphone")
-                }
+            // One row when it fits; stacked at large text so neither label is squeezed into a narrow column.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: Theme.Space.m) { clockLabel(minute); directorLabel(exercise) }
+                VStack(alignment: .leading, spacing: Theme.Space.xs) { clockLabel(minute); directorLabel(exercise) }
             }
             .font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
             if let narration = exercise.narration, exercise.lastDirector == .gemini {
@@ -108,6 +106,20 @@ struct AdaptiveRehearsalView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("adaptive.header")
+    }
+
+    private func clockLabel(_ minute: Int) -> some View {
+        let l = model.localizer
+        return Label(l("common.simClock", ["time": RehearsalPresentation.compactTime(minutes: minute, localizer: l)]), systemImage: "clock")
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: minute, localizer: l))
+    }
+
+    @ViewBuilder private func directorLabel(_ exercise: AppModel.AdaptiveExercise) -> some View {
+        if let director = exercise.lastDirector {
+            Label(model.localizer("adaptive.director.\(director.rawValue)"), systemImage: director == .gemini ? "sparkles" : "iphone")
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var staleNotice: some View {

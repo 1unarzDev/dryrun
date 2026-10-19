@@ -13,14 +13,10 @@ struct ScorecardCard: View {
         if let result = model.scorecard, result.key == model.scoreKey {
             let card = result.card
             SectionCard(title: l("score.title"), systemImage: "gauge.with.dots.needle.33percent") {
-                HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
-                    if let overall = card.overall {
-                        Text(l("score.outOf", ["score": Self.whole(overall)]))
-                            .font(.largeTitle.weight(.bold)).monospacedDigit()
-                    } else {
-                        Text(l("score.notAssessed")).font(.title2.weight(.bold))
-                    }
-                    if card.provisional { StatusPill(text: l("score.provisional"), systemImage: "hourglass", tint: Theme.caution) }
+                // Side by side when it fits; the pill drops below the number at large text instead of hyphenating.
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) { overallText(card); provisionalPill(card) }
+                    VStack(alignment: .leading, spacing: Theme.Space.xs) { overallText(card); provisionalPill(card) }
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityIdentifier("score.overall")
@@ -43,6 +39,21 @@ struct ScorecardCard: View {
             }
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("score.card")
+        }
+    }
+
+    @ViewBuilder private func overallText(_ card: PreparednessScorecard) -> some View {
+        if let overall = card.overall {
+            Text(model.localizer("score.outOf", ["score": Self.whole(overall)])).font(.largeTitle.weight(.bold)).monospacedDigit()
+                .fixedSize()
+        } else {
+            Text(model.localizer("score.notAssessed")).font(.title2.weight(.bold))
+        }
+    }
+
+    @ViewBuilder private func provisionalPill(_ card: PreparednessScorecard) -> some View {
+        if card.provisional {
+            StatusPill(text: model.localizer("score.provisional"), systemImage: "hourglass", tint: Theme.caution).fixedSize()
         }
     }
 

@@ -806,7 +806,6 @@
   "inventory.unit.usGallon": "gal",
   "inventory.unit.liter": "L",
   "inventory.unit.day": "days",
-  "inventory.unit.count": "",
   "inventory.unit.wattHour": "Wh",
   "inventory.ready": "Ready to use",
   "inventory.reachable": "Can you reach it quickly?",
