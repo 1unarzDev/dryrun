@@ -5,7 +5,14 @@ import type {Host} from './host.js';
 export async function executeDirectorTool(host:Host,state:any,binding:any,call:{name:string;arguments:unknown}){
  if(!Object.hasOwn(directorToolSchemas,call.name))throw new Error('forbidden_tool');
  const args=directorToolSchemas[call.name as keyof typeof directorToolSchemas].parse(call.arguments);
- const response=await host.request({op:'query',session:state.session,tool:{kind:call.name,baseRevision:binding.revision,...args}});
+ let response:any;
+ try {response=await host.request({op:'query',session:state.session,tool:{kind:call.name,baseRevision:binding.revision,...args}});}
+ catch(error){
+  // A rejected hypothetical challenge is not a computed failure/pass. Keep stale/source/transport errors fatal.
+  if(call.name!=='runCounterfactual'||!(error instanceof Error)||error.message!=='invalidCommand')throw error;
+  const unchanged=await host.request({op:'query',session:state.session});
+  return {receipt:unchanged.receipt,result:toolResult.parse({binding,snapshot:minimizedSnapshot(unchanged.receipt),contextDigest:unchanged.receipt.contextDigest,observation:{kind:'runCounterfactual',status:'unavailable',reason:'host_rejected_counterfactual'}})};
+ }
  const tool=response.tool;
  const path=(p:any)=>p?{spaceSequence:p.spaceSequence,portalSequence:p.portalSequence,connectorSequence:p.connectorSequence,verificationNeeded:p.verificationNeeded}:undefined;
  const routes=tool.receipt.routes.map((r:any)=>({personID:r.request.personID,primary:path(r.primary),alternative:path(r.alternative),alternativeStatus:r.alternativeStatus,sharedChokepoints:r.sharedChokepoints,noRouteReason:r.noRouteReason}));

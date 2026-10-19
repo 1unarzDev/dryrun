@@ -157,6 +157,15 @@
           ],
           "additionalProperties": false
         },
+        "initialInventoryItemIDs": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
         "directorPolicy": {
           "type": "object",
           "properties": {

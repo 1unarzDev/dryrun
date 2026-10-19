@@ -10120,8 +10120,8 @@
         ],
         "outcomes": [],
         "prompt": {
-          "version": "director/4",
-          "sha256": "d3cb06ee7289c092b07e7d067f8ac41240ca8566aa9ac9410e9268721d3ad8e0"
+          "version": "director/5",
+          "sha256": "0533542d05a4ab59ae9153d044322d527524c8e94f1bfdfd6bc33b2f1de74bfd"
         }
       }
     },
@@ -20174,8 +20174,8 @@
         ],
         "outcomes": [],
         "prompt": {
-          "version": "director/4",
-          "sha256": "d3cb06ee7289c092b07e7d067f8ac41240ca8566aa9ac9410e9268721d3ad8e0"
+          "version": "director/5",
+          "sha256": "0533542d05a4ab59ae9153d044322d527524c8e94f1bfdfd6bc33b2f1de74bfd"
         }
       }
     }

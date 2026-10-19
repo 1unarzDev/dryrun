@@ -22,12 +22,14 @@
               "target": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded person ID to move"
               },
               "value": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded destination room ID"
               }
             },
             "required": [
@@ -47,12 +49,14 @@
               "target": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded inventory item ID, not a resource balance ID"
               },
               "value": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded person ID who picks it up"
               }
             },
             "required": [
@@ -72,12 +76,14 @@
               "target": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded inventory item ID"
               },
               "value": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded current carrier room ID where the item is put down"
               }
             },
             "required": [
@@ -97,12 +103,14 @@
               "target": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded person ID needing help"
               },
               "value": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded helper person ID"
               }
             },
             "required": [
@@ -122,12 +130,14 @@
               "target": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded operable door portal ID"
               },
               "value": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded adjacent person ID"
               }
             },
             "required": [
@@ -147,12 +157,14 @@
               "target": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Recorded equipment ID"
               },
               "value": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 120
+                "maxLength": 120,
+                "description": "Compatible recorded backup ID or none"
               }
             },
             "required": [

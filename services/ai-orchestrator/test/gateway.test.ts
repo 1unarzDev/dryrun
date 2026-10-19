@@ -129,3 +129,41 @@ it('accepts exact supplied committed-event evidence but rejects an invented even
   expect(result.status).toBe(eventID==='invented-food-event'?'unavailable':'completed');
  }
 });
+
+it('returns bounded rejected counterfactual observations without treating them as previews',async()=>{
+ let calls=0;
+ const provider:AgentProvider={async turn(input){calls++;
+  if(calls===1){const call={type:'function_call' as const,id:'rejected',name:'runCounterfactual',arguments:{profileIDs:['p']}};return {steps:[call],calls:[call],text:'',usage:{}};}
+  const result=input.history.find(s=>s.type==='function_result');expect(result).toBeDefined();
+  // No candidate preview followed the unavailable comparison; the final output must fail closed.
+  return {steps:[],calls:[],text:JSON.stringify({commands:[{kind:'requestDecision'}],purpose:'Cannot run this comparison.',evidenceIDs:[]}),usage:{}};
+ }};
+ const gateway=new Gateway(provider);
+ const started:any=await gateway.start('owner',{...request,requestID:'rejected-counterfactual',context:{...request.context,profiles:[{id:'p',rule:'r',minute:0}]}});
+ const continued:any=await gateway.resume('owner',{token:started.token,binding,callID:'rejected',result:{binding,snapshot,contextDigest:binding.contextDigest,observation:{kind:'runCounterfactual',status:'unavailable',reason:'host_rejected_counterfactual'}}});
+ expect(continued.status).toBe('unavailable');expect(calls).toBeLessThanOrEqual(4);
+});
+
+it('repairs geometry IDs used as stock IDs before dispatching a hypothetical supply action',async()=>{
+ let calls=0;const provider:AgentProvider={async turn(input){calls++;
+  if(calls===2)expect(JSON.stringify(input.history)).toContain('invalid_inventory_item');
+  const call={type:'function_call' as const,id:'supply-'+calls,name:'runCounterfactual',arguments:{profileIDs:['p'],retestPlan:{version:'dryrun.stress-retest/1',commands:[{kind:'takeSupply',target:calls===1?'an-supplies':'water',value:'person'}]}}};
+  return {steps:[call],calls:[call],text:'',usage:{}};
+ }};
+ const gateway=new Gateway(provider);
+ const result:any=await gateway.start('owner',{...request,requestID:'inventory-reference',context:{...request.context,initialInventoryItemIDs:['water'],profiles:[{id:'p',rule:'r',minute:0}]}});
+ expect(result.status).toBe('needs_client_tools');expect(calls).toBe(2);
+ expect(result.calls[0].arguments.retestPlan.commands[0].target).toBe('water');
+ gateway.cancel('owner',result.token);
+});
+
+it.each([['water','completed'],['invented-stock','unavailable']])('accepts only supplied initial stock evidence: %s',async(evidence,status)=>{
+ let calls=0;const provider:AgentProvider={async turn(){calls++;
+  if(calls===1){const call={type:'function_call' as const,id:'p',name:'evaluateCandidateAction',arguments:{command:{kind:'advance',minute:20}}};return {steps:[call],calls:[call],text:'',usage:{}};}
+  return {steps:[],calls:[],usage:{},text:JSON.stringify({commands:[{kind:'advance',minute:20}],purpose:'Inspect current consequences.',evidenceIDs:[evidence]})};
+ }};
+ const gateway=new Gateway(provider);
+ const started:any=await gateway.start('owner',{...request,requestID:'stock-evidence',context:{...request.context,initialInventoryItemIDs:['water']}});
+ const result:any=await gateway.resume('owner',{token:started.token,binding,callID:'p',result:{binding,snapshot,contextDigest:'preview'}});
+ expect(result.status).toBe(status);
+});

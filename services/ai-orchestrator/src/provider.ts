@@ -43,7 +43,7 @@ export class GeminiProvider implements AgentProvider {
 export function providerSchema(value:Record<string,unknown>):Record<string,unknown>{
  const result:Record<string,unknown>={};
  for(const [key,v] of Object.entries(value)){
-  if(['type','enum','required','additionalProperties'].includes(key))result[key]=v;
+  if(['type','enum','required','additionalProperties','description'].includes(key))result[key]=v;
   else if(key==='const')result.enum=[v];
   else if(key==='properties'&&v&&typeof v==='object')result.properties=Object.fromEntries(Object.entries(v).map(([k,x])=>[k,providerSchema(x as Record<string,unknown>)]));
   else if(key==='items'&&v&&typeof v==='object')result.items=providerSchema(v as Record<string,unknown>);
