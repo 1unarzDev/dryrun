@@ -36,6 +36,7 @@ public struct PracticeAttempt: Codable, Sendable {
 }
 public struct PreparednessScorecard: Codable, Sendable {
     public var assessmentVersion:String?
+    public var practiceEvaluatorVersion:String? = nil
     public var rubricVersion:String; public var preparation:Double?; public var practice:Double
     public var overall:Double?; public var evidenceCoverage:Double; public var practiceAssessed:Int
     public var provisional:Bool; public var cap:Double; public var capReasons:[String]; public var statuses:[String:CriterionStatus]
@@ -92,7 +93,7 @@ public enum ScoreCompiler {
                 if !latest.coached && a.beforeFeedback {practice += 25*a.credit;practiceAssessed += 1}
             }
         }
-        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,rubricVersion:rubric.version,preparation:preparation,practice:practice,
+        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,practiceEvaluatorVersion:attempts.max(by:{$0.sequence<$1.sequence})?.source.map{$0.evaluatorVersion ?? PracticeEvaluator.legacyVersion},rubricVersion:rubric.version,preparation:preparation,practice:practice,
             overall:preparation.map{min(0.9*$0+0.1*practice,cap)},evidenceCoverage:weight>0 ? 100*coverage/weight : 0,
             practiceAssessed:practiceAssessed,provisional:true,cap:cap,capReasons:reasons.sorted(),statuses:statuses)
     }

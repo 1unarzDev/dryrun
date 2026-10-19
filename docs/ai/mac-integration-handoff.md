@@ -1,6 +1,6 @@
 # Claude/Mac integration handoff
 
-Latest: household-assessment/5, preparation/4, reviewed essentials inventory and 423 Core tests. Read the current acceptance ledger and policy/5 sections before historical notes below. No Xcode/iPhone verification has occurred here.
+Latest: household-assessment/5, preparation/4, reviewed essentials inventory and 426 Core tests; practice-anchors/2. Read the current acceptance ledger and policy/5 sections before historical notes below. No Xcode/iPhone verification has occurred here.
 
 Baseline: `main` / `436b243276e0f333131a1813b580382971949748`. Linux implementation adds Core files under Models/AI*, Models/HomeConcernReview/IntegratedAIState, Ranking/PreparationTaskCatalog/HouseholdAssessment/PreparednessScorecard, Simulation/IncrementalSession/PlanStressTest, Session/ResourceStrategyRefresh and Spatial/AIPlanDiagram; adds a Swift executable, private Node service, rubric/contracts/fixtures/docs; makes `RunState.input/household/model` mutable for session-local action application; adds an optional encrypted `VaultPayload.integratedAIState`. No native source/PDF/navigation/RoomPlan renderer is changed. Reconcile newer Mac changes before applying shared-file edits. The three untracked owner-supplied reference/audit files are preserved.
 
@@ -34,7 +34,8 @@ Build a gateway request from the *committed* receipt, never a speculative user a
   "snapshot":{"simMinute":720,"resources":{"res.water.stored":{"amount":3,"unit":"gal"}},"services":{"svc.water.supply":"unavailable"},"unmetRequirements":[],"unknowns":[]},
   "profiles":[{"id":"actual-eligible-profile-id","rule":"rule.external.set","minute":0}],
   "learningObjectives":["Investigate the current continuity dependency"],
-  "lastAction":{"id":"input-uuid","kind":"useStoredWater","value":"essential"}
+  "lastAction":{"contractVersion":"dryrun.committed-action-context/1","id":"input-uuid","kind":"useStoredWater","value":"essential","commitRevision":2,"commandIndex":0},
+  "recentActions":[{"contractVersion":"dryrun.committed-action-context/1","id":"input-uuid","kind":"useStoredWater","value":"essential","commitRevision":2,"commandIndex":0}]
  }
 }
 ```
@@ -202,3 +203,6 @@ A follow-up committed as `resumed-essential-use` at revision 7 yields:
 ```
 
 Do not label it with the original all-use input. For batched actions preserve commandIndex and the actual suffix order. Legacy contexts without recentActions still parse, but the native integration should send the canonical versioned projection. This DTO never contains raw optional text/voice submissions, contact details or user-entered unsupported target/value fields.
+
+
+Practice adaptation anchors/2: new sources persist evaluatorVersion; missing means historical anchors/1, and new source-bound cards expose practiceEvaluatorVersion. Preserve both through every Vault save. See practice-capture.md and practice-adaptation-v2.json: a previously verified primary route is blocked, the host has already computed an alternative, and actual movement along it earns credit. Attempting the blocked branch earns zero; incomplete connectivity, unchanged routes, arbitrary movement, and shelter/refuge anchors remain unassessed. Phone tests must demonstrate these distinctions before feedback without rerolling the first answer. The complete comparable four-competency check remains provisional/human-review pending.

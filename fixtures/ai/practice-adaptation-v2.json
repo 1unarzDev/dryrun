@@ -1,0 +1,1454 @@
+{
+  "synthetic": true,
+  "modelCalls": 0,
+  "evaluatorVersion": "dryrun.practice-anchors/2",
+  "usual": {
+    "contextDigest": "da2c9f64db11192",
+    "directorState": {
+      "activeIncidentCount": 1,
+      "awaitingUserAction": false,
+      "scheduledEventCount": 1,
+      "stageID": "evt.home-fire.alarm"
+    },
+    "eventSequence": 2,
+    "events": [
+      {
+        "evidence": {
+          "causedByEventIDs": [],
+          "factIDs": [],
+          "ruleID": "rule.fire.ignition",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.alarm",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "scenario.home-fire.event.alarm"
+      },
+      {
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.alarm"
+          ],
+          "factIDs": [
+            "home.annotations"
+          ],
+          "ruleID": "rule.fire.meeting-point",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.meeting-point-missing",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "caution",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "scenario.home-fire.meeting-point-missing"
+      }
+    ],
+    "finished": false,
+    "pending": [],
+    "revision": 1,
+    "routes": [
+      {
+        "algorithmVersion": "egress-portal-graph/2",
+        "alternative": {
+          "connectorSequence": [],
+          "exitPortalID": "living-exit",
+          "legs": [
+            {
+              "floorID": "fl-ground",
+              "points": [
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 4.45,
+                  "y": 1.5
+                },
+                {
+                  "x": 4,
+                  "y": 1.5
+                },
+                {
+                  "x": 3.55,
+                  "y": 1.5
+                },
+                {
+                  "x": 0.45,
+                  "y": 1.5
+                },
+                {
+                  "x": 0,
+                  "y": 1.5
+                },
+                {
+                  "x": -0.45,
+                  "y": 1.5
+                }
+              ]
+            }
+          ],
+          "lengthMeters": 6.528649747490233,
+          "portalSequence": [
+            "to-living",
+            "living-exit"
+          ],
+          "spaceSequence": [
+            "start",
+            "living"
+          ],
+          "verificationNeeded": []
+        },
+        "alternativeStatus": "independent",
+        "exclusions": [],
+        "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+        "homeID": "synthetic-two-branches",
+        "homeRevision": 1,
+        "primary": {
+          "connectorSequence": [],
+          "exitPortalID": "kitchen-exit",
+          "legs": [
+            {
+              "floorID": "fl-ground",
+              "points": [
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 7.55,
+                  "y": 1.5
+                },
+                {
+                  "x": 8,
+                  "y": 1.5
+                },
+                {
+                  "x": 8.45,
+                  "y": 1.5
+                },
+                {
+                  "x": 9.55,
+                  "y": 1.5
+                },
+                {
+                  "x": 10,
+                  "y": 1.5
+                },
+                {
+                  "x": 10.45,
+                  "y": 1.5
+                }
+              ]
+            }
+          ],
+          "lengthMeters": 4.528649747490232,
+          "portalSequence": [
+            "to-kitchen",
+            "kitchen-exit"
+          ],
+          "spaceSequence": [
+            "start",
+            "kitchen"
+          ],
+          "verificationNeeded": []
+        },
+        "request": {
+          "exclusions": {
+            "blockedConnectorIDs": [],
+            "blockedPortalIDs": [],
+            "blockedSpaceIDs": []
+          },
+          "mobility": {
+            "minimumClearWidthMeters": 0.7,
+            "requiresStepFree": false
+          },
+          "personID": "p-oak-1",
+          "purpose": "outdoorEgress",
+          "startSpaceID": "start"
+        },
+        "sharedChokepoints": []
+      }
+    ],
+    "sessionID": "synthetic-session",
+    "snapshot": {
+      "firedEventIDs": [
+        "evt.home-fire.alarm",
+        "evt.home-fire.meeting-point-missing"
+      ],
+      "resources": {
+        "res.backup.bk-station": {
+          "amount": 1000,
+          "unit": "Wh"
+        },
+        "res.device.eq-oxygen.runtime": {
+          "unit": "h"
+        },
+        "res.handset.hours": {
+          "amount": 18,
+          "unit": "h"
+        },
+        "res.handset.powerBankCharges": {
+          "amount": 2,
+          "unit": "charges"
+        },
+        "res.water.stored": {
+          "amount": 5,
+          "unit": "gal"
+        }
+      },
+      "revealedEventCount": 1,
+      "services": {
+        "svc.alerts": "operational",
+        "svc.cellular": "operational",
+        "svc.cooling": "operational",
+        "svc.destination": "unavailable",
+        "svc.device.eq-oxygen": "operational",
+        "svc.grid": "operational",
+        "svc.handset": "operational",
+        "svc.heat": "operational",
+        "svc.power.home": "operational",
+        "svc.refrigeration": "operational",
+        "svc.roads": "operational",
+        "svc.transport": "operational",
+        "svc.water.safety": "operational",
+        "svc.water.supply": "operational",
+        "svc.wellPump": "operational",
+        "svc.wifi": "operational"
+      },
+      "simMinute": 0,
+      "spatialState": {
+        "affectedPortalIDs": [],
+        "affectedSpaceIDs": [],
+        "assumption": "Exercise: routes before the authored smoke blockage. Starting rooms are recorded household assignments.",
+        "assumptionKey": "spatial.assumption.fire-before",
+        "exposedSpaceIDs": [],
+        "hazard": "homeFire",
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternative": {
+              "connectorSequence": [],
+              "exitPortalID": "living-exit",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 6,
+                      "y": 2
+                    },
+                    {
+                      "x": 4.45,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 4,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 3.55,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 0.45,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 0,
+                      "y": 1.5
+                    },
+                    {
+                      "x": -0.45,
+                      "y": 1.5
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 6.528649747490233,
+              "portalSequence": [
+                "to-living",
+                "living-exit"
+              ],
+              "spaceSequence": [
+                "start",
+                "living"
+              ],
+              "verificationNeeded": []
+            },
+            "alternativeStatus": "independent",
+            "exclusions": [],
+            "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+            "homeID": "synthetic-two-branches",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "kitchen-exit",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 6,
+                      "y": 2
+                    },
+                    {
+                      "x": 7.55,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 8,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 8.45,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 9.55,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 10,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 10.45,
+                      "y": 1.5
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 4.528649747490232,
+              "portalSequence": [
+                "to-kitchen",
+                "kitchen-exit"
+              ],
+              "spaceSequence": [
+                "start",
+                "kitchen"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": []
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "start"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "seed": 7,
+        "stageID": "evt.home-fire.alarm"
+      },
+      "unknowns": [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "home.smokeAlarms",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "unmetRequirements": [
+        "req.meetingPoint"
+      ]
+    }
+  },
+  "alternate": {
+    "contextDigest": "bdd752a8b4ff9bf1",
+    "directorState": {
+      "activeIncidentCount": 1,
+      "awaitingUserAction": false,
+      "originSpaceID": "kitchen",
+      "scheduledEventCount": 2,
+      "stageID": "evt.home-fire.fire-origin"
+    },
+    "eventSequence": 4,
+    "events": [
+      {
+        "evidence": {
+          "causedByEventIDs": [],
+          "factIDs": [],
+          "ruleID": "rule.fire.ignition",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.alarm",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "scenario.home-fire.event.alarm"
+      },
+      {
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.alarm"
+          ],
+          "factIDs": [
+            "home.annotations"
+          ],
+          "ruleID": "rule.fire.meeting-point",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.meeting-point-missing",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "caution",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "scenario.home-fire.meeting-point-missing"
+      },
+      {
+        "evidence": {
+          "causedByEventIDs": [],
+          "factIDs": [],
+          "ruleID": "rule.fire.block-primary",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.fire-origin",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 1,
+        "templateValues": {},
+        "titleKey": "scenario.home-fire.event.fire-origin"
+      },
+      {
+        "detailKey": "independence.none",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-1",
+            "home.portal.living-exit"
+          ],
+          "ruleID": "rule.fire.route",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.route.alternative.p-oak-1",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "caution",
+        "simMinute": 1,
+        "templateValues": {
+          "exitPortalID": "living-exit",
+          "exitRoom": "living",
+          "independence": "none",
+          "person": "Parent A"
+        },
+        "titleKey": "scenario.home-fire.route.alternative"
+      }
+    ],
+    "finished": false,
+    "pending": [],
+    "revision": 2,
+    "routes": [
+      {
+        "algorithmVersion": "egress-portal-graph/2",
+        "alternativeStatus": "none",
+        "exclusions": [
+          {
+            "elementID": "kitchen",
+            "reason": "blockedByScenario"
+          }
+        ],
+        "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+        "homeID": "synthetic-two-branches",
+        "homeRevision": 1,
+        "primary": {
+          "connectorSequence": [],
+          "exitPortalID": "living-exit",
+          "legs": [
+            {
+              "floorID": "fl-ground",
+              "points": [
+                {
+                  "x": 6,
+                  "y": 2
+                },
+                {
+                  "x": 4.45,
+                  "y": 1.5
+                },
+                {
+                  "x": 4,
+                  "y": 1.5
+                },
+                {
+                  "x": 3.55,
+                  "y": 1.5
+                },
+                {
+                  "x": 0.45,
+                  "y": 1.5
+                },
+                {
+                  "x": 0,
+                  "y": 1.5
+                },
+                {
+                  "x": -0.45,
+                  "y": 1.5
+                }
+              ]
+            }
+          ],
+          "lengthMeters": 6.528649747490233,
+          "portalSequence": [
+            "to-living",
+            "living-exit"
+          ],
+          "spaceSequence": [
+            "start",
+            "living"
+          ],
+          "verificationNeeded": []
+        },
+        "request": {
+          "exclusions": {
+            "blockedConnectorIDs": [],
+            "blockedPortalIDs": [],
+            "blockedSpaceIDs": [
+              "kitchen"
+            ]
+          },
+          "mobility": {
+            "minimumClearWidthMeters": 0.7,
+            "requiresStepFree": false
+          },
+          "personID": "p-oak-1",
+          "purpose": "outdoorEgress",
+          "startSpaceID": "start"
+        },
+        "sharedChokepoints": []
+      }
+    ],
+    "sessionID": "synthetic-session",
+    "snapshot": {
+      "firedEventIDs": [
+        "evt.home-fire.fire-origin",
+        "evt.home-fire.route.alternative.p-oak-1"
+      ],
+      "resources": {
+        "res.backup.bk-station": {
+          "amount": 1000,
+          "unit": "Wh"
+        },
+        "res.device.eq-oxygen.runtime": {
+          "unit": "h"
+        },
+        "res.handset.hours": {
+          "amount": 18,
+          "unit": "h"
+        },
+        "res.handset.powerBankCharges": {
+          "amount": 2,
+          "unit": "charges"
+        },
+        "res.water.stored": {
+          "amount": 5,
+          "unit": "gal"
+        }
+      },
+      "revealedEventCount": 3,
+      "services": {
+        "svc.alerts": "operational",
+        "svc.cellular": "operational",
+        "svc.cooling": "operational",
+        "svc.destination": "unavailable",
+        "svc.device.eq-oxygen": "operational",
+        "svc.grid": "operational",
+        "svc.handset": "operational",
+        "svc.heat": "operational",
+        "svc.power.home": "operational",
+        "svc.refrigeration": "operational",
+        "svc.roads": "operational",
+        "svc.transport": "operational",
+        "svc.water.safety": "operational",
+        "svc.water.supply": "operational",
+        "svc.wellPump": "operational",
+        "svc.wifi": "operational"
+      },
+      "simMinute": 1,
+      "spatialState": {
+        "affectedPortalIDs": [],
+        "affectedSpaceIDs": [
+          "kitchen"
+        ],
+        "assumption": "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.",
+        "assumptionKey": "spatial.assumption.fire-blocked",
+        "exposedSpaceIDs": [],
+        "hazard": "homeFire",
+        "originSpaceID": "kitchen",
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "kitchen",
+                "reason": "blockedByScenario"
+              }
+            ],
+            "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+            "homeID": "synthetic-two-branches",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "living-exit",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 6,
+                      "y": 2
+                    },
+                    {
+                      "x": 4.45,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 4,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 3.55,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 0.45,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 0,
+                      "y": 1.5
+                    },
+                    {
+                      "x": -0.45,
+                      "y": 1.5
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 6.528649747490233,
+              "portalSequence": [
+                "to-living",
+                "living-exit"
+              ],
+              "spaceSequence": [
+                "start",
+                "living"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "kitchen"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "start"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "seed": 7,
+        "stageID": "evt.home-fire.fire-origin"
+      },
+      "unknowns": [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "home.smokeAlarms",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "unmetRequirements": [
+        "req.meetingPoint"
+      ]
+    }
+  },
+  "source": {
+    "contractVersion": "dryrun.practice-capture/1",
+    "evaluatorVersion": "dryrun.practice-anchors/2",
+    "initialDigest": "f246b775cd8007c0",
+    "sessionID": "synthetic-session",
+    "startingEventSequence": 4,
+    "startingRevision": 2
+  },
+  "branches": [
+    {
+      "destination": "living",
+      "action": {
+        "id": "move-living",
+        "actor": "user",
+        "baseRevision": 3,
+        "commands": [
+          {
+            "kind": "moveTo",
+            "target": "p-oak-1",
+            "value": "living"
+          }
+        ]
+      },
+      "observation": {
+        "acceptedRevision": 4,
+        "actionID": "move-living",
+        "competencyID": "adaptation",
+        "credit": 1,
+        "feedbackRevealed": false,
+        "receiptDigest": "8c9591bcbc6364dc"
+      },
+      "receipt": {
+        "contextDigest": "8c9591bcbc6364dc",
+        "directorState": {
+          "activeIncidentCount": 1,
+          "awaitingUserAction": false,
+          "originSpaceID": "kitchen",
+          "scheduledEventCount": 2,
+          "stageID": "evt.home-fire.fire-origin"
+        },
+        "eventSequence": 6,
+        "events": [
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "rule.fire.ignition",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.alarm",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.event.alarm"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.alarm"
+              ],
+              "factIDs": [
+                "home.annotations"
+              ],
+              "ruleID": "rule.fire.meeting-point",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.meeting-point-missing",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "caution",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.meeting-point-missing"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "rule.fire.block-primary",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.fire-origin",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 1,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.event.fire-origin"
+          },
+          {
+            "detailKey": "independence.none",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-1",
+                "home.portal.living-exit"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.alternative.p-oak-1",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "caution",
+            "simMinute": 1,
+            "templateValues": {
+              "exitPortalID": "living-exit",
+              "exitRoom": "living",
+              "independence": "none",
+              "person": "Parent A"
+            },
+            "titleKey": "scenario.home-fire.route.alternative"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.unsupported-first",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 1,
+            "templateValues": {},
+            "titleKey": "simulation.user.unsupported"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.move-living",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 1,
+            "templateValues": {},
+            "titleKey": "simulation.user.moveTo"
+          }
+        ],
+        "finished": false,
+        "pending": [],
+        "revision": 4,
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "kitchen",
+                "reason": "blockedByScenario"
+              }
+            ],
+            "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+            "homeID": "synthetic-two-branches",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "living-exit",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 2,
+                      "y": 2
+                    },
+                    {
+                      "x": 0.45,
+                      "y": 1.5
+                    },
+                    {
+                      "x": 0,
+                      "y": 1.5
+                    },
+                    {
+                      "x": -0.45,
+                      "y": 1.5
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 2.5286497474902334,
+              "portalSequence": [
+                "living-exit"
+              ],
+              "spaceSequence": [
+                "living"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "kitchen"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "living"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "sessionID": "synthetic-session",
+        "snapshot": {
+          "firedEventIDs": [
+            "evt.home-fire.fire-origin",
+            "evt.home-fire.route.alternative.p-oak-1",
+            "user.unsupported-first",
+            "user.move-living"
+          ],
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "revealedEventCount": 3,
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "simMinute": 1,
+          "spatialState": {
+            "affectedPortalIDs": [],
+            "affectedSpaceIDs": [
+              "kitchen"
+            ],
+            "assumption": "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.",
+            "assumptionKey": "spatial.assumption.fire-blocked",
+            "exposedSpaceIDs": [],
+            "hazard": "homeFire",
+            "originSpaceID": "kitchen",
+            "routes": [
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "kitchen",
+                    "reason": "blockedByScenario"
+                  }
+                ],
+                "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+                "homeID": "synthetic-two-branches",
+                "homeRevision": 1,
+                "primary": {
+                  "connectorSequence": [],
+                  "exitPortalID": "living-exit",
+                  "legs": [
+                    {
+                      "floorID": "fl-ground",
+                      "points": [
+                        {
+                          "x": 2,
+                          "y": 2
+                        },
+                        {
+                          "x": 0.45,
+                          "y": 1.5
+                        },
+                        {
+                          "x": 0,
+                          "y": 1.5
+                        },
+                        {
+                          "x": -0.45,
+                          "y": 1.5
+                        }
+                      ]
+                    }
+                  ],
+                  "lengthMeters": 2.5286497474902334,
+                  "portalSequence": [
+                    "living-exit"
+                  ],
+                  "spaceSequence": [
+                    "living"
+                  ],
+                  "verificationNeeded": []
+                },
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "kitchen"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-1",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "living"
+                },
+                "sharedChokepoints": []
+              }
+            ],
+            "seed": 7,
+            "stageID": "evt.home-fire.fire-origin"
+          },
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "home.smokeAlarms",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ],
+          "unmetRequirements": [
+            "req.meetingPoint"
+          ]
+        }
+      },
+      "scorecard": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "cap": 79,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 28.611111111111107,
+        "overall": 23.749999999999996,
+        "practice": 25,
+        "practiceAssessed": 1,
+        "practiceEvaluatorVersion": "dryrun.practice-anchors/2",
+        "preparation": 23.611111111111107,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "unknown",
+          "assistance": "notApplicable",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "unknown",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "unknown",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "unknown",
+          "shelter": "unknown",
+          "water": "unknown"
+        }
+      },
+      "replayExact": true
+    },
+    {
+      "destination": "kitchen",
+      "action": {
+        "id": "move-kitchen",
+        "actor": "user",
+        "baseRevision": 3,
+        "commands": [
+          {
+            "kind": "moveTo",
+            "target": "p-oak-1",
+            "value": "kitchen"
+          }
+        ]
+      },
+      "observation": {
+        "acceptedRevision": 4,
+        "actionID": "move-kitchen",
+        "competencyID": "adaptation",
+        "credit": 0,
+        "feedbackRevealed": false,
+        "receiptDigest": "c8320d9907012be3"
+      },
+      "receipt": {
+        "contextDigest": "c8320d9907012be3",
+        "directorState": {
+          "activeIncidentCount": 1,
+          "awaitingUserAction": false,
+          "originSpaceID": "kitchen",
+          "scheduledEventCount": 2,
+          "stageID": "evt.home-fire.fire-origin"
+        },
+        "eventSequence": 6,
+        "events": [
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "rule.fire.ignition",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.alarm",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.event.alarm"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.alarm"
+              ],
+              "factIDs": [
+                "home.annotations"
+              ],
+              "ruleID": "rule.fire.meeting-point",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.meeting-point-missing",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "caution",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.meeting-point-missing"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "rule.fire.block-primary",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.fire-origin",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 1,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.event.fire-origin"
+          },
+          {
+            "detailKey": "independence.none",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-1",
+                "home.portal.living-exit"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.alternative.p-oak-1",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "caution",
+            "simMinute": 1,
+            "templateValues": {
+              "exitPortalID": "living-exit",
+              "exitRoom": "living",
+              "independence": "none",
+              "person": "Parent A"
+            },
+            "titleKey": "scenario.home-fire.route.alternative"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.unsupported-first",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 1,
+            "templateValues": {},
+            "titleKey": "simulation.user.unsupported"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.move-kitchen",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 1,
+            "templateValues": {},
+            "titleKey": "simulation.user.moveTo"
+          }
+        ],
+        "finished": false,
+        "pending": [],
+        "revision": 4,
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "kitchen",
+                "reason": "blockedByScenario"
+              }
+            ],
+            "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+            "homeID": "synthetic-two-branches",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "destinationSpaceID": "kitchen",
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "kitchen"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "helperReach",
+              "startSpaceID": "start"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "sessionID": "synthetic-session",
+        "snapshot": {
+          "firedEventIDs": [
+            "evt.home-fire.fire-origin",
+            "evt.home-fire.route.alternative.p-oak-1",
+            "user.unsupported-first",
+            "user.move-kitchen"
+          ],
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "revealedEventCount": 3,
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "simMinute": 1,
+          "spatialState": {
+            "affectedPortalIDs": [],
+            "affectedSpaceIDs": [
+              "kitchen"
+            ],
+            "assumption": "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.",
+            "assumptionKey": "spatial.assumption.fire-blocked",
+            "exposedSpaceIDs": [],
+            "hazard": "homeFire",
+            "originSpaceID": "kitchen",
+            "routes": [
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "kitchen",
+                    "reason": "blockedByScenario"
+                  }
+                ],
+                "homeFingerprint": "619c5343ab4da297abc960571aa9a53f",
+                "homeID": "synthetic-two-branches",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "destinationSpaceID": "kitchen",
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "kitchen"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-1",
+                  "purpose": "helperReach",
+                  "startSpaceID": "start"
+                },
+                "sharedChokepoints": []
+              }
+            ],
+            "seed": 7,
+            "stageID": "evt.home-fire.fire-origin"
+          },
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "home.smokeAlarms",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ],
+          "unmetRequirements": [
+            "req.meetingPoint"
+          ]
+        }
+      },
+      "scorecard": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "cap": 79,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 28.611111111111107,
+        "overall": 21.249999999999996,
+        "practice": 0,
+        "practiceAssessed": 1,
+        "practiceEvaluatorVersion": "dryrun.practice-anchors/2",
+        "preparation": 23.611111111111107,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "unknown",
+          "assistance": "notApplicable",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "unknown",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "unknown",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "unknown",
+          "shelter": "unknown",
+          "water": "unknown"
+        }
+      },
+      "replayExact": true
+    }
+  ]
+}

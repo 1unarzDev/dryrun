@@ -1,0 +1,21 @@
+{
+  "version": "dryrun.practice-anchors/2",
+  "status": "provisional-human-review-pending",
+  "authority": "PracticeEvaluator; committed user actions and computed host receipts only",
+  "legacy": {
+    "version": "dryrun.practice-anchors/1",
+    "selection": "Missing evaluatorVersion in a persisted practice source selects the original algorithm. Never silently regrade history."
+  },
+  "adaptation": {
+    "sourceIDs": ["S19"],
+    "supportedObjective": "outdoorEgress",
+    "prerequisite": "A committed exclusion invalidated an earlier verified primary path from the same starting room and home fingerprint.",
+    "independentCorrect": "A committed nontrivial move reaches a room on a currently verified primary or alternate path. The actual movement path and resulting egress are verified under the committed exclusions.",
+    "incorrect": "The committed attempted movement or resulting egress fails because of the scenario blockage.",
+    "unassessed": ["No proven prior route failure", "Unchanged or same-room movement", "Missing connectivity or verification", "Shelter/refuge objectives", "Safe movement outside the bounded path anchor"],
+    "partialCredit": "No partial anchor is defined."
+  },
+  "otherCompetencies": "Retain anchors/1 initial stored-water policy, usable contact/channel and essential-device allocation anchors. Unsupported actions remain unassessed.",
+  "exclusions": ["Concern-seeded training", "Coached score credit", "Reaction speed or physical ability scoring", "Model-provided grades"],
+  "comparability": "A runnable egress anchor is not a validated comparable four-competency practice examination. Variants remain provisional."
+}

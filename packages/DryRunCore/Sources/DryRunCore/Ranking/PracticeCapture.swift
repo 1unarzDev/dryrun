@@ -7,6 +7,8 @@ public struct PracticeAttemptSource:Codable,Sendable,Equatable {
     public var initialDigest:String
     public var startingRevision:Int
     public var startingEventSequence:Int
+    /// Missing on persisted capture/1 sources means anchors/1; never regrade old answers.
+    public var evaluatorVersion:String? = nil
 }
 public struct PracticeObservation:Codable,Sendable,Equatable {
     public var competencyID:String
@@ -35,7 +37,7 @@ public extension IntegratedAIState {
         var attempt=try candidate.beginPractice(id:id,variantID:variantID)
         attempt.source=PracticeAttemptSource(contractVersion:"dryrun.practice-capture/1",sessionID:sessionID,
             initialDigest:try Self.practiceSourceDigest(session),
-            startingRevision:session.revision,startingEventSequence:receipt.eventSequence)
+            startingRevision:session.revision,startingEventSequence:receipt.eventSequence,evaluatorVersion:PracticeEvaluator.version)
         attempt.observations=[]
         candidate.practiceAttempts[candidate.practiceAttempts.count-1]=attempt
         try persist(candidate);self=candidate;return attempt
@@ -57,6 +59,7 @@ public extension IntegratedAIState {
         guard let a=practiceAttempts.firstIndex(where:{$0.id==attemptID}),
               practiceAttempts[a].sequence==practiceAttempts.map(\.sequence).max(),
               let source=practiceAttempts[a].source,source.contractVersion=="dryrun.practice-capture/1",
+              [PracticeEvaluator.version,PracticeEvaluator.legacyVersion].contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),
               let s=sessions.firstIndex(where:{$0.id==source.sessionID}),
               sessions[s].concernSeed==nil,
               var observations=practiceAttempts[a].observations,
@@ -72,7 +75,7 @@ public extension IntegratedAIState {
         var candidate=self
         let receipt=try candidate.sessions[s].commit(commit,library:library)
         var answer:PracticeAnswer?
-        do {answer=try PracticeEvaluator.evaluate(competencyID:competencyID,actionID:commit.id,session:candidate.sessions[s],library:library)}
+        do {answer=try PracticeEvaluator.evaluate(competencyID:competencyID,actionID:commit.id,session:candidate.sessions[s],library:library,evaluatorVersion:source.evaluatorVersion ?? PracticeEvaluator.legacyVersion)}
         catch SessionError.invalidCommand {answer=nil} // Unsupported anchor, not an invented wrong/correct answer.
         let observation=PracticeObservation(competencyID:competencyID,actionID:commit.id,acceptedRevision:receipt.revision,
             receiptDigest:receipt.contextDigest,credit:answer?.credit,feedbackRevealed:false)
@@ -100,7 +103,8 @@ public extension IntegratedAIState {
         try practiceAttempts.map {attempt in
             var accepted=attempt;accepted.answers=[]
             guard let source=attempt.source else {return accepted}
-            guard attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
+            guard attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",
+              [PracticeEvaluator.version,PracticeEvaluator.legacyVersion].contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   let observations=attempt.observations,observations.count<=4,
                   Set(observations.map(\.actionID)).count==observations.count,
@@ -119,7 +123,7 @@ public extension IntegratedAIState {
                     guard commit.actor=="user",prefix.revision>source.startingRevision,
                           observation.acceptedRevision==receipt.revision,observation.receiptDigest==receipt.contextDigest else {throw SessionError.stale}
                     var answer:PracticeAnswer?
-                    do {answer=try PracticeEvaluator.evaluate(competencyID:observation.competencyID,actionID:commit.id,session:prefix,library:library)}
+                    do {answer=try PracticeEvaluator.evaluate(competencyID:observation.competencyID,actionID:commit.id,session:prefix,library:library,evaluatorVersion:source.evaluatorVersion ?? PracticeEvaluator.legacyVersion)}
                     catch SessionError.invalidCommand {answer=nil}
                     guard observation.credit==answer?.credit else {throw SessionError.invalidCommand}
                     if let answer {accepted.answers.append(answer)}
