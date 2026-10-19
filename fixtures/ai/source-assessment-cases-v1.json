@@ -1,0 +1,7260 @@
+{
+  "version": "dryrun.source-assessment-cases/1",
+  "assessmentVersion": "dryrun.household-assessment/3",
+  "referenceStatus": "Policy-authored synthetic source-to-predicate expectations, not human-adjudicated. These combinations are not independent sampled families. Same sample ranch geometry; varied-home evidence remains in Core spatial tests.",
+  "splitPolicy": "40 development / 20 holdout selected before first execution; no live prompt tuning uses these cases. Do not regenerate or tune on holdout failures without retiring that holdout claim.",
+  "template": {
+    "choices": {},
+    "contentVersion": "2026.10.3",
+    "home": {
+      "annotations": [
+        {
+          "floorID": "fl-ground",
+          "id": "an-smoke-hall",
+          "kind": "smokeAlarm",
+          "label": "Smoke alarm",
+          "position": {
+            "x": 6,
+            "y": 5.6
+          },
+          "spaceID": "sp-hall",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-smoke-bed1",
+          "kind": "smokeAlarm",
+          "label": "Smoke alarm",
+          "position": {
+            "x": 2.2,
+            "y": 8.1
+          },
+          "spaceID": "sp-bed1",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-smoke-bed2",
+          "kind": "smokeAlarm",
+          "label": "Smoke alarm",
+          "note": "Battery test not recorded",
+          "position": {
+            "x": 9.5,
+            "y": 8.1
+          },
+          "spaceID": "sp-bed2",
+          "verification": "proposed"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-co-hall",
+          "kind": "coAlarm",
+          "label": "CO alarm",
+          "position": {
+            "x": 3,
+            "y": 5.6
+          },
+          "spaceID": "sp-hall",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-extinguisher",
+          "kind": "fireExtinguisher",
+          "label": "Fire extinguisher",
+          "position": {
+            "x": 7.4,
+            "y": 4.5
+          },
+          "spaceID": "sp-kitchen",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-shutoff-water",
+          "kind": "utilityShutoffWater",
+          "label": "Water shutoff",
+          "position": {
+            "x": 11.6,
+            "y": 4.6
+          },
+          "spaceID": "sp-kitchen",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-shutoff-elec",
+          "kind": "utilityShutoffElectric",
+          "label": "Breaker panel",
+          "position": {
+            "x": 11.6,
+            "y": 5.6
+          },
+          "spaceID": "sp-hall",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-supplies",
+          "kind": "supplies",
+          "label": "Emergency supplies",
+          "position": {
+            "x": 5.75,
+            "y": 6.8
+          },
+          "spaceID": "sp-closet",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-medical",
+          "kind": "medicalEquipment",
+          "label": "Oxygen concentrator",
+          "position": {
+            "x": 6.4,
+            "y": 0.6
+          },
+          "spaceID": "sp-living",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-tornado",
+          "kind": "tornadoShelterCandidate",
+          "label": "Interior closet (shelter candidate)",
+          "note": "Interior room with no windows on the lowest floor. Not an engineered safe room.",
+          "position": {
+            "x": 5.75,
+            "y": 6.8
+          },
+          "spaceID": "sp-closet",
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-hydrant",
+          "kind": "exteriorHydrant",
+          "label": "Street hydrant",
+          "note": "Landmark only; not an evacuation objective.",
+          "position": {
+            "x": 14.5,
+            "y": -4
+          },
+          "verification": "verified"
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "an-meeting",
+          "kind": "outsideMeetingPoint",
+          "label": "Mailbox at the end of the driveway (fictional)",
+          "position": {
+            "x": 3.45,
+            "y": -8
+          },
+          "verification": "verified"
+        }
+      ],
+      "completeness": "complete",
+      "connectors": [],
+      "floors": [
+        {
+          "elevationMeters": 0,
+          "id": "fl-ground",
+          "label": "Ground floor",
+          "level": 0,
+          "toCommon": {
+            "rotationRadians": 0,
+            "translation": {
+              "x": 0,
+              "y": 0
+            }
+          }
+        }
+      ],
+      "frame": {
+        "handedness": "right",
+        "note": "Hand-authored fictional layout; x east, y north, metres.",
+        "sourceUpAxis": "y",
+        "units": "meters"
+      },
+      "id": "home-sample-ranch",
+      "isFictional": true,
+      "label": "Sample ranch home (fictional)",
+      "obstacles": [
+        {
+          "floorID": "fl-ground",
+          "id": "ob-sofa",
+          "label": "Sofa",
+          "polygon": [
+            {
+              "x": 1,
+              "y": 3.4
+            },
+            {
+              "x": 4,
+              "y": 3.4
+            },
+            {
+              "x": 4,
+              "y": 4.3
+            },
+            {
+              "x": 1,
+              "y": 4.3
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "ob-island",
+          "label": "Kitchen island",
+          "polygon": [
+            {
+              "x": 8.8,
+              "y": 2
+            },
+            {
+              "x": 10.4,
+              "y": 2
+            },
+            {
+              "x": 10.4,
+              "y": 3
+            },
+            {
+              "x": 8.8,
+              "y": 3
+            }
+          ]
+        }
+      ],
+      "portals": [
+        {
+          "a": {
+            "x": 3,
+            "y": 0
+          },
+          "b": {
+            "x": 3.9,
+            "y": 0
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.9
+          },
+          "floorID": "fl-ground",
+          "id": "pt-front",
+          "kind": "door",
+          "note": "Front door",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-living"
+            }
+          },
+          "sideB": {
+            "exterior": {}
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 12,
+            "y": 2
+          },
+          "b": {
+            "x": 12,
+            "y": 2.9
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.86
+          },
+          "floorID": "fl-ground",
+          "id": "pt-back",
+          "kind": "door",
+          "note": "Back door, one step down",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-kitchen"
+            }
+          },
+          "sideB": {
+            "exterior": {}
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": false
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 7,
+            "y": 1
+          },
+          "b": {
+            "x": 7,
+            "y": 2.2
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 1.2
+          },
+          "floorID": "fl-ground",
+          "id": "pt-living-kitchen",
+          "kind": "opening",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-living"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-kitchen"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 5,
+            "y": 5
+          },
+          "b": {
+            "x": 5.9,
+            "y": 5
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.9
+          },
+          "floorID": "fl-ground",
+          "id": "pt-living-hall",
+          "kind": "door",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-living"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-hall"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 8,
+            "y": 5
+          },
+          "b": {
+            "x": 8.86,
+            "y": 5
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.86
+          },
+          "floorID": "fl-ground",
+          "id": "pt-kitchen-hall",
+          "kind": "door",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-kitchen"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-hall"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 3,
+            "y": 6.2
+          },
+          "b": {
+            "x": 3.85,
+            "y": 6.2
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "floorID": "fl-ground",
+          "id": "pt-bed1-hall",
+          "kind": "door",
+          "note": "Clear width not yet measured",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-bed1"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-hall"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 9,
+            "y": 6.2
+          },
+          "b": {
+            "x": 9.86,
+            "y": 6.2
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.86
+          },
+          "floorID": "fl-ground",
+          "id": "pt-bed2-hall",
+          "kind": "door",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-bed2"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-hall"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 5.2,
+            "y": 6.2
+          },
+          "b": {
+            "x": 5.9,
+            "y": 6.2
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.7
+          },
+          "floorID": "fl-ground",
+          "id": "pt-closet-hall",
+          "kind": "door",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-closet"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-hall"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 4.5,
+            "y": 8
+          },
+          "b": {
+            "x": 4.5,
+            "y": 8.75
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "m",
+            "value": 0.75
+          },
+          "floorID": "fl-ground",
+          "id": "pt-bed1-bath",
+          "kind": "door",
+          "operable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-bed1"
+            }
+          },
+          "sideB": {
+            "space": {
+              "_0": "sp-bath"
+            }
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "verification": "verified"
+        },
+        {
+          "a": {
+            "x": 1.5,
+            "y": 10
+          },
+          "b": {
+            "x": 2.5,
+            "y": 10
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "floorID": "fl-ground",
+          "id": "pt-win-bed1",
+          "kind": "window",
+          "note": "Window — not an exit unless the household confirms it opens fully and can be used",
+          "operable": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-bed1"
+            }
+          },
+          "sideB": {
+            "exterior": {}
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": false
+          },
+          "verification": "proposed"
+        },
+        {
+          "a": {
+            "x": 9.5,
+            "y": 10
+          },
+          "b": {
+            "x": 10.5,
+            "y": 10
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "floorID": "fl-ground",
+          "id": "pt-win-bed2",
+          "kind": "window",
+          "operable": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-bed2"
+            }
+          },
+          "sideB": {
+            "exterior": {}
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": false
+          },
+          "verification": "proposed"
+        },
+        {
+          "a": {
+            "x": 0.8,
+            "y": 0
+          },
+          "b": {
+            "x": 2,
+            "y": 0
+          },
+          "clearWidthMeters": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "floorID": "fl-ground",
+          "id": "pt-win-living",
+          "kind": "window",
+          "operable": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "sideA": {
+            "space": {
+              "_0": "sp-living"
+            }
+          },
+          "sideB": {
+            "exterior": {}
+          },
+          "stepFree": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": false
+          },
+          "verification": "proposed"
+        }
+      ],
+      "revision": 1,
+      "schemaVersion": 1,
+      "source": "sample",
+      "spaces": [
+        {
+          "floorID": "fl-ground",
+          "id": "sp-living",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "livingRoom",
+          "label": "Living room",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 7,
+              "y": 0
+            },
+            {
+              "x": 7,
+              "y": 5
+            },
+            {
+              "x": 0,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "sp-kitchen",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "kitchen",
+          "label": "Kitchen",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 7,
+              "y": 0
+            },
+            {
+              "x": 12,
+              "y": 0
+            },
+            {
+              "x": 12,
+              "y": 5
+            },
+            {
+              "x": 7,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "sp-hall",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "hallway",
+          "label": "Hallway",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 0,
+              "y": 5
+            },
+            {
+              "x": 12,
+              "y": 5
+            },
+            {
+              "x": 12,
+              "y": 6.2
+            },
+            {
+              "x": 0,
+              "y": 6.2
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "sp-bed1",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "bedroom",
+          "label": "Main bedroom",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 0,
+              "y": 6.2
+            },
+            {
+              "x": 4.5,
+              "y": 6.2
+            },
+            {
+              "x": 4.5,
+              "y": 10
+            },
+            {
+              "x": 0,
+              "y": 10
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "sp-closet",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "kind": "closet",
+          "label": "Hall closet",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 4.5,
+              "y": 6.2
+            },
+            {
+              "x": 7,
+              "y": 6.2
+            },
+            {
+              "x": 7,
+              "y": 7.4
+            },
+            {
+              "x": 4.5,
+              "y": 7.4
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "sp-bath",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "bathroom",
+          "label": "Bathroom",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 4.5,
+              "y": 7.4
+            },
+            {
+              "x": 7,
+              "y": 7.4
+            },
+            {
+              "x": 7,
+              "y": 10
+            },
+            {
+              "x": 4.5,
+              "y": 10
+            }
+          ]
+        },
+        {
+          "floorID": "fl-ground",
+          "id": "sp-bed2",
+          "interiorNoWindowsConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "bedroom",
+          "label": "Kid's bedroom",
+          "labelConfirmed": true,
+          "needsMeasurement": false,
+          "polygon": [
+            {
+              "x": 7,
+              "y": 6.2
+            },
+            {
+              "x": 12,
+              "y": 6.2
+            },
+            {
+              "x": 12,
+              "y": 10
+            },
+            {
+              "x": 7,
+              "y": 10
+            }
+          ]
+        }
+      ],
+      "walls": [
+        {
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 12,
+            "y": 0
+          },
+          "floorID": "fl-ground",
+          "id": "w-ext-s",
+          "thicknessMeters": 0.2
+        },
+        {
+          "a": {
+            "x": 12,
+            "y": 0
+          },
+          "b": {
+            "x": 12,
+            "y": 10
+          },
+          "floorID": "fl-ground",
+          "id": "w-ext-e",
+          "thicknessMeters": 0.2
+        },
+        {
+          "a": {
+            "x": 12,
+            "y": 10
+          },
+          "b": {
+            "x": 0,
+            "y": 10
+          },
+          "floorID": "fl-ground",
+          "id": "w-ext-n",
+          "thicknessMeters": 0.2
+        },
+        {
+          "a": {
+            "x": 0,
+            "y": 10
+          },
+          "b": {
+            "x": 0,
+            "y": 0
+          },
+          "floorID": "fl-ground",
+          "id": "w-ext-w",
+          "thicknessMeters": 0.2
+        },
+        {
+          "a": {
+            "x": 7,
+            "y": 0
+          },
+          "b": {
+            "x": 7,
+            "y": 5
+          },
+          "floorID": "fl-ground",
+          "id": "w-living-kitchen",
+          "thicknessMeters": 0.12
+        },
+        {
+          "a": {
+            "x": 0,
+            "y": 5
+          },
+          "b": {
+            "x": 12,
+            "y": 5
+          },
+          "floorID": "fl-ground",
+          "id": "w-south-hall",
+          "thicknessMeters": 0.12
+        },
+        {
+          "a": {
+            "x": 0,
+            "y": 6.2
+          },
+          "b": {
+            "x": 12,
+            "y": 6.2
+          },
+          "floorID": "fl-ground",
+          "id": "w-hall-north",
+          "thicknessMeters": 0.12
+        },
+        {
+          "a": {
+            "x": 4.5,
+            "y": 6.2
+          },
+          "b": {
+            "x": 4.5,
+            "y": 10
+          },
+          "floorID": "fl-ground",
+          "id": "w-bed1-east",
+          "thicknessMeters": 0.12
+        },
+        {
+          "a": {
+            "x": 4.5,
+            "y": 7.4
+          },
+          "b": {
+            "x": 7,
+            "y": 7.4
+          },
+          "floorID": "fl-ground",
+          "id": "w-closet-bath",
+          "thicknessMeters": 0.12
+        },
+        {
+          "a": {
+            "x": 7,
+            "y": 6.2
+          },
+          "b": {
+            "x": 7,
+            "y": 10
+          },
+          "floorID": "fl-ground",
+          "id": "w-bed2-west",
+          "thicknessMeters": 0.12
+        }
+      ]
+    },
+    "household": {
+      "backupPower": [],
+      "communications": {
+        "batteryOrCrankRadio": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "handsetCount": 2,
+        "handsetRuntimeHours": {
+          "inputIDs": [],
+          "origin": "scenarioAssumption",
+          "sourceIDs": [],
+          "status": "assumed",
+          "unit": "h",
+          "value": 18
+        },
+        "powerBankCharges": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "routerOnBackup": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": false
+        }
+      },
+      "completedPreparations": [],
+      "contacts": [
+        {
+          "alias": "Neighbor in 2B (fictional)",
+          "id": "ct-lake-1",
+          "phone": "817-555-0117",
+          "role": "neighborHelper"
+        }
+      ],
+      "displayName": "Lake household (fictional)",
+      "equipment": [
+        {
+          "compatibleBackupIDs": [],
+          "documentedBackupRuntimeHours": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "id": "eq-insulin",
+          "isEssential": true,
+          "label": "",
+          "labelIsCustom": false,
+          "legacyOriginalLabel": "Refrigerated medication",
+          "needsRefrigeration": true,
+          "personID": "p-lake-1",
+          "powerWatts": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "purpose": "refrigeratedMedication"
+        }
+      ],
+      "housing": {
+        "cooling": "centralAC",
+        "floorCount": 1,
+        "heatingFuel": "electric",
+        "heatingNeedsElectricity": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": true
+        },
+        "homeType": "apartment",
+        "sanitation": "sewer",
+        "tenancy": "renter",
+        "waterSource": "municipal",
+        "wellPressureTankGallons": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "wellPumpElectric": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        }
+      },
+      "id": "hh-lake",
+      "isFictional": true,
+      "people": [
+        {
+          "ageBand": "olderAdult",
+          "alias": "Bà (Grandma)",
+          "communicationNotes": "Prefers Vietnamese",
+          "helperPersonID": "p-lake-2",
+          "id": "p-lake-1",
+          "needs": [
+            "heatSensitive",
+            "limitedMobility"
+          ],
+          "sleepingSpaceID": "sp-bed1"
+        },
+        {
+          "ageBand": "adult",
+          "alias": "Adult son",
+          "id": "p-lake-2",
+          "needs": [],
+          "sleepingSpaceID": "sp-bed2"
+        }
+      ],
+      "pets": [
+        {
+          "carrierAvailable": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "count": 1,
+          "id": "pet-lake-cat",
+          "kind": "cat"
+        }
+      ],
+      "preferredLocale": "vi",
+      "regionID": "48439",
+      "revision": 1,
+      "schemaVersion": 1,
+      "supplies": {
+        "coolerAndIcePacks": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "fireExtinguisher": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "firstAidKit": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "flashlights": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": 1
+        },
+        "limitedBudget": true,
+        "limitedStorageSpace": true,
+        "shelfStableFoodDays": {
+          "inputIDs": [],
+          "origin": "unknown",
+          "sourceIDs": [],
+          "status": "unknown"
+        },
+        "storedWaterGallons": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "unit": "gal",
+          "value": 2
+        }
+      },
+      "transport": {
+        "alternatives": [
+          {
+            "agreed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "id": "ta-lake-bus",
+            "kind": "publicTransit",
+            "wheelchairAccessible": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            }
+          }
+        ],
+        "destinations": [],
+        "vehicles": []
+      },
+      "updatedAt": "2026-10-01T12:00:00Z"
+    },
+    "interventions": [],
+    "scenarioID": "tornado",
+    "scenarioVersion": "1.0.0",
+    "seed": 7,
+    "variants": []
+  },
+  "cases": [
+    {
+      "id": "source-household-01",
+      "split": "development",
+      "household": {
+        "id": "source-household-01",
+        "displayName": "source-household-01",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-01-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-02",
+      "split": "development",
+      "household": {
+        "id": "source-household-02",
+        "displayName": "source-household-02",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-02-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-03",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-03",
+        "displayName": "source-household-03",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-03-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-04",
+      "split": "development",
+      "household": {
+        "id": "source-household-04",
+        "displayName": "source-household-04",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-04-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-05",
+      "split": "development",
+      "household": {
+        "id": "source-household-05",
+        "displayName": "source-household-05",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-05-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-06",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-06",
+        "displayName": "source-household-06",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-06-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-07",
+      "split": "development",
+      "household": {
+        "id": "source-household-07",
+        "displayName": "source-household-07",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-07-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-08",
+      "split": "development",
+      "household": {
+        "id": "source-household-08",
+        "displayName": "source-household-08",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-08-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-09",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-09",
+        "displayName": "source-household-09",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-09-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-10",
+      "split": "development",
+      "household": {
+        "id": "source-household-10",
+        "displayName": "source-household-10",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-10-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": "no-assistance-needs",
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": "no-care-needs"
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-11",
+      "split": "development",
+      "household": {
+        "id": "source-household-11",
+        "displayName": "source-household-11",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-11-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-12",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-12",
+        "displayName": "source-household-12",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-12-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-13",
+      "split": "development",
+      "household": {
+        "id": "source-household-13",
+        "displayName": "source-household-13",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-13-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-14",
+      "split": "development",
+      "household": {
+        "id": "source-household-14",
+        "displayName": "source-household-14",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-14-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-15",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-15",
+        "displayName": "source-household-15",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-15-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-16",
+      "split": "development",
+      "household": {
+        "id": "source-household-16",
+        "displayName": "source-household-16",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-16-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-17",
+      "split": "development",
+      "household": {
+        "id": "source-household-17",
+        "displayName": "source-household-17",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-17-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-18",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-18",
+        "displayName": "source-household-18",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-18-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-19",
+      "split": "development",
+      "household": {
+        "id": "source-household-19",
+        "displayName": "source-household-19",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-19-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-20",
+      "split": "development",
+      "household": {
+        "id": "source-household-20",
+        "displayName": "source-household-20",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "infant",
+            "needs": []
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-20-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-21",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-21",
+        "displayName": "source-household-21",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-21-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-22",
+      "split": "development",
+      "household": {
+        "id": "source-household-22",
+        "displayName": "source-household-22",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-22-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-23",
+      "split": "development",
+      "household": {
+        "id": "source-household-23",
+        "displayName": "source-household-23",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-23-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-24",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-24",
+        "displayName": "source-household-24",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-24-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-25",
+      "split": "development",
+      "household": {
+        "id": "source-household-25",
+        "displayName": "source-household-25",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-25-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-26",
+      "split": "development",
+      "household": {
+        "id": "source-household-26",
+        "displayName": "source-household-26",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-26-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-27",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-27",
+        "displayName": "source-household-27",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-27-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-28",
+      "split": "development",
+      "household": {
+        "id": "source-household-28",
+        "displayName": "source-household-28",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-28-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-29",
+      "split": "development",
+      "household": {
+        "id": "source-household-29",
+        "displayName": "source-household-29",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-29-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-30",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-30",
+        "displayName": "source-household-30",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "child",
+            "needs": [],
+            "helperPersonID": "adult-a"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-30-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": true
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-31",
+      "split": "development",
+      "household": {
+        "id": "source-household-31",
+        "displayName": "source-household-31",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-31-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-32",
+      "split": "development",
+      "household": {
+        "id": "source-household-32",
+        "displayName": "source-household-32",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-32-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-33",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-33",
+        "displayName": "source-household-33",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-33-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-34",
+      "split": "development",
+      "household": {
+        "id": "source-household-34",
+        "displayName": "source-household-34",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-34-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-35",
+      "split": "development",
+      "household": {
+        "id": "source-household-35",
+        "displayName": "source-household-35",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-35-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-36",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-36",
+        "displayName": "source-household-36",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-36-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-37",
+      "split": "development",
+      "household": {
+        "id": "source-household-37",
+        "displayName": "source-household-37",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-37-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-38",
+      "split": "development",
+      "household": {
+        "id": "source-household-38",
+        "displayName": "source-household-38",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-38-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-39",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-39",
+        "displayName": "source-household-39",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-39-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-40",
+      "split": "development",
+      "household": {
+        "id": "source-household-40",
+        "displayName": "source-household-40",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "usesWheelchair"
+            ],
+            "helperPersonID": "dependent"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-40-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-41",
+      "split": "development",
+      "household": {
+        "id": "source-household-41",
+        "displayName": "source-household-41",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-41-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-42",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-42",
+        "displayName": "source-household-42",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-42-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-43",
+      "split": "development",
+      "household": {
+        "id": "source-household-43",
+        "displayName": "source-household-43",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-43-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-44",
+      "split": "development",
+      "household": {
+        "id": "source-household-44",
+        "displayName": "source-household-44",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-44-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-45",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-45",
+        "displayName": "source-household-45",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-45-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-46",
+      "split": "development",
+      "household": {
+        "id": "source-household-46",
+        "displayName": "source-household-46",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-46-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-47",
+      "split": "development",
+      "household": {
+        "id": "source-household-47",
+        "displayName": "source-household-47",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-47-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-48",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-48",
+        "displayName": "source-household-48",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-48-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-49",
+      "split": "development",
+      "household": {
+        "id": "source-household-49",
+        "displayName": "source-household-49",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-49-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-50",
+      "split": "development",
+      "household": {
+        "id": "source-household-50",
+        "displayName": "source-household-50",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "deafOrHardOfHearing"
+            ]
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-50-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": null
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-51",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-51",
+        "displayName": "source-household-51",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-51-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-52",
+      "split": "development",
+      "household": {
+        "id": "source-household-52",
+        "displayName": "source-household-52",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 1,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-52-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-53",
+      "split": "development",
+      "household": {
+        "id": "source-household-53",
+        "displayName": "source-household-53",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-53-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-54",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-54",
+        "displayName": "source-household-54",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-54-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": true,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-55",
+      "split": "development",
+      "household": {
+        "id": "source-household-55",
+        "displayName": "source-household-55",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-55-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-56",
+      "split": "development",
+      "household": {
+        "id": "source-household-56",
+        "displayName": "source-household-56",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "count",
+          "usableQuantity": {
+            "value": 6,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-56-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-57",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-57",
+        "displayName": "source-household-57",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-57-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-58",
+      "split": "development",
+      "household": {
+        "id": "source-household-58",
+        "displayName": "source-household-58",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "value": 3,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-58-confirmed-food"
+          ],
+          "expiresAt": "2026-10-18T00:00:00Z"
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": false,
+          "accessible": false
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": true
+        }
+      }
+    },
+    {
+      "id": "source-household-59",
+      "split": "development",
+      "household": {
+        "id": "source-household-59",
+        "displayName": "source-household-59",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "origin": "userConfirmed",
+              "status": "unknown",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": false
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-59-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": null
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    },
+    {
+      "id": "source-household-60",
+      "split": "holdout",
+      "household": {
+        "id": "source-household-60",
+        "displayName": "source-household-60",
+        "people": [
+          {
+            "id": "adult-a",
+            "alias": "Fictional adult A",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": null
+          },
+          {
+            "id": "adult-b",
+            "alias": "Fictional adult B",
+            "ageBand": "adult",
+            "needs": [],
+            "sleepingSpaceID": "sp-living"
+          },
+          {
+            "id": "dependent",
+            "alias": "Fictional dependent",
+            "sleepingSpaceID": "sp-living",
+            "ageBand": "adult",
+            "needs": [
+              "needsHelperToEvacuate"
+            ],
+            "helperPersonID": "missing-person"
+          }
+        ],
+        "pets": [
+          {
+            "id": "pet",
+            "kind": "cat",
+            "count": 1,
+            "carrierAvailable": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            }
+          }
+        ],
+        "limitedBudget": true
+      },
+      "items": [
+        {
+          "id": "food",
+          "physicalID": "one-physical-food-batch",
+          "category": "food",
+          "quantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "unit": "day",
+          "usableQuantity": {
+            "origin": "userConfirmed",
+            "status": "unknown",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "accessible": {
+            "value": true,
+            "origin": "userConfirmed",
+            "status": "confirmed",
+            "sourceIDs": [],
+            "inputIDs": []
+          },
+          "subjectIDs": [],
+          "evidenceIDs": [
+            "source-household-60-confirmed-food"
+          ]
+        }
+      ],
+      "expected": {
+        "food": {
+          "quantity": null,
+          "accessible": true
+        },
+        "assistance": {
+          "notApplicableRule": null,
+          "assigned": false
+        },
+        "care": {
+          "notApplicableRule": null
+        },
+        "pets": {
+          "transport": true
+        },
+        "shelter": {
+          "suitable": true,
+          "reachable": null
+        }
+      }
+    }
+  ]
+}

@@ -50,6 +50,16 @@
         ],
         "unit": "liter",
         "unknown": false
+      },
+      {
+        "category": "food",
+        "confirmedUsable": 0,
+        "required": 3,
+        "sourceIDs": [
+          "S64"
+        ],
+        "unit": "day",
+        "unknown": true
       }
     ],
     "homeScene": {

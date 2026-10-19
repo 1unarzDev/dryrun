@@ -87,6 +87,20 @@ public struct RecordedSupplyRequirement: Codable, Sendable {
     }
 }
 public extension InventoryLedger {
+    /// Explicit household-coverage days only. Package counts and person-restricted quantities
+    /// cannot be converted into a whole household's food-days by inference.
+    func householdFoodGap(personIDs:[String],at date:Date)throws->SupplyGap {
+        guard !personIDs.isEmpty,personIDs.count<=100,personIDs.allSatisfy({!$0.isEmpty}),Set(personIDs).count==personIDs.count,items.count<=500,Set(items.map(\.id)).count==items.count,Set(items.map(\.physicalID)).count==items.count else {throw SessionError.invalidCommand}
+        var days=self
+        days.items=items.filter{$0.category=="food" && $0.unit == .day}
+        var result=try days.gap(for:RecordedSupplyRequirement(id:"household-food-days",category:"food",quantity:3,unit:.day,subjectIDs:personIDs,sourceIDs:["S64"]),at:date)
+        let unsupported=items.contains {item in
+            item.category=="food" && item.unit != .day && item.expiresAt.map{$0<=date} != true && item.accessible.confirmedValue != false
+                && (item.subjectIDs.isEmpty || Set(personIDs).isSubset(of:Set(item.subjectIDs)))
+        }
+        if unsupported {result.unknown=true;if result.confirmedUsable<result.required {result.deficit=nil}}
+        return result
+    }
     /// Shared household quantities are counted once. Subject-restricted supplies cannot cover another person.
     /// Requirements must already be consolidated by physical purpose; incompatible units fail explicitly.
     func gap(for requirement:RecordedSupplyRequirement,at date:Date)throws->SupplyGap {

@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-19",
+  "humanReview": "pending",
+  "method": "Direct HTTPS retrieval with desktop User-Agent during implementation; initial default-user-agent Red Cross and CDC requests returned 403.",
+  "sources": [
+    {"id":"S64","url":"https://www.redcross.org/get-help/how-to-prepare-for-emergencies/survival-kit-supplies.html","status":200,"observed":"Food list distinguishes three days for evacuation from two weeks for home."},
+    {"url":"https://www.ready.gov/food","status":200,"observed":"Recommends at least several days of nonperishable food and accounting for family dietary needs."}
+  ],
+  "interpretation": "The existing draft three-day food criterion is a limited product planning horizon. It is not completion of the longer Red Cross home recommendation. No per-package or per-person food-day conversion follows from these pages."
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "manifestVersion": "2026.10.0",
+  "manifestVersion": "2026.10.1",
   "note": "checkedAt records when the URL/scope was recorded from the brief. reviewState 'needsReview' means no human content review yet; 'verified' would require a recorded human check.",
   "sources": [
     {
@@ -542,6 +542,16 @@
       "reviewState": "needsReview",
       "category": "publicData",
       "scopeNote": "Notice dated 2025-11-13: vendor Crisis24 suspended access to the legacy CodeRED software; the city still sends Wireless Emergency Alerts and posts on social media (#FWOEM) and local media. Contact emo@fortworthtexas.gov. No replacement sign-up was named on 2026-10-18."
+    },
+    {
+      "id": "S64",
+      "publisher": "American Red Cross",
+      "title": "Survival Kit Supplies",
+      "url": "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/survival-kit-supplies.html",
+      "checkedAt": "2026-10-19",
+      "reviewState": "needsReview",
+      "category": "preparedness",
+      "scopeNote": "Direct page retrieval during implementation returned 200. The food list distinguishes a 3-day supply for evacuation from a 2-week supply for home. DryRun retains its provisional 3-day scoring/exercise horizon; reaching that horizon is not completion of the longer home recommendation. No independent human review."
     }
   ]
 }

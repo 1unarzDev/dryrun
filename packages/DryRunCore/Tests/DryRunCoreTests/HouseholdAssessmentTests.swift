@@ -32,6 +32,53 @@ import Testing
         #expect(predicate(assessed,"escape","confirmedExit")==nil)
         #expect(predicate(assessed,"escape","independentAlternative")==nil)
     }
+    @Test func shelterUsesConfirmedInteriorObjectiveAndActualRoutes()throws {
+        var h=SampleHouseholds.oak
+        h.people=[Person(id:"resident",alias:"A",ageBand:.adult,sleepingSpaceID:"sp-living")]
+        var original=SimFixtures.home
+        let index=try #require(original.spaces.firstIndex{$0.id=="sp-closet"})
+        original.spaces[index].interiorNoWindowsConfirmed = .unknown
+        #expect(predicate(try facts(h,home:original),"shelter","suitable")==nil)
+        let reviewed=HomeConfirmation.apply(.shelterSpot(spaceID:"sp-closet",interiorNoWindows:true),to:original,at:date)
+        #expect(reviewed.revision>original.revision)
+        let confirmed=try facts(h,home:reviewed)
+        #expect(predicate(confirmed,"shelter","suitable")==true)
+        #expect(predicate(confirmed,"shelter","reachable")==true)
+        h.people[0].sleepingSpaceID=nil
+        let missingStart=try facts(h,home:SimFixtures.home)
+        #expect(predicate(missingStart,"shelter","suitable")==true)
+        #expect(predicate(missingStart,"shelter","reachable")==nil)
+        h.people[0].sleepingSpaceID="sp-living";h.people[0].needs=[.usesWheelchair]
+        let narrow=try facts(h,home:SimFixtures.home)
+        #expect(predicate(narrow,"shelter","suitable")==true)
+        #expect(predicate(narrow,"shelter","reachable")==nil)
+    }
+    @Test func invalidatedShelterCannotEarnSuitabilityOrBorrowExteriorRoute()throws {
+        var home=SimFixtures.home
+        let shelter=try #require(ShelterSuitability.confirmedRoom(in:home))
+        let index=try #require(home.spaces.firstIndex{$0.id==shelter.id})
+        home.spaces[index].interiorNoWindowsConfirmed = .unknown
+        let values=try facts(SampleHouseholds.oak,home:home)
+        #expect(predicate(values,"shelter","suitable")==nil)
+        #expect(predicate(values,"shelter","reachable")==nil)
+    }
+    @Test func locationDoesNotProveFoodAccessAndConfirmationPropagates()throws {
+        var h=SampleHouseholds.oak
+        h.preparedness=PreparednessRecord(items:["food":PreparationFact(available:.confirmed(true),location:"Locked shed")])
+        let unknown=try facts(h)
+        #expect(predicate(unknown,"food","quantity")==true)
+        #expect(predicate(unknown,"food","accessible")==nil)
+        var ledger=InventoryLedger()
+        var food=InventoryItem(id:"food",physicalID:"pantry-box",category:"food",quantity:.confirmed(3),unit:.day,usableQuantity:.confirmed(3),accessible:.confirmed(false))
+        try ledger.confirm([food],baseRevision:0,at:date)
+        #expect(predicate(try facts(h,inventory:ledger),"food","accessible")==false)
+        food.accessible = .confirmed(true)
+        try ledger.confirm([food],baseRevision:1,at:date)
+        #expect(predicate(try facts(h,inventory:ledger),"food","accessible")==true)
+        food.expiresAt=date.addingTimeInterval(-1)
+        try ledger.confirm([food],baseRevision:2,at:date)
+        #expect(predicate(try facts(h,inventory:ledger),"food","accessible")==false)
+    }
     @Test func waterDisjunctionPreservesUnknownAndConfirmedNegative()throws {
         var ledger=InventoryLedger()
         func item(_ id:String,_ access:EvidenceValue<Bool>)->InventoryItem {

@@ -12,7 +12,7 @@ public enum HouseholdAssessment {
     private static func requiresAssistance(_ p:Person)->Bool {
         p.requiresStepFreeRoute || p.needs.contains(.needsHelperToEvacuate) || p.needs.contains(.deafOrHardOfHearing) || p.ageBand == .infant || p.ageBand == .child
     }
-    public static let version="dryrun.household-assessment/2"
+    public static let version="dryrun.household-assessment/3"
     public static func assess(household h:HouseholdProfile,home:HomeModel?,inventory:InventoryLedger?,places:[SavedPlace]=[],stressFindings:[StressTestFinding]=[],at date:Date) throws -> [CriterionAssessment] {
         var results:[CriterionAssessment]=[]
         func append(_ id:String,_ values:[String:Bool?],evidence:[String],notApplicable:String?=nil){
@@ -36,6 +36,16 @@ public enum HouseholdAssessment {
                 return nil
             }
             append("escape",["confirmedExit":all(confirmedRoutes),"independentAlternative":all(independent),"reviewed":h.preparedness?.items["clearExits"]?.available.confirmedValue],evidence:["home|\(home.id)|\(home.revision)","preparedness.clearExits"])
+            // Use the same recorded tornado planning choice and interior-purpose route rules as rehearsal.
+            // A missing/invalid candidate is unknown, never evidence that the household has no refuge.
+            let shelter=ShelterSuitability.confirmedRoom(in:home)
+            let shelterRoutes:[Bool?]=h.people.map {person in
+                guard let shelter else {return nil}
+                let route=EgressPlanner().plan(RouteRequest(personID:person.id,startSpaceID:person.sleepingSpaceID ?? "unknown",mobility:person.requiresStepFreeRoute ? .wheelchair:.walking,purpose:.interiorShelter,destinationSpaceID:shelter.id),in:home)
+                guard let path=route.primary,path.verificationNeeded.isEmpty else {return nil}
+                return true
+            }
+            append("shelter",["suitable":shelter == nil ? nil:true,"reachable":all(shelterRoutes)],evidence:["home|\(home.id)|\(home.revision)","home.tornadoShelterCandidate"])
         }
         let water=try inventory?.waterGap(people:h.people.count,at:date)
         let waterItems=inventory?.items.filter{$0.category=="water"} ?? []
@@ -43,7 +53,16 @@ public enum HouseholdAssessment {
             item.expiresAt.map{$0<=date}==true ? false:item.accessible.confirmedValue
         })
         append("water",["quantity":water.flatMap{$0.deficit.map{$0==0}},"accessible":waterAccess],evidence:["inventory.water"])
-        append("food",["quantity":h.supplies.shelfStableFoodDays.confirmedValue.map{$0>=3},"accessible":h.preparedness?.items["food"].map{!$0.location.isEmpty}],evidence:["supplies.shelfStableFoodDays","preparedness.food"])
+        let foodItems=inventory?.items.filter{$0.category=="food"} ?? []
+        let foodAccess=any(foodItems.map {item in
+            item.expiresAt.map{$0<=date}==true ? false:item.accessible.confirmedValue
+        })
+        let foodQuantity:Bool?
+        if !foodItems.isEmpty,let inventory {
+            foodQuantity=try inventory.householdFoodGap(personIDs:h.people.map(\.id),at:date).deficit.map{$0==0}
+        } else {foodQuantity=h.supplies.shelfStableFoodDays.confirmedValue.map{$0>=3}}
+        // A location string records where to look, not whether the household can access usable food.
+        append("food",["quantity":foodQuantity,"accessible":foodAccess],evidence:["supplies.shelfStableFoodDays","inventory.food"])
         append("essentials",["light":h.supplies.flashlights.confirmedValue.map{$0>0},"firstAid":h.supplies.firstAidKit.confirmedValue,"sanitation":h.preparedness?.items["sanitation"]?.available.confirmedValue],evidence:["supplies","preparedness.sanitation"])
         // Missing a contact is unknown, not proof no support exists.
         append("contact",["usableContact":h.contacts.contains{$0.isComplete} ? true : nil,"offlineAccess":h.preparedness?.items["reconnect"]?.available.confirmedValue],evidence:["contacts","preparedness.reconnect"])

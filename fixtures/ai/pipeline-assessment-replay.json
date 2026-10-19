@@ -44,7 +44,7 @@
       "reassessment": {
         "assessments": [
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "alarms",
             "evidenceIDs": [
               "preparedness.smokeAlarms"
@@ -53,7 +53,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "escape",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -65,7 +65,19 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
+            "criterionID": "shelter",
+            "evidenceIDs": [
+              "home|home-sample-ranch|1",
+              "home.tornadoShelterCandidate"
+            ],
+            "outsideScope": false,
+            "predicates": {
+              "suitable": true
+            }
+          },
+          {
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "water",
             "evidenceIDs": [
               "inventory.water"
@@ -77,11 +89,11 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "food",
             "evidenceIDs": [
               "supplies.shelfStableFoodDays",
-              "preparedness.food"
+              "inventory.food"
             ],
             "outsideScope": false,
             "predicates": {
@@ -89,7 +101,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "essentials",
             "evidenceIDs": [
               "supplies",
@@ -102,7 +114,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "contact",
             "evidenceIDs": [
               "contacts",
@@ -114,7 +126,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "meetups",
             "evidenceIDs": [
               "savedPlaces",
@@ -126,7 +138,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "assistance",
             "evidenceIDs": [
               "people.assistance"
@@ -137,7 +149,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "device",
             "evidenceIDs": [
               "equipment",
@@ -147,7 +159,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "care",
             "evidenceIDs": [
               "people.needs"
@@ -156,7 +168,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "pets",
             "evidenceIDs": [
               "pets"
@@ -167,7 +179,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "review",
             "evidenceIDs": [
               "preparedness.reviewedAt"
@@ -1455,7 +1467,7 @@
           }
         },
         "scorecard": {
-          "assessmentVersion": "dryrun.household-assessment/2",
+          "assessmentVersion": "dryrun.household-assessment/3",
           "cap": 59,
           "capReasons": [
             "alarms",
@@ -1463,11 +1475,11 @@
             "escape",
             "shelter"
           ],
-          "evidenceCoverage": 33.05555555555556,
-          "overall": 20.5,
+          "evidenceCoverage": 37.222222222222214,
+          "overall": 24.25,
           "practice": 0,
           "practiceAssessed": 0,
-          "preparation": 22.77777777777778,
+          "preparation": 26.944444444444443,
           "provisional": true,
           "rubricVersion": "dryrun-rubric/0.1-draft",
           "statuses": {
@@ -1483,7 +1495,7 @@
             "meetups": "partlyMet",
             "pets": "partlyMet",
             "review": "unknown",
-            "shelter": "unknown",
+            "shelter": "partlyMet",
             "water": "partlyMet"
           }
         },
@@ -4282,7 +4294,7 @@
       "reassessment": {
         "assessments": [
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "alarms",
             "evidenceIDs": [
               "preparedness.smokeAlarms"
@@ -4291,7 +4303,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "escape",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -4303,7 +4315,19 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
+            "criterionID": "shelter",
+            "evidenceIDs": [
+              "home|home-sample-ranch|1",
+              "home.tornadoShelterCandidate"
+            ],
+            "outsideScope": false,
+            "predicates": {
+              "suitable": true
+            }
+          },
+          {
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "water",
             "evidenceIDs": [
               "inventory.water"
@@ -4315,17 +4339,17 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "food",
             "evidenceIDs": [
               "supplies.shelfStableFoodDays",
-              "preparedness.food"
+              "inventory.food"
             ],
             "outsideScope": false,
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "essentials",
             "evidenceIDs": [
               "supplies",
@@ -4337,7 +4361,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "contact",
             "evidenceIDs": [
               "contacts",
@@ -4349,7 +4373,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "meetups",
             "evidenceIDs": [
               "savedPlaces",
@@ -4359,7 +4383,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "assistance",
             "evidenceIDs": [
               "people.assistance"
@@ -4369,7 +4393,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "device",
             "evidenceIDs": [
               "equipment",
@@ -4380,7 +4404,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "care",
             "evidenceIDs": [
               "people.needs"
@@ -4390,7 +4414,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "pets",
             "evidenceIDs": [
               "pets"
@@ -4400,7 +4424,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/2",
+            "assessmentVersion": "dryrun.household-assessment/3",
             "criterionID": "review",
             "evidenceIDs": [
               "preparedness.reviewedAt"
@@ -5652,18 +5676,18 @@
           }
         },
         "scorecard": {
-          "assessmentVersion": "dryrun.household-assessment/2",
+          "assessmentVersion": "dryrun.household-assessment/3",
           "cap": 59,
           "capReasons": [
             "alarms",
             "escape",
             "shelter"
           ],
-          "evidenceCoverage": 23.61111111111111,
-          "overall": 13.437499999999998,
+          "evidenceCoverage": 28.81944444444444,
+          "overall": 18.125,
           "practice": 0,
           "practiceAssessed": 0,
-          "preparation": 14.930555555555554,
+          "preparation": 20.13888888888889,
           "provisional": true,
           "rubricVersion": "dryrun-rubric/0.1-draft",
           "statuses": {
@@ -5679,7 +5703,7 @@
             "meetups": "unknown",
             "pets": "notApplicable",
             "review": "unknown",
-            "shelter": "unknown",
+            "shelter": "partlyMet",
             "water": "partlyMet"
           }
         },

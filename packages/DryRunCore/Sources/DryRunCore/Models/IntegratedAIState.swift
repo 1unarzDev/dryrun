@@ -38,6 +38,10 @@ public extension IntegratedAIState {
             let gap=try candidate.inventory.waterGap(people:h.people.count,at:date)
             h.supplies.storedWaterGallons=gap.unknown ? .unknown : .confirmed(gap.confirmedUsable/3.785411784,unit:"gal",verifiedAt:date)
         }
+        if candidate.inventory.items.contains(where:{$0.category=="food"}) {
+            let gap=try candidate.inventory.householdFoodGap(personIDs:h.people.map(\.id),at:date)
+            h.supplies.shelfStableFoodDays=gap.unknown ? .unknown : .confirmed(gap.confirmedUsable,unit:"day",verifiedAt:date)
+        }
         h.bumpRevision(at:date)
         try persist(h,candidate)
         self=candidate;household=h
