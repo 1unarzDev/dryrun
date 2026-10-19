@@ -12,6 +12,7 @@ struct HostRequest: Decodable {
     var aiState:IntegratedAIState?
     var attemptID:String?
     var variantID:String?
+    var practiceSessionIDs:[String]?
     var competencyID:String?
     var feedbackActionID:String?
     var resourceTasks:[PreparationTaskProposal]?
@@ -71,7 +72,7 @@ let encoder = DryRunJSON.encoder(); encoder.outputFormatting = [.sortedKeys, .wi
 while let line = readLine() {
     do {
         let request = try decoder.decode(HostRequest.self, from: Data(line.utf8))
-        guard ["initialize","query","tool","commit","directorCommit","interpretCommit","fallback","preview","assess","inventory","confirmInventory","stress","practiceBegin","practiceSubmit","practiceFeedback","reviewConcern","concernExercise","resourceKey"].contains(request.op) else {throw SessionError.invalidCommand}
+        guard ["initialize","query","tool","commit","directorCommit","interpretCommit","fallback","preview","assess","inventory","confirmInventory","stress","practiceBegin","practiceCheckBegin","practiceSubmit","practiceFeedback","reviewConcern","concernExercise","resourceKey"].contains(request.op) else {throw SessionError.invalidCommand}
         var session: SimulationSession
         if request.op == "initialize" {
             let household = request.sample == "lake" ? SampleHouseholds.lake : request.sample == "pine" ? SampleHouseholds.pine : SampleHouseholds.oak
@@ -109,8 +110,14 @@ while let line = readLine() {
             case "practiceBegin":
                 guard let variantID=request.variantID else {throw SessionError.invalidCommand}
                 try aiState!.beginPractice(id:attemptID,variantID:variantID,sessionID:session.id,library:library)
+            case "practiceCheckBegin":
+                guard let variantID=request.variantID,let ids=request.practiceSessionIDs else {throw SessionError.invalidCommand}
+                try aiState!.beginPracticeCheck(id:attemptID,variantID:variantID,sessionIDs:ids,library:library)
             case "practiceSubmit":
                 guard let competency=request.competencyID,let commit=request.commit else {throw SessionError.invalidCommand}
+                if aiState!.practiceAttempts.first(where:{$0.id==attemptID})?.phaseSources != nil {
+                    guard try aiState!.activePracticeCheckSession(attemptID:attemptID,library:library)?.id==session.id else {throw SessionError.stale}
+                }
                 try aiState!.submitPracticeAction(attemptID:attemptID,competencyID:competency,commit:commit,library:library)
             case "practiceFeedback":
                 guard let actionID=request.feedbackActionID else {throw SessionError.invalidCommand}

@@ -28,7 +28,7 @@ public extension IntegratedAIState {
         guard !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
            latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4 {return latest}
-        guard let session=sessions.first(where:{$0.id==sessionID}),session.concernSeed==nil,
+        guard !Self.phasedPracticeVariants.contains(variantID),let session=sessions.first(where:{$0.id==sessionID}),session.concernSeed==nil,
               !practiceAttempts.contains(where:{$0.source?.sessionID==sessionID}) else {throw SessionError.invalidCommand}
         let receipt=try session.query(library:library)
         guard !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
@@ -56,7 +56,10 @@ public extension IntegratedAIState {
     /// No credit or beforeFeedback input is accepted. A failed persistence publishes neither.
     @discardableResult mutating func submitPracticeAction(attemptID:String,competencyID:String,
         commit:SessionCommit,library:ScenarioLibrary,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeObservation {
-        guard let a=practiceAttempts.firstIndex(where:{$0.id==attemptID}),
+        if practiceAttempts.first(where:{$0.id==attemptID})?.phaseSources != nil {
+            return try submitPhasedPracticeAction(attemptID:attemptID,competencyID:competencyID,commit:commit,library:library,persist:persist)
+        }
+        guard let a=practiceAttempts.firstIndex(where:{$0.id==attemptID}),!Self.phasedPracticeVariants.contains(practiceAttempts[a].variantID),
               practiceAttempts[a].sequence==practiceAttempts.map(\.sequence).max(),
               let source=practiceAttempts[a].source,source.contractVersion=="dryrun.practice-capture/1",
               [PracticeEvaluator.version,PracticeEvaluator.legacyVersion].contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),
@@ -101,9 +104,10 @@ public extension IntegratedAIState {
     /// the numeric compiler. Legacy imported answers have no chronology proof and earn no credit.
     func eligiblePracticeAttempts(library:ScenarioLibrary)throws->[PracticeAttempt] {
         try practiceAttempts.map {attempt in
+            if attempt.phaseSources != nil {return try validatePhasedPractice(attempt,library:library)}
             var accepted=attempt;accepted.answers=[]
             guard let source=attempt.source else {return accepted}
-            guard attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",
+            guard !Self.phasedPracticeVariants.contains(attempt.variantID),attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",
               [PracticeEvaluator.version,PracticeEvaluator.legacyVersion].contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   let observations=attempt.observations,observations.count<=4,
@@ -151,13 +155,13 @@ public extension IntegratedAIState {
         var directorPolicy:DirectorPolicy?
         var concernSeed:ConcernExerciseSeed?
     }
-    private static func practiceSourceDigest(_ session:SimulationSession)throws->String {
+    static func practiceSourceDigest(_ session:SimulationSession)throws->String {
         StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)))
     }
-    private static func practiceOrder(_ variantID:String)->[String] {
+    static func practiceOrder(_ variantID:String)->[String] {
         switch variantID {
-        case "practice-check-a/0":return ["initialResponse","adaptation","communication","continuity"]
-        case "practice-check-b/0":return ["continuity","communication","adaptation","initialResponse"]
+        case "practice-check-a/0","practice-check-a/1":return ["initialResponse","adaptation","communication","continuity"]
+        case "practice-check-b/0","practice-check-b/1":return ["continuity","communication","adaptation","initialResponse"]
         default:return []
         }
     }

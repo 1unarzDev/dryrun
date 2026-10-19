@@ -1,0 +1,27 @@
+{
+  "version": "dryrun.practice-phases/1",
+  "status": "provisional; equivalence and qualified human review pending",
+  "evaluatorVersion": "dryrun.practice-anchors/2",
+  "variants": [
+    {"id":"practice-check-a/1","order":["initialResponse","adaptation","communication","continuity"]},
+    {"id":"practice-check-b/1","order":["continuity","communication","adaptation","initialResponse"]}
+  ],
+  "situations": {
+    "initialResponse": {"scenarioID":"water-outage","anchor":"Committed essential-versus-all stored-water use after host-computed supply loss"},
+    "adaptation": {"scenarioID":"home-fire","anchor":"Committed movement on a verified alternative after a prior verified egress path was invalidated"},
+    "communication": {"scenarioID":"water-outage","anchor":"Committed use of a recorded usable contact through computed operational handset and cellular"},
+    "continuity": {"scenarioID":"freeze-power-loss","anchor":"Committed essential-device allocation after computed power loss with sufficient recorded specifications"}
+  },
+  "invariants": [
+    "All four independent situation sources are frozen before presenting any question.",
+    "Each source has the same actual household, home and inventory and its own scenario/session identity.",
+    "No source has prior user actions, concern assumptions, preset choices or hypothetical interventions.",
+    "Each phase captures one actual user command before feedback; unsupported anchors remain unassessed.",
+    "No uncaptured user or director commits may enter any source during an incomplete check.",
+    "Interruptions resume the same identity, order, sources and first answers; sessions cannot be reused for a new check.",
+    "A newer incomplete check governs current practice while completed older checks remain history.",
+    "There is no speed, equipment-cost, physical-ability, LiDAR or difficulty multiplier.",
+    "Equivalent text/manual input, translation, VoiceOver and reading time are accessibility support.",
+    "All scores remain provisional pending variant comparability and human review."
+  ]
+}

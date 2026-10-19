@@ -31,6 +31,8 @@ public struct PracticeAttempt: Codable, Sendable {
     public var id:String; public var sequence:Int; public var variantID:String; public var answers:[PracticeAnswer]; public var coached:Bool
     public var archivedUnverified:Bool?
     public var source:PracticeAttemptSource?
+    /// Four frozen independent situations for version-1 checks, in the variant competency order.
+    public var phaseSources:[PracticeAttemptSource]?
     public var observations:[PracticeObservation]?
     public init(id:String,sequence:Int,variantID:String,answers:[PracticeAnswer],coached:Bool=false){self.id=id;self.sequence=sequence;self.variantID=variantID;self.answers=answers;self.coached=coached}
 }
@@ -43,7 +45,7 @@ public struct PreparednessScorecard: Codable, Sendable {
 }
 public enum ScoreCompiler {
     public static let competencies=["initialResponse","adaptation","communication","continuity"]
-    public static let variants=["practice-check-a/0","practice-check-b/0"]
+    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1"]
     public static func compile(rubric:RubricDefinition,assessments:[CriterionAssessment],attempts:[PracticeAttempt]=[]) throws -> PreparednessScorecard {
         guard rubric.preparationWeight==0.9,rubric.practiceWeight==0.1,
               rubric.domainWeights.values.allSatisfy({$0.isFinite && $0>0}),
