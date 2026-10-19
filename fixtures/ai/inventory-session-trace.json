@@ -1138,7 +1138,7 @@
       }
     ],
     "receipt": {
-      "contextDigest": "143685858951e7e3",
+      "contextDigest": "91d88e764a988517",
       "directorState": {
         "activeIncidentCount": 0,
         "awaitingUserAction": false,
@@ -1148,6 +1148,7 @@
       "events": [],
       "finished": false,
       "inventory": {
+        "foodPolicyVersion": "dryrun.exercise-food/1",
         "items": [
           {
             "accessible": true,
@@ -1175,6 +1176,9 @@
           },
           "res.device.eq-oxygen.runtime": {
             "unit": "h"
+          },
+          "res.food.days": {
+            "unit": "day"
           },
           "res.handset.hours": {
             "amount": 18,
@@ -1213,6 +1217,8 @@
           "backup.bk-station.setupConfirmed",
           "equipment.eq-oxygen.backup",
           "housing.wellPressureTankGallons",
+          "inventory.food.available",
+          "inventory.food.storageAndDietarySuitability",
           "pets.waterNeeds"
         ],
         "unmetRequirements": []
@@ -1273,7 +1279,7 @@
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.3",
+        "contentVersion": "2026.10.4",
         "home": {
           "annotations": [
             {
@@ -2677,6 +2683,7 @@
       },
       "inventory": {
         "asOf": "2026-10-19T00:00:00Z",
+        "foodPolicy": "dryrun.exercise-food/1",
         "ledger": {
           "items": [
             {
@@ -3804,7 +3811,7 @@
       }
     ],
     "receipt": {
-      "contextDigest": "4f91d026a70c8769",
+      "contextDigest": "609e133c833f1b09",
       "directorState": {
         "activeIncidentCount": 0,
         "awaitingUserAction": false,
@@ -3863,6 +3870,7 @@
       ],
       "finished": false,
       "inventory": {
+        "foodPolicyVersion": "dryrun.exercise-food/1",
         "items": [
           {
             "accessible": true,
@@ -4020,6 +4028,9 @@
           "res.device.eq-oxygen.runtime": {
             "unit": "h"
           },
+          "res.food.days": {
+            "unit": "day"
+          },
           "res.handset.hours": {
             "amount": 18,
             "unit": "h"
@@ -4057,6 +4068,8 @@
           "backup.bk-station.setupConfirmed",
           "equipment.eq-oxygen.backup",
           "housing.wellPressureTankGallons",
+          "inventory.food.available",
+          "inventory.food.storageAndDietarySuitability",
           "pets.waterNeeds"
         ],
         "unmetRequirements": []
@@ -4168,7 +4181,7 @@
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.3",
+        "contentVersion": "2026.10.4",
         "home": {
           "annotations": [
             {
@@ -5572,6 +5585,7 @@
       },
       "inventory": {
         "asOf": "2026-10-19T00:00:00Z",
+        "foodPolicy": "dryrun.exercise-food/1",
         "ledger": {
           "items": [
             {
@@ -6690,7 +6704,7 @@
       }
     ],
     "receipt": {
-      "contextDigest": "6144ec150bd54064",
+      "contextDigest": "d9534224eaaefc20",
       "directorState": {
         "activeIncidentCount": 1,
         "awaitingUserAction": false,
@@ -6952,6 +6966,7 @@
       ],
       "finished": false,
       "inventory": {
+        "foodPolicyVersion": "dryrun.exercise-food/1",
         "items": [
           {
             "accessible": false,
@@ -7160,6 +7175,9 @@
           },
           "res.device.eq-oxygen.runtime": {
             "unit": "h"
+          },
+          "res.food.days": {
+            "unit": "day"
           },
           "res.handset.hours": {
             "amount": 18,
@@ -7386,6 +7404,8 @@
           "equipment.eq-oxygen.backup",
           "home.smokeAlarms",
           "housing.wellPressureTankGallons",
+          "inventory.food.available",
+          "inventory.food.storageAndDietarySuitability",
           "pets.waterNeeds"
         ],
         "unmetRequirements": [
@@ -7475,7 +7495,7 @@
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.3",
+        "contentVersion": "2026.10.4",
         "home": {
           "annotations": [
             {
@@ -8879,6 +8899,7 @@
       },
       "inventory": {
         "asOf": "2026-10-19T00:00:00Z",
+        "foodPolicy": "dryrun.exercise-food/1",
         "ledger": {
           "items": [
             {
@@ -10006,7 +10027,7 @@
       }
     ],
     "receipt": {
-      "contextDigest": "95e75570146afc84",
+      "contextDigest": "5819af435addf138",
       "directorState": {
         "activeIncidentCount": 1,
         "awaitingUserAction": false,
@@ -10318,6 +10339,7 @@
       ],
       "finished": false,
       "inventory": {
+        "foodPolicyVersion": "dryrun.exercise-food/1",
         "items": [
           {
             "accessible": true,
@@ -10560,6 +10582,9 @@
           },
           "res.device.eq-oxygen.runtime": {
             "unit": "h"
+          },
+          "res.food.days": {
+            "unit": "day"
           },
           "res.handset.hours": {
             "amount": 18,
@@ -10820,6 +10845,8 @@
           "equipment.eq-oxygen.backup",
           "home.smokeAlarms",
           "housing.wellPressureTankGallons",
+          "inventory.food.available",
+          "inventory.food.storageAndDietarySuitability",
           "pets.waterNeeds"
         ],
         "unmetRequirements": [
@@ -10958,7 +10985,7 @@
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.3",
+        "contentVersion": "2026.10.4",
         "home": {
           "annotations": [
             {
@@ -12362,6 +12389,7 @@
       },
       "inventory": {
         "asOf": "2026-10-19T00:00:00Z",
+        "foodPolicy": "dryrun.exercise-food/1",
         "ledger": {
           "items": [
             {
@@ -12408,7 +12436,7 @@
       "Reviewed educational incident profiles; not a prediction of real failure"
     ],
     "baseline": {
-      "contextDigest": "cbc19ea0cf316d12",
+      "contextDigest": "2d2d25c149225786",
       "eventSequence": 10,
       "events": [
         {
@@ -12663,6 +12691,7 @@
       ],
       "finished": false,
       "inventory": {
+        "foodPolicyVersion": "dryrun.exercise-food/1",
         "items": [
           {
             "accessible": false,
@@ -12863,6 +12892,9 @@
           },
           "res.device.eq-oxygen.runtime": {
             "unit": "h"
+          },
+          "res.food.days": {
+            "unit": "day"
           },
           "res.handset.hours": {
             "amount": 18,
@@ -13089,6 +13121,8 @@
           "equipment.eq-oxygen.backup",
           "home.smokeAlarms",
           "housing.wellPressureTankGallons",
+          "inventory.food.available",
+          "inventory.food.storageAndDietarySuitability",
           "pets.waterNeeds"
         ],
         "unmetRequirements": [
@@ -13105,7 +13139,7 @@
     "dependencies": [
       {
         "evidenceIDs": [
-          "cbc19ea0cf316d12"
+          "2d2d25c149225786"
         ],
         "id": "contact|channel",
         "kind": "contactChannel",
@@ -13124,7 +13158,7 @@
       "req.egress.p-oak-4"
     ],
     "evidenceIDs": [
-      "cbc19ea0cf316d12"
+      "2d2d25c149225786"
     ],
     "failed": true,
     "id": "stress|home-fire|evt.home-fire.alarm|evt.home-fire.fire-origin",
@@ -13143,7 +13177,7 @@
     ],
     "sourceHomeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
     "sourceHouseholdDigest": "ed6c10c01a324e6f",
-    "sourceInventoryDigest": "b7b0b421d168c49c",
+    "sourceInventoryDigest": "888c29146da3b29d",
     "subjectIDs": [
       "p-oak-1",
       "p-oak-2",

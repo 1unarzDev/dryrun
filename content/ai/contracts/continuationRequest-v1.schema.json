@@ -140,7 +140,8 @@
                       "gal",
                       "Wh",
                       "h",
-                      "charges"
+                      "charges",
+                      "day"
                     ]
                   }
                 },
@@ -1129,7 +1130,8 @@
                               "gal",
                               "Wh",
                               "h",
-                              "charges"
+                              "charges",
+                              "day"
                             ]
                           }
                         },

@@ -9,5 +9,6 @@
   "simulation.user.takeSupply": "Tomaste un artículo registrado de tus suministros en este ejercicio.",
   "simulation.user.transferSupply": "Dejaste el artículo que llevabas en la habitación donde estás en el ejercicio.",
   "simulation.user.closeDoor": "Cerraste una puerta que se puede abrir y cerrar en este ejercicio. No se modela ningún cambio en la propagación del humo.",
-  "simulation.user.finish": "Terminaste este ejercicio."
+  "simulation.user.finish": "Terminaste este ejercicio.",
+  "scenario.common.res.food-depleted": "La reserva de alimentos registrada para el hogar se ha agotado en este ejercicio."
 }

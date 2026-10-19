@@ -39,6 +39,7 @@ public enum PlanStressTester {
         let unmet=Set(baseline.snapshot.unmetRequirements)
         let criterion = !shared.isEmpty || unmet.contains(where:{$0.hasPrefix("req.egress")}) ? "escape"
             : unmet.contains("req.water") ? "water"
+            : unmet.contains("req.food") ? "food"
             : unmet.contains(where:{$0.hasPrefix("req.power") || $0.hasPrefix("req.refrigeration")}) ? "device"
             : unmet.contains(where:{$0.hasPrefix("req.comms")}) ? "contact" : "advisory"
         let sharedPower=initial.household.backupPower.filter{b in initial.household.equipment.filter{$0.compatibleBackupIDs.contains(b.id)}.count>1}.map{ "backup.\($0.id)" }

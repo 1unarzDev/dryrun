@@ -1,0 +1,15 @@
+{
+  "version": "dryrun.exercise-food/1",
+  "status": "draft-human-review-pending",
+  "sourceIDs": ["S64"],
+  "sourceScope": "Recorded whole-household food coverage days; not package-to-day or nutritional inference.",
+  "activation": "New SessionInventorySeed values default to recordedHouseholdDays. Missing foodPolicy on decoded historical seeds preserves water-only behavior. Unknown policies reject.",
+  "rate": {"householdCoverageDaysPerSimulatedMinute": 0.0006944444444444445, "definition": "One explicitly recorded coverage day per 1440 simulated minutes, while not relocated. No wall-clock draw."},
+  "preconditions": ["Confirmed usable day quantities", "Confirmed access under the committed route/hazard state", "Current expiry", "Unrestricted stock or explicit scope covering every household member"],
+  "accounting": "Settle the host draw across accessible eligible physical records in stable ID order; remaining plus consumed equals original confirmed usable quantity in each record's day unit. Blocked/expired stock remains physically present and cannot contribute accessible coverage.",
+  "unknown": "Missing amount, access, household scope or compatible day units prevents a confident aggregate duration. Missing evidence is not zero; confirmed zero remains zero.",
+  "boundaries": "Stop at mandatory depletion and expiry boundaries; same-minute water/food depletion is deterministic. No implicit replenishment.",
+  "interpretation": "This is a recorded-quantity exercise assumption. It does not establish dietary suitability, calories, safe storage, spoilage or food availability after relocation. The snapshot preserves an explicit storage/dietary uncertainty.",
+  "scoring": "Hypothetical consumption never changes real inventory or preparation scores. Food challenges are advisory outside a separately approved scored stress envelope.",
+  "guidanceHorizon": "The draft three-day criterion is limited; S64 distinguishes three-day evacuation and two-week home supplies. Depletion is not a medical harm deadline."
+}

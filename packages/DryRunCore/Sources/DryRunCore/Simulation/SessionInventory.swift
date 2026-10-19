@@ -1,10 +1,16 @@
 import Foundation
 
+/// Whole-household coverage days explicitly confirmed by the household, never package inference.
+public enum ExerciseFoodPolicy:String,Codable,Sendable {case recordedHouseholdDays = "dryrun.exercise-food/1"}
 /// Immutable confirmed source. Exercise transfers/consumption never update this ledger.
 public struct SessionInventorySeed: Codable, Sendable {
     public var ledger: InventoryLedger
     public var asOf: Date
-    public init(ledger: InventoryLedger, asOf: Date) { self.ledger=ledger; self.asOf=asOf }
+    /// nil on historical sources preserves the original water-only resource behavior.
+    public var foodPolicy:ExerciseFoodPolicy?
+    public init(ledger: InventoryLedger, asOf: Date, foodPolicy:ExerciseFoodPolicy? = .recordedHouseholdDays) {
+        self.ledger=ledger; self.asOf=asOf;self.foodPolicy=foodPolicy
+    }
 }
 public struct ExerciseSupply: Codable, Sendable, Equatable {
     public var id:String
@@ -21,6 +27,7 @@ public struct ExerciseSupply: Codable, Sendable, Equatable {
 public struct ExerciseInventory: Codable, Sendable, Equatable {
     public var sourceRevision:Int
     public var items:[ExerciseSupply]
+    public var foodPolicyVersion:String? = nil
 }
 
 struct SessionSupplyLedger {
@@ -28,6 +35,7 @@ struct SessionSupplyLedger {
     let sources:[String:InventoryItem]
     var state:ExerciseInventory
     var projectedGallons:Double?
+    var projectedFoodDays:Double?
     init(_ seed:SessionInventorySeed) throws {
         guard seed.asOf.timeIntervalSince1970.isFinite,seed.ledger.items.allSatisfy({$0.expiresAt?.timeIntervalSince1970.isFinite ?? true}) else {throw SessionError.invalidCommand}
         // Revalidate decoded records rather than trusting their Codable representation.
@@ -38,7 +46,7 @@ struct SessionSupplyLedger {
         state=ExerciseInventory(sourceRevision:seed.ledger.revision,items:checked.items.sorted{$0.id<$1.id}.map{
             ExerciseSupply(id:$0.id,physicalID:$0.physicalID,category:$0.category,unit:$0.unit,
                 remaining:$0.quantity.confirmedValue==0 ? 0:$0.usableQuantity.confirmedValue,consumed:0,locationID:$0.locationID,carrierPersonID:nil,accessible:nil)
-        })
+        },foodPolicyVersion:seed.foodPolicy?.rawValue)
     }
     /// Settle the existing RunState draw, then recompute access from the same committed hazard/occupants.
     mutating func synchronize(_ run:inout RunState) throws {
@@ -55,7 +63,18 @@ struct SessionSupplyLedger {
             }
             guard liters<1e-7 else {throw SessionError.invalidCommand}
         }
+        if seed.foodPolicy != nil,let before=projectedFoodDays,let after=run.foodDays {
+            guard after<=before+1e-9 else {throw SessionError.invalidCommand}
+            var days=max(0,before-after)
+            for index in state.items.indices where state.items[index].category=="food" && state.items[index].unit == .day && state.items[index].accessible==true {
+                guard let remaining=state.items[index].remaining,let source=sources[state.items[index].id],InventoryLedger.coversHousehold(source,personIDs:run.household.people.map(\.id)) else {continue}
+                let used=min(remaining,days)
+                state.items[index].remaining=max(0,remaining-used);state.items[index].consumed += used;days=max(0,days-used)
+            }
+            guard days<1e-7 else {throw SessionError.invalidCommand}
+        }
         var reachableLocations:[String:Bool]=[:]
+        var foodDays=0.0,foodUnknown = !state.items.contains{$0.category=="food"},foodScopeUnsupported=false,foodUnitUnsupported=false
         var gallons=0.0,unknown = !state.items.contains{$0.category=="water"},scopeUnsupported=false
         for index in state.items.indices {
             let source=sources[state.items[index].id]!
@@ -77,6 +96,14 @@ struct SessionSupplyLedger {
                 }
             }
             state.items[index].accessible=access
+            if seed.foodPolicy != nil,source.category=="food" {
+                if access != false && state.items[index].remaining != 0 {
+                    if !InventoryLedger.coversHousehold(source,personIDs:run.household.people.map(\.id)) {foodUnknown=true;foodScopeUnsupported=true}
+                    else if source.unit != .day {foodUnknown=true;foodUnitUnsupported=true}
+                    else if access != true || state.items[index].remaining == nil {foodUnknown=true}
+                    else {foodDays += state.items[index].remaining!;guard foodDays.isFinite else {throw SessionError.invalidCommand}}
+                }
+            }
             if source.category=="water" {
                 guard source.unit == .liter || source.unit == .usGallon else {throw SessionError.invalidCommand}
                 if access==false || state.items[index].remaining==0 {continue}
@@ -84,6 +111,15 @@ struct SessionSupplyLedger {
                 if access != true || state.items[index].remaining == nil {unknown=true;continue}
                 gallons += state.items[index].remaining! * (source.unit == .usGallon ? 1 : 1/3.785411784)
                 guard gallons.isFinite else {throw SessionError.invalidCommand}
+            }
+        }
+        if seed.foodPolicy != nil {
+            run.tracksFood=true
+            run.unknowns.insert("inventory.food.storageAndDietarySuitability")
+            projectedFoodDays=foodUnknown ? nil:foodDays
+            run.foodDays=projectedFoodDays
+            for (id,present) in [("inventory.food.available",foodUnknown),("inventory.food.subjectScope",foodScopeUnsupported),("inventory.food.unit",foodUnitUnsupported)] {
+                if present {run.unknowns.insert(id)} else {run.unknowns.remove(id)}
             }
         }
         // Unknown stock cannot be turned into a confident forecast or an invented draw amount.

@@ -115,3 +115,17 @@ it('binds recent action ordering and latest action to the current host revision'
  expect(directorContext.safeParse({...context,recentActions:[{id:'unbound',kind:'unsupported'}]}).success).toBe(false);
  expect(directorContext.safeParse({...context,lastAction:{...action,phone:'private'}}).success).toBe(false);
 });
+
+it('accepts exact supplied committed-event evidence but rejects an invented event',async()=>{
+ for(const eventID of ['evt.water-outage.res.food-depleted','invented-food-event']){
+  let calls=0;
+  const provider:AgentProvider={async turn(){
+   if(++calls===1){const call={type:'function_call' as const,id:'food-preview',name:'evaluateCandidateAction',arguments:{command:{kind:'advance',minute:20}}};return {steps:[call],calls:[call],text:'',usage:{}};}
+   return {steps:[],calls:[],text:JSON.stringify({commands:[{kind:'requestDecision'}],purpose:'Review the recorded exercise food coverage.',evidenceIDs:[eventID]}),usage:{}};
+  }};
+  const context={...request.context,snapshot:{...snapshot,firedEventIDs:['evt.water-outage.res.food-depleted'],resources:{...snapshot.resources,'res.food.days':{amount:0,unit:'day'}}}};
+  const gateway=new Gateway(provider),start:any=await gateway.start('food-evidence',{...request,context});
+  const result:any=await gateway.resume('food-evidence',{token:start.token,binding,callID:'food-preview',result:{binding,snapshot:context.snapshot,contextDigest:'food-preview'}});
+  expect(result.status).toBe(eventID==='invented-food-event'?'unavailable':'completed');
+ }
+});

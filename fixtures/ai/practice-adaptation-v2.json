@@ -3,7 +3,7 @@
   "modelCalls": 0,
   "evaluatorVersion": "dryrun.practice-anchors/2",
   "usual": {
-    "contextDigest": "da2c9f64db11192",
+    "contextDigest": "cd577d31bd3ec491",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,
@@ -372,7 +372,7 @@
     }
   },
   "alternate": {
-    "contextDigest": "bdd752a8b4ff9bf1",
+    "contextDigest": "d0f9831ba1b031a0",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,
@@ -710,7 +710,7 @@
   "source": {
     "contractVersion": "dryrun.practice-capture/1",
     "evaluatorVersion": "dryrun.practice-anchors/2",
-    "initialDigest": "f246b775cd8007c0",
+    "initialDigest": "3c890df2d521b703",
     "sessionID": "synthetic-session",
     "startingEventSequence": 4,
     "startingRevision": 2
@@ -736,10 +736,10 @@
         "competencyID": "adaptation",
         "credit": 1,
         "feedbackRevealed": false,
-        "receiptDigest": "8c9591bcbc6364dc"
+        "receiptDigest": "5d67bde0a1eaae8d"
       },
       "receipt": {
-        "contextDigest": "8c9591bcbc6364dc",
+        "contextDigest": "5d67bde0a1eaae8d",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -1136,10 +1136,10 @@
         "competencyID": "adaptation",
         "credit": 0,
         "feedbackRevealed": false,
-        "receiptDigest": "c8320d9907012be3"
+        "receiptDigest": "4e8d50832bdfca60"
       },
       "receipt": {
-        "contextDigest": "c8320d9907012be3",
+        "contextDigest": "4e8d50832bdfca60",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,

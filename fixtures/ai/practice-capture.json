@@ -19,7 +19,7 @@
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
           "evaluatorVersion": "dryrun.practice-anchors/2",
-          "initialDigest": "cbf0f30c082ae8d9",
+          "initialDigest": "6713542b694d940c",
           "sessionID": "synthetic-session",
           "startingEventSequence": 3,
           "startingRevision": 1
@@ -64,7 +64,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.4",
           "home": {
             "annotations": [
               {
@@ -1466,7 +1466,7 @@
         "competencyID": "initialResponse",
         "credit": 1,
         "feedbackRevealed": false,
-        "receiptDigest": "c804a63add279071"
+        "receiptDigest": "2592a1fddbb4ca1c"
       },
       "feedback": {
         "acceptedRevision": 2,
@@ -1474,7 +1474,7 @@
         "competencyID": "initialResponse",
         "credit": 1,
         "feedbackRevealed": true,
-        "receiptDigest": "c804a63add279071"
+        "receiptDigest": "2592a1fddbb4ca1c"
       }
     },
     {
@@ -1483,14 +1483,14 @@
         "actionID": "answer-adaptation",
         "competencyID": "adaptation",
         "feedbackRevealed": false,
-        "receiptDigest": "9cd1c7510e106ef"
+        "receiptDigest": "99f8264e886a47d2"
       },
       "feedback": {
         "acceptedRevision": 3,
         "actionID": "answer-adaptation",
         "competencyID": "adaptation",
         "feedbackRevealed": true,
-        "receiptDigest": "9cd1c7510e106ef"
+        "receiptDigest": "99f8264e886a47d2"
       }
     },
     {
@@ -1499,14 +1499,14 @@
         "actionID": "answer-communication",
         "competencyID": "communication",
         "feedbackRevealed": false,
-        "receiptDigest": "373bc9a7c1254e58"
+        "receiptDigest": "9efe8f53de29f4e3"
       },
       "feedback": {
         "acceptedRevision": 4,
         "actionID": "answer-communication",
         "competencyID": "communication",
         "feedbackRevealed": true,
-        "receiptDigest": "373bc9a7c1254e58"
+        "receiptDigest": "9efe8f53de29f4e3"
       }
     },
     {
@@ -1515,14 +1515,14 @@
         "actionID": "answer-continuity",
         "competencyID": "continuity",
         "feedbackRevealed": false,
-        "receiptDigest": "c5393279a038cb8c"
+        "receiptDigest": "206040a5af5e0077"
       },
       "feedback": {
         "acceptedRevision": 5,
         "actionID": "answer-continuity",
         "competencyID": "continuity",
         "feedbackRevealed": true,
-        "receiptDigest": "c5393279a038cb8c"
+        "receiptDigest": "206040a5af5e0077"
       }
     }
   ],
@@ -1553,35 +1553,35 @@
             "competencyID": "initialResponse",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "c804a63add279071"
+            "receiptDigest": "2592a1fddbb4ca1c"
           },
           {
             "acceptedRevision": 3,
             "actionID": "answer-adaptation",
             "competencyID": "adaptation",
             "feedbackRevealed": true,
-            "receiptDigest": "9cd1c7510e106ef"
+            "receiptDigest": "99f8264e886a47d2"
           },
           {
             "acceptedRevision": 4,
             "actionID": "answer-communication",
             "competencyID": "communication",
             "feedbackRevealed": true,
-            "receiptDigest": "373bc9a7c1254e58"
+            "receiptDigest": "9efe8f53de29f4e3"
           },
           {
             "acceptedRevision": 5,
             "actionID": "answer-continuity",
             "competencyID": "continuity",
             "feedbackRevealed": true,
-            "receiptDigest": "c5393279a038cb8c"
+            "receiptDigest": "206040a5af5e0077"
           }
         ],
         "sequence": 1,
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
           "evaluatorVersion": "dryrun.practice-anchors/2",
-          "initialDigest": "cbf0f30c082ae8d9",
+          "initialDigest": "6713542b694d940c",
           "sessionID": "synthetic-session",
           "startingEventSequence": 3,
           "startingRevision": 1
@@ -1667,7 +1667,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.4",
           "home": {
             "annotations": [
               {

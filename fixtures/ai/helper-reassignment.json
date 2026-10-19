@@ -107,7 +107,7 @@
             "simultaneousCapacity": "notAssessed"
           }
         ],
-        "contextDigest": "2a52bb9c1760df94",
+        "contextDigest": "8da82d951f740af1",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -927,7 +927,7 @@
       "dependencies": [
         {
           "evidenceIDs": [
-            "2a52bb9c1760df94"
+            "8da82d951f740af1"
           ],
           "id": "contact|channel",
           "kind": "contactChannel",
@@ -938,7 +938,7 @@
         },
         {
           "evidenceIDs": [
-            "2a52bb9c1760df94"
+            "8da82d951f740af1"
           ],
           "id": "helperReach|p-oak-3",
           "kind": "helperReach",
@@ -950,7 +950,7 @@
         },
         {
           "evidenceIDs": [
-            "2a52bb9c1760df94"
+            "8da82d951f740af1"
           ],
           "id": "helperReach|p-oak-4",
           "kind": "helperReach",
@@ -1092,7 +1092,7 @@
             "simultaneousCapacity": "unknown"
           }
         ],
-        "contextDigest": "d386c8b7e719dc3f",
+        "contextDigest": "8c45a98cd65d9938",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -1928,7 +1928,7 @@
       "dependencies": [
         {
           "evidenceIDs": [
-            "d386c8b7e719dc3f"
+            "8c45a98cd65d9938"
           ],
           "id": "contact|channel",
           "kind": "contactChannel",
@@ -1939,7 +1939,7 @@
         },
         {
           "evidenceIDs": [
-            "d386c8b7e719dc3f"
+            "8c45a98cd65d9938"
           ],
           "id": "helperReach|p-oak-3",
           "kind": "helperReach",
@@ -1951,7 +1951,7 @@
         },
         {
           "evidenceIDs": [
-            "d386c8b7e719dc3f"
+            "8c45a98cd65d9938"
           ],
           "id": "helperReach|p-oak-4",
           "kind": "helperReach",
@@ -2073,7 +2073,7 @@
     "id": "synthetic-session",
     "initial": {
       "choices": {},
-      "contentVersion": "2026.10.3",
+      "contentVersion": "2026.10.4",
       "home": {
         "annotations": [
           {
@@ -3596,7 +3596,7 @@
         "simultaneousCapacity": "unknown"
       }
     ],
-    "contextDigest": "d386c8b7e719dc3f",
+    "contextDigest": "8c45a98cd65d9938",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,

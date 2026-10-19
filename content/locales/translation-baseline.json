@@ -83,6 +83,7 @@
     "tier.5": "33d9ffd2a7144f02"
    },
    "ai": {
+    "scenario.common.res.food-depleted": "2a1d3e5439a5cf54",
     "simulation.user.allocatePower": "e84aa557303569fd",
     "simulation.user.assignHelper": "528407a5b3b8c4e7",
     "simulation.user.choose": "36d06ccb62b0ebc6",
@@ -1917,6 +1918,7 @@
     "tier.5": "33d9ffd2a7144f02"
    },
    "ai": {
+    "scenario.common.res.food-depleted": "2a1d3e5439a5cf54",
     "simulation.user.allocatePower": "e84aa557303569fd",
     "simulation.user.assignHelper": "528407a5b3b8c4e7",
     "simulation.user.choose": "36d06ccb62b0ebc6",

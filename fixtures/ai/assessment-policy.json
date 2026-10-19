@@ -5,7 +5,7 @@
   "source": {
     "before": {
       "choices": {},
-      "contentVersion": "2026.10.3",
+      "contentVersion": "2026.10.4",
       "home": {
         "annotations": [
           {
@@ -1350,7 +1350,7 @@
     },
     "confirmed": {
       "choices": {},
-      "contentVersion": "2026.10.3",
+      "contentVersion": "2026.10.4",
       "home": {
         "annotations": [
           {
@@ -3997,7 +3997,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "a880313b9fcbb28e",
+        "contextDigest": "221ce469150cd05f",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -4105,7 +4105,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.4",
           "home": {
             "annotations": [
               {
@@ -7206,7 +7206,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "b9c73504379c8a8d",
+        "contextDigest": "2ef3f35f49559e94",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -7313,7 +7313,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.4",
           "home": {
             "annotations": [
               {
@@ -10420,7 +10420,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "d1377f2e330c05c4",
+        "contextDigest": "19a252eaf66cca81",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -10430,6 +10430,7 @@
         "events": [],
         "finished": false,
         "inventory": {
+          "foodPolicyVersion": "dryrun.exercise-food/1",
           "items": [
             {
               "accessible": false,
@@ -10450,6 +10451,10 @@
         "snapshot": {
           "firedEventIDs": [],
           "resources": {
+            "res.food.days": {
+              "amount": 0,
+              "unit": "day"
+            },
             "res.handset.hours": {
               "amount": 18,
               "unit": "h"
@@ -10481,10 +10486,13 @@
           },
           "simMinute": 0,
           "unknowns": [
+            "inventory.food.storageAndDietarySuitability",
             "inventory.water.available",
             "pets.waterNeeds"
           ],
-          "unmetRequirements": []
+          "unmetRequirements": [
+            "req.food"
+          ]
         }
       },
       "recentActions": [],
@@ -10541,7 +10549,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.4",
           "home": {
             "annotations": [
               {
@@ -11890,6 +11898,7 @@
         },
         "inventory": {
           "asOf": "2026-10-19T00:00:00Z",
+          "foodPolicy": "dryrun.exercise-food/1",
           "ledger": {
             "items": [
               {
@@ -13688,7 +13697,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "adbccacfc38e576",
+        "contextDigest": "3eb695de54f5f1a2",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -13698,6 +13707,7 @@
         "events": [],
         "finished": false,
         "inventory": {
+          "foodPolicyVersion": "dryrun.exercise-food/1",
           "items": [
             {
               "accessible": true,
@@ -13718,6 +13728,10 @@
         "snapshot": {
           "firedEventIDs": [],
           "resources": {
+            "res.food.days": {
+              "amount": 3,
+              "unit": "day"
+            },
             "res.handset.hours": {
               "amount": 18,
               "unit": "h"
@@ -13749,6 +13763,7 @@
           },
           "simMinute": 0,
           "unknowns": [
+            "inventory.food.storageAndDietarySuitability",
             "inventory.water.available",
             "pets.waterNeeds"
           ],
@@ -13809,7 +13824,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.4",
           "home": {
             "annotations": [
               {
@@ -15158,6 +15173,7 @@
         },
         "inventory": {
           "asOf": "2026-10-19T00:00:00Z",
+          "foodPolicy": "dryrun.exercise-food/1",
           "ledger": {
             "items": [
               {

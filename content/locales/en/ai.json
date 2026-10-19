@@ -9,5 +9,6 @@
   "simulation.user.takeSupply": "You took a recorded supply item in this exercise.",
   "simulation.user.transferSupply": "You placed the supply item you were carrying in your current exercise room.",
   "simulation.user.closeDoor": "You closed an operable door in this exercise. No change in smoke spread is modeled.",
-  "simulation.user.finish": "You ended this exercise."
+  "simulation.user.finish": "You ended this exercise.",
+  "scenario.common.res.food-depleted": "The recorded household food supply has run out in this exercise."
 }
