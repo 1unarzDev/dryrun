@@ -28,6 +28,9 @@ public struct PracticeAnswer: Codable, Sendable {
 }
 public struct PracticeAttempt: Codable, Sendable {
     public var id:String; public var sequence:Int; public var variantID:String; public var answers:[PracticeAnswer]; public var coached:Bool
+    public var archivedUnverified:Bool?
+    public var source:PracticeAttemptSource?
+    public var observations:[PracticeObservation]?
     public init(id:String,sequence:Int,variantID:String,answers:[PracticeAnswer],coached:Bool=false){self.id=id;self.sequence=sequence;self.variantID=variantID;self.answers=answers;self.coached=coached}
 }
 public struct PreparednessScorecard: Codable, Sendable {

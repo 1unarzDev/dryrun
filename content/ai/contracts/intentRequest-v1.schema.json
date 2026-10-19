@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contractVersion": {
+      "type": "string",
+      "const": "dryrun.ai/1"
+    },
+    "requestID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "synthetic": {
+      "type": "boolean",
+      "const": true
+    },
+    "submission": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "inputDigest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{1,16}$"
+        },
+        "binding": {
+          "type": "object",
+          "properties": {
+            "sessionID": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "eventSequence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "contextDigest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "householdRevision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "homeRevision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "sessionID",
+            "revision",
+            "eventSequence",
+            "contextDigest",
+            "householdRevision",
+            "homeRevision"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "inputDigest",
+        "binding"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "people": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "selected": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "selected"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rooms": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "use": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "id",
+              "use"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "portals": {
+          "maxItems": 200,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "equipment": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "backupIDs": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              }
+            },
+            "required": [
+              "id",
+              "backupIDs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "contacts": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "supplies": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "choices": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "optionIDs": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              }
+            },
+            "required": [
+              "id",
+              "optionIDs"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "people",
+        "rooms",
+        "portals",
+        "equipment",
+        "contacts",
+        "supplies",
+        "choices"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contractVersion",
+    "requestID",
+    "synthetic",
+    "submission",
+    "context"
+  ],
+  "additionalProperties": false
+}

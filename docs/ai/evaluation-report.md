@@ -9,9 +9,9 @@ This is an implemented, synthetic-tested integration package, **not a production
 | Check | Actual result |
 |---|---|
 | Existing baseline Core | 333 tests passed before changes |
-| Final Core | 372 tests / 65 suites passed, Swift 6.2 Docker |
+| Final Core | 381 tests / 67 suites passed, Swift 6.2 Docker |
 | Vault | 36 tests / 7 suites passed, including legacy/additive encrypted sidecar roundtrip |
-| Private gateway | 12 tests passed; TypeScript check passed |
+| Private gateway | 39 tests / 5 files passed; TypeScript check passed |
 | Unchanged public API | 68 tests passed; TypeScript check passed |
 | Frozen rubric cases | 60/60 predicate/arithmetic cases passed: 40 development, 20 locked holdout |
 | Recorded live-session replay | Both all-use and essential-only logs recomputed their original digest/snapshot offline |
@@ -122,3 +122,13 @@ Authored API follow-up: RehearsalEngine.run now delegates to SimulationSession.a
 The first final-policy connected pipeline failed safely after Gemini selected an already-applied external outage as a spatial startIncident. integrated-pipeline-policy-failure.json preserves the failed operation and unchanged tool trace. The prompt now distinguishes external profiles from spatial stages, minimized snapshots include applied event IDs, and validation rejects duplicate applied IDs before client work. This does not guarantee reliable narration or model behavior.
 
 Final connected retry passed for both synthetic households in **23 live Gemini calls**, retained as integrated-pipeline-policy.json. It used confirmed inventory, household-specific preparation, resource search plans/official evidence, executable stress, user-action-driven director tools, the full proposal-envelope commit, bounded council and deterministic scoring. Local replay exactly matched final receipts and scores (oak 22.5; lake 16.5625). This is a development retry after the retained failure, not a reliability-rate estimate.
+
+## Follow-up: practice chronology and capture
+
+The host now freezes practice source/variant before capture, atomically commits each user action with a derived first observation, persists feedback markers, and revalidates source/receipt/action prefixes before compiling score credit. Caller-created pre-feedback flags are rejected by the legacy recording API. Unknown anchors remain unassessed; coaching excludes credit. See [capture contract and migration](practice-capture.md). The final Core run passed **377 tests in 66 suites**; headless capture/restore/tampering checks passed with one supported answer (25 practice points) and three unknown competencies. This closes the portable capture chronology seam, not native enforcement or validated variant equivalence.
+
+## Follow-up: submitted text/voice intent
+
+[Intent contracts](user-action-intents.md) add source/input-bound interpretation, single-question ambiguity handling, user-only commands and an actual host commit before director continuation. Core rejects stale/mismatched/forbidden effects, preserves atomicity for infeasible compound attempts, and does not retain the raw transcript. Gateway tests cover unknown IDs, invented patches, bounded repair and cancellation. Live synthetic evaluation passed three input types (clear conservation, ambiguous identity/destination, impossible action) in three interpretation calls; a three-call director continuation then used dependency inspection and a real candidate preview, committed the full envelope, and paused at minute 360. Both deterministic and live fixtures replay exactly. These are small development checks, not semantic-accuracy estimates. The final full Core suite totals **381 tests / 67 suites**, gateway **39 tests / 5 files**, and Vault **36 tests / 7 suites**; native speech/consent/timing and human review are still pending.
+
+The actual synthetic-only HTTP /v1/intents route also passed a live request and rejected unauthorized credentials, a duplicate request ID and non-synthetic input (user-intent-http-live.json). No bearer credential is retained in that artifact.

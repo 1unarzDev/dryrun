@@ -1,0 +1,32 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "endpoint": "/v1/intents",
+  "result": {
+    "status": "completed",
+    "requestID": "http-intent-1",
+    "proposal": {
+      "contractVersion": "dryrun.user-intent/1",
+      "submittedInputID": "input-1",
+      "inputDigest": "ae34e66bdc141422",
+      "binding": {
+        "sessionID": "synthetic-http",
+        "revision": 0,
+        "eventSequence": 0,
+        "contextDigest": "synthetic",
+        "householdRevision": 0,
+        "homeRevision": 0
+      },
+      "status": "proposed",
+      "commands": [
+        {
+          "kind": "useStoredWater",
+          "value": "essential"
+        }
+      ]
+    }
+  },
+  "unauthorizedRejected": true,
+  "duplicateRejected": true,
+  "nonSyntheticRejected": true
+}

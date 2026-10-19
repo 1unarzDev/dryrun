@@ -166,8 +166,8 @@ import Testing
         try s.commit(.init(id:"answer",actor:"user",baseRevision:1,commands:[.init(kind:"useStoredWater",value:"all")]),library:SimFixtures.library)
         var local=IntegratedAIState(sessions:[s]);let attempt=try local.beginPractice(id:"a",variantID:"practice-check-a/0")
         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
-        try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)
-        #expect(local.practiceAttempts[0].answers[0].credit==0)
+        #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+        #expect(local.practiceAttempts[0].answers.isEmpty)
     }
     @Test func movedResidentOverridesRecordedStartAndReplays() throws {
         var input=SimFixtures.input(SampleHouseholds.oak,"home-fire")
