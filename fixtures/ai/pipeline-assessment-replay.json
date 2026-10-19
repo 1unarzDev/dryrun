@@ -1188,6 +1188,14 @@
           "revision": 2,
           "transport": "car"
         },
+        "lastAction": {
+          "commandIndex": 0,
+          "commitRevision": 2,
+          "contractVersion": "dryrun.committed-action-context/1",
+          "id": "water-policy",
+          "kind": "useStoredWater",
+          "value": "essential"
+        },
         "preparationActions": [
           "prep.medicalBackup",
           "prep.coAlarms",
@@ -1467,6 +1475,16 @@
             "unmetRequirements": []
           }
         },
+        "recentActions": [
+          {
+            "commandIndex": 0,
+            "commitRevision": 2,
+            "contractVersion": "dryrun.committed-action-context/1",
+            "id": "water-policy",
+            "kind": "useStoredWater",
+            "value": "essential"
+          }
+        ],
         "scorecard": {
           "assessmentVersion": "dryrun.household-assessment/5",
           "cap": 59,
@@ -5410,6 +5428,14 @@
           "revision": 2,
           "transport": "noCar"
         },
+        "lastAction": {
+          "commandIndex": 0,
+          "commitRevision": 2,
+          "contractVersion": "dryrun.committed-action-context/1",
+          "id": "water-policy",
+          "kind": "useStoredWater",
+          "value": "all"
+        },
         "preparationActions": [
           "prep.coAlarms",
           "prep.clearExits",
@@ -5671,6 +5697,16 @@
             "unmetRequirements": []
           }
         },
+        "recentActions": [
+          {
+            "commandIndex": 0,
+            "commitRevision": 2,
+            "contractVersion": "dryrun.committed-action-context/1",
+            "id": "water-policy",
+            "kind": "useStoredWater",
+            "value": "all"
+          }
+        ],
         "scorecard": {
           "assessmentVersion": "dryrun.household-assessment/5",
           "cap": 59,

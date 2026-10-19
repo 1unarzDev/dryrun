@@ -1,6 +1,6 @@
 # Claude/Mac integration handoff
 
-Latest: household-assessment/5, preparation/4, reviewed essentials inventory and 421 Core tests. Read the current acceptance ledger and policy/5 sections before historical notes below. No Xcode/iPhone verification has occurred here.
+Latest: household-assessment/5, preparation/4, reviewed essentials inventory and 423 Core tests. Read the current acceptance ledger and policy/5 sections before historical notes below. No Xcode/iPhone verification has occurred here.
 
 Baseline: `main` / `436b243276e0f333131a1813b580382971949748`. Linux implementation adds Core files under Models/AI*, Models/HomeConcernReview/IntegratedAIState, Ranking/PreparationTaskCatalog/HouseholdAssessment/PreparednessScorecard, Simulation/IncrementalSession/PlanStressTest, Session/ResourceStrategyRefresh and Spatial/AIPlanDiagram; adds a Swift executable, private Node service, rubric/contracts/fixtures/docs; makes `RunState.input/household/model` mutable for session-local action application; adds an optional encrypted `VaultPayload.integratedAIState`. No native source/PDF/navigation/RoomPlan renderer is changed. Reconcile newer Mac changes before applying shared-file edits. The three untracked owner-supplied reference/audit files are preserved.
 
@@ -180,3 +180,25 @@ Provider cancellation audit: queue acquisition and rate-limit spacing now observ
 
 
 Official explanation boundary: `resources/3` keeps Gemini's relevant record/task/field selection, but accepted `officialRecommendations[].reason` is composed by the host from bounded service labels, the linked preparation and check date. Free-form proposed wording cannot establish activation, medical suitability or accessibility. Current bundled records retain needsReview/unknown activation/unverified capabilities; no source pack was promoted. `validateOfficialCapability` now also requires actual review, verified-capability status, source IDs, valid nonfuture check date and unexpired evidence; activation additionally needs expiry. See `official-resource-explanation-v1.json`. Native must distinguish this independent official record from a MapKit candidate and establish identity before any join; the explanation is not a destination clearance. Test a valid record ID with an invented “activated and medically suitable” reason, a similar-name map listing, expired evidence and outside-region fallback. Gateway **51 tests / 8 files** plus typecheck passed; the model-prose injection case uses a mocked provider and actual bundled records. Live synthetic official-tool evaluation matched 2/2 region/task queries in four calls, selecting one record for Tarrant and none outside the pack. Real service capabilities and native search/identity joins remain unverified.
+
+
+Committed-action context and fallback/resume: `SimulationSession.userActionContexts(library:limit:)` validates the actual log and returns the latest eight user commands in committed order. `CommittedUserActionContext` includes contract version, commit ID/revision and command index, plus whitelisted semantic target/value fields; unsupported/ignored fields never forward private free text. NDJSON now returns recentActions and lastAction. Use these exact host values in director requests; do not reconstruct the latest action from an earlier UI choice or environment flag. The TS validator checks ordering, current revision and latest-action consistency. The smoke, pipeline, intent and spatial runners now use this path; older retained traces are historical and retain their original contexts.
+
+Run `pnpm --dir services/ai-orchestrator exec tsx scripts/fallback-resume-eval.ts` offline, and set `DRYRUN_RESUME_LIVE=1` for a new synthetic Gemini return. Both begin from the retained live oak policy trace, preserve its log prefix, queue an applicable future well-quality incident, pause locally without changing time/balances/pending stock, restore and commit a new conservation action, then continue. `fallback-resume-replay.ts` replays both retained outputs without model calls. The live return completed in three new calls and waited to the existing incident at minute 480; the origin is recorded evidence, not a new live origin call. Native must repeat the lifecycle with background/foreground, cancellation, network loss, relaunch and source edits on the wired phone. Keep the scene/resources authoritative and never reset supplies or reapply an incident on fallback.
+
+
+Native action-context example:
+
+```swift
+let actions = try session.userActionContexts(library: library)
+// Encode actions as directorContext.recentActions and actions.last as lastAction.
+// Use the binding/snapshot from this SAME session revision.
+```
+
+A follow-up committed as `resumed-essential-use` at revision 7 yields:
+
+```json
+{"contractVersion":"dryrun.committed-action-context/1","id":"resumed-essential-use","kind":"useStoredWater","value":"essential","commitRevision":7,"commandIndex":0}
+```
+
+Do not label it with the original all-use input. For batched actions preserve commandIndex and the actual suffix order. Legacy contexts without recentActions still parse, but the native integration should send the canonical versioned projection. This DTO never contains raw optional text/voice submissions, contact details or user-entered unsupported target/value fields.

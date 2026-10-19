@@ -1218,6 +1218,7 @@
         "unmetRequirements": []
       }
     },
+    "recentActions": [],
     "session": {
       "commits": [],
       "contractVersion": "dryrun.ai/1",
@@ -3708,6 +3709,15 @@
       "revision": 2,
       "transport": "car"
     },
+    "lastAction": {
+      "commandIndex": 2,
+      "commitRevision": 1,
+      "contractVersion": "dryrun.committed-action-context/1",
+      "id": "move-supplies",
+      "kind": "transferSupply",
+      "target": "water",
+      "value": "sp-living"
+    },
     "preparationActions": [
       "prep.medicalBackup",
       "prep.coAlarms",
@@ -4052,6 +4062,35 @@
         "unmetRequirements": []
       }
     },
+    "recentActions": [
+      {
+        "commandIndex": 0,
+        "commitRevision": 1,
+        "contractVersion": "dryrun.committed-action-context/1",
+        "id": "move-supplies",
+        "kind": "takeSupply",
+        "target": "water",
+        "value": "p-oak-1"
+      },
+      {
+        "commandIndex": 1,
+        "commitRevision": 1,
+        "contractVersion": "dryrun.committed-action-context/1",
+        "id": "move-supplies",
+        "kind": "moveTo",
+        "target": "p-oak-1",
+        "value": "sp-living"
+      },
+      {
+        "commandIndex": 2,
+        "commitRevision": 1,
+        "contractVersion": "dryrun.committed-action-context/1",
+        "id": "move-supplies",
+        "kind": "transferSupply",
+        "target": "water",
+        "value": "sp-living"
+      }
+    ],
     "session": {
       "commits": [
         {
@@ -7359,6 +7398,7 @@
         ]
       }
     },
+    "recentActions": [],
     "session": {
       "commits": [
         {
@@ -9871,6 +9911,15 @@
       "revision": 2,
       "transport": "car"
     },
+    "lastAction": {
+      "commandIndex": 2,
+      "commitRevision": 1,
+      "contractVersion": "dryrun.committed-action-context/1",
+      "id": "move-supplies",
+      "kind": "transferSupply",
+      "target": "water",
+      "value": "sp-living"
+    },
     "preparationActions": [
       "prep.medicalBackup",
       "prep.coAlarms",
@@ -10782,6 +10831,35 @@
         ]
       }
     },
+    "recentActions": [
+      {
+        "commandIndex": 0,
+        "commitRevision": 1,
+        "contractVersion": "dryrun.committed-action-context/1",
+        "id": "move-supplies",
+        "kind": "takeSupply",
+        "target": "water",
+        "value": "p-oak-1"
+      },
+      {
+        "commandIndex": 1,
+        "commitRevision": 1,
+        "contractVersion": "dryrun.committed-action-context/1",
+        "id": "move-supplies",
+        "kind": "moveTo",
+        "target": "p-oak-1",
+        "value": "sp-living"
+      },
+      {
+        "commandIndex": 2,
+        "commitRevision": 1,
+        "contractVersion": "dryrun.committed-action-context/1",
+        "id": "move-supplies",
+        "kind": "transferSupply",
+        "target": "water",
+        "value": "sp-living"
+      }
+    ],
     "session": {
       "commits": [
         {

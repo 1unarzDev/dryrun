@@ -41,6 +41,8 @@ struct HostRequest: Decodable {
     var tool:SessionToolRequest?
 }
 struct HostResponse: Encodable {
+    var lastAction:CommittedUserActionContext?
+    var recentActions:[CommittedUserActionContext]
     var resourceStrategyKey:ResourceStrategyKey?
     var concernTasks:[ConcernTaskLink]?
     var intentResult:IntentCommitReceipt?
@@ -147,7 +149,8 @@ while let line = readLine() {
             resourceStrategyKey=try ResourceStrategyKey.normalized(gaps:resourceGaps,tasks:tasks,transport:HouseholdContextSnapshot(session.initial.household).transport,
                 limitedBudget:session.initial.household.supplies.limitedBudget,regionID:session.initial.household.regionID,dependencies:request.strategyDependencies ?? [])
         }
-        let response = HostResponse(resourceStrategyKey:resourceStrategyKey,concernTasks:concernTasks,intentResult:intentResult,aiState:aiState,session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.initial.variants) }, directorProfiles:library.scenario(session.initial.scenarioID).map{scenario in scenario.events.filter{Applicability.holds($0.when,household:session.initial.household,home:session.initial.home,variants:session.initial.variants)}.map{DirectorProfileDescriptor($0,in:scenario)}}, householdContext: HouseholdContextSnapshot(session.initial.household), homeScene: session.initial.home.map(HomeSceneContext.init), preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
+        let actions=try session.userActionContexts(library:library)
+        let response = HostResponse(lastAction:actions.last,recentActions:actions,resourceStrategyKey:resourceStrategyKey,concernTasks:concernTasks,intentResult:intentResult,aiState:aiState,session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.initial.variants) }, directorProfiles:library.scenario(session.initial.scenarioID).map{scenario in scenario.events.filter{Applicability.holds($0.when,household:session.initial.household,home:session.initial.home,variants:session.initial.variants)}.map{DirectorProfileDescriptor($0,in:scenario)}}, householdContext: HouseholdContextSnapshot(session.initial.household), homeScene: session.initial.home.map(HomeSceneContext.init), preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
         print(String(decoding: try encoder.encode(response), as: UTF8.self))
         fflush(nil)
     } catch { print("{\"error\":\"\(error is SessionError ? String(describing: error) : "invalid_request")\"}"); fflush(nil) }

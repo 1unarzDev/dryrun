@@ -35,7 +35,7 @@ try{
  const actionReceipt=structuredClone(state.receipt);const adaptiveTrace:unknown[]=[];let metrics:unknown;
  if(live){
   const gateway=new Gateway(provider);const binding=bind();
-  let result:any=await gateway.start('synthetic-intent',{contractVersion:'dryrun.ai/1',requestID:'intent-director',role:'director',synthetic:true,context:{binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,profiles:state.directorProfiles,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,lastAction:{id:'input-0',kind:'useStoredWater',value:'essential'},learningObjectives:['Inspect the actual committed water-conservation consequences and select a useful next decision.']}});
+  let result:any=await gateway.start('synthetic-intent',{contractVersion:'dryrun.ai/1',requestID:'intent-director',role:'director',synthetic:true,context:{binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,profiles:state.directorProfiles,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Inspect the actual committed water-conservation consequences and select a useful next decision.']}});
   while(result.status==='needs_client_tools'){
    const call=result.calls[0],preview=await executeDirectorTool(host,state,binding,call);adaptiveTrace.push({tool:call.name,arguments:call.arguments,result:preview.result});
    result=await gateway.resume('synthetic-intent',{token:result.token,binding,callID:call.id,result:preview.result});
