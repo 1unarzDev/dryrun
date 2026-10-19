@@ -351,6 +351,13 @@ struct FocusedHouseholdEditor: View {
     private var transportFields: some View {
         let l = model.localizer
         return Group {
+            if draft?.housing.homeType == .manufacturedHome {
+                Section {
+                    Label(l("prep.shelterPlan.manufactured.why"), systemImage: "tornado")
+                        .font(.callout)
+                    Text(l("ui.shelter.advanceReview")).font(.footnote).foregroundStyle(.secondary)
+                }
+            }
             Section(l("ui.setup.gettingAround")) {
                 Toggle(l("ui.setup.hasVehicle"), isOn: Binding(get: { draft!.transport.hasVehicle }, set: { on in
                     if on && draft!.transport.vehicles.isEmpty { draft!.transport.vehicles = [Vehicle(id: UUID().uuidString, seats: 1)] }

@@ -54,6 +54,10 @@ struct ManualHomeEditorView: View {
     // Add-marker form
     @State private var markerKind: AnnotationKind = .smokeAlarm
     @State private var markerRoom = ""
+    @State private var markerEditRoom = ""
+    @State private var markerX = ""
+    @State private var markerY = ""
+    @State private var markerLocationChecked = false
     @State private var meetingLabel = ""
 
     init(home: HomeModel, selectedElementID: String? = nil, onSave: @escaping (HomeModel) -> Void) {
@@ -209,7 +213,7 @@ struct ManualHomeEditorView: View {
             }
             Section(s("Safety markers")) {
                 ForEach(draft.annotations) { a in
-                    Button("\(a.localizedLabel(model.localizer)) — \(a.spaceID.flatMap { draft.space($0)?.label } ?? s("outside"))") { selectedID = a.id }
+                    Button("\(a.localizedLabel(model.localizer)) — \(a.spaceID.flatMap { id in draft.space(id).map { HomeScenePresentation.roomLabel($0.id, in: draft) } } ?? s("outside"))") { selectedID = a.id }
                 }
                 .onDelete { idx in draft.edit { $0.annotations.remove(atOffsets: idx) } }
                 Picker(s("Marker"), selection: $markerKind) {
@@ -321,6 +325,9 @@ struct ManualHomeEditorView: View {
             } else if let index = draft.annotations.firstIndex(where: { $0.id == selectedID }) {
                 TextField(s("Label"), text: $draft.annotations[index].label)
                 TextField(s("Finding instructions"), text: Binding(get: { draft.annotations[index].note ?? "" }, set: { draft.annotations[index].note = $0 }), axis: .vertical)
+                if draft.annotations[index].kind != .outsideMeetingPoint && draft.annotations[index].kind != .exteriorHydrant {
+                    markerPlacementEditor(index)
+                }
             } else if let obstacle = draft.obstacles.first(where: { $0.id == selectedID }) {
                 Text(obstacle.label)
                 Text(s("An obstacle stays excluded from route geometry. Remove it only if the actual obstruction is gone.")).font(.footnote)
@@ -333,11 +340,11 @@ struct ManualHomeEditorView: View {
         }
         .navigationTitle(s("Selected home item"))
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button(s("All items")) { selectedID = nil } }
+            ToolbarItem(placement: .cancellationAction) { Button(s("All items")) { if applyPendingMarkerPlacement() { selectedID = nil } } }
             ToolbarItem(placement: .topBarTrailing) { Button(s("Undo")) {
                 if let previous = history.popLast() { undoing = true; draft = previous }
             }.disabled(history.isEmpty) }
-            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { draft.bumpRevision(); onSave(draft) } }
+            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { if applyPendingMarkerPlacement() { draft.bumpRevision(); onSave(draft) } } }
         }
     }
 
@@ -377,6 +384,14 @@ struct ManualHomeEditorView: View {
         landingPreviewTo = false
         correctionSide = nil
         correctionFromRoom = ""; correctionToRoom = "unknown"
+        if let marker = draft.annotations.first(where: { $0.id == selectedID }) {
+            markerEditRoom = marker.spaceID ?? ""
+            markerX = marker.position.map { String($0.x) } ?? ""
+            markerY = marker.position.map { String($0.y) } ?? ""
+            markerLocationChecked = marker.verification == .verified
+        } else {
+            markerEditRoom = ""; markerX = ""; markerY = ""; markerLocationChecked = false
+        }
         if let room = draft.spaces.first(where: { $0.id == selectedID }) {
             let size = HomeGeometryEditor.dimensions(of: room)
             correctionWidth = String(size.x); correctionDepth = String(size.y)
@@ -408,7 +423,7 @@ struct ManualHomeEditorView: View {
     private func openingLabel(_ opening: Portal) -> String {
         let rooms = [opening.sideA, opening.sideB].map { side in
             switch side {
-            case .space(let id): draft.space(id)?.label ?? s("unknown")
+            case .space(let id): draft.space(id).map { HomeScenePresentation.roomLabel($0.id, in: draft) } ?? s("unknown")
             case .exterior: s("outside")
             case .commonArea: s("building corridor")
             case .unknown: s("unknown")
@@ -425,7 +440,7 @@ struct ManualHomeEditorView: View {
                 Text(s("Not sure")).tag("unknown")
                 Text(s("Outside")).tag("outside")
                 Text(s("building corridor")).tag("common")
-                ForEach(draft.spaces.filter { $0.id != correctionFromRoom }) { Text($0.label).tag($0.id) }
+                ForEach(draft.spaces.filter { $0.id != correctionFromRoom }) { Text(HomeScenePresentation.roomLabel($0.id, in: draft)).tag($0.id) }
             }
             if correctionToRoom == "outside" || correctionToRoom == "common" {
                 Picker(s("Outside wall"), selection: $correctionSide) {
@@ -514,7 +529,7 @@ struct ManualHomeEditorView: View {
     }
 
     @ViewBuilder private var roomOptions: some View {
-        ForEach(draft.spaces) { Text($0.label).tag($0.id) }
+        ForEach(draft.spaces) { Text(HomeScenePresentation.roomLabel($0.id, in: draft)).tag($0.id) }
     }
 
     private func portalEditor(_ portal: Binding<Portal>) -> some View {
@@ -616,13 +631,75 @@ struct ManualHomeEditorView: View {
         } catch { message = describe(error) }
     }
 
-    private func addMarker() {
-        guard let space = draft.space(markerRoom) else { return }
-        draft.edit { h in
-            h.annotations.append(Annotation(id: "an-\(UUID().uuidString.prefix(6).lowercased())", kind: markerKind, floorID: space.floorID,
-                                            spaceID: space.id, position: Geometry.centroid(space.polygon),
-                                            label: "", verification: .verified))
+    private func suggestedMarkerPosition(in room: Space) -> Vec2? {
+        HomeSafetyMarkers.suggestedPosition(roomID: room.id, in: draft)
+    }
+
+    @ViewBuilder private func markerPlacementEditor(_ index: Int) -> some View {
+        Section(model.localizer("spatial.marker-location")) {
+            Picker(s("Room"), selection: Binding(get: { markerEditRoom }, set: { roomID in
+                markerEditRoom = roomID
+                let suggestion = draft.space(roomID).flatMap { suggestedMarkerPosition(in: $0) }
+                markerX = suggestion.map { String($0.x) } ?? ""
+                markerY = suggestion.map { String($0.y) } ?? ""
+                markerLocationChecked = false
+            })) {
+                Text(s("Not assigned")).tag("")
+                ForEach(draft.spaces) { room in Text(roomFloorLabel(room)).tag(room.id) }
+            }
+            Text(model.localizer("spatial.marker-position-note")).font(.footnote).foregroundStyle(.secondary)
+            TextField(model.localizer("spatial.marker-x"), text: Binding(get: { markerX }, set: { markerX = $0; markerLocationChecked = false })).keyboardType(.numbersAndPunctuation)
+                .accessibilityIdentifier("home.marker.x")
+            TextField(model.localizer("spatial.marker-y"), text: Binding(get: { markerY }, set: { markerY = $0; markerLocationChecked = false })).keyboardType(.numbersAndPunctuation)
+                .accessibilityIdentifier("home.marker.y")
+            Toggle(model.localizer("spatial.marker-location-checked"), isOn: $markerLocationChecked)
+                .accessibilityIdentifier("home.marker.locationChecked")
+            Button(model.localizer("spatial.marker-apply"), systemImage: "mappin.and.ellipse") { applyMarkerPlacement(index) }
+                .accessibilityIdentifier("home.marker.apply")
         }
+    }
+
+    /// Save and navigation commit the visible placement too; invalid input stays on this editor.
+    private func applyPendingMarkerPlacement() -> Bool {
+        guard let index = draft.annotations.firstIndex(where: { $0.id == selectedID }),
+              draft.annotations[index].kind != .outsideMeetingPoint,
+              draft.annotations[index].kind != .exteriorHydrant else { return true }
+        let marker = draft.annotations[index]
+        let coordinatesUnchanged = marker.position.map { decimal(markerX) == $0.x && decimal(markerY) == $0.y }
+            ?? (markerX.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && markerY.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        if markerEditRoom == (marker.spaceID ?? ""), coordinatesUnchanged,
+           markerLocationChecked == (marker.verification == .verified) { return true }
+        applyMarkerPlacement(index)
+        return message == nil
+    }
+
+    private func applyMarkerPlacement(_ index: Int) {
+        guard draft.annotations.indices.contains(index), let x = decimal(markerX), let y = decimal(markerY) else {
+            message = model.localizer("spatial.marker-invalid"); return
+        }
+        let marker = draft.annotations[index]
+        do {
+            var updated = try HomeSafetyMarkers.place(id: marker.id, kind: marker.kind, roomID: markerEditRoom,
+                position: Vec2(x, y), label: marker.label, note: marker.note, verified: markerLocationChecked, in: draft)
+            if let updatedIndex = updated.annotations.firstIndex(where: { $0.id == marker.id }) {
+                updated.annotations[updatedIndex].savedPlaceID = marker.savedPlaceID
+            }
+            draft = updated
+            message = nil
+        } catch { message = model.localizer("spatial.marker-invalid") }
+    }
+
+    private func addMarker() {
+        guard let room = draft.space(markerRoom), let position = suggestedMarkerPosition(in: room) else {
+            message = model.localizer("spatial.marker-invalid"); return
+        }
+        let id = "an-\(UUID().uuidString.lowercased())"
+        do {
+            draft = try HomeSafetyMarkers.place(id: id, kind: markerKind, roomID: room.id,
+                position: position, verified: false, in: draft)
+            selectedID = id
+            message = nil
+        } catch { message = model.localizer("spatial.marker-invalid") }
     }
 
     private func setMeetingPoint() {

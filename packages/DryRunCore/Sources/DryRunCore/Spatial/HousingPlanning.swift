@@ -7,6 +7,10 @@ public struct HomePlanningRoute: Codable, Sendable {
     public var primaryPortalIDs: [String]
     public var connectorIDs: [String]
     public var alternativePortalIDs: [String]
+    /// Optional for historical contexts. Missing means unreported, never independent.
+    public var alternativeStatus: AlternativeStatus?
+    public var alternativeConnectorIDs: [String]?
+    public var sharedChokepointIDs: [String]?
     public var noRouteReason: String?
     public var exclusions: [RouteExclusion]
     public var scope = "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance."
@@ -26,7 +30,8 @@ public enum HousingPlanning {
             let route=EgressPlanner().plan(RouteRequest(personID:person.id,startSpaceID:person.sleepingSpaceID ?? "unknown",mobility:person.requiresStepFreeRoute ? .wheelchair:.walking),in:home)
             return HomePlanningRoute(personID:person.id,startRoomID:person.sleepingSpaceID,stepFreeRequired:person.requiresStepFreeRoute,
                 primaryPortalIDs:route.primary?.portalSequence ?? [],connectorIDs:route.primary?.connectorSequence ?? [],
-                alternativePortalIDs:route.alternative?.portalSequence ?? [],noRouteReason:route.noRouteReason?.rawValue,exclusions:route.exclusions)
+                alternativePortalIDs:route.alternative?.portalSequence ?? [],alternativeStatus:route.alternativeStatus,
+                alternativeConnectorIDs:route.alternative?.connectorSequence ?? [],sharedChokepointIDs:route.sharedChokepoints,noRouteReason:route.noRouteReason?.rawValue,exclusions:route.exclusions)
         }
     }
     public static func needs(household:HouseholdProfile,home:HomeModel?)->[HousingPlanningNeed] {
@@ -41,7 +46,7 @@ public enum HousingPlanning {
         let routes=routes(household:household,home:home)
         for r in routes {
             if r.primaryPortalIDs.isEmpty {add("egressNotEstablished|"+r.personID,[r.personID],"prep.clearExits","home")}
-            else if !r.connectorIDs.isEmpty && r.alternativePortalIDs.isEmpty {add("stairsSingleDependency|"+r.personID,r.connectorIDs,"prep.fireDrill","home")}
+            else if !r.connectorIDs.isEmpty && r.alternativeStatus != .independent {add("stairsSingleDependency|"+r.personID,Array(Set(r.connectorIDs + (r.sharedChokepointIDs ?? []))).sorted(),"prep.fireDrill","home")}
         }
         for kind in [AnnotationKind.utilityShutoffElectric,.fireExtinguisher,.supplies] {
             if !home.annotations.contains(where:{$0.kind==kind && $0.verification == .verified && HomeSafetyMarkers.hasValidPlacement($0,in:home)}) {

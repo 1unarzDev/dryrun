@@ -10,7 +10,7 @@ export function inspectOutput(role:string,value:unknown):OutputQualityField[]{
   if(!item||typeof item!=='object')return;
   for(const [key,v] of Object.entries(item)){
    const p=path?path+'.'+key:key;
-   if(typeof v==='string'&&['why','purpose','visibleEvidence','concern','confirmationPrompt','improvement','reason','question'].includes(key)){
+   if(typeof v==='string'&&['why','purpose','visibleEvidence','concern','confirmationPrompt','improvement','reason','question','missingReview'].includes(key)){
     const words=v.trim().split(/\s+/u).filter(Boolean).length;
     const band:[number,number]=key==='question'||key==='confirmationPrompt'?[6,30]:key==='purpose'&&role==='director'?[30,90]:[12,45];
     const flags:string[]=[];if(words<band[0])flags.push('review_depth');if(words>band[1])flags.push('review_length');

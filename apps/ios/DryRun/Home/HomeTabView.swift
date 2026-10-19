@@ -47,10 +47,12 @@ struct HomeTabView: View {
                         ForEach(Mode.allCases) { Text(s($0.rawValue)).tag($0) }
                     }
                     .pickerStyle(.segmented)
+                    .accessibilityIdentifier("home.viewMode")
                     if home.floors.count > 1 {
                         Picker(s("Floor"), selection: Binding(get: { floorID ?? home.floors.first?.id ?? "" }, set: { floorID = $0 })) {
                             ForEach(home.floors) { Text($0.label).tag($0.id) }
                         }
+                        .accessibilityIdentifier("home.floor")
                     }
                     switch mode {
                     case .plan2D:
@@ -63,9 +65,38 @@ struct HomeTabView: View {
                             .frame(height: 320)
                             .listRowInsets(EdgeInsets())
                             .accessibilityIdentifier("home.scene")
-                        DollhouseKey(home: home)
+                        DollhouseKey(home: home, floorID: floorID ?? home.floors.first?.id)
                     case .rooms:
                         HomeRoomListView(home: home)
+                    }
+                }
+                if mode != .rooms {
+                    Section {
+                        DisclosureGroup(s("Safety markers")) {
+                            let markers = home.annotations.filter { $0.floorID == (floorID ?? home.floors.first?.id) }
+                            if markers.isEmpty { Text(model.localizer("spatial.no-markers-floor")).font(.footnote).foregroundStyle(.secondary) }
+                            ForEach(markers) { marker in
+                                Button {
+                                    selectedElementID = marker.id
+                                    editing = true
+                                } label: {
+                                    Label {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(marker.localizedLabel(model.localizer)).foregroundStyle(.primary)
+                                            if let roomID = marker.spaceID {
+                                                Text(HomeScenePresentation.roomLabel(roomID, in: home)).font(.footnote).foregroundStyle(.secondary)
+                                            }
+                                            Text(model.localizer(marker.verification == .verified ? "spatial.marker-recorded" : "spatial.marker-review"))
+                                                .font(.caption).foregroundStyle(.secondary)
+                                        }
+                                    } icon: {
+                                        Image(systemName: FloorPlanView.symbol(marker.kind)).foregroundStyle(Theme.accent)
+                                    }
+                                }
+                                .accessibilityIdentifier("home.marker.\(marker.id)")
+                            }
+                        }
+                        .accessibilityIdentifier("home.markerKey")
                     }
                 }
                 Section(s("Change the home")) {
@@ -94,7 +125,7 @@ struct HomeTabView: View {
                                     })) {
                                 Text(s("Not assigned")).tag(String?.none)
                                 ForEach(home.spaces) { space in
-                                    Text(space.label).tag(String?.some(space.id))
+                                    Text(HomeScenePresentation.roomLabel(space.id, in: home)).tag(String?.some(space.id))
                                 }
                             }
                         }

@@ -2820,6 +2820,546 @@
       ]
     },
     {
+      "source": "housing-features-live-v8.json",
+      "sample": "apartment-complex",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 38,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "No independent second path is recorded for at least one person. Practice the host-supported route from each starting room, including stairs and assistance where needed. A drill does not establish that an actual path is clear or safe."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review a lowest-level interior shelter candidate away from windows, including recorded grade, geometry and household access. A room label or windowless appearance alone does not establish tornado protection; confirm the missing evidence in Home."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 31,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home relies on an electric well pump. If power fails, your water supply will be interrupted. Storing emergency water ensures you have a reliable supply for your household and pet."
+        },
+        {
+          "path": "question",
+          "words": 20,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Have you verified if your building management provides a secondary emergency exit or fire escape route beyond the main stairwell?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v8.json",
+      "sample": "apartment-complex",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate food-grade water storage containers to maintain a 3-day supply for household and pet, as the electric well pump will be inoperable during power outages."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official fire-escape planning guidance for the unfinished drill and recorded exit dependencies. A search does not establish a ladder, new exit or independent route."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance to review a suitable tornado shelter and building-specific access. Shopping for supplies does not establish structural protection or confirm a windowless room."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v8.json",
+      "sample": "manufactured",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Arrange access to an appropriate sturdy building before a tornado warning. A manufactured home, including a windowless closet, is not tornado refuge; review the destination, timing and assistance in advance."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 28,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review the recorded exit paths for obstructions, opening operability, steps and required assistance. Upper-floor windows do not establish a walking exit; verify shared corridors and stairs where present."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home relies on an electric well pump. If power fails, your water supply will be interrupted. Storing a dedicated supply is essential for maintaining basic sanitation and hydration needs."
+        },
+        {
+          "path": "question",
+          "words": 13,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Which appropriate sturdy building can you arrange access to before a tornado warning?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v8.json",
+      "sample": "manufactured",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for arranging access to an appropriate sturdy building in advance. A manufactured home is not a tornado shelter; do not start driving to a generic distant shelter during a warning."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 22,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate food-grade water storage containers. Since your well pump requires electricity, storing a dedicated supply ensures access to water during power outages."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v8.json",
+      "sample": "twostory",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 27,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are present in the hall and landing, but their operational status and battery life are unverified. Testing them ensures they will function during a fire."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 37,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The recorded alternative shares a chokepoint with the primary path. Practice the host-supported route from each starting room, including stairs and assistance where needed. A drill does not establish that an actual path is clear or safe."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review a lowest-level interior shelter candidate away from windows, including recorded grade, geometry and household access. A room label or windowless appearance alone does not establish tornado protection; confirm the missing evidence in Home."
+        },
+        {
+          "path": "question",
+          "words": 18,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Have you tested the smoke alarms on both the ground and upper floors within the last six months?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v8.json",
+      "sample": "twostory",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 18,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Locate replacement batteries or units to ensure smoke alarms are fully functional, as current operational status is unverified."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official fire-escape planning guidance for the unfinished drill and recorded exit dependencies. A search does not establish a ladder, new exit or independent route."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v9.json",
+      "sample": "apartment-complex",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 38,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "No independent second path is recorded for at least one person. Practice the host-supported route from each starting room, including stairs and assistance where needed. A drill does not establish that an actual path is clear or safe."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 36,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review smoke alarm locations, coverage and the last recorded functional check on each floor and near sleeping areas. Follow manufacturer testing and replacement instructions; a successful test records present evidence without guaranteeing performance during a fire."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review a lowest-level interior shelter candidate away from windows, including recorded grade, geometry and household access. A room label or windowless appearance alone does not establish tornado protection; confirm the missing evidence in Home."
+        },
+        {
+          "path": "question",
+          "words": 18,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Have you verified that the common-area stairwell doors remain unlocked and unobstructed from the inside at all times?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v9.json",
+      "sample": "apartment-complex",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 26,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate and verify smoke alarms in all sleeping areas and on each floor to ensure coverage, as current records only confirm one alarm in the hallway."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official fire-escape planning guidance for the unfinished drill and recorded exit dependencies. A search does not establish a ladder, new exit or independent route."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v9.json",
+      "sample": "manufactured",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Arrange access to an appropriate sturdy building before a tornado warning. A manufactured home, including a windowless closet, is not tornado refuge; review the destination, timing and assistance in advance."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 28,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review the recorded exit paths for obstructions, opening operability, steps and required assistance. Upper-floor windows do not establish a walking exit; verify shared corridors and stairs where present."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 36,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review smoke alarm locations, coverage and the last recorded functional check on each floor and near sleeping areas. Follow manufacturer testing and replacement instructions; a successful test records present evidence without guaranteeing performance during a fire."
+        },
+        {
+          "path": "question",
+          "words": 13,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Which appropriate sturdy building can you arrange access to before a tornado warning?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v9.json",
+      "sample": "manufactured",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for arranging access to an appropriate sturdy building in advance. A manufactured home is not a tornado shelter; do not start driving to a generic distant shelter during a warning."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for reviewing obstructions and the recorded exit dependencies. Inspect the actual paths locally; a store search cannot verify clearance, create a ramp or establish a usable exit."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 13,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Purchase replacement smoke alarms or batteries to ensure full coverage near sleeping areas."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v9.json",
+      "sample": "twostory",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 37,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The recorded alternative shares a chokepoint with the primary path. Practice the host-supported route from each starting room, including stairs and assistance where needed. A drill does not establish that an actual path is clear or safe."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 36,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review smoke alarm locations, coverage and the last recorded functional check on each floor and near sleeping areas. Follow manufacturer testing and replacement instructions; a successful test records present evidence without guaranteeing performance during a fire."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 26,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Record CO alarm locations, coverage and a functional check. Electric heating and well pumps do not produce CO; possible combustion sources have not been fully assessed."
+        },
+        {
+          "path": "question",
+          "words": 13,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have a fire extinguisher, and if so, where is it located?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v9.json",
+      "sample": "twostory",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 22,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate replacement smoke alarms or testing supplies to ensure coverage on both floors and near sleeping areas, as current status requires verification."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 24,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find CO alarms for the unfinished alarm review. Electric heating and well pumps do not produce CO; confirm stock and placement guidance before purchasing."
+        }
+      ]
+    },
+    {
+      "source": "elevator-fire-live-v2.json",
+      "sample": "stairs-and-elevators",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 35,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The kitchen fire at minute 1 blocks the primary kitchen area. The current route exits the bedroom, moves through the hall and living room, then uses the common stairwells to reach the ground floor exit."
+        },
+        {
+          "path": "missingReview",
+          "words": 22,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The operability and exterior grade of the bedroom window (pt-win-bed1) remain unverified, which prevents its use as a secondary emergency egress point."
+        }
+      ]
+    },
+    {
+      "source": "elevator-fire-live-v2.json",
+      "sample": "elevators-only",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The fire in the kitchen blocks the primary path to the apartment entry. No secondary ground-level exit is verified, and elevators are excluded from egress planning, resulting in no supported route to the exterior."
+        },
+        {
+          "path": "missingReview",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Verify if the bedroom window (pt-win-bed1) is operable and leads to a safe exterior landing, as this is currently the only potential secondary egress point."
+        }
+      ]
+    },
+    {
       "source": "housing-director-live-v2.json",
       "sample": "housing-director",
       "role": "director",
@@ -2833,6 +3373,57 @@
           ],
           "flags": [],
           "text": "Simulate a kitchen fire to evaluate the impact on the primary exit route. The fire blocks the kitchen, forcing the occupant in the living room to use the corridor and stairs. This preview confirms the stair dependency for evacuation."
+        }
+      ]
+    },
+    {
+      "source": "housing-director-live-v3.json",
+      "sample": "housing-director",
+      "role": "director",
+      "fields": [
+        {
+          "path": "purpose",
+          "words": 57,
+          "band": [
+            30,
+            90
+          ],
+          "flags": [],
+          "text": "Simulate a kitchen fire to demonstrate the impact on the apartment's primary egress route. The shared stairwell (cn-common-upper-stairs, cn-common-lower-stairs) is a critical shared chokepoint for the apartment. This preview confirms the route dependency and allows the household to evaluate if alternative exits or fire suppression (extinguisher in kitchen) are viable before the fire spreads to the hallway."
+        }
+      ]
+    },
+    {
+      "source": "housing-director-live-v4.json",
+      "sample": "housing-director",
+      "role": "director",
+      "fields": [
+        {
+          "path": "purpose",
+          "words": 49,
+          "band": [
+            30,
+            90
+          ],
+          "flags": [],
+          "text": "Simulate a kitchen fire to demonstrate the impact on the apartment's sole exit route. The fire originates in the kitchen, and the preview confirms the shared corridor stairs remain the primary egress path. I am requesting a decision on evacuation procedures given the apartment's reliance on these shared stairs."
+        }
+      ]
+    },
+    {
+      "source": "housing-director-elevator-live-v2.json",
+      "sample": "housing-director",
+      "role": "director",
+      "fields": [
+        {
+          "path": "purpose",
+          "words": 50,
+          "band": [
+            30,
+            90
+          ],
+          "flags": [],
+          "text": "Initiate a kitchen fire to evaluate egress from the apartment. The current apartment layout relies on an elevator for building exit, which is excluded from fire egress. I am requesting a review of your building-specific fire procedures and assistance needs, as no supported route is currently recorded for the occupant."
         }
       ]
     },
@@ -3061,8 +3652,8 @@
       ]
     }
   ],
-  "fieldCount": 243,
+  "fieldCount": 288,
   "depthFlags": 122,
   "lengthFlags": 1,
-  "claimReviewFlags": 59
+  "claimReviewFlags": 70
 }

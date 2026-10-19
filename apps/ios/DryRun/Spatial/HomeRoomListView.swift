@@ -37,6 +37,10 @@ struct HomeRoomListView: View {
                     VStack(alignment: .leading) {
                         Text("\(model.localizer("spatial.connector.\(c.kind.rawValue)")): \(label(c.fromSpaceID)) ↔ \(label(c.toSpaceID))")
                         Text(stateText(c.verification)).font(.caption).foregroundStyle(.secondary)
+                        if c.kind == .elevator {
+                            Label(model.localizer("spatial.elevator-excluded"), systemImage: "exclamationmark.triangle")
+                                .font(.caption).foregroundStyle(Theme.caution)
+                        }
                     }
                     .accessibilityElement(children: .combine)
                 }
@@ -80,7 +84,6 @@ struct HomeRoomListView: View {
     private func portalRow(_ p: Portal) -> some View {
         let inside = [p.sideA, p.sideB].compactMap { if case .space(let id) = $0 { return label(id) }; return nil }.first ?? "?"
         var facts: [String] = [stateText(p.verification), openingText(p)]
-        if p.kind == .window { facts.append(s("window — not counted as an exit")) }
         if isCommonArea(p) { facts.append(s("opens to a shared building area that is not modelled")) }
         if let w = p.clearWidthMeters.value {
             let width = w.formatted(.number.precision(.fractionLength(2)).locale(Locale(identifier: model.locale)))
@@ -122,7 +125,7 @@ struct HomeRoomListView: View {
         }
     }
 
-    private func label(_ id: String) -> String { home.space(id)?.label ?? id }
+    private func label(_ id: String) -> String { HomeScenePresentation.roomLabel(id, in: home) }
 
     private func stateText(_ v: VerificationState) -> String {
         switch v {

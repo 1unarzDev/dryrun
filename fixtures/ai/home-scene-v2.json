@@ -30,7 +30,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -2508,6 +2508,12 @@
               "pt-kitchen-hall",
               "pt-back"
             ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed1-hall",
+              "sp-hall"
+            ],
             "exclusions": [
               {
                 "elementID": "pt-win-bed1",
@@ -2538,6 +2544,12 @@
               "pt-bed1-hall",
               "pt-kitchen-hall",
               "pt-back"
+            ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed1-hall",
+              "sp-hall"
             ],
             "exclusions": [
               {
@@ -2571,6 +2583,14 @@
               "pt-living-kitchen",
               "pt-front"
             ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed2-hall",
+              "pt-kitchen-hall",
+              "sp-hall",
+              "sp-kitchen"
+            ],
             "exclusions": [
               {
                 "elementID": "pt-win-bed1",
@@ -2599,6 +2619,9 @@
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "exclusions": [
               {
                 "elementID": "pt-win-bed1",
@@ -2727,7 +2750,7 @@
         "sharedChokepoints": []
       },
       "receipt": {
-        "contextDigest": "dd72cfdbee4759a6",
+        "contextDigest": "c05846f0ec1ddfb3",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -2818,7 +2841,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -5288,6 +5311,9 @@
             "primaryPortalIDs": [],
             "connectorIDs": [],
             "alternativePortalIDs": [],
+            "alternativeStatus": "none",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "noRouteReason": "noVerifiedExteriorExit",
             "exclusions": [
               {
@@ -5320,6 +5346,9 @@
             "primaryPortalIDs": [],
             "connectorIDs": [],
             "alternativePortalIDs": [],
+            "alternativeStatus": "none",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "noRouteReason": "noVerifiedExteriorExit",
             "exclusions": [
               {
@@ -5352,6 +5381,9 @@
             "primaryPortalIDs": [],
             "connectorIDs": [],
             "alternativePortalIDs": [],
+            "alternativeStatus": "none",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "noRouteReason": "noVerifiedExteriorExit",
             "exclusions": [
               {
@@ -5384,6 +5416,9 @@
             "primaryPortalIDs": [],
             "connectorIDs": [],
             "alternativePortalIDs": [],
+            "alternativeStatus": "none",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "noRouteReason": "noVerifiedExteriorExit",
             "exclusions": [
               {
@@ -5518,7 +5553,7 @@
         "sharedChokepoints": []
       },
       "receipt": {
-        "contextDigest": "d7867c720dba9b22",
+        "contextDigest": "e475b53b16d67359",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -5609,7 +5644,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -8088,6 +8123,12 @@
               "pt-kitchen-hall",
               "pt-back"
             ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed1-hall",
+              "sp-hall"
+            ],
             "exclusions": [
               {
                 "elementID": "sp-closet",
@@ -8126,6 +8167,12 @@
               "pt-bed1-hall",
               "pt-kitchen-hall",
               "pt-back"
+            ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed1-hall",
+              "sp-hall"
             ],
             "exclusions": [
               {
@@ -8167,6 +8214,14 @@
               "pt-living-kitchen",
               "pt-front"
             ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed2-hall",
+              "pt-kitchen-hall",
+              "sp-hall",
+              "sp-kitchen"
+            ],
             "exclusions": [
               {
                 "elementID": "sp-closet",
@@ -8203,6 +8258,9 @@
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "exclusions": [
               {
                 "elementID": "sp-closet",
@@ -8307,7 +8365,7 @@
         "sharedChokepoints": []
       },
       "receipt": {
-        "contextDigest": "502635e061bc9971",
+        "contextDigest": "576bd85cc6891608",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -8398,7 +8456,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -10876,6 +10934,12 @@
               "pt-kitchen-hall",
               "pt-back"
             ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed1-hall",
+              "sp-hall"
+            ],
             "exclusions": [
               {
                 "elementID": "pt-win-bed1",
@@ -10906,6 +10970,12 @@
               "pt-bed1-hall",
               "pt-kitchen-hall",
               "pt-back"
+            ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed1-hall",
+              "sp-hall"
             ],
             "exclusions": [
               {
@@ -10939,6 +11009,14 @@
               "pt-living-kitchen",
               "pt-front"
             ],
+            "alternativeStatus": "sharesChokepoint",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [
+              "pt-bed2-hall",
+              "pt-kitchen-hall",
+              "sp-hall",
+              "sp-kitchen"
+            ],
             "exclusions": [
               {
                 "elementID": "pt-win-bed1",
@@ -10967,6 +11045,9 @@
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
+            "alternativeConnectorIDs": [],
+            "sharedChokepointIDs": [],
             "exclusions": [
               {
                 "elementID": "pt-win-bed1",
@@ -11048,7 +11129,7 @@
         "sharedChokepoints": []
       },
       "receipt": {
-        "contextDigest": "4950f2fb3beb5ae1",
+        "contextDigest": "70097aa840e284c",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,

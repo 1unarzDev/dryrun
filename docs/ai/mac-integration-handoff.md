@@ -1,3 +1,5 @@
+> Current audit: read [ux-concentration-audit.md](ux-concentration-audit.md) and the latest block in BOTH wired-phone prompts before older notes below. Linux added narrow native UX edits, syntax parsed only. The seven native Gemini adapters/screens still need actual integration; existing rehearsal remains RehearsalCursor. Do not mark native acceptance from portable traces.
+
 # Claude/Mac integration handoff
 
 Latest: household-assessment/6, preparation/7, resources/5 and output-quality/1; expanded housing/site/marker context under additive home-scene/2; practice-anchors/3, exercise-food/1 and director/5. Read housing-location-support.md and CLAUDE_WIRED_IPHONE_HANDOFF_PROMPT.txt for mandatory added user objectives. Read the current acceptance ledger and policy/5 sections before historical notes below. No Xcode/iPhone verification has occurred here.
@@ -229,3 +231,24 @@ Image geometry: [image-geometry.md](image-geometry.md) specifies the new local c
 
 
 Housing/location/marker expansion: read housing-location-support.md and the dedicated Claude wired-phone prompt. Integrate AnonymousHousing, SiteHazardProfile/Context/Binding, HousingPlanning needs/routes/resource dependencies, shared 2D/3D fixtures and HomeSafetyMarkers. Every original seven-outcome check remains mandatory. Inspect actual Gemini JSON and on-screen text, not only schema success; routes and real facts remain host-owned. Current assessment/6 prevents manufactured-home interior shelter credit; old frozen cards remain historical. No real-location hazard coverage, actual camera/window-detection accuracy or native rendering is claimed by Linux fixtures.
+
+
+## Concentrated UX and apartment-fire integration (latest)
+
+Three tabs remain Prepare/Rehearse/Plan, with Home contextual. Use the same confirmed fact once across preparations/inventory/resources/score. Bind all cloud jobs to saved source revisions, cancel on change and discard stale output before rendering. Icons from `PreparationPresentation` describe action domains, never proof of completion. Keep the current scene and decision ahead of optional assumptions/history; render numerical consequences and routes from `SimulationReceipt`, not Gemini purpose.
+
+Current home-scene/2 planning-route addition is additive:
+
+```json
+{"personID":"person-1","startRoomID":"sp-bed1","stepFreeRequired":false,"primaryPortalIDs":["pt-bedroom","pt-exit"],"connectorIDs":["cn-stairs"],"alternativePortalIDs":["pt-bedroom-alt","pt-exit-alt"],"alternativeStatus":"sharesChokepoint","alternativeConnectorIDs":["cn-stairs"],"sharedChokepointIDs":["cn-stairs"],"exclusions":[],"scope":"Recorded baseline geometry only; current incidents require host tools."}
+```
+
+This illustrative response is not a complete request fixture. Use the exact host-produced IDs/route sequences from `housing-features-live-v9.json` for runnable contexts. Do not infer independence from two different exit portal IDs. Old contexts missing the three optional fields mean unreported status. `HomeSceneContext(home, household:)` is required to produce household-bound routes/needs; active-incident `queryRoutes` and preview results supersede baseline planning data.
+
+`elevator-fire-eval.ts` shows actual initialize → kitchen-fire commit → route/exclusion receipt → exact replay for stairs+elevators and elevators-only. The latter has no supported route and explicit `elevatorNotUsedForEgress` exclusions. No real elevator exception or alternative stair is created. Native Rehearse warning `rehearsal.noElevators` is not proof that the installed graph has an elevator: add the synthetic connectors from that retained fixture on Mac and test actual controls, request context, 2D/3D graphics and no-route rendering. Limited mobility never enables elevator use during fire. Follow reviewed building-specific assistance/posted procedure guidance without inventing carry/window techniques.
+
+Demo launch example: `-demoHousehold hh-oak -demoHome apartment-complex -demoScenario home-fire -demoStep decision -demoLocale en -disableAnimations`. Manufactured and twostory variants use the same canonical SampleHomes as portable JSON/render fixtures. Custom-home demos use an isolated in-memory snapshot and clear location/site evidence. Build and run HousingDemoTests, new DemoJourneyUITests and the expanded ScreenshotTourUITests, inspect resulting screenshots and manually test floor/mode selection, marker editing/persistence/rollback, accessibility and all seven gateway paths. Existing UI tests check discoverability, not visual correctness.
+
+Precise marker placement now applies pending room/XY/location confirmation on Save or All items, retaining invalid edits on screen. Apply remains an optional draft preview. Verify unchanged verified markers retain status; actual coordinate/room changes clear it; no marker grants readiness/shelter score. Test keyboard input with locale decimals, unsupported polygons, concave rooms, duplicate room names across floors, undo, failed save and restart.
+
+Fresh apartment-fire proof: `housing-director-elevator-live-v2.json` drives the ACTUAL director/7 gateway with elevator-only partial-building geometry after committed movement, executes Swift candidate preview, commits the proposed kitchen fire/pause and asserts no primary route plus elevator exclusions. Two Gemini calls, USD0.00487950; exact replay, duplicate rejected, source unchanged. Raw purpose requests posted building procedures and assistance review and invents no new exit. A first learning-objective bound failure is retained (0 provider calls). This is synthetic Linux/live-model evidence; wire and test the same case on iPhone, including limited mobility and assistance uncertainty.

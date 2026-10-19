@@ -5,7 +5,7 @@
   "source": {
     "before": {
       "choices": {},
-      "contentVersion": "2026.10.5",
+      "contentVersion": "2026.10.6",
       "home": {
         "annotations": [
           {
@@ -1350,7 +1350,7 @@
     },
     "confirmed": {
       "choices": {},
-      "contentVersion": "2026.10.5",
+      "contentVersion": "2026.10.6",
       "home": {
         "annotations": [
           {
@@ -3120,10 +3120,12 @@
         ],
         "planningRoutes": [
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -3144,14 +3146,17 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           },
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -3172,6 +3177,7 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           }
@@ -4273,7 +4279,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "64404f4555df93c8",
+        "contextDigest": "fdcdb0c6f7ddbe9",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -4382,7 +4388,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -6618,10 +6624,12 @@
         "planningNeeds": [],
         "planningRoutes": [
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -6642,14 +6650,17 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           },
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -6670,6 +6681,7 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           }
@@ -7771,7 +7783,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "89255044f8a124ff",
+        "contextDigest": "7226d0d80f6eb10e",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -7879,7 +7891,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -10101,10 +10113,12 @@
         "planningNeeds": [],
         "planningRoutes": [
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -10125,14 +10139,17 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           },
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -10153,6 +10170,7 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           }
@@ -11254,7 +11272,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "db8b8a80dee820b0",
+        "contextDigest": "ed729ec3d3f27b93",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -11384,7 +11402,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -13648,10 +13666,12 @@
         "planningNeeds": [],
         "planningRoutes": [
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -13672,14 +13692,17 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           },
           {
+            "alternativeConnectorIDs": [],
             "alternativePortalIDs": [
               "pt-living-kitchen",
               "pt-back"
             ],
+            "alternativeStatus": "independent",
             "connectorIDs": [],
             "exclusions": [
               {
@@ -13700,6 +13723,7 @@
               "pt-front"
             ],
             "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+            "sharedChokepointIDs": [],
             "startRoomID": "sp-living",
             "stepFreeRequired": false
           }
@@ -14800,7 +14824,7 @@
         }
       ],
       "receipt": {
-        "contextDigest": "8d827dd68aa7303f",
+        "contextDigest": "732388a0d61371c0",
         "directorState": {
           "activeIncidentCount": 0,
           "awaitingUserAction": false,
@@ -14928,7 +14952,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {

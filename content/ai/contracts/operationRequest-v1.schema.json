@@ -2512,6 +2512,32 @@
                           "maxLength": 120
                         }
                       },
+                      "alternativeStatus": {
+                        "type": "string",
+                        "enum": [
+                          "independent",
+                          "sharesChokepoint",
+                          "none"
+                        ]
+                      },
+                      "alternativeConnectorIDs": {
+                        "maxItems": 50,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "sharedChokepointIDs": {
+                        "maxItems": 500,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
                       "noRouteReason": {
                         "type": "string",
                         "minLength": 1,

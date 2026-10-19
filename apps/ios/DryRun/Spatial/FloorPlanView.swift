@@ -59,16 +59,22 @@ struct FloorPlanView: View {
     /// Generated from what this scene actually shows, never a fixed list.
     private var legend: some View {
         let l = model.localizer
-        var items: [(String, String, Color)] = [(s("Verified exit"), "door.left.hand.open", PlanColors.exit), (s("Unconfirmed"), "questionmark.diamond", PlanColors.unverified)]
-        if !routes.isEmpty { items.append((l("pdf.legend.primary"), "arrow.right", PlanColors.route)) }
-        if routes.count > 1 { items.append((l("pdf.legend.alternative"), "arrow.right.circle.dotted", PlanColors.route)) }
-        if let state = spatialState {
-            if state.originSpaceID != nil && state.hazard != .flashFlood { items.append((l("ui.scene.origin"), "flame.fill", PlanColors.alarm)) }
-            if !state.affectedSpaceIDs.isEmpty { items.append((l("pdf.legend.affected"), state.hazard == .flashFlood ? "water.waves" : "smoke.fill", state.hazard == .flashFlood ? .blue : .secondary)) }
-            if state.exposedSpaceIDs?.isEmpty == false || state.hazard == .tornado { items.append((l("pdf.legend.exposed"), "exclamationmark.triangle.fill", .purple)) }
-            if state.destinationSpaceID != nil { items.append((l("pdf.legend.shelter"), "shield.lefthalf.filled", PlanColors.exit)) }
+        let statuses = home.portals.filter { $0.floorID == floorID }.map {
+            HomeScenePresentation.openingStatus($0, in: home, state: spatialState, request: selectedRoute?.request)
         }
-        if selectedRoute != nil { items.append((l("pdf.legend.start"), "person.circle.fill", Color(.label))) }
+        var items: [(String, String, Color)] = []
+        if statuses.contains(.availableExit) { items.append((s("Verified exit"), "door.left.hand.open", PlanColors.exit)) }
+        if statuses.contains(.unconfirmed) { items.append((s("Unconfirmed"), "questionmark.diamond", PlanColors.unverified)) }
+        if statuses.contains(.unavailable) { items.append((l("pdf.legend.blocked"), "xmark", PlanColors.alarm)) }
+        if routeFloors.contains(floorID ?? "") { items.append((l("pdf.legend.primary"), "arrow.right", PlanColors.route)) }
+        if routes.dropFirst().contains(where: { $0.legs.contains { $0.floorID == floorID } }) { items.append((l("pdf.legend.alternative"), "arrow.right.circle.dotted", PlanColors.route)) }
+        if let state = spatialState {
+            if state.originSpaceID.flatMap({ home.space($0)?.floorID }) == floorID && state.originSpaceID != nil && state.hazard != .flashFlood { items.append((l("ui.scene.origin"), "flame.fill", PlanColors.alarm)) }
+            if state.affectedSpaceIDs.contains(where: { home.space($0)?.floorID == floorID }) { items.append((l("pdf.legend.affected"), state.hazard == .flashFlood ? "water.waves" : "smoke.fill", state.hazard == .flashFlood ? .blue : .secondary)) }
+            if state.exposedSpaceIDs?.contains(where: { home.space($0)?.floorID == floorID }) == true || (state.hazard == .tornado && home.portals.contains { $0.floorID == floorID && $0.kind == .window }) { items.append((l("pdf.legend.exposed"), "exclamationmark.triangle.fill", .purple)) }
+            if state.destinationSpaceID.flatMap({ home.space($0)?.floorID }) == floorID && state.destinationSpaceID != nil { items.append((l("pdf.legend.shelter"), "shield.lefthalf.filled", PlanColors.exit)) }
+        }
+        if HomeScenePresentation.startingRoom(in: home, route: selectedRoute)?.floorID == floorID && selectedRoute != nil { items.append((l("pdf.legend.start"), "person.circle.fill", Color(.label))) }
         return ViewThatFits(in: .horizontal) {
             HStack(spacing: 12) { ForEach(items, id: \.0) { Label($0.0, systemImage: $0.1).foregroundStyle($0.2) } }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 130), alignment: .leading)], alignment: .leading, spacing: 4) {
@@ -215,8 +221,17 @@ struct FloorPlanView: View {
         for connector in home.connectors {
             let room = home.space(connector.fromSpaceID)
             let other = home.space(connector.toSpaceID)
-            if room?.floorID == fid { ctx.draw(Text(Image(systemName: "stairs")).font(.caption), at: f.pt(connector.fromPoint)) }
-            if other?.floorID == fid { ctx.draw(Text(Image(systemName: "stairs")).font(.caption), at: f.pt(connector.toPoint)) }
+            let symbol: String = switch connector.kind {
+            case .stairs: "stairs"
+            case .ramp: "figure.roll"
+            case .elevator: "arrow.up.arrow.down.square"
+            }
+            let excluded = selectedRoute?.exclusions.contains { $0.elementID == connector.id } == true
+                || (connector.kind == .elevator && spatialState?.hazard == .homeFire)
+            for (floor, point) in [(room?.floorID, connector.fromPoint), (other?.floorID, connector.toPoint)] where floor == fid {
+                ctx.draw(Text(Image(systemName: symbol)).font(.caption).foregroundStyle(excluded ? PlanColors.alarm : PlanColors.label), at: f.pt(point))
+                if excluded { badges.append((f.pt(point), "xmark")) }
+            }
         }
         if let id = highlightedElementID {
             if let room = home.space(id), room.floorID == fid { ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }

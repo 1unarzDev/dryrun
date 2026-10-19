@@ -1,10 +1,37 @@
-> Latest handoff status: see [acceptance ledger](acceptance-audit.md) and [assessment policy](assessment-policy.md). The original app goal remains open for native/iPhone and external review. Latest portable results are 433 Core, 36 Vault, 66 gateway and 68 public-API tests passed; historical counts below describe earlier slices. Historical source-derived scores are preserved and separately reassessed under policy/5.
+> Latest handoff status: see [acceptance ledger](acceptance-audit.md) and [assessment policy](assessment-policy.md). The original app goal remains open for native/iPhone and external review. Current portable results are 474 Core, 39 Vault, 80 gateway and 68 public-API tests passed; historical counts below describe earlier slices. Historical source-derived scores are preserved and separately reassessed under policy/5.
 
 # Integrated Gemini evaluation — 2026-10-19
 
-Portable implementation on Linux, based on `main` at `436b243276e0f333131a1813b580382971949748`. No iOS source was changed. The root `DryRun_AI_Implementation_Reference.md` is the supplied specification; no `.txt` copy exists in this checkout. See [implementation map](implementation-map.md) for the verified original flows and [Mac handoff](mac-integration-handoff.md) for exact integration points.
+Portable implementation on Linux, based on `main` at `436b243276e0f333131a1813b580382971949748`. Initial slice changed no iOS source; later narrow native edits are listed in the current UX audit and remain Xcode/device-pending. The root `DryRun_AI_Implementation_Reference.md` is the supplied specification; no `.txt` copy exists in this checkout. See [implementation map](implementation-map.md) for the verified original flows and [Mac handoff](mac-integration-handoff.md) for exact integration points.
 
 This is an implemented, synthetic-tested integration package, **not a production release or a completed native experience**. Production authorization, device integration, real-photo quality and human validation remain gates.
+
+
+## Latest concentrated-flow and apartment-fire audit
+
+Read [ux-concentration-audit.md](ux-concentration-audit.md) for concrete ideator/critic findings and the native-versus-portable feature matrix. This slice preserves three primary tabs, adds per-action icons and floor-aware context, corrects marker save/confirmation behavior and 3D connector depiction, and forwards host alternative status/shared chokepoints to Gemini. Native Gemini adapters remain unfinished; neither existing native authored rehearsal nor on-device briefing should be presented as the portable Gemini path.
+
+Final `scripts/verify-ai-portable.sh` completed successfully after all portable changes: **474 Core /86 suites, 39 Vault /7 suites, 80 gateway /12 files, 68 public API /4 files**, TypeScript and every included contract/headless inventory/resource/image/rubric/simulation/stress/fallback/replay evaluator, including the new `elevator-fire-eval.ts` (**2 committed-fire cases**). All **58 native Swift files** passed Swift 6.2 frontend syntax parsing; no native typecheck, Xcode build or XCTest/UI execution was possible on Linux. New HousingDemoTests and UI/screenshot cases are authored only. Existing warnings include Node experimental/deprecation notices and pre-existing Swift test warnings; no failure was hidden.
+
+Actual new synthetic live development results (not independent-household quality estimates):
+
+| Retained run | Actual scope | Calls | Accounted USD | Interpretation |
+|---|---|---:|---:|---|
+| housing-features-live-v7 | 3 layouts; preparation/7 and resources/5 | 7 | 0.016494 | Two-story explanation invented two primary exits; fixed current context/status and host rationale |
+| housing-features-live-v8 | Same 3 layouts; preparation/8 and resources/5 | 6 | 0.01385575 | Shared-stair rationale corrected; raw smoke-test guarantee exposed and retained |
+| housing-features-live-v9 | Same 3 layouts; preparation/9 and resources/5 | 6 | 0.01387575 | Final compiled alarm/drill/shelter wording inspected; no test guarantees future fire performance |
+| elevator-fire-live-v2 | Stairs+elevators and elevator-only apartment fire, exact host replay/source unchanged | 2 | 0.00307025 | Both supported-route booleans and elevator exclusion correct; causal and window prose remain unsupported quality defects |
+| housing-director-live-v3 | Actual user movement → host/Gemini preview → validated incident/decision commit; director/6 | 2 | 0.00488475 | Executable/replay/duplicate gates passed; purpose proposed evaluating fire suppression, a quality defect |
+| housing-director-elevator-live-v2 | Actual director/7 loop with elevator-only partial apartment; no route/exclusions asserted after commit | 2 | 0.00487950 | Requests building procedures/assistance review, invents no route; exact replay, duplicate rejected, real source unchanged |
+| housing-director-live-v4 | Same actual committed loop, director/7 prioritizes escape/assistance | 2 | 0.00488425 | Kitchen incident minute1, advance5, pauseForDecision; exact replay, duplicate rejected, source unchanged; no suppression suggestion in this output |
+
+The fresh v4 trace commits submitted movement to living room at revision1, sends that action and current scene to Gemini, executes `evaluateCandidateAction` on the actual Swift host, returns its bound preview, validates the returned proposal, commits revision2 and pauses for user action. It retains exact binding/digest, proposal/receipt, tool results, replay and stale-duplicate rejection. It is one synthetic continuation, not an independent proof of a fully native adaptive experience. The broader retained essential/all-use traces demonstrate materially distinct resource consequences; the phone must implement and exercise subsequent user-action continuations.
+
+Director/7 adds explicit elevator/window/assistance constraints, host alternative-status semantics and no unsupported route causation, plus no fighting/suppressing fire or retrieving equipment/belongings. These instructions reduce observed defects; they do not certify free-form prose. Its v4 purpose still needs human wording review and should never replace host receipts. Native must show the current route and committed consequences, not promote an unverified purpose into facts.
+
+The final retained output audit covers **58 cases /288 text fields**, with **122 depth flags, 1 length flag and 70 claim-review flags**, including old failures and fresh outputs. These are advisory review counts, not pass/fail safety or accuracy statistics. Word bands do not truncate or pad text. Raw model text and final compiled output are both available where applicable. `elevator-fire-live-v1-failure.json` retains a pre-provider harness source-comparison assertion failure (**0 calls**); fixing absent optional JS fields through JSON normalization produced v2. `housing-director-elevator-live-v1-failure.json` retains an overlength learning objective rejected by the request contract before any provider call (0 calls); shortening it produced v2. No real household data or images were uploaded in these development runs.
+
+Remaining gates: Xcode typecheck and wired-iPhone execution, native gateway/session/score/inventory/image/stress/resource adapters, actual small-phone/accessibility/localization inspection, posted apartment assistance procedures, reviewed manufactured-home external-shelter completion evidence, real RoomPlan/window/camera accuracy, independent human safety/rubric/language review, real geographic hazard coverage, production installation authorization and provider/legal release review. The original full app goal remains open.
 
 ## Passed on Linux
 

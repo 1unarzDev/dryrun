@@ -8,6 +8,7 @@ import Foundation
 ///   -demoTab prepare|rehearse|plan          initial tab (default: prepare, or rehearse with -demoScenario)
 ///   -demoScenario <scenarioID>              open that rehearsal
 ///   -demoStep start|decision|end            how far to advance it (end answers each decision with the recommended option)
+///   -demoHome ranch|apartment|apartment-complex|manufactured|twostory  fictional layout (requires -demoHousehold)
 ///   -demoHomeMode 2d|3d|rooms               Home sheet view
 ///   -demoPlan all|<id,id,...>               generate a plan for these scenarios at launch
 ///   -demoWritePlanPDFs                      DEBUG only: write EN/ES/VI PDFs + JSON to Documents/demo-plans, then DONE
@@ -23,6 +24,7 @@ struct DemoLaunch: Sendable, Equatable {
     var scenarioID: String?
     var step: Step = .start
     var homeMode: String?
+    var homeID: String?
     var planScenarios: [String] = []
     var writePlanPDFs = false
     var disableAnimations = false
@@ -43,6 +45,7 @@ struct DemoLaunch: Sendable, Equatable {
         scenarioID = value("-demoScenario").flatMap { Self.allScenarios.contains($0) ? $0 : nil }
         step = value("-demoStep").flatMap(Step.init(rawValue:)) ?? .start
         homeMode = value("-demoHomeMode")
+        homeID = value("-demoHome").flatMap { ["ranch", "apartment", "apartment-complex", "manufactured", "twostory"].contains($0) ? "home-sample-" + $0 : nil }
         if let p = value("-demoPlan") {
             planScenarios = p == "all" ? Self.allScenarios : p.split(separator: ",").map(String.init).filter(Self.allScenarios.contains)
         }

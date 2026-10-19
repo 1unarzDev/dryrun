@@ -127,7 +127,8 @@ final class AppModel {
     func applyDemoLaunch(_ d: DemoLaunch) async {
         if let l = d.locale { locale = l }
         guard d.isActive, let sample = SampleHouseholds.all.first(where: { $0.id == d.householdID }) else { return }
-        await useSampleHousehold(sample)
+        let demoHome = d.homeID.flatMap { id in SampleHomes.all.first { $0.id == id } }
+        await useSampleHousehold(sample, demoHome: demoHome)
         if let l = d.locale { locale = l }
         if !d.planScenarios.isEmpty { await generatePlan(scenarioIDs: d.planScenarios, includePrivateNotes: false, selection: cardSelection) }
         #if DEBUG
@@ -267,11 +268,21 @@ final class AppModel {
 
     // MARK: - Household
 
-    func useSampleHousehold(_ sample: HouseholdProfile) async {
+    func useSampleHousehold(_ sample: HouseholdProfile, demoHome: HomeModel? = nil) async {
         var sample = sample
-        sample.homeID = SampleHomes.ranch.id
+        let sampleHome = demoHome ?? SampleHomes.ranch
+        sample.homeID = sampleHome.id
+        if demoHome != nil {
+            sample.housing.homeType = sampleHome.dwellingType ?? (sampleHome.id.contains("apartment") ? .apartment : .singleFamily)
+            sample.housing.floorCount = sampleHome.floors.count
+            sample.privateLocation = nil
+            sample.siteHazards = nil
+            for index in sample.people.indices where !sampleHome.spaces.contains(where: { $0.id == sample.people[index].sleepingSpaceID }) {
+                sample.people[index].sleepingSpaceID = nil
+            }
+        }
         var extraPlaces: [SavedPlace] = []
-        if sample.id == "hh-oak", sample.privateLocation == nil {
+        if sample.id == "hh-oak", sample.privateLocation == nil, demoHome == nil {
             // Demo-only map inputs: a public town-centre pin and a distant relative's town, both labelled fictional.
             // They show the neighborhood map and its separate distant panel; no real household address is implied.
             sample.privateLocation = PrivateLocation(addressLine: "Ranch road outside Stephenville, TX (fictional)", latitude: 32.2207, longitude: -98.2023,
@@ -281,8 +292,8 @@ final class AppModel {
                                       addressText: "Abilene, TX (fictional household)", findingInstructions: "Call the aunt before driving; meet at her front porch.",
                                       provenance: .fixture, createdAt: sample.updatedAt ?? Date(), updatedAt: sample.updatedAt ?? Date())]
         }
-        let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: SampleHomes.ranch, places: extraPlaces, recordedAt: sample.updatedAt)
-        let candidateHome = HomeMeetingPlaces.synchronize(SampleHomes.ranch, places: places)
+        let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: sampleHome, places: extraPlaces, recordedAt: sample.updatedAt)
+        let candidateHome = HomeMeetingPlaces.synchronize(sampleHome, places: places)
         let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: places)
         guard await save(snapshot: snapshot) else { return }
         household = sample

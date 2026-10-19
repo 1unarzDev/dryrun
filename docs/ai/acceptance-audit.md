@@ -1,3 +1,5 @@
+> Latest: full Linux verifier passed 474 Core/86 suites, 39 Vault/7, 80 gateway/12 files and 68 public API/4, including the alarm regression and new elevator-fire evaluator. Read [ux-concentration-audit.md](ux-concentration-audit.md) for concentrated-flow changes and actual native gaps. All seven native Gemini integrations and Xcode/device acceptance remain open. Older counts below are historical slice evidence.
+
 # Linux handoff acceptance ledger
 
 Scope: the original seven-outcome goal and complete root `DryRun_AI_Implementation_Reference.md` (the supplied `.txt` is absent). Baseline was `main` at `436b243`; obtain the final pushed implementation revision with `git log -1`. Current source, executable fixtures and observed results take precedence over this ledger. Existing native work is preserved; native integration remains assigned to the Mac session.

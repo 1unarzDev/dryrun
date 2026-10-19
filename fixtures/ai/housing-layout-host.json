@@ -2,11 +2,11 @@
   "synthetic": true,
   "liveModel": false,
   "featuresOnly": false,
-  "recordedAt": "2026-10-19T11:12:53.506Z",
+  "recordedAt": "2026-10-19T11:39:01.450Z",
   "sourceHashes": {
-    "scripts/housing-layout-eval.ts": "d68fc2b70581ec29aab3a532c4760e7e33ac95dd89a8a056de56ee119268a74c",
-    "src/features.ts": "fda85b3115a1dc44d9dc69c51ae656edd0033a126b12d73f087a8c7f836851eb",
-    "src/output-quality.ts": "868cc84d92af963990e1105963ca36c1a313c268535578d8fb43ddcb07636134",
+    "scripts/housing-layout-eval.ts": "54d464ebc895679a2ba75051987aba883e8712b377b0ee3179f4cc3e7a6aef93",
+    "src/features.ts": "0281e185c469954dc6d86d5e110d23c619dc6a8dc1667a12d5c5b96e516b6acd",
+    "src/output-quality.ts": "70792b6a2c6b551e977399a3b34698ad913448873b477357f8eb77abaaf5f9f2",
     "../../DryRun_AI_Implementation_Reference.md": "3cdaa439835f91d94439e4a41176712f2f3e42a7141d7fcf23c44bc89092dc0f"
   },
   "replies": [],
@@ -71,7 +71,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -2568,6 +2568,9 @@
                 "cn-common-lower-stairs"
               ],
               "alternativePortalIDs": [],
+              "alternativeStatus": "none",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [],
               "exclusions": [
                 {
                   "elementID": "pt-balcony",
@@ -2585,8 +2588,8 @@
             {
               "id": "stairsSingleDependency|p-oak-1",
               "relatedIDs": [
-                "cn-common-upper-stairs",
-                "cn-common-lower-stairs"
+                "cn-common-lower-stairs",
+                "cn-common-upper-stairs"
               ],
               "suggestedActionID": "prep.fireDrill",
               "editor": "home",
@@ -2723,6 +2726,8 @@
             ],
             "verificationNeeded": []
           },
+          "alternativeStatus": "none",
+          "sharedChokepointIDs": [],
           "noRouteReason": null,
           "exclusions": [
             {
@@ -2800,7 +2805,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -5297,6 +5302,9 @@
                 "cn-common-lower-stairs"
               ],
               "alternativePortalIDs": [],
+              "alternativeStatus": "none",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [],
               "exclusions": [
                 {
                   "elementID": "pt-balcony",
@@ -5314,8 +5322,8 @@
             {
               "id": "stairsSingleDependency|p-oak-1",
               "relatedIDs": [
-                "cn-common-upper-stairs",
-                "cn-common-lower-stairs"
+                "cn-common-lower-stairs",
+                "cn-common-upper-stairs"
               ],
               "suggestedActionID": "prep.fireDrill",
               "editor": "home",
@@ -5345,6 +5353,8 @@
         },
         "hostRoute": {
           "primary": null,
+          "alternativeStatus": "none",
+          "sharedChokepointIDs": [],
           "noRouteReason": "incompatibleMobility",
           "exclusions": [
             {
@@ -5442,7 +5452,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -7084,6 +7094,12 @@
                 "pt-bed-living",
                 "pt-living-kitchen",
                 "pt-back"
+              ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [
+                "pt-bed-living",
+                "sp-living"
               ],
               "exclusions": [
                 {
@@ -7160,6 +7176,11 @@
             ],
             "verificationNeeded": []
           },
+          "alternativeStatus": "sharesChokepoint",
+          "sharedChokepointIDs": [
+            "pt-bed-living",
+            "sp-living"
+          ],
           "noRouteReason": null,
           "exclusions": [
             {
@@ -7233,7 +7254,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -8876,6 +8897,12 @@
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [
+                "pt-bed-living",
+                "sp-living"
+              ],
               "exclusions": [
                 {
                   "elementID": "pt-win-bed",
@@ -8903,6 +8930,8 @@
         },
         "hostRoute": {
           "primary": null,
+          "alternativeStatus": "none",
+          "sharedChokepointIDs": [],
           "noRouteReason": "incompatibleMobility",
           "exclusions": [
             {
@@ -8984,7 +9013,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -10961,6 +10990,18 @@
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [
+                "cn-stairs"
+              ],
+              "sharedChokepointIDs": [
+                "cn-stairs",
+                "pt-bed1-landing",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen",
+                "sp-landing"
+              ],
               "exclusions": [
                 {
                   "elementID": "pt-win-up-bed1",
@@ -10975,6 +11016,20 @@
             }
           ],
           "planningNeeds": [
+            {
+              "id": "stairsSingleDependency|p-oak-1",
+              "relatedIDs": [
+                "cn-stairs",
+                "pt-bed1-landing",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen",
+                "sp-landing"
+              ],
+              "suggestedActionID": "prep.fireDrill",
+              "editor": "home",
+              "scoreEffect": "none; use existing rubric predicates only"
+            },
             {
               "id": "locationNotRecorded|utilityShutoffElectric",
               "relatedIDs": [],
@@ -11091,6 +11146,15 @@
             ],
             "verificationNeeded": []
           },
+          "alternativeStatus": "sharesChokepoint",
+          "sharedChokepointIDs": [
+            "cn-stairs",
+            "pt-bed1-landing",
+            "pt-kitchen-hall",
+            "sp-hall",
+            "sp-kitchen",
+            "sp-landing"
+          ],
           "noRouteReason": null,
           "exclusions": [
             {
@@ -11168,7 +11232,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -13145,6 +13209,18 @@
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [
+                "cn-stairs"
+              ],
+              "sharedChokepointIDs": [
+                "cn-stairs",
+                "pt-bed1-landing",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen",
+                "sp-landing"
+              ],
               "exclusions": [
                 {
                   "elementID": "pt-win-up-bed1",
@@ -13159,6 +13235,20 @@
             }
           ],
           "planningNeeds": [
+            {
+              "id": "stairsSingleDependency|p-oak-1",
+              "relatedIDs": [
+                "cn-stairs",
+                "pt-bed1-landing",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen",
+                "sp-landing"
+              ],
+              "suggestedActionID": "prep.fireDrill",
+              "editor": "home",
+              "scoreEffect": "none; use existing rubric predicates only"
+            },
             {
               "id": "locationNotRecorded|utilityShutoffElectric",
               "relatedIDs": [],
@@ -13199,6 +13289,8 @@
         },
         "hostRoute": {
           "primary": null,
+          "alternativeStatus": "none",
+          "sharedChokepointIDs": [],
           "noRouteReason": "blockedByScenario",
           "exclusions": [
             {

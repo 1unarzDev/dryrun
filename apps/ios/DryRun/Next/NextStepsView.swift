@@ -9,6 +9,8 @@ struct NextStepsView: View {
     @State private var finishSheet: FinishSheet?
     @State private var briefing: FamilyBriefingService.Briefing?
     @State private var writingBriefing = false
+    @State private var showBriefing = false
+    @State private var briefingSource: BriefingSource?
     var openRehearse: () -> Void = {}
 
     /// The card essentials a new household fills in from Prepare, each in its focused editor.
@@ -27,15 +29,9 @@ struct NextStepsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 header
-                finishCard
-                quickActions
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
-                    familyBriefing(summary)
                     toDo(summary)
-                    questions(summary)
-                    recorded(summary)
-                    done(summary)
                 } else {
                     SectionCard {
                         HStack(spacing: Theme.Space.m) {
@@ -44,6 +40,14 @@ struct NextStepsView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                }
+                quickActions
+                finishCard
+                if let summary = model.nextSteps, model.nextStepResults != nil {
+                    familyBriefing
+                    questions(summary)
+                    recorded(summary)
+                    done(summary)
                 }
                 Text(l("ui.next.footer")).font(.footnote).foregroundStyle(.secondary)
             }
@@ -59,58 +63,91 @@ struct NextStepsView: View {
             }
         }
         .task(id: model.currentKey) { await model.refreshNextSteps() }
-        .task(id: briefingKey) { await writeBriefing() }
+        .task(id: BriefingRequest(source: briefingKey, expanded: showBriefing)) { await writeBriefing() }
     }
 
     // MARK: For your family (optional, on-device)
 
     private var topSteps: [NextStep] { Array((model.nextStepResults == nil ? [] : model.nextSteps?.toDo ?? []).prefix(PlanBriefing.maxSteps)) }
 
-    /// Rewritten only when the top steps, the household or the language change.
-    private var briefingKey: String {
-        "\(topSteps.map(\.id).joined(separator: ","))|\(model.household?.revision ?? 0)|\(model.locale)"
+    private struct BriefingSource: Equatable {
+        let revision: RevisionKey?
+        let steps: [FamilyBriefingService.StepText]
+        let locale: String
+    }
+
+    private struct BriefingRequest: Equatable {
+        let source: BriefingSource
+        let expanded: Bool
+    }
+
+    /// Bind prose to the exact source text as well as household, home, content and language revisions.
+    private var briefingKey: BriefingSource {
+        let l = model.localizer
+        let steps = topSteps.map { step -> FamilyBriefingService.StepText in
+            let r = step.recommendation
+            let values = r.localizedTemplateValues(household: model.household, localizer: l)
+            return .init(id: step.id, title: l(r.titleKey, values), why: l(r.whyKey, values))
+        }
+        return BriefingSource(revision: model.currentKey, steps: steps, locale: model.locale)
     }
 
     private func writeBriefing() async {
-        guard let h = model.household, !topSteps.isEmpty, FamilyBriefingService.canWrite(locale: model.locale) else {
-            briefing = nil; writingBriefing = false; return
-        }
-        defer { if !Task.isCancelled { writingBriefing = false } }
-        let l = model.localizer
-        let texts = topSteps.map { step -> FamilyBriefingService.StepText in
-            let r = step.recommendation
-            let values = r.localizedTemplateValues(household: h, localizer: l)
-            return .init(id: step.id, title: l(r.titleKey, values), why: l(r.whyKey, values))
-        }
+        guard !Task.isCancelled else { return }
+        let source = briefingKey
+        if briefingSource != source { briefing = nil; briefingSource = nil }
+        writingBriefing = false
+        guard showBriefing, let h = model.household, !source.steps.isEmpty,
+              FamilyBriefingService.canWrite(locale: source.locale) else { return }
+        if briefingSource == source, briefing != nil { return }
+        guard !Task.isCancelled else { return }
+        defer { if !Task.isCancelled, briefingKey == source { writingBriefing = false } }
         let regionName = model.content?.region(h.regionID)?.name
         writingBriefing = true
-        let result = await FamilyBriefingService.write(steps: texts, household: h, regionName: regionName, locale: model.locale)
-        guard !Task.isCancelled else { return }
+        let result = await FamilyBriefingService.write(steps: source.steps, household: h, regionName: regionName, locale: source.locale)
+        guard !Task.isCancelled, showBriefing, briefingKey == source else { return }
         writingBriefing = false
+        briefingSource = source
         briefing = result
     }
 
-    @ViewBuilder private func familyBriefing(_ summary: NextStepsSummary) -> some View {
+    @ViewBuilder private var familyBriefing: some View {
         let l = model.localizer
-        if writingBriefing || briefing != nil {
-            SectionCard(title: l("ui.brief.title"), systemImage: "sparkles") {
-                if writingBriefing && briefing == nil {
-                    HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
-                }
-                if let overview = briefing?.overview { Text(overview).font(.body) }
-                ForEach(topSteps.filter { briefing?.notes[$0.id] != nil }) { step in
-                    let r = step.recommendation
-                    NavigationLink(value: step) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.callout.weight(.semibold))
-                            Text(briefing?.notes[step.id] ?? "").font(.callout).foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
+        if !topSteps.isEmpty, FamilyBriefingService.canWrite(locale: model.locale) {
+            SectionCard {
+                DisclosureGroup(isExpanded: $showBriefing) {
+                    if writingBriefing {
+                        HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
                     }
-                    .buttonStyle(.plain)
+                    if briefingSource == briefingKey, let briefing {
+                        if let overview = briefing.overview { Text(overview).font(.body) }
+                        ForEach(topSteps.filter { briefing.notes[$0.id] != nil }) { step in
+                            let r = step.recommendation
+                            VStack(alignment: .leading, spacing: 2) {
+                                Label(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l)),
+                                      systemImage: PreparationPresentation.symbol(actionID: r.actionID))
+                                    .font(.callout.weight(.semibold))
+                                Text(briefing.notes[step.id] ?? "").font(.callout).foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        Text(l("ui.brief.note")).font(.caption).foregroundStyle(.secondary)
+                    } else if !writingBriefing {
+                        // Authored explanations remain useful when the optional model returns no accepted prose.
+                        ForEach(topSteps) { step in
+                            let r = step.recommendation
+                            let values = r.localizedTemplateValues(household: model.household, localizer: l)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Label(l(r.titleKey, values), systemImage: PreparationPresentation.symbol(actionID: r.actionID))
+                                    .font(.callout.weight(.semibold))
+                                Text(l(r.whyKey, values)).font(.callout).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                } label: {
+                    Label(l("ui.brief.title"), systemImage: "sparkles").font(.headline)
                 }
-                Text(l("ui.brief.note")).font(.caption).foregroundStyle(.secondary)
+                .accessibilityIdentifier("next.briefing.expand")
             }
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("next.briefing")
@@ -118,7 +155,7 @@ struct NextStepsView: View {
     }
 
     /// Three concrete steps to a card worth printing: a contact with a phone number and the two meeting places.
-    /// Shown until all three exist; the 25-item preparation list is not where a new family should start.
+    /// Shown until all three exist, alongside the focused household/home/card shortcuts.
     @ViewBuilder private var finishCard: some View {
         let l = model.localizer
         if let h = model.household {
@@ -183,7 +220,6 @@ struct NextStepsView: View {
             HStack(spacing: Theme.Space.s) { tiles }
             VStack(spacing: Theme.Space.s) { tiles }
         }
-        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(l("ui.next.shortcuts"))
     }
@@ -218,6 +254,8 @@ struct NextStepsView: View {
                     .accessibilityIdentifier("next.showAll")
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("next.actions")
     }
 
     @ViewBuilder
@@ -299,12 +337,19 @@ struct NextStepRow: View {
         let l = model.localizer
         let r = step.recommendation
         HStack(alignment: .top, spacing: Theme.Space.m) {
-            Image(systemName: r.tier == .unmetEssentialRequirement ? "exclamationmark.circle.fill" : "circle")
+            Image(systemName: PreparationPresentation.symbol(actionID: r.actionID))
                 .font(.title3)
                 .foregroundStyle(r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Theme.Space.xs) {
-                Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(isPrimary ? .title3.weight(.bold) : .body.weight(.semibold)).multilineTextAlignment(.leading)
+                HStack(alignment: .firstTextBaseline, spacing: Theme.Space.xs) {
+                    if r.tier == .unmetEssentialRequirement {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundStyle(Theme.critical)
+                            .accessibilityLabel(l("common.critical"))
+                    }
+                    Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(isPrimary ? .title3.weight(.bold) : .body.weight(.semibold)).multilineTextAlignment(.leading)
+                }
                 if let subjectID = r.subjectID {
                     let values = r.localizedTemplateValues(household: model.household, localizer: l)
                     if let name = values[subjectID.hasPrefix("person.") ? "person" : "device"] { Text(name).font(.subheadline.weight(.semibold)) }

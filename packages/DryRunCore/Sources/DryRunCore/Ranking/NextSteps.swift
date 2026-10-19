@@ -27,6 +27,27 @@ public struct NextStepsSummary: Sendable, Hashable {
 }
 
 public enum NextSteps {
+    private static let equivalents = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
+                           "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water",
+                           "act.fire.meeting-point": "prep.nearMeetup", "act.fire.smoke-alarms": "prep.smokeAlarms",
+                           "act.assist.assign-helper": "prep.helper", "act.comms.weather-radio": "prep.radio", "act.alerts.enroll-local": "prep.alerts",
+                           "act.fire.practice-drill": "prep.fireDrill", "act.flood.higher-ground-plan": "prep.floodPlan",
+                           "act.water.well-test-after-flood": "prep.wellFloodPlan", "act.water.save-utility-contact": "prep.waterUtility"]
+
+    /// Shared action identity used by both summarization and native debrief navigation.
+    public static func preparationActionID(for actionID: String) -> String {
+        equivalents[actionID] ?? actionID
+    }
+
+    /// Includes recorded facts so a closed gap opens its factual editor rather than an unrelated fallback.
+    public static func matchingPreparation(for recommendation: Recommendation, in summary: NextStepsSummary) -> NextStep? {
+        let action = preparationActionID(for: recommendation.actionID)
+        return (summary.toDo + summary.completed + summary.recorded).first {
+            $0.recommendation.id == recommendation.id
+                || ($0.recommendation.actionID == action && $0.recommendation.subjectID == recommendation.subjectID)
+        }
+    }
+
     public static func summarize(_ results: [RehearsalResult], household: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> NextStepsSummary {
         var best: [String: (rec: Recommendation, scenario: String)] = [:]
         var scenarios: [String: Set<String>] = [:]
@@ -51,12 +72,6 @@ public enum NextSteps {
         }
         // One real preparation can explain several exercise gaps. Retain the exercise intervention
         // and source scenario while keeping the direct factual editor and household wording.
-        let equivalents = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
-                           "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water",
-                           "act.fire.meeting-point": "prep.nearMeetup", "act.fire.smoke-alarms": "prep.smokeAlarms",
-                           "act.assist.assign-helper": "prep.helper", "act.comms.weather-radio": "prep.radio", "act.alerts.enroll-local": "prep.alerts",
-                           "act.fire.practice-drill": "prep.fireDrill", "act.flood.higher-ground-plan": "prep.floodPlan",
-                           "act.water.well-test-after-flood": "prep.wellFloodPlan", "act.water.save-utility-contact": "prep.waterUtility"]
         let factualOnly = Set(["prep.radio", "prep.alerts", "prep.fireDrill", "prep.floodPlan", "prep.wellFloodPlan", "prep.waterUtility"])
         for key in best.keys.sorted() {
             guard let exercise = best[key], let action = equivalents[exercise.rec.actionID] else { continue }

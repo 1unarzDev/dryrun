@@ -26,6 +26,10 @@ try{
   const context=featureContext.parse({household:state.householdContext,scene:state.homeScene,tasks:[],gaps:[],allowedActionIDs:state.preparationActions,allowedCriterionIDs:[]});
   assert.equal(context.household.housing?.homeType,input.household.housing.homeType);
   assert.equal(context.scene?.schemaVersion,'dryrun.home-scene/2');
+  if(context.scene?.schemaVersion==='dryrun.home-scene/2'){
+   const baseline=context.scene.planningRoutes?.[0];assert.ok(baseline?.alternativeStatus);
+   if(kind==='twostory'){assert.equal(baseline.alternativeStatus,'sharesChokepoint');assert.ok(baseline.sharedChokepointIDs?.includes('cn-stairs'));}
+  }
   const tests=process.env.DRYRUN_HOUSING_FEATURES_ONLY==='1'?[]:[{id:kind+'-walking',stepFree:false,blocked:[],expected:true},
    {id:kind+'-blocked-or-stepfree',stepFree:kind!=='twostory',blocked:kind==='twostory'?['cn-stairs']:[],expected:false}];
   for(const test of tests){
@@ -33,7 +37,7 @@ try{
    const queried=await host.request({op:'query',session:state.session,tool:{kind:'queryRoutes',baseRevision:0,routeRequest:request}});
    const route=queried.tool.route;assert.equal(Boolean(route.primary),test.expected);
    const evidenceIDs=[...home.spaces.map((r:any)=>r.id),...home.portals.map((r:any)=>r.id),...home.connectors.map((r:any)=>r.id)];
-   const assessmentInput={allowedEvidenceIDs:evidenceIDs,household:context.household,scene:context.scene,course:{startRoomID:'sp-bed1',purpose:'outdoorEgress',stepFreeRequired:test.stepFree,blockedConnectorIDs:test.blocked},hostRoute:{primary:route.primary??null,noRouteReason:route.noRouteReason??null,exclusions:route.exclusions},instruction:'Cite exact allowedEvidenceIDs only. Assess this exact course only. A path requires a host primary route. Do not invent a window escape, elevator exception or structural safety. Explain the concrete dependency and one material unknown. In manufactured homes never propose the closet for tornado shelter; in upper floors windows are not walking exits. Feasible means recorded practice assumptions only.'};
+   const assessmentInput={allowedEvidenceIDs:evidenceIDs,household:context.household,scene:context.scene,course:{startRoomID:'sp-bed1',purpose:'outdoorEgress',stepFreeRequired:test.stepFree,blockedConnectorIDs:test.blocked},hostRoute:{primary:route.primary??null,alternativeStatus:route.alternativeStatus,sharedChokepointIDs:route.sharedChokepoints,noRouteReason:route.noRouteReason??null,exclusions:route.exclusions},instruction:'Cite exact allowedEvidenceIDs only. Assess this exact course only. A path requires a host primary route. Do not invent a window escape, elevator exception or structural safety. Explain the concrete dependency and one material unknown. In manufactured homes never propose the closet for tornado shelter; in upper floors windows are not walking exits. Feasible means recorded practice assumptions only.'};
    let output:unknown;
    if(provider){
     const boundSchema=schema.extend({evidenceIDs:z.array(z.enum(evidenceIDs as [string,...string[]])).min(1).max(3)});

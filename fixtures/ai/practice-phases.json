@@ -39,7 +39,7 @@
       "id": "phase-initialResponse",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.5",
+        "contentVersion": "2026.10.6",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -693,7 +693,7 @@
       "id": "phase-adaptation",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.5",
+        "contentVersion": "2026.10.6",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -1294,7 +1294,7 @@
       "id": "phase-communication",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.5",
+        "contentVersion": "2026.10.6",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -1895,7 +1895,7 @@
       "id": "phase-continuity",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.5",
+        "contentVersion": "2026.10.6",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -2480,7 +2480,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/2",
-            "initialDigest": "c48870bd0957e0e6",
+            "initialDigest": "8193f1ac4b068c11",
             "sessionID": "phase-initialResponse",
             "startingEventSequence": 3,
             "startingRevision": 1
@@ -2488,7 +2488,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/2",
-            "initialDigest": "1d0430ca1c3a9607",
+            "initialDigest": "fdf545394009602e",
             "sessionID": "phase-adaptation",
             "startingEventSequence": 4,
             "startingRevision": 2
@@ -2496,7 +2496,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/2",
-            "initialDigest": "c48870bd0957e0e6",
+            "initialDigest": "8193f1ac4b068c11",
             "sessionID": "phase-communication",
             "startingEventSequence": 3,
             "startingRevision": 1
@@ -2504,7 +2504,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/2",
-            "initialDigest": "55c59e04fe830c77",
+            "initialDigest": "39d2c9167ac2dba",
             "sessionID": "phase-continuity",
             "startingEventSequence": 8,
             "startingRevision": 1
@@ -2514,7 +2514,7 @@
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
           "evaluatorVersion": "dryrun.practice-anchors/2",
-          "initialDigest": "c48870bd0957e0e6",
+          "initialDigest": "8193f1ac4b068c11",
           "sessionID": "phase-initialResponse",
           "startingEventSequence": 3,
           "startingRevision": 1
@@ -2560,7 +2560,7 @@
         "id": "phase-initialResponse",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -3214,7 +3214,7 @@
         "id": "phase-adaptation",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -3815,7 +3815,7 @@
         "id": "phase-communication",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -4416,7 +4416,7 @@
         "id": "phase-continuity",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.5",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -4990,7 +4990,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-initialResponse",
-        "initialDigest": "c48870bd0957e0e6",
+        "initialDigest": "8193f1ac4b068c11",
         "startingRevision": 1,
         "startingEventSequence": 3,
         "evaluatorVersion": "dryrun.practice-anchors/2"
@@ -4998,7 +4998,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-adaptation",
-        "initialDigest": "1d0430ca1c3a9607",
+        "initialDigest": "fdf545394009602e",
         "startingRevision": 2,
         "startingEventSequence": 4,
         "evaluatorVersion": "dryrun.practice-anchors/2"
@@ -5006,7 +5006,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-communication",
-        "initialDigest": "c48870bd0957e0e6",
+        "initialDigest": "8193f1ac4b068c11",
         "startingRevision": 1,
         "startingEventSequence": 3,
         "evaluatorVersion": "dryrun.practice-anchors/2"
@@ -5014,7 +5014,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-continuity",
-        "initialDigest": "55c59e04fe830c77",
+        "initialDigest": "39d2c9167ac2dba",
         "startingRevision": 1,
         "startingEventSequence": 8,
         "evaluatorVersion": "dryrun.practice-anchors/2"
@@ -5042,7 +5042,7 @@
             "competencyID": "initialResponse",
             "actionID": "correct-initialResponse",
             "acceptedRevision": 2,
-            "receiptDigest": "b46d0538b3676f",
+            "receiptDigest": "ba270f4a48e08942",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5052,10 +5052,10 @@
             "competencyID": "initialResponse",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "b46d0538b3676f"
+            "receiptDigest": "ba270f4a48e08942"
           },
           "receipt": {
-            "contextDigest": "b46d0538b3676f",
+            "contextDigest": "ba270f4a48e08942",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -5265,7 +5265,7 @@
             "competencyID": "adaptation",
             "actionID": "correct-adaptation",
             "acceptedRevision": 3,
-            "receiptDigest": "8d95dfb1216f63cc",
+            "receiptDigest": "cbbafc7dd50372bd",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5275,10 +5275,10 @@
             "competencyID": "adaptation",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "8d95dfb1216f63cc"
+            "receiptDigest": "cbbafc7dd50372bd"
           },
           "receipt": {
-            "contextDigest": "8d95dfb1216f63cc",
+            "contextDigest": "cbbafc7dd50372bd",
             "directorState": {
               "activeIncidentCount": 1,
               "awaitingUserAction": false,
@@ -5653,7 +5653,7 @@
             "competencyID": "communication",
             "actionID": "correct-communication",
             "acceptedRevision": 2,
-            "receiptDigest": "9cf87a5cc8c8bd59",
+            "receiptDigest": "bc0296636965f834",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5663,10 +5663,10 @@
             "competencyID": "communication",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "9cf87a5cc8c8bd59"
+            "receiptDigest": "bc0296636965f834"
           },
           "receipt": {
-            "contextDigest": "9cf87a5cc8c8bd59",
+            "contextDigest": "bc0296636965f834",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -5876,7 +5876,7 @@
             "competencyID": "continuity",
             "actionID": "correct-continuity",
             "acceptedRevision": 2,
-            "receiptDigest": "5bfe2c1d97c37305",
+            "receiptDigest": "9e5474fa3bbbaa82",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5886,10 +5886,10 @@
             "competencyID": "continuity",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "5bfe2c1d97c37305"
+            "receiptDigest": "9e5474fa3bbbaa82"
           },
           "receipt": {
-            "contextDigest": "5bfe2c1d97c37305",
+            "contextDigest": "9e5474fa3bbbaa82",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -6255,7 +6255,7 @@
                 "competencyID": "initialResponse",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "b46d0538b3676f"
+                "receiptDigest": "ba270f4a48e08942"
               },
               {
                 "acceptedRevision": 3,
@@ -6263,7 +6263,7 @@
                 "competencyID": "adaptation",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "8d95dfb1216f63cc"
+                "receiptDigest": "cbbafc7dd50372bd"
               },
               {
                 "acceptedRevision": 2,
@@ -6271,7 +6271,7 @@
                 "competencyID": "communication",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "9cf87a5cc8c8bd59"
+                "receiptDigest": "bc0296636965f834"
               },
               {
                 "acceptedRevision": 2,
@@ -6279,14 +6279,14 @@
                 "competencyID": "continuity",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "5bfe2c1d97c37305"
+                "receiptDigest": "9e5474fa3bbbaa82"
               }
             ],
             "phaseSources": [
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "c48870bd0957e0e6",
+                "initialDigest": "8193f1ac4b068c11",
                 "sessionID": "phase-initialResponse",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -6294,7 +6294,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "1d0430ca1c3a9607",
+                "initialDigest": "fdf545394009602e",
                 "sessionID": "phase-adaptation",
                 "startingEventSequence": 4,
                 "startingRevision": 2
@@ -6302,7 +6302,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "c48870bd0957e0e6",
+                "initialDigest": "8193f1ac4b068c11",
                 "sessionID": "phase-communication",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -6310,7 +6310,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "55c59e04fe830c77",
+                "initialDigest": "39d2c9167ac2dba",
                 "sessionID": "phase-continuity",
                 "startingEventSequence": 8,
                 "startingRevision": 1
@@ -6320,7 +6320,7 @@
             "source": {
               "contractVersion": "dryrun.practice-capture/1",
               "evaluatorVersion": "dryrun.practice-anchors/2",
-              "initialDigest": "c48870bd0957e0e6",
+              "initialDigest": "8193f1ac4b068c11",
               "sessionID": "phase-initialResponse",
               "startingEventSequence": 3,
               "startingRevision": 1
@@ -6377,7 +6377,7 @@
             "id": "phase-initialResponse",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -7043,7 +7043,7 @@
             "id": "phase-adaptation",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -7655,7 +7655,7 @@
             "id": "phase-communication",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -8268,7 +8268,7 @@
             "id": "phase-continuity",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -8859,7 +8859,7 @@
             "competencyID": "initialResponse",
             "actionID": "wrong-initialResponse",
             "acceptedRevision": 2,
-            "receiptDigest": "f2066cfbb783762c",
+            "receiptDigest": "662948e3ab317db9",
             "credit": 0,
             "feedbackRevealed": false
           },
@@ -8869,10 +8869,10 @@
             "competencyID": "initialResponse",
             "credit": 0,
             "feedbackRevealed": true,
-            "receiptDigest": "f2066cfbb783762c"
+            "receiptDigest": "662948e3ab317db9"
           },
           "receipt": {
-            "contextDigest": "f2066cfbb783762c",
+            "contextDigest": "662948e3ab317db9",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -9082,7 +9082,7 @@
             "competencyID": "adaptation",
             "actionID": "wrong-adaptation",
             "acceptedRevision": 3,
-            "receiptDigest": "e8e2423b5154a016",
+            "receiptDigest": "89fac80de12ee3d7",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -9092,10 +9092,10 @@
             "competencyID": "adaptation",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "e8e2423b5154a016"
+            "receiptDigest": "89fac80de12ee3d7"
           },
           "receipt": {
-            "contextDigest": "e8e2423b5154a016",
+            "contextDigest": "89fac80de12ee3d7",
             "directorState": {
               "activeIncidentCount": 1,
               "awaitingUserAction": false,
@@ -9470,7 +9470,7 @@
             "competencyID": "communication",
             "actionID": "wrong-communication",
             "acceptedRevision": 2,
-            "receiptDigest": "dbe3184416c57bd3",
+            "receiptDigest": "c52815643416d52e",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -9480,10 +9480,10 @@
             "competencyID": "communication",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "dbe3184416c57bd3"
+            "receiptDigest": "c52815643416d52e"
           },
           "receipt": {
-            "contextDigest": "dbe3184416c57bd3",
+            "contextDigest": "c52815643416d52e",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -9693,7 +9693,7 @@
             "competencyID": "continuity",
             "actionID": "wrong-continuity",
             "acceptedRevision": 2,
-            "receiptDigest": "d2526a7ee3efc549",
+            "receiptDigest": "acd341d9a2f415d2",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -9703,10 +9703,10 @@
             "competencyID": "continuity",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "d2526a7ee3efc549"
+            "receiptDigest": "acd341d9a2f415d2"
           },
           "receipt": {
-            "contextDigest": "d2526a7ee3efc549",
+            "contextDigest": "acd341d9a2f415d2",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -10072,7 +10072,7 @@
                 "competencyID": "initialResponse",
                 "credit": 0,
                 "feedbackRevealed": true,
-                "receiptDigest": "f2066cfbb783762c"
+                "receiptDigest": "662948e3ab317db9"
               },
               {
                 "acceptedRevision": 3,
@@ -10080,7 +10080,7 @@
                 "competencyID": "adaptation",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "e8e2423b5154a016"
+                "receiptDigest": "89fac80de12ee3d7"
               },
               {
                 "acceptedRevision": 2,
@@ -10088,7 +10088,7 @@
                 "competencyID": "communication",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "dbe3184416c57bd3"
+                "receiptDigest": "c52815643416d52e"
               },
               {
                 "acceptedRevision": 2,
@@ -10096,14 +10096,14 @@
                 "competencyID": "continuity",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "d2526a7ee3efc549"
+                "receiptDigest": "acd341d9a2f415d2"
               }
             ],
             "phaseSources": [
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "c48870bd0957e0e6",
+                "initialDigest": "8193f1ac4b068c11",
                 "sessionID": "phase-initialResponse",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -10111,7 +10111,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "1d0430ca1c3a9607",
+                "initialDigest": "fdf545394009602e",
                 "sessionID": "phase-adaptation",
                 "startingEventSequence": 4,
                 "startingRevision": 2
@@ -10119,7 +10119,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "c48870bd0957e0e6",
+                "initialDigest": "8193f1ac4b068c11",
                 "sessionID": "phase-communication",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -10127,7 +10127,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/2",
-                "initialDigest": "55c59e04fe830c77",
+                "initialDigest": "39d2c9167ac2dba",
                 "sessionID": "phase-continuity",
                 "startingEventSequence": 8,
                 "startingRevision": 1
@@ -10137,7 +10137,7 @@
             "source": {
               "contractVersion": "dryrun.practice-capture/1",
               "evaluatorVersion": "dryrun.practice-anchors/2",
-              "initialDigest": "c48870bd0957e0e6",
+              "initialDigest": "8193f1ac4b068c11",
               "sessionID": "phase-initialResponse",
               "startingEventSequence": 3,
               "startingRevision": 1
@@ -10194,7 +10194,7 @@
             "id": "phase-initialResponse",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -10860,7 +10860,7 @@
             "id": "phase-adaptation",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -11472,7 +11472,7 @@
             "id": "phase-communication",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -12085,7 +12085,7 @@
             "id": "phase-continuity",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.5",
+              "contentVersion": "2026.10.6",
               "home": {
                 "annotations": [],
                 "completeness": "complete",

@@ -169,6 +169,39 @@ final class DemoJourneyUITests: XCTestCase {
         }
     }
 
+    func testPreparationActionsLeadSupportingEditors() {
+        let app = sample()
+        let firstAction = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'next.step.'")).firstMatch
+        XCTAssertTrue(firstAction.waitForExistence(timeout: 20))
+        let family = reveal("next.family", in: app)
+        XCTAssertLessThan(firstAction.frame.minY, family.frame.minY)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "prepare-concentrated-actions"; screenshot.lifetime = .keepAlways; add(screenshot)
+    }
+
+    func testHousingModelsExposeTwoAndThreeDimensionalViewsAndFloorControl() {
+        for home in ["apartment-complex", "manufactured", "twostory"] {
+            let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home, "-demoLocale", "en"])
+            tap("next.home", in: app)
+            XCTAssertTrue(element("home.scene", in: app).waitForExistence(timeout: 20), home)
+            XCTAssertEqual(element("home.floor", in: app).exists, home != "manufactured", home)
+            let twoD = XCTAttachment(screenshot: app.screenshot()); twoD.name = home + "-2d"; twoD.lifetime = .keepAlways; add(twoD)
+            let mode = element("home.viewMode", in: app)
+            let threeD = mode.buttons["3D"]
+            XCTAssertTrue(threeD.exists, home); threeD.tap()
+            XCTAssertTrue(element("home.scene", in: app).exists, home)
+            let dollhouse = XCTAttachment(screenshot: app.screenshot()); dollhouse.name = home + "-3d"; dollhouse.lifetime = .keepAlways; add(dollhouse)
+            app.terminate()
+        }
+    }
+
+    func testApartmentFireShowsElevatorExclusionBesideTheCommittedScene() {
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "apartment-complex", "-demoScenario", "home-fire", "-demoStep", "decision", "-demoLocale", "en"])
+        XCTAssertTrue(reveal("rehearsal.noElevators", in: app).waitForExistence(timeout: 20))
+        XCTAssertTrue(element("rehearsal.scene", in: app).exists)
+        let screenshot = XCTAttachment(screenshot: app.screenshot()); screenshot.name = "apartment-fire-no-elevators"; screenshot.lifetime = .keepAlways; add(screenshot)
+    }
+
     #if targetEnvironment(simulator)
     /// Real encrypted repository and Keychain bridge, isolated from normal app data. Relaunch reads
     /// persisted contacts/layout absence; this still does not establish device Data Protection or Print.

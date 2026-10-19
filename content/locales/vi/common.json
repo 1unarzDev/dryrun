@@ -695,5 +695,8 @@
   "ui.intake.alsoAdded": "Cũng đã thêm",
   "ui.brief.title": "Dành cho gia đình bạn",
   "ui.brief.writing": "Đang viết tóm tắt trên iPhone này…",
-  "ui.brief.note": "Do Apple Intelligence viết trên iPhone này từ kế hoạch của bạn. Thứ tự các bước do các buổi diễn tập của Dry Run quyết định, không phải AI. Mở một bước để xem đầy đủ."
+  "ui.brief.note": "Do Apple Intelligence viết trên iPhone này từ kế hoạch của bạn. Thứ tự các bước do các buổi diễn tập của Dry Run quyết định, không phải AI. Mở một bước để xem đầy đủ.",
+  "ui.task.changedTitle": "Xem lại các bước chuẩn bị hiện tại",
+  "ui.task.changedBody": "Đề xuất trước đây không còn khớp với bước chuẩn bị hiện có. Mở danh sách hiện tại để xem việc nào vẫn cần chú ý.",
+  "ui.shelter.advanceReview": "Sắp xếp quyền vào, thời điểm và hỗ trợ trước khi có cảnh báo lốc xoáy. Các mục điểm đến ghi lại kế hoạch chung; chúng không chứng nhận khả năng bảo vệ khỏi lốc xoáy."
 }

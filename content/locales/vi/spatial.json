@@ -416,5 +416,17 @@
   "spatial.window-person-question": "Ai đã kiểm tra rằng mình có thể dùng cửa sổ này làm lối thoát?",
   "spatial.window-person-note": "Chọn riêng từng người sau khi kiểm tra lối ra bên ngoài và khả năng sử dụng ô cửa của họ. Chỉ đánh dấu cửa sổ không có nghĩa là đã xác lập lối thoát.",
   "spatial.leak-location-unknown": "Chưa ghi vị trí rò rỉ",
-  "spatial.floor.ground": "Tầng trệt"
+  "spatial.floor.ground": "Tầng trệt",
+  "spatial.marker-location": "Vị trí ký hiệu",
+  "spatial.marker-position-note": "Tọa độ tính bằng mét trong sơ đồ tầng này. Đối chiếu vị trí gợi ý với phòng thực tế. Áp dụng cập nhật bản nháp; Lưu giữ lại thay đổi. Xác nhận vị trí không xác nhận thiết bị hoạt động hay nơi trú ẩn bảo vệ được bạn.",
+  "spatial.marker-x": "Vị trí X (m)",
+  "spatial.marker-y": "Vị trí Y (m)",
+  "spatial.marker-location-checked": "Tôi đã kiểm tra vị trí này trong phòng thực tế",
+  "spatial.marker-apply": "Áp dụng vị trí ký hiệu",
+  "spatial.marker-invalid": "Chọn phòng đã kiểm tra và một điểm có tọa độ hữu hạn bên trong. Sửa đường viền phòng trước nếu không xác định được vị trí gợi ý. Ký hiệu trước đó không thay đổi.",
+  "spatial.no-markers-floor": "Tầng này chưa có ký hiệu an toàn. Thêm trong trình sửa nhà.",
+  "spatial.marker-recorded": "Đã ghi vị trí; mức sẵn sàng được kiểm tra riêng",
+  "spatial.marker-review": "Cần kiểm tra vị trí",
+  "spatial.fire-no-elevators": "Bài tập cháy không dùng thang máy. Xem quy trình niêm yết của tòa nhà và kế hoạch hỗ trợ; nếu chưa có đường cầu thang phù hợp thì vấn đề vẫn chưa được giải quyết.",
+  "spatial.elevator-excluded": "Thang máy không được dùng trong đường thoát của bài tập"
 }

@@ -58,7 +58,7 @@
     "id": "synthetic-session",
     "initial": {
       "choices": {},
-      "contentVersion": "2026.10.5",
+      "contentVersion": "2026.10.6",
       "home": {
         "annotations": [
           {
@@ -1532,7 +1532,7 @@
       "Reviewed educational incident profiles; not a prediction of real failure"
     ],
     "baseline": {
-      "contextDigest": "a0cb88da65afb73c",
+      "contextDigest": "8832d1e12df745d9",
       "eventSequence": 10,
       "events": [
         {
@@ -2258,7 +2258,7 @@
       "version": "dryrun.stress-comparison/1"
     },
     "controlledRetest": {
-      "contextDigest": "74dd9b801009675",
+      "contextDigest": "b98168c87bba4358",
       "eventSequence": 13,
       "events": [
         {
@@ -3078,7 +3078,7 @@
     "dependencies": [
       {
         "evidenceIDs": [
-          "a0cb88da65afb73c"
+          "8832d1e12df745d9"
         ],
         "id": "contact|channel",
         "kind": "contactChannel",
@@ -3089,7 +3089,7 @@
       },
       {
         "evidenceIDs": [
-          "a0cb88da65afb73c",
+          "8832d1e12df745d9",
           "sp-kitchen"
         ],
         "id": "storage|sp-kitchen",
@@ -3109,7 +3109,7 @@
       "req.egress.p-oak-4"
     ],
     "evidenceIDs": [
-      "a0cb88da65afb73c"
+      "8832d1e12df745d9"
     ],
     "failed": true,
     "id": "stress|home-fire|evt.home-fire.alarm|evt.home-fire.fire-origin",
@@ -3194,7 +3194,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "e5ee152bc5b71379",
+          "contextDigest": "e98dd307ce8daeb8",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -3253,7 +3253,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "e5ee152bc5b71379",
+        "contextDigest": "e98dd307ce8daeb8",
         "observation": {
           "kind": "runCounterfactual",
           "scope": "initial_household_with_selected_profiles",
@@ -3443,7 +3443,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "e5ee152bc5b71379",
+          "contextDigest": "e98dd307ce8daeb8",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -3502,7 +3502,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "39328572f1045a7e",
+        "contextDigest": "b7a048205df68f0b",
         "preview": {
           "routes": [],
           "directorState": {
@@ -3524,7 +3524,7 @@
       "sessionID": "synthetic-session",
       "revision": 0,
       "eventSequence": 0,
-      "contextDigest": "e5ee152bc5b71379",
+      "contextDigest": "e98dd307ce8daeb8",
       "householdRevision": 3,
       "homeRevision": 1
     },
@@ -3794,11 +3794,13 @@
       "planningNeeds": [],
       "planningRoutes": [
         {
+          "alternativeConnectorIDs": [],
           "alternativePortalIDs": [
             "pt-bed1-hall",
             "pt-kitchen-hall",
             "pt-back"
           ],
+          "alternativeStatus": "sharesChokepoint",
           "connectorIDs": [],
           "exclusions": [
             {
@@ -3821,15 +3823,21 @@
             "pt-front"
           ],
           "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs": [
+            "pt-bed1-hall",
+            "sp-hall"
+          ],
           "startRoomID": "sp-bed1",
           "stepFreeRequired": false
         },
         {
+          "alternativeConnectorIDs": [],
           "alternativePortalIDs": [
             "pt-bed1-hall",
             "pt-kitchen-hall",
             "pt-back"
           ],
+          "alternativeStatus": "sharesChokepoint",
           "connectorIDs": [],
           "exclusions": [
             {
@@ -3852,16 +3860,22 @@
             "pt-front"
           ],
           "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs": [
+            "pt-bed1-hall",
+            "sp-hall"
+          ],
           "startRoomID": "sp-bed1",
           "stepFreeRequired": false
         },
         {
+          "alternativeConnectorIDs": [],
           "alternativePortalIDs": [
             "pt-bed2-hall",
             "pt-kitchen-hall",
             "pt-living-kitchen",
             "pt-front"
           ],
+          "alternativeStatus": "sharesChokepoint",
           "connectorIDs": [],
           "exclusions": [
             {
@@ -3884,14 +3898,22 @@
             "pt-back"
           ],
           "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs": [
+            "pt-bed2-hall",
+            "pt-kitchen-hall",
+            "sp-hall",
+            "sp-kitchen"
+          ],
           "startRoomID": "sp-bed2",
           "stepFreeRequired": false
         },
         {
+          "alternativeConnectorIDs": [],
           "alternativePortalIDs": [
             "pt-living-kitchen",
             "pt-back"
           ],
+          "alternativeStatus": "independent",
           "connectorIDs": [],
           "exclusions": [
             {
@@ -3912,6 +3934,7 @@
             "pt-front"
           ],
           "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs": [],
           "startRoomID": "sp-living",
           "stepFreeRequired": false
         }
@@ -4965,7 +4988,7 @@
       }
     ],
     "receipt": {
-      "contextDigest": "3aced36050a0d42c",
+      "contextDigest": "c462371c28f158ed",
       "directorState": {
         "activeIncidentCount": 0,
         "awaitingUserAction": true,
@@ -5122,7 +5145,7 @@
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.5",
+        "contentVersion": "2026.10.6",
         "home": {
           "annotations": [
             {

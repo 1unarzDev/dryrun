@@ -4,7 +4,7 @@
   "model": "deterministic_protocol_fixture",
   "sdk": "2.30.0",
   "foodPolicy": "dryrun.exercise-food/1",
-  "contentVersion": "2026.10.5",
+  "contentVersion": "2026.10.6",
   "schedule": [
     {
       "kind": "schedule",
@@ -293,11 +293,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -320,15 +322,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -351,16 +359,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -383,14 +397,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -411,6 +433,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -1559,7 +1582,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "7afd71d040183dc0",
+          "contextDigest": "b7c1ffc024547f4b",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -1672,7 +1695,7 @@
           "id": "synthetic-session",
           "initial": {
             "choices": {},
-            "contentVersion": "2026.10.5",
+            "contentVersion": "2026.10.6",
             "home": {
               "annotations": [
                 {
@@ -3391,11 +3414,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -3418,15 +3443,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -3449,16 +3480,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -3481,14 +3518,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -3509,6 +3554,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -4596,7 +4642,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "97170b219fcab006",
+          "contextDigest": "3dfd495b01a6f80f",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -4871,7 +4917,7 @@
           "id": "synthetic-session",
           "initial": {
             "choices": {},
-            "contentVersion": "2026.10.5",
+            "contentVersion": "2026.10.6",
             "home": {
               "annotations": [
                 {
@@ -6345,7 +6391,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 5,
-          "contextDigest": "97170b219fcab006",
+          "contextDigest": "3dfd495b01a6f80f",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -6708,11 +6754,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -6735,15 +6783,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -6766,16 +6820,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -6798,14 +6858,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -6826,6 +6894,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -7801,7 +7870,7 @@
               "sessionID": "synthetic-session",
               "revision": 3,
               "eventSequence": 5,
-              "contextDigest": "97170b219fcab006",
+              "contextDigest": "3dfd495b01a6f80f",
               "householdRevision": 2,
               "homeRevision": 1
             },
@@ -7862,7 +7931,7 @@
                 "pets.waterNeeds"
               ]
             },
-            "contextDigest": "67b5a2c7cf7d1ceb",
+            "contextDigest": "be215a0da4fae1dc",
             "preview": {
               "routes": [],
               "directorState": {
@@ -7912,7 +7981,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 5,
-          "contextDigest": "97170b219fcab006",
+          "contextDigest": "3dfd495b01a6f80f",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -8193,11 +8262,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -8220,15 +8291,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -8251,16 +8328,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -8283,14 +8366,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -8311,6 +8402,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -9398,7 +9490,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "c214df715cbdab82",
+          "contextDigest": "a451a8a58e318ecd",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": true,
@@ -9685,7 +9777,7 @@
           "id": "synthetic-session",
           "initial": {
             "choices": {},
-            "contentVersion": "2026.10.5",
+            "contentVersion": "2026.10.6",
             "home": {
               "annotations": [
                 {
@@ -11225,7 +11317,7 @@
           "Reviewed educational incident profiles; not a prediction of real failure"
         ],
         "baseline": {
-          "contextDigest": "113dda54e6df996",
+          "contextDigest": "1023f263eeb3e065",
           "eventSequence": 4,
           "events": [
             {
@@ -11414,7 +11506,7 @@
         "dependencies": [
           {
             "evidenceIDs": [
-              "113dda54e6df996"
+              "1023f263eeb3e065"
             ],
             "id": "contact|channel",
             "kind": "contactChannel",
@@ -11428,7 +11520,7 @@
           "req.food"
         ],
         "evidenceIDs": [
-          "113dda54e6df996"
+          "1023f263eeb3e065"
         ],
         "failed": true,
         "id": "stress|water-outage|evt.water-outage.well-pump-failure",
@@ -11460,8 +11552,8 @@
         ],
         "outcomes": [],
         "prompt": {
-          "version": "director/5",
-          "sha256": "0533542d05a4ab59ae9153d044322d527524c8e94f1bfdfd6bc33b2f1de74bfd"
+          "version": "director/7",
+          "sha256": "4a15a5f93bb98069c45995b050c0e4f1660c5dda1e5893f5d8567edb63e2ba3e"
         }
       }
     },
@@ -11741,11 +11833,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -11768,15 +11862,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -11799,16 +11899,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -11831,14 +11937,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -11859,6 +11973,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -13007,7 +13122,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "12d367785ee5fefa",
+          "contextDigest": "64c3abad6667db59",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -13120,7 +13235,7 @@
           "id": "synthetic-session",
           "initial": {
             "choices": {},
-            "contentVersion": "2026.10.5",
+            "contentVersion": "2026.10.6",
             "home": {
               "annotations": [
                 {
@@ -14839,11 +14954,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -14866,15 +14983,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -14897,16 +15020,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -14929,14 +15058,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -14957,6 +15094,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -16044,7 +16182,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "e2ae3b30c19521b5",
+          "contextDigest": "2f9fb2d63ec0f598",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -16293,7 +16431,7 @@
           "id": "synthetic-session",
           "initial": {
             "choices": {},
-            "contentVersion": "2026.10.5",
+            "contentVersion": "2026.10.6",
             "home": {
               "annotations": [
                 {
@@ -17767,7 +17905,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 4,
-          "contextDigest": "e2ae3b30c19521b5",
+          "contextDigest": "2f9fb2d63ec0f598",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -18126,11 +18264,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -18153,15 +18293,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -18184,16 +18330,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -18216,14 +18368,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -18244,6 +18404,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -19219,7 +19380,7 @@
               "sessionID": "synthetic-session",
               "revision": 3,
               "eventSequence": 4,
-              "contextDigest": "e2ae3b30c19521b5",
+              "contextDigest": "2f9fb2d63ec0f598",
               "householdRevision": 2,
               "homeRevision": 1
             },
@@ -19278,7 +19439,7 @@
                 "pets.waterNeeds"
               ]
             },
-            "contextDigest": "fc2ea7cd516c0b64",
+            "contextDigest": "baf20139ef5d0a55",
             "preview": {
               "routes": [],
               "directorState": {
@@ -19328,7 +19489,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 4,
-          "contextDigest": "e2ae3b30c19521b5",
+          "contextDigest": "2f9fb2d63ec0f598",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -19609,11 +19770,13 @@
           "planningNeeds": [],
           "planningRoutes": [
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -19636,15 +19799,21 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -19667,16 +19836,22 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "startRoomID": "sp-bed1",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-bed2-hall",
                 "pt-kitchen-hall",
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -19699,14 +19874,22 @@
                 "pt-back"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "startRoomID": "sp-bed2",
               "stepFreeRequired": false
             },
             {
+              "alternativeConnectorIDs": [],
               "alternativePortalIDs": [
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
               "connectorIDs": [],
               "exclusions": [
                 {
@@ -19727,6 +19910,7 @@
                 "pt-front"
               ],
               "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "sharedChokepointIDs": [],
               "startRoomID": "sp-living",
               "stepFreeRequired": false
             }
@@ -20814,7 +20998,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "cc3bd9c398a944e5",
+          "contextDigest": "d4e10288d15608b4",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": true,
@@ -21077,7 +21261,7 @@
           "id": "synthetic-session",
           "initial": {
             "choices": {},
-            "contentVersion": "2026.10.5",
+            "contentVersion": "2026.10.6",
             "home": {
               "annotations": [
                 {
@@ -22617,7 +22801,7 @@
           "Reviewed educational incident profiles; not a prediction of real failure"
         ],
         "baseline": {
-          "contextDigest": "95410ce52ab968a0",
+          "contextDigest": "3f3bffad0ed6dcb7",
           "eventSequence": 4,
           "events": [
             {
@@ -22808,7 +22992,7 @@
         "dependencies": [
           {
             "evidenceIDs": [
-              "95410ce52ab968a0"
+              "3f3bffad0ed6dcb7"
             ],
             "id": "contact|channel",
             "kind": "contactChannel",
@@ -22822,7 +23006,7 @@
           "req.food"
         ],
         "evidenceIDs": [
-          "95410ce52ab968a0"
+          "3f3bffad0ed6dcb7"
         ],
         "failed": true,
         "id": "stress|water-outage|evt.water-outage.well-pump-failure",
@@ -22854,8 +23038,8 @@
         ],
         "outcomes": [],
         "prompt": {
-          "version": "director/5",
-          "sha256": "0533542d05a4ab59ae9153d044322d527524c8e94f1bfdfd6bc33b2f1de74bfd"
+          "version": "director/7",
+          "sha256": "4a15a5f93bb98069c45995b050c0e4f1660c5dda1e5893f5d8567edb63e2ba3e"
         }
       }
     }

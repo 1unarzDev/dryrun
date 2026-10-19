@@ -63,6 +63,31 @@ public enum HomeScenePresentation {
             ?? home.floors.first?.id
     }
 
+    /// Names in pickers and route text must disambiguate identical rooms across floors.
+    /// This labels recorded geometry only; no room use or grade is inferred from the name.
+    public static func roomLabel(_ roomID: String, in home: HomeModel) -> String {
+        guard let room = home.space(roomID) else { return roomID }
+        guard home.floors.count > 1 else { return room.label }
+        let floor = home.floors.first { $0.id == room.floorID }
+        return "\(room.label) · \(floor?.label ?? room.floorID)"
+    }
+
+    public static func alternativeKey(_ route: RouteResult) -> String {
+        switch route.alternativeStatus {
+        case .independent: "common.route.independent"
+        case .sharesChokepoint: "common.route.shared"
+        case .none: "common.route.none"
+        }
+    }
+
+    public static func alternativeSymbol(_ route: RouteResult) -> String {
+        switch route.alternativeStatus {
+        case .independent: "arrow.triangle.branch"
+        case .sharesChokepoint: "arrow.triangle.merge"
+        case .none: "exclamationmark.triangle"
+        }
+    }
+
     /// Empty means intentionally unknown. Invalid nonempty edits retain the last recorded fact until corrected.
     public static func editedWidth(_ text: String, previous: EvidenceValue<Double>) -> EvidenceValue<Double> {
         let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)

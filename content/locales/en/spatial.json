@@ -416,5 +416,17 @@
   "spatial.window-person-question": "Who has checked that they can use this window as an escape option?",
   "spatial.window-person-note": "Select each person separately after checking exterior access and their ability to use the opening. A window marker alone does not establish an escape route.",
   "spatial.leak-location-unknown": "Leak location not recorded",
-  "spatial.floor.ground": "Ground floor"
+  "spatial.floor.ground": "Ground floor",
+  "spatial.marker-location": "Marker location",
+  "spatial.marker-position-note": "Coordinates are metres within this floor plan. Check the suggested position against the actual room. Apply updates this draft; Save keeps it. Confirming a location does not confirm equipment function or shelter protection.",
+  "spatial.marker-x": "Position X (m)",
+  "spatial.marker-y": "Position Y (m)",
+  "spatial.marker-location-checked": "I checked this location in the actual room",
+  "spatial.marker-apply": "Apply marker location",
+  "spatial.marker-invalid": "Choose a reviewed room and a finite point inside it. Correct the room outline first if a suggested position cannot be established. Your previous marker is unchanged.",
+  "spatial.no-markers-floor": "No safety markers on this floor yet. Add them in the home editor.",
+  "spatial.marker-recorded": "Location recorded; readiness is checked separately",
+  "spatial.marker-review": "Location needs review",
+  "spatial.fire-no-elevators": "Fire practice excludes elevators. Review the building’s posted procedures and assistance arrangements; a missing stair route stays unresolved.",
+  "spatial.elevator-excluded": "Elevator excluded from practice egress routes"
 }

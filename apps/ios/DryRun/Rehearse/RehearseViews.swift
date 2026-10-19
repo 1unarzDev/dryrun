@@ -81,6 +81,8 @@ struct RehearsalView: View {
     @Environment(AppModel.self) private var model
     @State private var showDebrief = false
     @State private var showAllServices = false
+    @State private var showEarlier = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var originID = ""
     @State private var waterEntryID = ""
     @State private var refugeID = ""
@@ -106,7 +108,6 @@ struct RehearsalView: View {
                                               state: session.snapshotAtCursor?.spatialState,
                                               previous: session.spatialStateBeforeCursor)
                             .accessibilityIdentifier("rehearsal.scene")
-                        sceneOptions(session, home: home)
                     }
                     if session.result.input.home == nil { Label(model.localizer("map.layoutMissing"), systemImage: "house").font(.callout).foregroundStyle(.secondary) }
                     let events = session.visibleEvents
@@ -125,6 +126,9 @@ struct RehearsalView: View {
                         }
                         .id("decision")
                     }
+                    if let home = session.result.input.home, ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
+                        sceneOptions(session, home: home)
+                    }
                     if session.isFinished && !["home-fire", "flash-flood", "tornado"].contains(scenarioID) && !session.result.routes.isEmpty {
                         RouteSummaryView(routes: session.result.routes)
                     }
@@ -139,8 +143,13 @@ struct RehearsalView: View {
                         .accessibilityIdentifier("rehearsal.allServices")
                     }
                     if events.count > 1 {
-                        SectionCard(title: l("ui.rehearse.earlier"), systemImage: "clock.arrow.circlepath") {
-                            ForEach(events.dropLast().reversed()) { e in TimelineRow(event: e, result: session.result) }
+                        SectionCard {
+                            DisclosureGroup(isExpanded: $showEarlier) {
+                                ForEach(events.dropLast().reversed()) { e in TimelineRow(event: e, result: session.result) }
+                            } label: {
+                                Label(l("ui.rehearse.earlier"), systemImage: "clock.arrow.circlepath").font(.subheadline.weight(.semibold))
+                            }
+                            .accessibilityIdentifier("rehearsal.earlier")
                         }
                     }
                 } else if model.isWorking {
@@ -155,10 +164,10 @@ struct RehearsalView: View {
         // A new decision must be fully visible above the bottom bar, not hidden behind it.
         .onChange(of: session?.pendingDecision?.id) { _, id in
             guard id != nil else { return }
-            withAnimation { proxy.scrollTo("decision", anchor: .bottom) }
+            withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo("decision", anchor: .bottom) }
         }
         .onChange(of: session?.revealed) { _, _ in
-            if session?.pendingDecision == nil { withAnimation { proxy.scrollTo("top", anchor: .top) } }
+            if session?.pendingDecision == nil { withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo("top", anchor: .top) } }
         }
         }
         .background(Theme.background)
@@ -189,26 +198,26 @@ struct RehearsalView: View {
             if scenarioID == "home-fire" {
                 Picker(s("Fire starts in one room"), selection: $originID) {
                     Text(s("Use the authored default")).tag("")
-                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                    ForEach(home.spaces) { Text(HomeScenePresentation.roomLabel($0.id, in: home)).tag($0.id) }
                 }
             }
             if scenarioID == "flash-flood" {
                 Toggle(s("Local household leak exercise"), isOn: $householdLeak)
                 Picker(s("Water-affected room (optional)"), selection: $waterEntryID) {
                     Text(householdLeak ? model.localizer("spatial.leak-location-unknown") : s("Regional warning; indoor extent unknown")).tag("")
-                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                    ForEach(home.spaces) { Text(HomeScenePresentation.roomLabel($0.id, in: home)).tag($0.id) }
                 }
                 if !householdLeak {
                     Picker(s("Higher refuge to review (optional)"), selection: $refugeID) {
                         Text(s("No refuge established")).tag("")
-                        ForEach(home.spaces.filter { $0.kind != .closet }) { Text($0.label).tag($0.id) }
+                        ForEach(home.spaces.filter { $0.kind != .closet }) { Text(HomeScenePresentation.roomLabel($0.id, in: home)).tag($0.id) }
                     }
                 }
             }
             ForEach(session.result.input.household.people) { person in
                 Picker(model.localizer("spatial.start-person", ["name": person.localizedLabel(model.localizer)]), selection: Binding(get: { daytimeStarts[person.id] ?? "" }, set: { daytimeStarts[person.id] = $0 })) {
                     Text(s("Use recorded assignment")).tag("")
-                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                    ForEach(home.spaces) { Text(HomeScenePresentation.roomLabel($0.id, in: home)).tag($0.id) }
                 }
             }
             Button(s("Restart with these assumptions")) {
@@ -275,7 +284,7 @@ struct RehearsalView: View {
 
     private func choiceFeedback(_ option: DecisionPoint.Option) -> some View {
         let l = model.localizer
-        return SectionCard(title: l("ui.rehearse.youChose"), systemImage: "checkmark.circle", tint: Theme.success) {
+        return SectionCard(title: l("ui.rehearse.youChose"), systemImage: "arrow.turn.down.right", tint: Theme.accent) {
             Text(l(option.labelKey)).font(.body.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
             Text(l(option.feedbackKey)).font(.callout).fixedSize(horizontal: false, vertical: true)
         }
@@ -366,7 +375,7 @@ struct SpatialRehearsalScene: View {
         guard let state else { return [] }
         let l = model.localizer
         var out: [String] = []
-        let newRooms = state.affectedSpaceIDs.filter { !(previous?.affectedSpaceIDs.contains($0) ?? false) }.compactMap { home.space($0)?.label }
+        let newRooms = state.affectedSpaceIDs.filter { !(previous?.affectedSpaceIDs.contains($0) ?? false) }.compactMap { id in home.space(id).map { _ in HomeScenePresentation.roomLabel(id, in: home) } }
         if !newRooms.isEmpty { out.append(l("ui.scene.newAffected", ["rooms": newRooms.joined(separator: ", ")])) }
         let newPortals = state.affectedPortalIDs.filter { !(previous?.affectedPortalIDs.contains($0) ?? false) }
         if !newPortals.isEmpty { out.append(l("ui.scene.newBlocked", ["count": "\(newPortals.count)"])) }
@@ -406,30 +415,35 @@ struct SpatialRehearsalScene: View {
                 .accessibilityIdentifier("rehearsal.changes")
             }
             if let room = HomeScenePresentation.startingRoom(in: home, route: route) {
-                Label(model.localizer("spatial.recorded-start-room", ["room": room.label]), systemImage: "person.crop.circle")
+                Label(model.localizer("spatial.recorded-start-room", ["room": HomeScenePresentation.roomLabel(room.id, in: home)]), systemImage: "person.crop.circle")
                     .font(.footnote)
             } else if route != nil {
                 // Only when this stage has a route request: before the first route there is nothing to contradict later.
                 Text(model.localizer("spatial.start-room-unknown")).font(.footnote)
             }
+            if state?.hazard == .homeFire && (household.housing.homeType == .apartment || home.connectors.contains { $0.kind == .elevator }) {
+                Label(model.localizer("spatial.fire-no-elevators"), systemImage: "exclamationmark.triangle")
+                    .font(.callout).foregroundStyle(Theme.caution)
+                    .accessibilityIdentifier("rehearsal.noElevators")
+            }
             if let state {
                 Text(state.assumptionKey.map { model.localizer($0) } ?? state.assumption).font(.footnote).foregroundStyle(.secondary)
                 if !state.affectedSpaceIDs.isEmpty {
-                    Label(state.affectedSpaceIDs.compactMap { home.space($0)?.label }.joined(separator: ", "), systemImage: "exclamationmark.triangle")
+                    Label(state.affectedSpaceIDs.compactMap { id in home.space(id).map { _ in HomeScenePresentation.roomLabel(id, in: home) } }.joined(separator: ", "), systemImage: "exclamationmark.triangle")
                         .font(.callout)
                 }
             }
             if let exposed = state?.exposedSpaceIDs, !exposed.isEmpty {
-                Label(model.localizer("spatial.window-exposure", ["rooms": exposed.compactMap { home.space($0)?.label }.joined(separator: ", ")]), systemImage: "window.vertical.closed")
+                Label(model.localizer("spatial.window-exposure", ["rooms": exposed.compactMap { id in home.space(id).map { _ in HomeScenePresentation.roomLabel(id, in: home) } }.joined(separator: ", ")]), systemImage: "window.vertical.closed")
                     .font(.footnote)
             }
             if let route {
                 if let path = route.primary {
-                    Text(path.spaceSequence.compactMap { id in
-                        guard let room = home.space(id) else { return nil }
-                        let floor = home.floors.first(where: { $0.id == room.floorID })?.label ?? ""
-                        return home.floors.count > 1 ? "\(room.label) (\(floor))" : room.label
-                    }.joined(separator: " → ")).font(.callout.weight(.semibold))
+                    Label(path.spaceSequence.map { HomeScenePresentation.roomLabel($0, in: home) }.joined(separator: " → "), systemImage: "figure.walk.departure")
+                        .font(.callout.weight(.semibold))
+                    Label(model.localizer(HomeScenePresentation.alternativeKey(route)), systemImage: HomeScenePresentation.alternativeSymbol(route))
+                        .font(.footnote).foregroundStyle(route.alternativeStatus == .independent ? Theme.accent : Theme.caution)
+                        .accessibilityIdentifier("rehearsal.routeRedundancy")
                     if !path.verificationNeeded.isEmpty { Text(s("Some opening measurements still need confirmation.")).font(.footnote) }
                 } else {
                     Label(s(route.noRouteReason == .blockedByScenario ? "No supported route: the starting room or a required connection is affected." : "No supported route from the recorded starting room. Review the layout, destination and this person's access needs."), systemImage: "exclamationmark.triangle")
@@ -440,7 +454,7 @@ struct SpatialRehearsalScene: View {
             DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
                 if show3D {
                     DollhouseView(home: home, routes: currentPaths, floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230)
-                    DollhouseKey(home: home, spatialState: state, selectedRoute: route, hasRoutes: !currentPaths.isEmpty)
+                    DollhouseKey(home: home, floorID: sceneFloorID, spatialState: state, selectedRoute: route, hasRoutes: currentPaths.contains { path in path.legs.contains { sceneFloorID == nil || $0.floorID == sceneFloorID } })
                 }
             }
         }
@@ -633,7 +647,7 @@ struct RouteSummaryView: View {
                     let start = RehearsalPresentation.startingRoom(route.request.startSpaceID, in: home, localizer: l)
                     VStack(alignment: .leading, spacing: 4) {
                         if let p = route.primary {
-                            Text(l("ui.route.from", ["start": start, "steps": p.spaceSequence.compactMap { home.space($0)?.label }.joined(separator: " → ")]))
+                            Text(l("ui.route.from", ["start": start, "steps": p.spaceSequence.compactMap { id in home.space(id).map { _ in HomeScenePresentation.roomLabel(id, in: home) } }.joined(separator: " → ")]))
                             switch route.alternativeStatus {
                             case .independent: Text(l("common.route.independent")).font(.footnote).foregroundStyle(.secondary)
                             case .sharesChokepoint: Text(l("common.route.shared")).font(.footnote).foregroundStyle(Theme.caution)
@@ -646,8 +660,8 @@ struct RouteSummaryView: View {
                     }
                     .font(.callout)
                 }
-                FloorPlanView(home: home, routes: routes.compactMap(\.primary), highlightedFloorID: home.floors.first?.id)
-                    .frame(height: 260)
+                FloorPlanView(home: home, routes: routes.compactMap(\.primary), highlightedFloorID: nil)
+                    .frame(height: 300)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.control))
                     .accessibilityLabel(l("spatial.route-scene-summary"))
             }
@@ -672,7 +686,12 @@ struct DebriefView: View {
                     Text(l("ui.debrief.intro")).font(.callout).foregroundStyle(.secondary)
                     SectionCard(title: l("common.topPreparations"), systemImage: "star") {
                         ForEach(recs) { rec in
-                            NavigationLink { RecommendationDetailView(recommendation: rec) } label: {
+                            NavigationLink {
+                                RecommendationDetailView(recommendation: rec, openPreparations: {
+                                    model.pendingTab = RootView.Tab.prepare.rawValue
+                                    dismiss()
+                                })
+                            } label: {
                                 RecommendationRow(recommendation: rec)
                             }
                             .buttonStyle(.plain)
@@ -766,18 +785,13 @@ struct RecommendationRow: View {
 struct RecommendationDetailView: View {
     @Environment(AppModel.self) private var model
     let recommendation: Recommendation
+    let openPreparations: () -> Void
     @State private var showComparison = false
     @State private var comparing = false
 
     private var preparation: NextStep? {
-        let canonical = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
-            "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water", "act.fire.meeting-point": "prep.nearMeetup",
-            "act.fire.smoke-alarms": "prep.smokeAlarms", "act.assist.assign-helper": "prep.helper"][recommendation.actionID] ?? recommendation.actionID
         guard let summary = model.nextSteps else { return nil }
-        return (summary.toDo + summary.completed).first {
-            $0.recommendation.id == recommendation.id
-                || ($0.recommendation.actionID == canonical && $0.recommendation.subjectID == recommendation.subjectID)
-        }
+        return NextSteps.matchingPreparation(for: recommendation, in: summary)
     }
 
     var body: some View {
@@ -797,9 +811,19 @@ struct RecommendationDetailView: View {
                 .navigationDestination(isPresented: $showComparison) { ComparisonView() }
         }
         else {
-            // A changed household can resolve an old rehearsal gap. The real facts remain editable;
-            // a generic Done button never certifies a route or medical compatibility.
-            FocusedHouseholdEditor(focus: .supplies)
+            ScrollView {
+                SectionCard(title: model.localizer("ui.task.changedTitle"), systemImage: "arrow.triangle.2.circlepath") {
+                    Text(model.localizer("ui.task.changedBody")).foregroundStyle(.secondary)
+                    Text(model.localizer(recommendation.titleKey, recommendation.localizedTemplateValues(household: model.household, localizer: model.localizer)))
+                        .font(.headline)
+                    Button(action: openPreparations) {
+                        Label(model.localizer("ui.debrief.goPrepare"), systemImage: "checklist")
+                    }
+                    .buttonStyle(.primary)
+                    .accessibilityIdentifier("recommendation.currentPreparations")
+                }.padding()
+            }
+            .background(Theme.background)
         }
     }
 }

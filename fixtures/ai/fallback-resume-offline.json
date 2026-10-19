@@ -7,8 +7,8 @@
   "model": null,
   "sdk": "2.30.0",
   "prompt": {
-    "version": "director/5",
-    "sha256": "0533542d05a4ab59ae9153d044322d527524c8e94f1bfdfd6bc33b2f1de74bfd"
+    "version": "director/7",
+    "sha256": "4a15a5f93bb98069c45995b050c0e4f1660c5dda1e5893f5d8567edb63e2ba3e"
   },
   "metrics": {
     "calls": 2,
@@ -18,8 +18,8 @@
     ],
     "outcomes": [],
     "prompt": {
-      "version": "director/5",
-      "sha256": "0533542d05a4ab59ae9153d044322d527524c8e94f1bfdfd6bc33b2f1de74bfd"
+      "version": "director/7",
+      "sha256": "4a15a5f93bb98069c45995b050c0e4f1660c5dda1e5893f5d8567edb63e2ba3e"
     }
   },
   "trace": [
@@ -4863,6 +4863,12 @@
                 "pt-kitchen-hall",
                 "pt-back"
               ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
+              ],
               "exclusions": [
                 {
                   "elementID": "pt-win-bed1",
@@ -4893,6 +4899,12 @@
                 "pt-bed1-hall",
                 "pt-kitchen-hall",
                 "pt-back"
+              ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [
+                "pt-bed1-hall",
+                "sp-hall"
               ],
               "exclusions": [
                 {
@@ -4926,6 +4938,14 @@
                 "pt-living-kitchen",
                 "pt-front"
               ],
+              "alternativeStatus": "sharesChokepoint",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "sp-hall",
+                "sp-kitchen"
+              ],
               "exclusions": [
                 {
                   "elementID": "pt-win-bed1",
@@ -4954,6 +4974,9 @@
                 "pt-living-kitchen",
                 "pt-back"
               ],
+              "alternativeStatus": "independent",
+              "alternativeConnectorIDs": [],
+              "sharedChokepointIDs": [],
               "exclusions": [
                 {
                   "elementID": "pt-win-bed1",

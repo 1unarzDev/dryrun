@@ -66,3 +66,25 @@ it('replays latest provider wording without promoting a locked bathroom or decla
   if(exits){expect(exits.why).toContain('do not establish a walking exit');expect(exits.why).not.toContain('not safe exits');}
  }
 });
+
+it('preserves shared-stair status and compiles a drill rationale without invented independence',async()=>{
+ const data=JSON.parse(await readFile('../../fixtures/ai/housing-features-live-v7.json','utf8')).outputs[2];
+ const route=data.context.scene.planningRoutes[0];
+ route.alternativeStatus='sharesChokepoint';route.alternativeConnectorIDs=['cn-stairs'];route.sharedChokepointIDs=['cn-stairs'];
+ expect(featureContext.safeParse(data.context).success).toBe(true);
+ const selection={selected:data.preparation.tasks.map((t:any)=>({candidateID:t.id,why:t.why,evidenceIDs:t.evidenceIDs})),inventoryObservations:[],question:null};
+ const runner=new FeatureRunner({async turn(input){expect(input.instruction).toContain('elevators are excluded from fire egress');return {steps:[],calls:[],usage:{},text:JSON.stringify(selection)}}});
+ const output:any=await runner.run('preparation',data.context);
+ const drill=output.tasks.find((t:any)=>t.actionID==='prep.fireDrill');
+ expect(drill.why).toContain('shares a chokepoint');expect(drill.why).toContain('does not establish');expect(drill.why).not.toContain('two primary');
+ route.alternativeStatus='inventedSafe';expect(featureContext.safeParse(data.context).success).toBe(false);
+});
+
+it('does not turn a smoke-alarm test into a guarantee of future fire performance',async()=>{
+ const data=JSON.parse(await readFile('../../fixtures/ai/housing-features-live-v8.json','utf8')).outputs[2];
+ const selection={selected:data.preparation.tasks.map((t:any)=>({candidateID:t.id,why:t.why,evidenceIDs:t.evidenceIDs})),inventoryObservations:[],question:null};
+ const runner=new FeatureRunner({async turn(){return {steps:[],calls:[],usage:{},text:JSON.stringify(selection)}}});
+ const output:any=await runner.run('preparation',data.context);
+ const alarm=output.tasks.find((t:any)=>t.actionID==='prep.smokeAlarms');
+ expect(alarm.why).toContain('without guaranteeing');expect(alarm.why).not.toContain('ensures');
+});
