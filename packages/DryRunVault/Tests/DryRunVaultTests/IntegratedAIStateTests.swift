@@ -39,4 +39,25 @@ import DryRunCore
   }
  }
 
+ @Test func selectedCameraMetadataIsEncryptedAndDeletionPersists() async throws {
+  struct Recording:Decodable {var geometry:RoomImageCaptureGeometry}
+  var root=URL(fileURLWithPath:#filePath)
+  for _ in 0..<5 {root.deleteLastPathComponent()}
+  var record=try DryRunJSON.decoder().decode(Recording.self,from:Data(contentsOf:root.appendingPathComponent("fixtures/ai/image-geometry-v1.json"))).geometry
+  record.cameraFrameID="PRIVATE-CAMERA-FRAME-CANARY"
+  var state=IntegratedAIState(imageGeometryRecords:[record])
+  var payload=canaryPayload();payload.integratedAIState=try DryRunJSON.encoder().encode(state)
+  let fixture=Fixture();defer {try? FileManager.default.removeItem(at:fixture.root)}
+  try await fixture.repo.save(payload)
+  let loaded=try #require(try await fixture.repo.load())
+  let restored=try DryRunJSON.decoder().decode(IntegratedAIState.self,from:#require(loaded.integratedAIState))
+  #expect(restored.imageGeometryRecords==[record])
+  for (_,bytes) in allFileBytes(under:fixture.root) {#expect(!contains(bytes,record.cameraFrameID));#expect(!contains(bytes,record.captureFrameID))}
+  try state.removeImageGeometry(imageID:record.imageID,persist:{_ in})
+  payload.integratedAIState=try DryRunJSON.encoder().encode(state)
+  try await fixture.repo.save(payload)
+  let deleted=try #require(try await fixture.repo.load())
+  #expect(try DryRunJSON.decoder().decode(IntegratedAIState.self,from:#require(deleted.integratedAIState)).imageGeometryRecords?.isEmpty==true)
+ }
+
 }

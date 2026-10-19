@@ -55,3 +55,17 @@ it('keeps optional reviewed item kind separate from broad inventory category',as
  for(const preparationKind of [undefined,null,'flashlight'])expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,preparationKind}],question:null}).success).toBe(true);
  expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,preparationKind:'any-light-is-a-flashlight'}],question:null}).success).toBe(false);
 });
+
+it('accepts submitted-image metadata but rejects the actual local calibration companion before provider dispatch',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {FeatureRunner}=await import('../src/features.js');
+ const fixture=JSON.parse(await readFile('../../fixtures/ai/image-geometry-v1.json','utf8'));
+ expect(imageManifest.parse(fixture.manifest)).toEqual(fixture.manifest);
+ const household={revision:1,people:[],pets:[],equipment:[],transport:'unknown',limitedBudget:false,regionID:'synthetic',evidence:[]};
+ const context={household,tasks:[],gaps:[],allowedActionIDs:[],allowedCriterionIDs:[],images:[fixture.manifest]};
+ let calls=0;
+ const runner=new FeatureRunner({async turn(){calls++;throw new Error('must_not_dispatch')}});
+ await expect(runner.run('home',{...context,images:[{...fixture.manifest,captureGeometry:fixture.geometry}]})).rejects.toThrow();
+ await expect(runner.run('home',{...context,cameraToCapture:fixture.geometry.cameraToCapture})).rejects.toThrow();
+ expect(calls).toBe(0);
+});

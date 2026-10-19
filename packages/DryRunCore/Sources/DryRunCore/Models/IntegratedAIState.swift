@@ -7,8 +7,10 @@ public struct IntegratedAIState: Codable, Sendable {
     public var sessions:[SimulationSession]
     public var practiceAttempts:[PracticeAttempt]
     public var scorecards:[PreparednessScorecard]
-    public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[]){
-        self.inventory=inventory;self.concerns=concerns;self.sessions=sessions;self.practiceAttempts=practiceAttempts;self.scorecards=scorecards
+    /// Optional local-only metadata for selected frames; absent in historical state. No image/depth bytes.
+    public var imageGeometryRecords:[RoomImageCaptureGeometry]?
+    public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[],imageGeometryRecords:[RoomImageCaptureGeometry]?=nil){
+        self.inventory=inventory;self.concerns=concerns;self.sessions=sessions;self.practiceAttempts=practiceAttempts;self.scorecards=scorecards;self.imageGeometryRecords=imageGeometryRecords
     }
     /// Legacy intake can resume/import an attempt, but cannot establish pre-feedback eligibility.
     /// Use beginPractice(...sessionID:library:persist:) for new scored checks.

@@ -84,3 +84,5 @@ The non-device /2 practice plan adds `scripts/practice-nondevice-eval.ts` and `s
 `pnpm exec tsx scripts/practice-order-eval.ts` runs and exactly replays both reverse-order practice variants after the forward fixture generators. It compares bound sources and correct competency credits and checks pre-feedback resume. Included in portable verification; synthetic execution consistency only, with human variant equivalence still pending.
 
 Home context /2: `pnpm exec tsx scripts/home-scene-eval.ts` validates four actual-host safety-attribute/route cases, strict cross-language schemas and historical /1 support without model calls. See [home-scene-context.md](../../docs/ai/home-scene-context.md) for minimization, recorded evidence and native checks. Included in portable verification.
+
+The local image-calibration companion is deliberately absent from cloud schemas. See [image-geometry.md](../../docs/ai/image-geometry.md) for Swift transform/provenance helpers, encrypted selected-frame metadata and exact native capture/deletion checks. Gateway tests reject accidental companion/matrix forwarding before provider dispatch.
