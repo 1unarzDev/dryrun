@@ -1,3 +1,4 @@
+import {executeDirectorTool} from './director-tools.js';
 import {readFile,writeFile} from 'node:fs/promises';
 import {PublicEvidenceTools} from '../src/evidence.js';
 import {Host} from './host.js';
@@ -38,9 +39,9 @@ try{
   let directed:any=await gateway.start('synthetic-pipeline',{contractVersion:'dryrun.ai/1',requestID:'pipeline-'+sample,role:'director',synthetic:true,context:directorContext});
   const adaptiveTrace:unknown[]=[];
   while(directed.status==='needs_client_tools'){
-   const call=directed.calls[0];const preview=await host.request({op:'preview',session:state.session,commit:{id:'preview',actor:'director',baseRevision:state.receipt.revision,commands:[call.arguments.command]}});
+   const call=directed.calls[0];const preview=await executeDirectorTool(host,state,binding,call);
    adaptiveTrace.push({tool:call.name,arguments:call.arguments,preview:preview.receipt});
-   directed=await gateway.resume('synthetic-pipeline',{token:directed.token,binding,callID:call.id,result:{binding,snapshot:minimizedSnapshot(preview.receipt),contextDigest:preview.receipt.contextDigest}});
+   directed=await gateway.resume('synthetic-pipeline',{token:directed.token,binding,callID:call.id,result:preview.result});
   }
   if(directed.status!=='completed'){await writeFile('/tmp/dryrun-pipeline-failure.json',JSON.stringify({synthetic:true,sample,result:directed,metrics:gateway.metrics,adaptiveTrace},null,2));throw new Error('adaptive_pipeline_unavailable');}
   const {id,actor,baseRevision,commands}=directed.proposal;
@@ -53,5 +54,5 @@ try{
   console.log(JSON.stringify({sample,calls:runner.calls+gateway.metrics.calls,status:'completed'}));
   outputs.push({synthetic:true,sample,session:state.session,inventory:confirmedInventory,context,preparation,resources,stress,executed,adaptiveTrace,council,acceptedAssessments:assessment.assessments,scorecard:assessment.scorecard});
  }
- await writeFile('../../fixtures/ai/integrated-pipeline.json',JSON.stringify({model:'gemini-3.1-flash-lite',sdk:'2.30.0',recordedAt:new Date().toISOString(),calls:runner.calls+gateway.metrics.calls,usage:[...runner.usage,...gateway.metrics.usage],outputs},null,2));console.log(JSON.stringify({status:'passed',households:2,calls:runner.calls+gateway.metrics.calls}));
+ await writeFile(process.env.DRYRUN_PIPELINE_OUTPUT??'../../fixtures/ai/integrated-pipeline.json',JSON.stringify({model:'gemini-3.1-flash-lite',sdk:'2.30.0',recordedAt:new Date().toISOString(),calls:runner.calls+gateway.metrics.calls,usage:[...runner.usage,...gateway.metrics.usage],outputs},null,2));console.log(JSON.stringify({status:'passed',households:2,calls:runner.calls+gateway.metrics.calls}));
 }finally{host.close();}

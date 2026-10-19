@@ -60,7 +60,7 @@ while let line = readLine() {
             var input=session.initial,local=IntegratedAIState(inventory:request.inventory ?? InventoryLedger())
             let date=ISO8601DateFormatter().date(from:"2026-10-19T00:00:00Z")!
             try local.confirmInventory(items,household:&input.household,baseHouseholdRevision:input.household.revision,baseInventoryRevision:local.inventory.revision,at:date,persist:{_,_ in})
-            session=SimulationSession(id:session.id,initial:input);confirmedInventory=local.inventory
+            session=SimulationSession(id:session.id,initial:input,inventory:SessionInventorySeed(ledger:local.inventory,asOf:date));confirmedInventory=local.inventory
         }
         if request.op == "commit", let commit = request.commit { try session.commit(commit, library: library) }
         if request.op == "fallback" { try session.commit(session.fallback(), library: library) }
@@ -74,7 +74,7 @@ while let line = readLine() {
             scorecard = try ScoreCompiler.compile(rubric:rubric,assessments:assessments!,attempts:request.attempts ?? [])
         }
         if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = [try inventory.waterGap(people:session.initial.household.people.count,at:date)]}
-        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention)}
+        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory)}
         let response = HostResponse(session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.initial.variants) }, householdContext: HouseholdContextSnapshot(session.initial.household), homeScene: session.initial.home.map(HomeSceneContext.init), preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
         print(String(decoding: try encoder.encode(response), as: UTF8.self))
         fflush(nil)

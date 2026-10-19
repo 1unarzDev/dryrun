@@ -44,14 +44,14 @@ public enum ScoreCompiler {
               rubric.knownGapCap.isFinite,rubric.unknownGapCap.isFinite,
               (0...100).contains(rubric.knownGapCap),(0...100).contains(rubric.unknownGapCap),
               Set(attempts.map(\.id)).count==attempts.count,Set(attempts.map(\.sequence)).count==attempts.count,
-              abs(rubric.domainWeights.values.reduce(0,+)-100)<0.001,
+              abs(rubric.domainWeights.keys.sorted().reduce(0){$0 + rubric.domainWeights[$1]!}-100)<0.001,
               Set(rubric.criteria.map(\.id)).count==rubric.criteria.count,
               Set(assessments.map(\.criterionID)).count==assessments.count else {throw SessionError.invalidCommand}
         let byID=Dictionary(uniqueKeysWithValues:assessments.map{($0.criterionID,$0)})
         guard byID.keys.allSatisfy({key in rubric.criteria.contains{$0.id==key}}) else {throw SessionError.invalidCommand}
         var domainEarned:[String:Double]=[:],domainAssessed:[String:Double]=[:],domainPossible:[String:Double]=[:]
         var statuses:[String:CriterionStatus]=[:],cap=100.0,reasons:[String]=[],hasAssessed=false
-        for c in rubric.criteria {
+        for c in rubric.criteria.sorted(by:{$0.id<$1.id}) {
             guard c.weight.isFinite,c.weight>0,!c.predicateIDs.isEmpty,Set(c.predicateIDs).count==c.predicateIDs.count,rubric.domainWeights[c.domain] != nil else {throw SessionError.invalidCommand}
             let a=byID[c.id] ?? CriterionAssessment(criterionID:c.id)
             guard a.predicates.keys.allSatisfy({c.predicateIDs.contains($0)}), a.predicates.isEmpty || !a.evidenceIDs.isEmpty else {throw SessionError.invalidCommand}
@@ -73,7 +73,7 @@ public enum ScoreCompiler {
             }
         }
         var earned=0.0,coverage=0.0,weight=0.0
-        for (domain,w) in rubric.domainWeights {if let possible=domainPossible[domain],possible>0{earned += w*(domainEarned[domain,default:0]/possible);coverage += w*(domainAssessed[domain,default:0]/possible);weight += w}}
+        for domain in rubric.domainWeights.keys.sorted() {let w=rubric.domainWeights[domain]!;if let possible=domainPossible[domain],possible>0{earned += w*(domainEarned[domain,default:0]/possible);coverage += w*(domainAssessed[domain,default:0]/possible);weight += w}}
         let preparation=hasAssessed && weight>0 ? 100*earned/weight : nil
         var practice=0.0,practiceAssessed=0
         // Latest attempt governs even if interrupted. Historical successful result cannot hide contrary evidence.

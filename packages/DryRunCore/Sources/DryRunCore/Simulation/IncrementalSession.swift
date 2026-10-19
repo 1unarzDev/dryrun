@@ -31,6 +31,7 @@ public struct SessionReceipt: Codable, Sendable, Equatable {
     public var events: [SimulationEvent]
     public var pending: [SessionCommand]
     public var finished: Bool
+    public var inventory:ExerciseInventory?
 }
 
 /// Serializable event-sourced session. Replay executes existing RunState, allocator, hazard and route rules.
@@ -39,9 +40,10 @@ public struct SimulationSession: Codable, Sendable {
     public let contractVersion: String
     public let id: String
     public let initial: RehearsalInput
+    public let inventory:SessionInventorySeed?
     public private(set) var commits: [SessionCommit]
-    public init(id: String, initial: RehearsalInput) {
-        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.commits = []
+    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil) {
+        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory; self.commits = []
     }
     public var revision: Int { commits.count }
     public func preview(_ commit: SessionCommit, library: ScenarioLibrary) throws -> SessionReceipt {
@@ -65,6 +67,8 @@ public struct SimulationSession: Codable, Sendable {
         guard commits.count<=128, let scenario = library.scenario(initial.scenarioID), scenario.version == initial.scenarioVersion else { throw SessionError.invalidCommand }
         let prepared = InterventionApplier.apply(initial.interventions, household: initial.household, home: initial.home)
         var run = RunState(scenario: scenario, input: initial, household: prepared.0, home: prepared.1, planner: EgressPlanner())
+        var supplies=try inventory.map(SessionSupplyLedger.init)
+        try supplies?.synchronize(&run)
         run.noteStaticUnknowns(); try run.reevaluate(trigger: nil, emit: false)
         var pending: [SessionCommand] = [], ended = false, scheduled = 0
         var scheduledIDs=Set<String>()
@@ -77,6 +81,9 @@ public struct SimulationSession: Codable, Sendable {
                 guard !ended else {throw SessionError.finished}
                 if commit.actor == "user" {
                     switch command.kind {
+                    case "takeSupply", "transferSupply":
+                        guard supplies != nil else {throw SessionError.invalidCommand}
+                        try supplies!.apply(command,run:run)
                     case "allocatePower":
                         guard let eqID = command.target, let eq = run.household.equipment.firstIndex(where: { $0.id == eqID }),
                             let source = command.value,
@@ -118,6 +125,7 @@ public struct SimulationSession: Codable, Sendable {
                         }
                     default: throw SessionError.invalidCommand
                     }
+                    try supplies?.synchronize(&run)
                     run.emit("user.\(commit.id)", title: "simulation.user.\(command.kind)", severity: .info, rule: "session.user/1", causedBy: nil, sources: [])
                     try run.reevaluate(trigger: run.events.last?.id, emit: true)
                 } else {
@@ -134,21 +142,25 @@ public struct SimulationSession: Codable, Sendable {
                             let right:(Int,Int,String)=(b.minute ?? 0,priorities[b.target ?? ""] ?? 0,b.target ?? "")
                             return left<right
                         }
-                        var boundary = until
+                        var boundary = min(until,supplies?.nextExpiryMinute(after:run.minute) ?? until)
                         var depletion = run.nextDepletion()
                         if let dep = depletion, dep.minute <= boundary { boundary = dep.minute }
                         while let event = pending.first, let t = event.minute, t <= boundary {
                             if let dep=depletion,dep.minute<=t {break}
                             pending.removeFirst(); run.advance(to: t)
+                            try supplies?.synchronize(&run)
                             guard var authored = scenario.events.first(where: { $0.id == event.target }) else { throw SessionError.invalidCommand }
                             authored.minute = t
                             guard Applicability.holds(authored.when, household: run.household, home: run.home, variants: run.effectiveVariants) else { throw SessionError.invalidCommand }
                             try run.apply(authored)
+                            try supplies?.synchronize(&run)
+                            if supplies != nil {try run.reevaluate(trigger:run.events.last?.id,emit:true)}
                             depletion = run.nextDepletion()
                             if let dep = depletion, dep.minute < boundary { boundary = dep.minute }
                         }
                         let simultaneous = run.depletionSchedule().filter { $0.minute == boundary }
                         run.advance(to: boundary)
+                        try supplies?.synchronize(&run)
                         // Depletion at the boundary is computed from the same ledger, never set by the director.
                         for dep in simultaneous { try run.handleDepletion(dep.resource) }
                         try run.reevaluate(trigger: run.events.last?.id, emit: true)
@@ -162,15 +174,15 @@ public struct SimulationSession: Codable, Sendable {
         run.snapshot()
         let snapshot = run.snapshots.last!
         let routes = run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }
-        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes)))
+        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory)))
         return SessionReceipt(sessionID: id, revision: revision, eventSequence: run.events.count, contextDigest: digest,
-                              snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended)
+                              snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state)
     }
     public func fallback() -> SessionCommit {
         SessionCommit(id: "fallback-\(revision)", actor: "director", baseRevision: revision, commands: [SessionCommand(kind: "requestDecision")])
     }
 }
-private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult] }
+private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed? }
 public enum StableDigest {
     /// Stable non-cryptographic replay identity; gateway uses SHA-256 for authorization/token binding.
     public static func of(_ data: Data) -> String {

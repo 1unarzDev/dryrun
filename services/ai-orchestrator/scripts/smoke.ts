@@ -1,3 +1,4 @@
+import {executeDirectorTool} from './director-tools.js';
 import {writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {Gateway} from '../src/gateway.js';
@@ -18,9 +19,9 @@ try {
  const context={binding,learningObjectives:['Compare stored-water policies and protect continuity without inventing supplies'],snapshot:minimizedSnapshot(state.receipt),profiles:state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),lastAction:{id:'submitted-water-action',kind:'useStoredWater',value:process.env.DRYRUN_ACTION??'all'}};
  let result:any=await gateway.start('synthetic-installation',{contractVersion:'dryrun.ai/1',requestID:`smoke-${turn}`,role:'director',synthetic:true,context});trace.push({context,result:safeResult(result)});
  while(result.status==='needs_client_tools'){
- const call=result.calls[0];const preview=await host.request({op:'preview',session:state.session,commit:{id:`preview-${turn}`,actor:'director',baseRevision:binding.revision,commands:[call.arguments.command]}});
+ const call=result.calls[0];const preview=await executeDirectorTool(host,state,binding,call);
  trace.push({tool:call.name,arguments:call.arguments,preview:preview.receipt});
- result=await gateway.resume('synthetic-installation',{token:result.token,binding,callID:call.id,result:{binding,snapshot:minimizedSnapshot(preview.receipt),contextDigest:preview.receipt.contextDigest}});trace.push({result:safeResult(result)});
+ result=await gateway.resume('synthetic-installation',{token:result.token,binding,callID:call.id,result:preview.result});trace.push({result:safeResult(result)});
  }
  if(result.status!=='completed'){await writeFile('../../fixtures/ai/failed-smoke.json',JSON.stringify({synthetic:true,trace,metrics:gateway.metrics},null,2));throw new Error('director_unavailable');}
  const {id,actor,baseRevision,commands}=result.proposal;

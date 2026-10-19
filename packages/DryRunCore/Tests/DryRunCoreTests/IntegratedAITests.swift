@@ -60,6 +60,15 @@ import Testing
             _=try session.commit(.init(id:"advance",actor:"director",baseRevision:session.revision,commands:[.init(kind:"advance",minute:scenario.durationMinutes)]),library:SimFixtures.library)
         }
     }
+    @Test func scoreIsIndependentOfRubricAndDictionaryOrder() throws {
+        var rubric=try DryRunJSON.decoder().decode(RubricDefinition.self,from:Data(contentsOf:SimFixtures.repoRoot.appendingPathComponent("content/ai/rubric-v0.json")))
+        let assessments=rubric.criteria.enumerated().map{n,c in CriterionAssessment(criterionID:c.id,predicates:Dictionary(uniqueKeysWithValues:c.predicateIDs.enumerated().map{($0.element,($0.offset+n)%3 != 0)}),evidenceIDs:["confirmed"]) }
+        let expected=try DryRunJSON.encoder().encode(ScoreCompiler.compile(rubric:rubric,assessments:assessments))
+        rubric.criteria.reverse()
+        rubric.domainWeights=Dictionary(uniqueKeysWithValues:rubric.domainWeights.sorted{$0.key>$1.key})
+        let actual=try DryRunJSON.encoder().encode(ScoreCompiler.compile(rubric:rubric,assessments:assessments.reversed()))
+        #expect(actual==expected)
+    }
     @Test func rubricMutationsAndLatestPractice() throws {
         let rubric=try DryRunJSON.decoder().decode(RubricDefinition.self,from:Data(contentsOf:SimFixtures.repoRoot.appendingPathComponent("content/ai/rubric-v0.json")))
         let full=rubric.criteria.map{CriterionAssessment(criterionID:$0.id,predicates:Dictionary(uniqueKeysWithValues:$0.predicateIDs.map{($0,true)}),evidenceIDs:["confirmed"]) }

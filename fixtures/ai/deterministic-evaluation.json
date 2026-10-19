@@ -87,10 +87,10 @@
           "shelter"
         ],
         "evidenceCoverage": 74.86111111111111,
-        "overall": 53.87499999999999,
+        "overall": 53.875,
         "practice": 25,
         "practiceAssessed": 2,
-        "preparation": 57.08333333333332,
+        "preparation": 57.08333333333333,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -122,7 +122,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 74.44444444444443,
+        "evidenceCoverage": 74.44444444444444,
         "overall": 54,
         "practice": 37.5,
         "practiceAssessed": 3,
@@ -300,11 +300,11 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 75.55555555555554,
-        "overall": 54.99999999999999,
+        "evidenceCoverage": 75.55555555555556,
+        "overall": 55,
         "practice": 37.5,
         "practiceAssessed": 3,
-        "preparation": 56.944444444444436,
+        "preparation": 56.94444444444444,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -336,11 +336,11 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 70.97222222222221,
-        "overall": 48.24999999999999,
+        "evidenceCoverage": 70.97222222222223,
+        "overall": 48.25,
         "practice": 37.5,
         "practiceAssessed": 4,
-        "preparation": 49.444444444444436,
+        "preparation": 49.44444444444444,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -373,10 +373,10 @@
           "shelter"
         ],
         "evidenceCoverage": 73.33333333333333,
-        "overall": 50.74999999999999,
+        "overall": 50.75,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 56.38888888888888,
+        "preparation": 56.388888888888886,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -478,7 +478,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 76.52777777777779,
+        "evidenceCoverage": 76.52777777777777,
         "overall": 55.62499999999999,
         "practice": 37.5,
         "practiceAssessed": 3,
@@ -659,10 +659,10 @@
           "shelter"
         ],
         "evidenceCoverage": 66.94444444444444,
-        "overall": 48.24999999999999,
+        "overall": 48.25,
         "practice": 37.5,
         "practiceAssessed": 3,
-        "preparation": 49.444444444444436,
+        "preparation": 49.44444444444444,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -729,10 +729,10 @@
           "shelter"
         ],
         "evidenceCoverage": 72.63888888888889,
-        "overall": 44.99999999999999,
+        "overall": 45,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 49.99999999999999,
+        "preparation": 50,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -764,7 +764,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 72.22222222222223,
+        "evidenceCoverage": 72.22222222222221,
         "overall": 51.25,
         "practice": 0,
         "practiceAssessed": 1,
@@ -871,7 +871,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 77.08333333333333,
+        "evidenceCoverage": 77.08333333333334,
         "overall": 55.62499999999999,
         "practice": 37.5,
         "practiceAssessed": 4,
@@ -907,7 +907,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 69.44444444444443,
+        "evidenceCoverage": 69.44444444444444,
         "overall": 50.25,
         "practice": 0,
         "practiceAssessed": 0,
@@ -1086,10 +1086,10 @@
           "shelter"
         ],
         "evidenceCoverage": 75.55555555555556,
-        "overall": 51.24999999999999,
+        "overall": 51.25,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 56.944444444444436,
+        "preparation": 56.94444444444444,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1122,10 +1122,10 @@
           "shelter"
         ],
         "evidenceCoverage": 72.63888888888889,
-        "overall": 46.24999999999999,
+        "overall": 46.25,
         "practice": 12.5,
         "practiceAssessed": 1,
-        "preparation": 49.99999999999999,
+        "preparation": 50,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1158,10 +1158,10 @@
           "shelter"
         ],
         "evidenceCoverage": 68.33333333333333,
-        "overall": 53.249999999999986,
+        "overall": 53.25,
         "practice": 25,
         "practiceAssessed": 2,
-        "preparation": 56.38888888888887,
+        "preparation": 56.388888888888886,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1263,10 +1263,10 @@
           "shelter"
         ],
         "evidenceCoverage": 74.86111111111111,
-        "overall": 51.37499999999999,
+        "overall": 51.375,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 57.08333333333332,
+        "preparation": 57.08333333333333,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1441,10 +1441,10 @@
           "escape"
         ],
         "evidenceCoverage": 70.13888888888889,
-        "overall": 51.12499999999999,
+        "overall": 51.125,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 56.80555555555555,
+        "preparation": 56.80555555555556,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1512,11 +1512,11 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 70.97222222222221,
-        "overall": 45.74999999999999,
+        "evidenceCoverage": 70.97222222222223,
+        "overall": 45.75,
         "practice": 12.5,
         "practiceAssessed": 2,
-        "preparation": 49.444444444444436,
+        "preparation": 49.44444444444444,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1620,10 +1620,10 @@
           "escape"
         ],
         "evidenceCoverage": 69.16666666666666,
-        "overall": 48.00000000000001,
+        "overall": 48,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 53.33333333333334,
+        "preparation": 53.33333333333333,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1725,7 +1725,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 71.25,
+        "evidenceCoverage": 71.24999999999999,
         "overall": 51.24999999999999,
         "practice": 37.5,
         "practiceAssessed": 3,
@@ -1798,10 +1798,10 @@
           "shelter"
         ],
         "evidenceCoverage": 73.88888888888889,
-        "overall": 46.999999999999986,
+        "overall": 46.99999999999999,
         "practice": 0,
         "practiceAssessed": 0,
-        "preparation": 52.22222222222221,
+        "preparation": 52.222222222222214,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1834,10 +1834,10 @@
           "shelter"
         ],
         "evidenceCoverage": 70.83333333333333,
-        "overall": 47.99999999999999,
+        "overall": 48,
         "practice": 0,
         "practiceAssessed": 1,
-        "preparation": 53.33333333333332,
+        "preparation": 53.33333333333333,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -1870,10 +1870,10 @@
           "shelter"
         ],
         "evidenceCoverage": 73.88888888888889,
-        "overall": 55.49999999999999,
+        "overall": 55.5,
         "practice": 37.5,
         "practiceAssessed": 2,
-        "preparation": 57.49999999999999,
+        "preparation": 57.5,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
         "statuses": {
@@ -2118,7 +2118,7 @@
           "escape",
           "shelter"
         ],
-        "evidenceCoverage": 66.25,
+        "evidenceCoverage": 66.24999999999999,
         "overall": 51.25,
         "practice": 62.5,
         "practiceAssessed": 4,

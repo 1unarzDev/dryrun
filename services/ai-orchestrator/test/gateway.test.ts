@@ -26,3 +26,38 @@ it('rejects startup without a secret and exhausts budgets before another provide
  const budget=new SpendBudget(0.01);expect(()=>budget.reserve()).toThrow('spend_budget');
  const gateway=new Gateway(new Provider(),()=>0,0);expect((await gateway.start('a',request) as any).status).toBe('unavailable');expect(gateway.metrics.calls).toBe(0);
 });
+
+it.each(['inspectScene','queryRoutes','evaluateResources','inspectDependencies','runCounterfactual'])('binds %s results to their tool and still requires an action preview',async(name)=>{
+ let turns=0;
+ const provider:AgentProvider={async turn(){turns++;const call={type:'function_call' as const,id:'inspect',name,arguments:name==='runCounterfactual'?{profileIDs:['p']}:{}};return turns===1?{steps:[call],text:'',calls:[call],usage:{}}:{steps:[],text:JSON.stringify({commands:[{kind:'requestDecision'}],purpose:'Wait',evidenceIDs:[]}),calls:[],usage:{}};}};
+ const gateway=new Gateway(provider);const start:any=await gateway.start('a',{...request,context:{...request.context,profiles:[{id:'p',rule:'reviewed',minute:0}]}});
+ expect(start.status).toBe('needs_client_tools');
+ const continuation={token:start.token,binding,callID:'inspect',result:{binding,snapshot,contextDigest:'abc'}};
+ await expect(gateway.resume('a',continuation)).rejects.toThrow('invalid_tool_result');
+ const observation=name==='inspectScene'?{kind:name}:name==='queryRoutes'?{kind:name,routes:[]}:name==='inspectDependencies'?{kind:name,dependencies:[]}:name==='runCounterfactual'?{kind:name,scope:'initial_household_with_selected_profiles',failed:false,criterionID:'water',dependencyIDs:[],baseline:snapshot}:{kind:name};
+ // A wrong tool result cannot consume the valid continuation.
+ await expect(gateway.resume('a',{...continuation,result:{...continuation.result,observation:{kind:'queryRoutes',routes:[],address:'private'}}})).rejects.toThrow();
+ expect((await gateway.resume('a',{...continuation,result:{...continuation.result,observation}}) as any).status).toBe('unavailable');
+ expect(turns).toBe(3); // one bounded repair, no inspection-only final proposal
+});
+
+it('rejects counterfactual profiles outside the supplied reviewed catalog',async()=>{
+ const provider:AgentProvider={async turn(){const call={type:'function_call' as const,id:'x',name:'runCounterfactual',arguments:{profileIDs:['invented']}};return {steps:[call],text:'',calls:[call],usage:{}};}};
+ expect((await new Gateway(provider).start('a',request) as any).status).toBe('unavailable');
+});
+
+it('limits optional investigations and disables tools after the required preview',async()=>{
+ const offered:{names:string[];mode:string|undefined}[]=[];
+ const provider:AgentProvider={async turn(input){
+  offered.push({names:input.tools.flatMap(t=>t.type==='function'&&t.name?[t.name]:[]),mode:input.toolMode});
+  if(offered.length<=3){const preview=offered.length===3;const call={type:'function_call' as const,id:'call-'+offered.length,name:preview?'evaluateCandidateAction':'evaluateResources',arguments:preview?{command:{kind:'advance',minute:20}}:{}};return {steps:[call],text:'',calls:[call],usage:{}};}
+  return {steps:[],text:JSON.stringify({commands:[{kind:'advance',minute:20}],purpose:'Use computed consequences',evidenceIDs:[]}),calls:[],usage:{}};
+ }};
+ const gateway=new Gateway(provider);let result:any=await gateway.start('a',request);
+ while(result.status==='needs_client_tools'){
+  const call=result.calls[0];const observation=call.name==='evaluateResources'?{kind:call.name}:undefined;
+  if(observation)await expect(gateway.resume('a',{token:result.token,binding,callID:call.id,result:{binding,snapshot,contextDigest:'wrong',observation}})).rejects.toThrow('invalid_tool_result');
+  result=await gateway.resume('a',{token:result.token,binding,callID:call.id,result:{binding,snapshot,contextDigest:observation?'abc':'preview',...(observation?{observation}:{})}});
+ }
+ expect(result.status).toBe('completed');expect(offered[2]).toEqual({names:['evaluateCandidateAction'],mode:'any'});expect(offered[3]?.mode).toBe('none');expect(gateway.metrics.calls).toBe(4);
+});

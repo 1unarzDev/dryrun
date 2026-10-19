@@ -1,7 +1,7 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {Host} from './host.js';
-const path='../../fixtures/ai/integrated-pipeline.json';
+const path=process.env.DRYRUN_PIPELINE_OUTPUT??'../../fixtures/ai/integrated-pipeline.json';
 const fixture=JSON.parse(await readFile(path,'utf8'));
 const rubric=JSON.parse(await readFile('../../content/ai/rubric-v0.json','utf8'));
 const host=new Host();

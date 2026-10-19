@@ -1,7 +1,7 @@
 import { GoogleGenAI, type Interactions } from '@google/genai';
 export type History = Interactions.Step[];
 export type ProviderReply = { steps: History; text: string; calls: Interactions.FunctionCallStep[]; usage: unknown };
-export interface AgentProvider { turn(input:{history:History;instruction:string;tools:Interactions.Tool[];modelRole?:'home'|'adjudication';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
+export interface AgentProvider { turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
 export class SpendBudget {
  spentUSD=0;calls=0;
  constructor(readonly limitUSD=Number(process.env.DRYRUN_MAX_USD??0.25)){}
@@ -12,7 +12,7 @@ export class GeminiProvider implements AgentProvider {
  private ai:GoogleGenAI;
  private queue:Promise<void>=Promise.resolve();private lastCall=0;
  constructor(key:string,readonly model='gemini-3.1-flash-lite',readonly budget=new SpendBudget(),private roleModels:Partial<Record<'home'|'adjudication',string>>={}){if(!key)throw new Error('missing_provider_secret');if([model,...Object.values(roleModels)].some(id=>!['gemini-3.1-flash-lite','gemini-3.8-flash'].includes(id)))throw new Error('unsupported_model');this.ai=new GoogleGenAI({apiKey:key});}
- async turn(input:{history:History;instruction:string;tools:Interactions.Tool[];modelRole?:'home'|'adjudication';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply>{
+ async turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply>{
  let release!:()=>void;const previous=this.queue;this.queue=new Promise<void>(resolve=>{release=resolve});await previous;
  try {
  const model=(input.modelRole&&this.roleModels[input.modelRole])||this.model;
@@ -27,7 +27,7 @@ export class GeminiProvider implements AgentProvider {
  const upperBoundUSD=(tokenBound*(model==='gemini-3.8-flash'?0.75:0.25)+2400*(model==='gemini-3.8-flash'?3.75:1.5))/1000000;
  this.budget.reserve(upperBoundUSD);this.lastCall=Date.now();
  const response=await this.ai.interactions.create({model,store:false,input:input.history,system_instruction:input.instruction,tools:input.tools,
- response_format:input.outputSchema&&(!input.tools.length||input.history.some(s=>s.type==='function_result'))?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:2400,temperature:0.2,tool_choice:input.tools.length?(!input.history.some(s=>s.type==='function_result')?'any':'none'):undefined}},{signal:input.signal});
+ response_format:input.outputSchema&&(!input.tools.length||input.history.some(s=>s.type==='function_result'))?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:2400,temperature:0.2,tool_choice:input.tools.length?(input.toolMode??(!input.history.some(s=>s.type==='function_result')?'any':'none')):undefined}},{signal:input.signal});
  this.budget.charge(response.usage,model,upperBoundUSD);
  const steps=response.steps??[];return {steps,text:response.output_text??'',calls:steps.filter(s=>s.type==='function_call'),usage:response.usage};
  }catch(error){const status=typeof error==='object'&&error&&'status'in error?error.status:undefined;throw new Error(status===429?'provider_rate_limited':input.signal.aborted?'provider_timeout_or_cancelled':'provider_unavailable');}finally{release();}
