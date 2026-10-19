@@ -30,7 +30,7 @@ struct FloorPlanView: View {
         VStack(spacing: 6) {
             if home.floors.count > 1 && highlightedFloorID == nil {
                 Picker(s("Floor"), selection: Binding(get: { floorID ?? "" }, set: { selectedFloorID = $0 })) {
-                    ForEach(home.floors) { f in
+                    ForEach(home.floors.sorted { ($0.level, $0.id) < ($1.level, $1.id) }) { f in
                         Text(routeFloors.contains(f.id) ? model.localizer("spatial.floor-route", ["floor": f.label]) : f.label).tag(f.id)
                     }
                 }

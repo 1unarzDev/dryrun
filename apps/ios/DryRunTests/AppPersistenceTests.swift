@@ -1,5 +1,6 @@
 import XCTest
 import DryRunCore
+import DryRunVault
 @testable import DryRun
 
 private actor ControlledStore: PrivateDataStore {
@@ -151,6 +152,91 @@ final class AppPersistenceTests: XCTestCase {
         XCTAssertTrue(saved)
         XCTAssertEqual(model.home?.id, SampleHomes.ranch.id)
         XCTAssertEqual(model.savedPlaces, [place])
+    }
+
+    func testConfirmedInventorySurvivesHouseholdEditsAndFailedWritesPublishNothing() async throws {
+        let store = ControlledStore()
+        let model = AppModel(store: store)
+        model.household = SampleHouseholds.oak; model.home = SampleHomes.ranch
+        let water = InventoryItem(id: "water-1", physicalID: "jug-1", category: "water", quantity: .confirmed(4),
+                                  unit: .usGallon, usableQuantity: .confirmed(4), accessible: .confirmed(true))
+        let date = Date(timeIntervalSince1970: 1_792_000_000)
+        let confirmed = await model.updateAIState { state, household in
+            try state.confirmInventory([water], household: &household, baseHouseholdRevision: household.revision,
+                                       baseInventoryRevision: state.inventory.revision, at: date) { _, _ in }
+        }
+        XCTAssertTrue(confirmed)
+        XCTAssertEqual(model.aiState.inventory.items.map(\.id), ["water-1"])
+        // An unrelated household edit carries the ledger through the same atomic snapshot.
+        let renamed = await model.updateHousehold { $0.people[0].alias = "Renamed (fictional)" }
+        XCTAssertTrue(renamed)
+        let saved = await store.snapshot
+        XCTAssertEqual(saved?.aiState?.inventory.items.map(\.id), ["water-1"])
+        // A failed write leaves both the published ledger and the stored one unchanged.
+        await store.failWrites()
+        let extra = InventoryItem(id: "water-2", physicalID: "jug-2", category: "water", quantity: .confirmed(1), unit: .usGallon)
+        let failed = await model.updateAIState { state, household in
+            try state.confirmInventory([extra], household: &household, baseHouseholdRevision: household.revision,
+                                       baseInventoryRevision: state.inventory.revision, at: date) { _, _ in }
+        }
+        XCTAssertFalse(failed)
+        XCTAssertEqual(model.aiState.inventory.items.map(\.id), ["water-1"])
+        let stored = await store.snapshot
+        XCTAssertEqual(stored?.aiState?.inventory.items.map(\.id), ["water-1"])
+    }
+
+    func testEncryptedVaultRoundTripsIntegratedAIStateAndRelaunchRestoresIt() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let keys = InMemoryVaultKeyStore()
+        func store() -> VaultPrivateDataStore {
+            VaultPrivateDataStore(repository: HouseholdVaultRepository(locations: VaultLocations(root: root), keyStore: keys,
+                                                                       protection: VaultFileProtection()))
+        }
+        let first = AppModel(store: store())
+        await first.useSampleHousehold(SampleHouseholds.oak)
+        let item = InventoryItem(id: "light-1", physicalID: "flashlight-1", category: "light", quantity: .confirmed(1),
+                                 unit: .count, preparationKind: .flashlight)
+        let confirmed = await first.updateAIState { state, household in
+            try state.confirmInventory([item], household: &household, baseHouseholdRevision: household.revision,
+                                       baseInventoryRevision: state.inventory.revision, at: Date()) { _, _ in }
+        }
+        XCTAssertTrue(confirmed)
+        // A fresh model over the same encrypted files is a relaunch.
+        let relaunched = AppModel(store: store())
+        await relaunched.loadPrivateData()
+        XCTAssertEqual(relaunched.aiState.inventory.items.map(\.id), ["light-1"])
+        XCTAssertEqual(relaunched.aiState.inventory.revision, first.aiState.inventory.revision)
+    }
+
+    func testAdaptiveExerciseResumesAfterRelaunchAndFailedSaveDoesNotAdvanceIt() async throws {
+        let store = ControlledStore()
+        let first = AppModel(store: store)
+        await first.start()
+        await first.useSampleHousehold(SampleHouseholds.oak)
+        await first.openAdaptive(scenarioID: "home-fire")
+        var exercise = try XCTUnwrap(first.adaptive)
+        // Advance to the first authored decision and answer it.
+        for _ in 0..<6 where exercise.receipt.directorState?.awaitingUserAction != true {
+            await first.advanceAdaptive()
+            exercise = try XCTUnwrap(first.adaptive)
+        }
+        let scenarios = try XCTUnwrap(first.scenarios)
+        let choice = try XCTUnwrap(LocalDirector.dueChoice(session: exercise.session, receipt: exercise.receipt, library: scenarios))
+        let answered = await first.submitAdaptive([SessionCommand(kind: "choose", target: choice.id, value: choice.options[0].id)])
+        XCTAssertTrue(answered)
+        let committed = try XCTUnwrap(first.adaptive)
+        // A failed write leaves the published exercise exactly where it was.
+        await store.failWrites()
+        await first.advanceAdaptive()
+        XCTAssertEqual(first.adaptive?.session.revision, committed.session.revision)
+        await store.allowWrites()
+        // Relaunch over the same store resumes the same session at the committed revision.
+        let relaunched = AppModel(store: store)
+        await relaunched.start()
+        await relaunched.openAdaptive(scenarioID: "home-fire")
+        XCTAssertEqual(relaunched.adaptive?.session.id, committed.session.id)
+        XCTAssertEqual(relaunched.adaptive?.receipt, committed.receipt)
     }
 
     func testGeometryEditInvalidatesEscapeAndDrillChecksOnlyAfterSuccessfulSave() async throws {
