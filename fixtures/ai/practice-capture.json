@@ -3092,5 +3092,6 @@
       "water": "unknown"
     }
   },
-  "tamperingRejected": true
+  "tamperingRejected": true,
+  "hiddenFirstResponseRejected": true
 }

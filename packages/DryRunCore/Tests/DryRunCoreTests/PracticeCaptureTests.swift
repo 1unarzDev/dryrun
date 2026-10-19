@@ -89,4 +89,25 @@ import Testing
         #expect(retest.sequence==2)
         #expect(try current.eligiblePracticeAttempts(library:SimFixtures.library).last?.answers.isEmpty==true)
     }
+    @Test func genericSessionActionsCannotBeHiddenBeforeScoredAnswers()throws {
+        var local=try state();try begin(&local)
+        try local.sessions[0].commit(.init(id:"unscored-first-response",actor:"user",baseRevision:1,commands:[.init(kind:"useStoredWater",value:"all")]),library:SimFixtures.library)
+        let original=try DryRunJSON.encoder().encode(local)
+        #expect(throws:SessionError.invalidCommand){try answer(&local,id:"improved",value:"essential")}
+        #expect(try DryRunJSON.encoder().encode(local)==original)
+        #expect(throws:SessionError.invalidCommand){try local.eligiblePracticeAttempts(library:SimFixtures.library)}
+        // Moving the declared start past the hidden action must not make it eligible either.
+        local.practiceAttempts[0].source!.startingRevision=2
+        #expect(throws:SessionError.invalidCommand){try local.eligiblePracticeAttempts(library:SimFixtures.library)}
+    }
+    @Test func completedCheckAllowsLaterTrainingWithoutRewritingAnswers()throws {
+        var local=try state();try begin(&local)
+        _=try answer(&local,value:"all")
+        for competency in ["adaptation","communication","continuity"] {_=try answer(&local,competency:competency,id:competency)}
+        let before=try local.eligiblePracticeAttempts(library:SimFixtures.library)[0].answers
+        try local.sessions[0].commit(.init(id:"later-training",actor:"user",baseRevision:local.sessions[0].revision,commands:[.init(kind:"useStoredWater",value:"essential")]),library:SimFixtures.library)
+        let after=try local.eligiblePracticeAttempts(library:SimFixtures.library)[0].answers
+        #expect(before.map(\.credit)==after.map(\.credit));#expect(after.first?.credit==0)
+    }
+
 }

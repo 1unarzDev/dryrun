@@ -1,6 +1,6 @@
 # Claude/Mac integration handoff
 
-Latest: household-assessment/4, preparation/3, validated/scoped inventory and 412 Core tests. Read the current acceptance ledger and policy/4 sections before historical notes below. No Xcode/iPhone verification has occurred here.
+Latest: household-assessment/4, preparation/3, validated/scoped inventory and 414 Core tests. Read the current acceptance ledger and policy/4 sections before historical notes below. No Xcode/iPhone verification has occurred here.
 
 Baseline: `main` / `436b243276e0f333131a1813b580382971949748`. Linux implementation adds Core files under Models/AI*, Models/HomeConcernReview/IntegratedAIState, Ranking/PreparationTaskCatalog/HouseholdAssessment/PreparednessScorecard, Simulation/IncrementalSession/PlanStressTest, Session/ResourceStrategyRefresh and Spatial/AIPlanDiagram; adds a Swift executable, private Node service, rubric/contracts/fixtures/docs; makes `RunState.input/household/model` mutable for session-local action application; adds an optional encrypted `VaultPayload.integratedAIState`. No native source/PDF/navigation/RoomPlan renderer is changed. Reconcile newer Mac changes before applying shared-file edits. The three untracked owner-supplied reference/audit files are preserved.
 
@@ -140,3 +140,6 @@ Policy/4 inventory acceptance update: run `pnpm --dir services/ai-orchestrator e
 
 
 Recorded-requirement scope follow-through: generic `gap(for:at:)` now shares the household scope rule. An unnamed requirement cannot consume person-reserved stock. Matching named instructions may use it; another person’s requirement cannot. Empty/duplicate requirement subject IDs reject. Core regression also checks that a scope-only change invalidates the resource strategy key. Test these reserved-care-supply semantics in native confirmation and explanations without inventing care instructions.
+
+
+Practice chronology audit: an unfinished scored check now requires its observations to match every actual user commit after its declared start, in order. Generic rehearsal commits cannot be omitted to substitute a later improved answer, and moving the start past a user action is rejected. All check actions, including unsupported/wrong ones, must go through `submitPracticeAction`; director commits may intervene. Once four observations are captured, later training may continue without rewriting those answers. On the phone, test both native action entry paths, interruption/restoration and a generic-commit bypass: invalid chronology must be reported and must never show an inflated score. Preserve the recorded trace; do not delete/reroll the attempt to hide the first action. Core **414 tests / 74 suites**, the extended practice-capture headless evaluation and gateway TypeScript typecheck passed. No new live calls or device checks were performed.

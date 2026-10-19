@@ -63,6 +63,10 @@ public extension IntegratedAIState {
               commit.baseRevision>=source.startingRevision,
               !practiceAttempts.flatMap({$0.observations ?? []}).contains(where:{$0.actionID==commit.id}),
               source.initialDigest==(try Self.practiceSourceDigest(sessions[s])) else {throw SessionError.invalidCommand}
+        // Every user action while the check is incomplete must be captured, including wrong or
+        // unsupported actions. A caller cannot rehearse through the generic session API and then
+        // submit a later, improved answer as its first response.
+        try Self.validatePracticeChronology(source:source,observations:observations,session:sessions[s])
         var candidate=self
         let receipt=try candidate.sessions[s].commit(commit,library:library)
         var answer:PracticeAnswer?
@@ -100,6 +104,7 @@ public extension IntegratedAIState {
                   Set(observations.map(\.actionID)).count==observations.count,
                   observations.map(\.acceptedRevision)==observations.map(\.acceptedRevision).sorted(),
                   observations.map(\.competencyID)==Array(Self.practiceOrder(attempt.variantID).prefix(observations.count)) else {throw SessionError.invalidCommand}
+            try Self.validatePracticeChronology(source:source,observations:observations,session:session)
             var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)
             var found=0
             let initialReceipt=try prefix.query(library:library)
@@ -125,6 +130,14 @@ public extension IntegratedAIState {
     }
     func compileScorecard(rubric:RubricDefinition,assessments:[CriterionAssessment],library:ScenarioLibrary)throws->PreparednessScorecard {
         try ScoreCompiler.compile(rubric:rubric,assessments:assessments,attempts:eligiblePracticeAttempts(library:library))
+    }
+    private static func validatePracticeChronology(source:PracticeAttemptSource,observations:[PracticeObservation],session:SimulationSession)throws {
+        guard source.startingRevision>=0,source.startingRevision<=session.commits.count,
+              session.commits.prefix(source.startingRevision).allSatisfy({$0.actor != "user"}) else {throw SessionError.invalidCommand}
+        let userIDs=session.commits.dropFirst(source.startingRevision).filter{$0.actor=="user"}.map(\.id)
+        let capturedIDs=observations.map(\.actionID)
+        guard Array(userIDs.prefix(observations.count))==capturedIDs,
+              observations.count==4 || userIDs.count==observations.count else {throw SessionError.invalidCommand}
     }
     private struct PracticeSourceSnapshot:Encodable {
         var initial:RehearsalInput
