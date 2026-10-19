@@ -232,8 +232,8 @@
       "nwsCountyIDs": [
         "TXC439"
       ],
-      "coverage": "notStarted",
-      "coverageNote": "Not verified: candidate official Tarrant County OEM pages returned HTTP 404 on 2026-10-09. No contact included rather than an unverified number. Map framing is approximate county browsing context; it is not a resource location or alert boundary.",
+      "coverage": "verifiedPartial",
+      "coverageNote": "County emergency management, county alert enrollment, Oncor outage and critical-care designation, Atmos gas emergency, Fort Worth water emergencies and Fort Worth alert status quoted from official pages on 2026-10-18 (automated fetch; human review pending). No shelter/warming/cooling sites curated. Map framing is approximate county browsing context; it is not a resource location or alert boundary.",
       "inTX25": "part",
       "mapCenterLatitude": 32.7732,
       "mapCenterLongitude": -97.3517,
@@ -444,6 +444,164 @@
       "checkedAt": "2026-10-09",
       "reviewState": "needsReview",
       "classification": "curated"
+    },
+    {
+      "contact": {
+        "phone": "817-884-1804",
+        "phoneNote": "Office line, Monday to Friday 9am to 5pm. For emergencies call 9-1-1.",
+        "url": "https://www.tarrantcountytx.gov/en/emergency-management.html",
+        "address": "100 E. Weatherford, Fort Worth, TX 76196"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-oem",
+      "name": "Tarrant County Emergency Management",
+      "publisher": "Tarrant County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Tarrant County, TX",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "County emergency management office for all hazards. Runs Tarrant Ready Alerts, the county's official mass notification system.",
+      "sourceIDs": [
+        "S57"
+      ]
+    },
+    {
+      "contact": {
+        "url": "https://www.tarrantcountytx.gov/en/emergency-management/emergency-notifications.html"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-alerts",
+      "name": "Tarrant Ready Alerts",
+      "publisher": "Tarrant County",
+      "serviceType": "alertEnrollment",
+      "jurisdiction": "Tarrant County, TX",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "Free, opt-in county alerts by cell phone, landline, email or text, such as tornado warnings and chemical incidents. You must register; Dry Run never registers you. Also keep Wireless Emergency Alerts turned on in your phone's settings.",
+      "sourceIDs": [
+        "S58"
+      ]
+    },
+    {
+      "contact": {
+        "phone": "888-313-4747",
+        "phoneNote": "24 hours. Text OUT to 66267 to report if enrolled in MyOncor Alerts; text REG to 66267 to enroll. For downed power lines, leave the area and call 9-1-1.",
+        "url": "https://www.oncor.com/content/oncorwww/us/en/home/faqs/faq-meter.html"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-oncor-outage",
+      "name": "Oncor outage reporting and MyOncor Alerts",
+      "publisher": "Oncor Electric Delivery",
+      "serviceType": "electricUtility",
+      "jurisdiction": "Oncor delivery area (most of Tarrant County; some homes are served by an electric cooperative or city utility)",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "Report an outage and get outage status updates. Your bill shows which company delivers your electricity.",
+      "sourceIDs": [
+        "S59"
+      ]
+    },
+    {
+      "contact": {
+        "url": "https://www.oncor.com/content/oncorwww/us/en/home/about-us/regulatory/chronic-condition-critical-care-critical-load.html",
+        "phoneNote": "Your physician submits the state form to the utility. Critical care designation lasts two years; chronic condition designation is usually 90 days."
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-oncor-critical-care",
+      "name": "Oncor critical care and chronic condition designation",
+      "publisher": "Oncor Electric Delivery / Public Utility Commission of Texas",
+      "serviceType": "assistanceRegistry",
+      "jurisdiction": "Oncor delivery area",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "For a household member who depends on an electric-powered medical device to sustain life, or has a serious chronic condition. Designated customers can get notice of planned interruptions and some disconnection protections. Designation does NOT guarantee uninterrupted electricity, so a backup plan is still needed.",
+      "sourceIDs": [
+        "S60"
+      ]
+    },
+    {
+      "contact": {
+        "phone": "866-322-8667",
+        "phoneNote": "Emergency line listed by Atmos Energy. If you smell gas, leave first, then call from a safe place.",
+        "url": "https://www.atmosenergy.com/safety"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-atmos",
+      "name": "Atmos Energy gas emergency line",
+      "publisher": "Atmos Energy",
+      "serviceType": "other",
+      "jurisdiction": "Atmos Energy service area (natural gas for much of Tarrant County)",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "Natural gas emergencies such as a suspected leak.",
+      "sourceIDs": [
+        "S61"
+      ]
+    },
+    {
+      "contact": {
+        "phone": "817-392-4477",
+        "phoneNote": "24/7 for water emergencies, select option 1. Other Tarrant cities have their own water utility.",
+        "url": "https://www.fortworthtexas.gov/departments/water/about-us"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-fw-water",
+      "name": "Fort Worth water emergencies",
+      "publisher": "City of Fort Worth Water Department",
+      "serviceType": "waterProvider",
+      "jurisdiction": "City of Fort Worth water customers",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "Report water main breaks and water service emergencies, and ask about boil-water or other advisories.",
+      "sourceIDs": [
+        "S62"
+      ]
+    },
+    {
+      "contact": {
+        "url": "https://www.fortworthtexas.gov/residents/my-services/Emergency-Alerts",
+        "phoneNote": "Email emo@fortworthtexas.gov."
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48439-fw-oem",
+      "name": "Fort Worth Office of Emergency Management alerts",
+      "publisher": "City of Fort Worth",
+      "serviceType": "alertEnrollment",
+      "jurisdiction": "City of Fort Worth",
+      "regionIDs": [
+        "48439"
+      ],
+      "summary": "The city's CodeRED sign-up was suspended by its vendor in November 2025. Fort Worth still sends Wireless Emergency Alerts and posts on social media as #FWOEM. Keep Wireless Emergency Alerts on, and sign up for Tarrant Ready.",
+      "sourceIDs": [
+        "S63"
+      ]
     }
   ],
   "sources": [
@@ -533,6 +691,62 @@
       "title": "Hood County Emergency Operations Center geocoder result for the official county address",
       "url": "https://www.openstreetmap.org/way/855408462",
       "checkedAt": "2026-10-16",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S57",
+      "publisher": "Tarrant County",
+      "title": "Emergency Management",
+      "url": "https://www.tarrantcountytx.gov/en/emergency-management.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S58",
+      "publisher": "Tarrant County",
+      "title": "Tarrant Ready Emergency Notifications",
+      "url": "https://www.tarrantcountytx.gov/en/emergency-management/emergency-notifications.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S59",
+      "publisher": "Oncor Electric Delivery",
+      "title": "Frequently asked questions: outages",
+      "url": "https://www.oncor.com/content/oncorwww/us/en/home/faqs/faq-meter.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S60",
+      "publisher": "Oncor Electric Delivery / Public Utility Commission of Texas",
+      "title": "Chronic Condition, Critical Care, Critical Load (16 TAC §25.497 as posted by Oncor)",
+      "url": "https://www.oncor.com/content/oncorwww/us/en/home/about-us/regulatory/chronic-condition-critical-care-critical-load.html",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S61",
+      "publisher": "Atmos Energy",
+      "title": "Safety",
+      "url": "https://www.atmosenergy.com/safety",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S62",
+      "publisher": "City of Fort Worth Water Department",
+      "title": "About us",
+      "url": "https://www.fortworthtexas.gov/departments/water/about-us",
+      "checkedAt": "2026-10-18",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S63",
+      "publisher": "City of Fort Worth",
+      "title": "Emergency alert system",
+      "url": "https://www.fortworthtexas.gov/residents/my-services/Emergency-Alerts",
+      "checkedAt": "2026-10-18",
       "reviewState": "needsReview"
     }
   ]

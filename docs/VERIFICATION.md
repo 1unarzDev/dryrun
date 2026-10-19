@@ -1,5 +1,31 @@
 # Verification record — October 17 revision
 
+## On-device LLM + Tarrant County pass — October 18, 2026 (Claude, simulator)
+
+| Check | Result |
+|---|---|
+| Core `swift test` | 333 tests / 53 suites passed (adds intake reader, grounding, briefing redaction/acceptance, deselected card line) |
+| Public-api tests incl. pack/source integrity and translation drift | 68 / 68 passed (7 Tarrant resources + sources S57–S63; 26 new EN/ES/VI keys baselined) |
+| DryRunTests, iPhone 18 Pro Max simulator (iOS 27 SDK) | 42 / 42 passed |
+| DemoJourneyUITests | 8 existing journeys passed; new `testDescribeHouseholdReviewThenTarrantCountyHelp` passed with the simulator's on-device model active (review shows oxygen concentrator and dog, no invented need; Help for Tarrant shows county OEM, Tarrant Ready and Oncor 888-313-4747) |
+| Real-model observations | Simulator model read "My mom … uses oxygen" as "uses a wheelchair" with no oxygen device → added `HouseholdIntake.ground` (medical facts must be supported by the family's words), regression test reproduces it. Briefing model wrote "a safe place" → "safe" now blocked unless the step says it; third-person tone → second-person instruction. After both fixes the Oak card showed two accepted notes and an overview in second person |
+| FoundationModels linking | Built binary loads FoundationModels as LC_LOAD_WEAK_DYLIB with the iOS 27 SDK (iOS 18–25 devices are not affected) |
+| Not done | Physical-device run of the new screens; Vietnamese briefing (no validator, card hidden); measured accuracy of the model on real family descriptions; human review of Tarrant resources and ES/VI copy; xcodebuild on this Mac does not exit after UI tests finish (tests complete; the process was stopped manually) |
+
+## First-run usability pass — October 18, 2026 (Claude, simulator)
+
+Scope: onboarding, the one-tap demo, the freeze rehearsal's first screen and decision feedback, the debrief's exit,
+household creation, and the card/Plan summary. Changes and findings are tabled in UI_AUDIT ("First-run pass").
+
+| Check | Result |
+|---|---|
+| Xcode 27 build for testing (iOS 27 simulator SDK) | Passes, no new warnings in changed files |
+| Core `swift test` (card builder change) | 320 tests / 51 suites passed |
+| Public-api locale tests incl. translation drift | 68 / 68 passed after re-recording the baseline for 9 re-translated and 22 new keys |
+| DryRunTests + DemoJourneyUITests, iPhone 18 Pro | 42 + 8 passed on each of three runs during the pass (identifiers `setup.finishLater`, `onboarding.create`, `plan.familyCard`, `card.page` kept) |
+| Running-app walk-throughs, iPhone 17e, in-memory store | Three passes by an independent reviewer agent: initial findings, then two re-checks confirming each fix on screen (intro card, immediate "You chose" card, debrief exits, sticky save with keyboard hidden, finish-card checklist, Plan summary with Grandpa first and no false "missing") |
+| Not done | VoiceOver/Reduce Motion/large text on the new screens; physical device; ES/VI copy is still a draft |
+
 ## Physical iPhone pass — October 18, 2026 (Claude, owner's iPhone)
 
 Device: iPhone 16 Pro (LiDAR), iOS 26.6.1, Developer Mode on, signed with the owner's free Personal Team through

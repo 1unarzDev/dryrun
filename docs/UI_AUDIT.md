@@ -1,5 +1,32 @@
 # UI audit — October 17 revision
 
+## First-run pass — October 18 (Claude, simulator iPhone 17e, in-memory store)
+
+Goal for this pass (owner's answers): the first 60 seconds for a judge, and a real family reaching a useful card in
+under two minutes. Two independent walk-throughs of the running app (fresh onboarding → "See how it works" → freeze
+rehearsal → debrief → Prepare/Plan; and "Set up my household" → card) found the problems below; each was fixed and
+re-checked on the simulator.
+
+| Screen | Found | Change |
+|---|---|---|
+| Plan card summary, card | Fully populated demo family read "Parent A: Not provided or not selected for this export" ×3 and "Still missing: Critical information, Last reviewed" | Core: with every clinical selection off, the critical section is one neutral line ("Critical information is turned off for sharing…") that never counts as missing; per-person lines appear only when that content is selected and read "Nothing recorded". Summary lists people with recorded needs first (Grandpa was hidden by `prefix(3)`), counts critical as missing only when nobody has anything, and no longer lists the review date as missing. "See how it works" turns all card content on for the example family; creating a real household or deleting everything resets to the opt-in default |
+| Onboarding | Both paths below ~95 words; three example-household cards competed with the two buttons | Shorter bullets; both buttons above the fold; a one-line note under each button; other examples behind a collapsed disclosure |
+| Rehearsal start | Empty box "Tap Next step to begin." and "Step 1 of 18" before anything happened | Intro card: scenario blurb, "You are practicing as Oak household (fictional): 4 people · Oxygen concentrator · …", example pill, how it works; label reads "18 steps" until the first step |
+| Decision | Choosing made the card vanish with no feedback until the debrief, ten taps later | "You chose" card with the option and its feedback sentence appears immediately after choosing and stays while the exercise is at that moment |
+| Debrief | Ended on "Still unconfirmed" with no way forward; Done returned to step 19 | Ends with "Set up my household" (example family; pushed inside the same sheet, saving replaces the example household and lands on Prepare) and "See what to prepare next" (switches to Prepare and pops Rehearse) |
+| Create household | Only exit was a list row "Finish later" hidden under the keyboard; a stray "Not sure / not provided" row; no contact asked, so the card had no phone number | Sticky "Save and continue" button (hidden while typing, keyboard toolbar Done), name hint, one "Someone to call in an emergency" name + phone, shorter address footer. Blank rows are dropped on save; a failed save keeps the draft |
+| Prepare (new household) | Landed on whatever tab was open before; "Do next (25)" starting with a tornado shelter; tiles below the fold; list visibly reordered a second after landing | "Finish your emergency card" checklist (contact · near meetup · backup meetup, each opening its editor) above the tiles, tiles above Do next; shown until all three exist. Waits for the six runs before listing. New household gets a fresh Prepare stack at the top; returning to onboarding resets to Prepare |
+| Settings | Delete dialog showed no Cancel | Explicit Cancel |
+| Copy | "Practice changes nothing until you mark a step done", "record the answer in its focused form", "These records satisfy their preparation checks…", "Preview below…" (preview was above) | Rewritten in plain words (EN/ES/VI drafts; baseline re-recorded) |
+
+Still open from these walk-throughs (content, not structure): eight "Next step" taps before the first decision in the
+freeze scenario; engine wording such as "continuity-planning gap", "confirmed compatible backup", "storage target, not a
+drinking prescription"; the final step being the pets footnote after "72 hours: end of the exercise"; unformatted phone
+numbers; "Choose above" wrapping in the bottom bar at default text size. Evidence: DemoJourneyUITests 8/8 and
+DryRunTests 42/42 (iPhone 18 Pro), core `swift test` 320/51 suites, public-api locale drift tests 68/68, three
+device-interaction walk-throughs on iPhone 17e. VoiceOver, Reduce Motion, iPad and physical-device checks of these
+screens are not yet done.
+
 ## Native simulator audit — October 18 (Claude)
 
 Structure after this pass (each primary editor is at most one transition from its tab root):

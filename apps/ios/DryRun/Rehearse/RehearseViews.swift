@@ -113,8 +113,11 @@ struct RehearsalView: View {
                     if let latest = events.last {
                         EventCard(event: latest, isCurrent: true, result: session.result)
                         changedServices(latest)
+                        if session.pendingDecision == nil, let (_, option) = answeredChoice(session, latest: latest) {
+                            choiceFeedback(option)
+                        }
                     } else {
-                        SectionCard { Text(l("ui.rehearse.ready")).foregroundStyle(.secondary) }
+                        intro(session)
                     }
                     if let decision = session.pendingDecision {
                         DecisionCard(decision: decision) { option in
@@ -223,12 +226,60 @@ struct RehearsalView: View {
     }
 
     /// "Step 2 of 6": progress through the exercise. Exercise minutes are not shown up front, so nothing reads as a
-    /// countdown or a prediction of how much time a household has.
+    /// countdown or a prediction of how much time a household has. Before the first step only the total is shown.
     private func stepLabel(_ session: RehearsalCursor) -> some View {
-        Label(model.localizer("ui.rehearse.step", ["step": "\(max(session.keyMomentsRevealed, 1))", "total": "\(session.keyMomentCount)"]), systemImage: "list.number")
+        let text = session.revealed == 0
+            ? model.localizer("ui.rehearse.stepCount", ["total": "\(session.keyMomentCount)"])
+            : model.localizer("ui.rehearse.step", ["step": "\(max(session.keyMomentsRevealed, 1))", "total": "\(session.keyMomentCount)"])
+        return Label(text, systemImage: "list.number")
             .font(.subheadline.weight(.semibold).monospacedDigit())
             .foregroundStyle(.secondary)
             .accessibilityIdentifier("rehearsal.step")
+    }
+
+    /// Who the family is and what is about to happen, so the first screen is not an empty box. The scenario blurb
+    /// is the same one shown on the Rehearse list; the household line matches onboarding.
+    private func intro(_ session: RehearsalCursor) -> some View {
+        let l = model.localizer
+        let household = session.result.input.household
+        return SectionCard(title: l("ui.rehearse.introTitle"), systemImage: "info.circle") {
+            Text(l("ui.scenario.\(scenarioID).blurb")).font(.title3.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+            Text(l("ui.rehearse.introHousehold", ["household": household.displayName, "summary": OnboardingView.summary(household, localizer: l)]))
+                .font(.callout)
+            if household.isFictional { StatusPill(text: l("family.example"), systemImage: "house", tint: Theme.caution) }
+            Text(l("ui.rehearse.introHow")).font(.footnote).foregroundStyle(.secondary)
+        }
+        .accessibilityIdentifier("rehearsal.intro")
+    }
+
+    /// The decision answered at the current step, until the exercise moves past that minute. The same option text and
+    /// feedback appear again in the debrief.
+    private func answeredChoice(_ session: RehearsalCursor, latest: SimulationEvent) -> (DecisionPoint, DecisionPoint.Option)? {
+        let result = session.result
+        let next = session.revealed < result.events.count ? result.events[session.revealed] : nil
+        // A decision just answered is one the cursor has reached but not moved past (same test that made it pending),
+        // or one whose outcome event is the newest thing on screen.
+        func current(_ d: DecisionPoint) -> Bool {
+            if latest.id == "evt.\(d.id)" { return true }
+            guard d.simMinute >= latest.simMinute else { return false }
+            guard let next else { return true }
+            return next.id == "evt.\(d.id)" || next.simMinute > d.simMinute
+        }
+        guard let decision = result.decisions
+                .filter({ result.input.choices[$0.id] != nil && current($0) })
+                .max(by: { ($0.simMinute, $0.id) < ($1.simMinute, $1.id) }),
+              let chosen = result.input.choices[decision.id],
+              let option = decision.options.first(where: { $0.id == chosen }) else { return nil }
+        return (decision, option)
+    }
+
+    private func choiceFeedback(_ option: DecisionPoint.Option) -> some View {
+        let l = model.localizer
+        return SectionCard(title: l("ui.rehearse.youChose"), systemImage: "checkmark.circle", tint: Theme.success) {
+            Text(l(option.labelKey)).font(.body.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+            Text(l(option.feedbackKey)).font(.callout).fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityIdentifier("rehearsal.choiceFeedback")
     }
 
     private func clock(_ session: RehearsalCursor) -> some View {
@@ -610,6 +661,7 @@ struct DebriefView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     @State private var showAll = false
+    @State private var settingUp = false
 
     var body: some View {
         let l = model.localizer
@@ -654,6 +706,7 @@ struct DebriefView: View {
                             }
                         }
                     }
+                    nextAction
                 }
             }
             .padding()
@@ -661,6 +714,30 @@ struct DebriefView: View {
         .background(Theme.background)
         .navigationTitle(l("common.debrief"))
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } } }
+        // Pushed inside the debrief's own stack, so there is no sheet on a sheet. Saving replaces the example household.
+        .navigationDestination(isPresented: $settingUp) { HouseholdSetupView(mode: .create) }
+    }
+
+    /// The debrief ends with a way forward instead of a dead end: the example family offers "Set up my household";
+    /// a real household goes straight to its preparation list.
+    private var nextAction: some View {
+        let l = model.localizer
+        return VStack(spacing: Theme.Space.s) {
+            if model.household?.isFictional == true {
+                Button { settingUp = true } label: { Label(l("ui.debrief.setUpOwn"), systemImage: "person.2.badge.plus") }
+                    .buttonStyle(.primary)
+                    .accessibilityIdentifier("debrief.setUpOwn")
+                Text(l("ui.debrief.setUpOwnWhy")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Button { model.pendingTab = RootView.Tab.prepare.rawValue; dismiss() } label: { Label(l("ui.debrief.goPrepare"), systemImage: "checklist") }
+                    .buttonStyle(.secondary)
+                    .accessibilityIdentifier("debrief.goPrepare")
+            } else {
+                Button { model.pendingTab = RootView.Tab.prepare.rawValue; dismiss() } label: { Label(l("ui.debrief.goPrepare"), systemImage: "checklist") }
+                    .buttonStyle(.primary)
+                    .accessibilityIdentifier("debrief.goPrepare")
+            }
+        }
+        .padding(.top, Theme.Space.s)
     }
 }
 

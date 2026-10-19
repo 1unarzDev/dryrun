@@ -6,16 +6,33 @@ import DryRunCore
 struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
+    @State private var finishSheet: FinishSheet?
+    @State private var briefing: FamilyBriefingService.Briefing?
+    @State private var writingBriefing = false
     var openRehearse: () -> Void = {}
+
+    /// The card essentials a new household fills in from Prepare, each in its focused editor.
+    enum FinishSheet: Identifiable {
+        case contact, meetup(SavedPlacePurpose)
+        var id: String {
+            switch self {
+            case .contact: "contact"
+            case .meetup(let purpose): "meetup-\(purpose.rawValue)"
+            }
+        }
+    }
 
     var body: some View {
         let l = model.localizer
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 header
-                if let summary = model.nextSteps {
+                finishCard
+                quickActions
+                // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
+                if let summary = model.nextSteps, model.nextStepResults != nil {
+                    familyBriefing(summary)
                     toDo(summary)
-                    quickActions
                     questions(summary)
                     recorded(summary)
                     done(summary)
@@ -35,7 +52,116 @@ struct NextStepsView: View {
         .background(Theme.background)
         .navigationTitle(l("common.tab.prepare"))
         .navigationDestination(for: NextStep.self) { PreparationTaskEditor(step: $0) }
+        .sheet(item: $finishSheet) { which in
+            switch which {
+            case .contact: NavigationStack { FocusedHouseholdEditor(focus: .newContact(.other)) }
+            case .meetup(let purpose): MeetingPlaceChooser(purpose: purpose)
+            }
+        }
         .task(id: model.currentKey) { await model.refreshNextSteps() }
+        .task(id: briefingKey) { await writeBriefing() }
+    }
+
+    // MARK: For your family (optional, on-device)
+
+    private var topSteps: [NextStep] { Array((model.nextStepResults == nil ? [] : model.nextSteps?.toDo ?? []).prefix(PlanBriefing.maxSteps)) }
+
+    /// Rewritten only when the top steps, the household or the language change.
+    private var briefingKey: String {
+        "\(topSteps.map(\.id).joined(separator: ","))|\(model.household?.revision ?? 0)|\(model.locale)"
+    }
+
+    private func writeBriefing() async {
+        guard let h = model.household, !topSteps.isEmpty, FamilyBriefingService.canWrite(locale: model.locale) else {
+            briefing = nil; writingBriefing = false; return
+        }
+        defer { if !Task.isCancelled { writingBriefing = false } }
+        let l = model.localizer
+        let texts = topSteps.map { step -> FamilyBriefingService.StepText in
+            let r = step.recommendation
+            let values = r.localizedTemplateValues(household: h, localizer: l)
+            return .init(id: step.id, title: l(r.titleKey, values), why: l(r.whyKey, values))
+        }
+        let regionName = model.content?.region(h.regionID)?.name
+        writingBriefing = true
+        let result = await FamilyBriefingService.write(steps: texts, household: h, regionName: regionName, locale: model.locale)
+        guard !Task.isCancelled else { return }
+        writingBriefing = false
+        briefing = result
+    }
+
+    @ViewBuilder private func familyBriefing(_ summary: NextStepsSummary) -> some View {
+        let l = model.localizer
+        if writingBriefing || briefing != nil {
+            SectionCard(title: l("ui.brief.title"), systemImage: "sparkles") {
+                if writingBriefing && briefing == nil {
+                    HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
+                }
+                if let overview = briefing?.overview { Text(overview).font(.body) }
+                ForEach(topSteps.filter { briefing?.notes[$0.id] != nil }) { step in
+                    let r = step.recommendation
+                    NavigationLink(value: step) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.callout.weight(.semibold))
+                            Text(briefing?.notes[step.id] ?? "").font(.callout).foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                Text(l("ui.brief.note")).font(.caption).foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("next.briefing")
+        }
+    }
+
+    /// Three concrete steps to a card worth printing: a contact with a phone number and the two meeting places.
+    /// Shown until all three exist; the 25-item preparation list is not where a new family should start.
+    @ViewBuilder private var finishCard: some View {
+        let l = model.localizer
+        if let h = model.household {
+            let places = model.savedPlaces.filter { $0.homeID == h.stableHomeID }
+            let items: [(sheet: FinishSheet, title: String, done: Bool)] = [
+                (.contact, l("ui.card.finishContact"), h.contacts.contains(where: \.hasUsablePhone)),
+                (.meetup(.outsideMeetingPoint), l("ui.card.finishNearMeetup"), places.contains { $0.purpose == .outsideMeetingPoint }),
+                (.meetup(.backupMeetingPlace), l("ui.card.finishBackupMeetup"), places.contains { $0.purpose == .backupMeetingPlace }),
+            ]
+            let done = items.filter(\.done).count
+            if done < items.count {
+                SectionCard(title: l("ui.card.finishTitle"), systemImage: "person.text.rectangle.fill") {
+                    Text(l("ui.card.finishProgress", ["done": "\(done)", "total": "\(items.count)"])).font(.footnote).foregroundStyle(.secondary)
+                    ForEach(items, id: \.sheet.id) { item in
+                        Button { finishSheet = item.sheet } label: {
+                            HStack(spacing: Theme.Space.m) {
+                                Image(systemName: item.done ? "checkmark.circle.fill" : "circle")
+                                    .font(.title3)
+                                    .foregroundStyle(item.done ? Theme.success : Theme.accent)
+                                    .accessibilityHidden(true)
+                                Text(item.title).font(.body.weight(item.done ? .regular : .semibold))
+                                    .foregroundStyle(item.done ? .secondary : .primary)
+                                    .multilineTextAlignment(.leading)
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
+                            }
+                            .frame(minHeight: Theme.minTap)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityValue(item.done ? l("ui.next.done") : "")
+                        .accessibilityIdentifier("next.finish.\(item.sheet.id)")
+                    }
+                    NavigationLink { OutageCardView() } label: {
+                        Label(l("ui.card.openCard"), systemImage: "arrow.right").font(.callout.weight(.semibold))
+                    }
+                    .frame(minHeight: Theme.minTap)
+                    .accessibilityIdentifier("next.finish.open")
+                }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("next.finishCard")
+            }
+        }
     }
 
     private var header: some View {

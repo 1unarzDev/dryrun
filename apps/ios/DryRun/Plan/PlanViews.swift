@@ -38,6 +38,7 @@ struct PlanTabView: View {
                         .accessibilityIdentifier("plan.share")
                     NavigationLink { HelpTabView() } label: { Label(t("official"), systemImage: "building.columns") }
                         .frame(minHeight: Theme.minTap)
+                        .accessibilityIdentifier("plan.help")
                     if let saved = model.savedPlan, !saved.scenarioIDs.isEmpty {
                         NavigationLink { PlanDocumentView(doc: saved) } label: {
                             Label(l("common.plan.viewSaved", ["count": "\(saved.pages.count)"]), systemImage: "doc.richtext")
@@ -79,8 +80,14 @@ struct PlanTabView: View {
     private func cardSummary(_ doc: PlanDocument) -> some View {
         let l = model.localizer
         let page = doc.pages.first { $0.id == "family-card" }
-        let missing = (page?.sections ?? []).filter { ["identity", "critical", "contacts", "outsideMeetingPoint", "backupMeetingPlace", "review"].contains($0.id) }
-            .flatMap { section in section.lines.filter { $0.parts?.isMissing == true }.map { _ in section.id == "identity" ? t("homeAddress") : section.heading } }
+        // Things a family can add. The review date is shown on the card itself, not listed as missing. Critical
+        // information counts as missing only when nobody has anything recorded: many people have nothing critical.
+        let missing = (page?.sections ?? []).filter { ["identity", "critical", "contacts", "outsideMeetingPoint", "backupMeetingPlace"].contains($0.id) }
+            .flatMap { section -> [String] in
+                let name = section.id == "identity" ? t("homeAddress") : section.heading
+                if section.id == "critical" { return section.lines.allSatisfy { $0.parts?.isMissing == true } ? [name] : [] }
+                return section.lines.filter { $0.parts?.isMissing == true }.map { _ in name }
+            }
         return NavigationLink { OutageCardView() } label: {
             VStack(alignment: .leading, spacing: Theme.Space.s) {
                 HStack {
@@ -89,8 +96,13 @@ struct PlanTabView: View {
                     Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
                 }
                 if let critical = page?.sections.first(where: { $0.id == "critical" }) {
-                    ForEach(Array(critical.lines.prefix(3).enumerated()), id: \.offset) { _, line in
+                    // People with recorded needs first, so the summary never hides the one line a responder needs.
+                    let ordered = critical.lines.filter { $0.parts?.isMissing != true } + critical.lines.filter { $0.parts?.isMissing == true }
+                    ForEach(Array(ordered.prefix(3).enumerated()), id: \.offset) { _, line in
                         Text(line.text).font(.callout).lineLimit(2).foregroundStyle(line.parts?.isMissing == true ? .secondary : .primary)
+                    }
+                    if ordered.count > 3 {
+                        Text(l("common.showAll", ["count": "\(ordered.count)"])).font(.footnote).foregroundStyle(.secondary)
                     }
                 }
                 if missing.isEmpty {

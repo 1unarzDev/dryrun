@@ -57,6 +57,7 @@ public enum FamilyEmergencyCardBuilder {
         var sections = [section("identity", "family.identity", identity)]
         var critical: [PlanLine] = []
         var instructionContinuations: [PlanLine] = []
+        let clinicalSelected = selection.includeCriticalInformation || selection.includeMedication || selection.includeResponderInstructions
         for p in h.people {
             var details: [String] = []
             var fields: [PlanField] = []
@@ -90,16 +91,24 @@ public enum FamilyEmergencyCardBuilder {
                 } else { details.append(value); fields.append(PlanField(value: value)) }
             }
             let name = p.alias.isEmpty ? localized(p.isSelf == true ? "family.you" : "ui.person") : p.alias
-            let missing = localized("family.notProvidedSelected")
-            critical.append(line(name + ": " + (details.isEmpty ? missing : details.joined(separator: "; ")),
-                                 parts: PlanLineParts(subject: name, fields: details.isEmpty ? [PlanField(value: missing)] : fields, isMissing: details.isEmpty)))
+            // Only people with something to show, or whose record is empty while that content IS selected, get a line.
+            // With every clinical selection off, per-person "not selected" lines would read as a broken card.
+            if !details.isEmpty || clinicalSelected {
+                let missing = localized("family.notProvidedSelected")
+                critical.append(line(name + ": " + (details.isEmpty ? missing : details.joined(separator: "; ")),
+                                     parts: PlanLineParts(subject: name, fields: details.isEmpty ? [PlanField(value: missing)] : fields, isMissing: details.isEmpty)))
+            }
             if let longInstruction {
                 instructionContinuations.append(line(displayLabel(p) + ": " + longInstruction,
                                                      parts: PlanLineParts(subject: displayLabel(p), fields: [PlanField(value: longInstruction)])))
             }
         }
-        let noCritical = localized("family.notProvidedSelected")
-        sections.append(section("critical", "family.critical", critical.isEmpty ? [line(noCritical, parts: PlanLineParts(fields: [PlanField(value: noCritical)], isMissing: true))] : critical, critical: true))
+        if critical.isEmpty {
+            // Deselected is a deliberate choice, not a gap; it is never counted as missing information.
+            let noCritical = localized(clinicalSelected ? "family.notProvidedSelected" : "family.criticalNotShared")
+            critical = [line(noCritical, parts: PlanLineParts(fields: [PlanField(value: noCritical)], isMissing: clinicalSelected))]
+        }
+        sections.append(section("critical", "family.critical", critical, critical: true))
         if selection.includeContacts {
             let contacts = h.contacts.map { c in
                 let role = c.role == .other ? nil : localized("ui.contact.role.\(c.role.rawValue)")
