@@ -1,0 +1,166 @@
+{
+  "synthetic": true,
+  "newModelCalls": 0,
+  "assessmentVersion": "dryrun.household-assessment/5",
+  "results": [
+    {
+      "kind": "flashlight",
+      "category": "light",
+      "initial": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "criterionID": "essentials",
+        "evidenceIDs": [
+          "supplies",
+          "inventory.preparationKind",
+          "preparedness.sanitation"
+        ],
+        "outsideScope": false,
+        "predicates": {
+          "firstAid": true,
+          "light": false
+        }
+      },
+      "confirmed": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "criterionID": "essentials",
+        "evidenceIDs": [
+          "supplies",
+          "inventory.preparationKind",
+          "preparedness.sanitation"
+        ],
+        "outsideScope": false,
+        "predicates": {
+          "firstAid": true,
+          "light": true
+        }
+      },
+      "generic": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "criterionID": "essentials",
+        "evidenceIDs": [
+          "supplies",
+          "inventory.preparationKind",
+          "preparedness.sanitation"
+        ],
+        "outsideScope": false,
+        "predicates": {
+          "firstAid": true
+        }
+      },
+      "gap": {
+        "category": "light",
+        "confirmedUsable": 2,
+        "deficit": 0,
+        "required": 1,
+        "sourceIDs": [
+          "S53"
+        ],
+        "unit": "count",
+        "unknown": false
+      },
+      "task": {
+        "actionID": "prep.flashlight",
+        "completionPredicates": [
+          "light"
+        ],
+        "criterionID": "essentials",
+        "dependencyIDs": [
+          "preparedness.flashlight"
+        ],
+        "editor": "supplies",
+        "evidenceIDs": [
+          "household-needs"
+        ],
+        "id": "prep.flashlight",
+        "priority": 2,
+        "subjectID": "household",
+        "why": "prep.location.why"
+      },
+      "resourceRefreshChanged": true,
+      "preparation": [
+        20,
+        22.77777777777778
+      ]
+    },
+    {
+      "kind": "firstAidKit",
+      "category": "firstAid",
+      "initial": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "criterionID": "essentials",
+        "evidenceIDs": [
+          "supplies",
+          "inventory.preparationKind",
+          "preparedness.sanitation"
+        ],
+        "outsideScope": false,
+        "predicates": {
+          "firstAid": false,
+          "light": true
+        }
+      },
+      "confirmed": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "criterionID": "essentials",
+        "evidenceIDs": [
+          "supplies",
+          "inventory.preparationKind",
+          "preparedness.sanitation"
+        ],
+        "outsideScope": false,
+        "predicates": {
+          "firstAid": true,
+          "light": true
+        }
+      },
+      "generic": {
+        "assessmentVersion": "dryrun.household-assessment/5",
+        "criterionID": "essentials",
+        "evidenceIDs": [
+          "supplies",
+          "inventory.preparationKind",
+          "preparedness.sanitation"
+        ],
+        "outsideScope": false,
+        "predicates": {
+          "light": true
+        }
+      },
+      "gap": {
+        "category": "firstAid",
+        "confirmedUsable": 2,
+        "deficit": 0,
+        "required": 1,
+        "sourceIDs": [
+          "S53"
+        ],
+        "unit": "count",
+        "unknown": false
+      },
+      "task": {
+        "actionID": "prep.firstAid",
+        "completionPredicates": [
+          "firstAid"
+        ],
+        "criterionID": "essentials",
+        "dependencyIDs": [
+          "preparedness.firstAid"
+        ],
+        "editor": "supplies",
+        "evidenceIDs": [
+          "household-needs"
+        ],
+        "id": "prep.firstAid",
+        "priority": 2,
+        "subjectID": "household",
+        "why": "prep.location.why"
+      },
+      "resourceRefreshChanged": true,
+      "preparation": [
+        20,
+        22.77777777777778
+      ]
+    }
+  ],
+  "limits": "Identity and usable count are reviewed; location, technique, kit suitability for specific needs and non-water consumption remain separately unassessed. Native review/save not tested."
+}

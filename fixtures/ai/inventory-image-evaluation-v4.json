@@ -1,0 +1,193 @@
+{
+  "synthetic": true,
+  "model": "gemini-3.1-flash-lite",
+  "sdk": "2.30.0",
+  "prompt": "preparation/4",
+  "physicalFixtures": 3,
+  "cases": 4,
+  "calls": 4,
+  "usage": [
+    {
+      "total_tokens": 2398,
+      "total_input_tokens": 2272,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 1208
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 126,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 2409,
+      "total_input_tokens": 2272,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 1208
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 137,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3603,
+      "total_input_tokens": 3472,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1344
+        },
+        {
+          "modality": "image",
+          "tokens": 2128
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 131,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 2402,
+      "total_input_tokens": 2271,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 1207
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 131,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    }
+  ],
+  "estimatedUSD": 0.003359250000000001,
+  "referenceStatus": "Programmatic synthetic label diagrams; development expectations, no real-label or phone validation",
+  "results": [
+    {
+      "fixture": "readable",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "readable"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide details regarding the power requirements and backup duration for the oxygen equipment used by the older adult in your household?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "unreadable",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": null,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": null,
+            "unit": "liter",
+            "evidenceIDs": [
+              "unreadable"
+            ],
+            "unknowns": [
+              "Volume label damaged"
+            ]
+          }
+        ],
+        "question": "Could you provide the power requirements or manufacturer documentation for the oxygen equipment (eq-oxygen) to ensure appropriate backup power planning?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "duplicate",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "readable"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide details on the power requirements or backup battery capacity for the oxygen equipment (eq-oxygen) to ensure it remains operational during a power outage?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "injected",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "injected"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide the power requirements (voltage, wattage, or battery type) for the oxygen equipment to help us plan for a power outage?"
+      },
+      "matched": true
+    }
+  ]
+}

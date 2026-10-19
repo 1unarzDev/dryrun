@@ -1,6 +1,8 @@
 import Foundation
 
 public enum InventoryUnit: String, Codable, Sendable, Hashable { case liter, usGallon, count, wattHour, day }
+/// Explicitly reviewed identity, independent of the broad extraction category.
+public enum InventoryPreparationKind:String,Codable,Sendable,Hashable {case flashlight,firstAidKit}
 public struct InventoryItem: Codable, Sendable, Hashable {
     public var id: String
     public var physicalID: String
@@ -14,12 +16,13 @@ public struct InventoryItem: Codable, Sendable, Hashable {
     public var subjectIDs: [String]
     public var evidenceIDs: [String]
     public var lastConfirmedAt: Date?
+    public var preparationKind:InventoryPreparationKind?
     public init(id: String, physicalID: String, category: String, quantity: EvidenceValue<Double>, unit: InventoryUnit,
                 usableQuantity: EvidenceValue<Double> = .unknown, accessible: EvidenceValue<Bool> = .unknown,
-                locationID: String? = nil, expiresAt: Date? = nil, subjectIDs: [String] = [], evidenceIDs: [String] = [], lastConfirmedAt: Date? = nil) {
+                locationID: String? = nil, expiresAt: Date? = nil, subjectIDs: [String] = [], evidenceIDs: [String] = [], lastConfirmedAt: Date? = nil, preparationKind:InventoryPreparationKind? = nil) {
         self.id=id; self.physicalID=physicalID; self.category=category; self.quantity=quantity; self.unit=unit
         self.usableQuantity=usableQuantity; self.accessible=accessible; self.locationID=locationID; self.expiresAt=expiresAt
-        self.subjectIDs=subjectIDs; self.evidenceIDs=evidenceIDs; self.lastConfirmedAt=lastConfirmedAt
+        self.subjectIDs=subjectIDs; self.evidenceIDs=evidenceIDs; self.lastConfirmedAt=lastConfirmedAt; self.preparationKind=preparationKind
     }
 }
 public struct InventoryLedger: Codable, Sendable {
@@ -42,6 +45,10 @@ public struct InventoryLedger: Codable, Sendable {
         items=candidate;revision += 1
     }
     private static func validateItem(_ p:InventoryItem)throws {
+        if let kind=p.preparationKind {
+            guard p.category==(kind == .flashlight ? "light":"firstAid"),p.unit == .count,
+                  [p.quantity.confirmedValue,p.usableQuantity.confirmedValue].compactMap({$0}).allSatisfy({$0.rounded(.towardZero)==$0 && $0<Double(Int.max)}) else {throw SessionError.invalidCommand}
+        }
         guard !p.id.isEmpty,!p.physicalID.isEmpty,!p.category.isEmpty,
               p.expiresAt?.timeIntervalSince1970.isFinite ?? true,
               p.quantity.status != .confirmed || p.quantity.origin == .userConfirmed,
@@ -143,6 +150,23 @@ public extension InventoryLedger {
         if unsupported {result.unknown=true;if result.confirmedUsable<result.required {result.deficit=nil}}
         if items.contains(where:{$0.category=="food" && !Self.coversHousehold($0,personIDs:personIDs) && $0.expiresAt.map{$0<=date} != true && $0.accessible.confirmedValue != false && $0.quantity.confirmedValue != 0 && $0.usableQuantity.confirmedValue != 0}) {result.scopeUnsupported=true;result.unknown=true;if result.confirmedUsable<result.required {result.deficit=nil}}
         return result
+    }
+    /// One input for preparation/resource refresh; preserve legacy water/food behavior when no
+    /// explicitly reviewed essentials identity has been recorded.
+    func preparationGaps(personIDs:[String],at date:Date)throws->[SupplyGap] {
+        var gaps=[try waterGap(people:personIDs.count,personIDs:personIDs,at:date),try householdFoodGap(personIDs:personIDs,at:date)]
+        for kind in [InventoryPreparationKind.flashlight,.firstAidKit] where items.contains(where:{$0.preparationKind==kind}) {
+            gaps.append(try preparationItemGap(kind:kind,personIDs:personIDs,at:date))
+        }
+        return gaps
+    }
+    /// Only explicitly reviewed item identity can satisfy an existing preparation. Generic light
+    /// or first-aid stock cannot establish that it is a flashlight or a complete first-aid kit.
+    func preparationItemGap(kind:InventoryPreparationKind,personIDs:[String],at date:Date)throws->SupplyGap {
+        try validate(at:date)
+        var selected=self
+        selected.items=items.filter{$0.preparationKind==kind}
+        return try selected.gap(for:RecordedSupplyRequirement(id:kind.rawValue,category:kind == .flashlight ? "light":"firstAid",quantity:1,unit:.count,subjectIDs:personIDs,sourceIDs:["S53"]),at:date)
     }
     /// Shared household quantities are counted once. Subject-restricted supplies cannot cover another person.
     /// Requirements must already be consolidated by physical purpose; incompatible units fail explicitly.

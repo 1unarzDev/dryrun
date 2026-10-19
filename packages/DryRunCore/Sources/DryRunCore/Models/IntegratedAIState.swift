@@ -42,6 +42,20 @@ public extension IntegratedAIState {
             let gap=try candidate.inventory.householdFoodGap(personIDs:h.people.map(\.id),at:date)
             h.supplies.shelfStableFoodDays=gap.unknown ? .unknown : .confirmed(gap.confirmedUsable,unit:"day",verifiedAt:date)
         }
+        if candidate.inventory.items.contains(where:{$0.preparationKind == .flashlight}) || inventory.items.contains(where:{$0.preparationKind == .flashlight}) {
+            let gap=try candidate.inventory.preparationItemGap(kind:.flashlight,personIDs:h.people.map(\.id),at:date)
+            guard gap.confirmedUsable<Double(Int.max) else {throw SessionError.invalidCommand}
+            h.supplies.flashlights=gap.unknown ? .unknown:.confirmed(Int(gap.confirmedUsable),verifiedAt:date)
+            if var fact=h.preparedness?.items["flashlight"] {
+                fact.available=h.supplies.flashlights.confirmedValue.map{.confirmed($0>0,verifiedAt:date)} ?? .unknown
+                h.preparedness?.items["flashlight"]=fact
+            }
+        }
+        if candidate.inventory.items.contains(where:{$0.preparationKind == .firstAidKit}) || inventory.items.contains(where:{$0.preparationKind == .firstAidKit}) {
+            let gap=try candidate.inventory.preparationItemGap(kind:.firstAidKit,personIDs:h.people.map(\.id),at:date)
+            h.supplies.firstAidKit=gap.deficit.map{.confirmed($0==0,verifiedAt:date)} ?? .unknown
+            if var fact=h.preparedness?.items["firstAid"] {fact.available=h.supplies.firstAidKit;h.preparedness?.items["firstAid"]=fact}
+        }
         h.bumpRevision(at:date)
         try persist(h,candidate)
         self=candidate;household=h

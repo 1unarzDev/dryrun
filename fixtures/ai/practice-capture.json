@@ -3060,7 +3060,7 @@
     ]
   },
   "scorecard": {
-    "assessmentVersion": "dryrun.household-assessment/4",
+    "assessmentVersion": "dryrun.household-assessment/5",
     "cap": 59,
     "capReasons": [
       "alarms",

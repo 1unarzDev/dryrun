@@ -127,6 +127,20 @@
               "other"
             ]
           },
+          "preparationKind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "flashlight",
+                  "firstAidKit"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "quantity": {
             "anyOf": [
               {

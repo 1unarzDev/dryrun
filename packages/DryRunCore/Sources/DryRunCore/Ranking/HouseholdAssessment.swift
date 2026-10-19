@@ -12,7 +12,7 @@ public enum HouseholdAssessment {
     private static func requiresAssistance(_ p:Person)->Bool {
         p.requiresStepFreeRoute || p.needs.contains(.needsHelperToEvacuate) || p.needs.contains(.deafOrHardOfHearing) || p.ageBand == .infant || p.ageBand == .child
     }
-    public static let version="dryrun.household-assessment/4"
+    public static let version="dryrun.household-assessment/5"
     public static func assess(household h:HouseholdProfile,home:HomeModel?,inventory:InventoryLedger?,places:[SavedPlace]=[],stressFindings:[StressTestFinding]=[],at date:Date) throws -> [CriterionAssessment] {
         var results:[CriterionAssessment]=[]
         func append(_ id:String,_ values:[String:Bool?],evidence:[String],notApplicable:String?=nil){
@@ -58,7 +58,14 @@ public enum HouseholdAssessment {
         } else {foodQuantity=h.supplies.shelfStableFoodDays.confirmedValue.map{$0>=3}}
         // A location string records where to look, not whether the household can access usable food.
         append("food",["quantity":foodQuantity,"accessible":foodAccess],evidence:["supplies.shelfStableFoodDays","inventory.food"])
-        append("essentials",["light":h.supplies.flashlights.confirmedValue.map{$0>0},"firstAid":h.supplies.firstAidKit.confirmedValue,"sanitation":h.preparedness?.items["sanitation"]?.available.confirmedValue],evidence:["supplies","preparedness.sanitation"])
+        let light:Bool?,firstAid:Bool?
+        if let inventory,inventory.items.contains(where:{$0.preparationKind == .flashlight}) {
+            light=try inventory.preparationItemGap(kind:.flashlight,personIDs:h.people.map(\.id),at:date).deficit.map{$0==0}
+        } else {light=h.supplies.flashlights.confirmedValue.map{$0>0}}
+        if let inventory,inventory.items.contains(where:{$0.preparationKind == .firstAidKit}) {
+            firstAid=try inventory.preparationItemGap(kind:.firstAidKit,personIDs:h.people.map(\.id),at:date).deficit.map{$0==0}
+        } else {firstAid=h.supplies.firstAidKit.confirmedValue}
+        append("essentials",["light":light,"firstAid":firstAid,"sanitation":h.preparedness?.items["sanitation"]?.available.confirmedValue],evidence:["supplies","inventory.preparationKind","preparedness.sanitation"])
         // Missing a contact is unknown, not proof no support exists.
         append("contact",["usableContact":h.contacts.contains{$0.isComplete} ? true : nil,"offlineAccess":h.preparedness?.items["reconnect"]?.available.confirmedValue],evidence:["contacts","preparedness.reconnect"])
         let near=places.contains{$0.homeID==h.stableHomeID && $0.purpose == .outsideMeetingPoint}

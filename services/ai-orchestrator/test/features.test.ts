@@ -47,3 +47,11 @@ it('supports station and meetup searches without granting geographic data forwar
   expect(resourcePlan.safeParse({...base,category,cloudReturnPolicy:'send_listings'}).success).toBe(false);
  }
 });
+
+
+it('keeps optional reviewed item kind separate from broad inventory category',async()=>{
+ const {preparationOutput}=await import('../src/features.js');
+ const observation={id:'one-batch',physicalID:'batch',category:'light',quantity:3,unit:'count',evidenceIDs:['typed'],unknowns:[]};
+ for(const preparationKind of [undefined,null,'flashlight'])expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,preparationKind}],question:null}).success).toBe(true);
+ expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,preparationKind:'any-light-is-a-flashlight'}],question:null}).success).toBe(false);
+});

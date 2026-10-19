@@ -138,12 +138,12 @@ while let line = readLine() {
             if let aiState {scorecard=try aiState.compileScorecard(rubric:rubric,assessments:assessments!,library:library)}
             else {scorecard = try ScoreCompiler.compile(rubric:rubric,assessments:assessments!,attempts:request.attempts ?? [])}
         }
-        if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = [try inventory.waterGap(people:session.initial.household.people.count,personIDs:session.initial.household.people.map(\.id),at:date),try inventory.householdFoodGap(personIDs:session.initial.household.people.map(\.id),at:date)]}
+        if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = try inventory.preparationGaps(personIDs:session.initial.household.people.map(\.id),at:date)}
         if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed)}
         var resourceStrategyKey:ResourceStrategyKey?
         if request.op=="resourceKey" {
             guard let inventory=request.inventory ?? session.inventory?.ledger,let tasks=request.resourceTasks else {throw SessionError.invalidCommand}
-            let resourceGaps=[try inventory.waterGap(people:session.initial.household.people.count,personIDs:session.initial.household.people.map(\.id),at:date),try inventory.householdFoodGap(personIDs:session.initial.household.people.map(\.id),at:date)]
+            let resourceGaps=try inventory.preparationGaps(personIDs:session.initial.household.people.map(\.id),at:date)
             resourceStrategyKey=try ResourceStrategyKey.normalized(gaps:resourceGaps,tasks:tasks,transport:HouseholdContextSnapshot(session.initial.household).transport,
                 limitedBudget:session.initial.household.supplies.limitedBudget,regionID:session.initial.household.regionID,dependencies:request.strategyDependencies ?? [])
         }

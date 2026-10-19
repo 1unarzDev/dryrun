@@ -8,7 +8,7 @@ pnpm --dir services/public-api test
 pnpm --dir services/ai-orchestrator typecheck
 pnpm --dir services/ai-orchestrator test
 pnpm --dir services/ai-orchestrator eval
-for check in inventory-validation-eval source-assessment-eval assessment-policy-eval contracts replay-eval spatial-policy-replay inventory-session-eval concern-eval resource-refresh-eval practice-capture-eval helper-eval stress-eval score-stability startup-eval; do
+for check in preparation-inventory-eval inventory-validation-eval source-assessment-eval assessment-policy-eval contracts replay-eval spatial-policy-replay inventory-session-eval concern-eval resource-refresh-eval practice-capture-eval helper-eval stress-eval score-stability startup-eval; do
     pnpm --dir services/ai-orchestrator exec tsx "scripts/$check.ts"
 done
 DRYRUN_PIPELINE_OUTPUT=../../fixtures/ai/integrated-pipeline-policy.json pnpm --dir services/ai-orchestrator exec tsx scripts/pipeline-replay.ts

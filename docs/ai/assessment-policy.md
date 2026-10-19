@@ -25,7 +25,7 @@ Food integration also tests incompatible package counts, partial-person scope, e
 Direct official-source rechecking is retained in food-source-check.json. New S64 records Red Cross kit guidance: three days for evacuation and two weeks for home. The **existing draft three-day food criterion is a limited product horizon**, not completion of the longer home recommendation. Its rubric source citation still uses the older broad S53; policy/3 and the gap now identify precise S64. Correcting the frozen rubric source metadata belongs in its next reviewed version, not rewriting retained score histories. No human safety/source review is claimed.
 
 
-## Current policy/4: usable stock and subject scope
+## Historical policy/4: usable stock and subject scope
 
 `dryrun.household-assessment/4` is published in `content/ai/household-assessment-v4.json`. Read paths now revalidate decoded inventory evidence; scan-observed fields cannot masquerade as user confirmation. Confirmed zero stock establishes a known quantity failure and cannot earn usable-access credit. Unknown quantity can retain independently confirmed access. Batch duplicate physical records and nonfinite converted/summed quantities reject before transaction publication.
 
@@ -35,3 +35,12 @@ Core passed 411 tests / 74 suites. `inventory-validation-eval.ts` exercises actu
 
 
 Recorded-requirement scope follow-through: generic `gap(for:at:)` now shares the household scope rule. An unnamed requirement cannot consume person-reserved stock. Matching named instructions may use it; another person’s requirement cannot. Empty/duplicate requirement subject IDs reject. Core regression also checks that a scope-only change invalidates the resource strategy key. Test these reserved-care-supply semantics in native confirmation and explanations without inventing care instructions.
+
+
+## Current policy/5: confirmed essentials identity
+
+`content/ai/household-assessment-v5.json` preserves policy/4 validation and scope rules, and adds the explicit `InventoryItem.preparationKind` mapping published in `inventory-preparation-kinds-v1.json`. Only a reviewed `flashlight` (category light) or `firstAidKit` (category firstAid), in whole count units, can update those existing preparation predicates. A broad light/firstAid category alone is insufficient. The confirmation transaction projects usable counts into existing supplies, preserving atomic persistence. Replacing a previously projected kind with generic identity clears its legacy value. Direct assessment reads current typed ledger stock rather than a stale scalar; expiry, access and narrower subject scope apply.
+
+`InventoryLedger.preparationGaps(personIDs:at:)` produces the same water/food gaps plus explicitly typed essentials for resource refresh. Existing tasks remain canonical, and known stock changes their missing-location explanation without inventing a location or completing unrelated checks. The first-aid criterion records a usable kit, not adequacy for clinical/personal needs. Generic sanitation stock still cannot establish a reviewed sanitation arrangement. No non-water consumption was added.
+
+Historical scorecards remain immutable. The locked source reference fixture and its policy/3 and policy/4 evaluation outputs are preserved; policy/5 results use a separate filename and are regression evidence, not fresh held-out generalization. No new live council evaluation is claimed for policy/5. See the evaluation report for the live preparation/4 extraction and connected zero→stock→resource/score fixture.

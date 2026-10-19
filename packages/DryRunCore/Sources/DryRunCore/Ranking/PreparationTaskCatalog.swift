@@ -9,7 +9,10 @@ public enum PreparationTaskCatalog {
    let action=String(rec.actionID.dropFirst(5));guard let criterionID=mapping[action],let criterion=rubric.criteria.first(where:{$0.id==criterionID}) else{return nil}
    let editor:String
    switch PreparationEditTarget.resolve(rec,home:home){case .contact:editor="contacts";case .family:editor="family";case .equipment,.backups:editor="medical";case .meeting:editor="meetingPlace";case .home,.homeSetup:editor="home";default:editor="supplies"}
-   return PreparationTaskProposal(id:rec.id,actionID:rec.actionID,criterionID:criterionID,subjectID:rec.subjectID ?? "household",why:rec.whyKey,evidenceIDs:["household-needs"],completionPredicates:criterion.predicateIDs,editor:editor,dependencyIDs:rec.matchedFactIDs,priority:min(3,max(0,rec.tier.rawValue-1)))
+   // A flashlight task cannot require a first-aid kit or sanitation to complete merely
+   // because these preparations share one bounded score criterion.
+   let predicateSubset=["flashlight":["light"],"firstAid":["firstAid"],"sanitation":["sanitation"]][action] ?? criterion.predicateIDs
+   return PreparationTaskProposal(id:rec.id,actionID:rec.actionID,criterionID:criterionID,subjectID:rec.subjectID ?? "household",why:rec.whyKey,evidenceIDs:["household-needs"],completionPredicates:predicateSubset,editor:editor,dependencyIDs:rec.matchedFactIDs,priority:min(3,max(0,rec.tier.rawValue-1)))
   }
  }
 }

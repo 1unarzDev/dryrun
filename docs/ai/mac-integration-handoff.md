@@ -1,6 +1,6 @@
 # Claude/Mac integration handoff
 
-Latest: household-assessment/4, preparation/3, validated/scoped inventory and 417 Core tests. Read the current acceptance ledger and policy/4 sections before historical notes below. No Xcode/iPhone verification has occurred here.
+Latest: household-assessment/5, preparation/4, reviewed essentials inventory and 421 Core tests. Read the current acceptance ledger and policy/5 sections before historical notes below. No Xcode/iPhone verification has occurred here.
 
 Baseline: `main` / `436b243276e0f333131a1813b580382971949748`. Linux implementation adds Core files under Models/AI*, Models/HomeConcernReview/IntegratedAIState, Ranking/PreparationTaskCatalog/HouseholdAssessment/PreparednessScorecard, Simulation/IncrementalSession/PlanStressTest, Session/ResourceStrategyRefresh and Spatial/AIPlanDiagram; adds a Swift executable, private Node service, rubric/contracts/fixtures/docs; makes `RunState.input/household/model` mutable for session-local action application; adds an optional encrypted `VaultPayload.integratedAIState`. No native source/PDF/navigation/RoomPlan renderer is changed. Reconcile newer Mac changes before applying shared-file edits. The three untracked owner-supplied reference/audit files are preserved.
 
@@ -152,3 +152,25 @@ Resource category audit: the versioned contract now also supports `policeStation
 
 
 Practice scope boundary: concern-seeded hypothetical rehearsals add assumptions outside the current practice variants and cannot be relabeled to earn practice credit. Host checks this at begin, submission and eligibility revalidation, while leaving training/stress replay intact. `practice-variants-v0.json` records the restriction. On the phone verify that a concern-based exercise still runs and debriefs, while its UI offers training rather than a scored check. Preserve any imported invalid trace as history and surface its validation issue; do not silently reset answers or count it as an approved equivalent variant. A fresh supported check is a separate explicit action. Ordinary practice comparability and human anchor review remain provisional.
+
+
+Essentials inventory integration: optional `InventoryItem.preparationKind` is `flashlight` or `firstAidKit`, explicitly reviewed with the batch. Broad categories alone never imply those kinds (candles/bandages remain generic). Kind/category/count compatibility is validated; usable count/access/expiry/household scope govern gaps and score predicates. `confirmInventory` atomically updates existing supplies, while `preparationGaps(personIDs:at:)` feeds the same gaps into resources. Replacing a typed record with a generic identity clears stale projected credit. On the phone confirm zero then two flashlights/kits, verify one existing task changes to locating known stock, resource refresh changes, score explains the added predicate, and failed saves publish nothing. Test generic candle/bandage observations, partial scope, unknown usability, correction/removal of kind, expired stock and legacy JSON without the new field. Do not infer kit suitability for personal medical needs or sanitation adequacy. See `preparation-inventory-v1.json`, `inventory-evaluation-v4.json`, and `inventory-preparation-kinds-v1.json`.
+
+
+Essentials confirmation example (inside the existing batch-review save, after user review):
+
+```swift
+let item = InventoryItem(
+    id: "flashlights", physicalID: "reviewed-batch-1", category: "light",
+    quantity: .confirmed(2), unit: .count,
+    usableQuantity: .confirmed(2), accessible: .confirmed(true),
+    evidenceIDs: ["typed-input-1"], preparationKind: .flashlight)
+try state.confirmInventory([item], household: &household,
+    baseHouseholdRevision: household.revision,
+    baseInventoryRevision: state.inventory.revision, at: now,
+    persist: saveBothAtomically)
+let gaps = try state.inventory.preparationGaps(
+    personIDs: household.people.map(\.id), at: now)
+```
+
+The light gap then has required 1, confirmedUsable 2, deficit 0, unit count. Legacy flashlights is 2; policy/5 essentials.light is true. With no recorded location, the single existing flashlight task asks for its location (`prep.location.why`). Its completionPredicates is `["light"]`, while first-aid and sanitation tasks use `["firstAid"]` and `["sanitation"]` respectively; sharing a score budget must not make unrelated preparations task prerequisites. The confirmation updates an older checklist ownership answer for the same item in that transaction, preserving the recorded location/check fields. No image observation alone invokes this save. A firstAidKit kind does not certify adequacy for personal care needs.
