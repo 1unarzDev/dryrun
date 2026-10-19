@@ -22,6 +22,7 @@ try{
  try{await host.request({op:'concernExercise',session:state.session,aiState:uncertain.aiState,concernID:proposal.id,selectedPortalIDs:[portal.id],allowHypothetical:false});}catch{permissionRejected=true;}
  if(!permissionRejected)throw new Error('hypothesis_without_permission');
  const hypothetical=await host.request({op:'concernExercise',session:state.session,aiState:uncertain.aiState,concernID:proposal.id,selectedPortalIDs:[portal.id],allowHypothetical:true});
+ await assert.rejects(host.request({op:'practiceBegin',session:hypothetical.session,attemptID:'concern-not-approved-variant',variantID:'practice-check-a/0'}),/invalidCommand/);
  const confirmed=await host.request({op:'reviewConcern',session:state.session,aiState:uncertain.aiState,concernProposal:proposal,imageManifest:manifest,concernDecision:'confirmed',rubric});
  if(confirmed.concernTasks.length!==1||confirmed.concernTasks[0].earnsScoreByItself)throw new Error('bad_task_link');
  const commands=[{kind:'schedule',target:'evt.home-fire.alarm',minute:0},{kind:'advance',minute:0}];
@@ -43,6 +44,6 @@ try{
  const revisedManifest={...manifest,homeRevision:revisedSession.initial.home.revision};
  await assert.rejects(host.request({op:'reviewConcern',session:revisedSession,aiState:dismissed.aiState,concernProposal:revisedProposal,imageManifest:revisedManifest,concernDecision:'confirmed',rubric}),/duplicate/);
 
- await writeFile('../../fixtures/ai/concern-integration.json',JSON.stringify({synthetic:true,newModelCalls:0,recordedVisionModel:vision.model,annotation:'Recorded synthetic image interpretation; explicitly fixture-selected opening, never inferred from pixels',proposal,manifest,uncertain:uncertain.aiState,permissionRejected,manualSelectedPortalID:portal.id,task:confirmed.concernTasks[0],hypotheticalSession:exercise.session,baselineReceipt:baseline.receipt,exerciseReceipt:exercise.receipt,controlledStress:stress.stress,scoreUnchanged:true,dismissed:dismissed.aiState,unchangedEvidenceAfterHomeRevisionRejected:true},null,2)+'\n');
- console.log(JSON.stringify({status:'passed',recordedVision:true,uncertainPermission:true,taskLinked:true,openingExcluded:true,sceneSynced:true,replay:true,sourceUnchanged:true,controlledStress:true,scoreUnchanged:true,unchangedEvidenceAfterHomeRevisionRejected:true}));
+ await writeFile('../../fixtures/ai/concern-integration.json',JSON.stringify({synthetic:true,newModelCalls:0,recordedVisionModel:vision.model,annotation:'Recorded synthetic image interpretation; explicitly fixture-selected opening, never inferred from pixels',proposal,manifest,uncertain:uncertain.aiState,permissionRejected,manualSelectedPortalID:portal.id,task:confirmed.concernTasks[0],hypotheticalSession:exercise.session,baselineReceipt:baseline.receipt,exerciseReceipt:exercise.receipt,controlledStress:stress.stress,scoreUnchanged:true,dismissed:dismissed.aiState,unchangedEvidenceAfterHomeRevisionRejected:true,concernPracticeVariantRejected:true},null,2)+'\n');
+ console.log(JSON.stringify({status:'passed',recordedVision:true,uncertainPermission:true,taskLinked:true,openingExcluded:true,sceneSynced:true,replay:true,sourceUnchanged:true,controlledStress:true,scoreUnchanged:true,unchangedEvidenceAfterHomeRevisionRejected:true,concernPracticeVariantRejected:true}));
 }finally{host.close();}

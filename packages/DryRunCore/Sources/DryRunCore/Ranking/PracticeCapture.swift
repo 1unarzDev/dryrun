@@ -26,7 +26,8 @@ public extension IntegratedAIState {
         guard !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
            latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4 {return latest}
-        guard let session=sessions.first(where:{$0.id==sessionID}),!practiceAttempts.contains(where:{$0.source?.sessionID==sessionID}) else {throw SessionError.invalidCommand}
+        guard let session=sessions.first(where:{$0.id==sessionID}),session.concernSeed==nil,
+              !practiceAttempts.contains(where:{$0.source?.sessionID==sessionID}) else {throw SessionError.invalidCommand}
         let receipt=try session.query(library:library)
         guard !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
         guard !receipt.finished else {throw SessionError.finished}
@@ -57,6 +58,7 @@ public extension IntegratedAIState {
               practiceAttempts[a].sequence==practiceAttempts.map(\.sequence).max(),
               let source=practiceAttempts[a].source,source.contractVersion=="dryrun.practice-capture/1",
               let s=sessions.firstIndex(where:{$0.id==source.sessionID}),
+              sessions[s].concernSeed==nil,
               var observations=practiceAttempts[a].observations,
               let expected=Self.practiceOrder(practiceAttempts[a].variantID).dropFirst(observations.count).first,
               expected==competencyID,commit.actor=="user",commit.commands.count==1,
@@ -98,7 +100,7 @@ public extension IntegratedAIState {
         try practiceAttempts.map {attempt in
             var accepted=attempt;accepted.answers=[]
             guard let source=attempt.source else {return accepted}
-            guard attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",let session=sessions.first(where:{$0.id==source.sessionID}),
+            guard attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   let observations=attempt.observations,observations.count<=4,
                   Set(observations.map(\.actionID)).count==observations.count,

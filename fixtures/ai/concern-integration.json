@@ -6160,5 +6160,6 @@
     "scorecards": [],
     "sessions": []
   },
-  "unchangedEvidenceAfterHomeRevisionRejected": true
+  "unchangedEvidenceAfterHomeRevisionRejected": true,
+  "concernPracticeVariantRejected": true
 }

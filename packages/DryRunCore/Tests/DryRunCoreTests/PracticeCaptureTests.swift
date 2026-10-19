@@ -110,4 +110,19 @@ import Testing
         #expect(before.map(\.credit)==after.map(\.credit));#expect(after.first?.credit==0)
     }
 
+    @Test func concernHypothesesCannotBecomeApprovedPracticeVariants()throws {
+        let fixtures=ConcernIntegrationTests()
+        var local=IntegratedAIState()
+        try fixtures.review(&local,decision:.uncertain)
+        let portal=try #require(SimFixtures.home.portals.first{$0.sideA == .space("sp-living") && $0.sideB == .exterior || $0.sideB == .space("sp-living") && $0.sideA == .exterior})
+        let seed=try local.concernExerciseSeed(concernID:"concern",scenarioID:"home-fire",selectedPortalIDs:[portal.id],allowHypothetical:true,home:SimFixtures.home)
+        local.sessions=[try SimulationSession.initialize(id:"hypothesis",initial:SimFixtures.input(SampleHouseholds.oak,"home-fire"),library:SimFixtures.library,concernSeed:seed)]
+        let before=try DryRunJSON.encoder().encode(local)
+        #expect(throws:SessionError.invalidCommand){try local.beginPractice(id:"not-equivalent",variantID:"practice-check-a/0",sessionID:"hypothesis",library:SimFixtures.library)}
+        #expect(try DryRunJSON.encoder().encode(local)==before)
+        // The educational exercise remains runnable and retains its explicit assumption.
+        #expect(try local.sessions[0].query(library:SimFixtures.library).revision==0)
+        #expect(local.sessions[0].concernSeed?.hypotheticalPermission==true)
+    }
+
 }
