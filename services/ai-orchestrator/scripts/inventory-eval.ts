@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {GeminiProvider} from '../src/provider.js';
@@ -11,5 +12,6 @@ try{const state=await host.request({op:'initialize'});for(const c of cases){
  const matched=observations.length===1&&observations[0]!.quantity===c.expected&&(c.expected===null||observations[0]!.unit==='liter');
  results.push({id:c.id,intake:c.text,expected:c.expected,output,matched});
 }
- await writeFile('../../fixtures/ai/inventory-evaluation.json',JSON.stringify({synthetic:true,model:'gemini-3.1-flash-lite',sdk:'2.30.0',calls:runner.calls,usage:runner.usage,results},null,2));console.log(JSON.stringify({fixtures:2,matched:results.filter(r=>r.matched).length}));
+ await writeFile('../../fixtures/ai/inventory-evaluation.json',JSON.stringify({synthetic:true,model:'gemini-3.1-flash-lite',sdk:'2.30.0',prompt:'preparation/2',schema:'preparation-v1',inventoryCategoryVersion:'dryrun.inventory-categories/1',calls:runner.calls,usage:runner.usage,results},null,2));console.log(JSON.stringify({fixtures:2,matched:results.filter(r=>r.matched).length}));
+ assert.equal(results.filter(r=>r.matched).length,cases.length,'inventory_expectations_failed');
 }finally{host.close();}

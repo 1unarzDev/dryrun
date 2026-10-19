@@ -1,0 +1,12 @@
+{
+  "version": "dryrun.inventory-categories/1",
+  "promptVersion": "preparation/2",
+  "categories": ["water", "food", "light", "firstAid", "sanitation", "medication", "petSupplies", "infantSupplies", "power", "fuel", "communication", "other"],
+  "rules": [
+    "Drinking/stored water observations use water, never hydration or another synonym.",
+    "Categories classify proposals; they do not establish ownership, quantity, usability, functionality or an approved requirement.",
+    "Unsupported item categories use other and remain reviewable; no invented standard deficit.",
+    "Manual recorded supply requirements retain their existing explicit category identity and approved source/instruction requirements.",
+    "Native confirmation must preserve canonical category and units when accepting an observation into the host ledger."
+  ]
+}

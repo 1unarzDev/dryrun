@@ -31,3 +31,10 @@ it('rejects a driving search strategy for a household with no car after bounded 
  const runner=new FeatureRunner({async turn(){calls++;return {steps:[],calls:[],usage:{},text:JSON.stringify({searchPlans:[plan],question:null})}}});
  await expect(runner.run('resources',context)).rejects.toThrow('unsupported_travel');expect(calls).toBe(2);
 });
+
+it('rejects noncanonical inventory categories before they bypass host arithmetic',async()=>{
+ const {preparationOutput}=await import('../src/features.js');
+ const observation={id:'bottle',physicalID:'one-bottle',category:'water',quantity:2,unit:'liter',evidenceIDs:['typed'],unknowns:[]};
+ expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[observation],question:null}).success).toBe(true);
+ expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,category:'hydration'}],question:null}).success).toBe(false);
+});

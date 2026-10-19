@@ -2,29 +2,59 @@
   "synthetic": true,
   "model": "gemini-3.1-flash-lite",
   "sdk": "2.30.0",
-  "calls": 2,
+  "prompt": "preparation/2",
+  "schema": "preparation-v1",
+  "calls": 4,
   "usage": [
     {
-      "total_tokens": 1031,
-      "total_input_tokens": 900,
+      "total_tokens": 1398,
+      "total_input_tokens": 954,
       "input_tokens_by_modality": [
         {
           "modality": "text",
-          "tokens": 900
+          "tokens": 954
         }
       ],
       "total_cached_tokens": 0,
-      "total_output_tokens": 131,
+      "total_output_tokens": 444,
       "total_tool_use_tokens": 0,
       "total_thought_tokens": 0
     },
     {
-      "total_tokens": 1055,
-      "total_input_tokens": 902,
+      "total_tokens": 1576,
+      "total_input_tokens": 1449,
       "input_tokens_by_modality": [
         {
           "modality": "text",
-          "tokens": 902
+          "tokens": 1449
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 127,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1394,
+      "total_input_tokens": 956,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 956
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 438,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1598,
+      "total_input_tokens": 1445,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1445
         }
       ],
       "total_cached_tokens": 0,
@@ -43,7 +73,7 @@
         "inventoryObservations": [
           {
             "id": "obs-water-001",
-            "physicalID": "water-bottle-01",
+            "physicalID": "sealed-water-bottle-1",
             "category": "water",
             "quantity": 2,
             "unit": "liter",
@@ -53,7 +83,7 @@
             "unknowns": []
           }
         ],
-        "question": "Do you have any backup power source or generator documentation available for the oxygen equipment required by the older adult in your household?"
+        "question": "Could you provide the manufacturer documentation or model number for the oxygen equipment to determine its power requirements?"
       },
       "matched": true
     },
@@ -65,8 +95,8 @@
         "tasks": [],
         "inventoryObservations": [
           {
-            "id": "obs-water-container-001",
-            "physicalID": "water-container-01",
+            "id": "obs-water-container",
+            "physicalID": "unknown-water-container-01",
             "category": "water",
             "quantity": null,
             "unit": "liter",
@@ -74,14 +104,15 @@
               "unknown-water"
             ],
             "unknowns": [
-              "Volume capacity of container is unreadable",
+              "Total capacity of container is unreadable",
               "Current fill level is unknown"
             ]
           }
         ],
-        "question": "Could you provide the power requirements or model number for the oxygen equipment to help determine the necessary backup power capacity?"
+        "question": "Does the oxygen equipment for p-oak-4 have a battery backup system or does it rely exclusively on grid power?"
       },
       "matched": true
     }
-  ]
+  ],
+  "inventoryCategoryVersion": "dryrun.inventory-categories/1"
 }

@@ -3060,6 +3060,7 @@
     ]
   },
   "scorecard": {
+    "assessmentVersion": "dryrun.household-assessment/2",
     "cap": 59,
     "capReasons": [
       "alarms",
@@ -3067,17 +3068,17 @@
       "escape",
       "shelter"
     ],
-    "evidenceCoverage": 28.611111111111107,
-    "overall": 21.249999999999996,
+    "evidenceCoverage": 24.72222222222222,
+    "overall": 19.25,
     "practice": 25,
     "practiceAssessed": 1,
-    "preparation": 20.83333333333333,
+    "preparation": 18.61111111111111,
     "provisional": true,
     "rubricVersion": "dryrun-rubric/0.1-draft",
     "statuses": {
       "alarms": "unknown",
-      "assistance": "notApplicable",
-      "care": "notApplicable",
+      "assistance": "partlyMet",
+      "care": "unknown",
       "contact": "partlyMet",
       "device": "unknown",
       "escape": "partlyMet",

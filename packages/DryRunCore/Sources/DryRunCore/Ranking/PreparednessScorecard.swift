@@ -18,8 +18,9 @@ public struct CriterionAssessment: Codable, Sendable {
     public var evidenceIDs:[String]
     public var notApplicableRule:String?
     public var outsideScope:Bool
-    public init(criterionID:String,predicates:[String:Bool]=[:],evidenceIDs:[String]=[],notApplicableRule:String?=nil,outsideScope:Bool=false){
-        self.criterionID=criterionID;self.predicates=predicates;self.evidenceIDs=evidenceIDs;self.notApplicableRule=notApplicableRule;self.outsideScope=outsideScope
+    public var assessmentVersion:String?
+    public init(criterionID:String,predicates:[String:Bool]=[:],evidenceIDs:[String]=[],notApplicableRule:String?=nil,outsideScope:Bool=false,assessmentVersion:String?=nil){
+        self.criterionID=criterionID;self.predicates=predicates;self.evidenceIDs=evidenceIDs;self.notApplicableRule=notApplicableRule;self.outsideScope=outsideScope;self.assessmentVersion=assessmentVersion
     }
 }
 public struct PracticeAnswer: Codable, Sendable {
@@ -34,6 +35,7 @@ public struct PracticeAttempt: Codable, Sendable {
     public init(id:String,sequence:Int,variantID:String,answers:[PracticeAnswer],coached:Bool=false){self.id=id;self.sequence=sequence;self.variantID=variantID;self.answers=answers;self.coached=coached}
 }
 public struct PreparednessScorecard: Codable, Sendable {
+    public var assessmentVersion:String?
     public var rubricVersion:String; public var preparation:Double?; public var practice:Double
     public var overall:Double?; public var evidenceCoverage:Double; public var practiceAssessed:Int
     public var provisional:Bool; public var cap:Double; public var capReasons:[String]; public var statuses:[String:CriterionStatus]
@@ -50,6 +52,8 @@ public enum ScoreCompiler {
               abs(rubric.domainWeights.keys.sorted().reduce(0){$0 + rubric.domainWeights[$1]!}-100)<0.001,
               Set(rubric.criteria.map(\.id)).count==rubric.criteria.count,
               Set(assessments.map(\.criterionID)).count==assessments.count else {throw SessionError.invalidCommand}
+        let assessmentVersions=Set(assessments.compactMap(\.assessmentVersion))
+        guard assessmentVersions.count<=1, assessmentVersions.isEmpty || assessments.allSatisfy({$0.assessmentVersion != nil}) else {throw SessionError.invalidCommand}
         let byID=Dictionary(uniqueKeysWithValues:assessments.map{($0.criterionID,$0)})
         guard byID.keys.allSatisfy({key in rubric.criteria.contains{$0.id==key}}) else {throw SessionError.invalidCommand}
         var domainEarned:[String:Double]=[:],domainAssessed:[String:Double]=[:],domainPossible:[String:Double]=[:]
@@ -88,7 +92,7 @@ public enum ScoreCompiler {
                 if !latest.coached && a.beforeFeedback {practice += 25*a.credit;practiceAssessed += 1}
             }
         }
-        return PreparednessScorecard(rubricVersion:rubric.version,preparation:preparation,practice:practice,
+        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,rubricVersion:rubric.version,preparation:preparation,practice:practice,
             overall:preparation.map{min(0.9*$0+0.1*practice,cap)},evidenceCoverage:weight>0 ? 100*coverage/weight : 0,
             practiceAssessed:practiceAssessed,provisional:true,cap:cap,capReasons:reasons.sorted(),statuses:statuses)
     }
