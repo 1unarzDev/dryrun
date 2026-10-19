@@ -12,7 +12,7 @@ public enum HouseholdAssessment {
     private static func requiresAssistance(_ p:Person)->Bool {
         p.requiresStepFreeRoute || p.needs.contains(.needsHelperToEvacuate) || p.needs.contains(.deafOrHardOfHearing) || p.ageBand == .infant || p.ageBand == .child
     }
-    public static let version="dryrun.household-assessment/3"
+    public static let version="dryrun.household-assessment/4"
     public static func assess(household h:HouseholdProfile,home:HomeModel?,inventory:InventoryLedger?,places:[SavedPlace]=[],stressFindings:[StressTestFinding]=[],at date:Date) throws -> [CriterionAssessment] {
         var results:[CriterionAssessment]=[]
         func append(_ id:String,_ values:[String:Bool?],evidence:[String],notApplicable:String?=nil){
@@ -47,16 +47,11 @@ public enum HouseholdAssessment {
             }
             append("shelter",["suitable":shelter == nil ? nil:true,"reachable":all(shelterRoutes)],evidence:["home|\(home.id)|\(home.revision)","home.tornadoShelterCandidate"])
         }
-        let water=try inventory?.waterGap(people:h.people.count,at:date)
-        let waterItems=inventory?.items.filter{$0.category=="water"} ?? []
-        let waterAccess=any(waterItems.map {item in
-            item.expiresAt.map{$0<=date}==true ? false:item.accessible.confirmedValue
-        })
+        let water=try inventory?.waterGap(people:h.people.count,personIDs:h.people.map(\.id),at:date)
+        let waterAccess=try inventory?.usableAccess(category:"water",personIDs:h.people.map(\.id),at:date)
         append("water",["quantity":water.flatMap{$0.deficit.map{$0==0}},"accessible":waterAccess],evidence:["inventory.water"])
         let foodItems=inventory?.items.filter{$0.category=="food"} ?? []
-        let foodAccess=any(foodItems.map {item in
-            item.expiresAt.map{$0<=date}==true ? false:item.accessible.confirmedValue
-        })
+        let foodAccess=try inventory?.usableAccess(category:"food",personIDs:h.people.map(\.id),at:date)
         let foodQuantity:Bool?
         if !foodItems.isEmpty,let inventory {
             foodQuantity=try inventory.householdFoodGap(personIDs:h.people.map(\.id),at:date).deficit.map{$0==0}

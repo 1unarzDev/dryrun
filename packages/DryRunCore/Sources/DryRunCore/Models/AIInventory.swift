@@ -28,36 +28,75 @@ public struct InventoryLedger: Codable, Sendable {
     public init() {}
     public mutating func confirm(_ proposals: [InventoryItem], baseRevision: Int, at date: Date) throws {
         guard baseRevision == revision else { throw SessionError.stale }
+        guard revision>=0,revision<Int.max,date.timeIntervalSince1970.isFinite,proposals.count<=500 else {throw SessionError.invalidCommand}
+        guard Set(proposals.map(\.id)).count==proposals.count,Set(proposals.map(\.physicalID)).count==proposals.count else {throw SessionError.duplicate}
+        guard items.count<=500,Set(items.map(\.id)).count==items.count,Set(items.map(\.physicalID)).count==items.count else {throw SessionError.duplicate}
+        for item in items {try Self.validateItem(item)}
         var candidate=items
         for var p in proposals {
-            guard !p.id.isEmpty,!p.physicalID.isEmpty,
-                  p.quantity.status != .confirmed || p.quantity.origin == .userConfirmed,
-                  p.usableQuantity.status != .confirmed || p.usableQuantity.origin == .userConfirmed,
-                  p.accessible.status != .confirmed || p.accessible.origin == .userConfirmed,
-                  p.quantity.confirmedValue.map({$0.isFinite && $0>=0}) ?? true,
-                  p.usableQuantity.confirmedValue.map({usable in usable.isFinite && usable>=0 && (p.quantity.confirmedValue.map{q in usable<=q} ?? true)}) ?? true else { throw SessionError.invalidCommand }
+            try Self.validateItem(p)
             if let old=candidate.first(where: {$0.id==p.id || $0.physicalID==p.physicalID}), old.id != p.id { throw SessionError.duplicate }
             p.lastConfirmedAt=date; candidate.removeAll{$0.id==p.id};candidate.append(p)
         }
         guard candidate.count<=500,Set(candidate.map(\.id)).count==candidate.count,Set(candidate.map(\.physicalID)).count==candidate.count else {throw SessionError.duplicate}
         items=candidate;revision += 1
     }
+    private static func validateItem(_ p:InventoryItem)throws {
+        guard !p.id.isEmpty,!p.physicalID.isEmpty,!p.category.isEmpty,
+              p.expiresAt?.timeIntervalSince1970.isFinite ?? true,
+              p.quantity.status != .confirmed || p.quantity.origin == .userConfirmed,
+              p.usableQuantity.status != .confirmed || p.usableQuantity.origin == .userConfirmed,
+              p.accessible.status != .confirmed || p.accessible.origin == .userConfirmed,
+              p.quantity.confirmedValue.map({$0.isFinite && $0>=0}) ?? true,
+              p.usableQuantity.confirmedValue.map({usable in usable.isFinite && usable>=0 && (p.quantity.confirmedValue.map{q in usable<=q} ?? true)}) ?? true else { throw SessionError.invalidCommand }
+    }
+    /// Recorded subject restrictions never become a shared household pool without matching scope.
+    static func coversHousehold(_ item:InventoryItem,personIDs:[String]?)->Bool {
+        item.subjectIDs.isEmpty || personIDs.map{!$0.isEmpty && Set($0).isSubset(of:Set(item.subjectIDs))} == true
+    }
+    /// Read paths must not trust Codable input more than an explicit confirmation transaction.
+    public func validate(at date:Date)throws {
+        guard revision>=0,revision<Int.max else {throw SessionError.invalidCommand}
+        var checked=InventoryLedger()
+        try checked.confirm(items,baseRevision:0,at:date)
+    }
+    /// Accessible usable stock, not merely an accessible empty container. Unknown amounts stay unknown
+    /// for quantity math while explicitly confirmed access may still be recorded independently.
+    public func usableAccess(category:String,personIDs:[String]?=nil,at date:Date)throws->Bool? {
+        try validate(at:date)
+        let relevant=items.filter{$0.category==category}
+        var unknown=relevant.isEmpty
+        for item in relevant {
+            if item.expiresAt.map({$0<=date})==true || item.quantity.confirmedValue==0 || item.usableQuantity.confirmedValue==0 {continue}
+            if item.accessible.confirmedValue==true {
+                if Self.coversHousehold(item,personIDs:personIDs) {return true}
+                unknown=true
+            }
+            if item.accessible.confirmedValue==nil {unknown=true}
+        }
+        return unknown ? nil:false
+    }
     /// S26 CDC storage planning baseline; pet/infant/device-specific additions remain recorded requirements.
-    public func waterGap(people: Int, days: Int = 3, at date: Date) throws -> SupplyGap {
+    public func waterGap(people: Int, days: Int = 3, personIDs:[String]?=nil, at date: Date) throws -> SupplyGap {
         guard people>0, people<=100, days>=3, days<=30,items.count<=500,
               Set(items.map(\.id)).count==items.count,Set(items.map(\.physicalID)).count==items.count else { throw SessionError.invalidCommand }
+        guard personIDs.map({$0.count==people && Set($0).count==$0.count && $0.allSatisfy{!$0.isEmpty}}) ?? true else {throw SessionError.invalidCommand}
+        try validate(at:date)
         let required=Double(people*days)*3.785411784
-        var known=0.0, unknown = !items.contains{$0.category=="water"}
+        var known=0.0, unknown = !items.contains{$0.category=="water"},scopeUnsupported=false
         for i in items where i.category=="water" {
             if let expiry=i.expiresAt, expiry<=date { continue }
+            if i.quantity.confirmedValue==0 || i.usableQuantity.confirmedValue==0 {continue}
             guard i.unit == .liter || i.unit == .usGallon else { throw SessionError.invalidCommand }
             if i.accessible.confirmedValue == false { continue }
+            if !Self.coversHousehold(i,personIDs:personIDs) {scopeUnsupported=true;unknown=true;continue}
             guard i.accessible.confirmedValue==true, let q=i.usableQuantity.confirmedValue else { unknown=true;continue }
             guard q.isFinite,q>=0,i.usableQuantity.origin == .userConfirmed,i.accessible.origin == .userConfirmed,
                   i.quantity.confirmedValue.map({$0.isFinite && $0>=q}) ?? true else {throw SessionError.invalidCommand}
             known += q * (i.unit == .usGallon ? 3.785411784 : 1)
+            guard known.isFinite else {throw SessionError.invalidCommand}
         }
-        return SupplyGap(category:"water",required:required,confirmedUsable:known,deficit:known>=required ? 0 : unknown ? nil : max(0,required-known),unit:"liter",unknown:unknown,sourceIDs:["S26"])
+        return SupplyGap(category:"water",required:required,confirmedUsable:known,deficit:known>=required ? 0 : unknown ? nil : max(0,required-known),unit:"liter",unknown:unknown,sourceIDs:["S26"],scopeUnsupported:scopeUnsupported ? true:nil)
     }
     /// Explicit adapter for legacy totals; call once during migration, never add both representations.
     public static func migrating(_ supplies: Supplies, at date: Date) throws -> InventoryLedger {
@@ -71,6 +110,8 @@ public struct InventoryLedger: Codable, Sendable {
 public struct SupplyGap: Codable, Sendable {
     public var category:String; public var required:Double; public var confirmedUsable:Double; public var deficit:Double?
     public var unit:String; public var unknown:Bool; public var sourceIDs:[String]
+    /// Some recorded stock belongs to a narrower scope than this household-wide calculation supports.
+    public var scopeUnsupported:Bool? = nil
 }
 
 /// A quantity requirement comes from reviewed guidance or the household's recorded instructions.
@@ -91,6 +132,7 @@ public extension InventoryLedger {
     /// cannot be converted into a whole household's food-days by inference.
     func householdFoodGap(personIDs:[String],at date:Date)throws->SupplyGap {
         guard !personIDs.isEmpty,personIDs.count<=100,personIDs.allSatisfy({!$0.isEmpty}),Set(personIDs).count==personIDs.count,items.count<=500,Set(items.map(\.id)).count==items.count,Set(items.map(\.physicalID)).count==items.count else {throw SessionError.invalidCommand}
+        try validate(at:date)
         var days=self
         days.items=items.filter{$0.category=="food" && $0.unit == .day}
         var result=try days.gap(for:RecordedSupplyRequirement(id:"household-food-days",category:"food",quantity:3,unit:.day,subjectIDs:personIDs,sourceIDs:["S64"]),at:date)
@@ -99,6 +141,7 @@ public extension InventoryLedger {
                 && (item.subjectIDs.isEmpty || Set(personIDs).isSubset(of:Set(item.subjectIDs)))
         }
         if unsupported {result.unknown=true;if result.confirmedUsable<result.required {result.deficit=nil}}
+        if items.contains(where:{$0.category=="food" && !Self.coversHousehold($0,personIDs:personIDs) && $0.expiresAt.map{$0<=date} != true && $0.accessible.confirmedValue != false && $0.quantity.confirmedValue != 0 && $0.usableQuantity.confirmedValue != 0}) {result.scopeUnsupported=true;result.unknown=true;if result.confirmedUsable<result.required {result.deficit=nil}}
         return result
     }
     /// Shared household quantities are counted once. Subject-restricted supplies cannot cover another person.
@@ -107,10 +150,11 @@ public extension InventoryLedger {
         guard !requirement.id.isEmpty,!requirement.category.isEmpty,requirement.quantity.isFinite,
               requirement.quantity>=0,!requirement.sourceIDs.isEmpty,
               Set(items.map(\.id)).count==items.count,Set(items.map(\.physicalID)).count==items.count else {throw SessionError.invalidCommand}
+        try validate(at:date)
         let relevant=items.filter{$0.category==requirement.category && ($0.subjectIDs.isEmpty || Set(requirement.subjectIDs).isSubset(of:Set($0.subjectIDs)))}
         var usable=0.0,unknown=relevant.isEmpty
         for item in relevant {
-            if item.expiresAt.map({$0<=date})==true || item.accessible.confirmedValue==false {continue}
+            if item.expiresAt.map({$0<=date})==true || item.accessible.confirmedValue==false || item.quantity.confirmedValue==0 || item.usableQuantity.confirmedValue==0 {continue}
             guard item.accessible.confirmedValue==true,let amount=item.usableQuantity.confirmedValue else {unknown=true;continue}
             guard amount.isFinite,amount>=0,item.usableQuantity.origin == .userConfirmed,item.accessible.origin == .userConfirmed,
                   item.quantity.confirmedValue.map({$0.isFinite && $0>=amount}) ?? true else {throw SessionError.invalidCommand}

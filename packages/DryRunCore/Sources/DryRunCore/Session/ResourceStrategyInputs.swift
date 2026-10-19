@@ -15,7 +15,7 @@ public extension ResourceStrategyKey {
               !regionID.isEmpty,regionID.count<=120,Set(tasks.map(\.id)).count==tasks.count,
               Set(dependencies.map(\.id)).count==dependencies.count,
               dependencies.allSatisfy({!$0.id.isEmpty && $0.id.count<=120 && !$0.state.isEmpty && $0.state.count<=120}) else {throw SessionError.invalidCommand}
-        struct Gap:Codable {var category:String;var required:Double;var confirmedUsable:Double;var deficit:Double?;var unit:String;var unknown:Bool;var sourceIDs:[String]}
+        struct Gap:Codable {var category:String;var required:Double;var confirmedUsable:Double;var deficit:Double?;var unit:String;var unknown:Bool;var sourceIDs:[String];var scopeUnsupported:Bool?}
         struct Task:Codable {var id:String;var actionID:String;var criterionID:String;var subjectID:String;var completionPredicates:[String];var editor:String;var dependencyIDs:[String];var priority:Int}
         struct Inputs:Encodable {var version:String;var gaps:[Gap];var tasks:[Task];var dependencies:[ResourceStrategyDependency]}
         var canonicalGaps:[String:Gap]=[:]
@@ -24,7 +24,7 @@ public extension ResourceStrategyKey {
                   gap.required.isFinite,gap.required>=0,gap.confirmedUsable.isFinite,gap.confirmedUsable>=0,
                   gap.deficit.map({$0.isFinite && $0>=0}) ?? true else {throw SessionError.invalidCommand}
             let canonical=Gap(category:gap.category,required:gap.required==0 ? 0:gap.required,confirmedUsable:gap.confirmedUsable==0 ? 0:gap.confirmedUsable,
-                deficit:gap.deficit.map{$0==0 ? 0:$0},unit:gap.unit,unknown:gap.unknown,sourceIDs:Array(Set(gap.sourceIDs)).sorted())
+                deficit:gap.deficit.map{$0==0 ? 0:$0},unit:gap.unit,unknown:gap.unknown,sourceIDs:Array(Set(gap.sourceIDs)).sorted(),scopeUnsupported:gap.scopeUnsupported==true ? true:nil)
             let encoded=String(decoding:try DryRunJSON.encoder().encode(canonical),as:UTF8.self)
             canonicalGaps[encoded]=canonical
         }
