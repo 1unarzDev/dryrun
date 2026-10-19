@@ -1,0 +1,106 @@
+{
+  "synthetic": true,
+  "newModelCalls": 0,
+  "sourceInventoryConfirmed": true,
+  "keys": {
+    "fiveGallons": {
+      "gapCategories": [
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "33be4d107e3ee8d3",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "sixGallons": {
+      "gapCategories": [
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "a8d8feeb064b7553",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "wording": {
+      "gapCategories": [
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "33be4d107e3ee8d3",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "explicitDependency": {
+      "gapCategories": [
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "ef861b35624065b0",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "unrelatedDisplayEdit": {
+      "gapCategories": [
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "a8d8feeb064b7553",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    }
+  },
+  "gaps": {
+    "fiveGallons": [
+      {
+        "category": "water",
+        "confirmedUsable": 18.92705892,
+        "deficit": 26.497882487999995,
+        "required": 45.424941407999995,
+        "sourceIDs": [
+          "S26"
+        ],
+        "unit": "liter",
+        "unknown": false
+      }
+    ],
+    "sixGallons": [
+      {
+        "category": "water",
+        "confirmedUsable": 22.712470703999998,
+        "deficit": 22.712470703999998,
+        "required": 45.424941407999995,
+        "sourceIDs": [
+          "S26"
+        ],
+        "unit": "liter",
+        "unknown": false
+      }
+    ]
+  },
+  "assertions": {
+    "changedDeficitInvalidates": true,
+    "wordingIgnored": true,
+    "explicitDependencyInvalidates": true,
+    "unrelatedDisplayEditIgnored": true
+  }
+}

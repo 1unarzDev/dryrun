@@ -50,3 +50,5 @@ Optional submitted action interpretation: `/v1/intents` (synthetic-only); `scrip
 Additional diagnostics: `scripts/council-invariance-eval.ts` (32 live calls; run sequentially), `scripts/inventory-image-eval.ts` (four live synthetic-label cases), and `scripts/vision-localization-eval.ts` (offline reanalysis of retained boxes). Read evaluation-report.md for actual failures/limits; raw council and vision results are not accepted household facts.
 
 Home review transport and portable task/scenario links: `scripts/concern-eval.ts`; read `../../docs/ai/concern-integration.md`. The fixture reuses retained synthetic Gemini vision output and real Swift route computations. New home responses include reviewProposals bound to exact manifest digests/home revisions; confirmation and hypothetical opening selection stay in the local host.
+
+Resource strategy refresh: `scripts/resource-refresh-eval.ts` drives actual Swift inventory arithmetic and normalized local keys without a model call. Native scheduling contracts are in `../../docs/ai/resource-refresh.md`; geographic results/origin never enter this key or cloud tools.

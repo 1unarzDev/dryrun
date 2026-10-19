@@ -9,7 +9,7 @@ This is an implemented, synthetic-tested integration package, **not a production
 | Check | Actual result |
 |---|---|
 | Existing baseline Core | 333 tests passed before changes |
-| Final Core | 387 tests / 70 suites passed, Swift 6.2 Docker |
+| Final Core | 392 tests / 71 suites passed, Swift 6.2 Docker |
 | Vault | 36 tests / 7 suites passed, including legacy/additive encrypted sidecar roundtrip |
 | Private gateway | 41 tests / 6 files passed; TypeScript check passed |
 | Unchanged public API | 68 tests passed; TypeScript check passed |
@@ -150,3 +150,7 @@ Inventory-image follow-up used three programmatic synthetic bottle-label diagram
 ## Follow-up: concern review integration
 
 The [concern transaction](concern-integration.md) now validates source home/image/task/scenario identity, persists review atomically, deduplicates repeated observations and exposes confirmed preparation links. Explicit user-selected adjacent opening IDs can seed a fresh hypothetical exercise; uncertain evidence requires separate permission. Pixel boxes never become geometry. Routes, movement, helper reach, supply access and spatial overlays share the same selected exclusions; source facts and score predicates stay unchanged. The headless fixture uses a retained live synthetic vision observation and passes review → task link → hypothetical route exclusion → scene synchronization → exact replay → dismissal. Core **387 tests / 70 suites**, gateway **41 tests / 6 files**, and typechecking passed. Legacy reviews need source re-review; native UI/photo/opening-selection and real-data validation remain pending.
+
+## Follow-up: relevant resource refresh
+
+[Normalized refresh inputs](resource-refresh.md) now include actual gap quantities/unknowns, canonical resource-task prerequisites and explicit dependencies, while excluding wording/order and unrelated household edits. Debounce invalidates stale work immediately and preserves useful plans. Returning to accepted inputs cancels newer pending work, fixing an overwrite race. Acceptance rejects wrong tasks, no-car driving, negative expansion and nonfinite ranges. Core **392 tests / 71 suites** and an actual inventory→arithmetic→key headless fixture passed; no new model call. Native timing/geographic fingerprints/MapKit cancellation remain pending.

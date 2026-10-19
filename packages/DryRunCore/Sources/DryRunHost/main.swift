@@ -14,6 +14,8 @@ struct HostRequest: Decodable {
     var variantID:String?
     var competencyID:String?
     var feedbackActionID:String?
+    var resourceTasks:[PreparationTaskProposal]?
+    var strategyDependencies:[ResourceStrategyDependency]?
     var concernProposal:HomeConcernProposal?
     var imageManifest:RoomImageManifest?
     var concernDecision:ConcernDecision?
@@ -39,6 +41,7 @@ struct HostRequest: Decodable {
     var tool:SessionToolRequest?
 }
 struct HostResponse: Encodable {
+    var resourceStrategyKey:ResourceStrategyKey?
     var concernTasks:[ConcernTaskLink]?
     var intentResult:IntentCommitReceipt?
     var aiState:IntegratedAIState?
@@ -65,7 +68,7 @@ let encoder = DryRunJSON.encoder(); encoder.outputFormatting = [.sortedKeys, .wi
 while let line = readLine() {
     do {
         let request = try decoder.decode(HostRequest.self, from: Data(line.utf8))
-        guard ["initialize","query","tool","commit","directorCommit","interpretCommit","fallback","preview","assess","inventory","confirmInventory","stress","practiceBegin","practiceSubmit","practiceFeedback","reviewConcern","concernExercise"].contains(request.op) else {throw SessionError.invalidCommand}
+        guard ["initialize","query","tool","commit","directorCommit","interpretCommit","fallback","preview","assess","inventory","confirmInventory","stress","practiceBegin","practiceSubmit","practiceFeedback","reviewConcern","concernExercise","resourceKey"].contains(request.op) else {throw SessionError.invalidCommand}
         var session: SimulationSession
         if request.op == "initialize" {
             let household = request.sample == "lake" ? SampleHouseholds.lake : request.sample == "pine" ? SampleHouseholds.pine : SampleHouseholds.oak
@@ -137,7 +140,14 @@ while let line = readLine() {
         }
         if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = [try inventory.waterGap(people:session.initial.household.people.count,at:date)]}
         if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory)}
-        let response = HostResponse(concernTasks:concernTasks,intentResult:intentResult,aiState:aiState,session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.initial.variants) }, directorProfiles:library.scenario(session.initial.scenarioID).map{scenario in scenario.events.filter{Applicability.holds($0.when,household:session.initial.household,home:session.initial.home,variants:session.initial.variants)}.map{DirectorProfileDescriptor($0,in:scenario)}}, householdContext: HouseholdContextSnapshot(session.initial.household), homeScene: session.initial.home.map(HomeSceneContext.init), preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
+        var resourceStrategyKey:ResourceStrategyKey?
+        if request.op=="resourceKey" {
+            guard let inventory=request.inventory ?? session.inventory?.ledger,let tasks=request.resourceTasks else {throw SessionError.invalidCommand}
+            let gap=try inventory.waterGap(people:session.initial.household.people.count,at:date)
+            resourceStrategyKey=try ResourceStrategyKey.normalized(gaps:[gap],tasks:tasks,transport:HouseholdContextSnapshot(session.initial.household).transport,
+                limitedBudget:session.initial.household.supplies.limitedBudget,regionID:session.initial.household.regionID,dependencies:request.strategyDependencies ?? [])
+        }
+        let response = HostResponse(resourceStrategyKey:resourceStrategyKey,concernTasks:concernTasks,intentResult:intentResult,aiState:aiState,session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.initial.variants) }, directorProfiles:library.scenario(session.initial.scenarioID).map{scenario in scenario.events.filter{Applicability.holds($0.when,household:session.initial.household,home:session.initial.home,variants:session.initial.variants)}.map{DirectorProfileDescriptor($0,in:scenario)}}, householdContext: HouseholdContextSnapshot(session.initial.household), homeScene: session.initial.home.map(HomeSceneContext.init), preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
         print(String(decoding: try encoder.encode(response), as: UTF8.self))
         fflush(nil)
     } catch { print("{\"error\":\"\(error is SessionError ? String(describing: error) : "invalid_request")\"}"); fflush(nil) }
