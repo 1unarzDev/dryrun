@@ -30,18 +30,7 @@ public struct RehearsalEngine: Sendable {
     }
 
     public func run(_ input: RehearsalInput) throws -> RehearsalResult {
-        guard let scenario = library.scenario(input.scenarioID) else { throw RehearsalError.unknownScenario(input.scenarioID) }
-        guard scenario.version == input.scenarioVersion else {
-            throw RehearsalError.scenarioVersionMismatch(expected: scenario.version, actual: input.scenarioVersion)
-        }
-        // Interventions apply to a simulation COPY. `input` is a value and is never mutated.
-        let (household, home) = InterventionApplier.apply(input.interventions, household: input.household, home: input.home)
-        var run = RunState(scenario: scenario, input: input, household: household, home: home, planner: planner)
-        try run.execute()
-        let recs = RecommendationRanker.rank(ActionRules.evaluate(run.summary(), catalog: actions))
-        return RehearsalResult(input: input, events: run.events, snapshots: run.snapshots, decisions: run.decisions,
-                               routes: run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }, recommendations: recs, unknowns: run.unknowns.sorted(),
-                               engineVersion: Self.engineVersion)
+        try SimulationSession.authoredResult(input,library:library,planner:planner,actions:actions)
     }
 
     /// Counterfactual replay: same seed, scenario/content versions, choices, variants, and schedule;
@@ -127,7 +116,7 @@ struct RunState {
     var onBackup: Set<String> = []
     var phaseID: String
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
-    let interventionChoices: [String: String]
+    var interventionChoices: [String: String]
 
     init(scenario: ScenarioDefinition, input: RehearsalInput, household: HouseholdProfile, home: HomeModel?, planner: EgressPlanning) {
         self.scenario = scenario; self.input = input; self.household = household; self.home = home; self.planner = planner
@@ -154,45 +143,6 @@ struct RunState {
         var variants = input.variants.filter { $0 != "householdLeak" }
         if scenario.hazard == .flashFlood && input.effectiveSpatialOptions.floodIsHouseholdLeak { variants.append("householdLeak") }
         return variants
-    }
-
-    mutating func execute() throws {
-        noteStaticUnknowns()
-        try reevaluate(trigger: nil, emit: false)
-        snapshot()
-
-        var schedule: [ScheduledItem] = []
-        for e in scenario.events where Applicability.holds(e.when, household: household, home: home, variants: effectiveVariants) {
-            schedule.append(ScheduledItem(minute: e.minute, priority: e.priority, id: e.id, kind: .event(e)))
-        }
-        for c in scenario.choicePoints where Applicability.holds(c.when, household: household, home: home, variants: effectiveVariants) {
-            schedule.append(ScheduledItem(minute: c.minute, priority: 100, id: c.id, kind: .choice(c)))
-        }
-        schedule.sort { ($0.minute, $0.priority, $0.id) < ($1.minute, $1.priority, $1.id) }
-
-        var idx = 0
-        var guardCount = 0
-        while true {
-            guardCount += 1
-            if guardCount > RehearsalEngine.maxEvents { throw RehearsalError.eventLimitExceeded }
-            let next = idx < schedule.count ? schedule[idx] : nil
-            if let dep = nextDepletion(), dep.minute <= scenario.durationMinutes, next == nil || dep.minute <= next!.minute {
-                let simultaneous=depletionSchedule().filter{$0.minute==dep.minute}
-                advance(to: dep.minute)
-                for item in simultaneous {try handleDepletion(item.resource)}
-                snapshot()
-                continue
-            }
-            guard let item = next else { break }
-            idx += 1
-            advance(to: item.minute)
-            switch item.kind {
-            case .event(let e): try apply(e)
-            case .choice(let c): try choose(c)
-            }
-            snapshot()
-        }
-        advance(to: max(minute, scenario.durationMinutes))
     }
 
     func summary() -> RunSummary {
@@ -227,9 +177,12 @@ struct RunState {
     func depletionSchedule() -> [(minute: Int, resource: String)] {
         var candidates: [(Int, String)] = []
         func consider(_ amount: Double?, _ rate: Double, _ id: String) {
-            guard let a = amount, a > 0, rate > 0 else { return }
-            let t = minute + Int((a / rate).rounded(.up))
-            candidates.append((t, id))
+            guard let a = amount, a.isFinite, a > 0, rate.isFinite, rate > 0, minute<=scenario.durationMinutes else { return }
+            let delay=(a/rate).rounded(.up)
+            // Extremely large confirmed quantities cannot overflow integer time or create a boundary
+            // beyond this exercise. No resource amount is clamped or silently replenished here.
+            guard delay.isFinite,delay<=Double(scenario.durationMinutes-minute),delay<Double(Int.max) else {return}
+            candidates.append((minute+Int(delay), id))
         }
         consider(storedWater, waterDrawPerMinute, "res.water.stored")
         consider(handsetHours, handsetDrawPerMinute, "res.handset.hours")

@@ -15,8 +15,10 @@ try {
  state=await host.request({op:'commit',session:state.session,commit:{id:'submitted-water-action',actor:'user',baseRevision:state.receipt.revision,commands:[{kind:'useStoredWater',value:process.env.DRYRUN_ACTION??'all'}]}});
  state=await host.request({op:'commit',session:state.session,commit:{id:'observe-consequences',actor:'director',baseRevision:state.receipt.revision,commands:[{kind:'advance',minute:720}]}});
  for(let turn=0;turn<2;turn++){
+ if(state.receipt.directorState?.awaitingUserAction){state=await host.request({op:'commit',session:state.session,commit:{id:`submitted-followup-${turn}`,actor:'user',baseRevision:state.receipt.revision,commands:[{kind:'useStoredWater',value:process.env.DRYRUN_FOLLOWUP_ACTION??'essential'}]}});trace.push({submittedFollowup:state});}
+
  const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
- const context={binding,learningObjectives:['Compare stored-water policies and protect continuity without inventing supplies'],snapshot:minimizedSnapshot(state.receipt),profiles:state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),lastAction:{id:'submitted-water-action',kind:'useStoredWater',value:process.env.DRYRUN_ACTION??'all'}};
+ const context={binding,learningObjectives:['Compare stored-water policies and protect continuity without inventing supplies'],snapshot:minimizedSnapshot(state.receipt),directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles??state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),lastAction:{id:'submitted-water-action',kind:'useStoredWater',value:process.env.DRYRUN_ACTION??'all'}};
  let result:any=await gateway.start('synthetic-installation',{contractVersion:'dryrun.ai/1',requestID:`smoke-${turn}`,role:'director',synthetic:true,context});trace.push({context,result:safeResult(result)});
  while(result.status==='needs_client_tools'){
  const call=result.calls[0];const preview=await executeDirectorTool(host,state,binding,call);
@@ -24,8 +26,7 @@ try {
  result=await gateway.resume('synthetic-installation',{token:result.token,binding,callID:call.id,result:preview.result});trace.push({result:safeResult(result)});
  }
  if(result.status!=='completed'){await writeFile('../../fixtures/ai/failed-smoke.json',JSON.stringify({synthetic:true,trace,metrics:gateway.metrics},null,2));throw new Error('director_unavailable');}
- const {id,actor,baseRevision,commands}=result.proposal;
- state=await host.request({op:'commit',session:state.session,commit:{id,actor,baseRevision,commands}});trace.push({committed:state});if(state.receipt.finished)break;
+ state=await host.request({op:'directorCommit',session:state.session,proposal:result.proposal,binding});trace.push({committed:state});if(state.receipt.finished)break;
  }
  const replay=await host.request({op:'query',session:state.session});if(replay.receipt.contextDigest!==state.receipt.contextDigest)throw new Error('replay_mismatch');
  await writeFile(`../../fixtures/ai/adaptive-trace-${process.env.DRYRUN_ACTION??'all'}.json`,JSON.stringify({synthetic:true,model:process.env.DRYRUN_MODEL??'gemini-3.1-flash-lite',sdk:'2.30.0',recordedAt:new Date().toISOString(),metrics:gateway.metrics,trace},null,2));

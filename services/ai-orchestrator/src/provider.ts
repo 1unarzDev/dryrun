@@ -43,7 +43,7 @@ export function providerSchema(value:Record<string,unknown>):Record<string,unkno
   else if(key==='properties'&&v&&typeof v==='object')result.properties=Object.fromEntries(Object.entries(v).map(([k,x])=>[k,providerSchema(x as Record<string,unknown>)]));
   else if(key==='items'&&v&&typeof v==='object')result.items=providerSchema(v as Record<string,unknown>);
   else if(key==='prefixItems')result.items={type:'number'};
-  else if(key==='anyOf'&&Array.isArray(v))result.anyOf=v.map(x=>providerSchema(x));
+  else if((key==='anyOf'||key==='oneOf')&&Array.isArray(v))result.anyOf=v.map(x=>providerSchema(x));
  }
  return result;
 }

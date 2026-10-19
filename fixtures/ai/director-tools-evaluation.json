@@ -8,7 +8,11 @@
       {},
       {}
     ],
-    "outcomes": []
+    "outcomes": [],
+    "prompt": {
+      "version": "director/3",
+      "sha256": "10fef4279f3a9fbce68136af16a1dd8b75f1bd5667f5269bdd25ee0de976df6e"
+    }
   },
   "trace": [
     {
@@ -19,7 +23,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -72,7 +76,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "a7d9bf2fd782734e",
+        "contextDigest": "33dd1b54f2ef4013",
         "observation": {
           "kind": "inspectScene",
           "scene": {
@@ -978,7 +982,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1031,7 +1035,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "a7d9bf2fd782734e",
+        "contextDigest": "33dd1b54f2ef4013",
         "observation": {
           "kind": "queryRoutes",
           "routes": []
@@ -1046,7 +1050,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1099,7 +1103,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "a7d9bf2fd782734e",
+        "contextDigest": "33dd1b54f2ef4013",
         "observation": {
           "kind": "evaluateResources"
         }
@@ -1113,7 +1117,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1166,7 +1170,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "a7d9bf2fd782734e",
+        "contextDigest": "33dd1b54f2ef4013",
         "observation": {
           "kind": "inspectDependencies",
           "dependencies": [
@@ -1177,7 +1181,7 @@
                 "ct-oak-1"
               ],
               "evidenceIDs": [
-                "a7d9bf2fd782734e"
+                "33dd1b54f2ef4013"
               ],
               "status": "recorded handset and cellular operational in exercise"
             }
@@ -1197,7 +1201,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1250,7 +1254,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "a7d9bf2fd782734e",
+        "contextDigest": "33dd1b54f2ef4013",
         "observation": {
           "kind": "runCounterfactual",
           "scope": "initial_household_with_selected_profiles",
@@ -1326,7 +1330,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1379,7 +1383,15 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "4ab23f203d13fd46"
+        "contextDigest": "b92efe1aa832894d",
+        "preview": {
+          "routes": [],
+          "directorState": {
+            "activeIncidentCount": 0,
+            "scheduledEventCount": 0,
+            "awaitingUserAction": false
+          }
+        }
       }
     },
     {
@@ -1390,7 +1402,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1443,7 +1455,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "a7d9bf2fd782734e",
+        "contextDigest": "33dd1b54f2ef4013",
         "observation": {
           "kind": "inspectDependencies",
           "dependencies": [
@@ -1454,7 +1466,7 @@
                 "ct-oak-1"
               ],
               "evidenceIDs": [
-                "a7d9bf2fd782734e"
+                "33dd1b54f2ef4013"
               ],
               "status": "recorded handset and cellular operational in exercise"
             }
@@ -1475,7 +1487,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "a7d9bf2fd782734e",
+          "contextDigest": "33dd1b54f2ef4013",
           "householdRevision": 1,
           "homeRevision": 1
         },
@@ -1528,14 +1540,32 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "4ab23f203d13fd46"
+        "contextDigest": "b92efe1aa832894d",
+        "preview": {
+          "routes": [],
+          "directorState": {
+            "activeIncidentCount": 0,
+            "scheduledEventCount": 0,
+            "awaitingUserAction": false
+          }
+        }
       }
     }
   ],
   "proposal": {
+    "contractVersion": "dryrun.director-proposal/1",
     "id": "tool-chain",
+    "requestID": "tool-chain",
     "actor": "director",
     "baseRevision": 0,
+    "binding": {
+      "sessionID": "synthetic-session",
+      "revision": 0,
+      "eventSequence": 0,
+      "contextDigest": "33dd1b54f2ef4013",
+      "householdRevision": 1,
+      "homeRevision": 1
+    },
     "commands": [
       {
         "kind": "advance",
@@ -1543,10 +1573,28 @@
       }
     ],
     "purpose": "Inspect dependencies then advance to a bounded decision.",
-    "evidenceIDs": []
+    "evidenceIDs": [],
+    "assumptionIDs": [
+      "assumption.educational-incident-profiles/1"
+    ],
+    "nextBoundary": {
+      "kind": "advanceUntilHostBoundary",
+      "requestedMinute": 120
+    },
+    "presentationIntent": {
+      "focus": "resources",
+      "sceneFirst": true,
+      "renderFrom": "committedReceipt",
+      "narration": "unverifiedProposal"
+    }
   },
   "receipt": {
-    "contextDigest": "3175f685538159da",
+    "contextDigest": "e5518a6cd7aa4c89",
+    "directorState": {
+      "activeIncidentCount": 0,
+      "awaitingUserAction": false,
+      "scheduledEventCount": 0
+    },
     "eventSequence": 0,
     "events": [],
     "finished": false,

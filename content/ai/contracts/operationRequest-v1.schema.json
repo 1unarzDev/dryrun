@@ -69,6 +69,14 @@
         "snapshot": {
           "type": "object",
           "properties": {
+            "firedEventIDs": {
+              "maxItems": 5000,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              }
+            },
             "simMinute": {
               "type": "integer",
               "minimum": 0,
@@ -147,6 +155,356 @@
             "unknowns"
           ],
           "additionalProperties": false
+        },
+        "directorPolicy": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "const": "dryrun.director-policy/1"
+            },
+            "permittedHazardFamilies": {
+              "minItems": 1,
+              "maxItems": 6,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "freezePowerLoss",
+                  "heatGridStrain",
+                  "tornado",
+                  "flashFlood",
+                  "homeFire",
+                  "waterOutage"
+                ]
+              }
+            },
+            "maximumActiveIncidents": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "schedulingHorizonMinutes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4320
+            },
+            "eventBudget": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 32
+            },
+            "maximumPendingEvents": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            "allowedStageTransitions": {
+              "maxItems": 820,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "to": {
+                    "type": "string",
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "version",
+            "permittedHazardFamilies",
+            "maximumActiveIncidents",
+            "schedulingHorizonMinutes",
+            "eventBudget",
+            "maximumPendingEvents",
+            "allowedStageTransitions"
+          ],
+          "additionalProperties": false
+        },
+        "directorState": {
+          "type": "object",
+          "properties": {
+            "activeIncidentCount": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "scheduledEventCount": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 32
+            },
+            "awaitingUserAction": {
+              "type": "boolean"
+            },
+            "stageID": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "originSpaceID": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "lastWait": {
+              "type": "object",
+              "properties": {
+                "predicate": {
+                  "type": "string",
+                  "enum": [
+                    "nextIncident",
+                    "storedWaterUnavailable",
+                    "primaryContactChannelUnavailable"
+                  ]
+                },
+                "startedMinute": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "maximumDurationMinutes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4320
+                },
+                "stoppedMinute": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "satisfied": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "type": "string",
+                  "enum": [
+                    "predicate",
+                    "mandatoryBoundary",
+                    "policyHorizon",
+                    "durationLimit"
+                  ]
+                }
+              },
+              "required": [
+                "predicate",
+                "startedMinute",
+                "maximumDurationMinutes",
+                "stoppedMinute",
+                "satisfied",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "activeIncidentCount",
+            "scheduledEventCount"
+          ],
+          "additionalProperties": false
+        },
+        "pending": {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "schedule"
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "minute": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4320
+                  }
+                },
+                "required": [
+                  "kind",
+                  "target",
+                  "minute"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "startIncident"
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "hazard": {
+                    "type": "string",
+                    "enum": [
+                      "freezePowerLoss",
+                      "heatGridStrain",
+                      "tornado",
+                      "flashFlood",
+                      "homeFire",
+                      "waterOutage"
+                    ]
+                  },
+                  "minute": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4320
+                  }
+                },
+                "required": [
+                  "kind",
+                  "target",
+                  "hazard",
+                  "minute"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "advanceIncident"
+                  },
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "hazard": {
+                    "type": "string",
+                    "enum": [
+                      "freezePowerLoss",
+                      "heatGridStrain",
+                      "tornado",
+                      "flashFlood",
+                      "homeFire",
+                      "waterOutage"
+                    ]
+                  },
+                  "minute": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4320
+                  }
+                },
+                "required": [
+                  "kind",
+                  "target",
+                  "hazard",
+                  "minute"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "advance"
+                  },
+                  "minute": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4320
+                  }
+                },
+                "required": [
+                  "kind",
+                  "minute"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "waitUntil"
+                  },
+                  "target": {
+                    "type": "string",
+                    "enum": [
+                      "nextIncident",
+                      "storedWaterUnavailable",
+                      "primaryContactChannelUnavailable"
+                    ]
+                  },
+                  "durationMinutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4320
+                  }
+                },
+                "required": [
+                  "kind",
+                  "target",
+                  "durationMinutes"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "requestDecision"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "finish"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "closedPortalIDs": {
+          "maxItems": 200,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "household": {
           "type": "object",
@@ -1023,6 +1381,26 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "hazard": {
+                "type": "string",
+                "enum": [
+                  "freezePowerLoss",
+                  "heatGridStrain",
+                  "tornado",
+                  "flashFlood",
+                  "homeFire",
+                  "waterOutage"
+                ]
+              },
+              "spatial": {
+                "type": "boolean"
+              },
+              "canStart": {
+                "type": "boolean"
+              },
+              "roomRequired": {
+                "type": "boolean"
               }
             },
             "required": [

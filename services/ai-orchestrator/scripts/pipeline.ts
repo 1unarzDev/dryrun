@@ -35,7 +35,7 @@ try{
   state=await host.request({op:'commit',session:state.session,commit:{id:'incident',actor:'director',baseRevision:0,commands:[{kind:'schedule',target:incident.id,minute:0},{kind:'advance',minute:0}]}});
   state=await host.request({op:'commit',session:state.session,commit:{id:'water-policy',actor:'user',baseRevision:state.receipt.revision,commands:[{kind:'useStoredWater',value:sample==='oak'?'essential':'all'}]}});
   const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
-  const directorContext={binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,profiles:state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),learningObjectives:['Inspect committed water conservation consequences and direct the next useful incident or decision'],lastAction:{id:'water-policy',kind:'useStoredWater',value:sample==='oak'?'essential':'all'}};
+  const directorContext={binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles??state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),learningObjectives:['Inspect committed water conservation consequences and direct the next useful incident or decision'],lastAction:{id:'water-policy',kind:'useStoredWater',value:sample==='oak'?'essential':'all'}};
   let directed:any=await gateway.start('synthetic-pipeline',{contractVersion:'dryrun.ai/1',requestID:'pipeline-'+sample,role:'director',synthetic:true,context:directorContext});
   const adaptiveTrace:unknown[]=[];
   while(directed.status==='needs_client_tools'){
@@ -44,8 +44,7 @@ try{
    directed=await gateway.resume('synthetic-pipeline',{token:directed.token,binding,callID:call.id,result:preview.result});
   }
   if(directed.status!=='completed'){await writeFile('/tmp/dryrun-pipeline-failure.json',JSON.stringify({synthetic:true,sample,result:directed,metrics:gateway.metrics,adaptiveTrace},null,2));throw new Error('adaptive_pipeline_unavailable');}
-  const {id,actor,baseRevision,commands}=directed.proposal;
-  state=await host.request({op:'commit',session:state.session,commit:{id,actor,baseRevision,commands}});
+  state=await host.request({op:'directorCommit',session:state.session,proposal:directed.proposal,binding});
   adaptiveTrace.push({proposal:directed.proposal,committed:state.receipt});
   const preAssessment=await host.request({op:'assess',session:state.session,inventory:confirmedInventory,stressFindings:executed,rubric});
   const assessmentEvidence=preAssessment.assessments.flatMap((a:any)=>a.evidenceIDs.map((id:string)=>({id,origin:'derived',status:'confirmed',sourceIDs:[],fieldIDs:Object.keys(a.predicates)})));

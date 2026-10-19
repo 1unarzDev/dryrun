@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {Gateway,fixtureAuthorize} from '../src/gateway.js';
+import {Gateway,fixtureAuthorize,validateCommands} from '../src/gateway.js';
 import {directorContext} from '../src/contracts.js';
 import type {AgentProvider,History} from '../src/provider.js';
 const binding={sessionID:'s',revision:1,eventSequence:1,contextDigest:'abc',householdRevision:1,homeRevision:1};
@@ -60,4 +60,46 @@ it('limits optional investigations and disables tools after the required preview
   result=await gateway.resume('a',{token:result.token,binding,callID:call.id,result:{binding,snapshot,contextDigest:observation?'abc':'preview',...(observation?{observation}:{})}});
  }
  expect(result.status).toBe('completed');expect(offered[2]).toEqual({names:['evaluateCandidateAction'],mode:'any'});expect(offered[3]?.mode).toBe('none');expect(gateway.metrics.calls).toBe(4);
+});
+
+const spatialPolicy={version:'dryrun.director-policy/1' as const,permittedHazardFamilies:['homeFire' as const],maximumActiveIncidents:1,schedulingHorizonMinutes:30,eventBudget:4,maximumPendingEvents:2,allowedStageTransitions:[{from:'notStarted',to:'ignition'}]};
+const spatialContext=directorContext.parse({...request.context,directorPolicy:spatialPolicy,directorState:{activeIncidentCount:0,scheduledEventCount:0},profiles:[{id:'ignition',rule:'rule.fire.ignition',minute:0,hazard:'homeFire',spatial:true,canStart:true,roomRequired:true}]});
+it.each([
+ {kind:'startIncident',target:'ignition',value:'invented',hazard:'homeFire',minute:0},
+ {kind:'startIncident',target:'ignition',value:'room',hazard:'flashFlood',minute:0},
+ {kind:'startIncident',target:'ignition',hazard:'homeFire',minute:0},
+ {kind:'schedule',target:'ignition',minute:31},
+ {kind:'advanceIncident',target:'ignition',value:'new-origin',hazard:'homeFire',minute:0},
+])('rejects unsupported incident context: %j',command=>{expect(()=>validateCommands([command],spatialContext)).toThrow();});
+it.each([{}, {command:{kind:'advance',minute:20},commands:[{kind:'advance',minute:20}]}])('rejects ambiguous/empty batch previews before issuing client work',async arguments_=>{
+ const provider:AgentProvider={async turn(){const call={type:'function_call' as const,id:'x',name:'evaluateCandidateAction',arguments:arguments_};return {steps:[call],calls:[call],text:'',usage:{}};}};
+ expect((await new Gateway(provider).start('a',request) as any).status).toBe('unavailable');
+});
+
+it('pairs a malformed tool call with an error result and repairs it once within the existing budget',async()=>{
+ let turns=0;let correctedHistory:History=[];
+ const provider:AgentProvider={async turn(input){turns++;
+  if(turns===2)correctedHistory=structuredClone(input.history);
+  if(turns<=2){const call={type:'function_call' as const,id:turns===1?'invalid':'valid',name:'evaluateCandidateAction',arguments:turns===1?{commands:[1,2,3]}:{commands:[{kind:'advance',minute:20}]}};return {steps:[call],calls:[call],text:'',usage:{}};}
+  return {steps:[],calls:[],text:JSON.stringify({commands:[{kind:'advance',minute:20}],purpose:'Use the validated host preview',evidenceIDs:[]}),usage:{}};
+ }};
+ const gateway=new Gateway(provider);const response:any=await gateway.start('a',request);
+ expect(response.status).toBe('needs_client_tools');expect(response.calls[0].id).toBe('valid');
+ expect(correctedHistory.some(s=>s.type==='function_result'&&s.call_id==='invalid')).toBe(true);
+ const final:any=await gateway.resume('a',{token:response.token,binding,callID:'valid',result:{binding,snapshot,contextDigest:'preview'}});
+ expect(final.status).toBe('completed');expect(gateway.metrics.calls).toBe(3);
+});
+
+it('does not call the provider while the host is waiting for a submitted user action',async()=>{
+ const provider=new Provider();const gateway=new Gateway(provider);
+ const result:any=await gateway.start('a',{...request,context:{...request.context,directorState:{activeIncidentCount:0,scheduledEventCount:0,awaitingUserAction:true}}});
+ expect(result.status).toBe('needs_user_action');expect(provider.histories).toHaveLength(0);expect(gateway.metrics.calls).toBe(0);
+ expect(()=>validateCommands([{kind:'requestDecision'},{kind:'finish'}],directorContext.parse(request.context))).toThrow('decision_must_be_last');
+});
+
+it('rejects already applied profiles and keeps non-spatial incidents out of spatial commands',()=>{
+ const context=directorContext.parse({...request.context,snapshot:{...snapshot,firedEventIDs:['outage']},profiles:[{id:'outage',rule:'rule.external.set',minute:0,spatial:false}]});
+ expect(()=>validateCommands([{kind:'schedule',target:'outage',minute:20}],context)).toThrow('duplicate_profile');
+ expect(()=>validateCommands([{kind:'startIncident',target:'outage',hazard:'waterOutage',minute:20}],context)).toThrow();
+ expect(()=>validateCommands([{kind:'advance',minute:20}],context)).not.toThrow();
 });

@@ -8,7 +8,7 @@
       "Reviewed educational incident profiles; not a prediction of real failure"
     ],
     "baseline": {
-      "contextDigest": "7eb1222c6463f688",
+      "contextDigest": "268890ae3077ffc5",
       "eventSequence": 4,
       "events": [
         {
@@ -165,7 +165,7 @@
       }
     },
     "controlledRetest": {
-      "contextDigest": "2e92d9af66ec1913",
+      "contextDigest": "e545ba86ae0f02dc",
       "eventSequence": 4,
       "events": [
         {
@@ -327,7 +327,7 @@
     "dependencies": [
       {
         "evidenceIDs": [
-          "7eb1222c6463f688"
+          "268890ae3077ffc5"
         ],
         "id": "contact|channel",
         "kind": "contactChannel",
@@ -341,7 +341,7 @@
       "req.water"
     ],
     "evidenceIDs": [
-      "7eb1222c6463f688"
+      "268890ae3077ffc5"
     ],
     "failed": true,
     "id": "stress|water-outage|evt.water-outage.well-pump-failure",

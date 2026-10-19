@@ -8,12 +8,42 @@ public struct AgentContextBinding: Codable, Sendable, Equatable {
               householdRevision==household.revision,homeRevision==(home?.revision ?? 0) else {throw SessionError.stale}
     }
 }
+public enum DirectorBoundaryKind:String,Codable,Sendable {case pauseForDecision,finishExercise,advanceUntilHostBoundary,scheduledIncident,noAdvance}
+public enum DirectorFocus:String,Codable,Sendable {case decision,summary,scene,resources}
+public struct DirectorNextBoundary:Codable,Sendable {
+    public var kind:DirectorBoundaryKind
+    public var requestedMinute:Int?
+    public var maximumDurationMinutes:Int?
+}
+public struct DirectorPresentationIntent:Codable,Sendable {
+    public var focus:DirectorFocus
+    public var sceneFirst:Bool
+    public var renderFrom:String
+    public var narration:String
+}
 public struct DirectorProposal: Codable, Sendable {
+    public var contractVersion:String?
+    public var requestID:String?
+    public var binding:AgentContextBinding?
+    public var nextBoundary:DirectorNextBoundary?
+    public var presentationIntent:DirectorPresentationIntent?
+    public var assumptionIDs:[String]?
     public var id:String;public var actor:String;public var baseRevision:Int;public var commands:[SessionCommand]
     public var purpose:String;public var evidenceIDs:[String]
     public func commit(to session:inout SimulationSession,binding:AgentContextBinding,library:ScenarioLibrary,persist:(SimulationSession)throws->Void) throws -> SessionReceipt {
         let receipt=try session.query(library:library)
         try binding.validate(receipt:receipt,household:session.initial.household,home:session.initial.home)
+        if let version=contractVersion {
+            guard version=="dryrun.director-proposal/1",self.binding != nil,requestID?.isEmpty==false,nextBoundary != nil,presentationIntent != nil,
+                  assumptionIDs==["assumption.educational-incident-profiles/1"] else {throw SessionError.invalidCommand}
+        }
+        if let boundary=nextBoundary {
+            if let minute=boundary.requestedMinute {guard (0...4320).contains(minute),commands.contains(where:{$0.minute==minute}) else {throw SessionError.invalidCommand}}
+            if let duration=boundary.maximumDurationMinutes {guard (1...4320).contains(duration),commands.contains(where:{$0.durationMinutes==duration}) else {throw SessionError.invalidCommand}}
+        }
+        if let source=self.binding {guard source==binding else {throw SessionError.stale}}
+        if let requestID {guard !requestID.isEmpty else {throw SessionError.invalidCommand}}
+        if let intent=presentationIntent {guard intent.sceneFirst,intent.renderFrom=="committedReceipt",intent.narration=="unverifiedProposal" else {throw SessionError.invalidCommand}}
         guard actor=="director",baseRevision==binding.revision else {throw SessionError.invalidCommand}
         return try session.commit(SessionCommit(id:id,actor:actor,baseRevision:baseRevision,commands:commands),library:library,persist:persist)
     }

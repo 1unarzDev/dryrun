@@ -1,0 +1,12 @@
+{
+  "version": "dryrun.incident-assumptions/1",
+  "reviewState": "draft",
+  "assumptions": [
+    {
+      "id": "assumption.educational-incident-profiles/1",
+      "text": "Incident locations, stages, timing and external conditions are hypothetical exercise assumptions bounded by implemented host profiles. Geometry and resource arithmetic do not predict physical spread, time to injury, road passability or household safety. Render actual committed host results; model purpose and narration remain unverified proposals.",
+      "source": "DryRun_AI_Implementation_Reference.md section 10",
+      "humanReviewRequired": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "simulation.user.allocatePower": "Bạn đã thay đổi việc phân bổ nguồn điện dự phòng trong bài diễn tập này.",
+  "simulation.user.useStoredWater": "Bạn đã chọn cách sử dụng nước dự trữ trong bài diễn tập này.",
+  "simulation.user.choose": "Bạn đã chọn một phương án trong bài diễn tập.",
+  "simulation.user.assignHelper": "Bạn đã thay đổi việc phân công người hỗ trợ trong bài diễn tập này.",
+  "simulation.user.contact": "Bạn đã thử liên lạc với một người liên hệ đã lưu trong bài diễn tập này.",
+  "simulation.user.unsupported": "Hành động này chưa được mô phỏng trong bài diễn tập.",
+  "simulation.user.moveTo": "Bạn đã thử di chuyển trong bài diễn tập này. Cảnh mô phỏng cho biết có lối đi hay không.",
+  "simulation.user.takeSupply": "Bạn đã lấy một vật dụng dự trữ đã ghi nhận trong bài diễn tập này.",
+  "simulation.user.transferSupply": "Bạn đã đặt vật dụng đang mang tại căn phòng hiện tại trong bài diễn tập.",
+  "simulation.user.closeDoor": "Bạn đã đóng một cánh cửa có thể mở và đóng trong bài diễn tập này. Không mô phỏng thay đổi về sự lan truyền của khói.",
+  "simulation.user.finish": "Bạn đã kết thúc bài diễn tập này."
+}

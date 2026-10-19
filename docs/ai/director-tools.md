@@ -4,7 +4,7 @@ Revisit reference section 10 when integrating this seam. `services/ai-orchestrat
 
 | Function | Arguments | Minimized response beyond binding/snapshot/contextDigest |
 | --- | --- | --- |
-| evaluateCandidateAction | `{ "command": { "kind": "advance", "minute": 120 } }` | Hypothetical preview snapshot/digest; omit observation |
+| evaluateCandidateAction | `{ "command": { "kind": "advance", "minute": 120 } }` or `commands` batch | Hypothetical snapshot/digest and optional typed preview scene/routes/director state; omit observation |
 | inspectScene | `{}` | `observation: { kind: "inspectScene", scene?: HomeSceneContext }` |
 | queryRoutes | `{}` | `observation: { kind: "queryRoutes", routes: [...] }` |
 | evaluateResources | `{}` | `observation: { kind: "evaluateResources" }`; current balances/unknowns are in snapshot |
@@ -28,3 +28,5 @@ DRYRUN_LIVE_TOOLS=1 pnpm --dir services/ai-orchestrator exec tsx scripts/directo
 ```
 
 The offline evaluation executes all six tools against the running Swift NDJSON host, verifies read-only behavior, drives a deterministic provider through two continuations, commits and verifies replay. The live variant uses Gemini with the same synthetic household and records a separate artifact. These checks do not establish native integration or exhaustive live tool selection coverage.
+
+The later [policy and actions slice](director-policy-and-actions.md) adds applied spatial batch previews, required command fields, one bounded tool repair, policy/runtime context and wait predicates. A spatial schedule alone is rejected as an unapplied preview.

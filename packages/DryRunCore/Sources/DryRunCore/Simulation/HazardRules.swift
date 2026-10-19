@@ -231,8 +231,8 @@ extension RunState {
                     if blockedSpaces.contains(b) { neighbors.insert(a) }
                 }
             }
-            let candidates = home.spaces.filter { $0.kind == kind && (spatialState?.originSpaceID == nil || neighbors.contains($0.id)) }.sorted { $0.id < $1.id }
-            let selected = spatialState?.originSpaceID == nil ? input.effectiveSpatialOptions.originSpaceID.flatMap(home.space) : nil
+            let candidates = home.spaces.filter { $0.kind == kind && (blockedSpaces.isEmpty || neighbors.contains($0.id)) }.sorted { $0.id < $1.id }
+            let selected = blockedSpaces.isEmpty ? input.effectiveSpatialOptions.originSpaceID.flatMap(home.space) : nil
             let origin = selected ?? (candidates.isEmpty ? nil : candidates[Int(input.seed % UInt64(candidates.count))])
             if let origin {
                 blockedSpaces.insert(origin.id)

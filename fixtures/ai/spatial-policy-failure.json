@@ -1,0 +1,288 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "trace": [
+    {
+      "tool": "evaluateCandidateAction",
+      "arguments": {
+        "commands": [
+          {
+            "kind": "startIncident",
+            "target": "evt.home-fire.fire-origin",
+            "value": "sp-kitchen",
+            "hazard": "homeFire",
+            "minute": 1
+          },
+          {
+            "kind": "advance",
+            "minute": 1
+          }
+        ]
+      },
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 1,
+          "eventSequence": 1,
+          "contextDigest": "409e8892fe640e18",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 1,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "d90595f776331f99",
+        "preview": {
+          "routes": [
+            {
+              "personID": "p-oak-1",
+              "primary": {
+                "spaceSequence": [
+                  "sp-living"
+                ],
+                "portalSequence": [
+                  "pt-front"
+                ],
+                "connectorSequence": [],
+                "verificationNeeded": []
+              },
+              "alternativeStatus": "none",
+              "sharedChokepoints": []
+            },
+            {
+              "personID": "p-oak-2",
+              "primary": {
+                "spaceSequence": [
+                  "sp-bed1",
+                  "sp-hall",
+                  "sp-living"
+                ],
+                "portalSequence": [
+                  "pt-bed1-hall",
+                  "pt-living-hall",
+                  "pt-front"
+                ],
+                "connectorSequence": [],
+                "verificationNeeded": [
+                  "pt-bed1-hall.clearWidth"
+                ]
+              },
+              "alternativeStatus": "none",
+              "sharedChokepoints": []
+            },
+            {
+              "personID": "p-oak-3",
+              "primary": {
+                "spaceSequence": [
+                  "sp-bed2",
+                  "sp-hall",
+                  "sp-living"
+                ],
+                "portalSequence": [
+                  "pt-bed2-hall",
+                  "pt-living-hall",
+                  "pt-front"
+                ],
+                "connectorSequence": [],
+                "verificationNeeded": []
+              },
+              "alternativeStatus": "none",
+              "sharedChokepoints": []
+            },
+            {
+              "personID": "p-oak-4",
+              "primary": {
+                "spaceSequence": [
+                  "sp-living"
+                ],
+                "portalSequence": [
+                  "pt-front"
+                ],
+                "connectorSequence": [],
+                "verificationNeeded": []
+              },
+              "alternativeStatus": "none",
+              "sharedChokepoints": []
+            }
+          ],
+          "directorState": {
+            "activeIncidentCount": 1,
+            "scheduledEventCount": 1,
+            "stageID": "evt.home-fire.fire-origin",
+            "originSpaceID": "sp-kitchen"
+          },
+          "spatial": {
+            "hazard": "homeFire",
+            "stageID": "evt.home-fire.fire-origin",
+            "originSpaceID": "sp-kitchen",
+            "affectedSpaceIDs": [
+              "sp-kitchen"
+            ],
+            "affectedPortalIDs": [],
+            "assumptionKey": "spatial.assumption.fire-blocked"
+          }
+        }
+      }
+    }
+  ],
+  "replies": [
+    {
+      "text": "",
+      "calls": [
+        {
+          "id": "call_422249",
+          "name": "evaluateCandidateAction",
+          "arguments": {
+            "commands": [
+              {
+                "hazard": "homeFire",
+                "target": "evt.home-fire.fire-origin",
+                "kind": "startIncident",
+                "minute": 1,
+                "value": "sp-kitchen"
+              },
+              {
+                "kind": "advanceIncident",
+                "minute": 5,
+                "target": "sp-kitchen",
+                "hazard": "homeFire"
+              },
+              {
+                "kind": "advance",
+                "minute": 5
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "text": "",
+      "calls": [
+        {
+          "id": "call_5011856",
+          "name": "evaluateCandidateAction",
+          "arguments": {
+            "commands": [
+              {
+                "target": "evt.home-fire.fire-origin",
+                "minute": 1,
+                "hazard": "homeFire",
+                "kind": "startIncident",
+                "value": "sp-kitchen"
+              },
+              {
+                "minute": 1,
+                "kind": "advance"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "text": "{\n  \"commands\": [\n    {\n      \"kind\": \"startIncident\",\n      \"target\": \"evt.home-fire.fire-origin\",\n      \"hazard\": \"homeFire\",\n      \"minute\": 1,\n      \"value\": \"sp-kitchen\"\n    },\n    {\n      \"kind\": \"advance\",\n      \"minute\": 1\n    },\n    {\n      \"kind\": \"requestDecision\"\n    }\n  ],\n  \"purpose\": \"Initiate a kitchen fire incident to evaluate evacuation routes for the household, specifically considering the oxygen-dependent occupant and the child/older adult members.\",\n  \"evidenceIDs\": [\n    \"sp-kitchen\",\n    \"evt.home-fire.fire-origin\",\n    \"p-oak-1\",\n    \"p-oak-2\",\n    \"p-oak-3\",\n    \"p-oak-4\"\n  ]\n}",
+      "calls": []
+    }
+  ],
+  "metrics": {
+    "calls": 3,
+    "usage": [
+      {
+        "total_tokens": 6032,
+        "total_input_tokens": 5943,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 5943
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 89,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 0
+      },
+      {
+        "total_tokens": 6103,
+        "total_input_tokens": 6040,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 6040
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 63,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 0
+      },
+      {
+        "total_tokens": 6318,
+        "total_input_tokens": 6111,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 6111
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 207,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 0
+      }
+    ],
+    "outcomes": [
+      "invalid_output"
+    ],
+    "prompt": {
+      "version": "director/3",
+      "sha256": "7236cc7c70c4ac4a705a6479e78927bcf7e2c0102515bf24f205bee343737b4b"
+    }
+  }
+}

@@ -8,8 +8,10 @@ public struct SessionCommand: Codable, Hashable, Sendable {
     public var target: String?
     public var value: String?
     public var minute: Int?
-    public init(kind: String, target: String? = nil, value: String? = nil, minute: Int? = nil) {
-        self.kind = kind; self.target = target; self.value = value; self.minute = minute
+    public var hazard:HazardKind?
+    public var durationMinutes:Int?
+    public init(kind: String, target: String? = nil, value: String? = nil, minute: Int? = nil, hazard:HazardKind?=nil,durationMinutes:Int?=nil) {
+        self.kind = kind; self.target = target; self.value = value; self.minute = minute;self.hazard=hazard;self.durationMinutes=durationMinutes
     }
 }
 public struct SessionCommit: Codable, Hashable, Sendable {
@@ -32,6 +34,8 @@ public struct SessionReceipt: Codable, Sendable, Equatable {
     public var pending: [SessionCommand]
     public var finished: Bool
     public var inventory:ExerciseInventory?
+    public var directorState:DirectorRuntimeState?
+    public var closedPortalIDs:[String]?
 }
 
 /// Serializable event-sourced session. Replay executes existing RunState, allocator, hazard and route rules.
@@ -41,9 +45,18 @@ public struct SimulationSession: Codable, Sendable {
     public let id: String
     public let initial: RehearsalInput
     public let inventory:SessionInventorySeed?
+    public let directorPolicy:DirectorPolicy?
     public private(set) var commits: [SessionCommit]
-    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil) {
-        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory; self.commits = []
+    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil,directorPolicy:DirectorPolicy?=nil) {
+        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory;self.directorPolicy=directorPolicy; self.commits = []
+    }
+    /// New native exercises freeze an explicit policy. The initializer also decodes legacy snapshots
+    /// whose absent policy must keep their historical replay behavior.
+    public static func initialize(id:String,initial:RehearsalInput,library:ScenarioLibrary,inventory:SessionInventorySeed?=nil)throws->SimulationSession {
+        guard let scenario=library.scenario(initial.scenarioID),scenario.version==initial.scenarioVersion else {throw SessionError.invalidCommand}
+        let session=SimulationSession(id:id,initial:initial,inventory:inventory,directorPolicy:.reviewed(scenario))
+        _=try session.query(library:library)
+        return session
     }
     public var revision: Int { commits.count }
     public func preview(_ commit: SessionCommit, library: ScenarioLibrary) throws -> SessionReceipt {
@@ -65,25 +78,42 @@ public struct SimulationSession: Codable, Sendable {
     }
     public func query(library: ScenarioLibrary) throws -> SessionReceipt {
         guard commits.count<=128, let scenario = library.scenario(initial.scenarioID), scenario.version == initial.scenarioVersion else { throw SessionError.invalidCommand }
+        try directorPolicy?.validate(in:scenario)
+        let horizon=min(scenario.durationMinutes,directorPolicy?.schedulingHorizonMinutes ?? scenario.durationMinutes)
+        var directorState=directorPolicy.map{_ in DirectorRuntimeState(activeIncidentCount:0)}
         let prepared = InterventionApplier.apply(initial.interventions, household: initial.household, home: initial.home)
         var run = RunState(scenario: scenario, input: initial, household: prepared.0, home: prepared.1, planner: EgressPlanner())
         var supplies=try inventory.map(SessionSupplyLedger.init)
         try supplies?.synchronize(&run)
-        run.noteStaticUnknowns(); try run.reevaluate(trigger: nil, emit: false)
+        try SessionTransitionReducer.initialize(&run)
         var pending: [SessionCommand] = [], ended = false, scheduled = 0
         var scheduledIDs=Set<String>()
         var chosenIDs=Set<String>()
         var inputIDs=Set<String>()
+        var closedPortals=Set<String>()
         for (index, commit) in commits.enumerated() {
             guard !commit.id.isEmpty,!commit.commands.isEmpty,commit.commands.count<=8,inputIDs.insert(commit.id).inserted, commit.actor == "user" || commit.actor == "director" else {throw SessionError.invalidCommand}
             guard commit.baseRevision == index, !ended else { throw SessionError.finished }
-            for command in commit.commands {
+            for (commandIndex,command) in commit.commands.enumerated() {
                 guard !ended else {throw SessionError.finished}
                 if commit.actor == "user" {
+                    directorState?.awaitingUserAction=false
                     switch command.kind {
+                    case "finish":
+                        ended=true;directorState?.activeIncidentCount=0
                     case "takeSupply", "transferSupply":
                         guard supplies != nil else {throw SessionError.invalidCommand}
                         try supplies!.apply(command,run:run)
+                    case "closeDoor":
+                        guard let portalID=command.target,let portal=run.home?.portal(portalID),portal.kind == .door,
+                              portal.verification == .verified,portal.operable.confirmedValue==true,
+                              let person=run.household.people.first(where:{$0.id==command.value}) else {throw SessionError.invalidCommand}
+                        let start=run.startSpace(for:person)
+                        guard (portal.sideA == .space(start) || portal.sideB == .space(start)),
+                              run.spatialState?.affectedSpaceIDs.contains(start) != true,
+                              run.spatialState?.affectedPortalIDs.contains(portalID) != true else {throw SessionError.invalidCommand}
+                        // An operable closed door remains passable. No unvalidated spread-delay credit.
+                        closedPortals.insert(portalID)
                     case "allocatePower":
                         guard let eqID = command.target, let eq = run.household.equipment.firstIndex(where: { $0.id == eqID }),
                             let source = command.value,
@@ -99,6 +129,7 @@ public struct SimulationSession: Codable, Sendable {
                         // Use the same reviewed choice semantics, with the actual submitted option.
                         var chosen = point; chosen.defaultOptionID = option.id
                         run.input.choices[point.id] = option.id
+                        run.interventionChoices.removeValue(forKey:point.id)
                         try run.choose(chosen)
                     case "assignHelper":
                         guard let personID=command.target,let person=run.household.people.firstIndex(where:{$0.id==personID}),let helperID=command.value,
@@ -129,60 +160,44 @@ public struct SimulationSession: Codable, Sendable {
                     run.emit("user.\(commit.id)", title: "simulation.user.\(command.kind)", severity: .info, rule: "session.user/1", causedBy: nil, sources: [])
                     try run.reevaluate(trigger: run.events.last?.id, emit: true)
                 } else {
+                    guard directorState?.awaitingUserAction != true || command.kind=="requestDecision" else {throw SessionError.invalidCommand}
                     switch command.kind {
-                    case "schedule":
-                        guard let profile = command.target, scenario.events.contains(where: { $0.id == profile }), let t = command.minute,
-                              t >= run.minute, t <= scenario.durationMinutes, scheduled < 32, pending.count < 8, !scheduledIDs.contains(profile) else { throw SessionError.budget }
-                        pending.append(command); scheduled += 1; scheduledIDs.insert(profile)
-                    case "advance":
-                        guard let until = command.minute, until >= run.minute, until <= scenario.durationMinutes else { throw SessionError.invalidCommand }
-                        let priorities=Dictionary(uniqueKeysWithValues:scenario.events.map{($0.id,$0.priority)})
-                        pending.sort { a,b in
-                            let left:(Int,Int,String)=(a.minute ?? 0,priorities[a.target ?? ""] ?? 0,a.target ?? "")
-                            let right:(Int,Int,String)=(b.minute ?? 0,priorities[b.target ?? ""] ?? 0,b.target ?? "")
-                            return left<right
-                        }
-                        var boundary = min(until,supplies?.nextExpiryMinute(after:run.minute) ?? until)
-                        var depletion = run.nextDepletion()
-                        if let dep = depletion, dep.minute <= boundary { boundary = dep.minute }
-                        while let event = pending.first, let t = event.minute, t <= boundary {
-                            if let dep=depletion,dep.minute<=t {break}
-                            pending.removeFirst(); run.advance(to: t)
-                            try supplies?.synchronize(&run)
-                            guard var authored = scenario.events.first(where: { $0.id == event.target }) else { throw SessionError.invalidCommand }
-                            authored.minute = t
-                            guard Applicability.holds(authored.when, household: run.household, home: run.home, variants: run.effectiveVariants) else { throw SessionError.invalidCommand }
-                            try run.apply(authored)
-                            try supplies?.synchronize(&run)
-                            if supplies != nil {try run.reevaluate(trigger:run.events.last?.id,emit:true)}
-                            depletion = run.nextDepletion()
-                            if let dep = depletion, dep.minute < boundary { boundary = dep.minute }
-                        }
-                        let simultaneous = run.depletionSchedule().filter { $0.minute == boundary }
-                        run.advance(to: boundary)
-                        try supplies?.synchronize(&run)
-                        // Depletion at the boundary is computed from the same ledger, never set by the director.
-                        for dep in simultaneous { try run.handleDepletion(dep.resource) }
-                        try run.reevaluate(trigger: run.events.last?.id, emit: true)
-                    case "requestDecision": break
-                    case "finish": ended = true
+                    case "schedule", "startIncident", "advanceIncident":
+                        guard let profileID=command.target,let profile=scenario.events.first(where:{$0.id==profileID}),let t=command.minute,
+                              t>=run.minute,t<=horizon,scheduled<(directorPolicy?.eventBudget ?? 32),pending.count<(directorPolicy?.maximumPendingEvents ?? 8),!scheduledIDs.contains(profileID) else {throw SessionError.budget}
+                        if let policy=directorPolicy {
+                            guard policy.permittedHazardFamilies.contains(scenario.hazard),Applicability.holds(profile.when,household:run.household,home:run.home,variants:run.effectiveVariants) else {throw SessionError.invalidCommand}
+                            try policy.validateQueue(pending+[command],after:directorState?.stageID,scenario:scenario)
+                            if command.kind=="startIncident" {
+                                try SessionTransitionReducer.validateIncidentOrigin(command,profile:profile,run:run)
+                            } else if command.value != nil || command.hazard != nil && command.hazard != scenario.hazard {throw SessionError.invalidCommand}
+                        } else if command.kind != "schedule" || command.hazard != nil {throw SessionError.invalidCommand}
+                        pending.append(command);scheduled += 1;scheduledIDs.insert(profileID);directorState?.scheduledEventCount=scheduled
+                    case "advance", "waitUntil":
+                        try SessionTransitionReducer.advance(command,run:&run,pending:&pending,supplies:&supplies,
+                            directorState:&directorState,horizon:horizon,policyEnabled:directorPolicy != nil)
+                    case "requestDecision":
+                        guard directorPolicy==nil || commandIndex==commit.commands.count-1 else {throw SessionError.invalidCommand}
+                        directorState?.awaitingUserAction=true
+                    case "finish": ended = true;directorState?.activeIncidentCount=0
                     default: throw SessionError.invalidCommand
                     }
                 }
             }
         }
+        if directorPolicy != nil {run.spatialState?.routes=run.currentRoutes.keys.sorted().compactMap{run.currentRoutes[$0]}}
         run.snapshot()
         let snapshot = run.snapshots.last!
         let routes = run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }
-        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory)))
+        let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory,directorPolicy:directorPolicy,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted())))
         return SessionReceipt(sessionID: id, revision: revision, eventSequence: run.events.count, contextDigest: digest,
-                              snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state)
+                              snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state,directorState:directorState,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted())
     }
     public func fallback() -> SessionCommit {
         SessionCommit(id: "fallback-\(revision)", actor: "director", baseRevision: revision, commands: [SessionCommand(kind: "requestDecision")])
     }
 }
-private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed? }
+private struct DigestState: Encodable { var initial: RehearsalInput; var commits: [SessionCommit]; var snapshot: SimulationSnapshot; var routes: [RouteResult];var inventory:ExerciseInventory?;var inventorySeed:SessionInventorySeed?;var directorPolicy:DirectorPolicy?;var closedPortalIDs:[String]? }
 public enum StableDigest {
     /// Stable non-cryptographic replay identity; gateway uses SHA-256 for authorization/token binding.
     public static func of(_ data: Data) -> String {

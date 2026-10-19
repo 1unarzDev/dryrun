@@ -1,6 +1,44 @@
 {
   "synthetic": true,
   "original": {
+    "directorProfiles": [
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.alarm",
+        "minute": 0,
+        "roomRequired": true,
+        "rule": "rule.fire.ignition",
+        "spatial": true
+      },
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.fire-origin",
+        "minute": 1,
+        "roomRequired": true,
+        "rule": "rule.fire.block-primary",
+        "spatial": true
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.displacement",
+        "minute": 30,
+        "roomRequired": false,
+        "rule": "rule.recovery.displacement",
+        "spatial": false
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.contacts",
+        "minute": 60,
+        "roomRequired": false,
+        "rule": "rule.note",
+        "spatial": false
+      }
+    ],
     "gaps": [
       {
         "category": "water",
@@ -1090,7 +1128,12 @@
       }
     ],
     "receipt": {
-      "contextDigest": "dd5d818044babe7c",
+      "contextDigest": "143685858951e7e3",
+      "directorState": {
+        "activeIncidentCount": 0,
+        "awaitingUserAction": false,
+        "scheduledEventCount": 0
+      },
       "eventSequence": 0,
       "events": [],
       "finished": false,
@@ -1168,10 +1211,58 @@
     "session": {
       "commits": [],
       "contractVersion": "dryrun.ai/1",
+      "directorPolicy": {
+        "allowedStageTransitions": [
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.alarm"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.second-blocked",
+            "to": "evt.home-fire.hallway-smoke"
+          }
+        ],
+        "eventBudget": 32,
+        "maximumActiveIncidents": 1,
+        "maximumPendingEvents": 8,
+        "permittedHazardFamilies": [
+          "homeFire"
+        ],
+        "schedulingHorizonMinutes": 4320,
+        "version": "dryrun.director-policy/1"
+      },
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.2",
+        "contentVersion": "2026.10.3",
         "home": {
           "annotations": [
             {
@@ -2617,6 +2708,44 @@
     }
   },
   "moved": {
+    "directorProfiles": [
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.alarm",
+        "minute": 0,
+        "roomRequired": true,
+        "rule": "rule.fire.ignition",
+        "spatial": true
+      },
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.fire-origin",
+        "minute": 1,
+        "roomRequired": true,
+        "rule": "rule.fire.block-primary",
+        "spatial": true
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.displacement",
+        "minute": 30,
+        "roomRequired": false,
+        "rule": "rule.recovery.displacement",
+        "spatial": false
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.contacts",
+        "minute": 60,
+        "roomRequired": false,
+        "rule": "rule.note",
+        "spatial": false
+      }
+    ],
     "homeScene": {
       "connectors": [],
       "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
@@ -3655,7 +3784,12 @@
       }
     ],
     "receipt": {
-      "contextDigest": "e93ce7d9771124a",
+      "contextDigest": "4f91d026a70c8769",
+      "directorState": {
+        "activeIncidentCount": 0,
+        "awaitingUserAction": false,
+        "scheduledEventCount": 0
+      },
       "eventSequence": 3,
       "events": [
         {
@@ -3934,10 +4068,58 @@
         }
       ],
       "contractVersion": "dryrun.ai/1",
+      "directorPolicy": {
+        "allowedStageTransitions": [
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.alarm"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.second-blocked",
+            "to": "evt.home-fire.hallway-smoke"
+          }
+        ],
+        "eventBudget": 32,
+        "maximumActiveIncidents": 1,
+        "maximumPendingEvents": 8,
+        "permittedHazardFamilies": [
+          "homeFire"
+        ],
+        "schedulingHorizonMinutes": 4320,
+        "version": "dryrun.director-policy/1"
+      },
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.2",
+        "contentVersion": "2026.10.3",
         "home": {
           "annotations": [
             {
@@ -5383,6 +5565,44 @@
     }
   },
   "blocked": {
+    "directorProfiles": [
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.alarm",
+        "minute": 0,
+        "roomRequired": true,
+        "rule": "rule.fire.ignition",
+        "spatial": true
+      },
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.fire-origin",
+        "minute": 1,
+        "roomRequired": true,
+        "rule": "rule.fire.block-primary",
+        "spatial": true
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.displacement",
+        "minute": 30,
+        "roomRequired": false,
+        "rule": "rule.recovery.displacement",
+        "spatial": false
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.contacts",
+        "minute": 60,
+        "roomRequired": false,
+        "rule": "rule.note",
+        "spatial": false
+      }
+    ],
     "homeScene": {
       "connectors": [],
       "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
@@ -6421,7 +6641,14 @@
       }
     ],
     "receipt": {
-      "contextDigest": "a15a9f8170d10827",
+      "contextDigest": "6144ec150bd54064",
+      "directorState": {
+        "activeIncidentCount": 1,
+        "awaitingUserAction": false,
+        "originSpaceID": "sp-kitchen",
+        "scheduledEventCount": 2,
+        "stageID": "evt.home-fire.fire-origin"
+      },
       "eventSequence": 10,
       "events": [
         {
@@ -7147,10 +7374,58 @@
         }
       ],
       "contractVersion": "dryrun.ai/1",
+      "directorPolicy": {
+        "allowedStageTransitions": [
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.alarm"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.second-blocked",
+            "to": "evt.home-fire.hallway-smoke"
+          }
+        ],
+        "eventBudget": 32,
+        "maximumActiveIncidents": 1,
+        "maximumPendingEvents": 8,
+        "permittedHazardFamilies": [
+          "homeFire"
+        ],
+        "schedulingHorizonMinutes": 4320,
+        "version": "dryrun.director-policy/1"
+      },
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.2",
+        "contentVersion": "2026.10.3",
         "home": {
           "annotations": [
             {
@@ -8596,6 +8871,44 @@
     }
   },
   "protectedStock": {
+    "directorProfiles": [
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.alarm",
+        "minute": 0,
+        "roomRequired": true,
+        "rule": "rule.fire.ignition",
+        "spatial": true
+      },
+      {
+        "canStart": true,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.fire-origin",
+        "minute": 1,
+        "roomRequired": true,
+        "rule": "rule.fire.block-primary",
+        "spatial": true
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.displacement",
+        "minute": 30,
+        "roomRequired": false,
+        "rule": "rule.recovery.displacement",
+        "spatial": false
+      },
+      {
+        "canStart": false,
+        "hazard": "homeFire",
+        "id": "evt.home-fire.contacts",
+        "minute": 60,
+        "roomRequired": false,
+        "rule": "rule.note",
+        "spatial": false
+      }
+    ],
     "homeScene": {
       "connectors": [],
       "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
@@ -9634,7 +9947,14 @@
       }
     ],
     "receipt": {
-      "contextDigest": "9e142ec6bce6199",
+      "contextDigest": "95e75570146afc84",
+      "directorState": {
+        "activeIncidentCount": 1,
+        "awaitingUserAction": false,
+        "originSpaceID": "sp-kitchen",
+        "scheduledEventCount": 2,
+        "stageID": "evt.home-fire.fire-origin"
+      },
       "eventSequence": 13,
       "events": [
         {
@@ -10499,10 +10819,58 @@
         }
       ],
       "contractVersion": "dryrun.ai/1",
+      "directorPolicy": {
+        "allowedStageTransitions": [
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.alarm"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "notStarted",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.fire-origin"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.alarm",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.second-blocked"
+          },
+          {
+            "from": "evt.home-fire.fire-origin",
+            "to": "evt.home-fire.hallway-smoke"
+          },
+          {
+            "from": "evt.home-fire.second-blocked",
+            "to": "evt.home-fire.hallway-smoke"
+          }
+        ],
+        "eventBudget": 32,
+        "maximumActiveIncidents": 1,
+        "maximumPendingEvents": 8,
+        "permittedHazardFamilies": [
+          "homeFire"
+        ],
+        "schedulingHorizonMinutes": 4320,
+        "version": "dryrun.director-policy/1"
+      },
       "id": "synthetic-session",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.2",
+        "contentVersion": "2026.10.3",
         "home": {
           "annotations": [
             {
@@ -11952,7 +12320,7 @@
       "Reviewed educational incident profiles; not a prediction of real failure"
     ],
     "baseline": {
-      "contextDigest": "343c4b2c9bc24239",
+      "contextDigest": "cbc19ea0cf316d12",
       "eventSequence": 10,
       "events": [
         {
@@ -12649,7 +13017,7 @@
     "dependencies": [
       {
         "evidenceIDs": [
-          "343c4b2c9bc24239"
+          "cbc19ea0cf316d12"
         ],
         "id": "contact|channel",
         "kind": "contactChannel",
@@ -12668,7 +13036,7 @@
       "req.egress.p-oak-4"
     ],
     "evidenceIDs": [
-      "343c4b2c9bc24239"
+      "cbc19ea0cf316d12"
     ],
     "failed": true,
     "id": "stress|home-fire|evt.home-fire.alarm|evt.home-fire.fire-origin",

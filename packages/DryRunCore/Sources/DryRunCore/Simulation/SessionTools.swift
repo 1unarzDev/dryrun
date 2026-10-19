@@ -5,10 +5,11 @@ public struct SessionToolRequest:Codable,Sendable {
     public var kind:SessionToolKind
     public var baseRevision:Int
     public var command:SessionCommand?
+    public var commands:[SessionCommand]?
     public var profileIDs:[String]?
     public var intervention:Intervention?
     public var routeRequest:RouteRequest?
-    public init(kind:SessionToolKind,baseRevision:Int,command:SessionCommand?=nil,profileIDs:[String]?=nil,intervention:Intervention?=nil,routeRequest:RouteRequest?=nil){self.kind=kind;self.baseRevision=baseRevision;self.command=command;self.profileIDs=profileIDs;self.intervention=intervention;self.routeRequest=routeRequest}
+    public init(kind:SessionToolKind,baseRevision:Int,command:SessionCommand?=nil,commands:[SessionCommand]?=nil,profileIDs:[String]?=nil,intervention:Intervention?=nil,routeRequest:RouteRequest?=nil){self.kind=kind;self.baseRevision=baseRevision;self.command=command;self.commands=commands;self.profileIDs=profileIDs;self.intervention=intervention;self.routeRequest=routeRequest}
 }
 public struct SessionToolResponse:Codable,Sendable {
     public var receipt:SessionReceipt
@@ -26,8 +27,9 @@ public extension SimulationSession {
         guard request.baseRevision==revision else {throw SessionError.stale}
         let receipt:SessionReceipt
         if request.kind == .evaluateCandidateAction {
-            guard let command=request.command else {throw SessionError.invalidCommand}
-            receipt=try preview(.init(id:"tool-preview-\(revision)",actor:"director",baseRevision:revision,commands:[command]),library:library)
+            guard (request.command != nil) != (request.commands != nil) else {throw SessionError.invalidCommand}
+            let commands=request.commands ?? [request.command!]
+            receipt=try preview(.init(id:"tool-preview-\(revision)",actor:"director",baseRevision:revision,commands:commands),library:library)
         } else {receipt=try query(library:library)}
         var result=SessionToolResponse(receipt:receipt)
         switch request.kind {
