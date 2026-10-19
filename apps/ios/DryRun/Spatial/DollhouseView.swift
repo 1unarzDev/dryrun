@@ -70,7 +70,6 @@ enum DollhouseBuilder {
         let floors = home.floors.filter { floorID == nil || $0.id == floorID }
         // uniquingKeysWith, not uniqueKeysWithValues: a duplicate floor ID is a reportable data problem
         // (HomeValidator), not a reason to crash the 3D view.
-        let elev = Dictionary(home.floors.map { ($0.id, Float($0.elevationMeters)) }, uniquingKeysWith: { first, _ in first })
         // Each floor's coordinates are placed in the shared frame with its rigid Floor.toCommon transform,
         // so storeys, stairs, and routes line up even when floors are rotated/offset relative to each other.
         let toCommon = Dictionary(home.floors.map { ($0.id, $0.toCommon) }, uniquingKeysWith: { first, _ in first })
@@ -81,8 +80,9 @@ enum DollhouseBuilder {
         let cx = Float(((pts.map(\.x).min() ?? 0) + (pts.map(\.x).max() ?? 0)) / 2)
         let cy = Float(((pts.map(\.y).min() ?? 0) + (pts.map(\.y).max() ?? 0)) / 2)
         func p3(_ v: Vec2, _ fid: String, lift: Float = 0) -> SIMD3<Float> {
-            let w = (toCommon[fid] ?? .identity).apply(v)
-            return SIMD3(Float(w.x) - cx, (elev[fid] ?? 0) + lift, -(Float(w.y) - cy))
+            guard let floor = home.floors.first(where: { $0.id == fid }) else { return SIMD3(0, lift, 0) }
+            let point = HomeModelExport.point3D(v, floor: floor)
+            return SIMD3(Float(point.x) - cx, Float(point.y) + lift, Float(point.z) + cy)
         }
 
         let floorMat = SimpleMaterial(color: .init(white: 0.92, alpha: 1), isMetallic: false)

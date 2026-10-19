@@ -3,15 +3,27 @@ public struct AnonymousPerson: Codable, Sendable {public var id:String;public va
 public struct AnonymousPet: Codable, Sendable {public var id:String;public var kind:String;public var count:Int}
 public struct AnonymousEquipment: Codable, Sendable {public var id:String;public var personID:String?;public var essential:Bool;public var powerRequired:Bool;public var documentation:String}
 public struct AIEvidenceRecord: Codable, Sendable {public var id:String;public var origin:String;public var status:String;public var sourceIDs:[String];public var fieldIDs:[String];public var jurisdiction:String?;public var retrievedAt:String?;public var uncertainty:String?}
+public struct AnonymousHousing: Codable, Sendable {
+    public var homeType: HomeType; public var tenancy: Tenancy; public var floorCount: Int
+    public var heatingFuel: HeatingFuel; public var heatingNeedsElectricity: EvidenceValue<Bool>
+    public var cooling: CoolingKind; public var waterSource: WaterSourceKind
+    public var wellPumpElectric: EvidenceValue<Bool>; public var sanitation: SanitationKind
+    public init(_ h: Housing) { homeType=h.homeType; tenancy=h.tenancy; floorCount=h.floorCount; heatingFuel=h.heatingFuel
+        heatingNeedsElectricity=h.heatingNeedsElectricity; cooling=h.cooling; waterSource=h.waterSource; wellPumpElectric=h.wellPumpElectric; sanitation=h.sanitation }
+}
 public struct HouseholdContextSnapshot: Codable, Sendable {
     public var revision:Int;public var people:[AnonymousPerson];public var pets:[AnonymousPet];public var equipment:[AnonymousEquipment]
     public var transport:String;public var limitedBudget:Bool;public var regionID:String;public var evidence:[AIEvidenceRecord]
-    public init(_ h:HouseholdProfile){
+    public var housing: AnonymousHousing?
+    public var site: SiteHazardContext?
+    public init(_ h:HouseholdProfile, at date:Date = Date()){
+        housing=AnonymousHousing(h.housing); site=SiteHazardContext(h.siteHazards,jurisdictionID:h.regionID,at:date,locationBinding:SiteHazardBinding.of(h))
         revision=h.revision;people=h.people.map{AnonymousPerson(id:$0.id,ageBand:$0.ageBand.rawValue,needs:$0.needs.map(\.rawValue).sorted())}
         pets=h.pets.map{AnonymousPet(id:$0.id,kind:$0.kind.rawValue,count:$0.count)}
         equipment=h.equipment.map{AnonymousEquipment(id:$0.id,personID:$0.personID,essential:$0.isEssential,powerRequired:$0.requiresElectricalPower,documentation:MedicalBackupReadiness.isReady($0,in:h) ? "confirmed":"unknown")}
         transport=h.transport.hasVehicle ? "car":"noCar";limitedBudget=h.supplies.limitedBudget;regionID=h.regionID
-        evidence=[AIEvidenceRecord(id:"household-needs",origin:"userConfirmed",status:"confirmed",sourceIDs:[],fieldIDs:["people.needs","pets","equipment"],jurisdiction:nil,retrievedAt:nil,uncertainty:nil)]
+        evidence=[AIEvidenceRecord(id:"household-needs",origin:"userConfirmed",status:"confirmed",sourceIDs:[],fieldIDs:["people.needs","pets","equipment","housing"],jurisdiction:nil,retrievedAt:nil,uncertainty:nil)]
+        evidence += (site?.sourceIDs ?? []).map{ sourceID in AIEvidenceRecord(id:sourceID,origin:"officialSource",status:"confirmed",sourceIDs:[sourceID],fieldIDs:["site.planningEvidence"],jurisdiction:h.regionID,retrievedAt:site?.sources?.first(where:{$0.id==sourceID}).map{ISO8601DateFormatter().string(from:$0.retrievedAt)},uncertainty:"Planning evidence only; no current hazard, route clearance or evacuation activation") }
     }
 }
 /// Graph/provenance remains canonical HomeModel, with private labels/notes removed before cloud use.
@@ -21,20 +33,31 @@ public struct HomeSceneContext: Codable, Sendable {
     public var walls:[WallSegment];public var connectors:[FloorConnector];public var obstacles:[ObstacleContext];public var objects:[ObjectContext]
     public var unknowns:[String]
     public var homeSource:HomeSource?
+    public var dwellingType:HomeType?
+    public var planningRoutes:[HomePlanningRoute]?
+    public var planningNeeds:[HousingPlanningNeed]?
     public struct FloorContext: Codable, Sendable {public var id:String;public var elevation:Double;public var transform:Transform2D;public var level:Int?;public var exteriorGrade:ExteriorGrade?}
     public struct RoomContext: Codable, Sendable {public var id:String;public var floorID:String;public var polygon:[Vec2];public var use:String;public var confirmed:Bool;public var geometryNeedsReview:Bool?;public var needsMeasurement:Bool?;public var interiorNoWindowsConfirmed:EvidenceValue<Bool>?;public var higherRefugeConfirmed:EvidenceValue<Bool>?;public var confirmedShelter:Bool?}
     public struct PortalContext: Codable, Sendable {public var id:String;public var floorID:String;public var kind:String;public var verification:String;public var a:Vec2;public var b:Vec2;public var sideA:String;public var sideB:String;public var clearWidth:EvidenceValue<Double>;public var operable:EvidenceValue<Bool>;public var stepFree:EvidenceValue<Bool>;public var emergencyEscapePersonIDs:[String]?}
     public struct ObstacleContext: Codable, Sendable {public var id:String;public var floorID:String;public var polygon:[Vec2]}
-    public struct ObjectContext: Codable, Sendable {public var id:String;public var kind:String;public var roomID:String?;public var verification:String}
+    public struct ObjectContext: Codable, Sendable {public var id:String;public var kind:String;public var roomID:String?;public var verification:String;public var floorID:String?;public var position:Vec2?}
     static func destination(_ d:PortalDestination)->String {switch d{case .space(let id):return id;case .exterior:return "exterior";case .commonArea(let id):return "common|\(id)";case .unknown:return "unknown"}}
+    public init(_ home:HomeModel, household:HouseholdProfile) {
+        var source=home
+        if household.housing.homeType == .manufacturedHome || home.dwellingType == .manufacturedHome { source.dwellingType = .manufacturedHome }
+        else { source.dwellingType = household.housing.homeType }
+        self.init(source)
+        planningRoutes=HousingPlanning.routes(household:household,home:source)
+        planningNeeds=HousingPlanning.needs(household:household,home:source)
+    }
     public init(_ home:HomeModel){
-        schemaVersion="dryrun.home-scene/2";homeSource=home.source;homeRevision=home.revision;units="meter";coordinateConvention="per-floor x/y right-handed; floor transforms to common"
+        schemaVersion="dryrun.home-scene/2";homeSource=home.source;dwellingType=home.dwellingType;homeRevision=home.revision;units="meter";coordinateConvention="per-floor x/y right-handed; floor transforms to common"
         floors=home.floors.map{FloorContext(id:$0.id,elevation:$0.elevationMeters,transform:$0.toCommon,level:$0.level,exteriorGrade:$0.exteriorGrade ?? .unknown)}
         rooms=home.spaces.map{RoomContext(id:$0.id,floorID:$0.floorID,polygon:$0.polygon,use:$0.kind.rawValue,confirmed:$0.labelConfirmed,geometryNeedsReview:$0.geometryNeedsReview ?? false,needsMeasurement:$0.needsMeasurement,interiorNoWindowsConfirmed:$0.interiorNoWindowsConfirmed,higherRefugeConfirmed:$0.higherRefugeConfirmed ?? .unknown,confirmedShelter:ShelterSuitability.isConfirmed(roomID:$0.id,in:home))}
         portals=home.portals.map{PortalContext(id:$0.id,floorID:$0.floorID,kind:$0.kind.rawValue,verification:$0.verification.rawValue,a:$0.a,b:$0.b,sideA:Self.destination($0.sideA),sideB:Self.destination($0.sideB),clearWidth:$0.clearWidthMeters,operable:$0.operable,stepFree:$0.stepFree,emergencyEscapePersonIDs:$0.emergencyEscapePersonIDs)}
         walls=home.walls;connectors=home.connectors
         obstacles=home.obstacles.map{ObstacleContext(id:$0.id,floorID:$0.floorID,polygon:$0.polygon)}
-        objects=home.annotations.map{ObjectContext(id:$0.id,kind:$0.kind.rawValue,roomID:$0.spaceID,verification:$0.verification.rawValue)}
+        objects=home.annotations.map{ObjectContext(id:$0.id,kind:$0.kind.rawValue,roomID:$0.spaceID,verification:$0.verification.rawValue,floorID:$0.floorID,position:$0.position)}
         unknowns=["Window operability/exterior grade require recorded confirmation","Geometry does not establish structural shelter performance","Image observations cannot create graph edges","confirmed is room-use confirmation, not geometry or route verification","confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"]
     }
 }

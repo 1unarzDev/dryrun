@@ -2,7 +2,7 @@
   "synthetic": true,
   "liveModel": false,
   "sourceFixture": "stress-retest.json",
-  "sourceContextDigest": "122e609d131bfdfa",
+  "sourceContextDigest": "e5ee152bc5b71379",
   "trace": [
     {
       "call": {
@@ -41,7 +41,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "122e609d131bfdfa",
+          "contextDigest": "e5ee152bc5b71379",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -100,7 +100,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "122e609d131bfdfa",
+        "contextDigest": "e5ee152bc5b71379",
         "observation": {
           "kind": "runCounterfactual",
           "status": "unavailable",
@@ -145,7 +145,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "122e609d131bfdfa",
+          "contextDigest": "e5ee152bc5b71379",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -204,7 +204,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "122e609d131bfdfa",
+        "contextDigest": "e5ee152bc5b71379",
         "observation": {
           "kind": "runCounterfactual",
           "scope": "initial_household_with_selected_profiles",
@@ -394,7 +394,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "122e609d131bfdfa",
+          "contextDigest": "e5ee152bc5b71379",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -453,7 +453,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "e9de58a7aa4da9fd",
+        "contextDigest": "39328572f1045a7e",
         "preview": {
           "routes": [],
           "directorState": {
@@ -475,7 +475,7 @@
       "sessionID": "synthetic-session",
       "revision": 0,
       "eventSequence": 0,
-      "contextDigest": "122e609d131bfdfa",
+      "contextDigest": "e5ee152bc5b71379",
       "householdRevision": 3,
       "homeRevision": 1
     },
@@ -507,7 +507,7 @@
     }
   },
   "committedReceipt": {
-    "contextDigest": "d3284e036f075533",
+    "contextDigest": "8a399828937e3a4",
     "directorState": {
       "activeIncidentCount": 0,
       "awaitingUserAction": true,

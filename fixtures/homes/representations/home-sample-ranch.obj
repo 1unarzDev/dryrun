@@ -1,0 +1,215 @@
+# DryRun fictional home; metres; x/elevation/-y; no route certification
+o sp-living
+v 0.0 0.0 -0.0
+v 7.0 0.0 -0.0
+v 7.0 0.0 -5.0
+v 0.0 0.0 -5.0
+f 1 2 3 4
+o sp-kitchen
+v 7.0 0.0 -0.0
+v 12.0 0.0 -0.0
+v 12.0 0.0 -5.0
+v 7.0 0.0 -5.0
+f 5 6 7 8
+o sp-hall
+v 0.0 0.0 -5.0
+v 12.0 0.0 -5.0
+v 12.0 0.0 -6.2
+v 0.0 0.0 -6.2
+f 9 10 11 12
+o sp-bed1
+v 0.0 0.0 -6.2
+v 4.5 0.0 -6.2
+v 4.5 0.0 -10.0
+v 0.0 0.0 -10.0
+f 13 14 15 16
+o sp-closet
+v 4.5 0.0 -6.2
+v 7.0 0.0 -6.2
+v 7.0 0.0 -7.4
+v 4.5 0.0 -7.4
+f 17 18 19 20
+o sp-bath
+v 4.5 0.0 -7.4
+v 7.0 0.0 -7.4
+v 7.0 0.0 -10.0
+v 4.5 0.0 -10.0
+f 21 22 23 24
+o sp-bed2
+v 7.0 0.0 -6.2
+v 12.0 0.0 -6.2
+v 12.0 0.0 -10.0
+v 7.0 0.0 -10.0
+f 25 26 27 28
+o w-ext-s-0
+v 0.0 0.0 -0.0
+v 0.8 0.0 -0.0
+l 29 30
+o w-ext-s-1
+v 2.0 0.0 -0.0
+v 3.0 0.0 -0.0
+l 31 32
+o w-ext-s-2
+v 3.9 0.0 -0.0
+v 12.0 0.0 -0.0
+l 33 34
+o w-ext-e-0
+v 12.0 0.0 -0.0
+v 12.0 0.0 -2.0
+l 35 36
+o w-ext-e-1
+v 12.0 0.0 -2.9
+v 12.0 0.0 -10.0
+l 37 38
+o w-ext-n-0
+v 12.0 0.0 -10.0
+v 10.5 0.0 -10.0
+l 39 40
+o w-ext-n-1
+v 9.5 0.0 -10.0
+v 2.5 0.0 -10.0
+l 41 42
+o w-ext-n-2
+v 1.5 0.0 -10.0
+v 0.0 0.0 -10.0
+l 43 44
+o w-ext-w-0
+v 0.0 0.0 -10.0
+v 0.0 0.0 -0.0
+l 45 46
+o w-living-kitchen-0
+v 7.0 0.0 -0.0
+v 7.0 0.0 -1.0
+l 47 48
+o w-living-kitchen-1
+v 7.0 0.0 -2.2
+v 7.0 0.0 -5.0
+l 49 50
+o w-south-hall-0
+v 0.0 0.0 -5.0
+v 5.0 0.0 -5.0
+l 51 52
+o w-south-hall-1
+v 5.9 0.0 -5.0
+v 8.0 0.0 -5.0
+l 53 54
+o w-south-hall-2
+v 8.86 0.0 -5.0
+v 12.0 0.0 -5.0
+l 55 56
+o w-hall-north-0
+v 0.0 0.0 -6.2
+v 3.0 0.0 -6.2
+l 57 58
+o w-hall-north-1
+v 3.85 0.0 -6.2
+v 5.2 0.0 -6.2
+l 59 60
+o w-hall-north-2
+v 5.9 0.0 -6.2
+v 9.0 0.0 -6.2
+l 61 62
+o w-hall-north-3
+v 9.86 0.0 -6.2
+v 12.0 0.0 -6.2
+l 63 64
+o w-bed1-east-0
+v 4.5 0.0 -6.2
+v 4.5 0.0 -8.0
+l 65 66
+o w-bed1-east-1
+v 4.5 0.0 -8.75
+v 4.5 0.0 -10.0
+l 67 68
+o w-closet-bath-0
+v 4.5 0.0 -7.4
+v 7.0 0.0 -7.4
+l 69 70
+o w-bed2-west-0
+v 7.0 0.0 -6.2
+v 7.0 0.0 -10.0
+l 71 72
+o pt-front_door_verified
+v 3.0 0.0 -0.0
+v 3.9 0.0 -0.0
+l 73 74
+o pt-back_door_verified
+v 12.0 0.0 -2.0
+v 12.0 0.0 -2.9
+l 75 76
+o pt-living-kitchen_opening_verified
+v 7.0 0.0 -1.0
+v 7.0 0.0 -2.2
+l 77 78
+o pt-living-hall_door_verified
+v 5.0 0.0 -5.0
+v 5.9 0.0 -5.0
+l 79 80
+o pt-kitchen-hall_door_verified
+v 8.0 0.0 -5.0
+v 8.86 0.0 -5.0
+l 81 82
+o pt-bed1-hall_door_verified
+v 3.0 0.0 -6.2
+v 3.85 0.0 -6.2
+l 83 84
+o pt-bed2-hall_door_verified
+v 9.0 0.0 -6.2
+v 9.86 0.0 -6.2
+l 85 86
+o pt-closet-hall_door_verified
+v 5.2 0.0 -6.2
+v 5.9 0.0 -6.2
+l 87 88
+o pt-bed1-bath_door_verified
+v 4.5 0.0 -8.0
+v 4.5 0.0 -8.75
+l 89 90
+o pt-win-bed1_window_proposed
+v 1.5 0.0 -10.0
+v 2.5 0.0 -10.0
+l 91 92
+o pt-win-bed2_window_proposed
+v 9.5 0.0 -10.0
+v 10.5 0.0 -10.0
+l 93 94
+o pt-win-living_window_proposed
+v 0.8 0.0 -0.0
+v 2.0 0.0 -0.0
+l 95 96
+o an-smoke-hall_smokeAlarm
+v 6.0 0.0 -5.6
+p 97
+o an-smoke-bed1_smokeAlarm
+v 2.2 0.0 -8.1
+p 98
+o an-smoke-bed2_smokeAlarm
+v 9.5 0.0 -8.1
+p 99
+o an-co-hall_coAlarm
+v 3.0 0.0 -5.6
+p 100
+o an-extinguisher_fireExtinguisher
+v 7.4 0.0 -4.5
+p 101
+o an-shutoff-water_utilityShutoffWater
+v 11.6 0.0 -4.6
+p 102
+o an-shutoff-elec_utilityShutoffElectric
+v 11.6 0.0 -5.6
+p 103
+o an-supplies_supplies
+v 5.75 0.0 -6.8
+p 104
+o an-medical_medicalEquipment
+v 6.4 0.0 -0.6
+p 105
+o an-tornado_tornadoShelterCandidate
+v 5.75 0.0 -6.8
+p 106
+o an-hydrant_exteriorHydrant
+v 14.5 0.0 4.0
+p 107
+o an-meeting_outsideMeetingPoint
+v 3.45 0.0 8.0
+p 108

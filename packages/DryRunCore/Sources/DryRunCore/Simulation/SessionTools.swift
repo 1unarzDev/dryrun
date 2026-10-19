@@ -34,7 +34,7 @@ public extension SimulationSession {
         } else {receipt=try query(library:library)}
         var result=SessionToolResponse(receipt:receipt)
         switch request.kind {
-        case .inspectScene:result.scene=initial.home.map(HomeSceneContext.init)
+        case .inspectScene:result.scene=initial.home.map{HomeSceneContext($0,household:initial.household)}
         case .queryRoutes:
             if var routeRequest=request.routeRequest {
                 guard let home=initial.home else {throw SessionError.invalidCommand}

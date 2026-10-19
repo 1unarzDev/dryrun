@@ -1,0 +1,76 @@
+{
+  "synthetic": true,
+  "modelCalls": 0,
+  "assessmentVersion": "dryrun.household-assessment/6",
+  "results": [
+    {
+      "category": "water",
+      "empty": {
+        "accessible": false,
+        "quantity": false
+      },
+      "unknownUsable": {
+        "accessible": true
+      },
+      "gap": {
+        "category": "water",
+        "confirmedUsable": 0,
+        "deficit": 45.424941407999995,
+        "required": 45.424941407999995,
+        "sourceIDs": [
+          "S26"
+        ],
+        "unit": "liter",
+        "unknown": false
+      },
+      "emptyWaterProjection": {
+        "amount": 0,
+        "unit": "gal"
+      },
+      "malformedOriginRejected": true,
+      "duplicateBatchRejected": true
+    },
+    {
+      "category": "food",
+      "empty": {
+        "accessible": false,
+        "quantity": false
+      },
+      "unknownUsable": {
+        "accessible": true
+      },
+      "gap": {
+        "category": "food",
+        "confirmedUsable": 0,
+        "deficit": 3,
+        "required": 3,
+        "sourceIDs": [
+          "S64"
+        ],
+        "unit": "day",
+        "unknown": false
+      },
+      "emptyWaterProjection": null,
+      "malformedOriginRejected": true,
+      "duplicateBatchRejected": true
+    },
+    {
+      "subjectScope": "partial household",
+      "gap": {
+        "category": "water",
+        "confirmedUsable": 0,
+        "required": 45.424941407999995,
+        "scopeUnsupported": true,
+        "sourceIDs": [
+          "S26"
+        ],
+        "unit": "liter",
+        "unknown": true
+      },
+      "physicalRemaining": 100,
+      "unsupportedAllocationDisclosed": true
+    }
+  ],
+  "overflowRejected": true,
+  "limits": "Headless transaction/schema checks; inout state and failed persistence atomicity are separately covered in Core. Native UI/Vault save path still pending."
+}

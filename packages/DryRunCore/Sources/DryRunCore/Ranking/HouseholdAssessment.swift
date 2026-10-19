@@ -12,7 +12,7 @@ public enum HouseholdAssessment {
     private static func requiresAssistance(_ p:Person)->Bool {
         p.requiresStepFreeRoute || p.needs.contains(.needsHelperToEvacuate) || p.needs.contains(.deafOrHardOfHearing) || p.ageBand == .infant || p.ageBand == .child
     }
-    public static let version="dryrun.household-assessment/5"
+    public static let version="dryrun.household-assessment/6"
     public static func assess(household h:HouseholdProfile,home:HomeModel?,inventory:InventoryLedger?,places:[SavedPlace]=[],stressFindings:[StressTestFinding]=[],at date:Date) throws -> [CriterionAssessment] {
         var results:[CriterionAssessment]=[]
         func append(_ id:String,_ values:[String:Bool?],evidence:[String],notApplicable:String?=nil){
@@ -38,14 +38,15 @@ public enum HouseholdAssessment {
             append("escape",["confirmedExit":all(confirmedRoutes),"independentAlternative":all(independent),"reviewed":h.preparedness?.items["clearExits"]?.available.confirmedValue],evidence:["home|\(home.id)|\(home.revision)","preparedness.clearExits"])
             // Use the same recorded tornado planning choice and interior-purpose route rules as rehearsal.
             // A missing/invalid candidate is unknown, never evidence that the household has no refuge.
-            let shelter=ShelterSuitability.confirmedRoom(in:home)
+            let manufactured = h.housing.homeType == .manufacturedHome || home.dwellingType == .manufacturedHome
+            let shelter=manufactured ? nil:ShelterSuitability.confirmedRoom(in:home)
             let shelterRoutes:[Bool?]=h.people.map {person in
                 guard let shelter else {return nil}
                 let route=EgressPlanner().plan(RouteRequest(personID:person.id,startSpaceID:person.sleepingSpaceID ?? "unknown",mobility:person.requiresStepFreeRoute ? .wheelchair:.walking,purpose:.interiorShelter,destinationSpaceID:shelter.id),in:home)
                 guard let path=route.primary,path.verificationNeeded.isEmpty else {return nil}
                 return true
             }
-            append("shelter",["suitable":shelter == nil ? nil:true,"reachable":all(shelterRoutes)],evidence:["home|\(home.id)|\(home.revision)","home.tornadoShelterCandidate"])
+            append("shelter",["suitable":manufactured ? false:(shelter == nil ? nil:true),"reachable":all(shelterRoutes)],evidence:["home|\(home.id)|\(home.revision)","home.tornadoShelterCandidate"])
         }
         let water=try inventory?.waterGap(people:h.people.count,personIDs:h.people.map(\.id),at:date)
         let waterAccess=try inventory?.usableAccess(category:"water",personIDs:h.people.map(\.id),at:date)

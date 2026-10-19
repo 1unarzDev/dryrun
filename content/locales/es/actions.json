@@ -76,5 +76,8 @@
   "tier.2": "Falta información",
   "tier.3": "Falta de suministros o de continuidad",
   "tier.4": "Ayuda en muchas emergencias",
-  "tier.5": "Buena práctica"
+  "tier.5": "Buena práctica",
+  "prep.shelterPlan.title": "Revisa tu plan de refugio para tornados",
+  "prep.shelterPlan.why": "No se ha confirmado un refugio adecuado sin ventanas en el piso más bajo apropiado. Revisa el nivel respecto al terreno, las ventanas, el acceso y la ayuda necesaria. Un marcador no certifica un refugio.",
+  "prep.shelterPlan.manufactured.why": "Una casa móvil o prefabricada no es un refugio para tornados. Acuerda con anticipación el acceso y transporte a un edificio resistente apropiado. No empieces a conducir hacia un refugio distante genérico durante una alerta de tornado."
 }

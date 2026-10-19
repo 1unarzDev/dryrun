@@ -1,0 +1,51 @@
+{
+  "version": "dryrun.housing-verification/1",
+  "synthetic": true,
+  "nativeVerified": false,
+  "fullOfflineVerification": {
+    "command": "scripts/verify-ai-portable.sh",
+    "passed": true,
+    "core": 467,
+    "vault": 39,
+    "gateway": 75,
+    "publicAPI": 68,
+    "scope": "Before final dwelling/site-stage/output fixes; all included evaluators/replays passed"
+  },
+  "finalAffectedVerification": {
+    "core": 468,
+    "coreSuites": 85,
+    "vault": 39,
+    "vaultSuites": 7,
+    "gateway": 78,
+    "gatewayFiles": 12,
+    "typecheck": true,
+    "contracts": true,
+    "offlineHousingCases": 6,
+    "diffCheck": true
+  },
+  "latestLiveFeatures": {
+    "fixture": "housing-features-live-v5.json",
+    "calls": 6,
+    "budgetAccountedUSD": 0.01396975,
+    "households": 3,
+    "routeProbes": 0,
+    "scope": "preparation/6 resources/5; diagnostic semantic issues retained"
+  },
+  "finalPreparation": "preparation/7; actual retained-response regression-tested, not live-retested",
+  "pending": [
+    "Xcode compilation",
+    "wired iPhone integration and all seven flow checks",
+    "actual scans/photos/window detection/calibration",
+    "official site adapters and precise marker UI",
+    "production installation authentication and provider release gates",
+    "qualified safety/rubric/language/family review"
+  ],
+  "sourceHashes": {
+    "services/ai-orchestrator/src/features.ts": "3a567d9f2952a7b9cc77c74be0bc2a4cd537b6a1a3c499336c24ef4685061c1e",
+    "services/ai-orchestrator/src/output-quality.ts": "868cc84d92af963990e1105963ca36c1a313c268535578d8fb43ddcb07636134",
+    "services/ai-orchestrator/scripts/output-quality-eval.ts": "3e5780c43978337e66634e7e983fe0936d397d373f0b9a047c5f2cd9dd75f455",
+    "packages/DryRunCore/Sources/DryRunCore/Models/SiteHazards.swift": "5584cda0c710b1db118caba48688132fb0fdeac60621ff23076662af1a6b9acf",
+    "packages/DryRunCore/Sources/DryRunCore/Models/HouseholdEditing.swift": "7ed92585f2cada6a4c254ab93435efdda07924d43f6b5e19fe8019156489f11c",
+    "DryRun_AI_Implementation_Reference.md": "3cdaa439835f91d94439e4a41176712f2f3e42a7141d7fcf23c44bc89092dc0f"
+  }
+}

@@ -60,4 +60,24 @@ import DryRunCore
   #expect(try DryRunJSON.decoder().decode(IntegratedAIState.self,from:#require(deleted.integratedAIState)).imageGeometryRecords?.isEmpty==true)
  }
 
+ @Test func privateSiteRoutesAndMarkerNotesSurviveOnlyEncryptedStorage() async throws {
+  let fixture=Fixture();defer {try? FileManager.default.removeItem(at:fixture.root)}
+  let date=Date(timeIntervalSince1970:1792368000)
+  var payload=canaryPayload()
+  var h=try #require(payload.household)
+  h=SiteHazardEditing.replace(SiteHazardProfile(jurisdictionID:h.regionID,hurricane:HurricaneEvacuationPlan(zone:"PRIVATE-ZONE-CANARY",routeIDs:["PRIVATE-ROUTE-CANARY"],sourceID:"pending-review",instructions:"PRIVATE-ROUTE-DIRECTIONS")),in:h,at:date)
+  payload.household=h
+  payload.home=try HomeSafetyMarkers.place(id:"breaker",kind:.utilityShutoffElectric,roomID:"sp-living",position:Vec2(6,1),note:"PRIVATE-BREAKER-NOTE",verified:true,in:SampleHomes.ranch)
+  try await fixture.repo.save(payload)
+  let loaded=try #require(try await fixture.repo.load())
+  #expect(loaded.household?.siteHazards==h.siteHazards)
+  #expect(loaded.home==payload.home)
+  for (_,bytes) in allFileBytes(under:fixture.root) {
+   for text in ["PRIVATE-ZONE-CANARY","PRIVATE-ROUTE-CANARY","PRIVATE-ROUTE-DIRECTIONS","PRIVATE-BREAKER-NOTE"] {#expect(!contains(bytes,text))}
+  }
+  payload.household?.siteHazards=nil;payload.home=nil
+  try await fixture.repo.save(payload)
+  #expect(try await fixture.repo.load()?.household?.siteHazards==nil)
+ }
+
 }

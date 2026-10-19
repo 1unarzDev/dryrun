@@ -44,7 +44,7 @@
       "reassessment": {
         "assessments": [
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "alarms",
             "evidenceIDs": [
               "preparedness.smokeAlarms"
@@ -53,7 +53,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "escape",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -65,7 +65,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "shelter",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -77,7 +77,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "water",
             "evidenceIDs": [
               "inventory.water"
@@ -89,7 +89,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "food",
             "evidenceIDs": [
               "supplies.shelfStableFoodDays",
@@ -101,7 +101,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "essentials",
             "evidenceIDs": [
               "supplies",
@@ -115,7 +115,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "contact",
             "evidenceIDs": [
               "contacts",
@@ -127,7 +127,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "meetups",
             "evidenceIDs": [
               "savedPlaces",
@@ -139,7 +139,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "assistance",
             "evidenceIDs": [
               "people.assistance"
@@ -150,7 +150,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "device",
             "evidenceIDs": [
               "equipment",
@@ -160,7 +160,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "care",
             "evidenceIDs": [
               "people.needs"
@@ -169,7 +169,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "pets",
             "evidenceIDs": [
               "pets"
@@ -180,7 +180,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "review",
             "evidenceIDs": [
               "preparedness.reviewedAt"
@@ -239,6 +239,7 @@
         "homeScene": {
           "connectors": [],
           "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
+          "dwellingType": "singleFamily",
           "floors": [
             {
               "elevation": 0,
@@ -258,73 +259,133 @@
           "homeSource": "sample",
           "objects": [
             {
+              "floorID": "fl-ground",
               "id": "an-smoke-hall",
               "kind": "smokeAlarm",
+              "position": {
+                "x": 6,
+                "y": 5.6
+              },
               "roomID": "sp-hall",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-smoke-bed1",
               "kind": "smokeAlarm",
+              "position": {
+                "x": 2.2,
+                "y": 8.1
+              },
               "roomID": "sp-bed1",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-smoke-bed2",
               "kind": "smokeAlarm",
+              "position": {
+                "x": 9.5,
+                "y": 8.1
+              },
               "roomID": "sp-bed2",
               "verification": "proposed"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-co-hall",
               "kind": "coAlarm",
+              "position": {
+                "x": 3,
+                "y": 5.6
+              },
               "roomID": "sp-hall",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-extinguisher",
               "kind": "fireExtinguisher",
+              "position": {
+                "x": 7.4,
+                "y": 4.5
+              },
               "roomID": "sp-kitchen",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-shutoff-water",
               "kind": "utilityShutoffWater",
+              "position": {
+                "x": 11.6,
+                "y": 4.6
+              },
               "roomID": "sp-kitchen",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-shutoff-elec",
               "kind": "utilityShutoffElectric",
+              "position": {
+                "x": 11.6,
+                "y": 5.6
+              },
               "roomID": "sp-hall",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-supplies",
               "kind": "supplies",
+              "position": {
+                "x": 5.75,
+                "y": 6.8
+              },
               "roomID": "sp-closet",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-medical",
               "kind": "medicalEquipment",
+              "position": {
+                "x": 6.4,
+                "y": 0.6
+              },
               "roomID": "sp-living",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-tornado",
               "kind": "tornadoShelterCandidate",
+              "position": {
+                "x": 5.75,
+                "y": 6.8
+              },
               "roomID": "sp-closet",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-hydrant",
               "kind": "exteriorHydrant",
+              "position": {
+                "x": 14.5,
+                "y": -4
+              },
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-meeting",
               "kind": "outsideMeetingPoint",
+              "position": {
+                "x": 3.45,
+                "y": -8
+              },
               "verification": "verified"
             }
           ],
@@ -372,6 +433,131 @@
                   "y": 3
                 }
               ]
+            }
+          ],
+          "planningNeeds": [],
+          "planningRoutes": [
+            {
+              "alternativePortalIDs": [
+                "pt-bed1-hall",
+                "pt-kitchen-hall",
+                "pt-back"
+              ],
+              "connectorIDs": [],
+              "exclusions": [
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "personID": "p-oak-1",
+              "primaryPortalIDs": [
+                "pt-bed1-hall",
+                "pt-living-hall",
+                "pt-front"
+              ],
+              "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "startRoomID": "sp-bed1",
+              "stepFreeRequired": false
+            },
+            {
+              "alternativePortalIDs": [
+                "pt-bed1-hall",
+                "pt-kitchen-hall",
+                "pt-back"
+              ],
+              "connectorIDs": [],
+              "exclusions": [
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "personID": "p-oak-2",
+              "primaryPortalIDs": [
+                "pt-bed1-hall",
+                "pt-living-hall",
+                "pt-front"
+              ],
+              "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "startRoomID": "sp-bed1",
+              "stepFreeRequired": false
+            },
+            {
+              "alternativePortalIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "pt-living-kitchen",
+                "pt-front"
+              ],
+              "connectorIDs": [],
+              "exclusions": [
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "personID": "p-oak-3",
+              "primaryPortalIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "pt-back"
+              ],
+              "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "startRoomID": "sp-bed2",
+              "stepFreeRequired": false
+            },
+            {
+              "alternativePortalIDs": [
+                "pt-living-kitchen",
+                "pt-back"
+              ],
+              "connectorIDs": [],
+              "exclusions": [
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "personID": "p-oak-4",
+              "primaryPortalIDs": [
+                "pt-front"
+              ],
+              "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "startRoomID": "sp-living",
+              "stepFreeRequired": false
             }
           ],
           "portals": [
@@ -1254,7 +1440,8 @@
               "fieldIDs": [
                 "people.needs",
                 "pets",
-                "equipment"
+                "equipment",
+                "housing"
               ],
               "id": "household-needs",
               "origin": "userConfirmed",
@@ -1262,6 +1449,29 @@
               "status": "confirmed"
             }
           ],
+          "housing": {
+            "cooling": "centralAC",
+            "floorCount": 1,
+            "heatingFuel": "electric",
+            "heatingNeedsElectricity": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "homeType": "singleFamily",
+            "sanitation": "septicGravity",
+            "tenancy": "owner",
+            "waterSource": "privateWell",
+            "wellPumpElectric": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            }
+          },
           "limitedBudget": false,
           "people": [
             {
@@ -1297,6 +1507,20 @@
           ],
           "regionID": "48143",
           "revision": 2,
+          "site": {
+            "elevationRecorded": false,
+            "floodComparison": "unknown",
+            "hurricanePlan": "unknown",
+            "limitations": [
+              "Planning evidence only; no current hazard or evacuation clearance",
+              "Terrain and indoor relative floor height do not establish finished-floor elevation",
+              "Wildfire community ratings do not establish individual-home risk",
+              "Hurricane route activation and current official orders require local verification",
+              "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
+            ],
+            "schemaVersion": "dryrun.site-context/1",
+            "sourceIDs": []
+          },
           "transport": "car"
         },
         "lastAction": {
@@ -1597,7 +1821,7 @@
           }
         ],
         "scorecard": {
-          "assessmentVersion": "dryrun.household-assessment/5",
+          "assessmentVersion": "dryrun.household-assessment/6",
           "cap": 59,
           "capReasons": [
             "alarms",
@@ -4418,7 +4642,7 @@
       "reassessment": {
         "assessments": [
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "alarms",
             "evidenceIDs": [
               "preparedness.smokeAlarms"
@@ -4427,7 +4651,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "escape",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -4439,7 +4663,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "shelter",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -4451,7 +4675,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "water",
             "evidenceIDs": [
               "inventory.water"
@@ -4463,7 +4687,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "food",
             "evidenceIDs": [
               "supplies.shelfStableFoodDays",
@@ -4473,7 +4697,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "essentials",
             "evidenceIDs": [
               "supplies",
@@ -4486,7 +4710,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "contact",
             "evidenceIDs": [
               "contacts",
@@ -4498,7 +4722,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "meetups",
             "evidenceIDs": [
               "savedPlaces",
@@ -4508,7 +4732,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "assistance",
             "evidenceIDs": [
               "people.assistance"
@@ -4518,7 +4742,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "device",
             "evidenceIDs": [
               "equipment",
@@ -4529,7 +4753,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "care",
             "evidenceIDs": [
               "people.needs"
@@ -4539,7 +4763,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "pets",
             "evidenceIDs": [
               "pets"
@@ -4549,7 +4773,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "criterionID": "review",
             "evidenceIDs": [
               "preparedness.reviewedAt"
@@ -4617,6 +4841,7 @@
         "homeScene": {
           "connectors": [],
           "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
+          "dwellingType": "apartment",
           "floors": [
             {
               "elevation": 0,
@@ -4636,73 +4861,133 @@
           "homeSource": "sample",
           "objects": [
             {
+              "floorID": "fl-ground",
               "id": "an-smoke-hall",
               "kind": "smokeAlarm",
+              "position": {
+                "x": 6,
+                "y": 5.6
+              },
               "roomID": "sp-hall",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-smoke-bed1",
               "kind": "smokeAlarm",
+              "position": {
+                "x": 2.2,
+                "y": 8.1
+              },
               "roomID": "sp-bed1",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-smoke-bed2",
               "kind": "smokeAlarm",
+              "position": {
+                "x": 9.5,
+                "y": 8.1
+              },
               "roomID": "sp-bed2",
               "verification": "proposed"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-co-hall",
               "kind": "coAlarm",
+              "position": {
+                "x": 3,
+                "y": 5.6
+              },
               "roomID": "sp-hall",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-extinguisher",
               "kind": "fireExtinguisher",
+              "position": {
+                "x": 7.4,
+                "y": 4.5
+              },
               "roomID": "sp-kitchen",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-shutoff-water",
               "kind": "utilityShutoffWater",
+              "position": {
+                "x": 11.6,
+                "y": 4.6
+              },
               "roomID": "sp-kitchen",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-shutoff-elec",
               "kind": "utilityShutoffElectric",
+              "position": {
+                "x": 11.6,
+                "y": 5.6
+              },
               "roomID": "sp-hall",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-supplies",
               "kind": "supplies",
+              "position": {
+                "x": 5.75,
+                "y": 6.8
+              },
               "roomID": "sp-closet",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-medical",
               "kind": "medicalEquipment",
+              "position": {
+                "x": 6.4,
+                "y": 0.6
+              },
               "roomID": "sp-living",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-tornado",
               "kind": "tornadoShelterCandidate",
+              "position": {
+                "x": 5.75,
+                "y": 6.8
+              },
               "roomID": "sp-closet",
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-hydrant",
               "kind": "exteriorHydrant",
+              "position": {
+                "x": 14.5,
+                "y": -4
+              },
               "verification": "verified"
             },
             {
+              "floorID": "fl-ground",
               "id": "an-meeting",
               "kind": "outsideMeetingPoint",
+              "position": {
+                "x": 3.45,
+                "y": -8
+              },
               "verification": "verified"
             }
           ],
@@ -4750,6 +5035,72 @@
                   "y": 3
                 }
               ]
+            }
+          ],
+          "planningNeeds": [],
+          "planningRoutes": [
+            {
+              "alternativePortalIDs": [
+                "pt-bed1-hall",
+                "pt-kitchen-hall",
+                "pt-back"
+              ],
+              "connectorIDs": [],
+              "exclusions": [
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "personID": "p-lake-1",
+              "primaryPortalIDs": [
+                "pt-bed1-hall",
+                "pt-living-hall",
+                "pt-front"
+              ],
+              "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "startRoomID": "sp-bed1",
+              "stepFreeRequired": false
+            },
+            {
+              "alternativePortalIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "pt-living-kitchen",
+                "pt-front"
+              ],
+              "connectorIDs": [],
+              "exclusions": [
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "personID": "p-lake-2",
+              "primaryPortalIDs": [
+                "pt-bed2-hall",
+                "pt-kitchen-hall",
+                "pt-back"
+              ],
+              "scope": "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+              "startRoomID": "sp-bed2",
+              "stepFreeRequired": false
             }
           ],
           "portals": [
@@ -5624,7 +5975,8 @@
               "fieldIDs": [
                 "people.needs",
                 "pets",
-                "equipment"
+                "equipment",
+                "housing"
               ],
               "id": "household-needs",
               "origin": "userConfirmed",
@@ -5632,6 +5984,28 @@
               "status": "confirmed"
             }
           ],
+          "housing": {
+            "cooling": "centralAC",
+            "floorCount": 1,
+            "heatingFuel": "electric",
+            "heatingNeedsElectricity": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "homeType": "apartment",
+            "sanitation": "sewer",
+            "tenancy": "renter",
+            "waterSource": "municipal",
+            "wellPumpElectric": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            }
+          },
           "limitedBudget": true,
           "people": [
             {
@@ -5648,6 +6022,20 @@
           "pets": [],
           "regionID": "48439",
           "revision": 2,
+          "site": {
+            "elevationRecorded": false,
+            "floodComparison": "unknown",
+            "hurricanePlan": "unknown",
+            "limitations": [
+              "Planning evidence only; no current hazard or evacuation clearance",
+              "Terrain and indoor relative floor height do not establish finished-floor elevation",
+              "Wildfire community ratings do not establish individual-home risk",
+              "Hurricane route activation and current official orders require local verification",
+              "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
+            ],
+            "schemaVersion": "dryrun.site-context/1",
+            "sourceIDs": []
+          },
           "transport": "noCar"
         },
         "lastAction": {
@@ -5930,7 +6318,7 @@
           }
         ],
         "scorecard": {
-          "assessmentVersion": "dryrun.household-assessment/5",
+          "assessmentVersion": "dryrun.household-assessment/6",
           "cap": 59,
           "capReasons": [
             "alarms",
@@ -7677,7 +8065,7 @@
               "transport.alternatives",
               "transport.vehicles"
             ],
-            "editor": "supplies",
+            "editor": "meetingPlace",
             "evidenceIDs": [
               "household-needs"
             ],

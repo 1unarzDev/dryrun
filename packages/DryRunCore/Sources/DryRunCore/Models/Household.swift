@@ -17,6 +17,7 @@ public struct HouseholdProfile: Codable, Sendable, Hashable, Identifiable {
     public var regionID: String
     /// Optional private location. Stays in the encrypted vault; never sent to the Dry Run backend.
     public var privateLocation: PrivateLocation?
+    public var siteHazards: SiteHazardProfile?
     public var homeID: String?
     public var stableHomeID: String { homeID ?? "home-\(id)" }
     public var preparedness: PreparednessRecord?

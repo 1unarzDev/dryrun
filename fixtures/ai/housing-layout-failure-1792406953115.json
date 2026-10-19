@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "sourceHashes": {
+    "scripts/housing-layout-eval.ts": "4949b59a13b19c69fd0227c7f1a8515f2b8eed28590b4e6c2507e4a5c5d013ca",
+    "src/features.ts": "cab1caa9f9f2edbf1a5493911e93647d341ac555d277883fdb7d698eb93c14cd",
+    "src/output-quality.ts": "467bde4f39632ac054fad08c64786ba912ed8a56219ec9554d92235063ed5ce7",
+    "../../DryRun_AI_Implementation_Reference.md": "3cdaa439835f91d94439e4a41176712f2f3e42a7141d7fcf23c44bc89092dc0f"
+  },
+  "results": [],
+  "outputs": [],
+  "failure": "The expression evaluated to a falsy value:\n\n  assert.ok(parsed.evidenceIDs.every(id=>evidenceIDs.includes(id)))\n",
+  "calls": 1
+}

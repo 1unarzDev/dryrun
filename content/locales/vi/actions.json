@@ -76,5 +76,8 @@
   "tier.2": "Thiếu thông tin",
   "tier.3": "Thiếu đồ dự trữ hoặc thiếu tính liên tục",
   "tier.4": "Hữu ích trong nhiều tình huống khẩn cấp",
-  "tier.5": "Thói quen tốt"
+  "tier.5": "Thói quen tốt",
+  "prep.shelterPlan.title": "Xem lại kế hoạch trú ẩn khi có lốc xoáy",
+  "prep.shelterPlan.why": "Chưa xác nhận được chỗ trú ẩn phù hợp không có cửa sổ ở tầng thấp nhất thích hợp. Kiểm tra cao độ so với mặt đất, cửa sổ, lối vào và nhu cầu hỗ trợ. Dấu đánh dấu không chứng nhận nơi trú ẩn.",
+  "prep.shelterPlan.manufactured.why": "Nhà di động hoặc nhà lắp ghép không phải là nơi trú ẩn khi có lốc xoáy. Sắp xếp trước lối vào và phương tiện đến một tòa nhà kiên cố phù hợp. Không bắt đầu lái xe đến một nơi trú ẩn xa không cụ thể trong lúc có cảnh báo lốc xoáy."
 }

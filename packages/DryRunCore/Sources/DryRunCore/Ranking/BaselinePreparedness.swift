@@ -154,6 +154,12 @@ public enum BaselinePreparedness {
         if includeSatisfied || !matchingPlaces.contains(where: { $0.purpose == .outsideMeetingPoint }) { add("nearMeetup", facts: ["savedPlaces"], scenarios: ["home-fire"]) }
         if includeSatisfied || !matchingPlaces.contains(where: { $0.purpose == .backupMeetingPlace }) { add("backupMeetup", facts: ["savedPlaces"]) }
         if includeSatisfied || home == nil { add("layout", tier: .multiScenarioPreparation, facts: ["home"], scenarios: ["home-fire", "tornado", "flash-flood"]) }
+        let manufactured=h.housing.homeType == .manufacturedHome || home?.dwellingType == .manufacturedHome
+        if manufactured || home.map({ShelterSuitability.confirmedRoom(in:$0)==nil}) == true {
+            add("shelterPlan",tier:manufactured ? .unmetEssentialRequirement:.blockingUnknownFact,
+                facts:["housing.homeType","home.tornadoShelterCandidate"],scenarios:["tornado"],sources:["S22"],
+                subjectID:manufactured ? "manufacturedAdvancePlan":"home",whyKey:manufactured ? "prep.shelterPlan.manufactured.why":"prep.shelterPlan.why")
+        }
         for person in h.people where person.needs.contains(.needsHelperToEvacuate) {
             let helperAssigned = h.people.contains { $0.id != person.id && $0.id == person.helperPersonID }
             if includeSatisfied || !helperAssigned { add("helper", tier: .unmetEssentialRequirement, facts: ["person.\(person.id).helperPersonID"], values: ["person": person.alias], subjectID: "person.\(person.id)") }

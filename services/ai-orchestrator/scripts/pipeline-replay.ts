@@ -19,5 +19,5 @@ try{for(const output of fixture.outputs){
  replays.push({sample:output.sample,matchedLiveReceipt:true,matchedFrozenScore:true,recordedAssessmentVersion:output.scorecard.assessmentVersion??'legacy-unversioned',recordedScore:recordedScore.scorecard,reassessment:reassessed,executed});
  console.log(JSON.stringify({sample:output.sample,matchedLiveReceipt:true,matchedFrozenScore:true,oldScore:recordedScore.scorecard.overall,currentScore:reassessed.scorecard.overall,currentCoverage:reassessed.scorecard.evidenceCoverage,assessmentVersion:reassessed.scorecard.assessmentVersion}));
 }
- await writeFile('../../fixtures/ai/pipeline-assessment-replay.json',JSON.stringify({synthetic:true,source:path,modelCalls:0,method:'Replay frozen accepted predicates exactly; separately reassess source with current version. Differences are policy/scope changes, not earned improvements.',replays},null,2)+'\n');
+ await writeFile(process.env.DRYRUN_REPLAY_OUTPUT??'../../fixtures/ai/pipeline-assessment-replay.json',JSON.stringify({synthetic:true,source:path,modelCalls:0,method:'Replay frozen accepted predicates exactly; separately reassess source with current version. Differences are policy/scope changes, not earned improvements.',replays},null,2)+'\n');
 }finally{host.close();}

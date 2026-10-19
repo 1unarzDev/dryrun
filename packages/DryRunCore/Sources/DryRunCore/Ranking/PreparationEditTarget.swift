@@ -31,6 +31,9 @@ public enum PreparationEditTarget: Sendable, Hashable {
         case "prep.backupMeetup": return .meeting(.backupMeetingPlace)
         case "prep.reviewCard": return .review
         case "prep.layout": return .homeSetup
+        case "prep.shelterPlan":
+            if recommendation.subjectID == "manufacturedAdvancePlan" {return .transport}
+            return home == nil ? .homeSetup:.home(elementID:home?.annotations.first{$0.kind == .tornadoShelterCandidate}?.spaceID)
         case "prep.helper", "act.assist.assign-helper", "act.fire.helper-reach-plan": return .family(personID: subject("person"))
         case "prep.transport", "act.relocation.arrange", "act.tornado.sturdy-building-plan": return .transport
         case "prep.water", "act.water.store-3day": return .water

@@ -286,6 +286,10 @@ struct ManualHomeEditorView: View {
                         draft = HomeConfirmation.apply(.shelterSpot(spaceID: roomID, interiorNoWindows: answer == 1), to: draft)
                     }
                 })) { Text(s("Not sure")).tag(-1); Text(s("Yes")).tag(1); Text(s("No")).tag(0) }
+                .disabled(model.household?.housing.homeType == .manufacturedHome)
+                if model.household?.housing.homeType == .manufacturedHome {
+                    Text(model.localizer("plan.shelter.manufactured")).font(.footnote)
+                }
             } else if let index = draft.portals.firstIndex(where: { $0.id == selectedID }) {
                 portalEditor($draft.portals[index])
                 openingPlacementEditor(index)

@@ -8,7 +8,7 @@
   "resourceProof": {
     "sourceID": "phase-continuity",
     "original": {
-      "contextDigest": "9f6ebe9e2baed145",
+      "contextDigest": "d27f444c556a5324",
       "directorState": {
         "activeIncidentCount": 0,
         "awaitingUserAction": false,
@@ -165,7 +165,7 @@
           ]
         },
         "receipt": {
-          "contextDigest": "30e6d1e22fbb190d",
+          "contextDigest": "a6b95048ddb76d00",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -334,7 +334,7 @@
           ]
         },
         "receipt": {
-          "contextDigest": "36653a764184a1d6",
+          "contextDigest": "457e05ec6441f303",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -516,7 +516,7 @@
       "id": "phase-continuity",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.4",
+        "contentVersion": "2026.10.5",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -1047,7 +1047,7 @@
       "id": "phase-communication",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.4",
+        "contentVersion": "2026.10.5",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -1631,7 +1631,7 @@
       "id": "phase-adaptation",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.4",
+        "contentVersion": "2026.10.5",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -2199,7 +2199,7 @@
       "id": "phase-initialResponse",
       "initial": {
         "choices": {},
-        "contentVersion": "2026.10.4",
+        "contentVersion": "2026.10.5",
         "home": {
           "annotations": [],
           "completeness": "complete",
@@ -2714,7 +2714,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/3",
-            "initialDigest": "96114dd5b5439a56",
+            "initialDigest": "93c8fbc08a73d30f",
             "sessionID": "phase-continuity",
             "startingEventSequence": 3,
             "startingRevision": 1
@@ -2722,7 +2722,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/3",
-            "initialDigest": "96114dd5b5439a56",
+            "initialDigest": "93c8fbc08a73d30f",
             "sessionID": "phase-communication",
             "startingEventSequence": 3,
             "startingRevision": 1
@@ -2730,7 +2730,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/3",
-            "initialDigest": "3cb9a393576d24e7",
+            "initialDigest": "ce48805e6e88119c",
             "sessionID": "phase-adaptation",
             "startingEventSequence": 4,
             "startingRevision": 2
@@ -2738,7 +2738,7 @@
           {
             "contractVersion": "dryrun.practice-capture/1",
             "evaluatorVersion": "dryrun.practice-anchors/3",
-            "initialDigest": "3cb9a393576d24e7",
+            "initialDigest": "ce48805e6e88119c",
             "sessionID": "phase-initialResponse",
             "startingEventSequence": 2,
             "startingRevision": 1
@@ -2748,7 +2748,7 @@
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
           "evaluatorVersion": "dryrun.practice-anchors/3",
-          "initialDigest": "96114dd5b5439a56",
+          "initialDigest": "93c8fbc08a73d30f",
           "sessionID": "phase-continuity",
           "startingEventSequence": 3,
           "startingRevision": 1
@@ -2794,7 +2794,7 @@
         "id": "phase-continuity",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.4",
+          "contentVersion": "2026.10.5",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -3325,7 +3325,7 @@
         "id": "phase-communication",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.4",
+          "contentVersion": "2026.10.5",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -3909,7 +3909,7 @@
         "id": "phase-adaptation",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.4",
+          "contentVersion": "2026.10.5",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -4477,7 +4477,7 @@
         "id": "phase-initialResponse",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.4",
+          "contentVersion": "2026.10.5",
           "home": {
             "annotations": [],
             "completeness": "complete",
@@ -4981,7 +4981,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-continuity",
-        "initialDigest": "96114dd5b5439a56",
+        "initialDigest": "93c8fbc08a73d30f",
         "startingRevision": 1,
         "startingEventSequence": 3,
         "evaluatorVersion": "dryrun.practice-anchors/3"
@@ -4989,7 +4989,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-communication",
-        "initialDigest": "96114dd5b5439a56",
+        "initialDigest": "93c8fbc08a73d30f",
         "startingRevision": 1,
         "startingEventSequence": 3,
         "evaluatorVersion": "dryrun.practice-anchors/3"
@@ -4997,7 +4997,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-adaptation",
-        "initialDigest": "3cb9a393576d24e7",
+        "initialDigest": "ce48805e6e88119c",
         "startingRevision": 2,
         "startingEventSequence": 4,
         "evaluatorVersion": "dryrun.practice-anchors/3"
@@ -5005,7 +5005,7 @@
       {
         "contractVersion": "dryrun.practice-capture/1",
         "sessionID": "phase-initialResponse",
-        "initialDigest": "3cb9a393576d24e7",
+        "initialDigest": "ce48805e6e88119c",
         "startingRevision": 1,
         "startingEventSequence": 2,
         "evaluatorVersion": "dryrun.practice-anchors/3"
@@ -5033,7 +5033,7 @@
             "competencyID": "continuity",
             "actionID": "correct-continuity",
             "acceptedRevision": 2,
-            "receiptDigest": "c2893d22e92db3f9",
+            "receiptDigest": "192f23f660a4006",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5043,10 +5043,10 @@
             "competencyID": "continuity",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "c2893d22e92db3f9"
+            "receiptDigest": "192f23f660a4006"
           },
           "receipt": {
-            "contextDigest": "c2893d22e92db3f9",
+            "contextDigest": "192f23f660a4006",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -5195,7 +5195,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -5245,7 +5245,7 @@
             "competencyID": "communication",
             "actionID": "correct-communication",
             "acceptedRevision": 2,
-            "receiptDigest": "b5bf37c6f158d03c",
+            "receiptDigest": "63d6e928782c4d9",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5255,10 +5255,10 @@
             "competencyID": "communication",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "b5bf37c6f158d03c"
+            "receiptDigest": "63d6e928782c4d9"
           },
           "receipt": {
-            "contextDigest": "b5bf37c6f158d03c",
+            "contextDigest": "63d6e928782c4d9",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -5407,7 +5407,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -5458,7 +5458,7 @@
             "competencyID": "adaptation",
             "actionID": "correct-adaptation",
             "acceptedRevision": 3,
-            "receiptDigest": "77829e28f69c01c1",
+            "receiptDigest": "892abd70a7b7ccf0",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5468,10 +5468,10 @@
             "competencyID": "adaptation",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "77829e28f69c01c1"
+            "receiptDigest": "892abd70a7b7ccf0"
           },
           "receipt": {
-            "contextDigest": "77829e28f69c01c1",
+            "contextDigest": "892abd70a7b7ccf0",
             "directorState": {
               "activeIncidentCount": 1,
               "awaitingUserAction": false,
@@ -5786,7 +5786,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -5837,7 +5837,7 @@
             "competencyID": "initialResponse",
             "actionID": "correct-initialResponse",
             "acceptedRevision": 2,
-            "receiptDigest": "dab0c9225e884edd",
+            "receiptDigest": "6800b4df084433d6",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -5847,10 +5847,10 @@
             "competencyID": "initialResponse",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "dab0c9225e884edd"
+            "receiptDigest": "6800b4df084433d6"
           },
           "receipt": {
-            "contextDigest": "dab0c9225e884edd",
+            "contextDigest": "6800b4df084433d6",
             "directorState": {
               "activeIncidentCount": 1,
               "awaitingUserAction": false,
@@ -6248,7 +6248,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -6327,7 +6327,7 @@
                 "competencyID": "continuity",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "c2893d22e92db3f9"
+                "receiptDigest": "192f23f660a4006"
               },
               {
                 "acceptedRevision": 2,
@@ -6335,7 +6335,7 @@
                 "competencyID": "communication",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "b5bf37c6f158d03c"
+                "receiptDigest": "63d6e928782c4d9"
               },
               {
                 "acceptedRevision": 3,
@@ -6343,7 +6343,7 @@
                 "competencyID": "adaptation",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "77829e28f69c01c1"
+                "receiptDigest": "892abd70a7b7ccf0"
               },
               {
                 "acceptedRevision": 2,
@@ -6351,14 +6351,14 @@
                 "competencyID": "initialResponse",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "dab0c9225e884edd"
+                "receiptDigest": "6800b4df084433d6"
               }
             ],
             "phaseSources": [
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "96114dd5b5439a56",
+                "initialDigest": "93c8fbc08a73d30f",
                 "sessionID": "phase-continuity",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -6366,7 +6366,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "96114dd5b5439a56",
+                "initialDigest": "93c8fbc08a73d30f",
                 "sessionID": "phase-communication",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -6374,7 +6374,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "3cb9a393576d24e7",
+                "initialDigest": "ce48805e6e88119c",
                 "sessionID": "phase-adaptation",
                 "startingEventSequence": 4,
                 "startingRevision": 2
@@ -6382,7 +6382,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "3cb9a393576d24e7",
+                "initialDigest": "ce48805e6e88119c",
                 "sessionID": "phase-initialResponse",
                 "startingEventSequence": 2,
                 "startingRevision": 1
@@ -6392,7 +6392,7 @@
             "source": {
               "contractVersion": "dryrun.practice-capture/1",
               "evaluatorVersion": "dryrun.practice-anchors/3",
-              "initialDigest": "96114dd5b5439a56",
+              "initialDigest": "93c8fbc08a73d30f",
               "sessionID": "phase-continuity",
               "startingEventSequence": 3,
               "startingRevision": 1
@@ -6449,7 +6449,7 @@
             "id": "phase-continuity",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -6991,7 +6991,7 @@
             "id": "phase-communication",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -7587,7 +7587,7 @@
             "id": "phase-adaptation",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -8167,7 +8167,7 @@
             "id": "phase-initialResponse",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -8688,7 +8688,7 @@
             "competencyID": "continuity",
             "actionID": "wrong-continuity",
             "acceptedRevision": 2,
-            "receiptDigest": "e0ffaa4eb85bed2",
+            "receiptDigest": "377846fde7741cc9",
             "credit": 0,
             "feedbackRevealed": false
           },
@@ -8698,10 +8698,10 @@
             "competencyID": "continuity",
             "credit": 0,
             "feedbackRevealed": true,
-            "receiptDigest": "e0ffaa4eb85bed2"
+            "receiptDigest": "377846fde7741cc9"
           },
           "receipt": {
-            "contextDigest": "e0ffaa4eb85bed2",
+            "contextDigest": "377846fde7741cc9",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -8850,7 +8850,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -8900,7 +8900,7 @@
             "competencyID": "communication",
             "actionID": "wrong-communication",
             "acceptedRevision": 2,
-            "receiptDigest": "dab21ed29e3e7ba6",
+            "receiptDigest": "130ea11767003eef",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -8910,10 +8910,10 @@
             "competencyID": "communication",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "dab21ed29e3e7ba6"
+            "receiptDigest": "130ea11767003eef"
           },
           "receipt": {
-            "contextDigest": "dab21ed29e3e7ba6",
+            "contextDigest": "130ea11767003eef",
             "directorState": {
               "activeIncidentCount": 0,
               "awaitingUserAction": false,
@@ -9062,7 +9062,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -9113,7 +9113,7 @@
             "competencyID": "adaptation",
             "actionID": "wrong-adaptation",
             "acceptedRevision": 3,
-            "receiptDigest": "314737356163567b",
+            "receiptDigest": "5b9212dd7074d526",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -9123,10 +9123,10 @@
             "competencyID": "adaptation",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "314737356163567b"
+            "receiptDigest": "5b9212dd7074d526"
           },
           "receipt": {
-            "contextDigest": "314737356163567b",
+            "contextDigest": "5b9212dd7074d526",
             "directorState": {
               "activeIncidentCount": 1,
               "awaitingUserAction": false,
@@ -9441,7 +9441,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -9492,7 +9492,7 @@
             "competencyID": "initialResponse",
             "actionID": "wrong-initialResponse",
             "acceptedRevision": 2,
-            "receiptDigest": "d95b0592dc161bd5",
+            "receiptDigest": "1d9af13e95fe65a",
             "credit": 1,
             "feedbackRevealed": false
           },
@@ -9502,10 +9502,10 @@
             "competencyID": "initialResponse",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "d95b0592dc161bd5"
+            "receiptDigest": "1d9af13e95fe65a"
           },
           "receipt": {
-            "contextDigest": "d95b0592dc161bd5",
+            "contextDigest": "1d9af13e95fe65a",
             "directorState": {
               "activeIncidentCount": 1,
               "awaitingUserAction": false,
@@ -9903,7 +9903,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/5",
+            "assessmentVersion": "dryrun.household-assessment/6",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -9982,7 +9982,7 @@
                 "competencyID": "continuity",
                 "credit": 0,
                 "feedbackRevealed": true,
-                "receiptDigest": "e0ffaa4eb85bed2"
+                "receiptDigest": "377846fde7741cc9"
               },
               {
                 "acceptedRevision": 2,
@@ -9990,7 +9990,7 @@
                 "competencyID": "communication",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "dab21ed29e3e7ba6"
+                "receiptDigest": "130ea11767003eef"
               },
               {
                 "acceptedRevision": 3,
@@ -9998,7 +9998,7 @@
                 "competencyID": "adaptation",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "314737356163567b"
+                "receiptDigest": "5b9212dd7074d526"
               },
               {
                 "acceptedRevision": 2,
@@ -10006,14 +10006,14 @@
                 "competencyID": "initialResponse",
                 "credit": 1,
                 "feedbackRevealed": true,
-                "receiptDigest": "d95b0592dc161bd5"
+                "receiptDigest": "1d9af13e95fe65a"
               }
             ],
             "phaseSources": [
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "96114dd5b5439a56",
+                "initialDigest": "93c8fbc08a73d30f",
                 "sessionID": "phase-continuity",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -10021,7 +10021,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "96114dd5b5439a56",
+                "initialDigest": "93c8fbc08a73d30f",
                 "sessionID": "phase-communication",
                 "startingEventSequence": 3,
                 "startingRevision": 1
@@ -10029,7 +10029,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "3cb9a393576d24e7",
+                "initialDigest": "ce48805e6e88119c",
                 "sessionID": "phase-adaptation",
                 "startingEventSequence": 4,
                 "startingRevision": 2
@@ -10037,7 +10037,7 @@
               {
                 "contractVersion": "dryrun.practice-capture/1",
                 "evaluatorVersion": "dryrun.practice-anchors/3",
-                "initialDigest": "3cb9a393576d24e7",
+                "initialDigest": "ce48805e6e88119c",
                 "sessionID": "phase-initialResponse",
                 "startingEventSequence": 2,
                 "startingRevision": 1
@@ -10047,7 +10047,7 @@
             "source": {
               "contractVersion": "dryrun.practice-capture/1",
               "evaluatorVersion": "dryrun.practice-anchors/3",
-              "initialDigest": "96114dd5b5439a56",
+              "initialDigest": "93c8fbc08a73d30f",
               "sessionID": "phase-continuity",
               "startingEventSequence": 3,
               "startingRevision": 1
@@ -10104,7 +10104,7 @@
             "id": "phase-continuity",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -10646,7 +10646,7 @@
             "id": "phase-communication",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -11242,7 +11242,7 @@
             "id": "phase-adaptation",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",
@@ -11822,7 +11822,7 @@
             "id": "phase-initialResponse",
             "initial": {
               "choices": {},
-              "contentVersion": "2026.10.4",
+              "contentVersion": "2026.10.5",
               "home": {
                 "annotations": [],
                 "completeness": "complete",

@@ -20,8 +20,20 @@ try {
    const replay=await host.request({op:'query',session:JSON.parse(JSON.stringify(branch.committed.session))});assert.deepEqual(replay.receipt,branch.committed.receipt);
    assert.deepEqual(replay.session.inventory,branch.source.session.inventory);assert.deepEqual(replay.session.initial,branch.source.session.initial);
    const stress=await host.request({op:'stress',session:branch.source.session,profileIDs:['evt.water-outage.well-pump-failure']});assert.deepEqual(stress.stress,branch.stress);
-   const score=await host.request({op:'assess',session:replay.session,inventory:replay.session.inventory.ledger,rubric});assert.deepEqual(score.scorecard,branch.scoreBefore);
+   const score=await host.request({op:'assess',session:replay.session,inventory:replay.session.inventory.ledger,rubric});
+   if(score.scorecard.assessmentVersion===branch.scoreBefore.assessmentVersion)assert.deepEqual(score.scorecard,branch.scoreBefore);
+   else {
+    // This legacy live artifact retained a card but not its accepted predicates. Do not relabel it:
+    // /6 changes manufactured-home shelter treatment; these frozen branches are single-family.
+    assert.equal(branch.source.session.initial.household.housing.homeType,'singleFamily');
+    assert.notEqual(branch.source.session.initial.home.dwellingType,'manufacturedHome');
+    assert.equal(branch.scoreBefore.assessmentVersion,'dryrun.household-assessment/5');
+    assert.equal(score.scorecard.assessmentVersion,'dryrun.household-assessment/6');
+    const {assessmentVersion:currentVersion,...currentCard}=score.scorecard;
+    const {assessmentVersion:recordedVersion,...recordedCard}=branch.scoreBefore;
+    assert.deepEqual(currentCard,recordedCard);
+   }
   }
-  console.log(JSON.stringify({status:'passed',retainedLiveModel:fixture.liveModel,branches:fixture.branches.length,receiptReplay:true,toolReplay:true,stressReplay:true,sourceAndScoreUnchanged:true,modelCalls:0}));
+  console.log(JSON.stringify({status:'passed',retainedLiveModel:fixture.liveModel,branches:fixture.branches.length,receiptReplay:true,toolReplay:true,stressReplay:true,sourceAndScoreUnchanged:true,historicalCardVersionPreserved:true,comparison:"Exact card when versions match; explicit /5-to-/6 non-manufactured numeric/status comparison otherwise (legacy accepted predicates absent).",modelCalls:0}));
  }
 }finally{host.close();}

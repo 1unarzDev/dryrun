@@ -747,6 +747,314 @@
                 ],
                 "additionalProperties": false
               }
+            },
+            "housing": {
+              "type": "object",
+              "properties": {
+                "homeType": {
+                  "type": "string",
+                  "enum": [
+                    "singleFamily",
+                    "apartment",
+                    "manufacturedHome",
+                    "townhouse",
+                    "duplex",
+                    "other"
+                  ]
+                },
+                "tenancy": {
+                  "type": "string",
+                  "enum": [
+                    "owner",
+                    "renter",
+                    "other"
+                  ]
+                },
+                "floorCount": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 200
+                },
+                "heatingFuel": {
+                  "type": "string",
+                  "enum": [
+                    "electric",
+                    "naturalGas",
+                    "propane",
+                    "wood",
+                    "none",
+                    "unknown"
+                  ]
+                },
+                "heatingNeedsElectricity": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "cooling": {
+                  "type": "string",
+                  "enum": [
+                    "centralAC",
+                    "windowOrPortableAC",
+                    "evaporative",
+                    "fansOnly",
+                    "none",
+                    "unknown"
+                  ]
+                },
+                "waterSource": {
+                  "type": "string",
+                  "enum": [
+                    "municipal",
+                    "privateWell",
+                    "unknown"
+                  ]
+                },
+                "wellPumpElectric": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "sanitation": {
+                  "type": "string",
+                  "enum": [
+                    "sewer",
+                    "septicGravity",
+                    "septicWithPump",
+                    "unknown"
+                  ]
+                }
+              },
+              "required": [
+                "homeType",
+                "tenancy",
+                "floorCount",
+                "heatingFuel",
+                "heatingNeedsElectricity",
+                "cooling",
+                "waterSource",
+                "wellPumpElectric",
+                "sanitation"
+              ],
+              "additionalProperties": false
+            },
+            "site": {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "type": "string",
+                  "const": "dryrun.site-context/1"
+                },
+                "elevationRecorded": {
+                  "type": "boolean"
+                },
+                "floodComparison": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "aboveDesignLevel",
+                    "belowDesignLevel",
+                    "overlappingUncertainty"
+                  ]
+                },
+                "wildfireRating": {
+                  "type": "string",
+                  "enum": [
+                    "veryLow",
+                    "low",
+                    "moderate",
+                    "high",
+                    "veryHigh"
+                  ]
+                },
+                "wildfireScale": {
+                  "type": "string",
+                  "enum": [
+                    "community",
+                    "parcel"
+                  ]
+                },
+                "hurricanePlan": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "recordedOfficialPlanningRoute"
+                  ]
+                },
+                "sourceIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "sources": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "publisher": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 600
+                      },
+                      "jurisdictionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "retrievedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "validUntil": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "datasetVersion": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "publishedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "publisher",
+                      "jurisdictionID",
+                      "retrievedAt",
+                      "validUntil"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "limitations": {
+                  "maxItems": 8,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 600
+                  }
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "elevationRecorded",
+                "floodComparison",
+                "hurricanePlan",
+                "sourceIDs",
+                "limitations"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [
@@ -2099,6 +2407,27 @@
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 120
+                      },
+                      "floorID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "position": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -2118,6 +2447,17 @@
                     "maxLength": 600
                   }
                 },
+                "dwellingType": {
+                  "type": "string",
+                  "enum": [
+                    "singleFamily",
+                    "apartment",
+                    "manufacturedHome",
+                    "townhouse",
+                    "duplex",
+                    "other"
+                  ]
+                },
                 "homeSource": {
                   "type": "string",
                   "enum": [
@@ -2125,6 +2465,145 @@
                     "manual",
                     "roomPlanScan"
                   ]
+                },
+                "planningRoutes": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "personID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "startRoomID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "stepFreeRequired": {
+                        "type": "boolean"
+                      },
+                      "primaryPortalIDs": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "connectorIDs": {
+                        "maxItems": 50,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "alternativePortalIDs": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "noRouteReason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "exclusions": {
+                        "maxItems": 500,
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "elementID": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            },
+                            "reason": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 600
+                            }
+                          },
+                          "required": [
+                            "elementID",
+                            "reason"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "scope": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 600
+                      }
+                    },
+                    "required": [
+                      "personID",
+                      "stepFreeRequired",
+                      "primaryPortalIDs",
+                      "connectorIDs",
+                      "alternativePortalIDs",
+                      "exclusions",
+                      "scope"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "planningNeeds": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "relatedIDs": {
+                        "maxItems": 50,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "suggestedActionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "editor": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "scoreEffect": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 600
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "relatedIDs",
+                      "suggestedActionID",
+                      "editor",
+                      "scoreEffect"
+                    ],
+                    "additionalProperties": false
+                  }
                 }
               },
               "required": [

@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "sourceHashes": {
+    "scripts/housing-layout-eval.ts": "1cf1005880b95977998a380c4dbae15aef3e8ce50442f24bafed5d6be91713f8",
+    "src/features.ts": "cab1caa9f9f2edbf1a5493911e93647d341ac555d277883fdb7d698eb93c14cd",
+    "src/output-quality.ts": "467bde4f39632ac054fad08c64786ba912ed8a56219ec9554d92235063ed5ce7",
+    "../../DryRun_AI_Implementation_Reference.md": "3cdaa439835f91d94439e4a41176712f2f3e42a7141d7fcf23c44bc89092dc0f"
+  },
+  "results": [],
+  "replies": [],
+  "outputs": [],
+  "failure": "[\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_big\",\n    \"maximum\": 10,\n    \"inclusive\": true,\n    \"path\": [\n      \"evidenceIDs\"\n    ],\n    \"message\": \"Too big: expected array to have <=10 items\"\n  }\n]",
+  "calls": 1
+}

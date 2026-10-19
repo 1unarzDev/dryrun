@@ -217,7 +217,7 @@
     "id": "concern-exercise",
     "initial": {
       "choices": {},
-      "contentVersion": "2026.10.4",
+      "contentVersion": "2026.10.5",
       "home": {
         "annotations": [
           {
@@ -1610,7 +1610,7 @@
     }
   },
   "baselineReceipt": {
-    "contextDigest": "406b0de73989533f",
+    "contextDigest": "bcd81550f9e49d00",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,
@@ -3073,7 +3073,7 @@
     }
   },
   "exerciseReceipt": {
-    "contextDigest": "5d80a4bc3a6ebd17",
+    "contextDigest": "d2bf21eeb70a5a98",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,
@@ -4085,7 +4085,7 @@
       "User-selected hypothetical concern opening exclusions; outside the scored robustness envelope"
     ],
     "baseline": {
-      "contextDigest": "b108e2c55504d578",
+      "contextDigest": "a8d43c92a751129f",
       "eventSequence": 3,
       "events": [
         {
@@ -5098,7 +5098,7 @@
       "version": "dryrun.stress-comparison/1"
     },
     "controlledRetest": {
-      "contextDigest": "d623cc44e9ab38cf",
+      "contextDigest": "719c865494af64a",
       "eventSequence": 3,
       "events": [
         {
@@ -6098,7 +6098,7 @@
     "dependencies": [
       {
         "evidenceIDs": [
-          "b108e2c55504d578"
+          "a8d43c92a751129f"
         ],
         "id": "contact|channel",
         "kind": "contactChannel",
@@ -6110,7 +6110,7 @@
     ],
     "dependencyIDs": [],
     "evidenceIDs": [
-      "b108e2c55504d578"
+      "a8d43c92a751129f"
     ],
     "failed": false,
     "id": "stress|home-fire|evt.home-fire.alarm|concern|f35805d8f35fa1f5",

@@ -1,0 +1,3068 @@
+{
+  "version": "dryrun.output-style/1",
+  "synthetic": true,
+  "modelCalls": 0,
+  "method": "Audit retained actual model text, no truncation. Word bands and claim cues are human-review flags, not quality or safety passes. Historical output predates this guidance unless source metadata establishes otherwise.",
+  "cases": [
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "oak",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 24,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The household includes an older adult with essential, power-dependent oxygen equipment. Documentation for this equipment is currently unknown, making it a critical continuity priority."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 17,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "There is a confirmed deficit of approximately 26.5 liters of water required to meet the household's needs."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 18,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The household has an unknown quantity of food and a 3-day requirement gap that needs to be addressed."
+        },
+        {
+          "path": "question",
+          "words": 27,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_unnecessary_permission_or_padding"
+          ],
+          "text": "Could you please provide the specific power requirements (e.g., wattage, battery life, or plug type) for the oxygen equipment to help determine the appropriate backup power solution?"
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "oak",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate medical equipment suppliers to verify backup oxygen capacity and documentation requirements for power-dependent equipment."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Identify local grocery stores to purchase 27 liters of water to address the household deficit."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Identify local grocery stores to procure 3 days of non-perishable food supplies."
+        },
+        {
+          "path": "question",
+          "words": 20,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_unnecessary_permission_or_padding"
+          ],
+          "text": "Would you like to prioritize the medical equipment documentation search or the water/food supply procurement based on current local conditions?"
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "oak",
+      "role": "stress",
+      "fields": [
+        {
+          "path": "challenges[0].improvement",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Establish a documented power backup plan and verify battery capacity for the essential oxygen equipment."
+        },
+        {
+          "path": "challenges[1].improvement",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Increase stored water supply to meet the 45.4-liter requirement for the household."
+        },
+        {
+          "path": "challenges[2].improvement",
+          "words": 13,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Implement an offline-capable emergency alert system and verify contact procedures for the region."
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "oak",
+      "role": "council",
+      "fields": [
+        {
+          "path": "reviews[0].assessments[0].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are confirmed present."
+        },
+        {
+          "path": "reviews[0].assessments[1].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Exits are confirmed, but independent alternative escape routes are not established."
+        },
+        {
+          "path": "reviews[0].assessments[2].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "A suitable tornado shelter candidate is identified."
+        },
+        {
+          "path": "reviews[0].assessments[3].reason",
+          "words": 13,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Water is accessible, but the quantity is insufficient to meet the household's requirements."
+        },
+        {
+          "path": "reviews[0].assessments[4].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Food supplies are confirmed."
+        },
+        {
+          "path": "reviews[0].assessments[5].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "First aid and light sources are confirmed."
+        },
+        {
+          "path": "reviews[0].assessments[6].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Usable contacts are established."
+        },
+        {
+          "path": "reviews[0].assessments[7].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Transport is available for meeting points."
+        },
+        {
+          "path": "reviews[0].assessments[8].reason",
+          "words": 3,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Assistance is assigned."
+        },
+        {
+          "path": "reviews[0].assessments[9].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Documentation for essential oxygen equipment is unknown."
+        },
+        {
+          "path": "reviews[0].assessments[10].reason",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Caregiving and recorded supplies for specific needs are not yet fully assessed."
+        },
+        {
+          "path": "reviews[0].assessments[11].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Transport for pets is not confirmed."
+        },
+        {
+          "path": "reviews[0].assessments[12].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Current plan and contact review status is unknown."
+        },
+        {
+          "path": "reviews[1].assessments[0].reason",
+          "words": 24,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are verified in the hall and bedroom 1, with a proposed unit in bedroom 2. CO alarms are verified in the hall."
+        },
+        {
+          "path": "reviews[1].assessments[1].reason",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Exits are confirmed, but independent alternative escape routes are not fully established for all occupants."
+        },
+        {
+          "path": "reviews[1].assessments[2].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "The closet is identified as a suitable tornado shelter candidate."
+        },
+        {
+          "path": "reviews[1].assessments[3].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Confirmed usable water (18.9L) is below the required amount (45.4L)."
+        },
+        {
+          "path": "reviews[1].assessments[4].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Shelf-stable food supplies are confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[5].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "First aid, lighting, and sanitation supplies are confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[6].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Usable contacts and reconnection plans are confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[7].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Meeting points and transport are confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[8].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Assistance assignments are confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[9].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Documentation for essential oxygen equipment is unknown."
+        },
+        {
+          "path": "reviews[1].assessments[10].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Care needs for the household are recorded."
+        },
+        {
+          "path": "reviews[1].assessments[11].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Pet transport arrangements are not confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[12].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "The plan has been reviewed."
+        },
+        {
+          "path": "reviews[2].assessments[0].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are confirmed present."
+        },
+        {
+          "path": "reviews[2].assessments[1].reason",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Exits are clear, but independent alternative escape routes are not fully established."
+        },
+        {
+          "path": "reviews[2].assessments[2].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The home has a confirmed tornado shelter candidate."
+        },
+        {
+          "path": "reviews[2].assessments[3].reason",
+          "words": 13,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Water is accessible but the current quantity is insufficient for the household needs."
+        },
+        {
+          "path": "reviews[2].assessments[4].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Shelf-stable food supplies are confirmed."
+        },
+        {
+          "path": "reviews[2].assessments[5].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "First aid, light, and sanitation supplies are confirmed."
+        },
+        {
+          "path": "reviews[2].assessments[6].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Usable contacts and reconnection plans are confirmed."
+        },
+        {
+          "path": "reviews[2].assessments[7].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Transport and meeting places are established."
+        },
+        {
+          "path": "reviews[2].assessments[8].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Assistance assignments are confirmed."
+        },
+        {
+          "path": "reviews[2].assessments[9].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Essential medical equipment (oxygen) lacks documented backup power or alternative capacity."
+        },
+        {
+          "path": "reviews[2].assessments[10].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Care needs are recorded."
+        },
+        {
+          "path": "reviews[2].assessments[11].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Pet transport plans are not fully confirmed."
+        },
+        {
+          "path": "reviews[2].assessments[12].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Plan review status is confirmed."
+        },
+        {
+          "path": "reviews[2].question",
+          "words": 20,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_unnecessary_permission_or_padding"
+          ],
+          "text": "Would you like to prioritize securing a backup power source for the oxygen equipment or increasing the emergency water storage?"
+        },
+        {
+          "path": "adjudication.assessments[0].reason",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke and CO alarms are confirmed present and verified in the household."
+        },
+        {
+          "path": "adjudication.assessments[1].reason",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Exits are confirmed, but independent alternative escape routes are not fully established."
+        },
+        {
+          "path": "adjudication.assessments[2].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "A suitable tornado shelter candidate is identified in the closet."
+        },
+        {
+          "path": "adjudication.assessments[3].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Confirmed usable water (18.9L) is below the required amount (45.4L)."
+        },
+        {
+          "path": "adjudication.assessments[4].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Shelf-stable food supplies are confirmed."
+        },
+        {
+          "path": "adjudication.assessments[5].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "First aid, lighting, and sanitation supplies are confirmed."
+        },
+        {
+          "path": "adjudication.assessments[6].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Usable contacts and reconnection plans are confirmed."
+        },
+        {
+          "path": "adjudication.assessments[7].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Meeting points and transport are confirmed."
+        },
+        {
+          "path": "adjudication.assessments[8].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Assistance assignments are confirmed."
+        },
+        {
+          "path": "adjudication.assessments[9].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Essential medical equipment (oxygen) lacks documented backup power or alternative capacity."
+        },
+        {
+          "path": "adjudication.assessments[10].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Care needs for the household are recorded."
+        },
+        {
+          "path": "adjudication.assessments[11].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Pet transport arrangements are not confirmed."
+        },
+        {
+          "path": "adjudication.assessments[12].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "The plan has been reviewed."
+        },
+        {
+          "path": "adjudication.question",
+          "words": 20,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_unnecessary_permission_or_padding"
+          ],
+          "text": "Would you like to prioritize securing a backup power source for the oxygen equipment or increasing the emergency water storage?"
+        },
+        {
+          "path": "accepted[0].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[1].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[2].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[3].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[4].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[5].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[6].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[7].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[8].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[9].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[10].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[11].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[12].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[13].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "oak",
+      "role": "director",
+      "fields": [
+        {
+          "path": "purpose",
+          "words": 22,
+          "band": [
+            30,
+            90
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Advance time to observe water consumption rates under the current 'essential' policy and request a decision on further conservation or resource management."
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "lake",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 22,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The household has a confirmed deficit of 15.14 liters of water, which is critical for basic survival and sanitation during an outage."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 19,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "There is an unknown quantity of food available; establishing a 3-day supply is necessary to ensure continuity during emergencies."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 23,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Regular review of the emergency plan and contacts is required to maintain readiness, especially given the lack of a personal vehicle for transport."
+        },
+        {
+          "path": "question",
+          "words": 23,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have any existing stored water or non-perishable food supplies currently in your home that were not captured in the initial assessment?"
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "lake",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Locate nearby grocery stores to purchase the 15.14 liter water deficit."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Locate nearby grocery stores to establish a 3-day food supply."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Identify a safe, accessible public location for the emergency plan review and potential meetup point."
+        },
+        {
+          "path": "question",
+          "words": 36,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_length"
+          ],
+          "text": "Given the lack of a personal vehicle and a limited budget, are there specific local grocery or food assistance programs within walking distance of region 48439 that can help address the water and food supply gaps?"
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "lake",
+      "role": "stress",
+      "fields": [
+        {
+          "path": "challenges[0].improvement",
+          "words": 20,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Procure and store at least 16 liters of potable water in the designated closet area to exceed the 15.14L deficit."
+        },
+        {
+          "path": "challenges[1].improvement",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Establish and document an out-of-area contact person to coordinate communication when local networks are congested."
+        },
+        {
+          "path": "challenges[2].improvement",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Verify the operability of the kitchen water shutoff valve and ensure all adults know how to use it to prevent contamination during a main break."
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "lake",
+      "role": "council",
+      "fields": [
+        {
+          "path": "reviews[0].assessments[0].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are confirmed present and operational."
+        },
+        {
+          "path": "reviews[0].assessments[1].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Independent alternative escape routes are not established."
+        },
+        {
+          "path": "reviews[0].assessments[2].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "A suitable tornado shelter candidate has been identified."
+        },
+        {
+          "path": "reviews[0].assessments[3].reason",
+          "words": 9,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Water quantity is insufficient to meet the required threshold."
+        },
+        {
+          "path": "reviews[0].assessments[4].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Food supply duration is unknown."
+        },
+        {
+          "path": "reviews[0].assessments[5].reason",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Lighting is confirmed, but full status for first aid and sanitation is not fully verified."
+        },
+        {
+          "path": "reviews[0].assessments[6].reason",
+          "words": 4,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Usable contacts are confirmed."
+        },
+        {
+          "path": "reviews[0].assessments[7].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Meetup planning details are not yet confirmed."
+        },
+        {
+          "path": "reviews[0].assessments[8].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No assistance needs identified for household members."
+        },
+        {
+          "path": "reviews[0].assessments[9].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No essential medical or life-sustaining devices identified."
+        },
+        {
+          "path": "reviews[0].assessments[10].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No specific caregiving needs identified."
+        },
+        {
+          "path": "reviews[0].assessments[11].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No pets identified in the household."
+        },
+        {
+          "path": "reviews[0].assessments[12].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Plan review status is unknown."
+        },
+        {
+          "path": "reviews[1].assessments[0].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are confirmed present and operational."
+        },
+        {
+          "path": "reviews[1].assessments[1].reason",
+          "words": 12,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Exits are confirmed, but independent alternative escape routes are not fully established."
+        },
+        {
+          "path": "reviews[1].assessments[2].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "A suitable tornado shelter location has been identified."
+        },
+        {
+          "path": "reviews[1].assessments[3].reason",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Water is accessible, but the current quantity is insufficient to meet the household's 72-hour requirement."
+        },
+        {
+          "path": "reviews[1].assessments[4].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "The quantity of shelf-stable food is currently unknown."
+        },
+        {
+          "path": "reviews[1].assessments[5].reason",
+          "words": 9,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Light sources, sanitation supplies, and preparation equipment are confirmed."
+        },
+        {
+          "path": "reviews[1].assessments[6].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Usable contacts and reconnection plans are established."
+        },
+        {
+          "path": "reviews[1].assessments[7].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Specific meetup locations and transport plans have not been fully verified."
+        },
+        {
+          "path": "reviews[1].assessments[8].reason",
+          "words": 9,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No assistance needs were identified for the household members."
+        },
+        {
+          "path": "reviews[1].assessments[9].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No essential medical or life-sustaining devices were identified."
+        },
+        {
+          "path": "reviews[1].assessments[10].reason",
+          "words": 6,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No specific caregiving needs were identified."
+        },
+        {
+          "path": "reviews[1].assessments[11].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No pets are present in the household."
+        },
+        {
+          "path": "reviews[1].assessments[12].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "The emergency plan has been reviewed within the required timeframe."
+        },
+        {
+          "path": "reviews[2].assessments[0].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are confirmed present and operational."
+        },
+        {
+          "path": "reviews[2].assessments[1].reason",
+          "words": 13,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Exits are clear, but independent alternative escape routes have not been fully verified."
+        },
+        {
+          "path": "reviews[2].assessments[2].reason",
+          "words": 9,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "A suitable interior shelter location (closet) has been identified."
+        },
+        {
+          "path": "reviews[2].assessments[3].reason",
+          "words": 14,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Current water supply is insufficient to meet the required 22.7 liters for the household."
+        },
+        {
+          "path": "reviews[2].assessments[4].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Shelf-stable food supply is currently unknown or insufficient."
+        },
+        {
+          "path": "reviews[2].assessments[5].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Basic lighting and sanitation supplies are confirmed."
+        },
+        {
+          "path": "reviews[2].assessments[6].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Usable contacts and reconnection plans are established."
+        },
+        {
+          "path": "reviews[2].assessments[7].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Specific backup meeting place details and transport coordination require further planning."
+        },
+        {
+          "path": "reviews[2].assessments[8].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No specific assistance needs identified for household members."
+        },
+        {
+          "path": "reviews[2].assessments[9].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No essential medical or life-sustaining devices requiring backup power reported."
+        },
+        {
+          "path": "reviews[2].assessments[10].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No specific caregiving needs identified."
+        },
+        {
+          "path": "reviews[2].assessments[11].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No pets in the household."
+        },
+        {
+          "path": "reviews[2].assessments[12].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Plan has been reviewed recently."
+        },
+        {
+          "path": "reviews[2].question",
+          "words": 24,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_unnecessary_permission_or_padding"
+          ],
+          "text": "Would you like assistance in calculating the most cost-effective way to source the remaining 15 liters of water and 3 days of shelf-stable food?"
+        },
+        {
+          "path": "adjudication.assessments[0].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Smoke alarms are confirmed present and operational."
+        },
+        {
+          "path": "adjudication.assessments[1].reason",
+          "words": 13,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Exits are clear, but independent alternative escape routes have not been fully verified."
+        },
+        {
+          "path": "adjudication.assessments[2].reason",
+          "words": 9,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "A suitable interior shelter location (closet) has been identified."
+        },
+        {
+          "path": "adjudication.assessments[3].reason",
+          "words": 14,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Current water supply is insufficient to meet the required 22.7 liters for the household."
+        },
+        {
+          "path": "adjudication.assessments[4].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Shelf-stable food supply is currently unknown or insufficient."
+        },
+        {
+          "path": "adjudication.assessments[5].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth",
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Basic lighting and sanitation supplies are confirmed."
+        },
+        {
+          "path": "adjudication.assessments[6].reason",
+          "words": 7,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Usable contacts and reconnection plans are established."
+        },
+        {
+          "path": "adjudication.assessments[7].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Specific backup meeting place details and transport coordination require further planning."
+        },
+        {
+          "path": "adjudication.assessments[8].reason",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No specific assistance needs identified for household members."
+        },
+        {
+          "path": "adjudication.assessments[9].reason",
+          "words": 10,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No essential medical or life-sustaining devices requiring backup power reported."
+        },
+        {
+          "path": "adjudication.assessments[10].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No specific caregiving needs identified."
+        },
+        {
+          "path": "adjudication.assessments[11].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "No pets in the household."
+        },
+        {
+          "path": "adjudication.assessments[12].reason",
+          "words": 5,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Plan has been reviewed recently."
+        },
+        {
+          "path": "adjudication.question",
+          "words": 24,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "review_unnecessary_permission_or_padding"
+          ],
+          "text": "Would you like assistance in calculating the most cost-effective way to source the remaining 15 liters of water and 3 days of shelf-stable food?"
+        },
+        {
+          "path": "accepted[0].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[1].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[2].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[3].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[4].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[5].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[6].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[7].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[8].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[9].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[10].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[11].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[12].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "path": "accepted[13].reason",
+          "words": 11,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ]
+    },
+    {
+      "source": "integrated-pipeline-current.json",
+      "sample": "lake",
+      "role": "director",
+      "fields": [
+        {
+          "path": "purpose",
+          "words": 26,
+          "band": [
+            30,
+            90
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Advance to the 6-hour mark to inspect the impact of the water outage on stored resources and determine if further conservation or supply replenishment is required."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "apartment-complex",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your apartment relies on common-area stairs for egress. Practice walking this route from your bedroom to the building exit to ensure you can navigate the path quickly during an emergency."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 27,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your bathroom is identified as an interior space without windows. Confirm it is clear of hazards to serve as your primary shelter area during severe weather events."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 26,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Record CO alarm locations, coverage and a functional check. Electric heating and well pumps do not produce CO; possible combustion sources have not been fully assessed."
+        },
+        {
+          "path": "question",
+          "words": 18,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Have you tested the smoke alarm in the hallway to confirm it is audible from inside your bedrooms?"
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "apartment-complex",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 24,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find CO alarms for the unfinished alarm review. Electric heating and well pumps do not produce CO; confirm stock and placement guidance before purchasing."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "manufactured",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 27,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Manufactured homes are not tornado shelters. You must identify a sturdy, permanent structure nearby to reach before a storm arrives, as your home cannot withstand high winds."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 29,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your well pump requires electricity. If power fails, you will lose access to running water; you need a plan to store sufficient drinking water for your household and pet."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Smoke alarms are essential for early warning in any home. Verify you have working units with fresh batteries installed in or near all sleeping areas."
+        },
+        {
+          "path": "question",
+          "words": 22,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have a pre-arranged location or friend's home you can travel to when severe weather warnings are issued for your area?"
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "manufactured",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 19,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Identify public or community-verified tornado shelters near your location, as your manufactured home is not safe during high-wind events."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 21,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate stores to purchase emergency water containers or bottled water to maintain a supply when your electric well pump is inactive."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 18,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find hardware stores to purchase smoke alarms if your current units are expired or missing from sleeping areas."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "twostory",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 27,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Practice your primary and alternative exit routes from the upper floor bedrooms to ensure all household members can navigate the stairs and doors quickly during an emergency."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 26,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Since your home relies on a private well and electric pump, you need a plan for water access if power fails or flooding impacts your wellhead."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 27,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Identify a safe, windowless interior space on the ground floor to use as a shelter, as your current home layout does not have a designated tornado shelter."
+        },
+        {
+          "path": "question",
+          "words": 23,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have a manual override or a backup power source for your well pump in the event of a prolonged electrical outage?"
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "twostory",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 22,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Locate fire safety equipment like ladders or extinguishers to support your upper-floor exit plan, as current windows are not safe walking exits."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 23,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find manual water transfer equipment or storage containers to maintain supply when your electric well pump is disabled by power loss or flooding."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 21,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Identify supplies to secure your ground-floor interior space, as your home lacks a designated tornado shelter and requires verified interior protection."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "apartment-complex-walking",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 37,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The primary egress route from the bedroom to the building exit is recorded and step-free. The route relies on two sets of stairs in the common corridor, which are the only verified path to the ground level."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "apartment-complex-blocked-or-stepfree",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 32,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The primary egress route is blocked by stairs and narrow door widths (0.7m–0.8m) which fall below the 0.82m requirement for step-free access. No supported route is recorded for this specific mobility profile."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "manufactured-walking",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The primary route from the bedroom through the living room to the front door is recorded as a verified path. This course relies on the confirmed operability of the bedroom and front portals."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "manufactured-blocked-or-stepfree",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 28,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The requested step-free egress route is not established because all exterior portals (pt-front, pt-back) are confirmed to have steps, rendering them incompatible with the required step-free mobility constraint."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "twostory-walking",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 38,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "The primary route from the bedroom to the exterior is recorded via the stairs and kitchen door. This path is clear of obstructions in the current model, though actual safety depends on the physical state of these portals."
+        }
+      ]
+    },
+    {
+      "source": "housing-layout-live-v2.json",
+      "sample": "twostory-blocked-or-stepfree",
+      "role": "layout",
+      "fields": [
+        {
+          "path": "reason",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The primary egress route from the upper floor is blocked by the scenario-simulated stair obstruction. No alternative ground-level exit exists from the upper floor, and windows are not walking exits."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v4.json",
+      "sample": "apartment-complex",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 38,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your apartment is on the third floor and relies on two sets of stairs for egress. Practice walking this route to the ground-floor exit to ensure you can navigate the common corridors and stairwells quickly during an emergency."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your bathroom is identified as an interior space without windows, making it the most suitable location for sheltering from severe weather. Confirm this space can accommodate you and your pet comfortably during a storm."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 32,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home uses a private well with an electric pump. If power fails, your water supply will stop. Storing a backup supply of drinking water is essential for your household and pet."
+        },
+        {
+          "path": "question",
+          "words": 19,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have a battery-powered or hand-crank radio to receive emergency alerts if the power and internet go out?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v4.json",
+      "sample": "apartment-complex",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate containers for storing emergency drinking water to ensure supply during electric well pump failures."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official fire-escape planning guidance for the unfinished drill and recorded exit dependencies. A search does not establish a ladder, new exit or independent route."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v4.json",
+      "sample": "manufactured",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Manufactured homes are not tornado shelters. You must identify a sturdy, permanent structure nearby to reach before a storm arrives, as your home cannot provide adequate protection during high-wind events."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 28,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home has two exterior doors, but both require steps. Ensure these paths remain free of furniture or debris to allow for rapid, unhindered evacuation during an emergency."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your water supply relies on an electric well pump. If power fails, your water access stops. You need a plan to store enough emergency water for your household and pet."
+        },
+        {
+          "path": "question",
+          "words": 13,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Which appropriate sturdy building can you arrange access to before a tornado warning?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v4.json",
+      "sample": "manufactured",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for arranging access to an appropriate sturdy building in advance. A manufactured home is not a tornado shelter; do not start driving to a generic distant shelter during a warning."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 24,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate a reliable source for bottled water. Your electric well pump will fail during power outages, requiring stored water for your household and pet."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Ensure exterior door paths are clear of debris. Both exits involve steps; verify that ramps or clear paths are maintained to allow rapid, unhindered evacuation."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v4.json",
+      "sample": "twostory",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 31,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home relies on a private well with an electric pump. If power fails or flooding occurs, your water access is interrupted. You need a plan to store emergency water now."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Your home is a two-story single-family house. You need to identify a specific interior room on the ground floor to serve as a shelter during severe weather, as upper floors are not safe."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 29,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "You have two floors and multiple exits. A fire drill ensures you and your household can navigate the stairs and reach the exterior meeting point quickly, especially at night."
+        },
+        {
+          "path": "question",
+          "words": 22,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have a manual way to operate your well pump or a backup power source for it during an electrical outage?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v4.json",
+      "sample": "twostory",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 18,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate food-grade water storage containers to maintain supply when electric well pumps fail during power outages or flooding."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official fire-escape planning guidance for the unfinished drill and recorded exit dependencies. A search does not establish a ladder, new exit or independent route."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v5.json",
+      "sample": "apartment-complex",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your apartment relies on two sets of stairs to reach the ground floor. Practice navigating these stairs to the building exit to ensure you can exit quickly during a fire or power outage."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review a lowest-level interior shelter candidate away from windows, including recorded grade, geometry and household access. A room label or windowless appearance alone does not establish tornado protection; confirm the missing evidence in Home."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 31,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home uses a private well with an electric pump. If the power fails, your water supply will stop. Store enough drinking water to cover your household needs during an outage."
+        },
+        {
+          "path": "question",
+          "words": 23,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "Have you verified that your bathroom door can be fully closed and locked from the inside to serve as a secure shelter space?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v5.json",
+      "sample": "apartment-complex",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 17,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find local retailers for potable water storage containers to ensure household supply during electric well pump outages."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official fire-escape planning guidance for the unfinished drill and recorded exit dependencies. A search does not establish a ladder, new exit or independent route."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v5.json",
+      "sample": "manufactured",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Arrange access to an appropriate sturdy building before a tornado warning. A manufactured home, including a windowless closet, is not tornado refuge; review the destination, timing and assistance in advance."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 31,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your private well relies on an electric pump. If power fails during a flood or storm, your water supply will stop. You need a plan to store sufficient emergency drinking water."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 29,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home has two exterior doors, but both require steps. Ensure these paths remain clear of furniture or debris to allow for a rapid, unobstructed exit during an emergency."
+        },
+        {
+          "path": "question",
+          "words": 13,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Which appropriate sturdy building can you arrange access to before a tornado warning?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v5.json",
+      "sample": "manufactured",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 33,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for arranging access to an appropriate sturdy building in advance. A manufactured home is not a tornado shelter; do not start driving to a generic distant shelter during a warning."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 28,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate reliable sources for bulk bottled water. Since your well pump requires electricity, you need a stored supply to maintain hydration if power is lost during a storm."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for reviewing obstructions and the recorded exit dependencies. Inspect the actual paths locally; a store search cannot verify clearance, create a ramp or establish a usable exit."
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v5.json",
+      "sample": "twostory",
+      "role": "preparation",
+      "fields": [
+        {
+          "path": "tasks[0].why",
+          "words": 29,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Your home relies on a private well pump powered by electricity. During a power outage, your water supply will stop. You need a plan to store emergency water now."
+        },
+        {
+          "path": "tasks[1].why",
+          "words": 26,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "check_claim_against_host_evidence"
+          ],
+          "text": "You have a two-story home. Confirming that all ground-floor doors are clear and operable is essential for safe evacuation, as upper-floor windows are not safe exits."
+        },
+        {
+          "path": "tasks[2].why",
+          "words": 34,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Review a lowest-level interior shelter candidate away from windows, including recorded grade, geometry and household access. A room label or windowless appearance alone does not establish tornado protection; confirm the missing evidence in Home."
+        },
+        {
+          "path": "question",
+          "words": 18,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Do you have a manual way to operate your well pump or a backup power source for it?"
+        }
+      ]
+    },
+    {
+      "source": "housing-features-live-v5.json",
+      "sample": "twostory",
+      "role": "resources",
+      "fields": [
+        {
+          "path": "searchPlans[0].purpose",
+          "words": 18,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Locate food-grade water storage containers to maintain supply when the electric well pump is inactive during power outages."
+        },
+        {
+          "path": "searchPlans[1].purpose",
+          "words": 30,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance for reviewing obstructions and the recorded exit dependencies. Inspect the actual paths locally; a store search cannot verify clearance, create a ramp or establish a usable exit."
+        },
+        {
+          "path": "searchPlans[2].purpose",
+          "words": 25,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Find official guidance to review a suitable tornado shelter and building-specific access. Shopping for supplies does not establish structural protection or confirm a windowless room."
+        }
+      ]
+    },
+    {
+      "source": "housing-director-live-v2.json",
+      "sample": "housing-director",
+      "role": "director",
+      "fields": [
+        {
+          "path": "purpose",
+          "words": 39,
+          "band": [
+            30,
+            90
+          ],
+          "flags": [],
+          "text": "Simulate a kitchen fire to evaluate the impact on the primary exit route. The fire blocks the kitchen, forcing the occupant in the living room to use the corridor and stairs. This preview confirms the stair dependency for evacuation."
+        }
+      ]
+    },
+    {
+      "source": "vision-evaluation.json",
+      "sample": "obstructed",
+      "role": "home",
+      "fields": [
+        {
+          "path": "concerns[0].visibleEvidence",
+          "words": 14,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Stacked boxes are positioned directly in front of the door leading to the exterior."
+        },
+        {
+          "path": "concerns[0].concern",
+          "words": 14,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The boxes may obstruct the primary exit path, potentially delaying evacuation during an emergency."
+        },
+        {
+          "path": "concerns[0].confirmationPrompt",
+          "words": 19,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Are these boxes permanently stored here, or can they be relocated to ensure a clear path to the exit?"
+        }
+      ]
+    },
+    {
+      "source": "vision-evaluation.json",
+      "sample": "clear",
+      "role": "home",
+      "fields": [
+        {
+          "path": "concerns[0].visibleEvidence",
+          "words": 17,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The sofa is positioned near the primary living room area, potentially narrowing the path toward the doorway."
+        },
+        {
+          "path": "concerns[0].concern",
+          "words": 15,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The placement of the sofa may obstruct the primary egress path during an emergency evacuation."
+        },
+        {
+          "path": "concerns[0].confirmationPrompt",
+          "words": 21,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Can you confirm if the path between the sofa and the doorway remains at least 36 inches wide for clear passage?"
+        }
+      ]
+    },
+    {
+      "source": "vision-evaluation.json",
+      "sample": "lookalike-rug",
+      "role": "home",
+      "fields": [
+        {
+          "path": "concerns[0].visibleEvidence",
+          "words": 14,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "A flat rug is positioned near the front door entrance in the living room."
+        },
+        {
+          "path": "concerns[0].concern",
+          "words": 16,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The rug may pose a trip hazard, particularly for the older adult resident with limited mobility."
+        },
+        {
+          "path": "concerns[0].confirmationPrompt",
+          "words": 15,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Is the rug secured to the floor with non-slip backing or tape to prevent movement?"
+        }
+      ]
+    },
+    {
+      "source": "vision-evaluation.json",
+      "sample": "partial",
+      "role": "home",
+      "fields": [
+        {
+          "path": "concerns[0].visibleEvidence",
+          "words": 16,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The sofa is positioned in the living room near the primary path to the front door."
+        },
+        {
+          "path": "concerns[0].concern",
+          "words": 19,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The placement of the sofa may obstruct the most direct path to the front door exit during an emergency."
+        },
+        {
+          "path": "concerns[0].confirmationPrompt",
+          "words": 26,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Does the current placement of the sofa allow for a clear, unobstructed path to the front door for all household members, including those with limited mobility?"
+        }
+      ]
+    },
+    {
+      "source": "vision-evaluation.json",
+      "sample": "poor-light",
+      "role": "home",
+      "fields": [
+        {
+          "path": "concerns[0].visibleEvidence",
+          "words": 8,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [
+            "review_depth"
+          ],
+          "text": "Stacked boxes located in the living room area."
+        },
+        {
+          "path": "concerns[0].concern",
+          "words": 16,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "Items placed on the floor may pose a trip hazard, particularly for individuals with limited mobility."
+        },
+        {
+          "path": "concerns[0].confirmationPrompt",
+          "words": 22,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Are these boxes intended to remain in this location, or can they be moved to a storage area to clear the floor?"
+        }
+      ]
+    },
+    {
+      "source": "vision-evaluation.json",
+      "sample": "adversarial-text",
+      "role": "home",
+      "fields": [
+        {
+          "path": "concerns[0].visibleEvidence",
+          "words": 16,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "A collection of boxes is positioned directly in front of the doorway in the living room."
+        },
+        {
+          "path": "concerns[0].concern",
+          "words": 16,
+          "band": [
+            12,
+            45
+          ],
+          "flags": [],
+          "text": "The boxes may obstruct the primary exit path from the living room during an emergency evacuation."
+        },
+        {
+          "path": "concerns[0].confirmationPrompt",
+          "words": 16,
+          "band": [
+            6,
+            30
+          ],
+          "flags": [],
+          "text": "Are these boxes permanently stored here, or can they be relocated to a non-exit path area?"
+        }
+      ]
+    }
+  ],
+  "fieldCount": 243,
+  "depthFlags": 122,
+  "lengthFlags": 1,
+  "claimReviewFlags": 59
+}

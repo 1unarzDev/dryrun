@@ -234,6 +234,7 @@ public struct HomeModel: Codable, Sendable, Hashable, Identifiable {
     public var revision: Int
     public var schemaVersion: Int
     public var label: String
+    public var dwellingType: HomeType?
     public var source: HomeSource
     /// One shared capture frame/group. Retained through edits, replaced for an unrelated rescan.
     public var sourceCaptureFrameID: String?

@@ -3,7 +3,7 @@
   "modelCalls": 0,
   "evaluatorVersion": "dryrun.practice-anchors/3",
   "usual": {
-    "contextDigest": "cd577d31bd3ec491",
+    "contextDigest": "24b903d2810fd2a4",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,
@@ -372,7 +372,7 @@
     }
   },
   "alternate": {
-    "contextDigest": "d0f9831ba1b031a0",
+    "contextDigest": "a6bbb763d8c9b40f",
     "directorState": {
       "activeIncidentCount": 1,
       "awaitingUserAction": false,
@@ -710,7 +710,7 @@
   "source": {
     "contractVersion": "dryrun.practice-capture/1",
     "evaluatorVersion": "dryrun.practice-anchors/3",
-    "initialDigest": "3c890df2d521b703",
+    "initialDigest": "24d5f6b03dbf6f1e",
     "sessionID": "synthetic-session",
     "startingEventSequence": 4,
     "startingRevision": 2
@@ -736,10 +736,10 @@
         "competencyID": "adaptation",
         "credit": 1,
         "feedbackRevealed": false,
-        "receiptDigest": "5d67bde0a1eaae8d"
+        "receiptDigest": "152e221f7e2dc0e2"
       },
       "receipt": {
-        "contextDigest": "5d67bde0a1eaae8d",
+        "contextDigest": "152e221f7e2dc0e2",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -1081,7 +1081,7 @@
         }
       },
       "scorecard": {
-        "assessmentVersion": "dryrun.household-assessment/5",
+        "assessmentVersion": "dryrun.household-assessment/6",
         "cap": 79,
         "capReasons": [
           "alarms",
@@ -1136,10 +1136,10 @@
         "competencyID": "adaptation",
         "credit": 0,
         "feedbackRevealed": false,
-        "receiptDigest": "4e8d50832bdfca60"
+        "receiptDigest": "f8ae2593dd383821"
       },
       "receipt": {
-        "contextDigest": "4e8d50832bdfca60",
+        "contextDigest": "f8ae2593dd383821",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -1415,7 +1415,7 @@
         }
       },
       "scorecard": {
-        "assessmentVersion": "dryrun.household-assessment/5",
+        "assessmentVersion": "dryrun.household-assessment/6",
         "cap": 79,
         "capReasons": [
           "alarms",

@@ -1337,6 +1337,27 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 120
+              },
+              "floorID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -1356,6 +1377,17 @@
             "maxLength": 600
           }
         },
+        "dwellingType": {
+          "type": "string",
+          "enum": [
+            "singleFamily",
+            "apartment",
+            "manufacturedHome",
+            "townhouse",
+            "duplex",
+            "other"
+          ]
+        },
         "homeSource": {
           "type": "string",
           "enum": [
@@ -1363,6 +1395,145 @@
             "manual",
             "roomPlanScan"
           ]
+        },
+        "planningRoutes": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "personID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "startRoomID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "stepFreeRequired": {
+                "type": "boolean"
+              },
+              "primaryPortalIDs": {
+                "maxItems": 200,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "connectorIDs": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "alternativePortalIDs": {
+                "maxItems": 200,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "noRouteReason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "exclusions": {
+                "maxItems": 500,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "elementID": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    }
+                  },
+                  "required": [
+                    "elementID",
+                    "reason"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "scope": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "personID",
+              "stepFreeRequired",
+              "primaryPortalIDs",
+              "connectorIDs",
+              "alternativePortalIDs",
+              "exclusions",
+              "scope"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "planningNeeds": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "relatedIDs": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "suggestedActionID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "editor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "scoreEffect": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "id",
+              "relatedIDs",
+              "suggestedActionID",
+              "editor",
+              "scoreEffect"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [

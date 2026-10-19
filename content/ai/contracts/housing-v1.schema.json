@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "homeType": {
+      "type": "string",
+      "enum": [
+        "singleFamily",
+        "apartment",
+        "manufacturedHome",
+        "townhouse",
+        "duplex",
+        "other"
+      ]
+    },
+    "tenancy": {
+      "type": "string",
+      "enum": [
+        "owner",
+        "renter",
+        "other"
+      ]
+    },
+    "floorCount": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200
+    },
+    "heatingFuel": {
+      "type": "string",
+      "enum": [
+        "electric",
+        "naturalGas",
+        "propane",
+        "wood",
+        "none",
+        "unknown"
+      ]
+    },
+    "heatingNeedsElectricity": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "boolean"
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "sourceIDs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "inputIDs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "recordedAt": {
+          "type": "string"
+        },
+        "verifiedAt": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      },
+      "required": [
+        "origin",
+        "status",
+        "sourceIDs",
+        "inputIDs"
+      ],
+      "additionalProperties": false
+    },
+    "cooling": {
+      "type": "string",
+      "enum": [
+        "centralAC",
+        "windowOrPortableAC",
+        "evaporative",
+        "fansOnly",
+        "none",
+        "unknown"
+      ]
+    },
+    "waterSource": {
+      "type": "string",
+      "enum": [
+        "municipal",
+        "privateWell",
+        "unknown"
+      ]
+    },
+    "wellPumpElectric": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "boolean"
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "sourceIDs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "inputIDs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        "recordedAt": {
+          "type": "string"
+        },
+        "verifiedAt": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      },
+      "required": [
+        "origin",
+        "status",
+        "sourceIDs",
+        "inputIDs"
+      ],
+      "additionalProperties": false
+    },
+    "sanitation": {
+      "type": "string",
+      "enum": [
+        "sewer",
+        "septicGravity",
+        "septicWithPump",
+        "unknown"
+      ]
+    }
+  },
+  "required": [
+    "homeType",
+    "tenancy",
+    "floorCount",
+    "heatingFuel",
+    "heatingNeedsElectricity",
+    "cooling",
+    "waterSource",
+    "wellPumpElectric",
+    "sanitation"
+  ],
+  "additionalProperties": false
+}

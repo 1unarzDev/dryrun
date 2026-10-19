@@ -33,11 +33,15 @@ public enum HouseholdEditing {
     }
 
     /// Called by the app's transactional household save; a failed save must retain the committed home.
-    /// Only deleted residents lose window suitability; surviving residents' answers and geometry stay intact.
+    /// Deleted residents lose window suitability; explicit dwelling-type edits also update the home safety context. Geometry and unrelated answers stay intact.
     public static func homeAfterRemovingResidents(previous: HouseholdProfile, updated: HouseholdProfile, home: HomeModel?) -> HomeModel? {
         let removed = Set(previous.people.map(\.id)).subtracting(updated.people.map(\.id))
-        guard !removed.isEmpty, var home else { return home }
+        guard var home else { return home }
         var changed = false
+        if previous.housing.homeType != updated.housing.homeType {
+            home.dwellingType=updated.housing.homeType
+            changed=true
+        }
         for index in home.portals.indices {
             guard let ids = home.portals[index].emergencyEscapePersonIDs else { continue }
             let retained = ids.filter { !removed.contains($0) }

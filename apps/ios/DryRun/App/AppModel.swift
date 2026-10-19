@@ -364,6 +364,11 @@ final class AppModel {
         return await updateHousehold { $0 = candidate }
     }
 
+    @discardableResult
+    func updateSiteHazards(_ profile: SiteHazardProfile?) async -> Bool {
+        await updateHousehold { household in SiteHazardEditing.stage(profile, in: &household) }
+    }
+
     /// Moving is explicitly separate from correcting an address or rescanning this home.
     /// Family, contacts, equipment and supplies are retained; old geometry, room assignments and local destinations reset.
     @discardableResult
@@ -371,6 +376,7 @@ final class AppModel {
         guard var candidate = household else { return false }
         candidate.homeID = "home-\(UUID().uuidString)"
         candidate.privateLocation = location
+        candidate.siteHazards = nil
         candidate.regionID = ""
         for index in candidate.people.indices { candidate.people[index].sleepingSpaceID = nil }
         candidate.preparedness?.items.removeValue(forKey: "clearExits")
@@ -395,6 +401,7 @@ final class AppModel {
         if let old = home, old != newHome, old.revision == newHome.revision { h.bumpRevision() }
         guard let household else { return false }
         h.id = home?.id ?? household.stableHomeID
+        h.dwellingType = household.housing.homeType
         let candidatePlaces = HomeMeetingPlaces.placesAfterHomeEdit(previous: home, updated: h, places: savedPlaces, editedAt: Date())
         h = HomeMeetingPlaces.synchronize(h, places: candidatePlaces)
         if let old = home { h.revision = max(h.revision, old.revision + 1) }

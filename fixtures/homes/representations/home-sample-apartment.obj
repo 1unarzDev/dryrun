@@ -1,0 +1,135 @@
+# DryRun fictional home; metres; x/elevation/-y; no route certification
+o sp-living
+v 0.0 6.0 -0.0
+v 6.0 6.0 -0.0
+v 6.0 6.0 -5.0
+v 0.0 6.0 -5.0
+f 1 2 3 4
+o sp-kitchen
+v 6.0 6.0 -0.0
+v 9.0 6.0 -0.0
+v 9.0 6.0 -5.0
+v 6.0 6.0 -5.0
+f 5 6 7 8
+o sp-hall
+v 0.0 6.0 -5.0
+v 9.0 6.0 -5.0
+v 9.0 6.0 -6.2
+v 0.0 6.0 -6.2
+f 9 10 11 12
+o sp-bed1
+v 0.0 6.0 -6.2
+v 4.0 6.0 -6.2
+v 4.0 6.0 -9.5
+v 0.0 6.0 -9.5
+f 13 14 15 16
+o sp-bed2
+v 4.0 6.0 -6.2
+v 7.0 6.0 -6.2
+v 7.0 6.0 -9.5
+v 4.0 6.0 -9.5
+f 17 18 19 20
+o sp-bath
+v 7.0 6.0 -6.2
+v 9.0 6.0 -6.2
+v 9.0 6.0 -9.5
+v 7.0 6.0 -9.5
+f 21 22 23 24
+o w-s-0
+v 0.0 6.0 -0.0
+v 2.0 6.0 -0.0
+l 25 26
+o w-s-1
+v 3.5 6.0 -0.0
+v 9.0 6.0 -0.0
+l 27 28
+o w-e-0
+v 9.0 6.0 -0.0
+v 9.0 6.0 -9.5
+l 29 30
+o w-n-0
+v 9.0 6.0 -9.5
+v 2.5 6.0 -9.5
+l 31 32
+o w-n-1
+v 1.5 6.0 -9.5
+v 0.0 6.0 -9.5
+l 33 34
+o w-w-0
+v 0.0 6.0 -9.5
+v 0.0 6.0 -2.4000000000000004
+l 35 36
+o w-w-1
+v 0.0 6.0 -1.5
+v 0.0 6.0 -0.0
+l 37 38
+o w-hall-s-0
+v 0.0 6.0 -5.0
+v 1.0 6.0 -5.0
+l 39 40
+o w-hall-s-1
+v 2.0 6.0 -5.0
+v 9.0 6.0 -5.0
+l 41 42
+o w-hall-n-0
+v 0.0 6.0 -6.2
+v 2.0 6.0 -6.2
+l 43 44
+o w-hall-n-1
+v 2.8 6.0 -6.2
+v 5.0 6.0 -6.2
+l 45 46
+o w-hall-n-2
+v 5.8 6.0 -6.2
+v 7.6 6.0 -6.2
+l 47 48
+o w-hall-n-3
+v 8.3 6.0 -6.2
+v 9.0 6.0 -6.2
+l 49 50
+o w-bed-mid-0
+v 4.0 6.0 -6.2
+v 4.0 6.0 -9.5
+l 51 52
+o w-bath-0
+v 7.0 6.0 -6.2
+v 7.0 6.0 -9.5
+l 53 54
+o pt-entry_door_verified
+v 0.0 6.0 -1.5
+v 0.0 6.0 -2.4
+l 55 56
+o pt-balcony_slidingDoor_verified
+v 2.0 6.0 -0.0
+v 3.5 6.0 -0.0
+l 57 58
+o pt-living-kitchen_opening_verified
+v 6.0 6.0 -0.5
+v 6.0 6.0 -4.5
+l 59 60
+o pt-living-hall_opening_verified
+v 1.0 6.0 -5.0
+v 2.0 6.0 -5.0
+l 61 62
+o pt-bed1-hall_door_verified
+v 2.0 6.0 -6.2
+v 2.8 6.0 -6.2
+l 63 64
+o pt-bed2-hall_door_verified
+v 5.0 6.0 -6.2
+v 5.8 6.0 -6.2
+l 65 66
+o pt-bath-hall_door_verified
+v 7.6 6.0 -6.2
+v 8.3 6.0 -6.2
+l 67 68
+o pt-win-bed1_window_proposed
+v 1.5 6.0 -9.5
+v 2.5 6.0 -9.5
+l 69 70
+o an-smoke-hall_smokeAlarm
+v 4.5 6.0 -5.6
+p 71
+o an-tornado_tornadoShelterCandidate
+v 8.0 6.0 -7.8
+p 72
