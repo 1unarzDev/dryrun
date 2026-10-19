@@ -7,7 +7,10 @@ struct HomeTabView: View {
     @Environment(AppModel.self) private var model
     // Not a `switch` expression inline: Xcode 27's @State macro does not accept one as the initial value.
     @State private var mode: Mode = Mode.initial(DemoLaunch.current.homeMode)
-    @State private var floorID: String?
+    @State private var floorID: String? = DemoLaunch.current.homeFloor.flatMap { index in
+        DemoLaunch.current.isActive ? DemoLaunch.current.homeID.flatMap { id in SampleHomes.all.first { $0.id == id } }
+            .flatMap { $0.floors.indices.contains(index) ? $0.floors[index].id : nil } : nil
+    }
     @State private var editing = false
     @State private var manualDraft: HomeModel?
     @State private var selectedElementID: String?
@@ -50,7 +53,7 @@ struct HomeTabView: View {
                     .accessibilityIdentifier("home.viewMode")
                     if home.floors.count > 1 {
                         Picker(s("Floor"), selection: Binding(get: { floorID ?? home.floors.first?.id ?? "" }, set: { floorID = $0 })) {
-                            ForEach(home.floors) { Text($0.label).tag($0.id) }
+                            ForEach(home.floors.sorted { ($0.level, $0.id) < ($1.level, $1.id) }) { Text($0.label).tag($0.id) }
                         }
                         .accessibilityIdentifier("home.floor")
                     }

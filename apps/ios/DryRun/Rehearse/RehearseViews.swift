@@ -40,7 +40,11 @@ struct RehearseTabView: View {
         }
         .background(Theme.background)
         .navigationTitle(l("common.tab.rehearse"))
-        .navigationDestination(for: String.self) { RehearsalView(scenarioID: $0) }
+        .navigationDestination(for: String.self) { id in
+            // "adaptive:<scenario>" opens the incremental exercise of the same scenario, inside the same stack.
+            if id.hasPrefix("adaptive:") { AdaptiveRehearsalView(scenarioID: String(id.dropFirst("adaptive:".count))) }
+            else { RehearsalView(scenarioID: id) }
+        }
     }
 }
 
@@ -106,7 +110,10 @@ struct RehearsalView: View {
                     if let home = session.result.input.home, ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
                         SpatialRehearsalScene(home: home, household: session.result.input.household,
                                               state: session.snapshotAtCursor?.spatialState,
-                                              previous: session.spatialStateBeforeCursor)
+                                              previous: session.spatialStateBeforeCursor,
+                                              isFireExercise: scenarioID == "home-fire")
+                            // A container keeps children's own identifiers (e.g. rehearsal.noElevators).
+                            .accessibilityElement(children: .contain)
                             .accessibilityIdentifier("rehearsal.scene")
                     }
                     if session.result.input.home == nil { Label(model.localizer("map.layoutMissing"), systemImage: "house").font(.callout).foregroundStyle(.secondary) }
@@ -257,6 +264,14 @@ struct RehearsalView: View {
                 .font(.callout)
             if household.isFictional { StatusPill(text: l("family.example"), systemImage: "house", tint: Theme.caution) }
             Text(l("ui.rehearse.introHow")).font(.footnote).foregroundStyle(.secondary)
+            NavigationLink(value: "adaptive:\(scenarioID)") {
+                VStack(alignment: .leading, spacing: 2) {
+                    Label(l("adaptive.open"), systemImage: "point.3.connected.trianglepath.dotted").font(.callout.weight(.semibold))
+                    Text(l("adaptive.openDetail")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                }
+                .frame(maxWidth: .infinity, minHeight: Theme.minTap, alignment: .leading)
+            }
+            .accessibilityIdentifier("rehearsal.openAdaptive")
         }
         .accessibilityIdentifier("rehearsal.intro")
     }
@@ -362,6 +377,8 @@ struct SpatialRehearsalScene: View {
     let household: HouseholdProfile
     let state: SpatialExerciseState?
     var previous: SpatialExerciseState? = nil
+    /// The elevator rule applies to the whole fire exercise, including stages before the fire is placed.
+    var isFireExercise = false
     @State private var personID: String?
     @State private var show3D = false
     @State private var selectedFloorID: String?
@@ -400,7 +417,7 @@ struct SpatialRehearsalScene: View {
             }
             if home.floors.count > 1 {
                 Picker(model.localizer("spatial.floor"), selection: Binding(get: { sceneFloorID ?? "" }, set: { selectedFloorID = $0 })) {
-                    ForEach(home.floors) { Text($0.label).tag($0.id) }
+                    ForEach(home.floors.sorted { ($0.level, $0.id) < ($1.level, $1.id) }) { Text($0.label).tag($0.id) }
                 }.accessibilityIdentifier("rehearsal.floor")
             }
             FloorPlanView(home: home, routes: currentPaths, highlightedFloorID: sceneFloorID,
@@ -421,7 +438,7 @@ struct SpatialRehearsalScene: View {
                 // Only when this stage has a route request: before the first route there is nothing to contradict later.
                 Text(model.localizer("spatial.start-room-unknown")).font(.footnote)
             }
-            if state?.hazard == .homeFire && (household.housing.homeType == .apartment || home.connectors.contains { $0.kind == .elevator }) {
+            if (isFireExercise || state?.hazard == .homeFire) && (household.housing.homeType == .apartment || home.connectors.contains { $0.kind == .elevator }) {
                 Label(model.localizer("spatial.fire-no-elevators"), systemImage: "exclamationmark.triangle")
                     .font(.callout).foregroundStyle(Theme.caution)
                     .accessibilityIdentifier("rehearsal.noElevators")

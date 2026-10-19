@@ -35,7 +35,7 @@ export class GeminiProvider implements AgentProvider {
  this.budget.charge(response.usage,model,upperBoundUSD);
  input.signal.throwIfAborted();
  const steps=response.steps??[];return {steps,text:response.output_text??'',calls:steps.filter(s=>s.type==='function_call'),usage:response.usage};
- }catch(error){const status=typeof error==='object'&&error&&'status'in error?error.status:undefined;throw new Error(status===429?'provider_rate_limited':input.signal.aborted?'provider_timeout_or_cancelled':'provider_unavailable');}finally{release();}
+ }catch(error){const status=typeof error==='object'&&error&&'status'in error?error.status:undefined;if(process.env.DRYRUN_DIAGNOSTICS==='1')console.error('provider error',status,String(error instanceof Error?error.message:error).slice(0,400));throw new Error(status===429?'provider_rate_limited':input.signal.aborted?'provider_timeout_or_cancelled':'provider_unavailable');}finally{release();}
  }
 }
 

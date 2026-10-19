@@ -7,9 +7,11 @@ import Foundation
 ///   -demoLocale en|es|vi                    plan/UI language
 ///   -demoTab prepare|rehearse|plan          initial tab (default: prepare, or rehearse with -demoScenario)
 ///   -demoScenario <scenarioID>              open that rehearsal
+///   -demoAdaptive                           open the scenario as an adaptive (incremental session) exercise
 ///   -demoStep start|decision|end            how far to advance it (end answers each decision with the recommended option)
 ///   -demoHome ranch|apartment|apartment-complex|manufactured|twostory  fictional layout (requires -demoHousehold)
 ///   -demoHomeMode 2d|3d|rooms               Home sheet view
+///   -demoHomeFloor <index>                  Home sheet floor (0-based, sample homes only)
 ///   -demoPlan all|<id,id,...>               generate a plan for these scenarios at launch
 ///   -demoWritePlanPDFs                      DEBUG only: write EN/ES/VI PDFs + JSON to Documents/demo-plans, then DONE
 ///   -disableAnimations                      steadier screenshots
@@ -28,6 +30,8 @@ struct DemoLaunch: Sendable, Equatable {
     var planScenarios: [String] = []
     var writePlanPDFs = false
     var disableAnimations = false
+    var adaptive = false
+    var homeFloor: Int?
 
     static let allScenarios = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
     static let current = DemoLaunch(arguments: ProcessInfo.processInfo.arguments)
@@ -51,6 +55,8 @@ struct DemoLaunch: Sendable, Equatable {
         }
         writePlanPDFs = arguments.contains("-demoWritePlanPDFs")
         disableAnimations = arguments.contains("-disableAnimations")
+        adaptive = arguments.contains("-demoAdaptive")
+        homeFloor = value("-demoHomeFloor").flatMap(Int.init).flatMap { (0..<8).contains($0) ? $0 : nil }
     }
 
     /// Demo mode is active when a sample household is requested.

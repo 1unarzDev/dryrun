@@ -1,0 +1,178 @@
+import XCTest
+
+/// Wired-iPhone audit journeys (fictional in-memory demos only). Every step keeps a screenshot so the rendering can
+/// be reviewed; passing here proves the controls are reachable, not that the drawing or the exercise is correct.
+@MainActor
+final class DeviceAuditUITests: XCTestCase {
+    private func launch(_ arguments: [String]) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestingInMemory", "-disableAnimations", "-demoLocale", "en"] + arguments
+        app.launch()
+        return app
+    }
+    private func element(_ id: String, in app: XCUIApplication) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: id).firstMatch
+    }
+    private func shot(_ name: String, _ app: XCUIApplication) {
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+    private func scroll(_ app: XCUIApplication, up: Bool) {
+        let low = app.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.70))
+        let high = app.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.36))
+        if up { low.press(forDuration: 0.05, thenDragTo: high) } else { high.press(forDuration: 0.05, thenDragTo: low) }
+    }
+    @discardableResult
+    private func reveal(_ id: String, in app: XCUIApplication, steps: Int = 14) -> XCUIElement {
+        let control = element(id, in: app)
+        _ = control.waitForExistence(timeout: 3)
+        for _ in 0..<steps where !(control.exists && control.isHittable) { scroll(app, up: true) }
+        return control
+    }
+
+    func testAdaptiveApartmentFireCommitsActionsFromReceipts() {
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "apartment-complex", "-demoScenario", "home-fire", "-demoAdaptive"])
+        XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30))
+        shot("adaptive-fire-01-open", app)
+        var moment = 2
+        for _ in 0..<8 {
+            if element("decision.option", in: app).exists || app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'")).firstMatch.exists { break }
+            let next = element("adaptive.next", in: app)
+            guard next.waitForExistence(timeout: 10), next.isEnabled else { break }
+            next.tap()
+            shot(String(format: "adaptive-fire-%02d-moment", moment), app); moment += 1
+        }
+        let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'")).firstMatch
+        XCTAssertTrue(option.waitForExistence(timeout: 10), "a due authored choice is offered")
+        if !option.isHittable { reveal(option.identifier, in: app) }
+        shot("adaptive-fire-decision", app)
+        option.tap()
+        XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 10))
+        shot("adaptive-fire-you-did", app)
+        let more = reveal("adaptive.otherActions", in: app)
+        if more.exists { more.tap(); shot("adaptive-fire-other-actions", app) }
+        for index in 0..<10 {
+            let next = element("adaptive.next", in: app)
+            if !next.exists || !next.isEnabled {
+                let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'")).firstMatch
+                guard option.exists else { break }
+                if !option.isHittable { reveal(option.identifier, in: app) }
+                option.tap()
+                continue
+            }
+            next.tap()
+            shot(String(format: "adaptive-fire-later-%02d", index), app)
+        }
+        let finished = element("adaptive.finishedCard", in: app)
+        if !finished.exists { element("adaptive.end", in: app).tap() }
+        XCTAssertTrue(finished.waitForExistence(timeout: 15))
+        reveal("adaptive.finishedCard", in: app)
+        shot("adaptive-fire-finished", app)
+    }
+
+    func testAdaptiveWaterOutageWaterPolicyChangesTheCommittedSituation() {
+        let app = launch(["-demoHousehold", "hh-oak", "-demoScenario", "water-outage", "-demoAdaptive"])
+        XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30))
+        shot("adaptive-water-01-open", app)
+        let more = reveal("adaptive.otherActions", in: app)
+        XCTAssertTrue(more.exists)
+        more.tap()
+        let essential = app.buttons.matching(NSPredicate(format: "label CONTAINS 'only for essentials'")).firstMatch
+        XCTAssertTrue(essential.waitForExistence(timeout: 10))
+        shot("adaptive-water-02-actions", app)
+        essential.tap()
+        XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 10))
+        shot("adaptive-water-03-you-did", app)
+        for index in 0..<4 {
+            let next = element("adaptive.next", in: app)
+            guard next.exists, next.isEnabled else { break }
+            next.tap()
+            shot(String(format: "adaptive-water-%02d-later", index + 4), app)
+        }
+        let services = reveal("adaptive.services", in: app)
+        if services.exists { services.tap(); shot("adaptive-water-services", app) }
+    }
+
+    /// Live synthetic loop: committed family action -> Core -> Gemini (gateway) -> Core tool previews -> validated
+    /// director commit -> next decision. Runs only when TEST_RUNNER_AIGATEWAY/_AIGATEWAYTOKEN are supplied at run time.
+    func testGeminiDirectsTheFictionalApartmentFireThroughValidatedCommits() throws {
+        let env = ProcessInfo.processInfo.environment
+        guard let gateway = env["AIGATEWAY"], let token = env["AIGATEWAYTOKEN"] else { throw XCTSkip("no development gateway supplied") }
+        let scenario = env["AISCENARIO"] ?? "home-fire"
+        let home = env["AIHOME"] ?? "apartment-complex"
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home, "-demoScenario", scenario, "-demoAdaptive",
+                          "-aiGateway", gateway, "-aiGatewayToken", token])
+        XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30))
+        let toggle = app.switches["adaptive.cloudToggle"].firstMatch
+        XCTAssertTrue(toggle.waitForExistence(timeout: 10), "cloud director offered for the fictional household")
+        if (toggle.value as? String) != "1" { toggle.switches.firstMatch.exists ? toggle.switches.firstMatch.tap() : toggle.tap() }
+        shot("gemini-\(scenario)-00-optin", app)
+        var turn = 1, geminiTurns = 0
+        for _ in 0..<7 {
+            let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'"))
+            if option.firstMatch.exists {
+                // Vary the family's answers so different committed actions reach the director.
+                let pick = option.count > 1 && turn % 2 == 0 ? option.element(boundBy: 1) : option.firstMatch
+                if !pick.isHittable { reveal(pick.identifier, in: app) }
+                pick.tap()
+                shot(String(format: "gemini-\(scenario)-%02d-answered", turn), app)
+            }
+            let next = element("adaptive.next", in: app)
+            guard next.waitForExistence(timeout: 10) else { break }
+            if !next.isEnabled { if element("adaptive.finishedCard", in: app).exists { break } else { continue } }
+            next.tap()
+            // First contact with the development gateway asks for Local Network access for this test app.
+            let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Allow"]
+            if allow.waitForExistence(timeout: 3) { allow.tap() }
+            // A Gemini turn waits on the gateway; the Next button comes back once the commit is published.
+            let done = NSPredicate(format: "isEnabled == true OR exists == false")
+            _ = XCTWaiter.wait(for: [expectation(for: done, evaluatedWith: next)], timeout: 150)
+            shot(String(format: "gemini-\(scenario)-%02d-director", turn), app)
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'suggested by Gemini'")).firstMatch.exists { geminiTurns += 1 }
+            turn += 1
+            if element("adaptive.finishedCard", in: app).exists { break }
+        }
+        // Fallback turns are legitimate, but this journey must show real Gemini-directed, host-validated commits.
+        XCTAssertGreaterThan(geminiTurns, 0, "at least one committed turn was directed by Gemini")
+        shot("gemini-\(scenario)-final", app)
+    }
+
+    func testScorecardOnPrepareForEachHousingDemo() {
+        for home in ["ranch", "apartment-complex", "manufactured", "twostory"] {
+            let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home])
+            XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+            let card = reveal("score.card", in: app, steps: 8)
+            XCTAssertTrue(card.waitForExistence(timeout: 30), home)
+            shot("score-\(home)", app)
+            let how = reveal("score.how", in: app, steps: 6)
+            if how.exists { how.tap(); scroll(app, up: true); shot("score-\(home)-how", app) }
+            app.terminate()
+        }
+    }
+
+    func testEveryFloorOfEveryHousingDemoInBothViews() {
+        // Floors come from -demoHomeFloor so every floor is captured without driving the menu picker.
+        let floors = ["apartment-complex": 3, "manufactured": 1, "twostory": 2, "ranch": 1]
+        for (home, count) in floors.sorted(by: { $0.key < $1.key }) {
+            for floor in 0..<count {
+                for mode in ["2d", "3d"] {
+                    let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home, "-demoHomeMode", mode, "-demoHomeFloor", "\(floor)"])
+                    XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+                    let open = reveal("next.home", in: app)
+                    XCTAssertTrue(open.waitForExistence(timeout: 10), home)
+                    open.tap()
+                    XCTAssertTrue(element("home.scene", in: app).waitForExistence(timeout: 20), home)
+                    shot("home-\(home)-floor\(floor + 1)-\(mode)", app)
+                    if mode == "2d" {
+                        // The legend/marker key sits below the drawing.
+                        scroll(app, up: true)
+                        shot("home-\(home)-floor\(floor + 1)-\(mode)-below", app)
+                    }
+                    app.terminate()
+                }
+            }
+        }
+    }
+}

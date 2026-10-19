@@ -81,10 +81,13 @@ enum DollhouseBuilder {
             .flatMap { s in s.polygon.map { (toCommon[s.floorID] ?? .identity).apply($0) } }
         let cx = Float(((pts.map(\.x).min() ?? 0) + (pts.map(\.x).max() ?? 0)) / 2)
         let cy = Float(((pts.map(\.y).min() ?? 0) + (pts.map(\.y).max() ?? 0)) / 2)
+        // Shown floors keep their relative heights, but the lowest one sits at the origin. Without this a third-floor
+        // unit (6 m) rose toward the default camera and was cropped and over-zoomed on device.
+        let baseElevation = Float(floors.map(\.elevationMeters).min() ?? 0)
         func p3(_ v: Vec2, _ fid: String, lift: Float = 0) -> SIMD3<Float> {
             guard let floor = home.floors.first(where: { $0.id == fid }) else { return SIMD3(0, lift, 0) }
             let point = HomeModelExport.point3D(v, floor: floor)
-            return SIMD3(Float(point.x) - cx, Float(point.y) + lift, Float(point.z) + cy)
+            return SIMD3(Float(point.x) - cx, Float(point.y) - baseElevation + lift, Float(point.z) + cy)
         }
 
         let floorMat = SimpleMaterial(color: .init(white: 0.92, alpha: 1), isMetallic: false)

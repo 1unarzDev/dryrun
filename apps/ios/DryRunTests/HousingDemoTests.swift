@@ -15,7 +15,7 @@ final class HousingDemoTests: XCTestCase {
         XCTAssertNil(DemoLaunch(arguments: ["app", "-demoHome", "arbitrary-path"]).homeID)
     }
     func testEachHousingDemoUsesOneCanonicalHomeAcrossHouseholdAndPlan() async throws {
-        for home in [SampleHomes.apartmentComplex, .manufactured, .twoStory] {
+        for home in [SampleHomes.apartmentComplex, SampleHomes.manufactured, SampleHomes.twoStory] {
             let store = InMemoryPrivateDataStore()
             let model = AppModel(store: store)
             await model.useSampleHousehold(SampleHouseholds.oak, demoHome: home)
