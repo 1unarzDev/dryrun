@@ -23,7 +23,7 @@ try {
  state=await commit('block',[{kind:'schedule',target:'evt.home-fire.fire-origin',minute:1},{kind:'advance',minute:1}]);
  const alternate=state.receipt;assert.equal(alternate.routes[0].primary.exitPortalID,'living-exit');
  state=await host.request({op:'practiceBegin',session:state.session,attemptID:'check',variantID:'practice-check-a/0'});
- assert.equal(practiceSource.parse(state.aiState.practiceAttempts[0].source).evaluatorVersion,'dryrun.practice-anchors/2');
+ assert.equal(practiceSource.parse(state.aiState.practiceAttempts[0].source).evaluatorVersion,'dryrun.practice-anchors/3');
  state=await host.request({op:'practiceSubmit',session:state.session,aiState:state.aiState,attemptID:'check',competencyID:'initialResponse',commit:{id:'unsupported-first',actor:'user',baseRevision:state.receipt.revision,commands:[{kind:'unsupported'}]}});
  const rubric=JSON.parse(await readFile('../../content/ai/rubric-v0.json','utf8')),branches=[];
  for(const destination of ['living','kitchen']) {
@@ -32,11 +32,11 @@ try {
   const observed=result.aiState.practiceAttempts[0].observations.at(-1);assert.equal(observed.credit,destination==='living'?1:0);
   const assessment=await host.request({op:'assess',session:result.session,aiState:JSON.parse(JSON.stringify(result.aiState)),rubric});
   assert.equal(assessment.scorecard.practice,destination==='living'?25:0);assert.equal(assessment.scorecard.practiceAssessed,1);
-  assert.equal(assessment.scorecard.practiceEvaluatorVersion,'dryrun.practice-anchors/2');
+  assert.equal(assessment.scorecard.practiceEvaluatorVersion,'dryrun.practice-anchors/3');
   const replay=await host.request({op:'query',session:JSON.parse(JSON.stringify(result.session))});assert.deepEqual(replay.receipt,result.receipt);
   assert.deepEqual(result.session.initial,input);
   branches.push({destination,action,observation:observed,receipt:result.receipt,scorecard:assessment.scorecard,replayExact:true});
  }
- await writeFile('../../fixtures/ai/practice-adaptation-v2.json',JSON.stringify({synthetic:true,modelCalls:0,evaluatorVersion:'dryrun.practice-anchors/2',usual,alternate,source:state.aiState.practiceAttempts[0].source,branches},null,2)+'\n');
- console.log(JSON.stringify({status:'passed',evaluatorVersion:'dryrun.practice-anchors/2',alternateMovement:1,blockedMovement:0,practiceAssessed:1,replayExact:true,modelCalls:0}));
+ await writeFile('../../fixtures/ai/practice-adaptation-v2.json',JSON.stringify({synthetic:true,modelCalls:0,evaluatorVersion:'dryrun.practice-anchors/3',usual,alternate,source:state.aiState.practiceAttempts[0].source,branches},null,2)+'\n');
+ console.log(JSON.stringify({status:'passed',evaluatorVersion:'dryrun.practice-anchors/3',alternateMovement:1,blockedMovement:0,practiceAssessed:1,replayExact:true,modelCalls:0}));
 }finally{host.close();}

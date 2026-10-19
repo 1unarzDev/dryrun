@@ -18,7 +18,7 @@
         "sequence": 1,
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
-          "evaluatorVersion": "dryrun.practice-anchors/2",
+          "evaluatorVersion": "dryrun.practice-anchors/3",
           "initialDigest": "6713542b694d940c",
           "sessionID": "synthetic-session",
           "startingEventSequence": 3,
@@ -1581,7 +1581,7 @@
         "sequence": 1,
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
-          "evaluatorVersion": "dryrun.practice-anchors/2",
+          "evaluatorVersion": "dryrun.practice-anchors/3",
           "initialDigest": "6713542b694d940c",
           "sessionID": "synthetic-session",
           "startingEventSequence": 3,
@@ -3076,7 +3076,7 @@
     "overall": 23,
     "practice": 25,
     "practiceAssessed": 1,
-    "practiceEvaluatorVersion": "dryrun.practice-anchors/2",
+    "practiceEvaluatorVersion": "dryrun.practice-anchors/3",
     "preparation": 22.77777777777778,
     "provisional": true,
     "rubricVersion": "dryrun-rubric/0.1-draft",

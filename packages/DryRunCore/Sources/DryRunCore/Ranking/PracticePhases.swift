@@ -2,7 +2,8 @@ import Foundation
 
 public extension IntegratedAIState {
     static let phasedPracticeEvaluatorVersion="dryrun.practice-anchors/2"
-    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1"]
+    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2"]
+    private static func phasedEvaluator(_ variant:String)->String {variant.hasSuffix("/2") ? "dryrun.practice-anchors/3":phasedPracticeEvaluatorVersion}
 
     /// Freeze all situations before presenting any question. No reroll, source switching or
     /// director difficulty changes are allowed during the scored check. Training stays separate.
@@ -18,14 +19,14 @@ public extension IntegratedAIState {
         var sources:[PracticeAttemptSource]=[]
         for (index,id) in sessionIDs.enumerated() {
             guard let session=sessions.first(where:{$0.id==id}),session.concernSeed==nil,
-                  session.initial.scenarioID==Self.practiceScenario(order[index]),
+                  session.initial.scenarioID==Self.practiceScenario(order[index],variant:variantID),
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
             let receipt=try session.query(library:library)
             guard !receipt.finished else {throw SessionError.finished}
             sources.append(.init(contractVersion:"dryrun.practice-capture/1",sessionID:id,
                 initialDigest:try Self.practiceSourceDigest(session),startingRevision:session.revision,
-                startingEventSequence:receipt.eventSequence,evaluatorVersion:Self.phasedPracticeEvaluatorVersion))
+                startingEventSequence:receipt.eventSequence,evaluatorVersion:Self.phasedEvaluator(variantID)))
         }
         var candidate=self
         var attempt=try candidate.beginPractice(id:id,variantID:variantID)
@@ -59,7 +60,7 @@ public extension IntegratedAIState {
         var candidate=self
         let receipt=try candidate.sessions[s].commit(commit,library:library)
         var answer:PracticeAnswer?
-        do {answer=try PracticeEvaluator.evaluate(competencyID:competencyID,actionID:commit.id,session:candidate.sessions[s],library:library,evaluatorVersion:Self.phasedPracticeEvaluatorVersion)}
+        do {answer=try PracticeEvaluator.evaluate(competencyID:competencyID,actionID:commit.id,session:candidate.sessions[s],library:library,evaluatorVersion:Self.phasedEvaluator(practiceAttempts[a].variantID))}
         catch SessionError.invalidCommand {answer=nil}
         let observation=PracticeObservation(competencyID:competencyID,actionID:commit.id,acceptedRevision:receipt.revision,
             receiptDigest:receipt.contextDigest,credit:answer?.credit,feedbackRevealed:false)
@@ -81,9 +82,9 @@ public extension IntegratedAIState {
         var accepted=attempt;accepted.answers=[]
         var common:SimulationSession?
         for (index,source) in sources.enumerated() {
-            guard source.contractVersion=="dryrun.practice-capture/1",source.evaluatorVersion==Self.phasedPracticeEvaluatorVersion,
+            guard source.contractVersion=="dryrun.practice-capture/1",source.evaluatorVersion==Self.phasedEvaluator(attempt.variantID),
                   let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
-                  session.initial.scenarioID==Self.practiceScenario(Self.practiceOrder(attempt.variantID)[index]),
+                  session.initial.scenarioID==Self.practiceScenario(Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID),
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   source.startingRevision>=0,source.startingRevision<=session.revision,
@@ -105,7 +106,7 @@ public extension IntegratedAIState {
                 let receipt=try prefix.commit(action,library:library)
                 guard receipt.contextDigest==observation.receiptDigest else {throw SessionError.stale}
                 var answer:PracticeAnswer?
-                do {answer=try PracticeEvaluator.evaluate(competencyID:observation.competencyID,actionID:action.id,session:prefix,library:library,evaluatorVersion:Self.phasedPracticeEvaluatorVersion)}
+                do {answer=try PracticeEvaluator.evaluate(competencyID:observation.competencyID,actionID:action.id,session:prefix,library:library,evaluatorVersion:Self.phasedEvaluator(attempt.variantID))}
                 catch SessionError.invalidCommand {answer=nil}
                 guard observation.credit==answer?.credit else {throw SessionError.invalidCommand}
                 if let answer {accepted.answers.append(answer)}
@@ -114,7 +115,10 @@ public extension IntegratedAIState {
         return accepted
     }
 
-    private static func practiceScenario(_ competency:String)->String {
+    private static func practiceScenario(_ competency:String,variant:String)->String {
+        if variant.hasSuffix("/2") {
+            return ["initialResponse","adaptation"].contains(competency) ? "home-fire":"water-outage"
+        }
         switch competency {
         case "initialResponse","communication":return "water-outage"
         case "adaptation":return "home-fire"

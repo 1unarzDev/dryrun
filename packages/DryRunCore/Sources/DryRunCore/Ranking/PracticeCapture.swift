@@ -62,7 +62,7 @@ public extension IntegratedAIState {
         guard let a=practiceAttempts.firstIndex(where:{$0.id==attemptID}),!Self.phasedPracticeVariants.contains(practiceAttempts[a].variantID),
               practiceAttempts[a].sequence==practiceAttempts.map(\.sequence).max(),
               let source=practiceAttempts[a].source,source.contractVersion=="dryrun.practice-capture/1",
-              [PracticeEvaluator.version,PracticeEvaluator.legacyVersion].contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),
+              PracticeEvaluator.supportedVersions.contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),
               let s=sessions.firstIndex(where:{$0.id==source.sessionID}),
               sessions[s].concernSeed==nil,
               var observations=practiceAttempts[a].observations,
@@ -108,7 +108,7 @@ public extension IntegratedAIState {
             var accepted=attempt;accepted.answers=[]
             guard let source=attempt.source else {return accepted}
             guard !Self.phasedPracticeVariants.contains(attempt.variantID),attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",
-              [PracticeEvaluator.version,PracticeEvaluator.legacyVersion].contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
+              PracticeEvaluator.supportedVersions.contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   let observations=attempt.observations,observations.count<=4,
                   Set(observations.map(\.actionID)).count==observations.count,
@@ -160,8 +160,8 @@ public extension IntegratedAIState {
     }
     static func practiceOrder(_ variantID:String)->[String] {
         switch variantID {
-        case "practice-check-a/0","practice-check-a/1":return ["initialResponse","adaptation","communication","continuity"]
-        case "practice-check-b/0","practice-check-b/1":return ["continuity","communication","adaptation","initialResponse"]
+        case "practice-check-a/0","practice-check-a/1","practice-check-a/2":return ["initialResponse","adaptation","communication","continuity"]
+        case "practice-check-b/0","practice-check-b/1","practice-check-b/2":return ["continuity","communication","adaptation","initialResponse"]
         default:return []
         }
     }

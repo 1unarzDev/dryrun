@@ -1,65 +1,133 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "properties": {
-    "variantID": {
-      "type": "string",
-      "enum": [
-        "practice-check-a/1",
-        "practice-check-b/1"
-      ]
-    },
-    "phaseSources": {
-      "minItems": 4,
-      "maxItems": 4,
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "contractVersion": {
-            "type": "string",
-            "const": "dryrun.practice-capture/1"
-          },
-          "sessionID": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "initialDigest": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 128
-          },
-          "startingRevision": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 128
-          },
-          "startingEventSequence": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "evaluatorVersion": {
-            "type": "string",
-            "const": "dryrun.practice-anchors/2"
-          }
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "variantID": {
+          "type": "string",
+          "enum": [
+            "practice-check-a/1",
+            "practice-check-b/1"
+          ]
         },
-        "required": [
-          "contractVersion",
-          "sessionID",
-          "initialDigest",
-          "startingRevision",
-          "startingEventSequence",
-          "evaluatorVersion"
-        ],
-        "additionalProperties": false
-      }
+        "phaseSources": {
+          "minItems": 4,
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "contractVersion": {
+                "type": "string",
+                "const": "dryrun.practice-capture/1"
+              },
+              "sessionID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "initialDigest": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "startingRevision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 128
+              },
+              "startingEventSequence": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "evaluatorVersion": {
+                "type": "string",
+                "const": "dryrun.practice-anchors/2"
+              }
+            },
+            "required": [
+              "contractVersion",
+              "sessionID",
+              "initialDigest",
+              "startingRevision",
+              "startingEventSequence",
+              "evaluatorVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "variantID",
+        "phaseSources"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "variantID": {
+          "type": "string",
+          "enum": [
+            "practice-check-a/2",
+            "practice-check-b/2"
+          ]
+        },
+        "phaseSources": {
+          "minItems": 4,
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "contractVersion": {
+                "type": "string",
+                "const": "dryrun.practice-capture/1"
+              },
+              "sessionID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "initialDigest": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "startingRevision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 128
+              },
+              "startingEventSequence": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "evaluatorVersion": {
+                "type": "string",
+                "const": "dryrun.practice-anchors/3"
+              }
+            },
+            "required": [
+              "contractVersion",
+              "sessionID",
+              "initialDigest",
+              "startingRevision",
+              "startingEventSequence",
+              "evaluatorVersion"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "variantID",
+        "phaseSources"
+      ],
+      "additionalProperties": false
     }
-  },
-  "required": [
-    "variantID",
-    "phaseSources"
-  ],
-  "additionalProperties": false
+  ]
 }

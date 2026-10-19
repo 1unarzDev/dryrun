@@ -2,15 +2,18 @@ import Foundation
 
 /// Narrow versioned anchors. Unsupported situations remain unassessed, never guessed by a model.
 public enum PracticeEvaluator {
-    public static let version = "dryrun.practice-anchors/2"
+    public static let version = "dryrun.practice-anchors/3"
+    public static let previousVersion = "dryrun.practice-anchors/2"
+    public static let supportedVersions=[version,previousVersion,legacyVersion]
     public static let legacyVersion = "dryrun.practice-anchors/1"
     public static func evaluate(competencyID:String,actionID:String,session:SimulationSession,library:ScenarioLibrary,evaluatorVersion:String = version) throws -> PracticeAnswer {
-        guard [version,legacyVersion].contains(evaluatorVersion) else {throw SessionError.invalidCommand}
+        guard supportedVersions.contains(evaluatorVersion) else {throw SessionError.invalidCommand}
         guard let index=session.commits.firstIndex(where:{$0.id==actionID && $0.actor=="user"}),
               session.commits[index].commands.count==1 else {throw SessionError.invalidCommand}
         var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)
         var history=[try prefix.query(library:library)]
         for commit in session.commits.prefix(index) {history.append(try prefix.commit(commit,library:library))}
+        let beforeSession=prefix
         let before=try prefix.query(library:library)
         let action=session.commits[index]
         let after=try prefix.commit(action,library:library)
@@ -20,6 +23,20 @@ public enum PracticeEvaluator {
         case ("initialResponse","useStoredWater"):
             guard session.initial.scenarioID=="water-outage",before.snapshot.services[Svc.waterSupply] == .unavailable else {throw SessionError.invalidCommand}
             credit=command.value=="essential" ? 1 : 0
+        case ("initialResponse","choose"):
+            guard evaluatorVersion==version,session.initial.scenarioID=="home-fire",
+                  command.target=="choice.home-fire.first-move",let scenario=library.scenario(session.initial.scenarioID),
+                  before.snapshot.firedEventIDs.contains(where:{id in scenario.events.contains{$0.id==id && [RuleID.fireIgnition,RuleID.fireBlockPrimary].contains($0.rule)}}),
+                  let choice=scenario.choicePoints.first(where:{$0.id==command.target}),
+                  let option=choice.options.first(where:{$0.id==command.value}) else {throw SessionError.invalidCommand}
+            // This is an authored decision/intent anchor, not proof of physical egress or mobility.
+            if option.unsafe {credit=0}
+            else {guard option.id=="get-out",option.effect=="takeExit" else {throw SessionError.invalidCommand};credit=1}
+        case ("continuity","useStoredWater"):
+            guard evaluatorVersion==version,session.initial.scenarioID=="water-outage",
+                  before.snapshot.services[Svc.waterSupply] == .unavailable else {throw SessionError.invalidCommand}
+            try verifyWaterConservation(before:beforeSession,actionID:actionID,library:library)
+            credit=command.value=="essential" ? 1:0
         case ("communication","contact"):
             guard let id=command.target,session.initial.household.contacts.contains(where:{$0.id==id && $0.isComplete}) else {throw SessionError.invalidCommand}
             // A recorded contact alone cannot establish a working communications channel.
@@ -44,6 +61,31 @@ public enum PracticeEvaluator {
         }
         return PracticeAnswer(competencyID:competencyID,credit:credit,committedActionID:actionID,beforeFeedback:true)
     }
+    /// Compare two isolated host projections under the same source/pending schedule. This proves
+    /// a meaningful conservation consequence without reproducing water arithmetic in the grader.
+    private static func verifyWaterConservation(before:SimulationSession,actionID:String,library:ScenarioLibrary)throws {
+        let receipt=try before.query(library:library)
+        guard let amount=receipt.snapshot.resources["res.water.stored"]?.amount,amount.isFinite,amount>0,
+              let scenario=library.scenario(before.initial.scenarioID),before.revision<=126,
+              receipt.snapshot.simMinute<min(scenario.durationMinutes,before.directorPolicy?.schedulingHorizonMinutes ?? scenario.durationMinutes) else {throw SessionError.invalidCommand}
+        let horizon=min(scenario.durationMinutes,before.directorPolicy?.schedulingHorizonMinutes ?? scenario.durationMinutes,receipt.snapshot.simMinute+60)
+        func project(_ policy:String)throws->SessionReceipt {
+            var probe=before
+            try probe.commit(.init(id:actionID,actor:"user",baseRevision:probe.revision,commands:[.init(kind:"useStoredWater",value:policy)]),library:library)
+            var projectionID="practice-water-projection"
+            while probe.commits.contains(where:{$0.id==projectionID}) {projectionID += "_"}
+            return try probe.commit(.init(id:projectionID,actor:"director",baseRevision:probe.revision,commands:[.init(kind:"advance",minute:horizon)]),library:library)
+        }
+        let essential=try project("essential"),all=try project("all")
+        guard let conserved=essential.snapshot.resources["res.water.stored"]?.amount,
+              let unrestricted=all.snapshot.resources["res.water.stored"]?.amount,
+              essential.snapshot.simMinute>receipt.snapshot.simMinute,all.snapshot.simMinute>receipt.snapshot.simMinute,
+              conserved<=amount,unrestricted<=amount else {throw SessionError.invalidCommand}
+        let differentDraw=essential.snapshot.simMinute==all.snapshot.simMinute && conserved>unrestricted+1e-9
+        let laterDepletion=essential.snapshot.simMinute>all.snapshot.simMinute && unrestricted==0
+        guard differentDraw || laterDepletion else {throw SessionError.invalidCommand}
+    }
+
     /// Egress-only anchor. A committed blockage must invalidate a previously verified path
     /// from the same starting room. An unchanged route, a model claim or an arbitrary safe
     /// movement cannot establish adaptation. Shelter/refuge anchors remain unassessed.

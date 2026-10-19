@@ -1,7 +1,7 @@
 {
   "synthetic": true,
   "modelCalls": 0,
-  "evaluatorVersion": "dryrun.practice-anchors/2",
+  "evaluatorVersion": "dryrun.practice-anchors/3",
   "usual": {
     "contextDigest": "cd577d31bd3ec491",
     "directorState": {
@@ -709,7 +709,7 @@
   },
   "source": {
     "contractVersion": "dryrun.practice-capture/1",
-    "evaluatorVersion": "dryrun.practice-anchors/2",
+    "evaluatorVersion": "dryrun.practice-anchors/3",
     "initialDigest": "3c890df2d521b703",
     "sessionID": "synthetic-session",
     "startingEventSequence": 4,
@@ -1093,7 +1093,7 @@
         "overall": 23.749999999999996,
         "practice": 25,
         "practiceAssessed": 1,
-        "practiceEvaluatorVersion": "dryrun.practice-anchors/2",
+        "practiceEvaluatorVersion": "dryrun.practice-anchors/3",
         "preparation": 23.611111111111107,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",
@@ -1427,7 +1427,7 @@
         "overall": 21.249999999999996,
         "practice": 0,
         "practiceAssessed": 1,
-        "practiceEvaluatorVersion": "dryrun.practice-anchors/2",
+        "practiceEvaluatorVersion": "dryrun.practice-anchors/3",
         "preparation": 23.611111111111107,
         "provisional": true,
         "rubricVersion": "dryrun-rubric/0.1-draft",

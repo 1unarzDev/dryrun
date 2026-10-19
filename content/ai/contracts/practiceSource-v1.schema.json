@@ -30,7 +30,8 @@
       "type": "string",
       "enum": [
         "dryrun.practice-anchors/1",
-        "dryrun.practice-anchors/2"
+        "dryrun.practice-anchors/2",
+        "dryrun.practice-anchors/3"
       ]
     }
   },

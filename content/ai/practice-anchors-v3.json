@@ -1,0 +1,26 @@
+{
+  "version": "dryrun.practice-anchors/3",
+  "status": "provisional; qualified human review and variant comparability pending",
+  "previousVersions": ["dryrun.practice-anchors/1", "dryrun.practice-anchors/2"],
+  "compatibility": "Missing persisted evaluatorVersion selects anchors/1. Explicit anchors/1 and /2 retain their original grading. Version-1 phased checks remain on anchors/2; version-2 phased checks pin anchors/3.",
+  "initialFireDecision": {
+    "sourceIDs": ["S19"],
+    "prerequisite": "A committed authored fire ignition or blockage is present in a home-fire source.",
+    "action": "Exactly one committed choose action for choice.home-fire.first-move.",
+    "full": "Authored get-out/takeExit decision prioritizes escape. This grades intent, not physical mobility or successful egress.",
+    "zero": "An authored unsafe option such as grabbing belongings, searching for a pet or fighting the fire.",
+    "unknown": "No committed fire cue, unsupported choice or unknown option. Missing geometry does not invent a route."
+  },
+  "waterContinuity": {
+    "sourceIDs": ["S26"],
+    "prerequisite": "Computed unavailable water supply and positive known recorded stored water in water-outage.",
+    "action": "Exactly one committed useStoredWater action.",
+    "proof": "Two isolated host projections from the same pre-answer state/pending schedule compare essential versus all use over at most 60 simulated minutes or an earlier mandatory boundary. The essential policy must preserve more stock at the same time, or delay depletion. The grader implements no water arithmetic.",
+    "full": "The submitted essential policy with a demonstrated conservation consequence.",
+    "zero": "The submitted all policy when the host demonstrates the avoidable faster draw.",
+    "unknown": "Unknown/zero stock, no active supply loss, no remaining supported projection horizon or no demonstrable difference.",
+    "limits": "The existing doubled-use exercise assumption is not medical rationing advice. No stock amount, purchase, speed, cost or equipment ownership adds practice points. Actual supply adequacy remains a separate preparation criterion."
+  },
+  "unchanged": "Initial stored-water response, verified route adaptation, recorded contact/channel and essential-device allocation anchors retain their prior semantics. No new partial-credit anchor is defined.",
+  "authority": "Committed user actions and deterministic host receipts only. Projections never enter the real session, inventory, household or captured answer."
+}

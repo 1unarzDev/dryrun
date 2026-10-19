@@ -4,7 +4,7 @@ import {Host} from './host.js';
 import {practicePhasePlan} from '../src/practice-contracts.js';
 const host=new Host();
 try {
- const fixture=JSON.parse(await readFile('../../fixtures/ai/practice-phases.json','utf8'));
+ const fixture=JSON.parse(await readFile('../../fixtures/ai/practice-'+(process.env.DRYRUN_PRACTICE_NONDEVICE==='1'?'nondevice':'phases')+'.json','utf8'));
  const plan=practicePhasePlan.parse(fixture.plan);
  const rubric=JSON.parse(await readFile('../../content/ai/rubric-v0.json','utf8'));
  for(const branch of fixture.branches){
@@ -22,5 +22,14 @@ try {
   assert.deepEqual(local,branch.final);
   assert.equal(branch.practice,branch.wrongFirst?75:100);assert.equal(branch.practiceAssessed,4);
  }
- console.log(JSON.stringify({passed:true,modelCalls:0,branches:2,actionAndReceiptReplay:true,preFeedbackGradeReplay:true,scoreReplay:true,allFourCompetencies:true}));
+ if(fixture.resourceProof){
+  const source=fixture.sources.find((s:any)=>s.id===fixture.resourceProof.sourceID);
+  for(const proof of fixture.resourceProof.projections){
+   const action=await host.request({op:'commit',session:source,commit:proof.actionCommit});
+   const projected=await host.request({op:'preview',session:action.session,commit:proof.forecastCommit});
+   assert.deepEqual(projected.receipt,proof.receipt);
+  }
+  assert.deepEqual((await host.request({op:'query',session:source})).receipt,fixture.resourceProof.original);
+ }
+ console.log(JSON.stringify({passed:true,modelCalls:0,variantID:plan.variantID,branches:2,actionAndReceiptReplay:true,preFeedbackGradeReplay:true,scoreReplay:true,allFourCompetencies:true}));
 }finally{host.close();}
