@@ -48,7 +48,10 @@
               "emergencyManagement",
               "warmingCooling",
               "shelter",
-              "clothing"
+              "clothing",
+              "policeStation",
+              "fireStation",
+              "trustedMeetup"
             ]
           },
           "purpose": {

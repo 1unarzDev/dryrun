@@ -76,4 +76,19 @@ import Testing
         try refresh.accept([plan()],ticket:ticket)
         #expect(throws:SessionError.stale){try refresh.accept([plan()],ticket:ticket)}
     }
+    @Test func stationAndMeetupCategoriesKeepLocalPolicyAndTaskBinding()throws {
+        for category in ["policeStation","fireStation","trustedMeetup"] {
+            var refresh=ResourceStrategyRefresh();refresh.setCloudOptIn(true)
+            let maybeTicket=refresh.begin(try key());let ticket=try #require(maybeTicket)
+            var proposed=plan();proposed.category=category
+            proposed.purpose="Review a recorded communication or meetup option"
+            proposed.requiredEvidence=["Confirm the actual role and household arrangement; shelter service is not established"]
+            var forbidden=proposed;forbidden.cloudReturnPolicy="send_listings"
+            #expect(throws:SessionError.invalidCommand){try refresh.accept([forbidden],ticket:ticket)}
+            try refresh.accept([proposed],ticket:ticket)
+            #expect(refresh.acceptedPlans.first?.category==category)
+            #expect(refresh.acceptedPlans.first?.cloudReturnPolicy=="local_only")
+        }
+    }
+
 }

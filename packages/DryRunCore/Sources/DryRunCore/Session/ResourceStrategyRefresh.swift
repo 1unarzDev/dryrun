@@ -29,7 +29,7 @@ public struct ResourceStrategyRefresh: Sendable {
     }
     public mutating func accept(_ plans:[ResourceSearchPlan],ticket:Ticket)throws {
         guard cloudOptIn,ticket.generation==generation,ticket.key==pending else{throw SessionError.stale}
-        let categories=["grocery","foodAssistance","pharmacy","equipmentSupplier","hardware","hospital","emergencyManagement","warmingCooling","shelter","clothing"]
+        let categories=["grocery","foodAssistance","pharmacy","equipmentSupplier","hardware","hospital","emergencyManagement","warmingCooling","shelter","clothing","policeStation","fireStation","trustedMeetup"]
         guard ticket.key.schemaVersion==nil || ticket.key.schemaVersion=="dryrun.resource-strategy-key/1" else {throw SessionError.invalidCommand}
         guard plans.count<=3,Set(plans.map(\.id)).count==plans.count,plans.allSatisfy({plan in
             !plan.id.isEmpty && !plan.taskID.isEmpty && (ticket.key.relatedTaskIDs?.contains(plan.taskID) ?? true)

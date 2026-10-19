@@ -38,3 +38,12 @@ it('rejects noncanonical inventory categories before they bypass host arithmetic
  expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[observation],question:null}).success).toBe(true);
  expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,category:'hydration'}],question:null}).success).toBe(false);
 });
+
+
+it('supports station and meetup searches without granting geographic data forwarding',()=>{
+ const base={id:'meetup-search',taskID:'recorded-meetup-task',dependencyIDs:['meetingPlace'],hazardIDs:[],purpose:'Review a communication or meetup preparation option',mandatoryCapabilities:[],unknowns:['Actual role and household agreement; no shelter capability established'],travelMode:'walking',maximumDistanceKm:5,expansionLimit:0,requiredEvidence:['Confirm the household arrangement and actual facility role'],cloudReturnPolicy:'local_only'};
+ for(const category of ['policeStation','fireStation','trustedMeetup']){
+  expect(resourcePlan.safeParse({...base,category}).success).toBe(true);
+  expect(resourcePlan.safeParse({...base,category,cloudReturnPolicy:'send_listings'}).success).toBe(false);
+ }
+});
