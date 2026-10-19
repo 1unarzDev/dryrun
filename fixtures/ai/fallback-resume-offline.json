@@ -3747,7 +3747,7 @@
           ]
         },
         "homeScene": {
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "homeRevision": 1,
           "units": "meter",
           "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
@@ -3761,7 +3761,9 @@
                   "x": 0,
                   "y": 0
                 }
-              }
+              },
+              "level": 0,
+              "exteriorGrade": "unknown"
             }
           ],
           "rooms": [
@@ -3787,7 +3789,22 @@
                 }
               ],
               "use": "livingRoom",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": false
             },
             {
               "id": "sp-kitchen",
@@ -3811,7 +3828,22 @@
                 }
               ],
               "use": "kitchen",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": false
             },
             {
               "id": "sp-hall",
@@ -3835,7 +3867,22 @@
                 }
               ],
               "use": "hallway",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": false
             },
             {
               "id": "sp-bed1",
@@ -3859,7 +3906,22 @@
                 }
               ],
               "use": "bedroom",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": false
             },
             {
               "id": "sp-closet",
@@ -3883,7 +3945,23 @@
                 }
               ],
               "use": "closet",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "value": true,
+                "origin": "userConfirmed",
+                "status": "confirmed",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": true
             },
             {
               "id": "sp-bath",
@@ -3907,7 +3985,22 @@
                 }
               ],
               "use": "bathroom",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": false
             },
             {
               "id": "sp-bed2",
@@ -3931,7 +4024,22 @@
                 }
               ],
               "use": "bedroom",
-              "confirmed": true
+              "confirmed": true,
+              "geometryNeedsReview": false,
+              "needsMeasurement": false,
+              "interiorNoWindowsConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "higherRefugeConfirmed": {
+                "origin": "unknown",
+                "status": "unknown",
+                "sourceIDs": [],
+                "inputIDs": []
+              },
+              "confirmedShelter": false
             }
           ],
           "portals": [
@@ -4635,8 +4743,11 @@
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
-          ]
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
+          ],
+          "homeSource": "sample"
         },
         "profiles": [
           {

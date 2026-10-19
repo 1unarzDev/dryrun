@@ -97,7 +97,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -108,6 +110,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -676,8 +679,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -700,8 +718,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -724,8 +757,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -748,8 +796,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -772,8 +835,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -796,8 +875,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -820,8 +914,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -843,12 +952,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -2860,7 +2971,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -2871,6 +2984,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -3439,8 +3553,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -3463,8 +3592,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -3487,8 +3631,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -3511,8 +3670,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -3535,8 +3709,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -3559,8 +3749,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -3583,8 +3788,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -3606,12 +3826,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -5804,7 +6026,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -5815,6 +6039,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -6383,8 +6608,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -6407,8 +6647,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -6431,8 +6686,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -6455,8 +6725,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -6479,8 +6764,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -6503,8 +6804,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -6527,8 +6843,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -6550,12 +6881,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -6992,7 +7325,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -7003,6 +7338,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -7571,8 +7907,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -7595,8 +7946,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -7619,8 +7985,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -7643,8 +8024,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -7667,8 +8063,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -7691,8 +8103,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -7715,8 +8142,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -7738,12 +8180,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -10205,7 +10649,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -10216,6 +10662,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -10784,8 +11231,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -10808,8 +11270,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -10832,8 +11309,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -10856,8 +11348,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -10880,8 +11387,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -10904,8 +11427,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -10928,8 +11466,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -10951,12 +11504,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -12968,7 +13523,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -12979,6 +13536,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -13547,8 +14105,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -13571,8 +14144,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -13595,8 +14183,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -13619,8 +14222,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -13643,8 +14261,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -13667,8 +14301,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -13691,8 +14340,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -13714,12 +14378,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -15882,7 +16548,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -15893,6 +16561,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -16461,8 +17130,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -16485,8 +17169,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -16509,8 +17208,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -16533,8 +17247,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -16557,8 +17286,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -16581,8 +17326,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -16605,8 +17365,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -16628,12 +17403,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {
@@ -17068,7 +17845,9 @@
           "floors": [
             {
               "elevation": 0,
+              "exteriorGrade": "unknown",
               "id": "fl-ground",
+              "level": 0,
               "transform": {
                 "rotationRadians": 0,
                 "translation": {
@@ -17079,6 +17858,7 @@
             }
           ],
           "homeRevision": 1,
+          "homeSource": "sample",
           "objects": [
             {
               "id": "an-smoke-hall",
@@ -17647,8 +18427,23 @@
           "rooms": [
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-living",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -17671,8 +18466,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-kitchen",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -17695,8 +18505,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-hall",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -17719,8 +18544,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed1",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 0,
@@ -17743,8 +18583,24 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": true,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-closet",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": true
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -17767,8 +18623,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bath",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 4.5,
@@ -17791,8 +18662,23 @@
             },
             {
               "confirmed": true,
+              "confirmedShelter": false,
               "floorID": "fl-ground",
+              "geometryNeedsReview": false,
+              "higherRefugeConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "id": "sp-bed2",
+              "interiorNoWindowsConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "needsMeasurement": false,
               "polygon": [
                 {
                   "x": 7,
@@ -17814,12 +18700,14 @@
               "use": "bedroom"
             }
           ],
-          "schemaVersion": "dryrun.home-scene/1",
+          "schemaVersion": "dryrun.home-scene/2",
           "units": "meter",
           "unknowns": [
             "Window operability/exterior grade require recorded confirmation",
             "Geometry does not establish structural shelter performance",
-            "Image observations cannot create graph edges"
+            "Image observations cannot create graph edges",
+            "confirmed is room-use confirmation, not geometry or route verification",
+            "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
           ],
           "walls": [
             {

@@ -21,7 +21,7 @@ export type Role=keyof typeof roleSchemas;
 export const anonymousHousehold=z.object({revision:z.number().int().nonnegative(),people:z.array(z.object({id,ageBand:id,needs:z.array(id).max(12)}).strict()).max(20),pets:z.array(z.object({id,kind:id,count:z.number().int().min(1).max(20)}).strict()).max(10),equipment:z.array(z.object({id,personID:id.nullable().optional(),essential:z.boolean(),powerRequired:z.boolean(),documentation:z.enum(['confirmed','missing','unknown'])}).strict()).max(20),transport:z.enum(['car','noCar','unknown']),limitedBudget:z.boolean(),regionID:id,evidence:z.array(evidence).max(100)}).strict();
 const vector=z.object({x:z.number().finite(),y:z.number().finite()}).strict();
 const evidenceValue=(value:z.ZodType)=>z.object({value:value.optional(),origin:id,status:id,sourceIDs:z.array(id),inputIDs:z.array(id),recordedAt:z.string().optional(),verifiedAt:z.string().optional(),unit:id.optional()}).strict();
-export const scene=z.object({schemaVersion:z.literal('dryrun.home-scene/1'),homeRevision:z.number().int().nonnegative(),units:z.literal('meter'),coordinateConvention:text,
+const legacyScene=z.object({schemaVersion:z.literal('dryrun.home-scene/1'),homeRevision:z.number().int().nonnegative(),units:z.literal('meter'),coordinateConvention:text,
  floors:z.array(z.object({id,elevation:z.number().finite(),transform:z.object({rotationRadians:z.number().finite(),translation:vector}).strict()}).strict()).max(12),
  rooms:z.array(z.object({id,floorID:id,polygon:z.array(vector).max(100),use:id,confirmed:z.boolean()}).strict()).max(100),
  portals:z.array(z.object({id,floorID:id,kind:id,verification:id,a:vector,b:vector,sideA:id,sideB:id,clearWidth:evidenceValue(z.number()),operable:evidenceValue(z.boolean()),stepFree:evidenceValue(z.boolean())}).strict()).max(200),
@@ -29,6 +29,16 @@ export const scene=z.object({schemaVersion:z.literal('dryrun.home-scene/1'),home
  connectors:z.array(z.object({id,kind:id,fromSpaceID:id,toSpaceID:id,fromPoint:vector,toPoint:vector,verification:id}).strict()).max(50),
  obstacles:z.array(z.object({id,floorID:id,polygon:z.array(vector).max(100)}).strict()).max(100),
  objects:z.array(z.object({id,kind:id,roomID:id.optional(),verification:id}).strict()).max(100),unknowns:z.array(text).max(20)}).strict();
+// /1 remains a distinct strict historical shape. /2 adds recorded safety facts and host-derived
+// planning suitability without accepting private labels, addresses, notes or model route patches.
+export const scene=z.discriminatedUnion('schemaVersion',[
+ legacyScene,
+ legacyScene.extend({schemaVersion:z.literal('dryrun.home-scene/2'),homeSource:z.enum(['sample','manual','roomPlanScan']),
+  floors:z.array(legacyScene.shape.floors.element.extend({level:z.number().int(),exteriorGrade:z.enum(['unknown','ground','aboveGround','belowGround','walkout'])})).max(12),
+  rooms:z.array(legacyScene.shape.rooms.element.extend({geometryNeedsReview:z.boolean(),needsMeasurement:z.boolean(),interiorNoWindowsConfirmed:evidenceValue(z.boolean()),higherRefugeConfirmed:evidenceValue(z.boolean()),confirmedShelter:z.boolean()})).max(100),
+  portals:z.array(legacyScene.shape.portals.element.extend({emergencyEscapePersonIDs:z.array(id).max(20).optional()})).max(200),
+ }),
+]);
 export const rubricSchema=z.object({version:id,domainWeights:z.record(id,z.number().positive()),criteria:z.array(z.object({id,domain:id,weight:z.number().positive(),predicateIDs:z.array(id).min(1),sourceIDs:z.array(id),critical:z.boolean(),applicabilityRule:id,freshnessDays:z.number().int().positive().nullable()}).strict()).max(50),preparationWeight:z.literal(0.9),practiceWeight:z.literal(0.1),knownGapCap:z.number().min(0).max(100),unknownGapCap:z.number().min(0).max(100)}).strict();
 export const featureContext=z.object({household:anonymousHousehold,tasks:z.array(task).max(30),gaps:z.array(z.object({category:id,required:z.number().nonnegative(),confirmedUsable:z.number().nonnegative(),deficit:z.number().nonnegative().nullable().optional(),unit:id,unknown:z.boolean(),sourceIDs:z.array(id),scopeUnsupported:z.boolean().optional()}).strict()).max(30),taskCatalog:z.array(task).max(100).optional(),intake:z.array(z.object({id,text:z.string().min(1).max(2000)}).strict()).max(4).optional(),allowedActionIDs:z.array(id).max(100),allowedCriterionIDs:z.array(id).max(50),scene:scene.optional(),images:z.array(imageManifest).max(4).optional(),rubric:rubricSchema.optional(),reviews:z.array(councilOutput).max(3).optional(),acceptedPredicates:z.array(z.object({assessmentVersion:id.optional(),criterionID:id,predicates:z.record(id,z.boolean()),evidenceIDs:z.array(id),notApplicableRule:id.optional(),outsideScope:z.boolean()}).strict()).max(50).optional(),profiles:z.array(z.object({id,scenarioID:id,rule:id,minute:z.number().int().nonnegative()}).strict()).max(40).optional()}).strict();
 const context=featureContext;

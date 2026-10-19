@@ -20,20 +20,21 @@ public struct HomeSceneContext: Codable, Sendable {
     public var floors:[FloorContext];public var rooms:[RoomContext];public var portals:[PortalContext]
     public var walls:[WallSegment];public var connectors:[FloorConnector];public var obstacles:[ObstacleContext];public var objects:[ObjectContext]
     public var unknowns:[String]
-    public struct FloorContext: Codable, Sendable {public var id:String;public var elevation:Double;public var transform:Transform2D}
-    public struct RoomContext: Codable, Sendable {public var id:String;public var floorID:String;public var polygon:[Vec2];public var use:String;public var confirmed:Bool}
-    public struct PortalContext: Codable, Sendable {public var id:String;public var floorID:String;public var kind:String;public var verification:String;public var a:Vec2;public var b:Vec2;public var sideA:String;public var sideB:String;public var clearWidth:EvidenceValue<Double>;public var operable:EvidenceValue<Bool>;public var stepFree:EvidenceValue<Bool>}
+    public var homeSource:HomeSource?
+    public struct FloorContext: Codable, Sendable {public var id:String;public var elevation:Double;public var transform:Transform2D;public var level:Int?;public var exteriorGrade:ExteriorGrade?}
+    public struct RoomContext: Codable, Sendable {public var id:String;public var floorID:String;public var polygon:[Vec2];public var use:String;public var confirmed:Bool;public var geometryNeedsReview:Bool?;public var needsMeasurement:Bool?;public var interiorNoWindowsConfirmed:EvidenceValue<Bool>?;public var higherRefugeConfirmed:EvidenceValue<Bool>?;public var confirmedShelter:Bool?}
+    public struct PortalContext: Codable, Sendable {public var id:String;public var floorID:String;public var kind:String;public var verification:String;public var a:Vec2;public var b:Vec2;public var sideA:String;public var sideB:String;public var clearWidth:EvidenceValue<Double>;public var operable:EvidenceValue<Bool>;public var stepFree:EvidenceValue<Bool>;public var emergencyEscapePersonIDs:[String]?}
     public struct ObstacleContext: Codable, Sendable {public var id:String;public var floorID:String;public var polygon:[Vec2]}
     public struct ObjectContext: Codable, Sendable {public var id:String;public var kind:String;public var roomID:String?;public var verification:String}
     static func destination(_ d:PortalDestination)->String {switch d{case .space(let id):return id;case .exterior:return "exterior";case .commonArea(let id):return "common|\(id)";case .unknown:return "unknown"}}
     public init(_ home:HomeModel){
-        schemaVersion="dryrun.home-scene/1";homeRevision=home.revision;units="meter";coordinateConvention="per-floor x/y right-handed; floor transforms to common"
-        floors=home.floors.map{FloorContext(id:$0.id,elevation:$0.elevationMeters,transform:$0.toCommon)}
-        rooms=home.spaces.map{RoomContext(id:$0.id,floorID:$0.floorID,polygon:$0.polygon,use:$0.kind.rawValue,confirmed:$0.labelConfirmed)}
-        portals=home.portals.map{PortalContext(id:$0.id,floorID:$0.floorID,kind:$0.kind.rawValue,verification:$0.verification.rawValue,a:$0.a,b:$0.b,sideA:Self.destination($0.sideA),sideB:Self.destination($0.sideB),clearWidth:$0.clearWidthMeters,operable:$0.operable,stepFree:$0.stepFree)}
+        schemaVersion="dryrun.home-scene/2";homeSource=home.source;homeRevision=home.revision;units="meter";coordinateConvention="per-floor x/y right-handed; floor transforms to common"
+        floors=home.floors.map{FloorContext(id:$0.id,elevation:$0.elevationMeters,transform:$0.toCommon,level:$0.level,exteriorGrade:$0.exteriorGrade ?? .unknown)}
+        rooms=home.spaces.map{RoomContext(id:$0.id,floorID:$0.floorID,polygon:$0.polygon,use:$0.kind.rawValue,confirmed:$0.labelConfirmed,geometryNeedsReview:$0.geometryNeedsReview ?? false,needsMeasurement:$0.needsMeasurement,interiorNoWindowsConfirmed:$0.interiorNoWindowsConfirmed,higherRefugeConfirmed:$0.higherRefugeConfirmed ?? .unknown,confirmedShelter:ShelterSuitability.isConfirmed(roomID:$0.id,in:home))}
+        portals=home.portals.map{PortalContext(id:$0.id,floorID:$0.floorID,kind:$0.kind.rawValue,verification:$0.verification.rawValue,a:$0.a,b:$0.b,sideA:Self.destination($0.sideA),sideB:Self.destination($0.sideB),clearWidth:$0.clearWidthMeters,operable:$0.operable,stepFree:$0.stepFree,emergencyEscapePersonIDs:$0.emergencyEscapePersonIDs)}
         walls=home.walls;connectors=home.connectors
         obstacles=home.obstacles.map{ObstacleContext(id:$0.id,floorID:$0.floorID,polygon:$0.polygon)}
         objects=home.annotations.map{ObjectContext(id:$0.id,kind:$0.kind.rawValue,roomID:$0.spaceID,verification:$0.verification.rawValue)}
-        unknowns=["Window operability/exterior grade require recorded confirmation","Geometry does not establish structural shelter performance","Image observations cannot create graph edges"]
+        unknowns=["Window operability/exterior grade require recorded confirmation","Geometry does not establish structural shelter performance","Image observations cannot create graph edges","confirmed is room-use confirmation, not geometry or route verification","confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"]
     }
 }

@@ -82,3 +82,5 @@ Four-situation provisional practice checks use local frozen sources and determin
 The non-device /2 practice plan adds `scripts/practice-nondevice-eval.ts` and `scripts/practice-nondevice-replay.ts` (tsx; Core build first), also included in portable verification. It pins anchors/3 while /1 remains on anchors/2. See practice-phases.md for contextual prerequisites, isolated host conservation proof and pending human/device review.
 
 `pnpm exec tsx scripts/practice-order-eval.ts` runs and exactly replays both reverse-order practice variants after the forward fixture generators. It compares bound sources and correct competency credits and checks pre-feedback resume. Included in portable verification; synthetic execution consistency only, with human variant equivalence still pending.
+
+Home context /2: `pnpm exec tsx scripts/home-scene-eval.ts` validates four actual-host safety-attribute/route cases, strict cross-language schemas and historical /1 support without model calls. See [home-scene-context.md](../../docs/ai/home-scene-context.md) for minimization, recorded evidence and native checks. Included in portable verification.
