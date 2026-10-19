@@ -139,6 +139,66 @@ final class DeviceAuditUITests: XCTestCase {
         shot("gemini-\(scenario)-final", app)
     }
 
+    func testTypedSupplyItemsAreReviewedOnceAndChangeGaps() {
+        let app = launch(["-demoHousehold", "hh-oak"])
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+        let all = reveal("next.showAll", in: app, steps: 6)
+        if all.exists { all.tap() }
+        let water = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'next.step.' AND identifier CONTAINS[c] 'water'")).firstMatch
+        for _ in 0..<12 where !(water.exists && water.isHittable) { scroll(app, up: true) }
+        XCTAssertTrue(water.exists, "a water preparation is offered")
+        water.tap()
+        let open = reveal("supplies.inventory", in: app, steps: 4)
+        XCTAssertTrue(open.waitForExistence(timeout: 10))
+        open.tap()
+        shot("inventory-01-empty", app)
+        let quantity = app.textFields["inventory.quantity"]
+        XCTAssertTrue(quantity.waitForExistence(timeout: 10))
+        /// Opens a List picker by its visible label and chooses an option.
+        func pick(_ label: String, _ option: String) {
+            let picker = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", label)).firstMatch
+            for _ in 0..<8 where !(picker.exists && picker.isHittable) { scroll(app, up: false) }
+            XCTAssertTrue(picker.exists, label)
+            picker.tap()
+            let choice = app.buttons.matching(NSPredicate(format: "label == %@", option)).firstMatch
+            if choice.waitForExistence(timeout: 5) { choice.tap() }
+        }
+        func segment(_ id: String, _ option: String) {
+            let control = app.segmentedControls[id]
+            for _ in 0..<8 where !(control.exists && control.isHittable) { scroll(app, up: false) }
+            XCTAssertTrue(control.exists, id)
+            control.buttons[option].tap()
+        }
+        func enter(_ amount: String) {
+            quantity.tap(); quantity.typeText(amount)
+            let done = app.buttons["inventory.keyboardDone"]
+            if done.waitForExistence(timeout: 3) { done.tap() }
+        }
+        enter("4")
+        segment("inventory.ready", "Yes")
+        segment("inventory.reachable", "Yes")
+        app.buttons["inventory.stage"].tap()
+        shot("inventory-02-staged-water", app)
+        pick("Item", "Flashlight")
+        enter("2")
+        segment("inventory.ready", "Yes")
+        segment("inventory.reachable", "Yes")
+        app.buttons["inventory.stage"].tap()
+        let confirm = reveal("inventory.confirm", in: app)
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        shot("inventory-03-review", app)
+        confirm.tap()
+        // Confirmed, usable amounts now produce a concrete water result instead of "not enough recorded".
+        let concrete = app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'Short by' OR label CONTAINS 'meets the'")).firstMatch
+        for _ in 0..<8 where !concrete.exists { scroll(app, up: true) }
+        XCTAssertTrue(concrete.exists, "confirmed usable water gives a computed gap")
+        shot("inventory-04-gaps", app)
+        let recorded = element("inventory.recorded", in: app)
+        for _ in 0..<10 where !recorded.exists { scroll(app, up: false) }
+        XCTAssertTrue(recorded.exists)
+        shot("inventory-05-recorded", app)
+    }
+
     func testScorecardOnPrepareForEachHousingDemo() {
         for home in ["ranch", "apartment-complex", "manufactured", "twostory"] {
             let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home])

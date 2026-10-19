@@ -446,6 +446,24 @@ final class AppModel {
         return true
     }
 
+    /// One reviewed batch of typed supply items into the confirmed ledger, with the household projection (stored water)
+    /// in the same atomic save. Bumps the household revision, so tasks, routes, resources and the score refresh.
+    @discardableResult
+    func confirmInventory(_ items: [InventoryItem]) async -> Bool {
+        guard !items.isEmpty else { return false }
+        let date = Date()
+        return await updateAIState { state, household in
+            try state.confirmInventory(items, household: &household, baseHouseholdRevision: household.revision,
+                                       baseInventoryRevision: state.inventory.revision, at: date) { _, _ in }
+        }
+    }
+
+    /// Deterministic gaps from confirmed inventory (water, household food days, reviewed flashlight/first-aid identity).
+    var inventoryGaps: [SupplyGap] {
+        guard let household else { return [] }
+        return (try? aiState.inventory.preparationGaps(personIDs: household.people.map(\.id), at: Date())) ?? []
+    }
+
     /// Focused forms retain their draft revision. A stale whole-household form must not overwrite later edits.
     @discardableResult
     func updateHousehold(_ candidate: HouseholdProfile) async -> Bool {
