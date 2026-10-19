@@ -11,9 +11,11 @@ struct HomeTabView: View {
         DemoLaunch.current.isActive ? DemoLaunch.current.homeID.flatMap { id in SampleHomes.all.first { $0.id == id } }
             .flatMap { $0.floors.indices.contains(index) ? $0.floors[index].id : nil } : nil
     }
-    @State private var editing = false
+    /// The editor opens on the element that was tapped. An item-driven sheet hands that ID to the editor directly;
+    /// an isPresented sheet could read a stale selection and open the general list instead (seen on device).
+    struct EditorRequest: Identifiable { let id = UUID(); let elementID: String? }
+    @State private var editorRequest: EditorRequest?
     @State private var manualDraft: HomeModel?
-    @State private var selectedElementID: String?
     @State private var scanning = false
     @State private var editingHousehold = false
     @State private var confirming: HomeModel?
@@ -59,7 +61,7 @@ struct HomeTabView: View {
                     }
                     switch mode {
                     case .plan2D:
-                        FloorPlanView(home: home, routes: [], highlightedFloorID: floorID ?? home.floors.first?.id, onSelect: { selectedElementID = $0; editing = true })
+                        FloorPlanView(home: home, routes: [], highlightedFloorID: floorID ?? home.floors.first?.id, onSelect: { editorRequest = EditorRequest(elementID: $0) })
                             .frame(height: 320)
                             .listRowInsets(EdgeInsets())
                             .accessibilityIdentifier("home.scene")
@@ -80,8 +82,7 @@ struct HomeTabView: View {
                             if markers.isEmpty { Text(model.localizer("spatial.no-markers-floor")).font(.footnote).foregroundStyle(.secondary) }
                             ForEach(markers) { marker in
                                 Button {
-                                    selectedElementID = marker.id
-                                    editing = true
+                                    editorRequest = EditorRequest(elementID: marker.id)
                                 } label: {
                                     Label {
                                         VStack(alignment: .leading, spacing: 2) {
@@ -99,6 +100,8 @@ struct HomeTabView: View {
                                 .accessibilityIdentifier("home.marker.\(marker.id)")
                             }
                         }
+                        // A container keeps each marker row's own identifier.
+                        .accessibilityElement(children: .contain)
                         .accessibilityIdentifier("home.markerKey")
                     }
                 }
@@ -107,7 +110,7 @@ struct HomeTabView: View {
                     if pending > 0 {
                         Button(model.localizer("spatial.confirm-count", ["count": String(pending)]), systemImage: "checklist") { confirming = home }
                     }
-                    Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { selectedElementID = nil; editing = true }
+                    Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { editorRequest = EditorRequest(elementID: nil) }
                     scanControls
                 }
                 if let household = model.household, !household.people.isEmpty {
@@ -170,11 +173,10 @@ struct HomeTabView: View {
                     Text(s("Your card and preparations work without a layout. Add your own rooms when you are ready to rehearse routes."))
                         .font(.callout).foregroundStyle(.secondary)
                     Button(s("Add layout manually"), systemImage: "square.and.pencil") {
-                        selectedElementID = nil
                         if manualDraft == nil {
                             manualDraft = ManualLayout.emptyHome(id: model.household?.stableHomeID ?? "home-\(UUID().uuidString.lowercased())")
                         }
-                        editing = true
+                        editorRequest = EditorRequest(elementID: nil)
                     }
                     .accessibilityIdentifier("home.addManual")
                     scanControls
@@ -197,13 +199,13 @@ struct HomeTabView: View {
             }
         }
         .navigationTitle(model.localizer("common.tab.home"))
-        .sheet(isPresented: $editing, onDismiss: { selectedElementID = nil }) {
+        .sheet(item: $editorRequest) { request in
             if let home = model.home ?? manualDraft {
                 NavigationStack {
-                    ManualHomeEditorView(home: home, selectedElementID: selectedElementID) { updated in
+                    ManualHomeEditorView(home: home, selectedElementID: request.elementID) { updated in
                         Task {
                             manualDraft = updated
-                            if await model.updateHome(updated) { editing = false; manualDraft = nil }
+                            if await model.updateHome(updated) { editorRequest = nil; manualDraft = nil }
                         }
                     }
                 }

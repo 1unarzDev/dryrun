@@ -199,6 +199,54 @@ final class DeviceAuditUITests: XCTestCase {
         shot("inventory-05-recorded", app)
     }
 
+    /// Marker relocation from the Home marker list: invalid input keeps the editor open and the old marker intact;
+    /// a valid visible position is applied by Save without tapping Apply, and moving it needs location review again.
+    func testMarkerRelocationSaveWithoutApplyAndInvalidInputStaysOpen() {
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "ranch"])
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
+        let open = reveal("next.home", in: app)
+        XCTAssertTrue(open.waitForExistence(timeout: 10))
+        open.tap()
+        let key = reveal("home.markerKey", in: app)
+        XCTAssertTrue(key.waitForExistence(timeout: 10))
+        let keyToggle = app.buttons.matching(NSPredicate(format: "label == 'Safety markers'")).firstMatch
+        if keyToggle.exists { keyToggle.tap() } else { key.tap() }
+        let marker = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'home.marker.' AND NOT (identifier IN %@)",
+                                                      ["home.markerKey", "home.marker.x", "home.marker.y", "home.marker.apply", "home.marker.locationChecked"])).firstMatch
+        for _ in 0..<6 where !(marker.exists && marker.isHittable) { scroll(app, up: true) }
+        XCTAssertTrue(marker.exists, "a recorded marker is listed")
+        let markerID = marker.identifier
+        marker.tap()
+        let x = app.textFields["home.marker.x"]
+        XCTAssertTrue(x.waitForExistence(timeout: 10))
+        shot("marker-01-editor", app)
+        let original = Double((x.value as? String) ?? "") ?? 1
+        func replace(_ field: XCUIElement, _ text: String) {
+            field.tap()
+            if let current = field.value as? String, !current.isEmpty {
+                field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count + 2))
+            }
+            field.typeText(text)
+        }
+        replace(x, "abc")
+        app.navigationBars.buttons["Save"].tap()
+        XCTAssertTrue(x.waitForExistence(timeout: 3), "invalid input keeps the editor open")
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'previous marker is unchanged'")).firstMatch.exists)
+        shot("marker-02-invalid-kept-open", app)
+        let moved = String(format: "%.2f", max(0.3, original - 0.25))
+        replace(x, moved)
+        app.navigationBars.buttons["Save"].tap()
+        XCTAssertTrue(element("home.scene", in: app).waitForExistence(timeout: 10), "a valid visible placement saves without Apply")
+        let reopened = app.buttons[markerID]
+        for _ in 0..<6 where !(reopened.exists && reopened.isHittable) { scroll(app, up: true) }
+        XCTAssertTrue(reopened.label.contains("Location needs review"), "a moved marker needs its location reviewed again")
+        shot("marker-03-saved-needs-review", app)
+        reopened.tap()
+        XCTAssertTrue(x.waitForExistence(timeout: 10))
+        XCTAssertEqual(Double((x.value as? String) ?? ""), Double(moved), "the saved position is the one that was visible")
+        shot("marker-04-reopened", app)
+    }
+
     func testScorecardOnPrepareForEachHousingDemo() {
         for home in ["ranch", "apartment-complex", "manufactured", "twostory"] {
             let app = launch(["-demoHousehold", "hh-oak", "-demoHome", home])
