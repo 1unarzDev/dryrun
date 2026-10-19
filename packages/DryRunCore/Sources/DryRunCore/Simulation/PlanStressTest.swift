@@ -12,7 +12,7 @@ public struct StressTestFinding: Codable, Sendable {
 }
 public enum PlanStressTester {
     /// Same recorded external schedule for intervention comparisons. Never a fresh director reroll.
-    public static func execute(initial:RehearsalInput,profileIDs:[String],library:ScenarioLibrary,intervention:Intervention?=nil,inventory:SessionInventorySeed?=nil,concernSeed:ConcernExerciseSeed?=nil) throws -> StressTestFinding {
+    public static func execute(initial:RehearsalInput,profileIDs:[String],library:ScenarioLibrary,intervention:Intervention?=nil,inventory:SessionInventorySeed?=nil,concernSeed:ConcernExerciseSeed?=nil,dependencyPolicy:DependencyInspectionPolicy? = .recordedAccess) throws -> StressTestFinding {
         guard let scenario=library.scenario(initial.scenarioID),!profileIDs.isEmpty,profileIDs.count<=8 else {throw SessionError.invalidCommand}
         var schedule:[SessionCommand]=[]
         for id in profileIDs {
@@ -20,20 +20,20 @@ public enum PlanStressTester {
             schedule.append(SessionCommand(kind:"schedule",target:id,minute:event.minute))
         }
         // The host may stop at depletion; bounded repeated advances reach the same final horizon.
-        func run(_ input:RehearsalInput)throws->SessionReceipt {
-            var session=SimulationSession(id:"stress",initial:input,inventory:inventory,concernSeed:concernSeed)
+        func run(_ input:RehearsalInput)throws->(SessionReceipt,[DependencyInspection]) {
+            var session=SimulationSession(id:"stress",initial:input,inventory:inventory,concernSeed:concernSeed,dependencyPolicy:dependencyPolicy)
             try session.commit(SessionCommit(id:"schedule",actor:"director",baseRevision:0,commands:schedule),library:library)
             var receipt=try session.query(library:library)
             for n in 0..<64 where receipt.snapshot.simMinute<scenario.durationMinutes {
                 receipt=try session.commit(SessionCommit(id:"advance-\(n)",actor:"director",baseRevision:session.revision,commands:[SessionCommand(kind:"advance",minute:scenario.durationMinutes)]),library:library)
             }
-            return receipt
+            return (receipt,try session.dependencyInspection(receipt:receipt,library:library))
         }
         let concernDigest=try concernSeed.map{StableDigest.of(try DryRunJSON.encoder().encode($0))}
-        let baseline=try run(initial)
+        let (baseline,dependencies)=try run(initial)
         var retest:SessionReceipt?
         if let intervention {
-            var copy=initial;copy.interventions.append(intervention);retest=try run(copy)
+            var copy=initial;copy.interventions.append(intervention);retest=try run(copy).0
         }
         let shared=baseline.routes.flatMap(\.sharedChokepoints)
         let unmet=Set(baseline.snapshot.unmetRequirements)
@@ -47,6 +47,6 @@ public enum PlanStressTester {
         return StressTestFinding(id:"stress|\(initial.scenarioID)|\(profileIDs.joined(separator:"|"))"+(concernDigest.map{"|concern|\($0)"} ?? ""),objectiveID:criterion,subjectIDs:initial.household.people.map(\.id),
             dependencyIDs:Array(Set(shared+sharedPower+baseline.snapshot.unmetRequirements)).sorted(),evidenceIDs:[baseline.contextDigest],
             assumptions:["Reviewed educational incident profiles; not a prediction of real failure"]+(concernSeed != nil ? ["User-selected hypothetical concern opening exclusions; outside the scored robustness envelope"]:[]),criterionID:criterion,failed:!baseline.snapshot.unmetRequirements.isEmpty || !shared.isEmpty,
-            baseline:baseline,controlledRetest:retest,schedule:schedule,dependencies:SimulationSession(id:"stress-inspect",initial:initial).dependencyInspection(receipt:baseline),sourceHouseholdDigest:StableDigest.of(try DryRunJSON.encoder().encode(initial.household)),sourceHomeFingerprint:initial.home.map(HomeFingerprint.of),sourceInventoryDigest:try inventory.map{StableDigest.of(try DryRunJSON.encoder().encode($0))},sourceConcernDigest:concernDigest)
+            baseline:baseline,controlledRetest:retest,schedule:schedule,dependencies:dependencies,sourceHouseholdDigest:StableDigest.of(try DryRunJSON.encoder().encode(initial.household)),sourceHomeFingerprint:initial.home.map(HomeFingerprint.of),sourceInventoryDigest:try inventory.map{StableDigest.of(try DryRunJSON.encoder().encode($0))},sourceConcernDigest:concernDigest)
     }
 }

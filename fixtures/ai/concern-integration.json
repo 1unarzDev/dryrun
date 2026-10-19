@@ -165,6 +165,7 @@
       "sourceHomeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba"
     },
     "contractVersion": "dryrun.ai/1",
+    "dependencyPolicy": "dryrun.dependencies/2",
     "directorPolicy": {
       "allowedStageTransitions": [
         {

@@ -41,16 +41,19 @@ public struct SessionReceipt: Codable, Sendable, Equatable {
 
 /// Serializable event-sourced session. Replay executes existing RunState, allocator, hazard and route rules.
 /// Replay is deliberately local and bounded (128 commits); no provider call or speculative default choice.
+public enum DependencyInspectionPolicy:String,Codable,Sendable {case recordedAccess = "dryrun.dependencies/2"}
+
 public struct SimulationSession: Codable, Sendable {
     public let contractVersion: String
     public let id: String
     public let initial: RehearsalInput
     public let inventory:SessionInventorySeed?
     public let concernSeed:ConcernExerciseSeed?
+    public let dependencyPolicy:DependencyInspectionPolicy?
     public let directorPolicy:DirectorPolicy?
     public private(set) var commits: [SessionCommit]
-    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil,directorPolicy:DirectorPolicy?=nil,concernSeed:ConcernExerciseSeed?=nil) {
-        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory;self.directorPolicy=directorPolicy;self.concernSeed=concernSeed; self.commits = []
+    public init(id: String, initial: RehearsalInput, inventory:SessionInventorySeed?=nil,directorPolicy:DirectorPolicy?=nil,concernSeed:ConcernExerciseSeed?=nil,dependencyPolicy:DependencyInspectionPolicy? = .recordedAccess) {
+        self.contractVersion = "dryrun.ai/1"; self.id = id; self.initial = initial; self.inventory=inventory;self.directorPolicy=directorPolicy;self.concernSeed=concernSeed; self.dependencyPolicy=dependencyPolicy; self.commits = []
     }
     /// New native exercises freeze an explicit policy. The initializer also decodes legacy snapshots
     /// whose absent policy must keep their historical replay behavior.

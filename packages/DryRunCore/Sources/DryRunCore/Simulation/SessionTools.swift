@@ -41,13 +41,15 @@ public extension SimulationSession {
                 routeRequest.exclusions.blockedPortalIDs=Array(Set(routeRequest.exclusions.blockedPortalIDs+(receipt.snapshot.spatialState?.affectedPortalIDs ?? []))).sorted()
                 result.route=ConcernRoutePlanner(portalIDs:concernSeed?.selectedPortalIDs ?? []).plan(routeRequest,in:home)
             }
-        case .inspectDependencies:result.dependencies=dependencyInspection(receipt:receipt)
-        case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory,concernSeed:concernSeed)
+        case .inspectDependencies:result.dependencies=try dependencyInspection(receipt:receipt,library:library)
+        case .runCounterfactual:result.counterfactual=try PlanStressTester.execute(initial:initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:inventory,concernSeed:concernSeed,dependencyPolicy:dependencyPolicy)
         default:break
         }
         return result
     }
-    func dependencyInspection(receipt:SessionReceipt)->[DependencyInspection] {
+    func dependencyInspection(receipt:SessionReceipt,library:ScenarioLibrary)throws->[DependencyInspection] {
+        // Bind observations to this exact committed host state, never a model-supplied receipt.
+        guard receipt == (try query(library:library)) else {throw SessionError.stale}
         let h=initial.household
         var result:[DependencyInspection]=[]
         for source in h.backupPower {
@@ -69,6 +71,27 @@ public extension SimulationSession {
             result.append(.init(id:"route|\(personID)",kind:"sharedRoute",subjectIDs:[personID],evidenceIDs:route.sharedChokepoints,status:"routes share geometry; alternative is not independent"))
         }
         if h.transport.destinations.count>1 {result.append(.init(id:"meetup|transport",kind:"commonTransport",subjectIDs:h.transport.destinations.map(\.id),evidenceIDs:["transport",receipt.contextDigest],status:"destinations depend on recorded transport; inspect exercise availability"))}
+        if dependencyPolicy == .recordedAccess {
+            // Only recorded, potentially nonempty stock. Unknown quantities remain conditional.
+            let stock=(receipt.inventory?.items ?? []).filter{$0.remaining != 0}
+            let stored=stock.filter{$0.carrierPersonID == nil && $0.locationID.flatMap{initial.home?.space($0)} != nil}
+            let groups=Dictionary(grouping:stored,by:{$0.locationID!})
+            for room in groups.keys.sorted() {
+                let items=groups[room]!.sorted{$0.id<$1.id}
+                let categories=Set(items.map(\.category))
+                let sole=categories.filter{category in stock.filter{$0.category==category}.allSatisfy{$0.carrierPersonID == nil && $0.locationID==room}}.sorted()
+                let access=items.allSatisfy{$0.accessible==true} ? "available" : items.allSatisfy{$0.accessible==false} ? "unavailable" : "mixed or unknown"
+                result.append(.init(id:"storage|\(room)",kind:"recordedSupplyStorage",subjectIDs:items.map(\.id),evidenceIDs:[receipt.contextDigest,room],
+                    status:"Recorded inventory only; access \(access). \(sole.isEmpty ? "Subset of stock." : "Sole recorded location for \(sole.count) stock categories.") Unknown quantities conditional; access loss cause unproven."))
+            }
+            for carrier in Set(stock.compactMap(\.carrierPersonID)).sorted() {
+                result.append(.init(id:"carrier|\(carrier)",kind:"recordedSupplyCarrier",subjectIDs:stock.filter{$0.carrierPersonID==carrier}.map(\.id).sorted(),evidenceIDs:[receipt.contextDigest,carrier],status:"Recorded inventory only; supplies currently carried by one exercise occupant; simultaneous carrying capacity unknown."))
+            }
+            for destination in h.transport.destinations.sorted(by:{$0.id<$1.id}) {
+                let conditions=destination.conditionsConfirmed.confirmedValue
+                result.append(.init(id:"destination|\(destination.id)",kind:"destinationConditions",subjectIDs:[destination.id],evidenceIDs:[receipt.contextDigest],status:conditions==true ? "Recorded conditions confirmed; activation and needed capabilities require current source verification. No real-time availability inferred." : conditions==false ? "Recorded conditions not met; exercise review prompt, not a claim about present availability." : "Recorded destination conditions unverified; needed capability and activation remain unknown."))
+            }
+        }
         return result.sorted{$0.id<$1.id}
     }
 }

@@ -1322,6 +1322,7 @@
         "session": {
           "commits": [],
           "contractVersion": "dryrun.ai/1",
+          "dependencyPolicy": "dryrun.dependencies/2",
           "directorPolicy": {
             "allowedStageTransitions": [],
             "eventBudget": 32,
@@ -4185,6 +4186,7 @@
             }
           ],
           "contractVersion": "dryrun.ai/1",
+          "dependencyPolicy": "dryrun.dependencies/2",
           "directorPolicy": {
             "allowedStageTransitions": [],
             "eventBudget": 32,
@@ -8328,6 +8330,7 @@
             }
           ],
           "contractVersion": "dryrun.ai/1",
+          "dependencyPolicy": "dryrun.dependencies/2",
           "directorPolicy": {
             "allowedStageTransitions": [],
             "eventBudget": 32,
@@ -11427,6 +11430,7 @@
         "session": {
           "commits": [],
           "contractVersion": "dryrun.ai/1",
+          "dependencyPolicy": "dryrun.dependencies/2",
           "directorPolicy": {
             "allowedStageTransitions": [],
             "eventBudget": 32,
@@ -14264,6 +14268,7 @@
             }
           ],
           "contractVersion": "dryrun.ai/1",
+          "dependencyPolicy": "dryrun.dependencies/2",
           "directorPolicy": {
             "allowedStageTransitions": [],
             "eventBudget": 32,
@@ -18377,6 +18382,7 @@
             }
           ],
           "contractVersion": "dryrun.ai/1",
+          "dependencyPolicy": "dryrun.dependencies/2",
           "directorPolicy": {
             "allowedStageTransitions": [],
             "eventBudget": 32,

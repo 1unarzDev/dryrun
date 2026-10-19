@@ -2022,6 +2022,7 @@
       }
     ],
     "contractVersion": "dryrun.ai/1",
+    "dependencyPolicy": "dryrun.dependencies/2",
     "directorPolicy": {
       "allowedStageTransitions": [
         {

@@ -125,7 +125,7 @@ while let line = readLine() {
             var input=session.initial,local=IntegratedAIState(inventory:request.inventory ?? InventoryLedger())
             let date=ISO8601DateFormatter().date(from:"2026-10-19T00:00:00Z")!
             try local.confirmInventory(items,household:&input.household,baseHouseholdRevision:input.household.revision,baseInventoryRevision:local.inventory.revision,at:date,persist:{_,_ in})
-            session=SimulationSession(id:session.id,initial:input,inventory:SessionInventorySeed(ledger:local.inventory,asOf:date),directorPolicy:session.directorPolicy,concernSeed:session.concernSeed);confirmedInventory=local.inventory
+            session=SimulationSession(id:session.id,initial:input,inventory:SessionInventorySeed(ledger:local.inventory,asOf:date),directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy);confirmedInventory=local.inventory
         }
         if request.op == "commit", let commit = request.commit { try session.commit(commit, library: library) }
         if request.op == "directorCommit" {guard let proposal=request.proposal,let binding=request.binding else {throw SessionError.invalidCommand};try proposal.commit(to:&session,binding:binding,library:library,persist:{_ in})}
@@ -141,7 +141,7 @@ while let line = readLine() {
             else {scorecard = try ScoreCompiler.compile(rubric:rubric,assessments:assessments!,attempts:request.attempts ?? [])}
         }
         if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = try inventory.preparationGaps(personIDs:session.initial.household.people.map(\.id),at:date)}
-        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed)}
+        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)}
         var resourceStrategyKey:ResourceStrategyKey?
         if request.op=="resourceKey" {
             guard let inventory=request.inventory ?? session.inventory?.ledger,let tasks=request.resourceTasks else {throw SessionError.invalidCommand}

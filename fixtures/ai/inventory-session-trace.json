@@ -1228,6 +1228,7 @@
     "session": {
       "commits": [],
       "contractVersion": "dryrun.ai/1",
+      "dependencyPolicy": "dryrun.dependencies/2",
       "directorPolicy": {
         "allowedStageTransitions": [
           {
@@ -4130,6 +4131,7 @@
         }
       ],
       "contractVersion": "dryrun.ai/1",
+      "dependencyPolicy": "dryrun.dependencies/2",
       "directorPolicy": {
         "allowedStageTransitions": [
           {
@@ -7444,6 +7446,7 @@
         }
       ],
       "contractVersion": "dryrun.ai/1",
+      "dependencyPolicy": "dryrun.dependencies/2",
       "directorPolicy": {
         "allowedStageTransitions": [
           {
@@ -10934,6 +10937,7 @@
         }
       ],
       "contractVersion": "dryrun.ai/1",
+      "dependencyPolicy": "dryrun.dependencies/2",
       "directorPolicy": {
         "allowedStageTransitions": [
           {
@@ -13146,6 +13150,18 @@
         "status": "recorded handset and cellular operational in exercise",
         "subjectIDs": [
           "ct-oak-1"
+        ]
+      },
+      {
+        "evidenceIDs": [
+          "2d2d25c149225786",
+          "sp-kitchen"
+        ],
+        "id": "storage|sp-kitchen",
+        "kind": "recordedSupplyStorage",
+        "status": "Recorded inventory only; access unavailable. Sole recorded location for 1 stock categories. Unknown quantities conditional; access loss cause unproven.",
+        "subjectIDs": [
+          "water"
         ]
       }
     ],

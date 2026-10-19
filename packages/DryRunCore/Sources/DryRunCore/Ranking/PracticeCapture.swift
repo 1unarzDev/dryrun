@@ -111,7 +111,7 @@ public extension IntegratedAIState {
                   observations.map(\.acceptedRevision)==observations.map(\.acceptedRevision).sorted(),
                   observations.map(\.competencyID)==Array(Self.practiceOrder(attempt.variantID).prefix(observations.count)) else {throw SessionError.invalidCommand}
             try Self.validatePracticeChronology(source:source,observations:observations,session:session)
-            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)
+            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)
             var found=0
             let initialReceipt=try prefix.query(library:library)
             guard source.startingRevision>=0,source.startingRevision<=session.revision else {throw SessionError.invalidCommand}
