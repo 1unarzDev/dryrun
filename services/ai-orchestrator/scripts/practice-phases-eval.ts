@@ -4,7 +4,8 @@ import {Host} from './host.js';
 import {practicePhasePlan,practiceObservation} from '../src/practice-contracts.js';
 const host=new Host();
 const nonDevice=process.env.DRYRUN_PRACTICE_NONDEVICE==='1';
-const variantID=nonDevice?'practice-check-a/2':'practice-check-a/1';
+const reverse=process.env.DRYRUN_PRACTICE_REVERSE==='1';
+const variantID='practice-check-'+(reverse?'b':'a')+'/'+(nonDevice?2:1);
 try {
  const policy=JSON.parse(await readFile('../../content/ai/practice-check-phases-v'+(nonDevice?2:1)+'.json','utf8'));
  const order:string[]=policy.variants.find((variant:any)=>variant.id===variantID).order;
@@ -37,6 +38,7 @@ try {
   for(const [n,event] of events.entries())state=await host.request({op:'commit',session:state.session,commit:{id:'setup-'+competency+'-'+n,actor:'director',baseRevision:state.receipt.revision,commands:[{kind:'schedule',target:event,minute:n},{kind:'advance',minute:n}]}});
   sources.push(state.session);
  }
+ sources.sort((a,b)=>order.indexOf(a.id.replace('phase-',''))-order.indexOf(b.id.replace('phase-','')));
  const seed=JSON.parse(await readFile('../../fixtures/ai/practice-capture.json','utf8')).begun;
  seed.sessions=sources;seed.practiceAttempts=[];seed.scorecards=[];
  const begun=await host.request({op:'practiceCheckBegin',session:sources[0],aiState:seed,attemptID:'four-situations',variantID,practiceSessionIDs:sources.map(s=>s.id)});
@@ -44,15 +46,22 @@ try {
  assert.equal(plan.phaseSources.length,4);
  const rubric=JSON.parse(await readFile('../../content/ai/rubric-v0.json','utf8'));
  const commands=[nonDevice?{kind:'choose',target:'choice.home-fire.first-move',value:'get-out'}:{kind:'useStoredWater',value:'essential'},{kind:'moveTo',target:person,value:'living'},{kind:'contact',target:'contact'},nonDevice?{kind:'useStoredWater',value:'essential'}:{kind:'allocatePower',target:'device',value:'battery'}];
+ const canonicalOrder=['initialResponse','adaptation','communication','continuity'];
+ const wrongFirst=reverse?(nonDevice?{kind:'useStoredWater',value:'all'}:{kind:'allocatePower',target:'device',value:'none'}):(nonDevice?{kind:'choose',target:'choice.home-fire.first-move',value:'grab-belongings'}:{kind:'useStoredWater',value:'all'});
  const branches:any[]=[];
  for(const wrong of [false,true]){
   let local=structuredClone(begun.aiState);const checkpoints:any[]=[];
   for(const [index,competencyID] of order.entries()){
    const current=local.sessions.find((s:any)=>s.id===plan.phaseSources[index]!.sessionID);
-   const commit={id:(wrong?'wrong-':'correct-')+competencyID,actor:'user',baseRevision:current.commits.length,commands:[wrong&&index===0?(nonDevice?{kind:'choose',target:'choice.home-fire.first-move',value:'grab-belongings'}:{kind:'useStoredWater',value:'all'}):commands[index]]};
+   const commit={id:(wrong?'wrong-':'correct-')+competencyID,actor:'user',baseRevision:current.commits.length,commands:[wrong&&index===0?wrongFirst:commands[canonicalOrder.indexOf(competencyID)]]};
    let state=await host.request({op:'practiceSubmit',session:current,aiState:local,attemptID:'four-situations',competencyID,commit});
    const observed=practiceObservation.parse(state.aiState.practiceAttempts[0].observations.at(-1));
    assert.equal(observed.credit,wrong&&index===0?0:1);assert.equal(observed.feedbackRevealed,false);
+   if(reverse&&index<3){
+    const resumed=await host.request({op:'practiceCheckBegin',session:state.session,aiState:JSON.parse(JSON.stringify(state.aiState)),attemptID:'before-feedback-reroll',variantID:'practice-check-a/'+(nonDevice?2:1),practiceSessionIDs:[]});
+    assert.deepEqual(resumed.aiState,state.aiState);
+    assert.equal(resumed.aiState.practiceAttempts[0].observations.at(-1).feedbackRevealed,false);
+   }
    state=await host.request({op:'practiceFeedback',session:state.session,aiState:JSON.parse(JSON.stringify(state.aiState)),attemptID:'four-situations',feedbackActionID:commit.id});
    local=state.aiState;
    const card=(await host.request({op:'assess',session:state.session,aiState:local,rubric})).scorecard;
@@ -60,7 +69,7 @@ try {
    for(const session of local.sessions)assert.deepEqual(session.initial,sources.find(s=>s.id===session.id).initial);
    checkpoints.push({competencyID,commit,observation:observed,feedbackObservation:structuredClone(local.practiceAttempts[0].observations.at(-1)),receipt:state.receipt,scorecard:card});
    if(index===0){
-    const resumed=await host.request({op:'practiceCheckBegin',session:state.session,aiState:JSON.parse(JSON.stringify(local)),attemptID:'reroll',variantID:nonDevice?'practice-check-b/2':'practice-check-b/1',practiceSessionIDs:[]});
+    const resumed=await host.request({op:'practiceCheckBegin',session:state.session,aiState:JSON.parse(JSON.stringify(local)),attemptID:'reroll',variantID:'practice-check-'+(reverse?'a':'b')+'/'+(nonDevice?2:1),practiceSessionIDs:[]});
     assert.equal(resumed.aiState.practiceAttempts[0].id,'four-situations');assert.equal(resumed.aiState.practiceAttempts[0].variantID,variantID);
     assert.deepEqual(resumed.aiState.practiceAttempts[0].observations,local.practiceAttempts[0].observations);
    }
@@ -86,6 +95,6 @@ try {
   assert.deepEqual((await host.request({op:'query',session:source})).receipt,original);
   resourceProof={sourceID:source.id,original,projections};
  }
- await writeFile('../../fixtures/ai/practice-'+(nonDevice?'nondevice':'phases')+'.json',JSON.stringify({synthetic:true,liveModel:false,modelCalls:0,version:policy.version,...(nonDevice?{equipmentRequired:false,limitedBudget:true,resourceProof}:{}),sources,begun:begun.aiState,plan,branches},null,2)+'\n');
+ await writeFile('../../fixtures/ai/practice-'+(nonDevice?'nondevice':'phases')+(reverse?'-reverse':'')+'.json',JSON.stringify({synthetic:true,liveModel:false,modelCalls:0,version:policy.version,...(nonDevice?{equipmentRequired:false,limitedBudget:true,resourceProof}:{}),sources,begun:begun.aiState,plan,branches},null,2)+'\n');
  console.log(JSON.stringify({passed:true,modelCalls:0,variantID,equipmentRequired:!nonDevice,competencies:4,correctPractice:100,wrongFirstPractice:75,resumedWithoutReroll:true,preFeedbackCapture:true,sourcePreserved:true,roundTrip:true,tamperingRejected:true,provisional:true}));
 }finally{host.close();}

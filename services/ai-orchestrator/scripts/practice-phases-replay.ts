@@ -4,7 +4,7 @@ import {Host} from './host.js';
 import {practicePhasePlan} from '../src/practice-contracts.js';
 const host=new Host();
 try {
- const fixture=JSON.parse(await readFile('../../fixtures/ai/practice-'+(process.env.DRYRUN_PRACTICE_NONDEVICE==='1'?'nondevice':'phases')+'.json','utf8'));
+ const fixture=JSON.parse(await readFile('../../fixtures/ai/practice-'+(process.env.DRYRUN_PRACTICE_NONDEVICE==='1'?'nondevice':'phases')+(process.env.DRYRUN_PRACTICE_REVERSE==='1'?'-reverse':'')+'.json','utf8'));
  const plan=practicePhasePlan.parse(fixture.plan);
  const rubric=JSON.parse(await readFile('../../content/ai/rubric-v0.json','utf8'));
  for(const branch of fixture.branches){
