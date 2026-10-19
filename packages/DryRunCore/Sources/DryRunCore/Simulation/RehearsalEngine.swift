@@ -82,11 +82,11 @@ struct ScheduledItem {
 
 struct RunState {
     let scenario: ScenarioDefinition
-    let input: RehearsalInput
-    let household: HouseholdProfile
+    var input: RehearsalInput
+    var household: HouseholdProfile
     let home: HomeModel?
     let planner: EgressPlanning
-    let model: DependencyModel
+    var model: DependencyModel
     let allocator = BackupAllocator()
 
     var minute = 0
@@ -177,8 +177,9 @@ struct RunState {
             if guardCount > RehearsalEngine.maxEvents { throw RehearsalError.eventLimitExceeded }
             let next = idx < schedule.count ? schedule[idx] : nil
             if let dep = nextDepletion(), dep.minute <= scenario.durationMinutes, next == nil || dep.minute <= next!.minute {
+                let simultaneous=depletionSchedule().filter{$0.minute==dep.minute}
                 advance(to: dep.minute)
-                try handleDepletion(dep.resource)
+                for item in simultaneous {try handleDepletion(item.resource)}
                 snapshot()
                 continue
             }
@@ -221,12 +222,14 @@ struct RunState {
 
     var handsetDrawPerMinute: Double { (homePowerUp || relocated) ? 0 : 1.0 / 60.0 }
 
-    func nextDepletion() -> (minute: Int, resource: String)? {
-        var best: (Int, String)?
+    func nextDepletion() -> (minute: Int, resource: String)? { depletionSchedule().first }
+
+    func depletionSchedule() -> [(minute: Int, resource: String)] {
+        var candidates: [(Int, String)] = []
         func consider(_ amount: Double?, _ rate: Double, _ id: String) {
             guard let a = amount, a > 0, rate > 0 else { return }
             let t = minute + Int((a / rate).rounded(.up))
-            if best == nil || (t, id) < (best!.0, best!.1) { best = (t, id) }
+            candidates.append((t, id))
         }
         consider(storedWater, waterDrawPerMinute, "res.water.stored")
         consider(handsetHours, handsetDrawPerMinute, "res.handset.hours")
@@ -237,7 +240,7 @@ struct RunState {
             guard let hours = r, assignments[Load.equipment(eid)]?.state == .operational, !homePowerUp, !relocated else { continue }
             consider(hours, 1.0 / 60.0, "res.device.\(eid).runtime")
         }
-        return best.map { (minute: $0.0, resource: $0.1) }
+        return candidates.sorted { ($0.0, $0.1) < ($1.0, $1.1) }.map { (minute: $0.0, resource: $0.1) }
     }
 
     mutating func advance(to t: Int) {

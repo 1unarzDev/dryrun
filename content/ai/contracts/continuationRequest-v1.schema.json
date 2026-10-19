@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "sessionID": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "eventSequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "contextDigest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "householdRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "homeRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "sessionID",
+        "revision",
+        "eventSequence",
+        "contextDigest",
+        "householdRevision",
+        "homeRevision"
+      ],
+      "additionalProperties": false
+    },
+    "callID": {
+      "type": "string"
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "binding": {
+          "type": "object",
+          "properties": {
+            "sessionID": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "eventSequence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "contextDigest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "householdRevision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "homeRevision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "sessionID",
+            "revision",
+            "eventSequence",
+            "contextDigest",
+            "householdRevision",
+            "homeRevision"
+          ],
+          "additionalProperties": false
+        },
+        "snapshot": {
+          "type": "object",
+          "properties": {
+            "simMinute": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "resources": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "gal",
+                      "Wh",
+                      "h",
+                      "charges"
+                    ]
+                  }
+                },
+                "required": [
+                  "unit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "services": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "string",
+                "enum": [
+                  "operational",
+                  "degraded",
+                  "unavailable",
+                  "unknown"
+                ]
+              }
+            },
+            "unmetRequirements": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "unknowns": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "simMinute",
+            "resources",
+            "services",
+            "unmetRequirements",
+            "unknowns"
+          ],
+          "additionalProperties": false
+        },
+        "contextDigest": {
+          "type": "string",
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "binding",
+        "snapshot",
+        "contextDigest"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "token",
+    "binding",
+    "callID",
+    "result"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,365 @@
+{
+  "synthetic": true,
+  "intervention": "Hypothetical water storage only; real profile unchanged",
+  "baselineDepletion": 1800,
+  "retestDepletion": 4320,
+  "finding": {
+    "assumptions": [
+      "Reviewed educational incident profiles; not a prediction of real failure"
+    ],
+    "baseline": {
+      "contextDigest": "7eb1222c6463f688",
+      "eventSequence": 4,
+      "events": [
+        {
+          "evidence": {
+            "causedByEventIDs": [],
+            "factIDs": [],
+            "ruleID": "rule.external.set",
+            "sourceIDs": [
+              "S24"
+            ]
+          },
+          "id": "evt.water-outage.well-pump-failure",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {
+            "svc.wellPump.mechanical": "unavailable"
+          },
+          "severity": "critical",
+          "simMinute": 0,
+          "templateValues": {},
+          "titleKey": "scenario.water-outage.event.well-pump-failure"
+        },
+        {
+          "evidence": {
+            "causedByEventIDs": [
+              "evt.water-outage.well-pump-failure"
+            ],
+            "factIDs": [
+              "housing.waterSource",
+              "housing.wellPumpElectric"
+            ],
+            "ruleID": "rule.dependency.well-pump",
+            "sourceIDs": [
+              "S24",
+              "S26"
+            ]
+          },
+          "id": "evt.water-outage.svc.wellPump.unavailable",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {
+            "svc.wellPump": "unavailable"
+          },
+          "severity": "caution",
+          "simMinute": 0,
+          "templateValues": {},
+          "titleKey": "service.wellPump.unavailable"
+        },
+        {
+          "evidence": {
+            "causedByEventIDs": [
+              "evt.water-outage.well-pump-failure"
+            ],
+            "factIDs": [
+              "housing.waterSource"
+            ],
+            "ruleID": "rule.dependency.water-supply",
+            "sourceIDs": [
+              "S24",
+              "S26"
+            ]
+          },
+          "id": "evt.water-outage.svc.water.supply.unavailable",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {
+            "svc.water.supply": "unavailable"
+          },
+          "severity": "critical",
+          "simMinute": 0,
+          "templateValues": {},
+          "titleKey": "service.water.supply.unavailable"
+        },
+        {
+          "evidence": {
+            "causedByEventIDs": [
+              "evt.water-outage.svc.water.supply.unavailable"
+            ],
+            "factIDs": [
+              "supplies.storedWaterGallons"
+            ],
+            "ruleID": "rule.resource.water",
+            "sourceIDs": [
+              "S26"
+            ]
+          },
+          "id": "evt.water-outage.res.water-depleted",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {},
+          "severity": "critical",
+          "simMinute": 1800,
+          "templateValues": {},
+          "titleKey": "scenario.common.res.water-depleted"
+        }
+      ],
+      "finished": false,
+      "pending": [],
+      "revision": 3,
+      "routes": [],
+      "sessionID": "stress",
+      "snapshot": {
+        "firedEventIDs": [],
+        "resources": {
+          "res.backup.bk-station": {
+            "amount": 1000,
+            "unit": "Wh"
+          },
+          "res.device.eq-oxygen.runtime": {
+            "unit": "h"
+          },
+          "res.handset.hours": {
+            "amount": 18,
+            "unit": "h"
+          },
+          "res.handset.powerBankCharges": {
+            "amount": 2,
+            "unit": "charges"
+          },
+          "res.water.stored": {
+            "amount": 0,
+            "unit": "gal"
+          }
+        },
+        "revealedEventCount": 4,
+        "services": {
+          "svc.alerts": "operational",
+          "svc.cellular": "operational",
+          "svc.cooling": "operational",
+          "svc.destination": "unavailable",
+          "svc.device.eq-oxygen": "operational",
+          "svc.grid": "operational",
+          "svc.handset": "operational",
+          "svc.heat": "operational",
+          "svc.power.home": "operational",
+          "svc.refrigeration": "operational",
+          "svc.roads": "operational",
+          "svc.transport": "operational",
+          "svc.water.safety": "operational",
+          "svc.water.supply": "unavailable",
+          "svc.wellPump": "unavailable",
+          "svc.wifi": "operational"
+        },
+        "simMinute": 4320,
+        "unknowns": [
+          "backup.bk-station.setupConfirmed",
+          "equipment.eq-oxygen.backup",
+          "housing.wellPressureTankGallons",
+          "pets.waterNeeds"
+        ],
+        "unmetRequirements": [
+          "req.water"
+        ]
+      }
+    },
+    "controlledRetest": {
+      "contextDigest": "2e92d9af66ec1913",
+      "eventSequence": 4,
+      "events": [
+        {
+          "evidence": {
+            "causedByEventIDs": [],
+            "factIDs": [],
+            "ruleID": "rule.external.set",
+            "sourceIDs": [
+              "S24"
+            ]
+          },
+          "id": "evt.water-outage.well-pump-failure",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {
+            "svc.wellPump.mechanical": "unavailable"
+          },
+          "severity": "critical",
+          "simMinute": 0,
+          "templateValues": {},
+          "titleKey": "scenario.water-outage.event.well-pump-failure"
+        },
+        {
+          "evidence": {
+            "causedByEventIDs": [
+              "evt.water-outage.well-pump-failure"
+            ],
+            "factIDs": [
+              "housing.waterSource",
+              "housing.wellPumpElectric"
+            ],
+            "ruleID": "rule.dependency.well-pump",
+            "sourceIDs": [
+              "S24",
+              "S26"
+            ]
+          },
+          "id": "evt.water-outage.svc.wellPump.unavailable",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {
+            "svc.wellPump": "unavailable"
+          },
+          "severity": "caution",
+          "simMinute": 0,
+          "templateValues": {},
+          "titleKey": "service.wellPump.unavailable"
+        },
+        {
+          "evidence": {
+            "causedByEventIDs": [
+              "evt.water-outage.well-pump-failure"
+            ],
+            "factIDs": [
+              "housing.waterSource"
+            ],
+            "ruleID": "rule.dependency.water-supply",
+            "sourceIDs": [
+              "S24",
+              "S26"
+            ]
+          },
+          "id": "evt.water-outage.svc.water.supply.unavailable",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {
+            "svc.water.supply": "unavailable"
+          },
+          "severity": "critical",
+          "simMinute": 0,
+          "templateValues": {},
+          "titleKey": "service.water.supply.unavailable"
+        },
+        {
+          "evidence": {
+            "causedByEventIDs": [
+              "evt.water-outage.svc.water.supply.unavailable"
+            ],
+            "factIDs": [
+              "supplies.storedWaterGallons"
+            ],
+            "ruleID": "rule.resource.water",
+            "sourceIDs": [
+              "S26"
+            ]
+          },
+          "id": "evt.water-outage.res.water-depleted",
+          "phaseID": "outage",
+          "priority": 0,
+          "serviceChanges": {},
+          "severity": "critical",
+          "simMinute": 4320,
+          "templateValues": {},
+          "titleKey": "scenario.common.res.water-depleted"
+        }
+      ],
+      "finished": false,
+      "pending": [],
+      "revision": 2,
+      "routes": [],
+      "sessionID": "stress",
+      "snapshot": {
+        "firedEventIDs": [
+          "evt.water-outage.res.water-depleted"
+        ],
+        "resources": {
+          "res.backup.bk-station": {
+            "amount": 1000,
+            "unit": "Wh"
+          },
+          "res.device.eq-oxygen.runtime": {
+            "unit": "h"
+          },
+          "res.handset.hours": {
+            "amount": 18,
+            "unit": "h"
+          },
+          "res.handset.powerBankCharges": {
+            "amount": 2,
+            "unit": "charges"
+          },
+          "res.water.stored": {
+            "amount": 0,
+            "unit": "gal"
+          }
+        },
+        "revealedEventCount": 4,
+        "services": {
+          "svc.alerts": "operational",
+          "svc.cellular": "operational",
+          "svc.cooling": "operational",
+          "svc.destination": "unavailable",
+          "svc.device.eq-oxygen": "operational",
+          "svc.grid": "operational",
+          "svc.handset": "operational",
+          "svc.heat": "operational",
+          "svc.power.home": "operational",
+          "svc.refrigeration": "operational",
+          "svc.roads": "operational",
+          "svc.transport": "operational",
+          "svc.water.safety": "operational",
+          "svc.water.supply": "unavailable",
+          "svc.wellPump": "unavailable",
+          "svc.wifi": "operational"
+        },
+        "simMinute": 4320,
+        "unknowns": [
+          "backup.bk-station.setupConfirmed",
+          "equipment.eq-oxygen.backup",
+          "housing.wellPressureTankGallons",
+          "pets.waterNeeds"
+        ],
+        "unmetRequirements": [
+          "req.water"
+        ]
+      }
+    },
+    "criterionID": "water",
+    "dependencies": [
+      {
+        "evidenceIDs": [
+          "7eb1222c6463f688"
+        ],
+        "id": "contact|channel",
+        "kind": "contactChannel",
+        "status": "recorded handset and cellular operational in exercise",
+        "subjectIDs": [
+          "ct-oak-1"
+        ]
+      }
+    ],
+    "dependencyIDs": [
+      "req.water"
+    ],
+    "evidenceIDs": [
+      "7eb1222c6463f688"
+    ],
+    "failed": true,
+    "id": "stress|water-outage|evt.water-outage.well-pump-failure",
+    "objectiveID": "water",
+    "schedule": [
+      {
+        "kind": "schedule",
+        "minute": 0,
+        "target": "evt.water-outage.well-pump-failure"
+      }
+    ],
+    "sourceHomeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+    "sourceHouseholdDigest": "eee9c494c735fd2c",
+    "subjectIDs": [
+      "p-oak-1",
+      "p-oak-2",
+      "p-oak-3",
+      "p-oak-4"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+# Integrated Gemini implementation
+
+The root implementation reference remains the specification. Baseline reconciliation is in implementation-map.md; official provider verification is in provider-research.md. Native files are deliberately untouched. Historical on-device intake, manual checklists, saved cards/PDFs and authored runs continue working.
+
+Three execution locations:
+
+- Core/iPhone owns facts, inventory, action commits, route geometry, state evolution, stress execution, grading eligibility and numeric score compilation. `SimulationSession` is a bounded event-sourced host over the existing `RunState`, `BackupAllocator`, `DependencyModel`, `HazardRules` and `EgressPlanner`. It serializes source input plus accepted commands; query/preview rebuild deterministically. It does not run Gemini on replay. Authored `RehearsalEngine.run` retains its existing scheduling adapter over the same state/rule primitives; its legacy default-choice behavior remains isolated from new incremental commits.
+- `services/ai-orchestrator` is a separate private Node gateway. Role prompts are configurations of one small runner. Strict contexts exclude contact values, private addresses, care notes and Apple map payloads. Stateless Interactions requests retain SDK steps/signatures only in bounded memory. Client previews return minimized Core state, are treated as untrusted observations, and cannot alter permissions or directly mutate any domain state.
+- `services/public-api` stays public-only. Independent official source packs are available through bounded read tools, with their existing `needsReview` status. There is no arbitrary URL-fetch, browser, Google grounding or private shared cache.
+
+The gateway uses the official pinned SDK, not ADK: this implementation needs one typed suspension and explicit commit boundary, rather than a workflow framework. Provider SDK types are confined to the private service transport/runner; portable Swift and native contracts contain no SDK types. Output JSON Schema is a provider-supported subset; Zod still applies full structural bounds, stable reference checks and semantic restrictions. Core dry-run and atomic persistence remain mandatory.
+
+State and persistence:
+
+`IntegratedAIState` holds inventory, concern reviews, event-sourced sessions, practice attempts and scorecard history. `VaultPayload.integratedAIState` is an additive optional encrypted document. Old payloads decode with nil; no existing IDs, places, plans or card selections migrate away. The Mac adapter must round-trip this field on **every** save. The new native code must not let an old snapshot constructor erase the sidecar. No raw model history, deliberations or inline images belong in this document.
+
+`confirmInventory` stages both household and ledger, projects the inventory water amount once into the existing Supplies seam, bumps the household revision and calls persistence before publishing. Unknown accessible quantity stays unknown. Never sum the projection and original ledger. Existing manual-total edits must explicitly replace/reconcile the ledger total before confirming it.
+
+`DirectorProposal.commit` checks session ID, event sequence, source revisions and digest, then calls the same transactional host commit. Source edits invalidate outstanding work; a session continues against its immutable labeled original snapshot or is explicitly forked. It cannot mix old geometry with new people/facts.
+
+Map strategy uses a normalized `ResourceStrategyKey` (gaps, transport, budget, region). `ResourceStrategyRefresh` rejects stale generations and revocation, deduplicates requests and retains useful accepted plans during failure. Origin changes have a separate local geographic fingerprint. Native MapKit results never return through the director/core tool result schema. Official identity/capability checks remain distinct from nearest/name-only map matches.
+
+Image evidence remains image-space. Manifest digests bind boxes to exact submitted bytes and transforms; absent calibration/depth prevents projection. Selected photos are optional, minimized and separately consented. Concern review creates linked tasks only after user confirmation, with uncertain findings requiring explicit exercise permission. Detection absence cannot prove safety. `AIPlanDiagram` supplies annotated per-floor SVG context keyed to canonical room/portal IDs; native export/renderers are unaffected.
+
+Scoring is Core-only. Agents inspect the frozen rubric/evidence, identify inconsistencies and suggest questions; household-changing interpretations return through review. They cannot set points, weights, criticality or applicability. Practice remains provisional until equivalent-variant and human-content validation. Production assessment must use host-accepted predicates, not a model's status labels.
+
+Deployment limitations are deliberate fail-closed boundaries: synthetic-only fixture auth is loopback/dev, production App Attest verification and short-lived installation sessions remain an integration dependency. The release's private-data billing, audience/under-18 terms fit and native consent need actual approval. No production deployment or real family data test is claimed.

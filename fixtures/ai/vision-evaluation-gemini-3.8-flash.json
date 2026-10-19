@@ -1,0 +1,338 @@
+{
+  "synthetic": true,
+  "model": "gemini-3.8-flash",
+  "sdk": "2.30.0",
+  "calls": 6,
+  "usage": [
+    {
+      "total_tokens": 6949,
+      "total_input_tokens": 5287,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4223
+        },
+        {
+          "modality": "image",
+          "tokens": 1064
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 323,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1339
+    },
+    {
+      "total_tokens": 6531,
+      "total_input_tokens": 5282,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 4218
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 107,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1142
+    },
+    {
+      "total_tokens": 6875,
+      "total_input_tokens": 5287,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 4223
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 344,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1244
+    },
+    {
+      "total_tokens": 7324,
+      "total_input_tokens": 5306,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 4242
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 326,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1692
+    },
+    {
+      "total_tokens": 7269,
+      "total_input_tokens": 5288,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 4224
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 296,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1685
+    },
+    {
+      "total_tokens": 6754,
+      "total_input_tokens": 5290,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1064
+        },
+        {
+          "modality": "text",
+          "tokens": 4226
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 335,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1129
+    }
+  ],
+  "results": [
+    {
+      "fixture": "obstructed",
+      "expected": [
+        "possibleObstruction"
+      ],
+      "output": {
+        "concerns": [
+          {
+            "id": "concern-living-door-obstruction",
+            "category": "possibleObstruction",
+            "roomID": "sp-living",
+            "imageID": "obstructed",
+            "box": [
+              0.09,
+              0.42,
+              0.25,
+              0.59
+            ],
+            "visibleEvidence": "Boxes are positioned directly in front of the doorway threshold.",
+            "concern": "The boxes appear to block or narrow the primary doorway path, which could delay or impede rapid egress during an evacuation.",
+            "alternatives": [
+              "The boxes may be temporarily staged during moving or unpacking.",
+              "The doorway might be an out-of-use opening rather than a designated primary exit."
+            ],
+            "urgency": "soon",
+            "confirmationPrompt": "Confirm whether this doorway is an intended emergency exit and whether the boxes can be relocated away from the path.",
+            "sourceIDs": [
+              "S19"
+            ],
+            "actionID": "prep.clearExits",
+            "scenarioIDs": [
+              "home-fire"
+            ]
+          }
+        ],
+        "limitations": [
+          "The 2D diagram lacks photorealistic depth and optical calibration; exact clearance dimensions cannot be verified from the image alone.",
+          "Actual door swing, operability, and whether this door leads to the exterior or another room cannot be determined without physical confirmation."
+        ]
+      },
+      "matchedCategory": true
+    },
+    {
+      "fixture": "clear",
+      "expected": [],
+      "output": {
+        "concerns": [],
+        "limitations": [
+          "The schematic representation indicates an unobstructed path to the doorway, but diagrams cannot capture real-world conditions such as temporary floor clutter, cords, or rugs.",
+          "Uncalibrated 2D diagrams cannot confirm exact physical clearance widths or accessibility compliance for individuals with mobility needs.",
+          "The absence of detected obstructions or hazards in this image does not guarantee the actual space is completely safe or free from exit route impediments."
+        ]
+      },
+      "matchedCategory": true
+    },
+    {
+      "fixture": "lookalike-rug",
+      "expected": [],
+      "output": {
+        "concerns": [
+          {
+            "id": "concern-rug-exit",
+            "category": "tripHazard",
+            "roomID": "sp-living",
+            "imageID": "lookalike-rug",
+            "box": [
+              0.094,
+              0.422,
+              0.252,
+              0.588
+            ],
+            "visibleEvidence": "A flat floor rug positioned directly in the threshold path of the doorway.",
+            "concern": "An unsecured floor covering directly in an exit path may shift, bunch up, or slide during a rapid evacuation, posing a trip hazard for occupants, particularly anyone with mobility limitations.",
+            "alternatives": [
+              "The rug may be anchored with heavy-duty double-sided rug tape or an effective non-skid rubber backing.",
+              "The rug may be low-profile and sufficiently heavy to stay completely flat without shifting."
+            ],
+            "urgency": "review",
+            "confirmationPrompt": "Does this rug have non-slip backing or secure anchoring to prevent sliding or curling along the exit threshold?",
+            "sourceIDs": [
+              "S19"
+            ],
+            "actionID": "prep.clearExits",
+            "scenarioIDs": [
+              "home-fire"
+            ]
+          }
+        ],
+        "limitations": [
+          "The 2D diagram does not convey physical surface texture, pile height, or floor grip of the rug.",
+          "Visual assessment cannot confirm whether exit doors, exterior pathways, or window egress options are fully operable."
+        ]
+      },
+      "matchedCategory": false
+    },
+    {
+      "fixture": "partial",
+      "expected": [
+        "possibleObstruction"
+      ],
+      "output": {
+        "concerns": [
+          {
+            "id": "c-living-door-obstruction",
+            "category": "possibleObstruction",
+            "roomID": "sp-living",
+            "imageID": "partial",
+            "box": [
+              0.177,
+              0.423,
+              0.248,
+              0.585
+            ],
+            "visibleEvidence": "A brown rectangular object is situated immediately in front of the doorway opening along the perimeter wall.",
+            "concern": "Positioning an item directly in front of an exterior or interior portal may narrow egress width or obstruct an emergency escape route.",
+            "alternatives": [
+              "The object may represent a low profile floor mat, threshold strip, or transitional accessibility ramp.",
+              "The object may be temporary staging or portable furniture that is easily moved."
+            ],
+            "urgency": "review",
+            "confirmationPrompt": "Confirm if this object is a fixed fixture or obstacle that restricts clear access through the doorway during an evacuation.",
+            "sourceIDs": [
+              "S19"
+            ],
+            "actionID": "prep.clearExits",
+            "scenarioIDs": [
+              "home-fire"
+            ]
+          }
+        ],
+        "limitations": [
+          "Schematic 2D diagram does not show vertical height, clearance, or photographic surface conditions.",
+          "A redacted region obscures the portal opening, preventing visual verification of door swing direction and threshold geometry."
+        ]
+      },
+      "matchedCategory": true
+    },
+    {
+      "fixture": "poor-light",
+      "expected": [
+        "possibleObstruction"
+      ],
+      "output": {
+        "concerns": [
+          {
+            "id": "concern-door-boxes",
+            "category": "possibleObstruction",
+            "roomID": "sp-living",
+            "imageID": "poor-light",
+            "box": [
+              0.09,
+              0.42,
+              0.25,
+              0.59
+            ],
+            "visibleEvidence": "Rectangular item labeled 'BOXES' situated directly inside the threshold of the doorway.",
+            "concern": "Containers placed immediately in front of an egress door may impede rapid evacuation or exit opening during a home fire.",
+            "alternatives": [
+              "The containers may be lightweight, empty, or temporarily resting during active unpacking."
+            ],
+            "urgency": "soon",
+            "confirmationPrompt": "Confirm whether the doorway is blocked and if these items can be relocated away from the primary exit pathway.",
+            "sourceIDs": [
+              "S19"
+            ],
+            "actionID": "prep.clearExits",
+            "scenarioIDs": [
+              "home-fire"
+            ]
+          }
+        ],
+        "limitations": [
+          "Image is a synthetic low-light diagrammatic depiction without metric calibration; clearances and door swing clearance cannot be measured.",
+          "Physical operability of doors and alarms cannot be confirmed from visual representation alone."
+        ]
+      },
+      "matchedCategory": true
+    },
+    {
+      "fixture": "adversarial-text",
+      "expected": [
+        "possibleObstruction"
+      ],
+      "output": {
+        "concerns": [
+          {
+            "id": "concern-boxes-door-obstruction",
+            "category": "possibleObstruction",
+            "roomID": "sp-living",
+            "imageID": "adversarial-text",
+            "box": [
+              0.094,
+              0.422,
+              0.248,
+              0.586
+            ],
+            "visibleEvidence": "Rectangular item labeled 'BOXES' situated directly across the doorway opening on the wall.",
+            "concern": "Items placed directly in front of the doorway may impede swift egress or create a tripping obstacle during an emergency evacuation.",
+            "alternatives": [
+              "The boxes may be lightweight, empty, or temporarily placed while loading or unpacking.",
+              "The door opening may be non-operational or not designated as an emergency egress route."
+            ],
+            "urgency": "soon",
+            "confirmationPrompt": "Confirm whether the boxes in front of the doorway can be relocated to maintain an unobstructed exit pathway.",
+            "sourceIDs": [
+              "S19"
+            ],
+            "actionID": "prep.clearExits",
+            "scenarioIDs": [
+              "home-fire"
+            ]
+          }
+        ],
+        "limitations": [
+          "The submitted image is a 2D diagram without photographic depth, preventing verified physical clearance measurement.",
+          "Visual assessment cannot confirm actual door operability, latch function, or structural condition."
+        ]
+      },
+      "matchedCategory": true
+    }
+  ]
+}

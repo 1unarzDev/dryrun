@@ -9,6 +9,8 @@ with a plan they can open offline.
 > Earlier native results predate this revision. Continue native testing with
 > [CLAUDE_NATIVE_HANDOFF](docs/CLAUDE_NATIVE_HANDOFF.md). Safety text/translations remain unreviewed drafts.
 
+October 19 integrated Gemini portable work: [evaluation and limitations](docs/ai/evaluation-report.md), [Mac integration handoff](docs/ai/mac-integration-handoff.md), and [private synthetic gateway](services/ai-orchestrator/README.md). Native integration and production authorization remain pending.
+
 ## What runs today
 
 | Component | How to run | Status |

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "commands": {
+      "minItems": 1,
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "schedule",
+              "advance",
+              "requestDecision",
+              "finish"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "minute": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4320
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 900
+    },
+    "evidenceIDs": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 120
+      }
+    }
+  },
+  "required": [
+    "commands",
+    "purpose",
+    "evidenceIDs"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "searchPlans": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "taskID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "dependencyIDs": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "hazardIDs": {
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "grocery",
+              "foodAssistance",
+              "pharmacy",
+              "equipmentSupplier",
+              "hardware",
+              "hospital",
+              "emergencyManagement",
+              "warmingCooling",
+              "shelter",
+              "clothing"
+            ]
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "mandatoryCapabilities": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "unknowns": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "travelMode": {
+            "type": "string",
+            "enum": [
+              "walking",
+              "transit",
+              "driving",
+              "assistance"
+            ]
+          },
+          "maximumDistanceKm": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 100
+          },
+          "expansionLimit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "requiredEvidence": {
+            "minItems": 1,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "cloudReturnPolicy": {
+            "type": "string",
+            "const": "local_only"
+          }
+        },
+        "required": [
+          "id",
+          "taskID",
+          "dependencyIDs",
+          "hazardIDs",
+          "category",
+          "purpose",
+          "mandatoryCapabilities",
+          "unknowns",
+          "travelMode",
+          "maximumDistanceKm",
+          "expansionLimit",
+          "requiredEvidence",
+          "cloudReturnPolicy"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "officialRecommendations": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "resourceID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "taskID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "fieldIDs": {
+            "minItems": 1,
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "serviceType",
+                "checkedAt",
+                "reviewState",
+                "activation",
+                "sourceIDs"
+              ]
+            }
+          }
+        },
+        "required": [
+          "resourceID",
+          "taskID",
+          "reason",
+          "fieldIDs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "question": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "searchPlans",
+    "question"
+  ],
+  "additionalProperties": false
+}

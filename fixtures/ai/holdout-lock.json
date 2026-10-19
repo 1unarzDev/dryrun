@@ -1,0 +1,26 @@
+{
+  "version": "rubric-cases/1",
+  "sha256": "7f61d8f348a76901cbf5b2e5e39b4391d5c93e6714111d1b19321c30f3293a0a",
+  "holdoutIDs": [
+    "household-41",
+    "household-42",
+    "household-43",
+    "household-44",
+    "household-45",
+    "household-46",
+    "household-47",
+    "household-48",
+    "household-49",
+    "household-50",
+    "household-51",
+    "household-52",
+    "household-53",
+    "household-54",
+    "household-55",
+    "household-56",
+    "household-57",
+    "household-58",
+    "household-59",
+    "household-60"
+  ]
+}

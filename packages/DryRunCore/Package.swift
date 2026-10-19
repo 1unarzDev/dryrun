@@ -6,10 +6,12 @@ let package = Package(
     name: "DryRunCore",
     platforms: [.iOS(.v18), .macOS(.v15)],
     products: [
+        .executable(name: "dryrun-host", targets: ["DryRunHost"]),
         .library(name: "DryRunCore", targets: ["DryRunCore"]),
     ],
     targets: [
         .target(name: "DryRunCore", path: "Sources/DryRunCore"),
+        .executableTarget(name: "DryRunHost", dependencies: ["DryRunCore"]),
         .testTarget(name: "DryRunCoreTests", dependencies: ["DryRunCore"], path: "Tests/DryRunCoreTests"),
     ]
 )

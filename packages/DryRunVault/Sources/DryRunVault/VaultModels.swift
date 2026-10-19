@@ -16,17 +16,19 @@ public struct VaultPayload: Codable, Sendable, Hashable {
     public var rehearsalResults: [CachedRehearsal]
     /// Private geographic planning places. Absent in schema-version-1 payloads written before map planning.
     public var savedPlaces: [SavedPlace]
+    /// Versioned AI local state encoded with DryRunJSON; sealed in the same atomic vault transaction.
+    public var integratedAIState: Data?
     public var savedAt: Date
 
     public init(household: HouseholdProfile? = nil, home: HomeModel? = nil, retainedPlans: [RetainedPlan] = [],
-                rehearsalResults: [CachedRehearsal] = [], savedPlaces: [SavedPlace] = [], homeGeometryIntentionallyAbsent: Bool = false, savedAt: Date = Date()) {
+                rehearsalResults: [CachedRehearsal] = [], savedPlaces: [SavedPlace] = [], homeGeometryIntentionallyAbsent: Bool = false, integratedAIState: Data? = nil, savedAt: Date = Date()) {
         self.schemaVersion = Self.currentSchemaVersion
         self.household = household; self.home = home; self.homeGeometryIntentionallyAbsent = homeGeometryIntentionallyAbsent; self.retainedPlans = retainedPlans
-        self.rehearsalResults = rehearsalResults; self.savedPlaces = savedPlaces; self.savedAt = savedAt
+        self.rehearsalResults = rehearsalResults; self.savedPlaces = savedPlaces; self.integratedAIState = integratedAIState; self.savedAt = savedAt
     }
 
     private enum CodingKeys: String, CodingKey {
-        case schemaVersion, household, home, homeGeometryIntentionallyAbsent, retainedPlans, rehearsalResults, savedPlaces, savedAt
+        case schemaVersion, household, home, homeGeometryIntentionallyAbsent, retainedPlans, rehearsalResults, savedPlaces, integratedAIState, savedAt
     }
 
     public init(from decoder: Decoder) throws {
@@ -38,6 +40,7 @@ public struct VaultPayload: Codable, Sendable, Hashable {
         retainedPlans = try c.decodeIfPresent([RetainedPlan].self, forKey: .retainedPlans) ?? []
         rehearsalResults = try c.decodeIfPresent([CachedRehearsal].self, forKey: .rehearsalResults) ?? []
         savedPlaces = try c.decodeIfPresent([SavedPlace].self, forKey: .savedPlaces) ?? []
+        integratedAIState = try c.decodeIfPresent(Data.self, forKey: .integratedAIState)
         savedAt = try c.decode(Date.self, forKey: .savedAt)
     }
 

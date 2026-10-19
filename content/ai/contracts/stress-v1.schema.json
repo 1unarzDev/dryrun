@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "challenges": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "objectiveID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "dependencyIDs": {
+            "minItems": 1,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "evidenceIDs": {
+            "minItems": 1,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "assumptions": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "scenarioID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "profileIDs": {
+            "minItems": 1,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "criterionID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "improvement": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          }
+        },
+        "required": [
+          "id",
+          "objectiveID",
+          "dependencyIDs",
+          "evidenceIDs",
+          "assumptions",
+          "scenarioID",
+          "profileIDs",
+          "criterionID",
+          "improvement"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "challenges"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,1304 @@
+{
+  "synthetic": true,
+  "method": "Offline host reconciliation of retained live recommendations; no additional model calls",
+  "results": [
+    {
+      "household": "household-01",
+      "repeat": 0,
+      "rawCriticalFalsePass": 1,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "alarms",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "escape",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "food",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "care",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-01",
+      "repeat": 1,
+      "rawCriticalFalsePass": 0,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "alarms",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "shelter",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "food",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "contact",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "assistance",
+          "proposed": "notApplicable",
+          "accepted": "met"
+        },
+        {
+          "criterionID": "pets",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "expiry",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-01",
+      "repeat": 2,
+      "rawCriticalFalsePass": 1,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-0-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "alarms",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "escape",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "shelter",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "food",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-02",
+      "repeat": 0,
+      "rawCriticalFalsePass": 0,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "device",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-02",
+      "repeat": 1,
+      "rawCriticalFalsePass": 0,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "device",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-02",
+      "repeat": 2,
+      "rawCriticalFalsePass": 0,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "met",
+          "evidenceIDs": [
+            "synthetic-confirmed-1-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "assistance",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "device",
+          "proposed": "unmet",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-03",
+      "repeat": 0,
+      "rawCriticalFalsePass": 3,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "alarms",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "shelter",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "food",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "assistance",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "device",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "pets",
+          "proposed": "notApplicable",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "expiry",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-03",
+      "repeat": 1,
+      "rawCriticalFalsePass": 3,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "alarms",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "shelter",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "food",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "assistance",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "device",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "pets",
+          "proposed": "notApplicable",
+          "accepted": "partlyMet"
+        }
+      ]
+    },
+    {
+      "household": "household-03",
+      "repeat": 2,
+      "rawCriticalFalsePass": 3,
+      "acceptedCriticalFalsePass": 0,
+      "accepted": [
+        {
+          "criterionID": "alarms",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-0"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "escape",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-1"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "shelter",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-2"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "water",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-3"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "food",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-4"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "essentials",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-5"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "contact",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-6"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "meetups",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-7"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "assistance",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-8"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "device",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-9"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "care",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-10"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "pets",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-11"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "review",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-12"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        },
+        {
+          "criterionID": "expiry",
+          "status": "partlyMet",
+          "evidenceIDs": [
+            "synthetic-confirmed-2-13"
+          ],
+          "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+        }
+      ],
+      "disagreements": [
+        {
+          "criterionID": "alarms",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "shelter",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "food",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "contact",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "assistance",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "device",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "pets",
+          "proposed": "notApplicable",
+          "accepted": "partlyMet"
+        },
+        {
+          "criterionID": "expiry",
+          "proposed": "met",
+          "accepted": "partlyMet"
+        }
+      ]
+    }
+  ]
+}

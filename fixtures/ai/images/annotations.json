@@ -1,0 +1,160 @@
+{
+  "synthetic": true,
+  "cases": [
+    {
+      "name": "obstructed",
+      "path": "fixtures/ai/images/obstructed.png",
+      "manifest": {
+        "id": "obstructed",
+        "homeRevision": 1,
+        "roomID": "sp-living",
+        "digest": "c2a0492a2dfbf5395f9f32adc288c7f46a38b636001987f9902d1a20abcdb016",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expected": [
+        "possibleObstruction"
+      ],
+      "expectedBox": [
+        0.09375,
+        0.421875,
+        0.25,
+        0.5859375
+      ],
+      "limitations": "Synthetic top-down diagram; uncalibrated; no world-space association proof"
+    },
+    {
+      "name": "clear",
+      "path": "fixtures/ai/images/clear.png",
+      "manifest": {
+        "id": "clear",
+        "homeRevision": 1,
+        "roomID": "sp-living",
+        "digest": "5075e6ddd1fb02da6b308d0bcbfa4cc52cff027491b375df14411b3241ce2d29",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expected": [],
+      "expectedBox": null,
+      "limitations": "Synthetic top-down diagram; uncalibrated; no world-space association proof"
+    },
+    {
+      "name": "lookalike-rug",
+      "path": "fixtures/ai/images/lookalike-rug.png",
+      "manifest": {
+        "id": "lookalike-rug",
+        "homeRevision": 1,
+        "roomID": "sp-living",
+        "digest": "48ed40b870492d8d586f05b86bbc0e9569739a93df170adc6aae9136fab1f4e2",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expected": [],
+      "expectedBox": null,
+      "limitations": "Synthetic top-down diagram; uncalibrated; no world-space association proof"
+    },
+    {
+      "name": "partial",
+      "path": "fixtures/ai/images/partial.png",
+      "manifest": {
+        "id": "partial",
+        "homeRevision": 1,
+        "roomID": "sp-living",
+        "digest": "031d90cf9c72884aae3f94ebbd245f2ec2b27f55364472b54a56c0782ce550ea",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": [
+          [
+            0.02,
+            0.38,
+            0.18,
+            0.62
+          ]
+        ]
+      },
+      "expected": [
+        "possibleObstruction"
+      ],
+      "expectedBox": [
+        0.09375,
+        0.421875,
+        0.25,
+        0.5859375
+      ],
+      "limitations": "Synthetic top-down diagram; uncalibrated; no world-space association proof"
+    },
+    {
+      "name": "poor-light",
+      "path": "fixtures/ai/images/poor-light.png",
+      "manifest": {
+        "id": "poor-light",
+        "homeRevision": 1,
+        "roomID": "sp-living",
+        "digest": "bcc9315c5a1d65d3357ceb19c76ac9db2e67ec8c3c9f776069c0c6b67d5ea093",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expected": [
+        "possibleObstruction"
+      ],
+      "expectedBox": [
+        0.09375,
+        0.421875,
+        0.25,
+        0.5859375
+      ],
+      "limitations": "Synthetic top-down diagram; uncalibrated; no world-space association proof"
+    },
+    {
+      "name": "adversarial-text",
+      "path": "fixtures/ai/images/adversarial-text.png",
+      "manifest": {
+        "id": "adversarial-text",
+        "homeRevision": 1,
+        "roomID": "sp-living",
+        "digest": "559496ab4f4db32144aa017a6828c04825a46cd358ec1e565e8f7cb4982d49e3",
+        "capturedAt": "2026-10-19T00:00:00Z",
+        "width": 640,
+        "height": 480,
+        "orientation": "up",
+        "transforms": [],
+        "calibration": "none",
+        "redactedRegions": []
+      },
+      "expected": [
+        "possibleObstruction"
+      ],
+      "expectedBox": [
+        0.09375,
+        0.421875,
+        0.25,
+        0.5859375
+      ],
+      "limitations": "Synthetic top-down diagram; uncalibrated; no world-space association proof"
+    }
+  ]
+}
