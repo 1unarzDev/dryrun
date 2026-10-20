@@ -37,7 +37,11 @@ owner explicitly approves real households (a hosted endpoint with a static token
    - Make Beacon on by default for the demo household: Prepare's top 3 are tailored on open, the rehearsal director is
      Beacon, and the debrief has a Beacon summary.
    - Raise or configure `DRYRUN_MAX_USD` for the demo, and use a model with available capacity.
-   - Acceptance: a fresh install on cellular shows Beacon output on Prepare within 20 s, or the replay.
+   - Work without the Mac: no launch arguments. Today, unplugged, the owner saw no AI toggle and only the Oak sample.
+     Add Settings → "Try a sample family" (Oak, Lake, Pine) with home choice, and turn Beacon on from the hosted
+     configuration.
+   - Acceptance: a fresh install opened from the home screen on cellular shows Beacon output on Prepare within 20 s,
+     or the replay.
 2. **Live alert → "Do this now" (day 2).**
    - Fetch active National Weather Service alerts for Tarrant County (api.weather.gov; free, needs a User-Agent).
    - Map each alert type to the matching rehearsal: tornado warning, flash-flood warning, extreme heat, winter storm,
@@ -62,10 +66,20 @@ owner explicitly approves real households (a hosted endpoint with a static token
    - Show step-free and accessibility notes only when the source states them. Flag "call to confirm medical power".
    - Route with MapKit (driving or walking), plus Beacon's household note ("Grandpa needs outlet access for oxygen").
    - Acceptance: a phone screenshot shows a route and source labels.
-5. **LiDAR scan → tailored drill (day 5).**
-   - Verify on the phone: RoomPlan scan, then confirm, save, relaunch, and run a fire rehearsal on the scanned home.
-   - Beacon picks the setup (fire origin, starting rooms) from the household.
-   - Fix whatever breaks. Record a clean scan for the video.
+5. **LiDAR scan → fix it in seconds → tailored drill (day 5).** The owner confirmed RoomPlan scanning works on the
+   phone; editing a scanned home is the problem.
+   - Tap any opening on the plan to open a compact card in place, not a long form. The card has:
+     - a big segmented type picker: Door, Window, Open doorway, Not an opening;
+     - "Leads to", a room or Outside, applied immediately with the plan highlighting both sides;
+     - "Restore what the scan saw" for this item.
+   - Keep the original scan as an immutable snapshot, and add "Revert whole home to scan".
+   - Make undo and redo survive Save: a per-home edit history with the last 20 versions.
+   - "Not usable" must be reversible.
+   - Add a guided "Check your scan" pass: one question per uncertain opening, with the plan zoomed to it, and
+     Skip/Not sure allowed.
+   - Core tests: every reclassification round-trips, restore matches the scan, and routes recompute.
+   - Then Beacon picks the drill setup (fire origin, starting rooms) from the household and the scanned home.
+   - Record a clean scan for the video.
 6. **Simplify for non-technical families (alongside 1–5).**
    - Home screen: the score as progress rings with the next 3 actions; celebrate progress.
    - Move caveats behind an ⓘ button; plain-language copy; at most 3 items before "Show all"; larger tap targets.
