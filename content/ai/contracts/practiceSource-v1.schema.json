@@ -31,8 +31,15 @@
       "enum": [
         "dryrun.practice-anchors/1",
         "dryrun.practice-anchors/2",
-        "dryrun.practice-anchors/3"
+        "dryrun.practice-anchors/3",
+        "dryrun.hazard-checks/1",
+        "dryrun.hazard-checks/2"
       ]
+    },
+    "startingReceiptDigest": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
     }
   },
   "required": [

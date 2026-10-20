@@ -100,10 +100,6 @@ struct HomeTabView: View {
                     }
                 }
                 Section(s("Change the home")) {
-                    let pending = HomeConfirmation.steps(for: home).count
-                    if pending > 0 {
-                        Button(model.localizer("spatial.confirm-count", ["count": String(pending)]), systemImage: "checklist") { confirming = home }
-                    }
                     Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { selectedElementID = nil; editing = true }
                     scanControls
                 }
@@ -195,13 +191,13 @@ struct HomeTabView: View {
         }
         .navigationTitle(model.localizer("common.tab.home"))
         .sheet(isPresented: $editing, onDismiss: { selectedElementID = nil }) {
-            if let home = model.home ?? manualDraft {
+            if let home = manualDraft ?? model.home {
                 NavigationStack {
-                    ManualHomeEditorView(home: home, selectedElementID: selectedElementID) { updated in
-                        Task {
-                            manualDraft = updated
-                            if await model.updateHome(updated) { editing = false; manualDraft = nil }
-                        }
+                    ManualHomeEditorView(home: home, baseRevision: model.home?.revision, selectedElementID: selectedElementID) { updated, baseRevision in
+                        manualDraft = updated
+                        let success = await model.updateHome(updated, expectedRevision: baseRevision)
+                        if success { editing = false; manualDraft = nil }
+                        return success
                     }
                 }
                 .interactiveDismissDisabled()
@@ -212,7 +208,8 @@ struct HomeTabView: View {
             // onDismiss because SwiftUI can drop a sheet requested while the cover is still dismissing.
             if let proposed = pendingProposal {
                 pendingProposal = nil
-                confirming = proposed
+                manualDraft = proposed
+                editing = true
             }
         }) {
             RoomScanFlowView { proposed in
@@ -225,16 +222,7 @@ struct HomeTabView: View {
         .sheet(isPresented: $showingMeetingPlaceMap) {
             MeetingPlaceChooser(purpose: .outsideMeetingPoint)
         }
-        .sheet(item: $confirming) { draft in
-            NavigationStack {
-                HomeConfirmationView(home: draft) { confirmed in
-                    Task {
-                        if await model.updateHome(confirmed) { confirming = nil }
-                    }
-                }
-            }
-            .interactiveDismissDisabled()
-        }
+
     }
 
     @ViewBuilder private var scanControls: some View {

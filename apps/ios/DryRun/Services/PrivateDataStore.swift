@@ -7,13 +7,15 @@ struct PrivateSnapshot: Sendable, Equatable {
     var home: HomeModel?
     var savedPlan: PlanDocument?
     var savedPlaces: [SavedPlace]
+    var integratedAIState: Data?
 
     init(household: HouseholdProfile, home: HomeModel? = nil, savedPlan: PlanDocument? = nil,
-         savedPlaces: [SavedPlace] = []) {
+         savedPlaces: [SavedPlace] = [], integratedAIState: Data? = nil) {
         self.household = household
         self.home = home
         self.savedPlan = savedPlan
         self.savedPlaces = savedPlaces
+        self.integratedAIState = integratedAIState
     }
 }
 

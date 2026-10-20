@@ -45,6 +45,11 @@
               "evaluatorVersion": {
                 "type": "string",
                 "const": "dryrun.practice-anchors/2"
+              },
+              "startingReceiptDigest": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
               }
             },
             "required": [
@@ -109,6 +114,11 @@
               "evaluatorVersion": {
                 "type": "string",
                 "const": "dryrun.practice-anchors/3"
+              },
+              "startingReceiptDigest": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
               }
             },
             "required": [

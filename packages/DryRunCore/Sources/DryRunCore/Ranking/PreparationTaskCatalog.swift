@@ -7,12 +7,13 @@ public enum PreparationTaskCatalog {
   let recommendations=includeSatisfied ? unresolved+BaselinePreparedness.recorded(household:household,home:home,referenceDate:date) : unresolved
   return recommendations.compactMap{rec in
    let action=String(rec.actionID.dropFirst(5));guard let criterionID=mapping[action],let criterion=rubric.criteria.first(where:{$0.id==criterionID}) else{return nil}
+   let destination=PreparationEditTarget.resolve(rec,home:home)
    let editor:String
-   switch PreparationEditTarget.resolve(rec,home:home){case .contact:editor="contacts";case .family:editor="family";case .equipment,.backups:editor="medical";case .meeting,.transport:editor="meetingPlace";case .home,.homeSetup:editor="home";default:editor="supplies"}
+   switch destination{case .contact:editor="contacts";case .family:editor="family";case .equipment,.backups:editor="medical";case .meeting,.transport:editor="meetingPlace";case .home,.homeSetup:editor="home";default:editor="supplies"}
    // A flashlight task cannot require a first-aid kit or sanitation to complete merely
    // because these preparations share one bounded score criterion.
    let predicateSubset=["flashlight":["light"],"firstAid":["firstAid"],"sanitation":["sanitation"]][action] ?? criterion.predicateIDs
-   return PreparationTaskProposal(id:rec.id,actionID:rec.actionID,criterionID:criterionID,subjectID:rec.subjectID ?? "household",why:rec.whyKey,evidenceIDs:["household-needs"],completionPredicates:predicateSubset,editor:editor,dependencyIDs:rec.matchedFactIDs,priority:min(3,max(0,rec.tier.rawValue-1)))
+   return PreparationTaskProposal(destination:destination,id:rec.id,actionID:rec.actionID,criterionID:criterionID,subjectID:rec.subjectID ?? "household",why:rec.whyKey,evidenceIDs:["household-needs"],completionPredicates:predicateSubset,editor:editor,dependencyIDs:rec.matchedFactIDs,priority:min(3,max(0,rec.tier.rawValue-1)))
   }
  }
 }

@@ -1,0 +1,20 @@
+{
+  "syntheticOnly": true,
+  "providerCalls": 0,
+  "core": {
+    "passed": 539,
+    "suites": 96
+  },
+  "publicAndLocalization": {
+    "passed": 68
+  },
+  "native": "Swift syntax parse only; Xcode/SwiftUI/device pending",
+  "humanReview": "pending",
+  "sha256": {
+    "packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalDebriefEvidence.swift": "9bc92bc7f85ab6675f1216150fd4aa62e2fa902645059f6591db5bc3974c8245",
+    "packages/DryRunCore/Tests/DryRunCoreTests/RehearsalDebriefEvidenceTests.swift": "1171690fabc51f223ef846e9b5c8b1c0ce5ede17697ce8d05c69751c901d42f2",
+    "apps/ios/DryRun/Rehearse/ScenarioExperienceViews.swift": "7a82fe8c995aad28d590b6070a1b9bbeb0633cec6ca127419e37d1264387bb2d",
+    "apps/ios/DryRun/Rehearse/RehearseViews.swift": "5829fe6cc7d075d8a0fb6eb75c5b07da8f0c90654b97293a2d0f407a8dd165d2",
+    "fixtures/ai/rehearsal-debrief-outcomes.json": "59b69e7c6fefca9dbcdd63160bc633e628ae69b7761f86cf9ff4dcab8ac4a3c0"
+  }
+}

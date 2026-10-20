@@ -698,5 +698,7 @@
   "ui.brief.note": "Written on this iPhone by Apple Intelligence from your plan. Which steps come first is decided by Dry Run's rehearsals, not by AI. Open a step for the full details.",
   "ui.task.changedTitle": "Review current preparations",
   "ui.task.changedBody": "This earlier recommendation no longer matches an available preparation. Open the current list to review what still needs attention.",
-  "ui.shelter.advanceReview": "Arrange access, timing and assistance before a tornado warning. These destination fields record general arrangements; they do not certify tornado protection."
+  "ui.shelter.advanceReview": "Arrange access, timing and assistance before a tornado warning. These destination fields record general arrangements; they do not certify tornado protection.",
+  "family.member": "Household member",
+  "family.customRole": "Custom role"
 }

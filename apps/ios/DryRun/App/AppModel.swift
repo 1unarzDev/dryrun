@@ -29,6 +29,8 @@ final class AppModel {
     var savedPlaces: [SavedPlace] = []
     var locale: String = "en" { didSet { if locale != oldValue { invalidatePlans() } } }
     var savedPlan: PlanDocument?
+    /// Opaque versioned portable state is retained even before native AI screens are integrated.
+    private(set) var integratedAIState: Data?
     /// The family's choice of what the card shows, shared by the card view, Plan, Share/Print and saved plans so the
     /// preview always matches what is sent. Only these on/off choices are kept (in UserDefaults), never any content.
     var cardSelection: FamilyCardSelection = AppModel.storedCardSelection() {
@@ -255,6 +257,7 @@ final class AppModel {
             savedPlaces = HomeMeetingPlaces.placesIncludingLocalMeetup(home: snapshot.home, places: snapshot.savedPlaces, recordedAt: restored.updatedAt)
             home = snapshot.home.map { HomeMeetingPlaces.synchronize($0, places: savedPlaces) }
             savedPlan = snapshot.savedPlan
+            integratedAIState = snapshot.integratedAIState
             locale = snapshot.household.preferredLocale
             configureRegionalResources()
             phase = .ready
@@ -407,15 +410,17 @@ final class AppModel {
     }
 
     @discardableResult
-    func updateHome(_ newHome: HomeModel) async -> Bool {
-        var h = newHome
-        if let old = home, old != newHome, old.revision == newHome.revision { h.bumpRevision() }
+    func updateHome(_ newHome: HomeModel, expectedRevision: Int?) async -> Bool {
         guard let household else { return false }
+        guard var h = HomeEditTransaction.prepare(newHome, baseRevision: expectedRevision, current: home, homeID: household.stableHomeID) else {
+            lastError = "This home changed while you were editing. Your draft was kept; reopen the latest home before saving."
+            return false
+        }
         h.id = home?.id ?? household.stableHomeID
         h.dwellingType = household.housing.homeType
         let candidatePlaces = HomeMeetingPlaces.placesAfterHomeEdit(previous: home, updated: h, places: savedPlaces, editedAt: Date())
         h = HomeMeetingPlaces.synchronize(h, places: candidatePlaces)
-        if let old = home { h.revision = max(h.revision, old.revision + 1) }
+        h.revision = (home?.revision ?? 0) + 1
         var candidateHousehold = household
         candidateHousehold.homeID = h.id
         if HomeGeometryEditor.requiresNewEscapeCheck(previous: home, updated: h) {
@@ -704,7 +709,7 @@ final class AppModel {
     /// Saves a complete candidate before publishing it to observable state. This keeps failed home/place writes
     /// from presenting a success state while the previous committed snapshot remains intact.
     @discardableResult
-    private func save(snapshot: PrivateSnapshot) async -> Bool {
+    private func save(snapshot: PrivateSnapshot, preserveIntegratedAIState: Bool = true) async -> Bool {
         guard !privateWriteInFlight else {
             lastError = "Another edit is still saving. Your draft was kept; try Save again."
             return false
@@ -712,8 +717,33 @@ final class AppModel {
         privateWriteInFlight = true
         defer { privateWriteInFlight = false }
         do {
-            try await store.save(snapshot)
+            var candidate = snapshot
+            if preserveIntegratedAIState {
+                candidate.integratedAIState = household?.id == snapshot.household.id ? integratedAIState : snapshot.integratedAIState
+            }
+            try await store.save(candidate)
+            integratedAIState = candidate.integratedAIState
             return true
+        } catch {
+            lastError = String(describing: error)
+            return false
+        }
+    }
+
+    /// Native AI/practice adapters stage the portable reducer here. The digest rejects late
+    /// responses; the encrypted write completes before any observing screen sees new evidence.
+    @discardableResult
+    func updateIntegratedAIState(expectedDigest: String?, _ change: (inout IntegratedAIState) throws -> Void) async -> Bool {
+        guard let household, integratedAIState.map(StableDigest.of) == expectedDigest else {
+            lastError = "The recorded evidence changed. Refresh this result before saving."
+            return false
+        }
+        do {
+            var candidate = try integratedAIState.map { try DryRunJSON.decoder().decode(IntegratedAIState.self, from: $0) } ?? IntegratedAIState()
+            try change(&candidate)
+            let data = try DryRunJSON.encoder().encode(candidate)
+            return await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: savedPlan,
+                savedPlaces: savedPlaces, integratedAIState: data), preserveIntegratedAIState: false)
         } catch {
             lastError = String(describing: error)
             return false
@@ -762,7 +792,7 @@ final class AppModel {
             try await store.deleteAll()
             LocalReviewReminderScheduler.shared.cancel()
             TemporaryExports.purgeAll()
-            household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
+            integratedAIState = nil; household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
             cardSelection = FamilyCardSelection()
             runGate.invalidate(); planGate.invalidate(); nextGate.invalidate()
             phase = .onboarding

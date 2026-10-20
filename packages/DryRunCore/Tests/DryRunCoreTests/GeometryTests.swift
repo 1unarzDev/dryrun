@@ -132,11 +132,10 @@ struct GeometryTests {
         }
         let r2 = EgressPlanner().plan(RouteRequest(startSpaceID: "sp-scan-1"), in: confirmed)
         #expect(r2.primary?.exitPortalID == "pt-door-out")
-        // Scanned widths are evidence, not confirmation: walkers get a verification item, wheelchair users no route.
-        #expect(r2.primary?.verificationNeeded.contains("pt-door-out.clearWidth") == true)
+        // Current corrective contract accepts captured dimensions; semantic access facts remain explicit.
+        #expect(r2.primary?.verificationNeeded.contains("pt-door-out.clearWidth") == false)
         let chair = EgressPlanner().plan(RouteRequest(startSpaceID: "sp-scan-1", mobility: .wheelchair), in: confirmed)
-        #expect(chair.primary == nil)
-        #expect(chair.exclusions.contains { $0.reason == "incompatibleMobility: scanned clear width not confirmed" })
+        #expect(chair.primary?.exitPortalID == "pt-door-out")
         if let p = r2.primary { #expect(RouteGeometryAudit.violations(p, in: confirmed).isEmpty) }
     }
 

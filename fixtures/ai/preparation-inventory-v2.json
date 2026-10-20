@@ -1,13 +1,13 @@
 {
   "synthetic": true,
   "newModelCalls": 0,
-  "assessmentVersion": "dryrun.household-assessment/6",
+  "assessmentVersion": "dryrun.household-assessment/7",
   "results": [
     {
       "kind": "flashlight",
       "category": "light",
       "initial": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "criterionID": "essentials",
         "evidenceIDs": [
           "supplies",
@@ -21,7 +21,7 @@
         }
       },
       "confirmed": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "criterionID": "essentials",
         "evidenceIDs": [
           "supplies",
@@ -35,7 +35,7 @@
         }
       },
       "generic": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "criterionID": "essentials",
         "evidenceIDs": [
           "supplies",
@@ -67,6 +67,11 @@
         "dependencyIDs": [
           "preparedness.flashlight"
         ],
+        "destination": {
+          "checklistID": "flashlight",
+          "kind": "checklist",
+          "titleKey": "prep.flashlight.title"
+        },
         "editor": "supplies",
         "evidenceIDs": [
           "household-needs"
@@ -86,7 +91,7 @@
       "kind": "firstAidKit",
       "category": "firstAid",
       "initial": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "criterionID": "essentials",
         "evidenceIDs": [
           "supplies",
@@ -100,7 +105,7 @@
         }
       },
       "confirmed": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "criterionID": "essentials",
         "evidenceIDs": [
           "supplies",
@@ -114,7 +119,7 @@
         }
       },
       "generic": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "criterionID": "essentials",
         "evidenceIDs": [
           "supplies",
@@ -146,6 +151,11 @@
         "dependencyIDs": [
           "preparedness.firstAid"
         ],
+        "destination": {
+          "checklistID": "firstAid",
+          "kind": "checklist",
+          "titleKey": "prep.firstAid.title"
+        },
         "editor": "supplies",
         "evidenceIDs": [
           "household-needs"

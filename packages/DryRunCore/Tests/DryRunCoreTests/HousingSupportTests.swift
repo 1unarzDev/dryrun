@@ -37,7 +37,7 @@ import Testing
         let assessments=try HouseholdAssessment.assess(household:h,home:SampleHomes.ranch,inventory:nil,at:at)
         #expect(assessments.first{$0.criterionID=="shelter"}?.predicates["suitable"]==false)
         #expect(assessments.first{$0.criterionID=="shelter"}?.predicates["reachable"]==nil)
-        #expect(assessments.allSatisfy{$0.assessmentVersion=="dryrun.household-assessment/6"})
+        #expect(assessments.allSatisfy{$0.assessmentVersion=="dryrun.household-assessment/7"})
     }
     @Test func capturedWindowsRemainProposalsButExcludeWindowlessShelter() throws {
         var home=try ScanImport.importCapture(GeometryTests.capture,homeID:"scan-window-fixture").home

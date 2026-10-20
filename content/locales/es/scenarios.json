@@ -339,5 +339,12 @@
   "scenario.household-leak.choice.help.get-help": "Contactar con un adulto de confianza, el administrador del edificio o un profesional adecuado desde un lugar seco",
   "scenario.household-leak.choice.help.get-help.feedback": "Busque ayuda adecuada a la situación. Si hay peligro inmediato, contacte con el servicio local de emergencias. Este ejercicio no incluye procedimientos de reparación eléctrica ni de fontanería.",
   "scenario.household-leak.choice.help.touch-electrics": "Tocar equipos eléctricos mojados para revisarlos",
-  "scenario.household-leak.choice.help.touch-electrics.feedback": "No toque equipos eléctricos si está mojado o de pie en el agua. Manténgase lejos y busque ayuda adecuada."
+  "scenario.household-leak.choice.help.touch-electrics.feedback": "No toque equipos eléctricos si está mojado o de pie en el agua. Manténgase lejos y busque ayuda adecuada.",
+  "scenario.flash-flood.event.access-lost": "Ejercicio: la ruta de acceso ya no está disponible",
+  "scenario.heat-grid-strain.variant.cooling-followup": "Revisión del enfriamiento con electricidad disponible",
+  "scenario.heat-grid-strain.choice.powered-evening.prompt": "El siguiente día caluroso aún tiene electricidad. ¿Qué opción de enfriamiento registrada usarás?",
+  "scenario.heat-grid-strain.choice.powered-evening.relocate": "Usar la alternativa de enfriamiento registrada si hay transporte y destino disponibles",
+  "scenario.heat-grid-strain.choice.powered-evening.relocate.feedback": "El sistema comprueba las condiciones registradas del transporte y el destino. Una opción sin preparar sigue siendo una carencia; elegirla no inventa un centro de enfriamiento ni una autorización para viajar.",
+  "scenario.heat-grid-strain.choice.powered-evening.stay": "Continuar el plan de enfriamiento en casa y revisar sus dependencias",
+  "scenario.heat-grid-strain.choice.powered-evening.stay.feedback": "La electricidad sigue disponible en este ejercicio. La familia permanece en casa con sus dependencias registradas de enfriamiento y agua; tener equipos encendidos no garantiza enfriamiento suficiente ni tolerancia médica."
 }

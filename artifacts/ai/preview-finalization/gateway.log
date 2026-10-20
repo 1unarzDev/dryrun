@@ -1,0 +1,14 @@
+$ vitest run
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/ai-orchestrator
+
+
+ Test Files  24 passed (24)
+      Tests  205 passed (205)
+   Start at  07:23:50
+   Duration  1.35s (import 46%, transform 33%, tests 20%, worker 1%)
+
+  Transform  transforming modules took 4.54s · 33% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+

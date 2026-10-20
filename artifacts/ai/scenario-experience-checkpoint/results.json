@@ -1,0 +1,51 @@
+{
+  "version": "dryrun.scenario-experience-checkpoint/1",
+  "date": "2026-10-20",
+  "syntheticOnly": true,
+  "newLiveModelCalls": 0,
+  "checks": {
+    "fullPortable": {
+      "exit": 0,
+      "coreTests": 533,
+      "coreSuites": 95,
+      "vaultTests": 39,
+      "publicTests": 68,
+      "gatewayTests": 199,
+      "gatewaySuites": 24,
+      "typeScript": "passed",
+      "includedOfflineEvaluators": "passed"
+    },
+    "subsequentFinalCore": {
+      "exit": 0,
+      "tests": 534,
+      "suites": 95
+    },
+    "subsequentFinalPublic": {
+      "exit": 0,
+      "tests": 68
+    },
+    "native": {
+      "swiftSyntaxParse": "passed",
+      "swiftUITypecheck": "pending",
+      "xcodeBuild": "pending",
+      "iPhone": "pending",
+      "roomPlanSave": "pending"
+    },
+    "preview": {
+      "rendered": "Firefox Linux",
+      "hazards": 6,
+      "computedBranches": 24,
+      "coreAuthoredTraceRuns": 12,
+      "defaultAndLaterBranchScreenshots": "reviewed",
+      "narrow430pxScreenshot": "reviewed",
+      "nativeScreenshot": false
+    }
+  },
+  "open": [
+    "Native incremental receipt integration and iPhone checks",
+    "Existing live-model semantic failures",
+    "Useful fresh end-to-end Groq sourced discovery",
+    "Independent safety/accessibility/language/usability review"
+  ],
+  "handoff": "docs/ai/scenario-experience-handoff.md"
+}

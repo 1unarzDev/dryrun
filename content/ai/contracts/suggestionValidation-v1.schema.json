@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "minItems": 1,
+  "maxItems": 4,
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "feasible": {
+        "type": "boolean"
+      },
+      "rejection": {
+        "type": "string",
+        "maxLength": 120
+      }
+    },
+    "required": [
+      "id",
+      "feasible"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,12 +1,14 @@
+import {ProviderFailure} from './groq.js';
 import type {RequestListener} from 'node:http';
 import {z} from 'zod';
 import {normalizeHomeReview} from './home-review.js';
 import {intentRequest,type IntentInterpreter} from './intents.js';
+import {researchBrief,type ResourceDiscovery} from './resource-discovery.js';
 import type {Gateway} from './gateway.js';
 import {featureContext,type FeatureRunner} from './features.js';
 
 /** Transport adapter only. Production verification remains an explicit startup dependency. */
-export function createAIRequestHandler({gateway,features,interpreter,authorize}:{gateway:Gateway;features:FeatureRunner;interpreter:IntentInterpreter;authorize:(header:string|undefined)=>string}):RequestListener {
+export function createAIRequestHandler({gateway,features,interpreter,discovery,authorize}:{gateway:Gateway;features:FeatureRunner;interpreter:IntentInterpreter;discovery?:ResourceDiscovery;authorize:(header:string|undefined)=>string}):RequestListener {
  const seen=new Set<string>();
 return async(req,res)=>{
  const controller=new AbortController();
@@ -14,6 +16,12 @@ return async(req,res)=>{
  req.once('aborted',disconnected);res.once('close',disconnected);
  res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
  try{const owner=authorize(req.headers.authorization);if(req.method!=='POST')throw new Error('method');const chunks:Buffer[]=[];let bytes=0;for await(const chunk of req){bytes+=chunk.length;if(bytes>(req.url==='/v1/features'?6000000:96000))throw new Error('payload');chunks.push(chunk);}const input:unknown=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(chunks)));
+ if(req.url==='/v1/research'){
+ const r=z.object({contractVersion:z.literal('dryrun.ai/1'),requestID:z.string().min(1).max(120),synthetic:z.literal(true),brief:researchBrief}).strict().parse(input);
+ const key=owner+':'+r.requestID;if(!discovery||seen.has(key)||seen.size>=100)throw new Error('replay_or_quota');seen.add(key);
+ try{const result=await discovery.discover(r.brief,controller.signal);res.end(JSON.stringify({status:'completed',requestID:r.requestID,result}));}
+ catch(error){const reason=error instanceof ProviderFailure?`provider_${error.kind}`:error instanceof Error&&['provider_rate_limited','provider_overloaded','provider_model_unavailable','provider_access_denied','provider_request_rejected','provider_timeout_or_cancelled','spend_budget','research_budget','provider_unavailable'].includes(error.message)?error.message:'research_unavailable';res.end(JSON.stringify({status:'unavailable',requestID:r.requestID,reason,...(error instanceof ProviderFailure?{retryAfterMs:error.retryAfterMs,diagnostic:error.diagnostic}:{}),fallback:'independent_native_search',preservePriorResult:true}));}return;
+ }
  if(req.url==='/v1/intents'){
  const r=intentRequest.parse(input);const key=owner+':'+r.requestID;
  if(seen.has(key)||seen.size>=100)throw new Error('replay_or_quota');seen.add(key);
@@ -21,13 +29,17 @@ return async(req,res)=>{
  res.end(JSON.stringify({status:'completed',requestID:r.requestID,proposal}));return;
  }
  if(req.url==='/v1/features'){
- const r=z.object({contractVersion:z.literal('dryrun.ai/1'),requestID:z.string().min(1).max(120),synthetic:z.literal(true),role:z.enum(['preparation','resources','home','stress','council']),context:featureContext,images:z.array(z.unknown()).max(4).default([])}).strict().parse(input);
+ const r=z.object({contractVersion:z.literal('dryrun.ai/1'),requestID:z.string().min(1).max(120),synthetic:z.literal(true),role:z.enum(['preparation','resources','home','stress','council']),providerConsent:z.array(z.enum(['gemini','groq'])).min(1).max(2).optional(),context:featureContext,images:z.array(z.unknown()).max(4).default([])}).strict().parse(input);
  const key=owner+':'+r.requestID;if(seen.has(key)||seen.size>=100)throw new Error('replay_or_quota');seen.add(key);
- const proposal=r.role==='council'?await features.council(r.context,controller.signal):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(60000)]),r.images);
+ const proposal=r.role==='council'?await features.council(r.context,controller.signal):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(60000)]),r.images,r.providerConsent);
  res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,proposal,...(r.role==='home'?{reviewProposals:normalizeHomeReview(proposal,r.context)}:{})}));return;
  }
  const result=req.url==='/v1/operations'?await gateway.start(owner,input,controller.signal):req.url==='/v1/continue'?await gateway.resume(owner,input,controller.signal):req.url==='/v1/cancel'&&typeof input==='object'&&input!==null&&'token'in input&&typeof input.token==='string'?gateway.cancel(owner,input.token):{status:'rejected',reason:'unknown_endpoint'};
- res.end(JSON.stringify(result));}catch{res.statusCode=400;res.end(JSON.stringify({status:'rejected',reason:'invalid_or_unauthorized_request'}));}
+ res.end(JSON.stringify(result));}catch(error){
+ if(error instanceof ProviderFailure){res.end(JSON.stringify({status:'unavailable',reason:`provider_${error.kind}`,retryAfterMs:error.retryAfterMs,diagnostic:error.diagnostic,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
+ else if(error instanceof Error&&['provider_rate_limited','provider_overloaded','provider_model_unavailable','provider_access_denied','provider_request_rejected','provider_timeout_or_cancelled','provider_unavailable','spend_budget','operation_budget'].includes(error.message)){res.end(JSON.stringify({status:'unavailable',reason:error.message,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
+ else{res.statusCode=400;res.end(JSON.stringify({status:'rejected',reason:'invalid_or_unauthorized_request'}));}
+ }
  finally {req.off('aborted',disconnected);res.off('close',disconnected);}
 };
 }

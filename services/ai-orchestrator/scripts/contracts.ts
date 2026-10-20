@@ -1,11 +1,14 @@
 import {resourceStrategyKey} from '../src/resource-refresh-contracts.js';
 import {homeConcernReviewProposal} from '../src/home-review.js';
 import {intentRequest,intentContext,userCommand,userActionIntent} from '../src/intents.js';
-import {practiceSource,practiceObservation,practicePhasePlan} from '../src/practice-contracts.js';
+import {hazardCheck,practiceSource,practiceObservation,practicePhasePlan} from '../src/practice-contracts.js';
 import {directorProposalEnvelope,nextBoundary,presentationIntent} from '../src/director-envelope.js';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {z} from 'zod';
 import {roleSchemas,featureContext,imageManifest,resourcePlan,scene,housing,siteHazardContext} from '../src/features.js';
-import {stressRetestPlan,stressRetestComparison,committedActionContext,operationRequest,continuationRequest,directorOutput,directorPolicy,directorState,command,previewConsequences,exerciseAssistance} from '../src/contracts.js';
+import {hazardExperience} from '../src/contracts.js';
+import {researchBrief,discoveryComparison} from '../src/resource-discovery.js';
+import {suggestedAction} from '../src/user-commands.js';
+import {stressRetestPlan,stressRetestComparison,directorContext,committedActionContext,operationRequest,continuationRequest,directorOutput,directorPolicy,directorState,command,previewConsequences,exerciseAssistance,suggestionValidationArgs,suggestionValidation} from '../src/contracts.js';
 await mkdir('../../content/ai/contracts',{recursive:true});
-for(const [name,schema] of Object.entries({housing,siteHazardContext,resourceStrategyKey,homeConcernReviewProposal,intentRequest,intentContext,userCommand,userActionIntent,practiceSource,practiceObservation,practicePhasePlan,...roleSchemas,stressRetestPlan,stressRetestComparison,homeScene:scene,featureContext,imageManifest,resourcePlan,committedActionContext,operationRequest,continuationRequest,directorOutput,directorPolicy,directorState,command,previewConsequences,exerciseAssistance,directorProposalEnvelope,nextBoundary,presentationIntent}))await writeFile('../../content/ai/contracts/'+name+'-v1.schema.json',JSON.stringify(z.toJSONSchema(schema),null,2)+'\n');
+for(const [name,schema] of Object.entries({hazardExperience,researchBrief,discoveryComparison,suggestedAction,suggestionValidationArgs,suggestionValidation,housing,siteHazardContext,resourceStrategyKey,homeConcernReviewProposal,intentRequest,intentContext,userCommand,userActionIntent,hazardCheck,practiceSource,practiceObservation,practicePhasePlan,...roleSchemas,stressRetestPlan,stressRetestComparison,homeScene:scene,featureContext,imageManifest,resourcePlan,directorContext,committedActionContext,operationRequest,continuationRequest,directorOutput,directorPolicy,directorState,command,previewConsequences,exerciseAssistance,directorProposalEnvelope,nextBoundary,presentationIntent}))await writeFile('../../content/ai/contracts/'+name+'-v1.schema.json',JSON.stringify(z.toJSONSchema(schema),null,2)+'\n');

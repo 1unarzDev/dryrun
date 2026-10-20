@@ -44,7 +44,7 @@
       "reassessment": {
         "assessments": [
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "alarms",
             "evidenceIDs": [
               "preparedness.smokeAlarms"
@@ -53,7 +53,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "escape",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -65,7 +65,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "shelter",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -77,7 +77,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "water",
             "evidenceIDs": [
               "inventory.water"
@@ -89,7 +89,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "food",
             "evidenceIDs": [
               "supplies.shelfStableFoodDays",
@@ -101,7 +101,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "essentials",
             "evidenceIDs": [
               "supplies",
@@ -115,11 +115,10 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "contact",
             "evidenceIDs": [
-              "contacts",
-              "preparedness.reconnect"
+              "contacts"
             ],
             "outsideScope": false,
             "predicates": {
@@ -127,7 +126,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "meetups",
             "evidenceIDs": [
               "savedPlaces",
@@ -139,7 +138,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "assistance",
             "evidenceIDs": [
               "people.assistance"
@@ -150,7 +149,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "device",
             "evidenceIDs": [
               "equipment",
@@ -160,7 +159,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "care",
             "evidenceIDs": [
               "people.needs"
@@ -169,7 +168,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "pets",
             "evidenceIDs": [
               "pets"
@@ -180,7 +179,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "review",
             "evidenceIDs": [
               "preparedness.reviewedAt"
@@ -1449,13 +1448,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -1470,6 +1525,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -1495,30 +1570,74 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "typed-water"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 5
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 5
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "infant",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -1543,6 +1662,53 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 3
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 5,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -1572,7 +1738,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -1844,7 +2009,7 @@
           }
         ],
         "scorecard": {
-          "assessmentVersion": "dryrun.household-assessment/6",
+          "assessmentVersion": "dryrun.household-assessment/7",
           "cap": 59,
           "capReasons": [
             "alarms",
@@ -3380,6 +3545,10 @@
             "dependencyIDs": [
               "equipment.eq-oxygen"
             ],
+            "destination": {
+              "kind": "equipment",
+              "subjectID": "eq-oxygen"
+            },
             "editor": "medical",
             "evidenceIDs": [
               "household-needs"
@@ -3401,6 +3570,11 @@
             "dependencyIDs": [
               "preparedness.coAlarms"
             ],
+            "destination": {
+              "checklistID": "coAlarms",
+              "kind": "checklist",
+              "titleKey": "prep.coAlarms.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3421,6 +3595,11 @@
             "dependencyIDs": [
               "preparedness.clearExits"
             ],
+            "destination": {
+              "checklistID": "clearExits",
+              "kind": "checklist",
+              "titleKey": "prep.clearExits.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3442,6 +3621,11 @@
             "dependencyIDs": [
               "preparedness.smokeAlarms"
             ],
+            "destination": {
+              "checklistID": "smokeAlarms",
+              "kind": "checklist",
+              "titleKey": "prep.smokeAlarms.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3462,6 +3646,11 @@
               "equipment.eq-oxygen",
               "preparedness.equipmentSupplies.eq-oxygen"
             ],
+            "destination": {
+              "checklistID": "equipmentSupplies.eq-oxygen",
+              "kind": "checklist",
+              "titleKey": "prep.equipmentSupplies.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3481,6 +3670,11 @@
             "dependencyIDs": [
               "preparedness.radio"
             ],
+            "destination": {
+              "checklistID": "radio",
+              "kind": "checklist",
+              "titleKey": "prep.radio.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3500,6 +3694,11 @@
             "dependencyIDs": [
               "preparedness.heatCold"
             ],
+            "destination": {
+              "checklistID": "heatCold",
+              "kind": "checklist",
+              "titleKey": "prep.heatCold.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3519,6 +3718,11 @@
             "dependencyIDs": [
               "preparedness.floodPlan"
             ],
+            "destination": {
+              "checklistID": "floodPlan",
+              "kind": "checklist",
+              "titleKey": "prep.floodPlan.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3538,6 +3742,11 @@
             "dependencyIDs": [
               "preparedness.wellFloodPlan"
             ],
+            "destination": {
+              "checklistID": "wellFloodPlan",
+              "kind": "checklist",
+              "titleKey": "prep.wellFloodPlan.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3558,6 +3767,11 @@
               "preparedness.alerts",
               "regionID"
             ],
+            "destination": {
+              "checklistID": "alerts",
+              "kind": "checklist",
+              "titleKey": "prep.alerts.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3578,6 +3792,10 @@
             "dependencyIDs": [
               "savedPlaces"
             ],
+            "destination": {
+              "kind": "meeting",
+              "purpose": "backupMeetingPlace"
+            },
             "editor": "meetingPlace",
             "evidenceIDs": [
               "household-needs"
@@ -3598,6 +3816,11 @@
             "dependencyIDs": [
               "preparedness.batteries"
             ],
+            "destination": {
+              "checklistID": "batteries",
+              "kind": "checklist",
+              "titleKey": "prep.batteries.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3616,6 +3839,11 @@
             "dependencyIDs": [
               "preparedness.firstAid"
             ],
+            "destination": {
+              "checklistID": "firstAid",
+              "kind": "checklist",
+              "titleKey": "prep.firstAid.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3634,6 +3862,11 @@
             "dependencyIDs": [
               "preparedness.flashlight"
             ],
+            "destination": {
+              "checklistID": "flashlight",
+              "kind": "checklist",
+              "titleKey": "prep.flashlight.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3653,6 +3886,11 @@
             "dependencyIDs": [
               "preparedness.food"
             ],
+            "destination": {
+              "checklistID": "food",
+              "kind": "checklist",
+              "titleKey": "prep.food.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3673,6 +3911,11 @@
               "pets",
               "preparedness.pets"
             ],
+            "destination": {
+              "checklistID": "pets",
+              "kind": "checklist",
+              "titleKey": "prep.pets.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3683,25 +3926,6 @@
             "why": "prep.pets.why"
           },
           {
-            "actionID": "prep.reconnect",
-            "completionPredicates": [
-              "usableContact",
-              "offlineAccess"
-            ],
-            "criterionID": "contact",
-            "dependencyIDs": [
-              "preparedness.reconnect"
-            ],
-            "editor": "supplies",
-            "evidenceIDs": [
-              "household-needs"
-            ],
-            "id": "prep.reconnect",
-            "priority": 2,
-            "subjectID": "household",
-            "why": "prep.reconnect.why"
-          },
-          {
             "actionID": "prep.sanitation",
             "completionPredicates": [
               "sanitation"
@@ -3710,6 +3934,11 @@
             "dependencyIDs": [
               "preparedness.sanitation"
             ],
+            "destination": {
+              "checklistID": "sanitation",
+              "kind": "checklist",
+              "titleKey": "prep.sanitation.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3730,6 +3959,9 @@
               "preparedness.water.location",
               "supplies.storedWaterGallons"
             ],
+            "destination": {
+              "kind": "water"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3750,6 +3982,11 @@
             "dependencyIDs": [
               "preparedness.fireDrill"
             ],
+            "destination": {
+              "checklistID": "fireDrill",
+              "kind": "checklist",
+              "titleKey": "prep.fireDrill.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -3769,6 +4006,9 @@
             "dependencyIDs": [
               "preparedness.reviewedAt"
             ],
+            "destination": {
+              "kind": "review"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -4665,7 +4905,7 @@
       "reassessment": {
         "assessments": [
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "alarms",
             "evidenceIDs": [
               "preparedness.smokeAlarms"
@@ -4674,7 +4914,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "escape",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -4686,7 +4926,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "shelter",
             "evidenceIDs": [
               "home|home-sample-ranch|1",
@@ -4698,7 +4938,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "water",
             "evidenceIDs": [
               "inventory.water"
@@ -4710,7 +4950,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "food",
             "evidenceIDs": [
               "supplies.shelfStableFoodDays",
@@ -4720,7 +4960,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "essentials",
             "evidenceIDs": [
               "supplies",
@@ -4733,11 +4973,10 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "contact",
             "evidenceIDs": [
-              "contacts",
-              "preparedness.reconnect"
+              "contacts"
             ],
             "outsideScope": false,
             "predicates": {
@@ -4745,7 +4984,7 @@
             }
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "meetups",
             "evidenceIDs": [
               "savedPlaces",
@@ -4755,7 +4994,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "assistance",
             "evidenceIDs": [
               "people.assistance"
@@ -4765,7 +5004,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "device",
             "evidenceIDs": [
               "equipment",
@@ -4776,7 +5015,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "care",
             "evidenceIDs": [
               "people.needs"
@@ -4786,7 +5025,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "pets",
             "evidenceIDs": [
               "pets"
@@ -4796,7 +5035,7 @@
             "predicates": {}
           },
           {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "criterionID": "review",
             "evidenceIDs": [
               "preparedness.reviewedAt"
@@ -6006,6 +6245,7 @@
           ]
         },
         "householdContext": {
+          "backupPower": [],
           "equipment": [],
           "evidence": [
             {
@@ -6019,6 +6259,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -6043,17 +6303,59 @@
               "status": "unknown"
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "typed-water"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 2
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 2
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": true,
           "people": [
             {
               "ageBand": "adult",
+              "communicationInstructions": "Prefers Vietnamese",
+              "helperPersonID": "p-lake-2",
               "id": "p-lake-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-lake-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             }
           ],
           "pets": [],
@@ -6072,6 +6374,49 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 1
+            },
+            "limitedStorageSpace": true,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 2,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "noCar"
         },
@@ -6099,7 +6444,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.outOfAreaContact",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.transport",
           "prep.water",
@@ -6355,7 +6699,7 @@
           }
         ],
         "scorecard": {
-          "assessmentVersion": "dryrun.household-assessment/6",
+          "assessmentVersion": "dryrun.household-assessment/7",
           "cap": 59,
           "capReasons": [
             "alarms",
@@ -7792,6 +8136,11 @@
             "dependencyIDs": [
               "preparedness.coAlarms"
             ],
+            "destination": {
+              "checklistID": "coAlarms",
+              "kind": "checklist",
+              "titleKey": "prep.coAlarms.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7812,6 +8161,11 @@
             "dependencyIDs": [
               "preparedness.clearExits"
             ],
+            "destination": {
+              "checklistID": "clearExits",
+              "kind": "checklist",
+              "titleKey": "prep.clearExits.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7833,6 +8187,11 @@
             "dependencyIDs": [
               "preparedness.smokeAlarms"
             ],
+            "destination": {
+              "checklistID": "smokeAlarms",
+              "kind": "checklist",
+              "titleKey": "prep.smokeAlarms.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7852,6 +8211,11 @@
             "dependencyIDs": [
               "preparedness.radio"
             ],
+            "destination": {
+              "checklistID": "radio",
+              "kind": "checklist",
+              "titleKey": "prep.radio.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7871,6 +8235,11 @@
             "dependencyIDs": [
               "preparedness.heatCold"
             ],
+            "destination": {
+              "checklistID": "heatCold",
+              "kind": "checklist",
+              "titleKey": "prep.heatCold.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7891,6 +8260,10 @@
               "contacts.waterUtility",
               "housing.waterSource"
             ],
+            "destination": {
+              "contactRole": "waterUtility",
+              "kind": "contact"
+            },
             "editor": "contacts",
             "evidenceIDs": [
               "household-needs"
@@ -7910,6 +8283,11 @@
             "dependencyIDs": [
               "preparedness.floodPlan"
             ],
+            "destination": {
+              "checklistID": "floodPlan",
+              "kind": "checklist",
+              "titleKey": "prep.floodPlan.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7930,6 +8308,11 @@
               "preparedness.alerts",
               "regionID"
             ],
+            "destination": {
+              "checklistID": "alerts",
+              "kind": "checklist",
+              "titleKey": "prep.alerts.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7950,6 +8333,10 @@
             "dependencyIDs": [
               "savedPlaces"
             ],
+            "destination": {
+              "kind": "meeting",
+              "purpose": "backupMeetingPlace"
+            },
             "editor": "meetingPlace",
             "evidenceIDs": [
               "household-needs"
@@ -7970,6 +8357,11 @@
             "dependencyIDs": [
               "preparedness.batteries"
             ],
+            "destination": {
+              "checklistID": "batteries",
+              "kind": "checklist",
+              "titleKey": "prep.batteries.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -7988,6 +8380,11 @@
             "dependencyIDs": [
               "preparedness.firstAid"
             ],
+            "destination": {
+              "checklistID": "firstAid",
+              "kind": "checklist",
+              "titleKey": "prep.firstAid.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -8006,6 +8403,11 @@
             "dependencyIDs": [
               "preparedness.flashlight"
             ],
+            "destination": {
+              "checklistID": "flashlight",
+              "kind": "checklist",
+              "titleKey": "prep.flashlight.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -8025,6 +8427,11 @@
             "dependencyIDs": [
               "preparedness.food"
             ],
+            "destination": {
+              "checklistID": "food",
+              "kind": "checklist",
+              "titleKey": "prep.food.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -8044,6 +8451,10 @@
             "dependencyIDs": [
               "contacts"
             ],
+            "destination": {
+              "contactRole": "outOfAreaContact",
+              "kind": "contact"
+            },
             "editor": "contacts",
             "evidenceIDs": [
               "household-needs"
@@ -8054,25 +8465,6 @@
             "why": "prep.outOfAreaContact.why"
           },
           {
-            "actionID": "prep.reconnect",
-            "completionPredicates": [
-              "usableContact",
-              "offlineAccess"
-            ],
-            "criterionID": "contact",
-            "dependencyIDs": [
-              "preparedness.reconnect"
-            ],
-            "editor": "supplies",
-            "evidenceIDs": [
-              "household-needs"
-            ],
-            "id": "prep.reconnect",
-            "priority": 2,
-            "subjectID": "household",
-            "why": "prep.reconnect.why"
-          },
-          {
             "actionID": "prep.sanitation",
             "completionPredicates": [
               "sanitation"
@@ -8081,6 +8473,11 @@
             "dependencyIDs": [
               "preparedness.sanitation"
             ],
+            "destination": {
+              "checklistID": "sanitation",
+              "kind": "checklist",
+              "titleKey": "prep.sanitation.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -8102,6 +8499,9 @@
               "transport.alternatives",
               "transport.vehicles"
             ],
+            "destination": {
+              "kind": "transport"
+            },
             "editor": "meetingPlace",
             "evidenceIDs": [
               "household-needs"
@@ -8122,6 +8522,9 @@
               "preparedness.water.location",
               "supplies.storedWaterGallons"
             ],
+            "destination": {
+              "kind": "water"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -8142,6 +8545,11 @@
             "dependencyIDs": [
               "preparedness.fireDrill"
             ],
+            "destination": {
+              "checklistID": "fireDrill",
+              "kind": "checklist",
+              "titleKey": "prep.fireDrill.title"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"
@@ -8161,6 +8569,9 @@
             "dependencyIDs": [
               "preparedness.reviewedAt"
             ],
+            "destination": {
+              "kind": "review"
+            },
             "editor": "supplies",
             "evidenceIDs": [
               "household-needs"

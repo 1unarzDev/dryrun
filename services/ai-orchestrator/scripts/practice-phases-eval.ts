@@ -35,6 +35,8 @@ try {
   const definition=await host.request({op:'initialize',scenarioID});
   const input={...structuredClone(initial),scenarioID,scenarioVersion:definition.session.initial.scenarioVersion};
   let state=await host.request({op:'initialize',input});state.session.id='phase-'+competency;
+  // Frozen legacy phased-check evaluation; new hazard mechanics use the retiring hazard bank.
+  delete state.session.mechanicsVersion;state=await host.request({op:'query',session:state.session});
   for(const [n,event] of events.entries())state=await host.request({op:'commit',session:state.session,commit:{id:'setup-'+competency+'-'+n,actor:'director',baseRevision:state.receipt.revision,commands:[{kind:'schedule',target:event,minute:n},{kind:'advance',minute:n}]}});
   sources.push(state.session);
  }

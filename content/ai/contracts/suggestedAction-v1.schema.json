@@ -1,0 +1,558 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "fact": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400
+    },
+    "implication": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 400
+    },
+    "commands": {
+      "minItems": 1,
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "moveTo"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "takeSupply"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "transferSupply"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "assignHelper"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "allocatePower"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "closeDoor"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "choose"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "escape"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "reachHigherRefuge"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "reachShelter"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "accompanyEscape"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "accompanyShelter"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "identifyGap"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "contact"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "accountOutside"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "leaveEarly"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "heatedAlternative"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "cooledAlternative"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "reduceSolarGain"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              }
+            },
+            "required": [
+              "kind",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "warmLayers"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "useWater"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "value": {
+                "type": "string",
+                "enum": [
+                  "drink",
+                  "prepareFood",
+                  "hygiene",
+                  "boiledDrink"
+                ]
+              },
+              "quantityLiters": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 20
+              }
+            },
+            "required": [
+              "kind",
+              "target",
+              "value",
+              "quantityLiters"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "useStoredWater"
+              },
+              "value": {
+                "type": "string",
+                "enum": [
+                  "essential",
+                  "all"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "const": "finish"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "fact",
+    "implication",
+    "commands"
+  ],
+  "additionalProperties": false
+}

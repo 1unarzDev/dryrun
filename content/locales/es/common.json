@@ -698,5 +698,7 @@
   "ui.brief.note": "Escrito en este iPhone por Apple Intelligence a partir de su plan. Qué pasos van primero lo deciden los ensayos de Dry Run, no la IA. Abra un paso para ver todos los detalles.",
   "ui.task.changedTitle": "Revisa las preparaciones actuales",
   "ui.task.changedBody": "Esta recomendación anterior ya no coincide con una preparación disponible. Abre la lista actual para revisar lo que aún necesita atención.",
-  "ui.shelter.advanceReview": "Acuerda el acceso, el momento y la ayuda antes de una alerta de tornado. Estos campos registran acuerdos generales; no certifican protección contra tornados."
+  "ui.shelter.advanceReview": "Acuerda el acceso, el momento y la ayuda antes de una alerta de tornado. Estos campos registran acuerdos generales; no certifican protección contra tornados.",
+  "family.member": "Miembro del hogar",
+  "family.customRole": "Rol personalizado"
 }

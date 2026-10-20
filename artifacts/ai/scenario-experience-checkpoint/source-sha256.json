@@ -1,0 +1,18 @@
+{
+  "apps/ios/DryRun/Rehearse/RehearseViews.swift": "051722b5b3542d949670ec6ce4e3b3d07d3d6004175d5829185603a20564ecc1",
+  "apps/ios/DryRun/Rehearse/ScenarioExperienceViews.swift": "671ffed2acad29a1a4709a2b60009dafe3285078a7db60b24e76259317a923f9",
+  "packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalExperienceDesign.swift": "ca3d696d07a140ccfbdf7f3af17eb15ca38f0f59cc6a71a9b534e212d1ddeb67",
+  "packages/DryRunCore/Tests/DryRunCoreTests/RehearsalExperienceDesignTests.swift": "7021f42d6f938dbce8f455cb579c18e4c0fe18202593b5e16f4f4487d02b8cfb",
+  "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift": "4fbeb72cabada27eebc447079272fdb7bdba9461c67a2161056b3bb68c8e9c53",
+  "content/scenarios/heat-grid-strain.json": "4876e572b40a2953dc2c62d443d3c9e768f6f9fd6c01ff7af7c595858086d21b",
+  "content/locales/translation-baseline.json": "d26594b61ff1552fe0a502b650f01ac006dd24f619e7e86ed1e28396a6df1c41",
+  "fixtures/ai/rehearsal-experience-review.json": "5bf68514547926f5f083ab6555ee1a8181237ee63fbba0093c153dd2137578b5",
+  "scripts/render-rehearsal-experiences.py": "0b1f571cc692ee347cf8ea5fbc6b889de8e5c24ada2808f7280498f9e73838bd",
+  "docs/ai/scenario-experience-handoff.md": "79c83872d07520b90fb8dd0a50a32b24bff9f44cc48d1d7816459fe365f40e87",
+  "content/locales/en/native.json": "bdeb616f69eb890e9eb748717307ab752f24832608b90a7db78cdd1a2dd27dfb",
+  "content/locales/en/scenarios.json": "30146c82e545ca9aab02118edd78cd1073b856842cdd9a296f1fb910e8b9124d",
+  "content/locales/es/native.json": "81495ae8bfe987ee405ba2e61cbeb470fcda39592c4e6ffd0424a82ebcdf1366",
+  "content/locales/es/scenarios.json": "3cbad8f5275e2c855a3991891004d4a1a2ce152c9101029246d46e3cbeb24724",
+  "content/locales/vi/native.json": "1b98fc6ee3dfa8facdba2e626f2a4179f858893296bc59771ac5a8c09ba1e549",
+  "content/locales/vi/scenarios.json": "d62b8b426f5e8215dc8579fe51b5736c930b954e834e17d32bb02d00c6b23820"
+}

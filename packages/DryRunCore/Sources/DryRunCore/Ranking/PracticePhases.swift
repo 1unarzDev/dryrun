@@ -9,7 +9,7 @@ public extension IntegratedAIState {
     /// director difficulty changes are allowed during the scored check. Training stays separate.
     @discardableResult mutating func beginPracticeCheck(id:String,variantID:String,sessionIDs:[String],
         library:ScenarioLibrary,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeAttempt {
-        if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),latest.archivedUnverified != true,
+        if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),latest.checkID==nil,latest.archivedUnverified != true,
            (latest.observations?.count ?? latest.answers.count)<4 {return latest}
         guard Self.phasedPracticeVariants.contains(variantID),sessionIDs.count==4,Set(sessionIDs).count==4,
               !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
@@ -96,7 +96,7 @@ public extension IntegratedAIState {
             let observation=index<observations.count ? observations[index]:nil
             // Before completion, no uncaptured action or later director complication may enter any phase.
             if observations.count<4 {guard session.revision==source.startingRevision+(observation==nil ? 0:1) else {throw SessionError.invalidCommand}}
-            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)
+            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,mechanicsVersion:session.mechanicsVersion)
             for commit in session.commits.prefix(source.startingRevision) {try prefix.commit(commit,library:library)}
             guard try prefix.query(library:library).eventSequence==source.startingEventSequence else {throw SessionError.stale}
             if let observation {

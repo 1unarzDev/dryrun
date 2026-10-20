@@ -339,5 +339,12 @@
   "scenario.household-leak.choice.help.get-help": "Liên hệ người lớn đáng tin cậy, quản lý tòa nhà hoặc chuyên gia phù hợp từ nơi khô ráo",
   "scenario.household-leak.choice.help.get-help.feedback": "Tìm sự hỗ trợ phù hợp với tình huống. Nếu có nguy hiểm tức thì, liên hệ dịch vụ khẩn cấp địa phương. Bài tập này không cung cấp quy trình sửa điện hoặc đường ống nước.",
   "scenario.household-leak.choice.help.touch-electrics": "Chạm vào thiết bị điện ướt để kiểm tra",
-  "scenario.household-leak.choice.help.touch-electrics.feedback": "Không chạm vào thiết bị điện khi người ướt hoặc đang đứng trong nước. Tránh xa và tìm sự hỗ trợ phù hợp."
+  "scenario.household-leak.choice.help.touch-electrics.feedback": "Không chạm vào thiết bị điện khi người ướt hoặc đang đứng trong nước. Tránh xa và tìm sự hỗ trợ phù hợp.",
+  "scenario.flash-flood.event.access-lost": "Diễn tập: đường tiếp cận không còn sử dụng được",
+  "scenario.heat-grid-strain.variant.cooling-followup": "Kiểm tra lại làm mát khi có điện",
+  "scenario.heat-grid-strain.choice.powered-evening.prompt": "Ngày nóng tiếp theo vẫn có điện. Bạn sẽ dùng phương án làm mát nào đã ghi?",
+  "scenario.heat-grid-strain.choice.powered-evening.relocate": "Dùng địa điểm làm mát thay thế đã ghi nếu có phương tiện và nơi đến",
+  "scenario.heat-grid-strain.choice.powered-evening.relocate.feedback": "Hệ thống kiểm tra điều kiện phương tiện và nơi đến đã ghi. Phương án còn thiếu vẫn là thiếu sót; lựa chọn này không tạo ra trung tâm làm mát hoặc xác nhận đường đi.",
+  "scenario.heat-grid-strain.choice.powered-evening.stay": "Tiếp tục kế hoạch làm mát tại nhà và kiểm tra lại các phụ thuộc",
+  "scenario.heat-grid-strain.choice.powered-evening.stay.feedback": "Trong bài tập này vẫn có điện. Gia đình ở nhà với các phụ thuộc làm mát và nước đã ghi; thiết bị có điện không chứng minh làm mát đủ hoặc khả năng chịu nhiệt về y tế."
 }

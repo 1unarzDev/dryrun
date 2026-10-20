@@ -40,7 +40,7 @@ struct VaultPrivateDataStore: PrivateDataStore {
             let plan = payload.retainedPlans.max { $0.generatedAt < $1.generatedAt }
                 .flatMap { try? DryRunJSON.decoder().decode(PlanDocument.self, from: $0.document) }
             return .loaded(PrivateSnapshot(household: household, home: payload.home, savedPlan: plan,
-                                           savedPlaces: payload.savedPlaces))
+                                           savedPlaces: payload.savedPlaces, integratedAIState: payload.integratedAIState))
         } catch {
             switch error {
             case .keyUnavailableWhileLocked:
@@ -68,7 +68,8 @@ struct VaultPrivateDataStore: PrivateDataStore {
         }
         try await repository.save(VaultPayload(household: snapshot.household, home: snapshot.home,
                                                retainedPlans: plans, savedPlaces: snapshot.savedPlaces,
-                                               homeGeometryIntentionallyAbsent: snapshot.home == nil))
+                                               homeGeometryIntentionallyAbsent: snapshot.home == nil,
+                                               integratedAIState: snapshot.integratedAIState))
     }
 
     func deleteAll() async throws {

@@ -185,6 +185,26 @@
       "when": [
         "variant:householdLeak"
       ]
+    },
+    {
+      "id": "evt.flash-flood.access-lost",
+      "minute": 120,
+      "priority": 0,
+      "phaseID": "warning",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.flash-flood.event.access-lost",
+      "severity": "critical",
+      "sourceIDs": [
+        "S23"
+      ],
+      "params": {
+        "service": "svc.roads",
+        "state": "unavailable"
+      },
+      "when": [
+        "!variant:householdLeak",
+        "variant:adaptive-mechanics"
+      ]
     }
   ],
   "choicePoints": [

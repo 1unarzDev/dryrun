@@ -1,0 +1,44 @@
+$ vitest run -- test/gateway.test.ts
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/ai-orchestrator
+
+ ❯ test/gateway.test.ts (47 tests | 1 failed) 149ms
+   × scopes final effect fields to the accepted preview while keeping bespoke suggestion reasoning 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/gateway.test.ts > scopes final effect fields to the accepted preview while keeping bespoke suggestion reasoning
+AssertionError: expected { type: 'integer', minimum: +0, …(1) } to match object { const: 20 }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "const": 20,
++   "maximum": 4320,
++   "minimum": 0,
++   "type": "integer",
+  }
+
+ ❯ test/gateway.test.ts:366:87
+    364|  expect(result.status).toBe('completed');
+    365|  const effects=finalSchema.properties.commands.items.anyOf;
+    366|  expect(effects.find((s:any)=>s.properties.kind.const==='advance').pro…
+       |                                                                                       ^
+    367|  expect(effects.map((s:any)=>s.properties.kind.const)).toEqual(['advan…
+    368|  expect(finalSchema.properties.suggestedActions).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 23 passed (24)
+      Tests  1 failed | 203 passed (204)
+   Start at  07:22:58
+   Duration  1.29s (import 42%, transform 35%, tests 21%, worker 1%)
+
+  Transform  transforming modules took 4.54s · 35% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+[ELIFECYCLE] Test failed. See above for more details.

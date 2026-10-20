@@ -5342,7 +5342,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -5564,7 +5564,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -5953,7 +5953,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -6175,7 +6175,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -9189,7 +9189,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -9411,7 +9411,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -9800,7 +9800,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",
@@ -10022,7 +10022,7 @@
             }
           },
           "scorecard": {
-            "assessmentVersion": "dryrun.household-assessment/6",
+            "assessmentVersion": "dryrun.household-assessment/7",
             "cap": 79,
             "capReasons": [
               "alarms",

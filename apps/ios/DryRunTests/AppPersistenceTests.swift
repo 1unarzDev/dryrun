@@ -32,6 +32,27 @@ private actor ControlledStore: PrivateDataStore {
 /// Native app integration tests: run by scripts/mac/verify.sh. Authored on Linux; execution evidence is separate.
 @MainActor
 final class AppPersistenceTests: XCTestCase {
+    func testPortableEvidenceSurvivesOrdinaryEditsAndFailedWrites() async throws {
+        let store = ControlledStore()
+        let model = AppModel(store: store)
+        model.household = SampleHouseholds.oak; model.home = SampleHomes.ranch
+        let wrote = await model.updateIntegratedAIState(expectedDigest: nil) { state in
+            state.imageGeometryRecords = []
+        }
+        XCTAssertTrue(wrote)
+        let data = try XCTUnwrap(model.integratedAIState)
+        let edited = await model.updateHousehold { $0.displayName = "Renamed family" }
+        XCTAssertTrue(edited)
+        XCTAssertEqual(model.integratedAIState, data)
+        if case .loaded(let snapshot) = await store.load() { XCTAssertEqual(snapshot.integratedAIState, data) }
+        else { XCTFail("No durable snapshot") }
+        await store.failWrites()
+        let failed = await model.updateIntegratedAIState(expectedDigest: StableDigest.of(data)) { $0.imageGeometryRecords = nil }
+        XCTAssertFalse(failed); XCTAssertEqual(model.integratedAIState, data)
+        let stale = await model.updateIntegratedAIState(expectedDigest: "stale") { $0.sessions = [] }
+        XCTAssertFalse(stale); XCTAssertEqual(model.integratedAIState, data)
+    }
+
     func testResidentRemovalCommitsWindowAssociationsWithHouseholdAndRetainsBothOnFailure() async throws {
         let store = ControlledStore()
         let model = AppModel(store: store)
@@ -147,7 +168,7 @@ final class AppPersistenceTests: XCTestCase {
         model.savedPlaces = [place]
         var rescan = SampleHomes.ranch
         rescan.id = "new-capture-id"
-        let saved = await model.updateHome(rescan)
+        let saved = await model.updateHome(rescan, expectedRevision: model.home?.revision)
         XCTAssertTrue(saved)
         XCTAssertEqual(model.home?.id, SampleHomes.ranch.id)
         XCTAssertEqual(model.savedPlaces, [place])
@@ -165,13 +186,13 @@ final class AppPersistenceTests: XCTestCase {
         household.preparedness?.items["firstAid"] = exit
         model.household = household; model.home = SampleHomes.ranch
         var renamed = SampleHomes.ranch; renamed.spaces[0].label = "Renamed room"
-        let renamedSaved = await model.updateHome(renamed)
+        let renamedSaved = await model.updateHome(renamed, expectedRevision: model.home?.revision)
         XCTAssertTrue(renamedSaved)
         XCTAssertEqual(model.household?.preparedness?.items["clearExits"]?.checkedAt, checked)
         XCTAssertEqual(model.household?.preparedness?.items["fireDrill"]?.checkedAt, checked)
         var corrected = try XCTUnwrap(model.home)
         corrected.portals[0].operable = .confirmed(false)
-        let saved = await model.updateHome(corrected)
+        let saved = await model.updateHome(corrected, expectedRevision: model.home?.revision)
         XCTAssertTrue(saved)
         XCTAssertNil(model.household?.preparedness?.items["clearExits"]?.checkedAt)
         XCTAssertNil(model.household?.preparedness?.items["fireDrill"]?.checkedAt)
@@ -179,7 +200,7 @@ final class AppPersistenceTests: XCTestCase {
         let prior = model.home
         await store.failWrites()
         corrected.portals[0].operable = .confirmed(true)
-        let failed = await model.updateHome(corrected)
+        let failed = await model.updateHome(corrected, expectedRevision: model.home?.revision)
         XCTAssertFalse(failed)
         XCTAssertEqual(model.home, prior)
     }

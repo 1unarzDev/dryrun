@@ -25,6 +25,12 @@ extension RunState {
             var route:RouteResult?
             let status:AssistanceReachStatus
             if helper==nil {status = .missingHelper}
+            else if hazardProgress?.supportsEscapeAccompaniment==true,scenario.hazard == .homeFire,let helper,
+                    hazardProgress?.outside.contains(person.id)==true {
+                status = hazardProgress?.escapeHelperByPersonID[person.id]==helper.id ? .reachable:.unknown
+            }
+            else if hazardProgress?.supportsEscapeAccompaniment==true,scenario.hazard == .homeFire,let helper,
+                    hazardProgress?.outside.contains(helper.id)==true {status = .unreachable}
             else if let home,let helper {
                 route=planner.plan(RouteRequest(personID:helper.id,startSpaceID:startSpace(for:helper),mobility:mobility(for:helper),
                     exclusions:ScenarioExclusions(blockedSpaceIDs:spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:spatialState?.affectedPortalIDs ?? []),

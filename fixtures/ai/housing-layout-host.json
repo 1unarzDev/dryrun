@@ -2,12 +2,12 @@
   "synthetic": true,
   "liveModel": false,
   "featuresOnly": false,
-  "recordedAt": "2026-10-19T11:39:01.450Z",
+  "recordedAt": "2026-10-20T12:28:04.970Z",
   "sourceHashes": {
     "scripts/housing-layout-eval.ts": "54d464ebc895679a2ba75051987aba883e8712b377b0ee3179f4cc3e7a6aef93",
-    "src/features.ts": "0281e185c469954dc6d86d5e110d23c619dc6a8dc1667a12d5c5b96e516b6acd",
+    "src/features.ts": "9f2c5ea67d3d5647ad2dbc82554ab598e3f200dda89a53e5686f9f468373491d",
     "src/output-quality.ts": "70792b6a2c6b551e977399a3b34698ad913448873b477357f8eb77abaaf5f9f2",
-    "../../DryRun_AI_Implementation_Reference.md": "3cdaa439835f91d94439e4a41176712f2f3e42a7141d7fcf23c44bc89092dc0f"
+    "../../DryRun_AI_Implementation_Reference.md": "34628befbe8a9dfd173f27c5837ea115d9ef6404acb921730193376c4e44f9d1"
   },
   "replies": [],
   "calls": 0,
@@ -1358,7 +1358,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "allowedEvidenceIDs": [
@@ -1389,7 +1390,8 @@
             {
               "id": "p-oak-1",
               "ageBand": "adult",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -1415,8 +1417,19 @@
                 "equipment",
                 "housing"
               ]
+            },
+            {
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
+          "backupPower": [],
           "housing": {
             "homeType": "apartment",
             "tenancy": "owner",
@@ -1453,6 +1466,52 @@
               "Hurricane route activation and current official orders require local verification",
               "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
             ]
+          },
+          "supplies": {
+            "storedWaterGallons": {
+              "value": 5,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": [],
+              "unit": "gal"
+            },
+            "shelfStableFoodDays": {
+              "value": 3,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "flashlights": {
+              "value": 2,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "coolerAndIcePacks": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "firstAidKit": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "fireExtinguisher": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "limitedStorageSpace": false
           }
         },
         "scene": {
@@ -4092,7 +4151,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "allowedEvidenceIDs": [
@@ -4123,7 +4183,8 @@
             {
               "id": "p-oak-1",
               "ageBand": "adult",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -4149,8 +4210,19 @@
                 "equipment",
                 "housing"
               ]
+            },
+            {
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
+          "backupPower": [],
           "housing": {
             "homeType": "apartment",
             "tenancy": "owner",
@@ -4187,6 +4259,52 @@
               "Hurricane route activation and current official orders require local verification",
               "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
             ]
+          },
+          "supplies": {
+            "storedWaterGallons": {
+              "value": 5,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": [],
+              "unit": "gal"
+            },
+            "shelfStableFoodDays": {
+              "value": 3,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "flashlights": {
+              "value": 2,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "coolerAndIcePacks": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "firstAidKit": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "fireExtinguisher": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "limitedStorageSpace": false
           }
         },
         "scene": {
@@ -6320,7 +6438,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "allowedEvidenceIDs": [
@@ -6341,7 +6460,8 @@
             {
               "id": "p-oak-1",
               "ageBand": "adult",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -6367,8 +6487,19 @@
                 "equipment",
                 "housing"
               ]
+            },
+            {
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
+          "backupPower": [],
           "housing": {
             "homeType": "manufacturedHome",
             "tenancy": "owner",
@@ -6405,6 +6536,52 @@
               "Hurricane route activation and current official orders require local verification",
               "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
             ]
+          },
+          "supplies": {
+            "storedWaterGallons": {
+              "value": 5,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": [],
+              "unit": "gal"
+            },
+            "shelfStableFoodDays": {
+              "value": 3,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "flashlights": {
+              "value": 2,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "coolerAndIcePacks": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "firstAidKit": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "fireExtinguisher": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "limitedStorageSpace": false
           }
         },
         "scene": {
@@ -8122,7 +8299,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "allowedEvidenceIDs": [
@@ -8143,7 +8321,8 @@
             {
               "id": "p-oak-1",
               "ageBand": "adult",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -8169,8 +8348,19 @@
                 "equipment",
                 "housing"
               ]
+            },
+            {
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
+          "backupPower": [],
           "housing": {
             "homeType": "manufacturedHome",
             "tenancy": "owner",
@@ -8207,6 +8397,52 @@
               "Hurricane route activation and current official orders require local verification",
               "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
             ]
+          },
+          "supplies": {
+            "storedWaterGallons": {
+              "value": 5,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": [],
+              "unit": "gal"
+            },
+            "shelfStableFoodDays": {
+              "value": 3,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "flashlights": {
+              "value": 2,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "coolerAndIcePacks": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "firstAidKit": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "fireExtinguisher": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "limitedStorageSpace": false
           }
         },
         "scene": {
@@ -10046,7 +10282,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "allowedEvidenceIDs": [
@@ -10073,7 +10310,8 @@
             {
               "id": "p-oak-1",
               "ageBand": "adult",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -10099,8 +10337,19 @@
                 "equipment",
                 "housing"
               ]
+            },
+            {
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
+          "backupPower": [],
           "housing": {
             "homeType": "singleFamily",
             "tenancy": "owner",
@@ -10137,6 +10386,52 @@
               "Hurricane route activation and current official orders require local verification",
               "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
             ]
+          },
+          "supplies": {
+            "storedWaterGallons": {
+              "value": 5,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": [],
+              "unit": "gal"
+            },
+            "shelfStableFoodDays": {
+              "value": 3,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "flashlights": {
+              "value": 2,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "coolerAndIcePacks": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "firstAidKit": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "fireExtinguisher": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "limitedStorageSpace": false
           }
         },
         "scene": {
@@ -12265,7 +12560,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "allowedEvidenceIDs": [
@@ -12292,7 +12588,8 @@
             {
               "id": "p-oak-1",
               "ageBand": "adult",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -12318,8 +12615,19 @@
                 "equipment",
                 "housing"
               ]
+            },
+            {
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
+          "backupPower": [],
           "housing": {
             "homeType": "singleFamily",
             "tenancy": "owner",
@@ -12356,6 +12664,52 @@
               "Hurricane route activation and current official orders require local verification",
               "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
             ]
+          },
+          "supplies": {
+            "storedWaterGallons": {
+              "value": 5,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": [],
+              "unit": "gal"
+            },
+            "shelfStableFoodDays": {
+              "value": 3,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "flashlights": {
+              "value": 2,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "coolerAndIcePacks": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "firstAidKit": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "fireExtinguisher": {
+              "value": true,
+              "origin": "userConfirmed",
+              "status": "confirmed",
+              "sourceIDs": [],
+              "inputIDs": []
+            },
+            "limitedStorageSpace": false
           }
         },
         "scene": {

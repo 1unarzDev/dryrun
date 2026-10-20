@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {readFile,mkdir,writeFile} from 'node:fs/promises';
+import {Host} from './host.js';
+const host=new Host(),trace:any[]=[];
+const rubric=JSON.parse(await readFile('../../content/ai/rubric-v0.json','utf8'));
+try{
+ let state=await host.request({op:'initialize',scenarioID:'water-outage'});
+ trace.push({initial:state});
+ state=await host.request({op:'practiceHazardBegin',session:state.session,attemptID:'synthetic-water-check',checkID:'water.activity/1'});
+ trace.push({begun:state});
+ const command=state.receipt.experience.feasibleCommands.find((c:any)=>c.kind==='useWater'&&c.target==='recordedStored');assert(command);
+ state=await host.request({op:'practiceHazardSubmit',session:state.session,aiState:state.aiState,attemptID:'synthetic-water-check',commit:{id:'first-answer',actor:'user',baseRevision:0,commands:[command]},rubric,assessments:[]});
+ trace.push({submitted:state});assert.equal(state.scorecard.practice,25/3);assert(!state.pendingHazardChecks.some((c:any)=>c.id==='water.activity/1'));
+ const restored=await host.request({op:'assess',session:state.session,aiState:JSON.parse(JSON.stringify(state.aiState)),rubric,assessments:[]});
+ assert.equal(restored.scorecard.practice,25/3);trace.push({restored});
+ await assert.rejects(host.request({op:'practiceHazardSubmit',session:state.session,aiState:state.aiState,attemptID:'synthetic-water-check',commit:{id:'duplicate',actor:'user',baseRevision:1,commands:[command]},rubric,assessments:[]}),/invalidCommand/);
+ const continued=await host.request({op:'commit',session:state.session,commit:{id:'later-water-use',actor:'user',baseRevision:state.receipt.revision,commands:[{kind:'useWater',target:'recordedStored',value:'hygiene',quantityLiters:1}]}});
+ const finished=await host.request({op:'commit',session:continued.session,commit:{id:'later-exercise-finish',actor:'director',baseRevision:continued.receipt.revision,commands:[{kind:'finish'}]}});
+ const retainedAI=structuredClone(state.aiState);retainedAI.sessions=retainedAI.sessions.map((s:any)=>s.id===finished.session.id?finished.session:s);
+ const afterContinuation=await host.request({op:'assess',session:finished.session,aiState:JSON.parse(JSON.stringify(retainedAI)),rubric,assessments:[]});
+ assert(afterContinuation.receipt.finished);assert.notDeepEqual(afterContinuation.receipt.snapshot.resources,state.receipt.snapshot.resources);
+ assert.equal(afterContinuation.scorecard.practice,state.scorecard.practice);
+ assert.deepEqual(afterContinuation.aiState.practiceAttempts,state.aiState.practiceAttempts);
+ assert(!afterContinuation.pendingHazardChecks.some((c:any)=>c.id==='water.activity/1'));
+ trace.push({continued,finished,afterContinuation});
+ await mkdir('../../artifacts/ai/practice',{recursive:true});
+ const evidence={synthetic:true,modelCalls:0,passed:true,checks:'queue retirement, persisted first response, immediate component score, JSON relaunch, duplicate rejection, continued exercise/finish preserves original evidence',trace,native:'pending'};
+ await writeFile('../../artifacts/ai/practice/hazard-lifecycle.json',JSON.stringify(evidence,null,2)+'\n');
+ await writeFile('../../fixtures/ai/hazard-practice-continuation.json',JSON.stringify(evidence,null,2)+'\n');
+ console.log(JSON.stringify({passed:true,practice:25/3,retired:'water.activity/1',relaunch:'passed',duplicate:'rejected',continuedExercisePreservesFirstResponse:true,laterResourceUseActuallyCommitted:true}));
+}finally{host.close();}

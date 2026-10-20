@@ -339,7 +339,7 @@
   "spatial.level-name": "Floor or level name",
   "spatial.level-order": "Relative level order: {order}",
   "spatial.level-elevation": "Recorded elevation relative to the first level (metres)",
-  "spatial.level-note": "Enter only levels that exist. Use lower order numbers for lower levels. Elevation and order do not confirm exterior ground; review each level separately. Leave this draft for later if you do not know the relationship.",
+  "spatial.level-note": "Add only levels that exist. Lower order numbers mean lower levels. Floor order does not establish exterior ground or usable stairs.",
   "spatial.save-level": "Add this level",
   "spatial.level-input-error": "Enter a level name and a finite, recorded elevation in metres.",
   "spatial.add-stairs": "Add a stair connection",
@@ -418,7 +418,7 @@
   "spatial.leak-location-unknown": "Leak location not recorded",
   "spatial.floor.ground": "Ground floor",
   "spatial.marker-location": "Marker location",
-  "spatial.marker-position-note": "Coordinates are metres within this floor plan. Check the suggested position against the actual room. Apply updates this draft; Save keeps it. Confirming a location does not confirm equipment function or shelter protection.",
+  "spatial.marker-position-note": "Choose a position in the room. Apply updates this draft; Save keeps it. A recorded location does not confirm equipment function or shelter protection.",
   "spatial.marker-x": "Position X (m)",
   "spatial.marker-y": "Position Y (m)",
   "spatial.marker-location-checked": "I checked this location in the actual room",
@@ -428,5 +428,7 @@
   "spatial.marker-recorded": "Location recorded; readiness is checked separately",
   "spatial.marker-review": "Location needs review",
   "spatial.fire-no-elevators": "Fire practice excludes elevators. Review the building’s posted procedures and assistance arrangements; a missing stair route stays unresolved.",
-  "spatial.elevator-excluded": "Elevator excluded from practice egress routes"
+  "spatial.elevator-excluded": "Elevator excluded from practice egress routes",
+  "spatial.tap-placement": "Tap the position in the selected room.",
+  "spatial.use-room-position": "Use the suggested room position"
 }

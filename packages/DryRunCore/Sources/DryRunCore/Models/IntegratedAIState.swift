@@ -15,8 +15,9 @@ public struct IntegratedAIState: Codable, Sendable {
     /// Legacy intake can resume/import an attempt, but cannot establish pre-feedback eligibility.
     /// Use beginPractice(...sessionID:library:persist:) for new scored checks.
     public mutating func beginPractice(id:String,variantID:String) throws -> PracticeAttempt {
+        guard !practiceAttempts.contains(where:{$0.checkID != nil && $0.observations?.isEmpty==true}) else {throw SessionError.invalidCommand}
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
-           latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4{return latest}
+           latest.checkID==nil,latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4{return latest}
         guard !id.isEmpty,ScoreCompiler.variants.contains(variantID),!practiceAttempts.contains(where:{$0.id==id}) else {throw SessionError.invalidCommand}
         let attempt=PracticeAttempt(id:id,sequence:(practiceAttempts.map(\.sequence).max() ?? 0)+1,variantID:variantID,answers:[])
         practiceAttempts.append(attempt);return attempt

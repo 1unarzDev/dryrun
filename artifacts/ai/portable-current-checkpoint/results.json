@@ -1,0 +1,22 @@
+{
+  "command": "scripts/verify-ai-portable.sh",
+  "exitCode": 0,
+  "coreTests": 544,
+  "coreSuites": 97,
+  "vaultTests": 39,
+  "vaultSuites": 7,
+  "publicTests": 68,
+  "gatewayTests": 205,
+  "gatewayFiles": 24,
+  "typescript": "passed",
+  "newProviderCalls": 0,
+  "newSearch": false,
+  "sixHazardBranching": "passed on the common synthetic household/home",
+  "providerContinuity": "all six, injected primary failure and synthetic Groq HTTP",
+  "recordedReplays": "exact; historical semantic/live failures remain failures",
+  "native": "pending; prior syntax parsing only",
+  "humanReview": "pending",
+  "freshLiveQuality": "pending",
+  "freshUsefulDiscovery": "pending",
+  "logSha256": "44e1900042f569c03b494f826a83dbd4786f6e1a68bca5a924dff83c86e3e605"
+}

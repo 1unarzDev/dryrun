@@ -1,0 +1,13 @@
+import {readFile,mkdir,writeFile} from 'node:fs/promises';
+import {GroqClient,ProviderOperation} from '../src/groq.js';
+import {GroqResourceDiscovery} from '../src/groq-discovery.js';
+import {groqEvaluationKey} from './eval-key.js';
+import {defaultGroqExtractorModel} from '../src/provider-capabilities.js';
+const path=process.env.DRYRUN_GROQ_SOURCE_RECEIPT;if(!path)throw new Error('synthetic_source_receipt_required');
+const receipt=JSON.parse(await readFile(path,'utf8'));if(!receipt.synthetic||!receipt.result?.attribution?.evidence)throw new Error('synthetic_receipt_required');
+const r=receipt.result;if(Date.now()-Date.parse(r.retrievedAt)>3600000)throw new Error('source_expired');
+const responses:unknown[]=[];
+const client=new GroqClient(await groqEvaluationKey(),process.env.DRYRUN_GROQ_EXTRACTOR_MODEL??defaultGroqExtractorModel,fetch,raw=>responses.push(raw));
+const result=await new GroqResourceDiscovery(client).formatEvidence({answer:r.attribution.answer,sources:r.attribution.evidence,searchSteps:r.execution.searchSteps,inspectionSteps:r.execution.urlInspectionSteps,usage:r.usage?.[0]},r.brief,new ProviderOperation(AbortSignal.timeout(60000),2),{retrievedAt:r.retrievedAt,expiresAt:r.expiresAt});
+const artifact={synthetic:true,mode:'live-extraction-from-recorded-live-groq-evidence',sourceReceipt:path,sourceRetrievedAt:r.retrievedAt,newSearch:false,liveModelTested:true,result,responses};
+const directory='../../artifacts/ai/groq-extraction/'+new Date().toISOString().replace(/[:.]/g,'-');await mkdir(directory,{recursive:true});await writeFile(directory+'/result.json',JSON.stringify(artifact,null,2)+'\n');console.log(JSON.stringify({status:result.status,options:result.comparison.options.map(o=>o.name),execution:result.execution,artifact:directory+'/result.json'}));if(!result.comparison.options.length)process.exitCode=1;

@@ -1,3 +1,5 @@
+> Corrective implementation update: read [current Mac handoff](mac-corrective-handoff.md), [six-scenario coverage](six-scenario-coverage.md), and [issue status](corrective-issue-status.md) before historical notes below. Current scope includes hazard-mechanics/1, full grounded task generation, automatic research, and retiring fixed-budget hazard anchors. Native and live-quality gates remain separately reported.
+
 # One provisional check, four frozen situations
 
 Reference §12 asks for four equally weighted competencies in a short optional Practice check, graded before feedback and separate from adaptive training difficulty. The previous single-session capture could execute each individual anchor, but its source scenario could not support all four: initial response was water-outage-specific, adaptation egress-specific, and continuity power-loss-specific. The new `dryrun.practice-phases/1` plan fixes that executable coverage gap by freezing four independent situations under one attempt. It adds no new grading anchors or difficulty multiplier.
