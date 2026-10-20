@@ -104,7 +104,7 @@ on. Milestones 1, 2 and 7 are mandatory; 3–5 are ordered by value.
 - An update to `docs/ai/wired-iphone-pass-2026-10-20.md`.
 
 **Needs the owner:**
-- Pick a hosting account and log in: Google Cloud Run (free tier) or Render.
-- Confirm the participating congressional district.
+- Hosting: a friend's Oracle Cloud VM behind a Cloudflare Tunnel (HTTPS). Needs SSH access or the friend running `scripts/deploy/oracle-setup.sh`, the tunnel hostname, and a server-only Gemini key.
+- District TX-25 confirmed participating (2026-10-20).
 - Team member names for the video.
 - A native ES/VI reviewer, if available.
