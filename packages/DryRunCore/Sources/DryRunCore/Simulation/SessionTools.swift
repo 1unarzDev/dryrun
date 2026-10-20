@@ -1,19 +1,21 @@
 import Foundation
 
-public enum SessionToolKind:String,Codable,Sendable {case inspectScene,queryRoutes,evaluateResources,inspectDependencies,evaluateCandidateAction,runCounterfactual}
+public enum SessionToolKind:String,Codable,Sendable {case inspectScene,queryRoutes,evaluateResources,inspectDependencies,evaluateCandidateAction,runCounterfactual,validateSuggestedActions}
 public struct SessionToolRequest:Codable,Sendable {
     public var kind:SessionToolKind
     public var baseRevision:Int
     public var command:SessionCommand?
     public var commands:[SessionCommand]?
+    public var suggestedActions:[SuggestedRehearsalAction]?
     public var profileIDs:[String]?
     public var intervention:Intervention?
     public var routeRequest:RouteRequest?
     public var retestPlan:StressRetestPlan?
-    public init(kind:SessionToolKind,baseRevision:Int,command:SessionCommand?=nil,commands:[SessionCommand]?=nil,profileIDs:[String]?=nil,intervention:Intervention?=nil,routeRequest:RouteRequest?=nil,retestPlan:StressRetestPlan?=nil){self.kind=kind;self.baseRevision=baseRevision;self.command=command;self.commands=commands;self.profileIDs=profileIDs;self.intervention=intervention;self.routeRequest=routeRequest;self.retestPlan=retestPlan}
+    public init(kind:SessionToolKind,baseRevision:Int,command:SessionCommand?=nil,commands:[SessionCommand]?=nil,suggestedActions:[SuggestedRehearsalAction]?=nil,profileIDs:[String]?=nil,intervention:Intervention?=nil,routeRequest:RouteRequest?=nil,retestPlan:StressRetestPlan?=nil){self.kind=kind;self.baseRevision=baseRevision;self.command=command;self.commands=commands;self.suggestedActions=suggestedActions;self.profileIDs=profileIDs;self.intervention=intervention;self.routeRequest=routeRequest;self.retestPlan=retestPlan}
 }
 public struct SessionToolResponse:Codable,Sendable {
     public var receipt:SessionReceipt
+    public var suggestedActions:[SuggestedActionPreview]?
     public var scene:HomeSceneContext?
     public var dependencies:[DependencyInspection]?
     public var counterfactual:StressTestFinding?
@@ -34,6 +36,17 @@ public extension SimulationSession {
         } else {receipt=try query(library:library)}
         var result=SessionToolResponse(receipt:receipt)
         switch request.kind {
+        case .validateSuggestedActions:
+            guard let commands=request.commands,let actions=request.suggestedActions,actions.count<=4 else {throw SessionError.invalidCommand}
+            var prospective=self
+            try prospective.commit(.init(id:"suggestion-boundary-\(revision)",actor:"director",baseRevision:revision,commands:commands),library:library)
+            result.suggestedActions=actions.map {action in
+                do {
+                    guard !action.id.isEmpty,!action.label.isEmpty,!action.commands.isEmpty,action.commands.count<=8 else {throw SessionError.invalidCommand}
+                    let preview=try prospective.preview(.init(id:"suggestion-\(action.id)-\(prospective.revision)",actor:"user",baseRevision:prospective.revision,commands:action.commands),library:library)
+                    return .init(action:action,feasible:true,receipt:preview)
+                } catch {return .init(action:action,feasible:false,rejection:String(describing:error))}
+            }
         case .inspectScene:result.scene=initial.home.map{HomeSceneContext($0,household:initial.household)}
         case .queryRoutes:
             if var routeRequest=request.routeRequest {

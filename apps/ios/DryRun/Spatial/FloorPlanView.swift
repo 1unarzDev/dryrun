@@ -15,13 +15,16 @@ struct FloorPlanView: View {
     var spatialState: SpatialExerciseState?
     var selectedRoute: RouteResult?
     var onSelect: ((String) -> Void)?
+    var onSelectPoint: ((Vec2, String) -> Void)?
+    var placementPoint: Vec2?
     @State private var selectedFloorID: String?
 
-    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil, onSelect: ((String) -> Void)? = nil) {
+    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil, onSelect: ((String) -> Void)? = nil, onSelectPoint: ((Vec2, String) -> Void)? = nil, placementPoint: Vec2? = nil) {
         self.home = home
         self.routes = routes
         self.highlightedFloorID = highlightedFloorID
         self.highlightedElementID = highlightedElementID; self.spatialState = spatialState; self.selectedRoute = selectedRoute; self.onSelect = onSelect
+        self.onSelectPoint = onSelectPoint; self.placementPoint = placementPoint
     }
 
     private var floorID: String? { highlightedFloorID ?? selectedFloorID ?? home.floors.first?.id }
@@ -41,7 +44,10 @@ struct FloorPlanView: View {
                 Canvas { context, size in draw(in: &context, size: size) }
                     .contentShape(Rectangle())
                     .onTapGesture { point in
-                        if let id = hitTest(point, size: geometry.size) { onSelect?(id) }
+                        if let onSelectPoint, let fid = floorID, let fit = fit(geometry.size, fid) {
+                            let local = Vec2((point.x - fit.offset.x) / fit.scale + fit.minX, fit.maxY - (point.y - fit.offset.y) / fit.scale)
+                            onSelectPoint(local, fid)
+                        } else if let id = hitTest(point, size: geometry.size) { onSelect?(id) }
                     }
             }
             .frame(minHeight: 140)
@@ -95,7 +101,12 @@ struct FloorPlanView: View {
         guard let fid = floorID, let floor = home.floors.first(where: { $0.id == fid }) else { return model.localizer("spatial.floor-plan") }
         let rooms = home.spaces.filter { $0.floorID == fid }.map(\.label).joined(separator: ", ")
         let exits = home.portals.filter { $0.floorID == fid && HomeScenePresentation.openingStatus($0, in: home, state: spatialState, request: selectedRoute?.request) == .availableExit }.count
-        let summary = model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
+        var summary = model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
+        if let id = highlightedElementID {
+            let selected = home.space(id)?.label ?? home.portal(id).map { DisplayNames.name($0.kind.rawValue, localizer: model.localizer) }
+                ?? home.annotations.first(where: { $0.id == id })?.localizedLabel(model.localizer)
+            if let selected { summary += " " + model.localizer("spatial.selected-home-item") + ": " + selected }
+        }
         if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid {
             return summary + " " + model.localizer("spatial.recorded-start-room", ["room": room.label])
         }
@@ -257,6 +268,11 @@ struct FloorPlanView: View {
             markers.append(pinned)
             ctx.draw(Text(Image(systemName: Self.symbol(a.kind))).font(.system(size: 13)).foregroundStyle(Self.color(a.kind)), at: pinned, anchor: .center)
         }
+        if let placementPoint {
+            let point = f.pt(placementPoint)
+            ctx.stroke(Path(ellipseIn: CGRect(origin: point, size: .zero).insetBy(dx: -10, dy: -10)), with: .color(.purple), lineWidth: 4)
+            ctx.draw(Text(Image(systemName: "plus")).foregroundStyle(.purple), at: point)
+        }
         for (point, symbol) in badges {
             let disc = CGRect(origin: point, size: .zero).insetBy(dx: -11, dy: -11).offsetBy(dx: 0, dy: -14)
             ctx.fill(Path(ellipseIn: disc), with: .color(PlanColors.background))
@@ -303,10 +319,19 @@ struct FloorPlanView: View {
             // room list and the VoiceOver summary name every room.
             let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
             let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
+            // Wrapping happens between words only: a word wider than the room would otherwise break mid-word.
+            func widestWord(_ font: Font) -> CGFloat {
+                s.label.split(separator: " ").map { word -> CGFloat in
+                    let resolved: GraphicsContext.ResolvedText = ctx.resolve(Text(verbatim: String(word)).font(font))
+                    return resolved.measure(in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)).width
+                }.max() ?? 0
+            }
+            var drawn = false
             for font in [Font.caption2, .system(size: 8)] {
                 let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
                 let need = text.measure(in: CGSize(width: room.width, height: .infinity))
-                if need.width <= room.width && need.height <= room.height {
+                if need.width <= room.width && need.height <= room.height && widestWord(font) <= room.width {
+                    drawn = true
                     // Safety markers often sit at the room centre: move the name above one rather than cover it.
                     var c = f.pt(Geometry.centroid(s.polygon))
                     if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
@@ -316,6 +341,23 @@ struct FloorPlanView: View {
                     ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
                              with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
                     ctx.draw(text, in: rect)
+                    break
+                }
+            }
+            // A tall, narrow room (a corridor or stair landing) reads its name vertically instead of losing it.
+            if !drawn, room.height > room.width {
+                for font in [Font.caption2, .system(size: 8)] {
+                    let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
+                    let need = text.measure(in: CGSize(width: room.height, height: .infinity))
+                    guard need.width <= room.height, need.height <= room.width, widestWord(font) <= room.height else { continue }
+                    let c = f.pt(Geometry.centroid(s.polygon))
+                    var rotated = ctx
+                    rotated.translateBy(x: c.x, y: c.y)
+                    rotated.rotate(by: .degrees(-90))
+                    let rect = CGRect(x: -need.width / 2, y: -need.height / 2, width: need.width, height: need.height)
+                    rotated.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                                 with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
+                    rotated.draw(text, in: rect)
                     break
                 }
             }

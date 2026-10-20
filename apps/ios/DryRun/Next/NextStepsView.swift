@@ -33,6 +33,7 @@ struct NextStepsView: View {
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
                     toDo(summary)
+                    if model.preparationAIAvailable { PreparationAICard() }
                     ScorecardCard()
                 } else {
                     SectionCard {
@@ -116,9 +117,20 @@ struct NextStepsView: View {
 
     @ViewBuilder private var familyBriefing: some View {
         let l = model.localizer
-        if !topSteps.isEmpty, FamilyBriefingService.canWrite(locale: model.locale) {
+        if !topSteps.isEmpty {
             SectionCard {
                 DisclosureGroup(isExpanded: $showBriefing) {
+                    VStack(alignment: .leading, spacing: Theme.Space.m) {
+                    if let household = model.household {
+                        LabeledContent(l("ui.setup.homeType"), value: DisplayNames.name(household.housing.homeType.rawValue, localizer: l))
+                        ForEach(household.people.filter { !$0.needs.isEmpty }) { person in
+                            LabeledContent(person.localizedLabel(l), value: person.needs.map { DisplayNames.name($0.rawValue, localizer: l) }.joined(separator: ", "))
+                        }
+                        ForEach(household.equipment.filter { $0.isEssential }) { equipment in
+                            Label(DisplayNames.equipment(equipment, localizer: l), systemImage: equipment.requiresColdStorage ? "snowflake" : "bolt.heart")
+                                .font(.callout)
+                        }
+                    }
                     if writingBriefing {
                         HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
                     }
@@ -147,8 +159,9 @@ struct NextStepsView: View {
                             }
                         }
                     }
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, Theme.Space.s)
                 } label: {
-                    Label(l("ui.brief.title"), systemImage: "sparkles").font(.headline)
+                    Label(l("ui.brief.title"), systemImage: "person.2.fill").font(.headline)
                 }
                 .accessibilityIdentifier("next.briefing.expand")
             }
@@ -239,13 +252,19 @@ struct NextStepsView: View {
     @ViewBuilder
     private func toDo(_ summary: NextStepsSummary) -> some View {
         let l = model.localizer
-        let shown = showAll ? summary.toDo : Array(summary.toDo.prefix(3))
+        // Gemini may reorder within a priority tier only (PreparationFeatureBridge.order); otherwise the app's order.
+        let personalization = model.preparationPersonalization
+        let ordered = personalization.map { PreparationFeatureBridge.order(summary.toDo, by: $0) } ?? summary.toDo
+        let shown = showAll ? ordered : Array(ordered.prefix(3))
         SectionCard(title: l("ui.next.doNext") + " (\(summary.toDo.count))", systemImage: "list.bullet.clipboard") {
             if summary.toDo.isEmpty {
                 Text(l("ui.next.nothingLeft")).foregroundStyle(.secondary)
             }
             ForEach(shown) { step in
-                NavigationLink(value: step) { NextStepRow(step: step, isPrimary: step.id == shown.first?.id) }
+                NavigationLink(value: step) {
+                    NextStepRow(step: step, isPrimary: step.id == shown.first?.id,
+                                aiWhy: personalization?.ranked.first { $0.stepID == step.id }?.why)
+                }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("next.step.\(step.id)")
                 if step.id != shown.last?.id { Divider() }
@@ -335,6 +354,8 @@ struct NextStepRow: View {
     @Environment(AppModel.self) private var model
     let step: NextStep
     var isPrimary = false
+    /// Gemini's household-specific reason, already accepted by Core for this exact step. Labelled as Gemini's text.
+    var aiWhy: String? = nil
 
     var body: some View {
         let l = model.localizer
@@ -346,11 +367,6 @@ struct NextStepRow: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Theme.Space.xs) {
                 HStack(alignment: .firstTextBaseline, spacing: Theme.Space.xs) {
-                    if r.tier == .unmetEssentialRequirement {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .foregroundStyle(Theme.critical)
-                            .accessibilityLabel(l("common.critical"))
-                    }
                     Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(isPrimary ? .title3.weight(.bold) : .body.weight(.semibold)).multilineTextAlignment(.leading)
                 }
                 if let subjectID = r.subjectID {
@@ -358,19 +374,30 @@ struct NextStepRow: View {
                     if let name = values[subjectID.hasPrefix("person.") ? "person" : "device"] { Text(name).font(.subheadline.weight(.semibold)) }
                 }
                 Text(l(r.whyKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
+                if let aiWhy {
+                    Label { Text(aiWhy).font(.footnote).multilineTextAlignment(.leading) } icon: { Image(systemName: "sparkles") }
+                        .foregroundStyle(Theme.accent)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(l("prep.ai.whyLabel") + ": " + aiWhy)
+                        .accessibilityIdentifier("next.step.aiWhy")
+                }
                 // Side by side when they fit; stacked at large text sizes instead of pushing the row off screen.
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: Theme.Space.s) {
-                        StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                        ScenarioIcons(ids: step.scenarioIDs)
+                        StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
+                        ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement)
                     }
                     VStack(alignment: .leading, spacing: Theme.Space.xs) {
-                        StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                        ScenarioIcons(ids: step.scenarioIDs)
+                        StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
+                        ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement)
                     }
                 }
             }
             Spacer(minLength: 0)
+            if r.tier == .unmetEssentialRequirement {
+                Image(systemName: "exclamationmark.circle.fill").font(.caption)
+                    .foregroundStyle(Theme.critical).accessibilityLabel(l("common.critical"))
+            }
             Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
                 .accessibilityHidden(true)
         }
@@ -384,11 +411,12 @@ struct NextStepRow: View {
 struct ScenarioIcons: View {
     @Environment(AppModel.self) private var model
     let ids: [String]
+    var urgent = false
 
     var body: some View {
         HStack(spacing: 4) {
             ForEach(ids, id: \.self) { id in
-                Image(systemName: RehearseTabView.symbols[id] ?? "circle").font(.caption).foregroundStyle(.secondary)
+                Image(systemName: RehearseTabView.symbols[id] ?? "circle").font(.caption).foregroundStyle(urgent ? Theme.critical : .secondary)
             }
         }
         .accessibilityElement()
@@ -414,10 +442,10 @@ struct NextStepDetailView: View {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.title2.weight(.bold))
                 ViewThatFits(in: .horizontal) {
-                    HStack { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                             ScenarioIcons(ids: step.scenarioIDs) }
-                    VStack(alignment: .leading) { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                                                  ScenarioIcons(ids: step.scenarioIDs) }
+                    HStack { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
+                             ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement) }
+                    VStack(alignment: .leading) { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
+                                                  ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement) }
                 }
                 SectionCard(title: l("common.why"), systemImage: "lightbulb") {
                     Text(l(r.whyKey, r.localizedTemplateValues(household: model.household, localizer: l)))
@@ -503,8 +531,10 @@ struct PreparationTaskEditor: View {
         case .transport: FocusedHouseholdEditor(focus: .transport)
         case .home(let elementID):
             if let home = model.home {
-                ManualHomeEditorView(home: home, selectedElementID: elementID) { candidate in
-                    Task { if await model.updateHome(candidate) { dismiss() } }
+                ManualHomeEditorView(home: home, baseRevision: home.revision, selectedElementID: elementID) { candidate, baseRevision in
+                    let success = await model.updateHome(candidate, expectedRevision: baseRevision)
+                    if success { dismiss() }
+                    return success
                 }
             } else { HomeTabView() }
         case .homeSetup: HomeTabView()

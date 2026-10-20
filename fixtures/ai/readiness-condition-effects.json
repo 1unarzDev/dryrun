@@ -1,0 +1,177 @@
+[
+  {
+    "addedRuleIDs" : [
+
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "extended-outage",
+    "questionID" : "freeze-power-loss.duration",
+    "removedRuleIDs" : [
+      "rule.recovery.device-not-certified",
+      "rule.recovery.handset-recharge-on-grid",
+      "rule.recovery.power-restored"
+    ],
+    "scenarioID" : "freeze-power-loss",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "no-rotating-outage",
+    "questionID" : "heat-grid-strain.grid",
+    "removedRuleIDs" : [
+      "rule.dependency.refrigeration",
+      "rule.dependency.wifi",
+      "rule.recovery.device-not-certified",
+      "rule.recovery.handset-recharge-on-grid",
+      "rule.recovery.power-restored"
+    ],
+    "scenarioID" : "heat-grid-strain",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.tornado.night-alerting"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "night",
+    "questionID" : "tornado.timing",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "tornado",
+    "stateChanged" : false
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.recovery.displacement"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "home-damaged",
+    "questionID" : "tornado.impact",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "tornado",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.flood.household-leak"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "householdLeak",
+    "questionID" : "flash-flood.event",
+    "removedRuleIDs" : [
+      "rule.checkpoint",
+      "rule.dependency.cooling",
+      "rule.dependency.device",
+      "rule.dependency.heat",
+      "rule.dependency.home-power",
+      "rule.dependency.refrigeration",
+      "rule.dependency.transport",
+      "rule.dependency.wifi",
+      "rule.external.set",
+      "rule.flood.never-through-water",
+      "rule.flood.warning",
+      "rule.recovery.device-not-certified",
+      "rule.recovery.handset-recharge-on-grid",
+      "rule.recovery.power-restored",
+      "rule.resource.handset",
+      "rule.resource.water-storage-target"
+    ],
+    "scenarioID" : "flash-flood",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.recovery.displacement"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "home-flooded",
+    "questionID" : "flash-flood.extent",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "flash-flood",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.fire.helper-reach"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "hallway-smoke",
+    "questionID" : "home-fire.smoke",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "home-fire",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+
+    ],
+    "evaluatedRulesChanged" : false,
+    "optionID" : "second-exit-blocked",
+    "questionID" : "home-fire.exit",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "home-fire",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.water.chemical-no-boil"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "do-not-drink",
+    "questionID" : "water-outage.advisory",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "water-outage",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.water.chemical-no-boil"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "do-not-use",
+    "questionID" : "water-outage.advisory",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "water-outage",
+    "stateChanged" : true
+  },
+  {
+    "addedRuleIDs" : [
+      "rule.dependency.cooling",
+      "rule.dependency.device",
+      "rule.dependency.heat",
+      "rule.dependency.home-power",
+      "rule.dependency.refrigeration",
+      "rule.dependency.wifi",
+      "rule.recovery.advisory-persists",
+      "rule.recovery.device-not-certified",
+      "rule.recovery.handset-recharge-on-grid",
+      "rule.recovery.no-auto-refill",
+      "rule.recovery.power-restored",
+      "rule.resource.handset"
+    ],
+    "evaluatedRulesChanged" : true,
+    "optionID" : "with-power-loss",
+    "questionID" : "water-outage.power",
+    "removedRuleIDs" : [
+
+    ],
+    "scenarioID" : "water-outage",
+    "stateChanged" : true
+  }
+]

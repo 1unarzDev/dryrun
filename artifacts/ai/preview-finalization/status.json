@@ -1,0 +1,11 @@
+{
+  "director": "director/29",
+  "gatewayTests": 205,
+  "gatewayFiles": 24,
+  "typecheck": "passed",
+  "newProviderCalls": 0,
+  "transport": "synthetic",
+  "liveAcceptance": "pending",
+  "native": "pending",
+  "humanReview": "pending"
+}

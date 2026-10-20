@@ -1,13 +1,33 @@
 DRYRUN AI IMPLEMENTATION REFERENCE
 
 Purpose
-This is the detailed product and engineering specification for DryRun's Gemini integration. Its companion launch prompt is DryRun_AI_Fresh_Context_Goal.txt. Keep this document available to the coding agent and consult it throughout implementation.
+This is the detailed product and engineering specification for improving DryRun's Gemini integration and the native flows it enhances. Its companion launch prompt is DryRun_AI_Fresh_Context_Goal.txt. Keep this document available to the coding agent and consult it throughout implementation.
+
+ADDITIONAL WORKING POINT — GROQ FALLBACK, CHECKED 2026-10-20 UTC
+
+The owner reports substantial progress toward this goal and requests Groq as a fallback because Gemini is rate limited, with particular concern for search. This is an additional implementation requirement, not a replacement goal or a new architecture. Preserve every existing product outcome, corrective priority, six-scenario acceptance gate, deterministic authority boundary, and Linux/Mac responsibility. Inspect current progress and extend working code; do not restart completed work.
+
+Keep Gemini primary and add capability-aware Groq fallback inside the existing private gateway using the server-side GROQ_API_KEY. Section 5A specifies real search continuity and provider switching; sections 8 and 13H connect it to existing resource and evaluation requirements. Elsewhere, requirements for what Gemini contributes also apply to an eligible fallback agent; provider-specific protocols, capabilities, and data rules remain specific to their adapters. A successful text fallback alone does not establish that search works.
+
+CORRECTIVE PRIORITIES — UPDATED 2026-10-20 UTC
+
+The owner reports that the current app's AI feels generic and immature, all six disaster scenarios feel the same, room editing is confusing and Save fails, and several panels/checks create unnecessary friction. These are reports about the newer app, not defects established by inspection of an older archive. Reproduce them against the actual current checkout and Mac build.
+
+Highest-priority completion gates:
+1) ALL SIX DISASTERS must have distinct causal mechanics, decisions, consequences, scenes, and debriefs: home fire, tornado, flash flood, freeze/power loss, heat/grid strain, and water outage. Sections 10 and 13 define the required evidence. One strong scenario or six renamed versions of one sequence is insufficient.
+2) Fix room editing and its real Save/persistence path. Remove measurement chores and Still to confirm; make selection and Door/Window correction direct. Section 9 defines the native contract and checks.
+3) Make household personalization substantive. Relevant recorded disabilities, assistance needs, medications, equipment, dwelling, and supply gaps must reach Gemini and affect applicable outputs. Sections 5-7 define the context and quality requirements.
+4) Replace generic movement/helping decisions and the single persistent practice check with meaningful actions and varied checks whose completion updates persisted evidence and scores. Sections 10 and 12 define the lifecycle.
+5) Fetch useful location information automatically. Remove user-facing location-record maintenance; support actual research, comparison, sources, and task links beyond the initial county. Section 8 replaces the older curated-only design.
+6) Complete the reported task-row, family-editor, For your family, reconnection, and score-explanation corrections in sections 2 and 12.
+
+These requirements supersede earlier constraints that would preserve unusable native flows, require routine manual measurement/scan confirmation, limit useful recommendations to a closed task catalog, make live resource research optional, or hide relevant household needs from the agents. Keep the existing seven connected feature outcomes and the deterministic authority boundaries. Mature the implementation already present; do not start another parallel architecture from scratch.
 
 Operating context
 The coding session starts without previous conversation context and works in an existing native iOS repository on Linux. A separate Claude session on an Xcode-enabled Mac with a connected iPhone owns native integration and device verification. The objective is a working, evaluated architecture with concrete native integration contracts.
 
 How to use this reference
-- Read the product, repository, architecture, and authority requirements before designing.
+- Read these corrective priorities and the product, repository, architecture, and authority requirements before designing.
 - Follow the implementation sequence in section 14, then revisit each feature section before changing that flow.
 - Use section 13 to select meaningful verification for each slice.
 - Treat historical implementation notes as orientation; current source establishes the actual implementation.
@@ -20,11 +40,12 @@ Section index
 3. Linux/Mac ownership, repository discovery, and engineering standards.
 4. Architecture, execution locations, and agent roles.
 5. Provider configuration, privacy, authorization, and operating limits.
+5A. Additional working point: Groq fallback, real search, and provider continuity.
 6. Shared contracts, evidence, revisions, and proposal acceptance.
 7. Personalized preparations and supply inventory.
 8. Automatic nearby resources and map integration.
-9. Home geometry, optional images, and concern review.
-10. Incremental adaptive rehearsal, state, tools, replay, and fallback.
+9. Direct room editing and Save, home geometry, optional images, and concern review.
+10. Six distinct disaster experiences, meaningful actions, adaptive state, replay, and fallback.
 11. Dependency analysis and executable plan stress tests.
 12. Numerical scorecard, practice credit, rubric, and agent council.
 13. Contract, domain, model, image, rubric, and human/device evaluations.
@@ -32,7 +53,7 @@ Section index
 15. Community impact and demonstration.
 16. Research sources and re-verification guidance.
 
-The detailed requirements follow. The original research baseline is 2026-10-19; section 16 identifies provider information to recheck at implementation time.
+The original research baseline is 2026-10-19. Resource discovery and the six-hazard lesson sources were checked again on 2026-10-20 UTC; section 16 identifies provider information to recheck at implementation time.
 
 1. PRODUCT INTENT AND CURRENT BASELINE
 
@@ -40,7 +61,7 @@ DryRun helps families make useful emergency preparations, discover weaknesses in
 
 Product vocabulary:
 - Household: family/household members, roles, assistance needs, trusted contacts, and relevant medical/power/storage dependencies.
-- Home: a manually editable or RoomPlan-derived representation of rooms, floors, doors/windows, connectors, and relevant locations. Scanner suggestions and user-confirmed facts have different authority.
+- Home: a manually entered or RoomPlan-derived representation of rooms, floors, doors/windows, connectors, and relevant locations. Valid RoomPlan dimensions are accepted as the normal geometry input. Semantic suggestions and facts about actual use can be corrected without a scan-wide confirmation chore.
 - Prepare / Next steps: a short prioritized action list for preparedness and mitigation, not just rehearsals.
 - Plan: the living family emergency plan, meetups, local-resource map, home/escape preview, and emergency card.
 - Family emergency card: a quickly readable, intentionally shareable/printable summary with prominent critical information, contacts, and meeting places.
@@ -55,7 +76,7 @@ Treat the latest repository and the following reported Mac-session changes as th
 - The redesigned native PDFs emphasize critical information, contact tables, paired meetups, numbered map markers, home diagrams with opening gaps and route legends, continuation pages, and smaller files.
 - Navigation now has direct family/home/card editors, a living Plan screen, contextual meetup selection, and fewer nested sheets. Card selections agree across preview and export.
 - Rehearsal is scene first, advances between key moments, provides immediate decision feedback, and has clearer hazard/person/route symbols and useful debrief exits. Routing remains deterministic.
-- Home/RoomPlan has clearer labeled 3D views, corrected floor-mesh winding, collapsible family details, and scanner room-type suggestions that require confirmation.
+- Home/RoomPlan has clearer labeled 3D views, corrected floor-mesh winding, collapsible family details, and scanner room-type suggestions. Preserve the useful representation; the newer request removes the unusable blanket confirmation flow and measurement controls.
 - Existing optional on-device AI turns a household description into a reviewable proposal, with an EN/ES/VI keyword fallback. A separate EN/ES briefing explains existing priorities.
 - Local resources include explicit county selection and seven sourced Tarrant County records, still marked for review.
 
@@ -84,6 +105,27 @@ confirmed facts -> inventory and dependency assessment -> relevant tasks and nea
 
 One confirmed change should propagate through that loop without repeated data entry. Simulated actions never silently become real household facts or completed preparations.
 
+Required corrections to the existing surfaces:
+
+Task rows:
+- Keep the title and description in a stable text column. Place a smaller warning indicator in a dedicated trailing position or similarly unobtrusive location; adding a warning must not shift the text's leading edge or reduce it through a second large leading icon.
+- Derive the row's relevant icon/badge styling from one semantic urgency state. Urgent rows use coherent red treatment, including the currently blue No cost icon; ordinary rows retain their appropriate styles. Keep readable contrast and an accessible text/icon indication of urgency.
+- Verify long titles, multiline descriptions, large Dynamic Type, existing languages, and usable hit targets when an indicator is interactive.
+
+Family editing:
+- Present one clear Name field and a separate Relationship/role control. Avoid a redundant default-looking family-member heading immediately above the editable name. Keep You as an identity marker. A relationship change must not overwrite a real name.
+- A new household starts with the user; other members are added intentionally. Preserve existing people, stable IDs, names, relationships, needs, and medications on migration and reopening.
+- Capitalize localized disability/accessibility option labels through the display layer. Preserve stable stored values, user-written text, and acronyms such as ADHD. Audit dropdown options as well as field headings in existing supported languages.
+
+For your family:
+- Use a family icon, aligned with the heading, and consistent leading edges, spacing, and hierarchy. Avoid crowded badges and uneven padding.
+- Show a small set of the most consequential supported observations, each connecting a household fact to its practical implication and an existing next action. Select them dynamically; do not hardcode a few sentences that merely repeat the profile.
+- Where applicable, use actual recorded assistance/disability needs, medication storage or power dependencies, apartment/shared-building constraints, multiple floors, inaccessible supplies, and missing protection such as an extinguisher. Locally resolve member/room IDs to readable names. Distinguish not recorded from confirmed absent.
+
+Remove the vague standalone Reconnect with family feature and its orphaned entry points, notifications, and obsolete completion checks. Preserve trusted/out-of-area contacts, useful meetups, emergency-card content, and concrete reunification tasks/practice. Replace a vague card only when a specific missing preparation warrants a direct action, such as adding an out-of-area contact. Removing a screen must not delete useful plan data or award communication points.
+
+These changes should simplify existing screens. Do not substitute new approval dashboards, nested sheets, or a setup wizard for the flows being removed.
+
 3. LINUX OWNERSHIP, MAC OWNERSHIP, AND INITIAL RECONCILIATION
 
 On Linux, own:
@@ -100,7 +142,7 @@ Do not say Linux cannot test anything. Run the backend, schema, engine, and mode
 Start with focused repository discovery:
 1) Read applicable AGENTS instructions, root README, package manifests, existing architecture notes, and relevant working changes. Identify branch/commit, actual runtime/toolchain versions, package boundaries, and test commands. Inspect credential presence without printing values or dumping environment files.
 2) Locate existing domain, persistence, routing, simulation, AI intake/briefing, public-evidence, and native-adapter code. Reuse their actual symbols and ownership boundaries.
-3) Trace one rehearsal from native entry through AppModel, domain state/routing, persistence, and scene presentation. Trace one household edit through preparation/plan invalidation.
+3) Trace all six rehearsal entry points through selected hazard ID, session initialization, household/home context, director policy, event handlers, fallback, persistence, and native scene selection. Trace one household edit through its outbound Gemini snapshot and preparation/plan invalidation, room Save through durable storage, and practice completion through evidence/scoring/UI refresh.
 4) Run the relevant existing portable test/build baseline and record pre-existing failures separately. Native builds remain a Mac responsibility.
 5) Write a compact implementation map with verified files/symbols, state owners, reuse decisions, required migrations, and genuine unknowns. Then begin the first executable slice; do not wait for every architectural question to be resolved.
 
@@ -114,6 +156,10 @@ Known earlier repository layout, to verify and adapt if renamed:
 Useful historical seams include packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalEngine.swift, Simulation/HazardRules.swift, Session/RehearsalCursor.swift, and native AppModel orchestration. RehearsalEngine.run historically computed a whole schedule, missing choices could take defaults, and the cursor revealed precomputed results. If this is still true, implement an incremental session; a larger AI-generated fixed script is insufficient. Verify current resource/temperature support instead of assuming a label means a numerical model exists.
 
 Preserve the established hazard families: home fire, tornado, flash flood, freeze/power loss, heat/grid strain, and water outage. Extend their shared mechanisms instead of leaving some families on an incompatible second engine.
+
+Investigate actual causes of sameness rather than assuming a prompt change is sufficient. Candidates to examine include a selection/enum mapping bug, shared scenario fixture, generic fallback, omitted hazard or member revisions in a cache key, missing fields in transport, an overrestrictive decoder/action catalog, precomputed choices, or a renderer that ignores distinct committed events. Record evidence for the causes you find. Similarly trace failed Save and stale scores to their actual state owners; do not label a guessed cause as diagnosed.
+
+Native corrections are required outcomes. If the current native branch is available and file ownership permits, prepare scoped changes against verified code and mark them native-pending until Mac validation. If newer native code is unavailable or Claude owns it, deliver exact shared contracts, reducers, persistence expectations, and reproduction/acceptance steps. Linux handoff readiness does not mean the app's native defects have been verified fixed.
 
 Engineering standards:
 - Implement the first runnable host/provider/tool/commit loop before creating a full set of empty role classes and schema shells.
@@ -143,20 +189,20 @@ iPhone / portable DryRun domain host:
 
 Private AI gateway:
 - A separate boundary from the public regional-content service; suggested location services/ai-orchestrator.
-- Authenticates app requests, enforces per-installation and global budgets, invokes Gemini, validates tool calls/output, and handles cancellation and errors.
+- Authenticates app requests, enforces per-installation and global budgets, invokes Gemini or an eligible configured Groq fallback, validates tool calls/output, and handles cancellation and errors.
 - Runs a handful of roles using versioned prompts and role-scoped tools.
 - Retains private job state only when required for a bounded operation, with an explicit short TTL.
 - Returns proposals, evidence references, tool requests, and accepted-result explanations. It is not a second independent simulation database.
 
 Public evidence service:
 - Retains the existing public-only scope.
-- Supplies reviewed guidance and independently obtained official resource records, with source identifiers, dates, applicability, and freshness.
+- Supplies reviewed guidance and automatically obtained public resource evidence through permitted APIs/directories/retrieval paths, with source identifiers, dates, applicability, and freshness. Curated region packs are bootstrap/fallback content, not the boundary of live discovery.
 - Never accepts household profiles, room photos, contact lists, or private exercise histories into a shared public cache.
 
-Build a provider-neutral AgentProvider interface with a Gemini implementation. Keep provider-specific request/response parsing and tool-continuation state inside it. Suggested roles:
+Build on the existing provider-neutral AgentProvider interface with Gemini and Groq implementations. Keep provider-specific request/response parsing and tool-continuation state inside their adapters. Represent research as a capability/workflow within this same gateway; it need not have the same call shape on both providers. Do not introduce another service or duplicate domain engine for fallback. Suggested roles:
 
 1) PreparationPlanner: household-specific tasks and inventory interpretation.
-2) ResourceStrategist: useful nearby search plans and supported resource explanations.
+2) ResourceStrategist: autonomous bounded discovery, reading, useful candidate comparisons, and task-specific resource explanations, alongside the native geographic adapter.
 3) HomeObserver: visible concern proposals from home context and selected images.
 4) RehearsalDirector: adaptive events, pacing, action interpretation, and consequence-based coaching.
 5) PlanStressTester: executable counterexamples and dependency analysis.
@@ -170,25 +216,29 @@ The official SDK plus a small explicit orchestration loop is the default. Google
 
 Provider implementation:
 - Read GOOGLE_AI_STUDIO_KEY from the selected runtime's secret mechanism and pass it explicitly to the SDK: env.GOOGLE_AI_STUDIO_KEY for a Cloudflare Worker binding, or process.env.GOOGLE_AI_STUDIO_KEY for Node. Do not copy it into client configuration or assume the SDK discovers this custom variable name.
+- Read GROQ_API_KEY through the same server-only mechanism and pass it explicitly to the Groq adapter. Never log either key, include it in fixtures, or ship it in the iOS app. Section 5A adds fallback without replacing the primary provider or the existing feature goal.
 - Verify the current model/API capabilities and installed SDK. Configure model IDs per role rather than scattering literals. Pin model, SDK, prompt, schema, content, and rubric versions in evaluation records.
 - Current official documentation presents Interactions as the recommended API for new work; generateContent remains supported. Interactions stores by default. Use store:false for private requests and keep the required continuation content yourself; do not mix the two APIs' response formats. [R1]
 - Preserve required tool-call IDs, signatures, and opaque protocol parts through stateless continuation using the official SDK's supported representation. Retain them only for the active bounded operation. Application code executes function calls. Validate values and semantics even when structured output passes its JSON Schema subset. [R2-R3]
 - Start by evaluating a current economical Flash-class model for routine roles and a stronger configured model for difficult inspection/adjudication. Choose using actual fixture quality, latency, and cost.
-- Do not require Live voice, Deep Research, browser automation, provider file-search storage, or an always-running agent for this feature set.
+- Do not require Live voice, Deep Research, desktop browser automation, provider file-search storage, or an always-running agent for this feature set. Provider-hosted research tools such as Groq browser_search are covered separately in section 5A.
 
 Data defaults and deployment fit:
 - Use synthetic fixtures for developer testing until the intended private-data configuration is verified. Gemini's unpaid-service terms disallow submitting sensitive/personal information; paid-service handling differs, and provider abuse retention still exists. [R6]
 - Google's current terms require developers to be 18+ and restrict API clients directed to, or likely accessed by, under-18s. The owner's age meets the developer minimum; it does not settle the family-app audience question. Record this release-fit issue without blocking synthetic implementation or claiming parental consent alone resolves it. [R6]
-- Keep any alternate provider/Vertex deployment behind the adapter and evaluate its actual terms separately. Do not silently change providers or promise that an alternate product automatically resolves all restrictions.
+- Keep Groq and any future alternate provider/Vertex deployment behind the adapter and evaluate actual terms separately. Groq fallback is owner-requested; household data sharing still follows the configured disclosure and consent scope. Do not promise that an alternate product automatically resolves all restrictions.
 - Keep the product within preparedness education and recorded care requirements; do not implement clinical advice or diagnose medical conditions. [R6, R14]
-- Provide a concise native cloud opt-in that identifies the provider and information shared, with a separate understandable review for optional room-photo upload. Apple requires disclosure and permission for personal-data sharing with third-party AI. [R9]
+- Provide a concise native cloud opt-in that identifies Google Gemini and Groq fallback and the information shared, with a separate understandable review for optional room-photo upload. Reuse existing consent when it already covers both; update a Gemini-only disclosure before sending private household data to Groq. Do not interrupt every automatic switch with another prompt. Apple requires disclosure and permission for personal-data sharing with third-party AI. [R9]
 
 Context minimization:
-- Task planning normally needs anonymous member IDs and needs such as infant caregiving, pet care, mobility assistance, or a powered-device dependency, not names, phone numbers, or full medical notes.
+- Task planning uses stable anonymous member IDs with relevant recorded disabilities, functional/communication/assistance needs, medications, storage requirements, essential equipment, caregiving arrangements, and instructions that affect preparedness. Keep specificity that changes the plan; a hasMedicalNeeds boolean is insufficient.
+- Include a medication name or relevant recorded instruction when needed to interpret that dependency, under the configured consent/data path. Do not discard medications or disability fields merely to simplify the DTO. Omit member/contact names, phone numbers, and unrelated clinical narrative; resolve readable member names locally for presentation.
+- Distinguish a recorded diagnosis/disability from a recorded functional limitation. Do not assume a diagnosis establishes inability to walk, hear, decide, or live independently. A medication name alone cannot establish a storage temperature, safe interruption period, altered dose, or clinical recommendation.
 - Spatial review needs the home graph and selected images, not the street address.
-- Resource strategy normally needs preparation gaps, user travel constraints, and jurisdiction/category context, not the family's medical narrative.
+- Public resource research receives a minimized service brief, travel constraints, and a coarse locality; it does not receive names, medication lists, room plans, or the exact home address in search queries. The private planner can translate a recorded medical/accessibility need into a necessary service capability. Apply that translation without losing the practical requirement.
+- Run web-enabled research as a separate operation built from a typed ResearchBrief. Do not attach the private planner's conversation, provider continuation state, household snapshot, member IDs, or room images. Preserve useful requirements such as step-free access, delivery, and needed equipment-service capabilities. Personalized briefs/reasoning stay private; shared caches contain only permitted public evidence.
 - The exercise director needs relevant committed state and evidence, not the entire photo collection at every turn.
-- Build schema-level minimizers and test forbidden fields, not just a prompt asking the model to ignore unnecessary data.
+- Build schema-level context policies and test both required relevant fields and forbidden unnecessary fields. Privacy handling must preserve useful permitted context instead of reducing every household to the same generic summary.
 - Household snapshots remain sensitive even after names are removed.
 
 Gateway requirements:
@@ -199,11 +249,62 @@ Gateway requirements:
 - Redact personal payloads from logs and error traces. Record versions, latency, token/tool counts, validation outcomes, and non-sensitive diagnostics.
 - Give each operation a deadline, finite tool/call budget, one bounded repair opportunity, cancellation, and typed errors. Use a configurable small development spend cap; start with a synthetic smoke suite and report remaining evaluation work if the cap is reached.
 - Prefer inline bounded image requests over persistent provider uploads. If uploads are necessary, implement explicit lifecycle/deletion and document actual retention.
-- Treat website text, OCR, household notes, and model output as untrusted data. They cannot change role instructions, tool access, source allowlists, or system state.
-- Avoid arbitrary URL fetches, SSRF, private-network access, prompt injection through retrieved documents, and cross-household caches.
+- Treat website text, OCR, household notes, and model output as untrusted data. They cannot change role instructions, tool permissions, validated network-access policies, or application state.
+- Accept newly discovered public sources through section 8's guarded retrieval controls; a source need not already exist in a region pack/catalog. Reject unvalidated URL execution, private-network destinations, unsafe redirects, and attempts to alter retrieval policy. Separate retrieved instructions from application instructions and prevent cross-household cache contamination.
 - Do not request, display, analyze, or persist hidden chain-of-thought in application records. Preserve only provider-required continuation parts/signatures, unchanged, inside bounded transient operation state; delete them on completion or expiry. Durable records contain concise evidence-linked decisions, tool receipts, accepted commands, and committed events. store:false is an interaction-storage setting, not a guarantee of zero provider retention.
 
 Keep the existing local intake, translations/fallbacks, deterministic checklist, saved plan, card, and authored exercises available without cloud access. A network error must not erase useful results.
+
+5A. ADDITIONAL WORKING POINT: GROQ FALLBACK AND SEARCH CONTINUITY
+
+Scope and architecture
+
+Implement Groq fallback within the existing gateway, context builders, role policies, validators, tool protocol, and result contracts. The original goal remains in force. Preserve the richness of household personalization, all six distinct scenarios, evidence-based resources, and the practice/score loop. Fallback must not substitute generic prose, a canned regional list, or a new user workflow for those outcomes. Do not make users choose providers, obtain keys, paste URLs, or maintain location records.
+
+Route by the capability needed for the operation: private text/structured proposals, application function tools, public web research, or image understanding. Record the configured model/API capabilities and evaluation status. A shared chat-completion interface does not prove tool, search, schema, continuation, privacy, or image compatibility. Keep Gemini as the default when eligible; use Groq when the relevant primary operation is unavailable or its quota circuit is open. If neither can satisfy a capability, preserve the useful existing local/native/cached path and return an honest typed status.
+
+Current search implementation to verify and use
+
+- As checked on 2026-10-20 UTC, Groq lists groq/compound and groq/compound-mini as decommissioned on September 21, 2026. Do not build against surviving examples or search snippets for those model IDs. The deprecation notice does not itself name a direct successor. [R25]
+- Current Groq documentation supports provider-executed browser_search on openai/gpt-oss-120b and openai/gpt-oss-20b through POST https://api.groq.com/openai/v1/chat/completions. Evaluate the 120B model first for research quality; test the 20B model if it meets the same useful-output gates. These are Groq-hosted model IDs authenticated with GROQ_API_KEY; they do not add an OpenAI API dependency. Keep model IDs configurable and recheck current availability when implementing. [R26]
+- Supply tools: [{ type: "browser_search" }], tool_choice: "required", and stream: false on the dedicated research request. Configure citation options, output limits, reasoning effort, and returned-reasoning suppression only through parameters supported by the actual API and installed SDK. Current Groq guidance recommends low reasoning effort to constrain browsing. Do not persist hidden reasoning. [R26, R29]
+- The documented browser_search path uses Exa internally and does not require a separate Exa/search-provider key. Actual model access, billing, usage limits, and deployment configuration still need a small synthetic live smoke test; the existence of GROQ_API_KEY alone proves none of these. [R26]
+- Do not pass obsolete Compound web_search/visit_website configurations. GPT-OSS does not support the separate legacy Visit Website tool. Current built-in tools can coexist with compatible custom tools, so do not impose obsolete Compound restrictions; DryRun's public research role should nevertheless expose only the tools it needs. [R26]
+
+Required search-to-result flow
+
+1) Build the existing typed ResearchBrief from permitted service needs, coarse locality, travel constraints, and the current preparation gap. Run it in a fresh public-research context. Do not forward private planner history, exact home address, names, household/member IDs, medication lists, diagnoses, room images, or home geometry to web-enabled research.
+2) Attempt the existing Gemini research workflow when its capability and circuit are available. On an eligible failure, run actual Groq browser_search. Request named useful options, material comparisons, explicit sources, and specific unknowns. A natural-language answer from a plain model call is not live search.
+3) Preserve the returned attributed answer and actual source metadata. Capture a sanitized synthetic response from the chosen Groq API/model and implement parsing against it. Browser Search documentation shows snippets and inline citations; optional SDK annotations or executed_tools fields are not guaranteed on every response and must not be the sole success requirement. Never invent URLs from unresolved citation markers, reuse Gemini groundingMetadata parsing, or accept source-looking model text as proof of retrieval. [R26, R29]
+4) When the existing UI needs a typed proposal, perform a separate, tools-disabled Groq extraction call using a supported strict JSON schema. Groq currently does not support combining Browser Search with Structured Outputs; its Structured Outputs also excludes tool use and streaming. GPT-OSS 20B/120B support strict schema output. Preserve a working Gemini single-call path where supported; identical app contracts do not require identical provider workflows. [R27]
+5) Give the extractor application-assigned source IDs and supported evidence. It can map and qualify those claims, but cannot manufacture new sources, coordinates, dates, capabilities, or URLs. The schema must represent unknown/partial/unavailable results instead of forcing invented required fields. Keep the original attributed answer available. Validate claim support, source identity, relevance, material uncertainty, schema, and permitted display/storage. If extraction fails after the bounded repair, retain any independently validated useful research that the existing UI can safely show; do not silently label an empty JSON result as a successful resource search.
+6) Return through the existing Plan/task result contract and native MapKit adapter. Keep the practical chain: household gap -> supported local capability -> useful next step. Native map candidate identity joins, data permissions, automatic refresh, and task links remain governed by section 8. Do not claim Groq searched Apple Maps or established a safe evacuation route.
+
+The fallback extraction cannot depend on Gemini recovering. Conversely, do not remove search from a failing request just to obtain schema-valid output. Tools-disabled extraction is formatting/interpretation of retrieved evidence, not a second search. If the current UI already accepts a validated attributed answer, omit an unnecessary extraction call. Preserve partial supported findings and dates; distinguish live sourced, partial sourced, successful search with no matches, unavailable search, and cached results. A successful request does not prove stock, opening, shelter activation, or present road conditions. [R26-R27]
+
+Keep provider-grounded content and independently retrieved durable evidence under their respective permissions. Do not transfer raw Google-grounded content into Groq merely because the primary failed. A fresh research brief is the default across providers. Only reuse evidence where its provenance, freshness, and processing permissions allow it; unsupported claims may be verified through the existing permitted independent retrieval path or left qualified. Fallback is not a way to bypass content-use restrictions.
+
+Rate limits, budgets, and error handling
+
+- Normalize provider failures into useful internal categories: transient rate limit, exhausted quota, service/transport timeout, authorization/configuration failure, unsupported capability/request, policy refusal, invalid output, and cancellation. Preserve retry/reset data and a non-sensitive diagnostic. Do not reduce every failure to an empty list or retryable 500.
+- Gemini limits are per project, not per API key. Groq exposes 429/retry-after and quota headers; its request and token counters use different windows, so parse documented units/reset values rather than assuming both are per minute. Avoid hard-coded account quotas and key rotation. [R28, R31]
+- On confirmed exhaustion, open the relevant circuit promptly. A short transient retry is acceptable only when its delay fits the remaining operation deadline. Otherwise use an eligible fallback. Respect retry-after, use jitter, permit a controlled half-open probe after cooldown, and prevent simultaneous callers from repeatedly probing an exhausted provider. Scope failures to the real quota/capability scope instead of globally disabling a working provider after one unsupported tool combination.
+- Bound the entire logical operation across both providers: request attempts, tool continuations, extraction, output repair, token/output limits, elapsed time, and spend. A new attempt or extraction step does not reset its deadline or budget. Allow at most one provider switch and one output-repair opportunity per operation; never ping-pong between providers. Suggested retry/call limits are implementation policy, not vendor quota claims. Account for provider-internal browsing separately: an application request cap is not an exact cap on internal searches.
+- Groq's current TypeScript SDK automatically retries selected failures twice and defaults to a one-minute timeout. Set maxRetries: 0 when the gateway owns retries, and use an explicit timeout bounded by the remaining deadline; otherwise explicitly account for SDK attempts. Inspect the installed Gemini SDK's behavior too. Cancellation must reach queued work, network requests, tool continuations, and result acceptance. [R29]
+- Do not cross providers to bypass a policy refusal, revoked consent, or an access restriction. Stop retries for invalid configuration and expose an actionable operator diagnostic; a separately authorized, correctly configured fallback may continue. Model/tool incompatibility requires an adapter/configuration fix, not pretending a text call searched.
+- Keep permitted useful results while refreshing. If both providers are unavailable, return the existing native/offline/cached behavior with an accurate freshness/status message. Do not make an outage erase the plan or generate dozens of generic replacement tasks.
+
+State continuity and privacy
+
+- Retain the logical operation ID but issue a new provider-attempt ID/generation. Fence the old attempt's responses, continuations, and pending tool calls, including late arrivals at an otherwise unchanged host revision. Check the fence before dispatching native tools and when accepting their results. Cancellation is best effort: an upstream call may still finish and incur usage, so unknown usage is not zero or an automatic refund. Record provider/model/attempt provenance internally without a new user-facing provider dashboard.
+- Reconstruct the fallback request from the current authoritative committed snapshot, selected hazard/mechanics version, user intent or durable commit receipt, recent accepted events, pending incidents, valid evidence, and remaining budget. Do not translate or forward Gemini thought signatures, raw continuation objects, or hidden reasoning to Groq.
+- Reuse a read-only tool receipt only if its arguments, revision, freshness, and permissions still hold. Never replay a committed user action or consume supplies again on provider switch. If a commit acknowledgement is lost, reconcile the host's durable receipt before continuing; an unknown outcome is not permission to retry a state mutation. Pause that operation if durable status cannot be established; neither model may guess whether the commit happened.
+- Rehearsal network waiting does not advance simulated time. Preserve resources, occupants, incident queue, history, and hazard identity. The deterministic host still validates and commits changes. Replay uses the committed log without model calls. The same fixed rubric and accepted evidence determine scores; changing provider alone never changes a score.
+- Preserve the relevant member-linked disability, assistance, medication/storage, equipment, dwelling, and supply context for authorized private Groq roles. Provider fallback must not strip meaningful context into generic booleans. Explicitly disable public web/remote tools on private inference using supported adapter controls; test what is actually sent.
+- Groq's data documentation distinguishes inference content, limited reliability/abuse retention, usage metadata, and configurable retention controls; do not promise blanket zero retention. Browser Search is outside Groq's HIPAA BAA coverage. Verify the actual deployed data configuration before sending real private fixtures; these facts do not block synthetic implementation or establish the legal classification of every consumer record. Groq Chat Completions currently does not support store, so do not blindly copy Gemini's store:false parameter. [R29-R30]
+- Do not assume text/search fallback also supplies evaluated vision. Current model listings include a preview vision option; use an image-capable fallback only after capability, privacy, and quality evaluation. Otherwise leave image inspection pending or use the existing manual/local path while continuing eligible text, home-graph, and search work. Never claim a text-only call inspected room photos. [R30]
+
+Definition of this additional working point: the existing app outcomes remain intact when Gemini is rate limited, with actual attributable Groq search, source-preserving useful results, bounded provider handling, and no state/privacy regression. Implement and verify section 13H; a provider selector, mock search, or successful generic chat response alone does not complete it.
 
 6. SHARED CONTRACTS AND EVIDENCE MODEL
 
@@ -217,25 +318,33 @@ At minimum define:
 - AgentOperationRequest / AgentOperationResult
 - ClientToolRequest / ClientToolResult
 - ResourceSearchPlan and ResourceRecommendationProposal
+- DiscoveredResourceEvidence and an attributed transient research-result envelope with explicit display/retention permissions
 - InventoryObservationProposal and ConfirmedInventoryItem
 - PreparationTaskProposal
 - HomeConcernProposal
 - SimulationSessionState, UserActionIntent, DirectorProposal, and CommitReceipt
 - StressTestFinding
 - RubricDefinition, CriterionAssessment, CouncilReview, and PreparednessScorecard
+- PracticeCheckDefinition, PracticeAttempt, CompetencyEvidence, and persisted completion/score invalidation receipts
 
 Use stable IDs and include the relevant household/home/inventory revisions, session ID, monotonic event sequence, context digest, request/proposal ID, creation/expiry timestamps, and contract version. Reject stale responses rather than applying them to newer facts.
+
+Extend existing operation/evidence envelopes only as needed for section 5A: provider-attempt generation, actual model/API provenance, capability/error classification, research execution status, and source/expiry metadata. Do not create a parallel Groq-specific domain model. Provider switching must fence stale attempts as well as stale household revisions.
 
 Evidence must distinguish:
 - User-recorded or explicitly confirmed facts.
 - Scanner measurements and unconfirmed scanner suggestions.
-- Independently obtained official guidance/resource facts.
+- Independently obtained official guidance and public-service information.
+- Independently obtained publisher-reported business/provider claims, with publisher identity, claim-specific sources, dates, and limitations.
+- Attributed provider-grounded research, retaining metadata and applicable display, retention, and reuse permissions.
 - Geographic provider results subject to their own use rules.
 - Model observations/suggestions.
 - Explicit hypothetical exercise assumptions.
 - Engine-derived findings and real committed exercise outcomes.
 
 Do not merge those into a single "AI confidence" field. Include source/evidence IDs, applicable jurisdiction, retrieval/publication date where available, confirmation state, and uncertainty. Model confidence is not verified truth.
+
+Validate support at the claim level. A business page can support its stated delivery service without proving stock; an official service page can establish a program without proving today's activation. Preserve supported information and identify the particular unknown rather than rejecting the entire recommendation.
 
 A useful operation result is a discriminated union:
 - completed: a validated proposal with evidence.
@@ -247,23 +356,28 @@ The gateway should use opaque, expiring, revision-bound continuation state, pref
 
 Only app/domain commit handlers write household facts, inventory, task completion, or simulation state. A user's confirmation can approve a batch of related observations in one concise review; do not require repetitive confirmations for the same fact.
 
+Audit the full household path: stored person -> context builder -> transport -> server validation -> role input -> structured result -> local presentation. A field existing in Swift is not evidence Gemini receives it. Add schema fixtures for disabilities, assistance capabilities/preferences, medication and recorded storage instructions, equipment loads/backup arrangements, dwelling/floors, contacts' roles, and inventory availability. Preserve unknown versus absent. Include relevant revisions in request fingerprints and invalidate stale results after edits.
+
+Verify relevant medical/assistance context separately for the preparation planner, exercise director, stress tester, and scorecard reviewers. Preserve member-to-medication/device/instruction links and uncertainty; each private role receives the dependencies it needs. Public research receives only the minimized service brief. Include a two-member fixture proving that needs are never assigned to the wrong person or lost during local name resolution.
+
 7. PERSONALIZED PREPARATIONS AND SUPPLY INVENTORY
 
 Implement a preparation pipeline that combines agent interpretation with source-backed actions and deterministic quantities.
 
 Inputs:
-- Confirmed household needs, dwelling and relevant hazards, assistance arrangements, actual supplies, essential dependencies, existing plan, and unresolved evidence.
+- Confirmed member disabilities and recorded functional needs, medications and applicable storage/continuity instructions, equipment, caregiver/assistance arrangements, dwelling type/floors, relevant hazards, actual supplies, transport, existing plan, and unresolved evidence.
 - Optional cost, effort, transport, and storage constraints. Make these optional and easy to change.
-- Existing approved action catalog and content source records, including sourced communication/meetup and home-escape preparations. [R12-R13]
+- Existing reviewed action catalog and source records as reusable foundations, including communication/meetup and home-escape preparations. Permit grounded task composition and new useful preparations beyond catalog wording. [R12-R13]
 
 Planner behavior:
 - Identify which actions apply and why, adapt their wording, identify dependencies, choose a small useful slate, and ask only the highest-value missing question.
 - Show three primary next actions by default, with a compact path to the rest. Do not replace a short list with dozens of generated tasks.
 - Keep reviewed life-safety priority constraints. Let the agent meaningfully select and sequence within those constraints using household needs, prerequisites, cost, effort, and expected preparation benefit.
-- Every task needs stable action/criterion and subject IDs, an applicability explanation, source/evidence references, completion predicates, the relevant editor/action, and links to inventory/resource/stress-test dependencies.
+- Every task needs stable objective and subject IDs, a specific next action, an applicability explanation, source/evidence references, completion predicates, the relevant editor/action, and links to inventory/resource/stress-test dependencies. Include criterion IDs only where a valid mapping exists; useful tasks need not all be scored.
 - Use subject-specific identity so two people needing different support are not collapsed into one task.
 - Do not automatically complete a task because the model recommended something or the family succeeded in a simulation.
-- Novel uncatalogued suggestions can remain optional reviewable ideas; they do not earn or remove score points until a reviewed criterion supports them.
+- Let Gemini generate bespoke, evidence-linked preparations and combine related needs into practical tasks. Validate relevance, support for consequential claims, feasibility, duplication, and completion behavior. Uncatalogued must not automatically mean rejected or hidden behind a separate ideas-review queue.
+- A bespoke task can satisfy an existing criterion only when its confirmed result meets that criterion's actual predicates. Otherwise it is a useful unscored task; it cannot invent a weight, denominator, critical cap, or medical instruction. Rubric changes remain a development process.
 - Display rough cost/effort bands as estimates when useful. Do not invent current prices or product availability.
 
 Examples of meaningful personalization:
@@ -273,6 +387,15 @@ Examples of meaningful personalization:
 - Two independent adults: applicable household protections, water/food, communication, meetups, and relevant local hazards without irrelevant infant/pet/device tasks.
 - A household without a car: reachable resources and assistance/transport plans that do not assume driving.
 - A family with limited funds: feasible free or low-cost actions and supported community resources, without hiding genuine shortages.
+- A member with a recorded mobility constraint sleeping upstairs: identify the specific route/assistance-plan dependency; do not offer a generic staircase action as feasible.
+- A recorded refrigerated medication with no documented outage arrangement: identify the missing storage preparation without inventing product-specific limits.
+- An apartment household: account for recorded shared exits, dwelling/floor information, and building arrangements; do not pretend a unit-only scan includes the whole building.
+
+Personalization acceptance:
+- Require a traceable recorded fact -> practical implication -> useful next action -> reason for its current priority. Keep this concise in the UI; detailed evidence belongs behind existing details.
+- Pair synthetic households differing in one relevant disability, medication-storage requirement, housing/floor arrangement, or supply gap. Verify the actual outbound snapshot and that applicable tasks, resource needs, or scenario options change substantively. Irrelevant facts should not gratuitously change unrelated advice.
+- Test sparse profiles, conflicting records, and already-owned equipment. Correctly ask one useful question or explain a specific uncertainty instead of fabricating a fact, repeating buy supplies, or requesting a large questionnaire.
+- Audit all role prompts, schema enums, token budgets, source tools, caches, and fallbacks for constraints that collapse supported reasoning to generic templates. Make the system bounded around factual authority and execution, with enough latitude for useful planning.
 
 Inventory:
 - Add concise "What do you already have?" intake in the existing Prepare/household flow. Reuse current description intake where possible.
@@ -290,68 +413,94 @@ For an infant + dog + powered-device household, incomplete backup documentation 
 
 8. AUTOMATIC NEARBY PREPARATION RESOURCES
 
-Keep the existing Apple map. Save an address once; resolve geographic context locally where possible, select applicable source packs automatically, and let the user correct an ambiguous jurisdiction. County may remain source metadata or a fallback selector, not the organizing concept of the feature.
+Remove the user-facing Location records workflow, including record creation, URL entry, source-pack choice, and manual record reconciliation. The family should receive researched options in the existing Plan map and related task. Internal evidence records are still useful; maintaining them is the app's job.
 
-Separate three kinds of work.
+Save an address once. Resolve geographic context locally where possible and request correction only for actual ambiguity. County is internal source metadata, not the organizing concept. Start discovery automatically within the existing cloud opt-in after a home is established or a material preparation gap changes. Users may choose/favorite a destination or refresh results without becoming researchers.
 
-A. Gemini plans the search around an actual need.
-Produce a ResourceSearchPlan containing:
-- Related task, household dependency, and hazard IDs.
-- Resource category and preparation purpose.
-- Mandatory capabilities, preferences, and unknowns that need verification.
-- Travel mode/range and optional budget constraints.
-- Alternative categories and bounded expansion/stop rules.
-- Evidence needed before claiming the resource satisfies the need.
+Deliver completed recommendations, not merely a ResourceSearchPlan that leaves discovery to the user.
 
-B. The native adapter finds and presents geographic candidates.
-- Execute approved search categories through existing MapKit adapters with the saved home as origin.
-- Keep geographic results and routes on the native side unless their specific permitted processing path has been established.
-- Rank locally by the search plan's constraints and actual returned fields.
-- Do not claim Gemini compared individual Apple listings it never received.
-- Show the existing map with limited, useful markers and a compact resource overview: name, category, actual location, distance/travel estimate when available, why it matters, what remains unverified, and a direct task/plan action.
-- Use "Open in Apple Maps" and ordinary user-initiated calling/navigation controls. Agents do not call locations, contact people, buy items, or begin navigation on their own.
-- Give every client tool an explicit cloud-return policy. Geographic tools may rank/present locally without forwarding listings, coordinates, routes, photos, reviews, or derived descriptions. A completion acknowledgement does not authorize forwarding its payload through a generic tool-continuation loop. Use independent official evidence for cloud candidate comparisons and local match reasons for native candidates.
+A. Derive a focused research brief.
+The private planner identifies the relevant gap, hazard/dependency, necessary capability, travel mode/range, optional cost constraints, and alternatives. Send only the minimized service need and locality to web-enabled research. Exact address, medical narrative, contact identities, and floor plans stay out of public search queries.
 
-C. Gemini compares legitimate official evidence where available.
-- Expose independently curated read-only tools such as find_official_resources(regionID, serviceType), read_resource_evidence(resourceID), and get_preparation_guidance(sourceIDs).
-- Return structured evidence with exact source/field IDs, publisher, jurisdiction, timestamps, service facts, and uncertainty.
-- Validate every claimed facility capability against those records.
-- Join official records to map candidates only after establishing facility identity using stable identifiers where available, complete name/address, and appropriate location checks. A similar name or nearest result is insufficient. Keep ambiguous matches separate; never transfer activation, accessibility, or medical capabilities onto an unverified place match.
-- Keep this source collection independent of Google grounding output. Use known official directories, feeds, and reviewed source packs with appropriate reuse rights.
-- Preserve the seven Tarrant records and their review status until actually verified. Implement generic category search beyond that county and test an outside-region fallback. Do not imply nationwide official-shelter coverage from a handful of records.
+B. Research and native geography work in parallel.
+- Implement actual agent-assisted discovery and page inspection. The primary Gemini path uses supported Google Search together with URL Context so the model can find relevant pages and read them; users need not supply URLs. Verify the chosen model/SDK/tool combination and preserve required citation/suggestion metadata. Add section 5A's Groq browser_search workflow when the primary is unavailable. Both return the same useful app outcome with provider-appropriate evidence handling; schema-valid text alone is insufficient. [R3, R7, R21, R26-R27]
+- Investigate organization/provider pages, official directories and service announcements, and relevant business websites. Compare what matters: documented service, eligibility, accessibility information, delivery/pickup, stated hours, appropriate cost information, and consequential unknowns.
+- If the first result is weak, allow bounded expansion to neighboring localities, regional assistance, delivery, or another useful category. Seven bundled records cannot define the research universe.
+- Run MapKit searches independently on the iPhone with the saved home as origin. The native adapter supplies geographic candidates, ordinary travel estimates, and Apple-map presentation.
+- Each native tool has an explicit cloud-return policy. Do not forward Apple listings, coordinates, routes, photos, or derived descriptions into a generic continuation unless the specific processing path is permitted. Gemini may compare independently obtained permitted evidence; do not claim it inspected listings it never received.
+- Match independently sourced evidence to a native candidate automatically only through a permitted path and sufficient identity checks: stable IDs where available, full name/address, and relevant location checks. A nearby similarly named place is insufficient. If a join cannot be established, retain a useful attributed research result alongside native candidates rather than inventing a match or asking the user to reconcile records.
 
-Resource categories should include, when relevant:
+C. Support two concrete evidence paths.
+1) Provider-grounded answers: the Gemini Search/URL Context path or section 5A's Groq Browser Search path performs live discovery/reading and returns an attributed answer. Retain and display it under that product's actual terms, with adapter-specific provenance. Do not mine grounding results into a separate crawler or unrestricted permanent database.
+2) Independent retrieval: query permitted official APIs/directories or appropriately licensed search services and read relevant public pages through a guarded retrieval service. This can populate durable DiscoveredResourceEvidence when its source rights permit that use. Source controls include public HTTPS, redirect/destination checks, network isolation, size/time bounds, relevance, publisher identity, and claim support. Do not require an operator to pre-enter every locality or a user to approve every URL.
+
+Implement the first path as required live research; support the second where durable resource/plan evidence needs it. A fixed source-ID allowlist or bundled pack alone does not meet automatic discovery. Keep website content untrusted and separate from role instructions. Prefer official evidence for public services and activation claims; a business's page can substantiate what it states about its services without proving stock or suitability for every household.
+
+Use an internal evidence envelope with identity, source URL/provider, retrieval date, publication/updated date when available, claim-to-source references, jurisdiction, supported capabilities, unresolved questions, refresh policy, and permitted display/storage/export uses. Apply those permissions at the adapter boundary. Do not require human review of every informational location before it can be useful.
+
+Record the research execution time separately from source publication/update dates and the period a claim describes. Online discovery may use indexed content. A successful research call does not establish current opening, stock, or activation; request fresher evidence when that distinction materially changes the recommendation. Preserve useful dated findings with specific qualifications. [R21]
+
+D. Show a compact, useful result.
+- Favor two or three good options related to the current preparation, with limited map markers and a direct location overview.
+- Explain the actual match: household gap -> supported service/candidate capability -> useful next action. Distance alone is not a rationale.
+- Show name, category, location, ordinary distance/travel estimate when available, why it matters, material unknowns, and sources associated with the claims. Keep attribution with provider-grounded content.
+- Connect to an existing task or plan choice; for example, a missing extinguisher preparation can open relevant hardware-store options, and a documented cooling dependency can open researched cooling alternatives.
+- Offer Open in Apple Maps and ordinary user-initiated contact/navigation controls. Agents do not call locations, send messages, buy supplies, or start navigation themselves.
+- Preserve partial usefulness: a grocery candidate is useful even when stock is unknown; a published service is informative when today's activation is unconfirmed. State the particular limitation instead of a blanket unverified label and a research chore.
+- If evidence is genuinely unavailable, explain the limited result and offer a useful native search or supported alternative. Do not fabricate a named facility.
+
+Relevant categories:
 - Grocery/food assistance and drinking-water preparation.
-- Pharmacies and equipment suppliers for preparation and verified requirements.
-- Hardware/general retailers for extinguishers, alarms, flashlights, and appropriate preparation supplies.
-- Hospitals/emergency departments, with facility type confirmed where available.
-- Police/fire stations and emergency-management offices, with their actual role explained.
+- Pharmacies/equipment suppliers for recorded requirements.
+- Hardware/general retailers for extinguishers, alarms, flashlights, and suitable supplies.
+- Hospitals/emergency departments with facility type established where available.
+- Police/fire stations and emergency-management offices, explaining their actual role.
 - Officially identified warming/cooling centers, shelters, accessible destinations, and trusted meetups.
-- Warm clothing/blankets and appropriate heating preparation. Firewood is relevant only when the family has confirmed suitable, properly installed heating equipment; avoid generic indoor-combustion recommendations. [R17]
+- Warm clothing/blankets and appropriate heating preparations. Include firewood only for a household with confirmed suitable installed equipment; do not make generic indoor-combustion suggestions. [R17]
 
-Meaningful card examples:
-- "This hardware-store candidate may help with your missing extinguisher task. Stock is unverified; check before going."
-- "Your plan depends on an electrically powered well. This task is to store drinking water before an outage; a nearby grocery is a preparation option, not guaranteed water during the event."
-- "This official location lists a warming service; current activation and transport access still need confirmation."
+Unsupported claims remain specific boundaries:
+- A police/fire station, school, or church is not automatically an activated public shelter.
+- Listing a retailer does not establish stock or operation during an outage.
+- Nearest does not establish the appropriate destination for a particular medical emergency.
+- An ordinary route estimate does not establish a flood-safe evacuation route.
+Use supported official information for flood preparation and explicit hypothetical closures for stress tests. Tornado preparation focuses on an appropriate reachable shelter, rather than default driving to a distant generic destination during a warning. [R15-R16]
 
-Do not infer that:
-- A police/fire station accepts evacuees or functions as a public storm shelter.
-- A school/church is an activated shelter.
-- A store has stock or will operate during an outage.
-- The nearest hospital is the appropriate destination for an individual medical emergency.
-- A current driving route is safe during a future or active flood.
+Data and refresh behavior:
+- Preserve the seven Tarrant records and their provenance until updated by actual evidence. They are initial content, not a nationwide coverage claim or a mandatory review task.
+- Keep provider-grounded Search/Maps answers out of the unrestricted permanent resource database and PDF pipeline unless an explicitly implemented permitted path allows that use. Live discovery is required now; rights-aware handling should make it useful, not defer it indefinitely. [R6-R7]
+- Direct Google Places has separate configuration and map-display policies. The Gemini key does not automatically enable it. Keep the existing Apple map and do not copy Google Places/Maps content indiscriminately into Apple pins or exports. [R8]
+- Apple also limits map-data reuse/storage/display; preserve a provenance-aware native adapter and verify snapshot/export handling without undoing the working renderer. [R10]
+- Refresh on changes to relevant needs, transport/budget constraints, locality, source freshness, or an explicit refresh. Native geography has a separate fingerprint. Debounce edits, deduplicate, cancel stale work, and retain useful results while refreshing. Unrelated medical notes/photos must not trigger web research.
+- Bound operation time, requests, tool rounds, returned results, and cost. A cap on app requests is not a guaranteed cap on the provider's internal searches. Record actual usage.
+- Revoking cloud opt-in stops new jobs and cancels active work where possible; native search and permitted saved plans remain useful.
 
-For flood planning, use supported official advisories/hazard evidence and clearly hypothetical road-closure tests. Ordinary map routing is not an evacuation clearance. For tornadoes, focus on advance shelter selection and a reachable appropriate location; do not suggest leaving home to drive to a generic distant shelter during a warning. Distinguish these hazards explicitly. [R15-R16]
+Acceptance:
+Starting with an address and a relevant household gap outside Tarrant County, demonstrate actual automatic discovery of useful named options, evidence-backed differences, native map candidates, and a task link. Include a rural/no-car case, stale/unavailable information, and a no-results fallback. The family must not create records, paste URLs, choose source packs, or repeat the research. Clearly label live-retrieved, recorded-fixture, and native-pending evidence.
 
-Provider/data-rights decision:
-- For this implementation, keep Google-grounded answers out of the permanent resource database and PDF pipeline. Search and Maps have different display, retention, and reuse terms; this design avoids making either grounded-answer product the source of durable household records. A later integration must implement its specific requirements. [R6-R7]
-- Direct Google Places has separate setup and map-display policies. It is not automatically enabled by the Gemini key and is unnecessary for the existing Apple map. [R8]
-- Apple also limits map-data reuse, storage, and display. Keep a provenance-aware native adapter and distinguish user/official plan facts from provider map content. Verify intended snapshot/export handling without undoing the existing native renderer. [R10]
-- An optional attributed Google discovery answer can be investigated later if it adds value and meets its requirements; it is not required for this goal's primary resource workflow.
+9. DIRECT HOME EDITING, OPTIONAL IMAGES, AND REVIEWABLE CONCERNS
 
-After cloud opt-in, refresh strategy only when its relevant normalized inputs change: preparation gap/category, transport or budget constraint, jurisdiction, or an explicit strategy dependency. Unrelated medical notes, contacts, or photos must not trigger another resource call. Native searches have a separate geographic fingerprint. Debounce edits, deduplicate equivalent requests, cancel stale work, bound expansion, and retain useful results during refresh. Revoking cloud opt-in stops new jobs and cancels active work where possible; native search and saved plans remain usable.
+Repair the existing room editor as a required native outcome.
 
-9. HOME CONTEXT, OPTIONAL IMAGES, AND REVIEWABLE CONCERNS
+Direct editing:
+- Make the home canvas the main editor. Tapping a room selects it and opens/updates one compact inspector with clear Name, room use/type, floor context, and relevant settings. Avoid nested room -> configuration -> another sheet chains.
+- Selected room and opening must be unmistakable using a strong outline/fill and visible name/type, with accessible selected-state announcements. Selection and inspector values must reference the same stable ID, including adjacent/small rooms and multiple floors.
+- Tap a door/window opening to select that precise object and show an immediate Door / Window control. Reclassify it in place; preserve identity and captured geometry. Do not require deletion/recreation or another screen.
+- Update 2D/3D appearance and draft route semantics coherently. A corrected window does not automatically become a verified usable exit, and a previous door classification cannot leave stale door-route eligibility.
+- Hide raw measurements, dimensions, transforms, and measurement-edit controls from the user interface. Do not move them to another user-facing advanced menu. Use valid RoomPlan measurements without asking families to remeasure or approve dimensions.
+- Keep automated geometry/connector consistency checks internally. Show a targeted explanation only if a specific issue blocks the requested operation. Trusting captured dimensions does not establish window operability, exterior grade, or structural safety.
+- Valid captured dimensions/widths satisfy geometry validation without a separate user-confirmation flag. Audit legacy isConfirmed/verification/measurement prerequisites in import, Save, routing, previews, and rehearsal initialization. Removing the confirmation UI must not leave an invisible gate that makes an otherwise supported home unusable.
+- Remove Still to confirm, its badge/count, and dead-end links. Do not rebuild it under another name. Offer scanner room-type suggestions directly in the inspector, with easy correction and reasonable defaults. Semantic uncertainty should not block ordinary editing or saving.
+
+Save and persistence:
+- Find the actual failure in the current native branch. Draft bindings, selected IDs, validation, async persistence, dismissal, and downstream observation are investigation areas, not assumed causes.
+- Save must commit the current draft atomically through the authoritative home store, increment the home revision once, and return success only after durable persistence. Disable duplicate in-flight commits or make them idempotent.
+- Dismiss only after success. On failure, preserve the draft and offer a clear retry; a disappearing sheet is not evidence of a saved home.
+- Keep Cancel from partially committing edits. Handle a stale base revision/concurrent scan without silently overwriting newer geometry.
+- After success, refresh the home scene, plan/escape previews, route caches, relevant tasks, and new rehearsal context from the same saved revision. Reject stale pending AI proposals. Active exercises retain their identified snapshot or follow the supported refresh/fork path.
+- Optional metadata and unconfirmed room-use suggestions must not disable Save. Preserve a draft with a real topology problem and explain its specific route limitation without pretending the route is valid.
+
+Required Mac/iPhone checks:
+Import the example scan and save without a measurement/confirmation menu. Select adjacent rooms and different floors; rename/reclassify rooms; switch a door to a window and back; save, leave, force-quit/relaunch, and verify identity, geometry, labels, and dependent previews/routes. Test repeated Save, cancellation, pending updates, and an injected failed write. Confirm no silent success, lost draft, duplicate objects, or dead Still to confirm entry points. Validate touch selection, VoiceOver, large text, and a shallow editing path on the connected iPhone. Linux can test portable reducers and persistence contracts; it cannot certify these native interactions.
 
 Define HomeSceneContext so the agent can reason about the actual home instead of interpreting an unlabeled screenshot alone.
 
@@ -359,8 +508,8 @@ Include:
 - Schema/home revision, units, coordinate conventions, per-floor origins/transforms and elevations.
 - Stable floor, room, wall, opening, door/window, connector, obstacle, and relevant object IDs.
 - Room polygons, adjacency, opening dimensions and operability where recorded, stairs/ramps, exterior access and grade, and known accessible routes.
-- Verification status and provenance for every safety-relevant attribute.
-- Confirmed room uses, shelter/exit/meetup candidates, storage/equipment locations, and anonymous assistance needs.
+- Internal provenance and known/unknown status for safety-relevant attributes, without exposing a blanket confirmation queue.
+- Recorded room uses and reasonable scanner defaults with provenance/uncertainty; shelter/exit/meetup candidates; storage/equipment locations; and anonymous assistance needs. Room-use defaults can support labeled exercise assumptions without establishing a usable exit or structural shelter suitability.
 - Derived graph relationships and current route feasibility from the deterministic core.
 - Explicit unknowns: scanner geometry does not establish usable exterior grade, window operability, fire resistance, structural shelter performance, or hidden hazards.
 
@@ -389,9 +538,69 @@ User flow:
 - An uncertain concern can appear as a clearly labeled hypothetical exercise assumption, with permission to use it.
 - Detection failure or an unphotographed room must never produce an "all safe" conclusion.
 
+This optional review of a specific photo concern is separate from the removed Still to confirm scan workflow. Ask about the finding that matters; do not require every room, dimension, or opening to be reapproved. Locate a concern in its room/image and connect an accepted finding to its actual preparation or exercise consequence.
+
 Generate reviewable in-app findings, not autonomous emergency alerts or unsolicited push notifications. Keep capture/manual input alternatives equally useful.
 
 10. GENUINELY ADAPTIVE REHEARSAL
+
+10A. ALL SIX DISASTERS MUST BE SUBSTANTIVELY DIFFERENT
+
+This is the highest-priority product correction. Every hazard needs its own drivers, salient state, transition rules, objectives, feasible actions, pacing, visuals, ending conditions, and debrief. A new title, icon, color, paragraph, or event ID over the same blackout -> move someone -> helping sequence fails acceptance.
+
+Implement a hazard specification/adapter in the existing engine for each family, with an explicit supported-mechanics manifest. The director receives the selected hazard and its actual affordances. Shared power, water, geometry, and assistance modules can be composed differently; Gemini directs events within those mechanics. Each local fallback must also remain hazard-aware.
+
+The following are proposed educational abstractions. Sources support lesson content, not predictive fire, flood, temperature, or structural models.
+
+HOME FIRE
+- Driver/state: specific ignition room/origin, staged smoke/fire effects through supported room/opening relationships, occupant positions, blocked/reachable exits, and outside household-accounting status.
+- Decisions: choose an available escape route from the actual starting room, adapt if a connection becomes unavailable, and account for people at the outside meetup. An extended battery or supply-allocation sequence is not the primary fire experience.
+- Consequences: a valid chosen route changes positions and exit status; a blocked path stays blocked. Later events respond to actual progress. A missing route/support arrangement becomes an explicit plan gap, not a magic exit or encouragement to re-enter.
+- Scene/debrief: smoke/fire stages, affected connections, current route, outside meetup, and people accounted for. Explain the actual chokepoint, missing second way out, or meetup gap. Vary ignition locations, including an occupied room and the usual exit path. [R13]
+
+TORNADO
+- Driver/state: exercise watch/warning/impact stage, building type, interior/window exposure, supported shelter candidates, floor/access constraints, occupants reaching shelter, and alert continuity.
+- Decisions: reach an appropriate recorded shelter through a feasible approach; choose concrete accompaniment when a recorded need warrants it; address a usual shelter dependent on unusable stairs. Outdoor reunification is not the default objective.
+- Consequences: shelter choice changes modeled exposure and sheltered status. The director responds to who has arrived and the remaining access/alert gap; it cannot certify structural safety from the scan.
+- Scene/debrief: shelter/approaches, window exposure, sheltered occupants, and restrained impact/window-damage cues tied to committed events. Do not imply exact predicted glass failure. Explain suitability limits, access, or warning continuity. [R15]
+
+FLASH FLOOD
+- Driver/state: explicit exercise flood/evacuation stage, illustrative rising water in applicable low spaces, floor/elevation relationships, affected electrical/access links, reachable supplies, transport, and road/destination assumptions.
+- Decisions: use a supported early evacuation arrangement under the exercise's stated official instructions before relevant access is lost. An explicitly trapped case can require identifying a supported refuge or recognizing that none is modeled.
+- Consequences: water/access changes alter route and supply feasibility. Lower-room supplies can become inaccessible. A modeled road closure affects the relevant dependency; ordinary directions cannot make it passable.
+- Scene/debrief: water in relevant rooms/floors, lost links and supplies, supported paths/refuge, and the decision stage that mattered. Never reuse tornado's lowest-interior-room objective for a flooded basement. Outdoor flooding/access assumptions are explicit, not inferred from RoomPlan. [R16]
+
+FREEZE / POWER LOSS
+- Driver/state: extended cold-weather outage, recorded heating/power dependencies, illustrative indoor cooling model/range, backup allocations/energy, phone reserves, and well/medical/storage dependencies where applicable.
+- Decisions: compare feasible continuity arrangements, allocate documented backup under competing loads, use available warmth preparations, and consider a supported heated alternative as conditions change.
+- Consequences: allocations change computed consumption and later options over simulated hours. A useful preparation averts its corresponding complication. Do not invent medically safe device interruptions or medication storage limits.
+- Scene/debrief: indoor temperature trend/range, available heat, energy allocation, and the actual unresolved dependency. A generic escape diagram is not the main display. Heating/generator lesson content uses reviewed guidance. [R14, R17, R22]
+
+HEAT / GRID STRAIN
+- Driver/state: extreme heat with potentially functioning electricity, actual cooling options, illustrative indoor warming model/range, water access, and feasible transport/destinations. Grid strain is not automatically a total blackout.
+- Decisions: select workable cooling for the recorded household; a later loss of cooling requires adaptation. It is not the mandatory first event shared with freeze.
+- Consequences: cooling/backup choices alter available resources and modeled conditions. Account for recorded assistance and storage dependencies without inferring medical tolerance or prescribing fluid intake.
+- Scene/debrief: heat trend/range, available cooling, relevant rooms, and supported cooling alternatives. Explain what changed cooling access/continuity. Recolored freeze or a universal turn-on-a-fan answer is insufficient. [R23]
+
+WATER OUTAGE
+- Driver/state: separate service availability, quality/advisory category, usable stored volume, access location, and household uses. Include absent-water and flowing-water-under-advisory variants. Power need not fail.
+- Decisions: select an appropriate recorded supply for a particular activity, choose feasible use under the exercise advisory, and address inaccessible storage or a supply gap.
+- Consequences: consumption deducts from the correct accessible usable inventory. Restoring service does not automatically clear an advisory. Boil-water, do-not-drink, and do-not-use are distinct; boiling is not a generic fix for chemical contamination. [R24]
+- Scene/debrief: faucet/service state, advisory, stored-water availability, and affected activities. Do not reuse rising floodwater visuals. Explain the actual quantity, quality, or access issue and next preparation.
+
+For every hazard, demonstrate at least two meaningful decision points with alternative choices producing different valid consequences, plus a household/home variant that changes a feasible option or result. Run all six against the same representative home/household to expose shared-script leakage. Then vary relevant layouts, ignition locations, needs, and supplies. Native scenes and local fallbacks belong in the six-row acceptance matrix; one working row cannot establish completion.
+
+10B. MEANINGFUL ACTIONS AND LEARNING
+
+Remove generic Move someone and Helping as the main visible decisions. Low-level movement/helper primitives may remain internal. A primary action explains what changed, its objective, actor/recipient where relevant, destination or resource, and meaningful constraint/tradeoff.
+
+Examples, only when supported: Take the available back exit to the family meetup; Accompany the child to the selected shelter; Allocate the recorded battery to the specified essential load; Use stored water for this household task. Show concise context before the choices. Assistance performs a defined task; a helper cannot teleport, satisfy incompatible simultaneous duties, or enter an excluded area because a flag says helping.
+
+Let Gemini formulate, compose, and rank contextual options from actual affordances rather than select a few old choice IDs. Support a short alternative-action input without adding chat. A recommended action must be feasible or explicitly identify the missing fact. An incorrect/infeasible attempt receives a specific explanation, never a silent default. Concept checks can teach without resource movement, but must be presented as checks rather than fake physical actions.
+
+Committed physical actions have identifiable state effects. Next-turn context includes those effects and infeasibility results. Debrief claims reference actual events and open the relevant preparation directly. Recognize a sound plan and end appropriately; continually inventing failures is not better agency. Section 12 defines varied practice checks and scoring.
+
+10C. INCREMENTAL HOST AND DIRECTOR ARCHITECTURE
 
 Implement an incremental, serializable SimulationSession and a pure domain reducer with operations equivalent to:
 
@@ -420,12 +629,12 @@ The app is the authoritative host. At each meaningful boundary:
 
 Provide a headless executable over the portable Swift host using a documented transport such as newline-delimited JSON over stdin/stdout. The Linux harness must drive initialize -> user action -> gateway request -> client-tool request/result -> validated proposal -> commit -> next director turn against that running host. Do not rewrite state mechanics independently in TypeScript. Isolate genuinely Apple-only dependencies behind protocols and use honest fixtures for those seams; fixtures must not replace available state/resource/route computations. Report a genuinely unavailable Swift toolchain explicitly.
 
-A DirectorProposal needs session/proposal/request IDs, base revision and event sequence, home/household revisions, context digest, permitted commands, next boundary, purpose, evidence/assumption references, and presentation intent.
+A DirectorProposal needs session/proposal/request IDs, selected hazard and mechanics version, base revision and event sequence, home/household revisions, context digest, permitted commands, next boundary, purpose, evidence/assumption references, and presentation intent. Validate hazard identity through initialization, gateway, cache, reducer, fallback, scene, and debrief.
 
 Expose a small, composable action language:
 - External conditions: power loss/restoration, water-service advisory, communications loss, unavailable destination, modeled road closure.
 - Spatial incidents: startIncident(roomID, hazardType, reviewedProfileID), advance permitted hazard stage, affected portal/room relationships calculated by the core.
-- User actions: moveTo(destinationID), take/transfer supplies, assign a helper, allocate a power source, contact a simulated contact, close an operable door, choose a plan alternative.
+- Internal user-action primitives: moveTo(destinationID), take/transfer supplies, assign a helper to a concrete duty, allocate a power source, contact a simulated contact, close an operable door, choose a plan alternative. Compose these into the meaningful visible actions in 10B; do not expose raw primitive labels as the experience.
 - Pacing: requestDecision, waitUntil(predicate, maximumSimulatedDuration), finishExercise.
 - Read-only tools: queryRoutes, inspectRoom, forecastResources, evaluateCandidateAction, inspectDependencyGraph, and runCounterfactual.
 
@@ -468,7 +677,7 @@ Replay and failure behavior:
 - A random seed does not reproduce model choices. Replays use the committed log and do not call Gemini.
 - Enforce idempotency, revision checks, cancellation, atomic persistence, and recovery after app backgrounding/relaunch.
 - Do not commit partial streamed output. Reject stale or duplicate proposals without double-consuming resources.
-- On timeout/provider failure, retain the same session, resource balances, pending event queue, and history. A local fallback director supplies validated next commands for that state, or the app pauses. Never restart an authored scenario, replay default choices, reset supplies, or reapply incidents for fallback. Test switching from Gemini to local continuation and back without lost/duplicated effects.
+- On timeout/provider failure, retain the same session, resource balances, pending event queue, and history. An eligible Groq director can continue under section 5A, followed by the existing local fallback or pause when necessary. Never restart an authored scenario, replay default choices, reset supplies, or reapply incidents for fallback. Test switching from Gemini to Groq and local continuation without lost/duplicated effects; all six hazards retain their mechanics and acceptance criteria.
 - Use any prefetch only for an exact revision and discard it after changes.
 - For before/after comparisons, replay the same external incident schedule while varying the intervention. A freshly directed scenario is an alternate exercise, not a controlled comparison.
 
@@ -536,18 +745,41 @@ Keep unresolved applicability in its fixed parent budget as unknown; exclude onl
 Practice component P:
 - Use four equally weighted competencies: appropriate initial response; adapting when a route/shelter option fails; using the communication/reunification/assistance plan; handling a relevant continuity dependency.
 - Grade anchored actions from committed traces: independently correct, defined partial credit, incorrect, or unassessed.
-- Unsafe choices get no credit for the affected competency. Feedback never retroactively changes the original answer.
+- Unsafe choices earn zero on the assessed anchor; any broader restriction must be an explicit rubric rule. Feedback never retroactively changes the original answer.
 - Collect comparable evidence from an optional short "Practice check" within the existing Rehearse flow using approved equivalent variants. Guided/adaptive training still provides feedback and insights but arbitrary scenario difficulty cannot directly determine the score.
-- Use the latest eligible practice assessment, not a best-attempt maximum or drill count. Support learning and later retesting with an equivalent variant. Persist attempt identity, variant, and pre-feedback answers; interruptions resume that attempt. Restarting cannot erase errors or silently reroll a variant. A newer incomplete attempt is provisional, retaining observed results and unknown remaining competencies. Show an older completed result as history, not the current score while suppressing newer contrary evidence.
+- Use the latest eligible evidence for each atomic rubric anchor, keyed by household, rubric, competency, anchor ID, relevant hazard/scope, and stable subject where applicable. Preserve evidence revisions separately. Variant IDs identify attempts, not new scoring scopes. A short check updates only the anchors it assesses; it cannot overwrite other hazards, subjects, or competencies. Do not use a best-attempt maximum or drill count.
+- Persist attempt and variant identity, assessed competencies/hazard scope, committed pre-feedback answers, grading anchors, and evidence revisions. Interruptions resume the same attempt. Restarting cannot erase contrary observed evidence or silently reroll an easier variant.
+- Track hazard coverage separately; one fire check cannot claim knowledge of all six disasters. Where a criterion requires multiple hazard anchors, define fixed subpredicates/weights in the rubric before generation and aggregate only their eligible evidence. More generated questions never enlarge a competency's fixed budget.
+- For an incomplete attempt, retain its observed results and explicit unanswered state without clearing unrelated assessments. Retest with a genuinely equivalent variant. Keep older results in history and never hide a newer eligible incorrect result behind an older success.
+- Only a newly observed eligible answer supersedes prior evidence for the same anchor. Starting, canceling, or leaving a question unanswered does not erase a prior valid answer. Report partial anchor coverage without claiming the whole competency has been assessed.
+- Track each anchor's relevant dependency fingerprint and freshness rule. Material preparation/home changes invalidate only dependent evidence and can schedule a targeted retest. Renames, display-label changes, and unrelated edits do not revoke credit. Preserve invalidated evidence in history and explain any score change.
 - VoiceOver, translation, alternative input, and additional reading time are accessibility support, not coaching. Provide an equivalent text/manual option with the same grading anchors.
 - Do not score reaction speed, expensive equipment, photo quality, LiDAR ownership, physical ability, animation completion, or the number of rehearsals.
 - Until variant comparability is evaluated, mark practice results provisional and avoid invented difficulty multipliers.
+
+Practice-check variety and meaning:
+- Replace the single generic persistent check with a bank spanning all six hazards. As an initial content gate, provide at least two distinct check objectives per hazard, each with alternate equivalent variants. Reuse competent existing content where it meets these requirements.
+- Examples: fire route choice and household accounting; tornado shelter/access and alert continuity; flood early evacuation decisions and loss of access; freeze warmth/continuity and competing backup loads; heat cooling access and adapting to lost cooling; water usable-supply selection and advisory distinctions. These are content objectives, not twelve new score budgets.
+- Each check presents a concrete situation, a useful goal, and an assessable choice. State which competency/predicate it measures and why the decision matters. Recognizing an unrecorded arrangement or unsupported route can be the appropriate result.
+- Gemini personalizes the context/options to current facts and valid mechanics. Keep grading anchors, difficulty/comparability rules, and eligibility fixed; changing the prose must not change which answer earns credit secretly.
+- Prefer a short relevant check based on an unresolved learning need, a material changed preparation, or an unassessed hazard. Keep one clear next check or a compact choice in existing Rehearse; do not create another navigation area or endless queue.
+
+Completion, persistence, and score refresh:
+1) Commit the attempt/answer evidence with stable instance IDs and first-answer grading. Deduplicate double taps and late model responses. Make persisted completion recoverable/idempotent across relaunch.
+2) Retire that completed check instance from the active queue, including an incorrect completion. Keep it in history; a later retest is an intentional equivalent variant, not the same stuck card. If there is no useful next check, show an honest completed/current state.
+3) Update only the assessed competency evidence and compile the score from the latest accepted evidence and fixed rubric. Trigger observation/invalidation for every native score surface and the practice queue. Display the updated practice component and explanation immediately after the local commit; a council/network response must not block it.
+4) Persist/derive the score snapshot with its evidence revision. Recompute recoverably after a crash; reject stale asynchronous assessments that would overwrite newer evidence. Cosmetic household edits must not resurrect all completed checks.
+5) Completion does not guarantee earned points. An incorrect answer, an already-current result, rounding, or a critical cap may leave the headline number unchanged; the component/result and reason must still update. Never animate a fabricated increase to imply progress.
+
+Regression cases: completed checks stay retired after relaunch; one check preserves other competency results; repeated drills cannot stack credit; cancellation/interruptions retain answered evidence; incorrect results do not retain an older best score; double taps cannot grade twice; preparation changes trigger appropriate targeted retests; score views agree after refresh; council timeout/stale results cannot undo newer practice. Test all six check families, supported languages, and accessible alternatives.
+
+Include a medication-storage change that invalidates its dependent continuity anchor while preserving unrelated route/communication evidence, and a member rename that changes neither practice credit nor completed-check status.
 
 Overall proposed score:
 Base = 0.90 * C + 0.10 * P
 Overall = min(Base, applicableCriticalGapCap)
 
-C is the uncapped preparation subscore. For each of four practice competencies: independently correct = 1, explicitly anchored partial = 0.5, incorrect/unsafe = 0; unassessed earns 0 while retaining unknown status. P = 100 * sum(competency credits) / 4. Unassessed competencies remain in the denominator. Use the lowest triggered critical cap, or 100 if none applies. Apply it after combining C and P; round only the displayed result.
+C is the uncapped preparation subscore. Each atomic practice anchor earns 1 for independently correct, 0.5 only for explicitly anchored partial credit, or 0 for incorrect/unsafe; unassessed earns 0 with unknown status. For competency k, compute c_k as the fixed-weight mean of its applicable rubric anchors. Unknown/unresolved anchors keep their weight; exclude only anchors confirmed not applicable under a frozen rule. Subject-specific anchors divide a predetermined parent budget. An unevaluable competency remains unassessed with c_k = 0. P = 100 * (c_1 + c_2 + c_3 + c_4) / 4. Define the anchor/weight/applicability map before generating checks; added questions do not add weight. Use the lowest triggered critical cap, or 100 if none applies. Apply the cap after combining C and P; round only the displayed result.
 
 When practice/evidence is unassessed, retain the fixed possible contribution, show the unresolved portion/coverage, and label the overall result provisional. Do not normalize only over successful or answered criteria.
 
@@ -562,7 +794,7 @@ Example: C = 76; all practice competencies are unassessed, so earned P = 0 and B
 "Household preparations 76 · Practice not assessed"
 "Limited by a confirmed gap in essential-device continuity"
 "Household evidence assessed: [computed coverage] · Practice: 0/4 assessed"
-Then the three most useful improvements and a short "How this is calculated" view. Missing backup documentation alone must not be reclassified as confirmed absence.
+Then the three most useful improvements and the existing How this is scored explanation. Remove the rubric-version label from the bottom of that user-facing view. Keep its version in internal score records, migrations, logs, and evaluation artifacts; explain points, evidence, practice contribution, and any cap in ordinary language. Missing backup documentation alone must not be reclassified as confirmed absence.
 
 Avoid green "safe" labels, leaderboards, competitive family rankings, and shame-based messaging. An equally suitable low-cost solution earns equal credit. Budget changes feasible next steps; it does not fabricate supplies or conceal gaps.
 
@@ -589,6 +821,8 @@ A. Contracts and service:
 - Startup behavior with missing credentials and production authorization misconfiguration.
 
 B. Spatial and simulation:
+- Maintain a six-row scenario coverage report with initial driver, supported state, two meaningful branching decisions, household/layout variant, distinct visual/debrief expectations, local fallback, and actual verification status for each hazard. All six rows are required; mark native checks pending until performed on Mac/iPhone.
+- Run all six with the same representative household/home and compare causal state transitions and action semantics. Assert hazard identity across selection, context, cache, director, reducer, scene, fallback, and debrief. Different text/IDs alone cannot pass the differentiation gate.
 - Same committed log gives identical state/route hashes offline.
 - Duplicate/stale/out-of-order proposals and failed atomic persistence cannot double-consume resources or corrupt the session.
 - Conservation, simultaneous power allocation, access constraints, unit conversion, depletion boundaries, and temperature assumptions.
@@ -598,14 +832,20 @@ B. Spatial and simulation:
 - External incident schedules stay controlled in before/after intervention tests.
 - Test past-time incidents, scheduling-budget exhaustion, fallback/resume, interior routing, and source household/home edits during a session. Source edits invalidate pending proposals and require a supported snapshot refresh/fork or continuation against the identified original snapshot; never mix old geometry with new facts.
 - Demonstrate that distinct household actions yield materially different valid continuations and that the director creates sequences beyond the old fixed choice IDs.
+- Add cross-hazard negatives: flood cannot inherit the tornado basement objective; water-service loss cannot create floodwater; heat can start with functioning power; fire cannot default to a multi-hour battery drill; a no-cloud fallback cannot silently turn every scenario into an outage.
+- Exercise direct room/opening edit reducers and atomic persistence where portable. Verify identity/geometry retention after Door/Window changes, route invalidation, stale revisions, failed saves, and cancellation. Leave native hit testing, actual durable Save, 2D/3D synchronization, and relaunch checks explicitly for Mac.
+- Import a fixture whose captured geometry and recorded exterior/access facts support a route. Save, generate its route/preview, and start rehearsal without a measurement/confirmation screen. A missing manual confirmation flag alone must not block the path. Separately verify that genuinely unknown exterior/operability facts remain unknown.
 
 C. Inventory, tasks, resources:
 - Two adults versus infant + dog + powered-device household.
+- Mutate recorded disability/functional need, medication storage instruction, apartment/multistory context, and missing extinguisher independently. Inspect actual serialized role inputs and relevant output changes; reject unsupported functional/clinical inferences. Include already-owned and unrecorded versus confirmed-absent cases.
 - Duplicate images/items, unreadable labels, unknown quantities, expiry, inaccessible supplies, shared battery capacity, missing device specifications.
 - Priority constraints, subject-specific tasks, no duplicate shopping, and limited actionable recommendations.
 - Ambiguous addresses, no results, rural distances, no-car travel, outside-source-pack regions, closed/unknown services, stale official records, and prompt injection in resource text.
 - No invented inventory, shelter activation, hospital capability, retailer stock, or route safety.
 - Verify that actual supported facts drive the resource explanation and checklist link.
+- Prove automatic named-resource research beyond the bundled county, without manual records, URLs, or source-pack selection. Distinguish a useful qualified result from fabricated stock/activation; verify attribution and permitted data handling through the actual provider adapter.
+- Evaluate For your family observations and task proposals for evidence, implication, concrete action, fit, and redundancy. A changed name or added generic sentence is not substantive personalization.
 
 D. Rubric/council:
 - Create at least 60 distinct synthetic household cases, separating a development set from a locked holdout before prompt tuning. Include incomplete/conflicting facts and diverse supported home/assistance/budget situations.
@@ -617,6 +857,7 @@ D. Rubric/council:
 - Score arithmetic must be identical for identical accepted facts/rubric. Removing a valid resource cannot improve its criterion; adding duplicates cannot inflate credit; equivalent low-cost preparations receive equal credit.
 - Unknown cannot become N/A to improve the score. A pantry improvement cannot clear an unrelated critical cap. A repeated drill cannot repeatedly earn points.
 - Test comparable practice variants, coaching boundaries, accessibility equivalents, incomplete checks, and harder arbitrary scenarios.
+- Run section 12's practice lifecycle regressions against persisted attempts and the score compiler: retirement/replacement, per-competency updates, fixed budgets, no duplicate credit, caps/rounding, no network dependency for local refresh, and recovery after relaunch.
 - Report critical false passes, unsupported-claim acceptance, criterion/applicability agreement, useful-priority relevance, inventory error, abstention quality, and score stability.
 - Report sample sizes and uncertainty at the household level; reruns and variations of one case are not independent households.
 - Known critical invariant violations must be fixed before calling the affected path complete. A finite passing test suite is evidence of behavior, not proof of real-world safety.
@@ -633,65 +874,96 @@ F. Human/device evaluation:
 - Prepare a small consent-based family usability protocol: time/steps to reach three useful tasks, comprehension of "unknown," correction effort, recall, and whether a concrete preparation was completed.
 - Do not claim a responder, clinician, family, or competition judge reviewed anything unless it actually happened.
 - Supply the Mac session with exact end-to-end cases, fixtures, expected state transitions, and native visual checks.
+- Include the reported warning/text shift, urgent No cost coloring, duplicate-looking name labels, disability dropdown capitalization/localization, family-card alignment and specificity, removed reconnection/version labels, direct room editing/Save, removed Location records, and completed-check/score refresh in the native acceptance script. Validate ordinary and large text, VoiceOver, and existing supported locales.
 
-Produce an evaluation report with clear "passed on Linux," "live model tested," "synthetic only," "native pending," and "human review pending" categories. Never report an unrun test as passed.
+G. Meaningful live-agent quality:
+- Evaluate the actual model path after schema validation/rendering, not just raw impressive prose in a provider console. Check whether current validators, context omission, fixtures, fallbacks, or UI truncation erase useful content.
+- Use paired household/context and user-action mutations. Record evidence-linked changes in useful tasks, location comparisons, offered actions, actual continuation, and debrief. Check for repetitive generic fallback even when calls technically succeed.
+- Keep instructions/schema limits around supported facts, executable effects, and budgets. Permit grounded task generation, bounded investigative tool use, and varied incident composition. Extend a justified missing domain affordance instead of faking it in narration or suppressing all meaningful alternatives.
+- Preserve a substantive adaptive trace per hazard. Budget live runs honestly; if any are unrun, identify those rows instead of claiming all-six maturity. Use privacy-safe synthetic context and label recorded/mock traces accurately.
+
+H. Additional provider fallback and real-search acceptance:
+- Force a Gemini 429 at the adapter boundary, then complete a live Groq browser_search operation for a public locality outside Tarrant County. Return supported named options and meaningful differences through the existing result contract. Where typed extraction is required, it runs on Groq with no recovery-time dependency on Gemini. Label the injected primary failure and the genuinely live fallback separately.
+- Capture and sanitize an actual response fixture for the configured Groq model/API/SDK, then test source parsing and output normalization. Plain chat, unresolved citations, invented URLs, disabled/unsupported tools, and schema-valid unsupported claims cannot pass as live research. tool_choice: required is a request setting, not evidence of a successful search.
+- Preserve partial supported results and original source dates. Distinguish no matches, unavailable search, unresolved evidence, cached information, and an extraction failure. The fallback schema cannot force fabricated values or discard a useful attributable answer just because not every field is known.
+- Exercise relevant quota/reset headers, circuit cooldown/half-open behavior, missing/invalid credentials, both providers rate limited, cancellation, and incompatible tool/schema requests. Prove retries, internal extraction, continuation, and repair share one bounded budget and cannot multiply through SDK defaults or provider ping-pong.
+- Inject a late Gemini proposal and a late native-tool response after Groq takes over, including unchanged host revisions. Both are fenced. Test duplicate callbacks and lost commit acknowledgement; reconcile durable receipts before continuing and never double-consume resources or credit practice twice.
+- Reuse the existing six-scenario suite to verify hazard identity, mechanics, state/resource/time continuity, meaningful actions, replay, and score invariants across the new provider route. Run budgeted live Groq quality checks for eligible roles; mark any untested provider/hazard combinations honestly. Search success alone does not complete rehearsal or assessment fallback.
+- Verify both private adapters receive the relevant member-linked disability, medication/storage, equipment, dwelling, and supply context. Verify none of that private context leaks into public research. Revoked consent cancels jobs; Gemini-only consent does not silently authorize private Groq traffic.
+- Test image-dependent capability routing. A text-only fallback must not claim to inspect a photo or silently omit a required image; eligible text/search/home-graph work can continue while the image result remains pending or uses an evaluated supported path.
+- Keep existing Plan/task/MapKit integration and data-use requirements. No new user record curation, URL entry, provider chooser, or third-party search key is required by the documented Groq browser_search path. Account/model access or quota blockers must be reported accurately instead of replaced with mocks labeled live.
+
+Produce an evaluation report with clear "passed on Linux," "live model tested," "synthetic only," "native pending," and "human review pending" categories. Include provider/model and fallback-path coverage; never report an unrun test as passed.
 
 14. IMPLEMENTATION SEQUENCE AND DELIVERABLES
 
-Work in vertical slices and keep them runnable.
+Work in integrated slices and keep them runnable. Mature verified existing implementation instead of rebuilding services or native screens from prose.
 
-Milestone 1: Verify the repository baseline and state owners. Implement the minimum private gateway, Gemini adapter, authorization seam, context/contracts, and incremental host seam needed for one runnable director/tool/commit loop. Deliver a synthetic smoke runner that exercises actual portable state before expanding role scaffolding.
+Additive integration work: inspect progress against the same milestones, then implement section 5A within the existing provider boundary and section 13H within the existing acceptance suite. Start with a real search fallback slice because that is the owner's stated concern, then cover the other eligible roles and state continuity. This adds resilience work; it does not replace, narrow, defer, or satisfy any original feature milestone. Preserve completed work and use targeted regression evidence rather than restarting the project.
 
-Milestone 2: Implement inventory interpretation and deterministic gaps, personalized top actions, resource search strategy, official evidence tools, and native MapKit adapter protocol. Demonstrate a household change producing different task/resource plans.
+Milestone 1 — Reconcile and trace the current failures.
+Verify branch/commit and state owners; trace all six scenario selections and host/director/rendering paths, required household-context fields, room Save, and practice-to-score updates. Run available baselines and record actual causes. Start the Mac reproduction/editing handoff immediately so native fixes are not left as vague last-minute suggestions. If the host/provider/tool loop already exists, extend it. Otherwise implement the smallest real incremental loop before adding role scaffolding.
 
-Milestone 3: Implement the incremental simulation host, validated director loop, client-tool continuation, resource ledger, replay, and local fallback. Demonstrate a live or recorded Gemini session whose next events depend on committed user actions.
+Milestone 2 — Make all six disaster experiences distinct.
+Implement each hazard's drivers/state/actions/consequences, meaningful choices, fallback, replay, and scene/debrief contract. Demonstrate every row of section 10's matrix with branches and relevant household/home variations. Develop the shared room-edit/persistence changes required for valid home context in parallel under clear file ownership. This is the highest-priority feature gate; additional AI prose or score polish cannot substitute for missing hazards.
 
-Milestone 4: Implement home scene/image schemas, observation proposals, confirmation lifecycle, and scenario links. Demonstrate supported concern -> review -> task/scenario linkage with honestly labeled fixtures.
+Milestone 3 — Make planning and resources household-specific.
+Trace recorded disability/assistance/medication/equipment/dwelling/inventory facts through Gemini and into applicable tasks and For your family observations. Permit grounded bespoke preparations, deterministic supply gaps, and automatic research of useful named local options. Demonstrate a material household change producing a substantive change in recommendations, including outside the initial region. Remove the Location records requirement.
 
-Milestone 5: Implement dependency stress tests, executable findings, fixed scoring rubric, practice evidence, council, and repeatable evaluation. Compare a real intervention under the same recorded incident schedule.
+Milestone 4 — Complete the practice and assessment loop.
+Create varied meaningful checks across the six hazards. Implement completion/retirement/retest persistence, per-competency evidence, immediate score invalidation/refresh, executable stress tests, the fixed rubric, and bounded council. Test that scores reflect accepted evidence without duplicate points or stale asynchronous overwrites. A local practice result must not wait for Gemini to update the UI.
 
-Milestone 6: Complete native integration contracts, synthetic demo package, documentation, and status report for Claude/Mac. Resolve portable failures before declaring handoff ready.
+Milestone 5 — Finish home/image integration and native simplification.
+Complete scene/image context, targeted concern review, and links into tasks/scenarios. Deliver direct room/opening editing, trusted captured dimensions, no Still to confirm, and durable Save semantics. Coordinate the exact native task-row, family editor/card, reconnection, scoring-label, resource, and practice changes in sections 2, 8, 9, and 12. Preserve working PDFs/card privacy selections and shallow navigation. RoomPlan capture and the image path must be concretely ready for the Mac/iPhone Pro verification; contracts alone do not establish device completion.
 
-Suggested repository deliverables, adapted to actual conventions:
-- Private AI service with role prompts, SDK adapter, tools, schemas, validation, configuration, and README.
-- Shared contract fixtures/schema definitions.
-- Portable domain changes for session state/reducer, inventory/evidence, stress-test outputs, and scoring.
-- Versioned guidance/action/rubric content and source registry.
-- Headless exercise and agent-evaluation runner.
-- Development/holdout fixtures and adversarial/mutation tests.
-- docs/ai/architecture.md, data-flow.md, rubric.md, evaluation-report.md, and mac-integration-handoff.md.
-- Non-secret configuration example and exact setup/test commands.
-- Synthetic demonstration households and recorded replay logs, visibly labeled as fixtures.
+Milestone 6 — Validate integrated behavior and report completion honestly.
+Run the relevant contract, domain, live-model, rubric, and regression evaluations. Prepare the six-scenario coverage report, current status of every reported issue, runnable fixtures/replays, and precise Mac handoff. Fix portable failures. Record each native/human test still outstanding without marking the app complete while these required outcomes remain unverified.
+
+Suggested repository deliverables, adapted to current conventions:
+- Working private AI service/role configuration, official SDK adapter, tools, schemas, validation, and non-secret configuration.
+- Shared contracts and cross-language fixtures, including member context, home edits, attributed resource output, scenario identity/actions, practice evidence, and score invalidation.
+- Portable state/reducer, inventory/evidence, edit/persistence, stress-test, and scoring changes.
+- Versioned guidance/action/rubric content and automatically maintained permitted source evidence.
+- Headless host/agent evaluation runner, development/holdout fixtures, adversarial/mutation tests, and exact commands.
+- docs/ai/architecture.md, data-flow.md, rubric.md, evaluation-report.md, six-scenario-coverage.md, corrective-issue-status.md, and mac-integration-handoff.md, or equivalent established files.
+- A meaningful adaptive trace per hazard, useful context/resource examples, and privacy-safe demonstration households; distinguish live calls, recorded real outputs, and mocks.
 
 The Mac handoff must identify:
-- Current branch/commit and shared-file changes.
-- Native protocols and DTOs with exact call/response examples.
-- App context building and proposal acceptance points.
-- Incremental engine and native scene synchronization.
-- MapKit search/result presentation and attribution responsibilities.
-- RoomPlan/AR image selection, calibration, redaction, deletion, and fallback capture.
-- Consent, Keychain/authorization handshake, background/resume/cancellation handling.
-- Existing-screen placement for task suggestions, supplies, concern review, stress findings, practice check, and scorecard.
-- Locale/VoiceOver/Dynamic Type behavior and human-reviewed critical language.
-- Existing PDF/card integration: only accepted plan content, intentional privacy selection, and permitted map content, never raw council deliberations.
-- Exact Xcode/iPhone tests still needed and expected observable results.
+- Exact branch/commit, verified files/symbols, shared-file ownership, migrations, and compatibility assumptions.
+- Native protocols/DTOs with real call/response fixtures and state owner/acceptance points.
+- Scene selection and incremental synchronization for every hazard, meaningful action options, and hazard-specific fallback/replay.
+- Room canvas hit testing/selection, compact inspector, in-place Door/Window switch, removed dimensions/confirmation UI, Save transaction, failure/cancel behavior, and all downstream invalidation.
+- The stored-member -> outbound-context -> native personalized-result path, including disability/medication information and local display names.
+- MapKit candidate/overview/attribution handling, automatic research integration, removal of Location records, and use beyond Tarrant County.
+- Groq fallback contract/status/source presentation, existing cloud-disclosure update where needed, cancellation/resume behavior, and the exact Gemini-unavailable native verification case. Backend search can be verified on Linux; Apple-map rendering and iPhone behavior still require Mac/device checks.
+- RoomPlan/AR image selection, calibration, redaction, deletion, and fallback capture on a supported iPhone Pro.
+- Consent, Keychain/authorization handshake, background/resume/cancellation, and data-sharing controls.
+- Practice bank, queue retirement/replacement, persisted attempts, component/headline score updates, caps, and relaunch behavior.
+- The exact task-warning placement/urgent styling, family labels, For your family layout/icon/content, and removed reconnection/rubric labels.
+- Locale, VoiceOver, Dynamic Type, reduced-motion scene support, and critical-language checks.
+- PDF/card integration using accepted household content and permitted map data; do not export raw agent deliberations.
+- Reproduction steps, expected observable results, actual passed tests, and outstanding Xcode/iPhone checks.
 
 Definition of done on Linux:
-- Real provider adapter and bounded role workflows exist, not only mocked strings.
-- A complete synthetic household can pass through personalization, resource strategy, inventory, stress test, adaptive session, and score compilation using the documented host protocol.
-- At least one accepted adaptive trace demonstrates substantive tool use and a continuation changed by the family's action.
-- Failures preserve valid local state and provide useful fallback.
-- Score/rubric behavior is reproducible and its limitations are documented.
-- Contracts and runnable fixtures make the remaining native work specific.
-- If credentials/provider access/budget/toolchain block part of verification, complete all unaffected work, report the exact blocked tests, and do not fabricate success.
+- Real provider workflows and substantive domain behavior exist; the implementation does not consist only of schema shells, mocked strings, or design notes.
+- A synthetic household goes through personalized preparations, researched-resource integration, inventory, stress test, adaptive rehearsal, and score compilation using the documented host protocol.
+- All six portable scenario rows implement and demonstrate their distinct state/actions/consequences, supported branches, and fallback. Each has an evaluation status and an honest live-model/native verification status.
+- The user's corrective requests each map to a concrete implementation and relevant test or an explicit Mac integration dependency; none disappear into an unspecified later audit.
+- Confirmed household edits invalidate relevant planning context; practice evidence updates the deterministic score; home-edit persistence contracts handle real failure cases.
+- Failures preserve valid local state and useful fallback. Scores remain reproducible under a frozen rubric and accepted evidence.
+- Groq fallback includes actual sourced research under a simulated Gemini quota failure, capability-aware routing, shared operation budgets, and fenced state continuity. Its integration preserves the same product outcomes and all-six-hazard gates; section 13H records live, fixture, and pending coverage.
+- Contracts and runnable fixtures make native work concrete. Native UI/RoomPlan/Save completion is established only by actual Mac/device testing.
+- If provider access, credentials, budget, toolchain, or a newer native branch blocks verification, complete unaffected work and state precisely which tests/changes remain pending. Do not fabricate success or hide an unfinished hazard behind aggregate completion.
 
 15. IMPACT AND DEMONSTRATION
 
-Prioritize one compelling, honest community story over feature count:
+Use a coherent, honest community story to explain the benefit, while demonstrating maturity across all six disasters:
 
 A family with an infant, a dog, and a powered-device dependency imports its actual needs, confirms existing supplies, sees three relevant actions, identifies suitable preparation resources, and practices a home-specific outage/storm scenario. The exercise reveals a shared battery, inaccessible supplies, or a brittle contact/route. A confirmed improvement changes the plan, the controlled retest, and the explained score.
 
 Pair it with a two-adult/no-special-dependency household to demonstrate real personalization. Show manual home input and offline fallback so the benefit is not limited to people with a LiDAR iPhone.
+
+Include a brief six-hazard comparison using the same home so the audience can see different objectives, meaningful actions, and consequences. One flagship outage demo does not establish that the remaining five scenarios work. Show a completed practice check leaving the queue and its explained score update, plus a saved room/opening correction surviving relaunch when Mac verification is available.
 
 The strongest evidence of impact is an understandable chain:
 observed/recorded need -> useful recommendation -> completed preparation -> fewer supported plan failures.
@@ -702,7 +974,7 @@ Prepare a short demo script and measurable usability/quality results from actual
 
 16. RESEARCH REFERENCES AND HOW TO USE THEM
 
-Research checked 2026-10-19. Recheck provider APIs/models/terms at implementation time. The architecture choices and numeric rubric above are proposals; official sources do not validate DryRun as a safety system. Keep app guidance short, accurately sourced, versioned, and appropriate to its jurisdiction. Do not indiscriminately copy source pages into prompts or ship a legal essay in the user flow.
+Research baseline checked 2026-10-19; Search/URL Context discovery, the six-hazard lesson sources, and Groq fallback documentation were checked on 2026-10-20 UTC. Recheck provider APIs/models/terms at implementation time. Documentation research does not establish that the app's actual Groq account/key, quotas, or deployed fallback work; the coding session must perform the synthetic live tests. Architecture choices, educational mechanics, and numeric rubric values are proposals; official sources do not validate DryRun as a predictive safety system. Keep app guidance short, accurately sourced, versioned, and appropriate to its jurisdiction. Do not indiscriminately copy source pages into prompts or ship a legal essay in the user flow.
 
 R1. Gemini Interactions:
 https://ai.google.dev/gemini-api/docs/interactions-overview
@@ -767,3 +1039,42 @@ https://arxiv.org/abs/2404.13076
 
 R20. Current model pricing:
 https://ai.google.dev/gemini-api/docs/pricing
+
+R21. Gemini URL Context, including combination with Google Search for automatic discovery and reading:
+https://ai.google.dev/gemini-api/docs/url-context
+
+R22. National Weather Service cold-weather and power-outage guidance:
+https://www.weather.gov/safety/cold-during
+
+R23. National Weather Service heat and grid-strain guidance:
+https://www.weather.gov/safety/heat-during
+
+R24. CDC drinking-water advisories, including distinct boil, do-not-drink, and do-not-use conditions:
+https://www.cdc.gov/water-emergency/about/drinking-water-advisories-an-overview.html
+
+R25. Groq deprecations, including Compound model retirement:
+https://console.groq.com/docs/deprecations
+
+R26. Groq Browser Search and supported built-in tools:
+https://console.groq.com/docs/tool-use/built-in-tools/browser-search
+https://console.groq.com/docs/tool-use/built-in-tools
+
+R27. Groq Structured Outputs, supported models, and tool/streaming limitations:
+https://console.groq.com/docs/structured-outputs
+
+R28. Groq rate-limit headers and error behavior:
+https://console.groq.com/docs/rate-limits
+https://console.groq.com/docs/errors
+
+R29. Groq API reference, official TypeScript SDK retry/timeout behavior, and response types:
+https://console.groq.com/docs/api-reference
+https://github.com/groq/groq-typescript
+https://github.com/groq/groq-typescript/blob/main/src/resources/chat/completions.ts
+
+R30. Groq data handling and current model capability/status listings:
+https://console.groq.com/docs/your-data
+https://console.groq.com/docs/models
+
+R31. Gemini project-scoped limits and troubleshooting:
+https://ai.google.dev/gemini-api/docs/rate-limits
+https://ai.google.dev/gemini-api/docs/troubleshooting

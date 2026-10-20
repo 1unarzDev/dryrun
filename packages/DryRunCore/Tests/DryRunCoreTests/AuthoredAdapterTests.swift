@@ -11,7 +11,12 @@ import Testing
     let scenario=SimFixtures.library.scenario(scenarioID)!
     for alternate in [false,true] {
      var input=SimFixtures.input(household,scenarioID)
-     if alternate {for point in scenario.choicePoints {input.choices[point.id]=point.options.last?.id}}
+     if alternate {for point in scenario.choicePoints {
+      // Keep the captured legacy input dictionary exact. The additive setup-only
+      // cooling follow-up never existed in these historical 24 runs.
+      guard !point.when.contains("variant:cooling-followup") else {continue}
+      input.choices[point.id]=point.options.last?.id
+     }}
      let actual=try SimFixtures.engine.run(input)
      let key=name+"/"+scenarioID+(alternate ? "/alternate" : "/default")
      #expect(StableDigest.of(try DryRunJSON.encoder().encode(actual))==hashes[key])

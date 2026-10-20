@@ -12,7 +12,7 @@ public enum HouseholdAssessment {
     private static func requiresAssistance(_ p:Person)->Bool {
         p.requiresStepFreeRoute || p.needs.contains(.needsHelperToEvacuate) || p.needs.contains(.deafOrHardOfHearing) || p.ageBand == .infant || p.ageBand == .child
     }
-    public static let version="dryrun.household-assessment/6"
+    public static let version="dryrun.household-assessment/7"
     public static func assess(household h:HouseholdProfile,home:HomeModel?,inventory:InventoryLedger?,places:[SavedPlace]=[],stressFindings:[StressTestFinding]=[],at date:Date) throws -> [CriterionAssessment] {
         var results:[CriterionAssessment]=[]
         func append(_ id:String,_ values:[String:Bool?],evidence:[String],notApplicable:String?=nil){
@@ -67,8 +67,11 @@ public enum HouseholdAssessment {
             firstAid=try inventory.preparationItemGap(kind:.firstAidKit,personIDs:h.people.map(\.id),at:date).deficit.map{$0==0}
         } else {firstAid=h.supplies.firstAidKit.confirmedValue}
         append("essentials",["light":light,"firstAid":firstAid,"sanitation":h.preparedness?.items["sanitation"]?.available.confirmedValue],evidence:["supplies","inventory.preparationKind","preparedness.sanitation"])
-        // Missing a contact is unknown, not proof no support exists.
-        append("contact",["usableContact":h.contacts.contains{$0.isComplete} ? true : nil,"offlineAccess":h.preparedness?.items["reconnect"]?.available.confirmedValue],evidence:["contacts","preparedness.reconnect"])
+        // Missing a contact is unknown, not proof no support exists. A legacy generic
+        // reconnection plan does not establish an accessible offline contact copy.
+        // No such specific copy evidence is recorded by this model yet. Preserve
+        // the legacy record, but never convert it into this different predicate.
+        append("contact",["usableContact":h.contacts.contains{$0.isComplete} ? true : nil,"offlineAccess":nil],evidence:["contacts"])
         let near=places.contains{$0.homeID==h.stableHomeID && $0.purpose == .outsideMeetingPoint}
         let backup=places.contains{$0.homeID==h.stableHomeID && $0.purpose == .backupMeetingPlace}
         append("meetups",["near":near ? true : nil,"backup":backup ? true : nil,"transport":any(h.transport.vehicles.map{TransportReadiness.vehicleAvailability($0,household:h)}+h.transport.alternatives.map{TransportReadiness.alternativeAvailability($0,household:h)})],evidence:["savedPlaces","transport"])

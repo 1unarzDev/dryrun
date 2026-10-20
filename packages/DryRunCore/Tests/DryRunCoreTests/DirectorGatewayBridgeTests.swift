@@ -78,6 +78,34 @@ import Testing
         }
     }
 
+    /// The gateway's final whole-sequence check: each suggestion is previewed after the proposal's own commands on a copy.
+    @Test func suggestedActionsAreValidatedWithoutChangingTheSession() throws {
+        let library = SimFixtures.library
+        let (session, receipt) = try session("home-fire", home: SampleHomes.apartmentComplex)
+        let binding = AgentContextBinding(receipt: receipt, householdRevision: session.initial.household.revision, homeRevision: session.initial.home?.revision ?? 0)
+        let feasible = try #require(receipt.experience?.feasibleCommands?.first)
+        let good = SuggestedRehearsalAction(id: "good", label: "Act on the computed option", fact: "The host lists it.", implication: "It is previewed first.", commands: [feasible])
+        let bad = SuggestedRehearsalAction(id: "bad", label: "Unmodeled action", fact: good.fact, implication: good.implication, commands: [.init(kind: "teleport")])
+        let call = DirectorGatewayBridge.ToolCall(id: "host-suggestions-1", name: "validateSuggestedActions",
+                                                  arguments: .init(commands: [.init(kind: "requestDecision")], suggestedActions: [good, bad]))
+        let result = try DirectorGatewayBridge.execute(call, session: session, binding: binding, library: library)
+        #expect(result.suggestionValidation?.map(\.id) == ["good", "bad"])
+        #expect(result.suggestionValidation?.map(\.feasible) == [true, false])
+        #expect(result.suggestionValidation?.allSatisfy { ($0.rejection?.count ?? 0) <= 120 } == true)
+        #expect(result.preview == nil && result.observation == nil)
+        #expect(try session.query(library: library) == receipt)
+        _ = try write("tool-result-validateSuggestedActions.json", result)
+        // Suggestions travel only with this call, and this call needs both the proposal commands and the suggestions.
+        for arguments in [DirectorGatewayBridge.ToolArguments(suggestedActions: [good]), .init(commands: [.init(kind: "requestDecision")])] {
+            #expect(throws: SessionError.self) {
+                try DirectorGatewayBridge.execute(.init(id: "v", name: "validateSuggestedActions", arguments: arguments), session: session, binding: binding, library: library)
+            }
+        }
+        #expect(throws: SessionError.self) {
+            try DirectorGatewayBridge.execute(.init(id: "q", name: "queryRoutes", arguments: .init(suggestedActions: [good])), session: session, binding: binding, library: library)
+        }
+    }
+
     @Test func noRequestIsBuiltWhileTheFamilyMustAct() throws {
         let library = SimFixtures.library
         var session = try SimulationSession.initialize(id: "await", initial: SimFixtures.input(SampleHouseholds.oak, "home-fire"), library: library)

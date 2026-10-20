@@ -57,7 +57,6 @@ public enum BaselinePreparedness {
         .init(id: "batteries", editor: .supplies, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
         .init(id: "radio", editor: .supplies, scenarioIDs: ["freeze-power-loss", "tornado", "flash-flood"], sourceIDs: ["S53"], requiresPhysicalCheck: false),
         .init(id: "sanitation", editor: .supplies, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
-        .init(id: "reconnect", editor: .family, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
         .init(id: "floodPlan", editor: .supplies, scenarioIDs: ["flash-flood"], sourceIDs: ["S23"], requiresPhysicalCheck: false),
         .init(id: "wellFloodPlan", editor: .contacts, scenarioIDs: ["flash-flood"], sourceIDs: ["S24"], requiresPhysicalCheck: false),
         .init(id: "heatCold", editor: .supplies, scenarioIDs: ["freeze-power-loss", "extreme-heat"], sourceIDs: ["S53"], requiresPhysicalCheck: false)

@@ -1,14 +1,34 @@
 {
   "binding" : {
-    "contextDigest" : "fc0e1bbc5c1923fd",
+    "contextDigest" : "7eb026c1fb706e58",
     "eventSequence" : 5,
     "homeRevision" : 1,
     "householdRevision" : 1,
     "revision" : 2,
     "sessionID" : "native-home-fire"
   },
-  "contextDigest" : "e08a89ad34a3bbc1",
+  "contextDigest" : "a2cc8fc1ed29b3a2",
   "preview" : {
+    "assistance" : [
+      {
+        "helperID" : "p-oak-1",
+        "personID" : "p-oak-3",
+        "reachStatus" : "reachable",
+        "sharedWithPersonIDs" : [
+
+        ],
+        "simultaneousCapacity" : "notAssessed"
+      },
+      {
+        "helperID" : "p-oak-2",
+        "personID" : "p-oak-4",
+        "reachStatus" : "reachable",
+        "sharedWithPersonIDs" : [
+
+        ],
+        "simultaneousCapacity" : "notAssessed"
+      }
+    ],
     "directorState" : {
       "activeIncidentCount" : 1,
       "awaitingUserAction" : false,

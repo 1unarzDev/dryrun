@@ -1,0 +1,90 @@
+{
+ "synthetic": true,
+ "household": "hh-oak",
+ "recordedAt": "2026-10-20",
+ "model": "gateway default (DRYRUN_MODEL)",
+ "note": "Live Gemini answer to the Swift-built fictional request feature-request-preparation-hh-oak.json, before the no-internal-ID prompt rule.",
+ "response": {
+  "status": "completed",
+  "contractVersion": "dryrun.ai/1",
+  "requestID": "mac-621cb0300c19",
+  "householdRevision": 1,
+  "proposal": {
+   "tasks": [
+    {
+     "destination": {
+      "kind": "equipment",
+      "subjectID": "eq-oxygen"
+     },
+     "id": "prep.medicalBackup|equipment.eq-oxygen",
+     "actionID": "prep.medicalBackup",
+     "criterionID": "device",
+     "subjectID": "equipment.eq-oxygen",
+     "why": "Verify the oxygen concentrator (eq-oxygen) runtime on the battery station (bk-station). Life-sustaining medical equipment requires confirmed power duration to manage risks during utility outages, as the backup setup status is currently unknown.",
+     "evidenceIDs": [
+      "household-needs"
+     ],
+     "completionPredicates": [
+      "approvedAlternative",
+      "capacity",
+      "accessible"
+     ],
+     "editor": "medical",
+     "dependencyIDs": [
+      "equipment.eq-oxygen"
+     ],
+     "priority": 0
+    },
+    {
+     "destination": {
+      "kind": "water"
+     },
+     "id": "prep.water",
+     "actionID": "prep.water",
+     "criterionID": "water",
+     "subjectID": "household",
+     "why": "Increase stored drinking water supplies beyond the current 5 gallons to meet the calculated 45-liter requirement. Stored water is essential for your household, as the private well pump ceases operation during power outages.",
+     "evidenceIDs": [
+      "household-needs"
+     ],
+     "completionPredicates": [
+      "quantity",
+      "accessible"
+     ],
+     "editor": "supplies",
+     "dependencyIDs": [
+      "preparedness.water.location",
+      "supplies.storedWaterGallons"
+     ],
+     "priority": 2
+    },
+    {
+     "destination": {
+      "kind": "checklist",
+      "checklistID": "food",
+      "titleKey": "prep.food.title"
+     },
+     "id": "prep.food",
+     "actionID": "prep.food",
+     "criterionID": "food",
+     "subjectID": "household",
+     "why": "Build an emergency food supply for at least 3 days. Your household has no confirmed food storage, and having ready-to-eat supplies is crucial for maintaining daily nutrition during local incidents.",
+     "evidenceIDs": [
+      "household-needs"
+     ],
+     "completionPredicates": [
+      "quantity",
+      "accessible"
+     ],
+     "editor": "supplies",
+     "dependencyIDs": [
+      "preparedness.food"
+     ],
+     "priority": 2
+    }
+   ],
+   "inventoryObservations": [],
+   "question": "Have you verified how long your oxygen concentrator runs on your battery station (bk-station) during a power outage?"
+  }
+ }
+}

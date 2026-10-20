@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/ai-orchestrator
+
+ ❯ test/groq.test.ts (39 tests | 1 failed | 38 skipped) 36ms
+   × does not publish invented transit and general-pharmacy claims from retained Albuquerque20B extraction 35ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/groq.test.ts > does not publish invented transit and general-pharmacy claims from retained Albuquerque20B extraction
+AssertionError: expected '{"options":[{"name":"Public Health Ph…' not to match /general pharmacy services|accessibl…/iu
+
+- Expected:
+/general pharmacy services|accessible by public transit|convenient pharmacy experience/iu
+
++ Received:
+"{\"options\":[{\"name\":\"Public Health Pharmacy Clinic\",\"locality\":\"Albuquerque, New Mexico, United States\",\"documentedService\":\"Pharmacy\",\"whyUseful\":\"Provides general pharmacy services with operating hours Monday through Friday 9 AM to 5 PM and a central location within the wellness center. It is accessible by public transit and offers a convenient pharmacy experience for residents.\",\"nextAction\":\"Call 505.832.7162 or visit 9204 Menaul Blvd NE to verify current operating hours, service availability, ADA accessibility, and public transit connections before traveling.\",\"unknowns\":[\"Current operational status\",\"ADA accessibility\",\"public transit stop proximity\"],\"sourceURLs\":[\"https://www.phpcabq.net/\"],\"publishedOrUpdatedAt\":null}],\"comparison\":\"Some researched options have supported source excerpts; other proposed options could not be validated.\",\"limitations\":[\"Cannot confirm current operation status, payment acceptance, or transportation availability.\",\"Unsupported options were omitted. Comparison and suitability require checking against the retained source excerpts.\"]}"
+
+ ❯ test/groq.test.ts:373:48
+    371|  // The retained source identifies a testing/vaccine clinic; neither i…
+    372|  // service nor a usable transit approach follows from its name, addre…
+    373|  expect(JSON.stringify(result.comparison)).not.toMatch(/general pharma…
+       |                                                ^
+    374| });
+    375|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 38 skipped (39)
+   Start at  07:05:31
+   Duration  357ms (import 44%, transform 42%, tests 13%, worker 1%)
+

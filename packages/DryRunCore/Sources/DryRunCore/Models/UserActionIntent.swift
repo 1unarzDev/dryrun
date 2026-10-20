@@ -37,10 +37,12 @@ public struct UserActionIntent:Codable,Sendable {
         for command in commands {
             guard command.minute==nil,command.hazard==nil,command.durationMinutes==nil else {throw SessionError.invalidCommand}
             switch command.kind {
-            case "moveTo","takeSupply","transferSupply","assignHelper","allocatePower","closeDoor","choose":
+            case "moveTo","takeSupply","transferSupply","assignHelper","allocatePower","closeDoor","choose","escape","reachHigherRefuge","reachShelter","accompanyEscape","accompanyShelter":
                 guard command.target?.isEmpty==false,command.value?.isEmpty==false else {throw SessionError.invalidCommand}
-            case "contact":guard command.target?.isEmpty==false,command.value==nil else {throw SessionError.invalidCommand}
+            case "contact","identifyGap","accountOutside","leaveEarly","heatedAlternative","cooledAlternative","reduceSolarGain":guard command.target?.isEmpty==false,command.value==nil else {throw SessionError.invalidCommand}
             case "useStoredWater":guard command.target==nil,["essential","all"].contains(command.value) else {throw SessionError.invalidCommand}
+            case "warmLayers":guard command.target==nil,command.value==nil else {throw SessionError.invalidCommand}
+            case "useWater":guard command.target?.isEmpty==false,["drink","prepareFood","hygiene","boiledDrink"].contains(command.value),let liters=command.quantityLiters,liters.isFinite,liters>0,liters<=20 else {throw SessionError.invalidCommand}
             case "finish":guard command.target==nil,command.value==nil,commands.count==1 else {throw SessionError.invalidCommand}
             default:throw SessionError.invalidCommand
             }

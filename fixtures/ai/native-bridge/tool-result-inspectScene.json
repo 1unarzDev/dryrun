@@ -1,13 +1,13 @@
 {
   "binding" : {
-    "contextDigest" : "fc0e1bbc5c1923fd",
+    "contextDigest" : "7eb026c1fb706e58",
     "eventSequence" : 5,
     "homeRevision" : 1,
     "householdRevision" : 1,
     "revision" : 2,
     "sessionID" : "native-home-fire"
   },
-  "contextDigest" : "fc0e1bbc5c1923fd",
+  "contextDigest" : "7eb026c1fb706e58",
   "observation" : {
     "kind" : "inspectScene",
     "scene" : {

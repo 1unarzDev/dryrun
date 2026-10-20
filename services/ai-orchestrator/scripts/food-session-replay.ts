@@ -24,16 +24,18 @@ try {
    if(score.scorecard.assessmentVersion===branch.scoreBefore.assessmentVersion)assert.deepEqual(score.scorecard,branch.scoreBefore);
    else {
     // This legacy live artifact retained a card but not its accepted predicates. Do not relabel it:
-    // /6 changes manufactured-home shelter treatment; these frozen branches are single-family.
+    // /6 changed manufactured-home shelter treatment; /7 removes obsolete reconnection credit.
+    // These frozen branches are single-family and record no legacy reconnection fact.
     assert.equal(branch.source.session.initial.household.housing.homeType,'singleFamily');
     assert.notEqual(branch.source.session.initial.home.dwellingType,'manufacturedHome');
+    assert.equal(branch.source.session.initial.household.preparedness?.items?.reconnect,undefined);
     assert.equal(branch.scoreBefore.assessmentVersion,'dryrun.household-assessment/5');
-    assert.equal(score.scorecard.assessmentVersion,'dryrun.household-assessment/6');
+    assert.equal(score.scorecard.assessmentVersion,'dryrun.household-assessment/7');
     const {assessmentVersion:currentVersion,...currentCard}=score.scorecard;
     const {assessmentVersion:recordedVersion,...recordedCard}=branch.scoreBefore;
     assert.deepEqual(currentCard,recordedCard);
    }
   }
-  console.log(JSON.stringify({status:'passed',retainedLiveModel:fixture.liveModel,branches:fixture.branches.length,receiptReplay:true,toolReplay:true,stressReplay:true,sourceAndScoreUnchanged:true,historicalCardVersionPreserved:true,comparison:"Exact card when versions match; explicit /5-to-/6 non-manufactured numeric/status comparison otherwise (legacy accepted predicates absent).",modelCalls:0}));
+  console.log(JSON.stringify({status:'passed',retainedLiveModel:fixture.liveModel,branches:fixture.branches.length,receiptReplay:true,toolReplay:true,stressReplay:true,sourceAndScoreUnchanged:true,historicalCardVersionPreserved:true,comparison:"Exact card when versions match; explicit /5-to-/7 non-manufactured numeric/status comparison otherwise (legacy accepted predicates absent).",modelCalls:0}));
  }
 }finally{host.close();}

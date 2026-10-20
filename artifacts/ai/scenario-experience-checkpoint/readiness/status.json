@@ -1,0 +1,14 @@
+{
+  "syntheticOnly": true,
+  "conditionOptions": 11,
+  "hazards": 6,
+  "computedStateDifferences": 10,
+  "dependencyOnly": [
+    "tornado.timing"
+  ],
+  "coreTests": 11,
+  "publicLocalizationTests": 68,
+  "providerCalls": 0,
+  "native": "syntax only; SwiftUI/Xcode/iPhone pending",
+  "humanReview": "pending"
+}

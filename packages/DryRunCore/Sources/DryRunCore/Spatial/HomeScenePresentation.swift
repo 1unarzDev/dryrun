@@ -72,6 +72,38 @@ public enum HomeScenePresentation {
         return "\(room.label) · \(floor?.label ?? room.floorID)"
     }
 
+    /// Display a computed path only against the exact home that produced it. Interior objectives
+    /// end in their recorded room; only outdoor egress appends outside. No raw IDs reach the copy.
+    public static func routeSteps(_ route: RouteResult, in home: HomeModel, localizer: Localizer,
+                                  alternative: Bool = false) -> String? {
+        guard route.isCurrent(for: home), let path = alternative ? route.alternative : route.primary else { return nil }
+        var labels = path.spaceSequence.map { id in
+            home.space(id) == nil ? localizer("plan.route.unknownRoom") : roomLabel(id, in: home)
+        }
+        if route.request.purpose == nil || route.request.purpose == .outdoorEgress {
+            labels.append(localizer("plan.route.outside"))
+        }
+        return labels.joined(separator: " → ")
+    }
+
+    /// Label a recorded bottleneck without guessing that every connection is a door.
+    public static func routeElementLabel(_ id: String, in home: HomeModel, localizer: Localizer) -> String {
+        if home.space(id) != nil { return roomLabel(id, in: home) }
+        let sides: [PortalDestination]
+        if let portal = home.portal(id) { sides = [portal.sideA, portal.sideB] }
+        else if let connector = home.connectors.first(where: { $0.id == id }) {
+            sides = [.space(connector.fromSpaceID), .space(connector.toSpaceID)]
+        } else { return localizer("plan.route.unknownRoom") }
+        let names = sides.map { side in
+            switch side {
+            case .space(let room): return home.space(room) == nil ? localizer("plan.route.unknownRoom") : roomLabel(room, in: home)
+            case .exterior: return localizer("plan.route.outside")
+            case .unknown, .commonArea: return localizer("plan.route.unknownRoom")
+            }
+        }
+        return localizer("experience.route.connection", ["a": names[0], "b": names[1]])
+    }
+
     public static func alternativeKey(_ route: RouteResult) -> String {
         switch route.alternativeStatus {
         case .independent: "common.route.independent"

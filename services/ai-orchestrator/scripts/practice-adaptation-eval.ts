@@ -17,6 +17,9 @@ try {
  home.walls=[];home.obstacles=[];home.connectors=[];home.annotations=[];delete home.meetingPoint;
  input.household.people=input.household.people.slice(0,1);input.household.people[0].sleepingSpaceID='start';delete input.spatialOptions;
  let state=await host.request({op:'initialize',input});
+ // This regression freezes the legacy /3 anchor, which recorded infeasible movement for zero credit.
+ // New strict hazard mechanics/check retirement are evaluated by practice-hazard-eval.ts.
+ delete state.session.mechanicsVersion;state=await host.request({op:'query',session:state.session});
  const commit=async(id:string,commands:unknown[])=>host.request({op:'commit',session:state.session,commit:{id,actor:'director',baseRevision:state.receipt.revision,commands}});
  state=await commit('alarm',[{kind:'schedule',target:'evt.home-fire.alarm',minute:0},{kind:'advance',minute:0}]);
  const usual=state.receipt;assert.equal(usual.routes[0].primary.exitPortalID,'kitchen-exit');

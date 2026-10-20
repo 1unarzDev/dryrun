@@ -1,3 +1,5 @@
+> Corrective implementation update: read [current Mac handoff](mac-corrective-handoff.md), [six-scenario coverage](six-scenario-coverage.md), and [issue status](corrective-issue-status.md) before historical notes below. Current scope includes hazard-mechanics/1, full grounded task generation, automatic research, and retiring fixed-budget hazard anchors. Native and live-quality gates remain separately reported.
+
 # Host-owned practice capture
 
 Reference §12 requires eligible evidence before feedback. `IntegratedAIState` now owns the complete local capture transaction. Do not pass caller-created `PracticeAnswer` values into production scoring. The old `recordPracticeAnswer` entry point is source-compatible but rejects all writes; `beforeFeedback=true` cannot prove chronology. The low-level `ScoreCompiler.compile` still accepts trusted assessment inputs for frozen arithmetic fixtures. Native uses `IntegratedAIState.compileScorecard`, which reconstructs eligible practice answers from the bound committed traces.

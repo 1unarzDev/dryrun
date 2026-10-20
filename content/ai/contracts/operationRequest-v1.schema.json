@@ -19,6 +19,18 @@
       "type": "boolean",
       "const": true
     },
+    "providerConsent": {
+      "minItems": 1,
+      "maxItems": 2,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "gemini",
+          "groq"
+        ]
+      }
+    },
     "context": {
       "type": "object",
       "properties": {
@@ -156,6 +168,4221 @@
             "unknowns"
           ],
           "additionalProperties": false
+        },
+        "experience": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "mechanicsVersion": {
+                  "type": "string",
+                  "const": "dryrun.hazard-mechanics/1"
+                },
+                "hazard": {
+                  "type": "string",
+                  "enum": [
+                    "freezePowerLoss",
+                    "heatGridStrain",
+                    "tornado",
+                    "flashFlood",
+                    "homeFire",
+                    "waterOutage"
+                  ]
+                },
+                "scene": {
+                  "type": "string",
+                  "enum": [
+                    "smoke-egress-accounting",
+                    "warning-shelter-exposure",
+                    "rising-water-access",
+                    "cold-continuity-energy",
+                    "heat-cooling-access",
+                    "service-advisory-water-use"
+                  ]
+                },
+                "objective": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "supportedActions": {
+                  "maxItems": 15,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "feasibleCommands": {
+                  "maxItems": 1000,
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "moveTo"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "takeSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "transferSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "assignHelper"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "allocatePower"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "closeDoor"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "choose"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "escape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachHigherRefuge"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyEscape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "identifyGap"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "contact"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accountOutside"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "leaveEarly"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "heatedAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "cooledAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reduceSolarGain"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "warmLayers"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useWater"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "drink",
+                              "prepareFood",
+                              "hygiene",
+                              "boiledDrink"
+                            ]
+                          },
+                          "quantityLiters": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 20
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value",
+                          "quantityLiters"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useStoredWater"
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "essential",
+                              "all"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "finish"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "outsidePersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "accountedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelteredPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "destinationIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "occupantRoomIDs": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelterRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "relocated": {
+                  "type": "boolean"
+                },
+                "temperature": {
+                  "type": "object",
+                  "properties": {
+                    "lowerC": {
+                      "type": "number"
+                    },
+                    "upperC": {
+                      "type": "number"
+                    },
+                    "model": {
+                      "type": "string",
+                      "const": "illustrative-room-range/1"
+                    },
+                    "assumption": {
+                      "type": "string",
+                      "maxLength": 600
+                    }
+                  },
+                  "required": [
+                    "lowerC",
+                    "upperC",
+                    "model",
+                    "assumption"
+                  ],
+                  "additionalProperties": false
+                },
+                "waterAdvisory": {
+                  "type": "string",
+                  "enum": [
+                    "quantityUnavailable",
+                    "unknownQuality",
+                    "boilWater",
+                    "doNotDrink",
+                    "doNotUse"
+                  ]
+                },
+                "waterService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "availableWaterGallons": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "selectedProtection": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "openGapIDs": {
+                  "maxItems": 10,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "identifiedGapIDs": {
+                  "maxItems": 10,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "debrief": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "subjectIDs": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "eventIDs": {
+                        "maxItems": 5000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "nextActionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "subjectIDs",
+                      "eventIDs",
+                      "nextActionID"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "mechanicsVersion",
+                "hazard",
+                "scene",
+                "objective",
+                "supportedActions",
+                "outsidePersonIDs",
+                "accountedPersonIDs",
+                "shelteredPersonIDs",
+                "destinationIDs",
+                "occupantRoomIDs",
+                "relocated",
+                "openGapIDs",
+                "identifiedGapIDs",
+                "debrief"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mechanicsVersion": {
+                  "type": "string",
+                  "const": "dryrun.hazard-mechanics/2"
+                },
+                "hazard": {
+                  "type": "string",
+                  "enum": [
+                    "freezePowerLoss",
+                    "heatGridStrain",
+                    "tornado",
+                    "flashFlood",
+                    "homeFire",
+                    "waterOutage"
+                  ]
+                },
+                "scene": {
+                  "type": "string",
+                  "enum": [
+                    "smoke-egress-accounting",
+                    "warning-shelter-exposure",
+                    "rising-water-access",
+                    "cold-continuity-energy",
+                    "heat-cooling-access",
+                    "service-advisory-water-use"
+                  ]
+                },
+                "objective": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "supportedActions": {
+                  "maxItems": 15,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "feasibleCommands": {
+                  "maxItems": 1000,
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "moveTo"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "takeSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "transferSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "assignHelper"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "allocatePower"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "closeDoor"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "choose"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "escape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachHigherRefuge"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyEscape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "identifyGap"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "contact"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accountOutside"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "leaveEarly"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "heatedAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "cooledAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reduceSolarGain"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "warmLayers"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useWater"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "drink",
+                              "prepareFood",
+                              "hygiene",
+                              "boiledDrink"
+                            ]
+                          },
+                          "quantityLiters": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 20
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value",
+                          "quantityLiters"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useStoredWater"
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "essential",
+                              "all"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "finish"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "outsidePersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "accountedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelteredPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "destinationIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "occupantRoomIDs": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelterRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "relocated": {
+                  "type": "boolean"
+                },
+                "temperature": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/1"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/2"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "waterAdvisory": {
+                  "type": "string",
+                  "enum": [
+                    "quantityUnavailable",
+                    "unknownQuality",
+                    "boilWater",
+                    "doNotDrink",
+                    "doNotUse"
+                  ]
+                },
+                "waterService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "availableWaterGallons": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "selectedProtection": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "openGapIDs": {
+                  "maxItems": 10,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "identifiedGapIDs": {
+                  "maxItems": 10,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "debrief": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "subjectIDs": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "eventIDs": {
+                        "maxItems": 5000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "nextActionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "subjectIDs",
+                      "eventIDs",
+                      "nextActionID"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "roomTemperatures": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "lowerC": {
+                        "type": "number"
+                      },
+                      "upperC": {
+                        "type": "number"
+                      },
+                      "model": {
+                        "type": "string",
+                        "const": "illustrative-room-range/2"
+                      },
+                      "assumption": {
+                        "type": "string",
+                        "maxLength": 600
+                      }
+                    },
+                    "required": [
+                      "lowerC",
+                      "upperC",
+                      "model",
+                      "assumption"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "shadedRoomIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "conditioningService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "roomCoolingCoverageUnknown": {
+                  "type": "boolean",
+                  "const": true
+                }
+              },
+              "required": [
+                "mechanicsVersion",
+                "hazard",
+                "scene",
+                "objective",
+                "supportedActions",
+                "outsidePersonIDs",
+                "accountedPersonIDs",
+                "shelteredPersonIDs",
+                "destinationIDs",
+                "occupantRoomIDs",
+                "relocated",
+                "openGapIDs",
+                "identifiedGapIDs",
+                "debrief"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mechanicsVersion": {
+                  "type": "string",
+                  "const": "dryrun.hazard-mechanics/3"
+                },
+                "hazard": {
+                  "type": "string",
+                  "enum": [
+                    "freezePowerLoss",
+                    "heatGridStrain",
+                    "tornado",
+                    "flashFlood",
+                    "homeFire",
+                    "waterOutage"
+                  ]
+                },
+                "scene": {
+                  "type": "string",
+                  "enum": [
+                    "smoke-egress-accounting",
+                    "warning-shelter-exposure",
+                    "rising-water-access",
+                    "cold-continuity-energy",
+                    "heat-cooling-access",
+                    "service-advisory-water-use"
+                  ]
+                },
+                "objective": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "supportedActions": {
+                  "maxItems": 15,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "feasibleCommands": {
+                  "maxItems": 1000,
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "moveTo"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "takeSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "transferSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "assignHelper"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "allocatePower"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "closeDoor"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "choose"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "escape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachHigherRefuge"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyEscape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "identifyGap"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "contact"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accountOutside"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "leaveEarly"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "heatedAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "cooledAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reduceSolarGain"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "warmLayers"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useWater"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "drink",
+                              "prepareFood",
+                              "hygiene",
+                              "boiledDrink"
+                            ]
+                          },
+                          "quantityLiters": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 20
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value",
+                          "quantityLiters"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useStoredWater"
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "essential",
+                              "all"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "finish"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "outsidePersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "accountedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelteredPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "destinationIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "occupantRoomIDs": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelterRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "relocated": {
+                  "type": "boolean"
+                },
+                "temperature": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/1"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/2"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "waterAdvisory": {
+                  "type": "string",
+                  "enum": [
+                    "quantityUnavailable",
+                    "unknownQuality",
+                    "boilWater",
+                    "doNotDrink",
+                    "doNotUse"
+                  ]
+                },
+                "waterService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "availableWaterGallons": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "selectedProtection": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "openGapIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "identifiedGapIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "debrief": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "subjectIDs": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "eventIDs": {
+                        "maxItems": 5000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "nextActionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "subjectIDs",
+                      "eventIDs",
+                      "nextActionID"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "roomTemperatures": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "lowerC": {
+                        "type": "number"
+                      },
+                      "upperC": {
+                        "type": "number"
+                      },
+                      "model": {
+                        "type": "string",
+                        "const": "illustrative-room-range/2"
+                      },
+                      "assumption": {
+                        "type": "string",
+                        "maxLength": 600
+                      }
+                    },
+                    "required": [
+                      "lowerC",
+                      "upperC",
+                      "model",
+                      "assumption"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "shadedRoomIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "conditioningService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "roomCoolingCoverageUnknown": {
+                  "type": "boolean",
+                  "const": true
+                }
+              },
+              "required": [
+                "mechanicsVersion",
+                "hazard",
+                "scene",
+                "objective",
+                "supportedActions",
+                "outsidePersonIDs",
+                "accountedPersonIDs",
+                "shelteredPersonIDs",
+                "destinationIDs",
+                "occupantRoomIDs",
+                "relocated",
+                "openGapIDs",
+                "identifiedGapIDs",
+                "debrief"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mechanicsVersion": {
+                  "type": "string",
+                  "const": "dryrun.hazard-mechanics/4"
+                },
+                "hazard": {
+                  "type": "string",
+                  "enum": [
+                    "freezePowerLoss",
+                    "heatGridStrain",
+                    "tornado",
+                    "flashFlood",
+                    "homeFire",
+                    "waterOutage"
+                  ]
+                },
+                "scene": {
+                  "type": "string",
+                  "enum": [
+                    "smoke-egress-accounting",
+                    "warning-shelter-exposure",
+                    "rising-water-access",
+                    "cold-continuity-energy",
+                    "heat-cooling-access",
+                    "service-advisory-water-use"
+                  ]
+                },
+                "objective": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "supportedActions": {
+                  "maxItems": 15,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "feasibleCommands": {
+                  "maxItems": 1000,
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "moveTo"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "takeSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "transferSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "assignHelper"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "allocatePower"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "closeDoor"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "choose"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "escape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachHigherRefuge"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyEscape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "identifyGap"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "contact"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accountOutside"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "leaveEarly"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "heatedAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "cooledAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reduceSolarGain"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "warmLayers"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useWater"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "drink",
+                              "prepareFood",
+                              "hygiene",
+                              "boiledDrink"
+                            ]
+                          },
+                          "quantityLiters": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 20
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value",
+                          "quantityLiters"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useStoredWater"
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "essential",
+                              "all"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "finish"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "outsidePersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "accountedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelteredPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "destinationIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "occupantRoomIDs": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelterRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "relocated": {
+                  "type": "boolean"
+                },
+                "temperature": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/1"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/2"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "waterAdvisory": {
+                  "type": "string",
+                  "enum": [
+                    "quantityUnavailable",
+                    "unknownQuality",
+                    "boilWater",
+                    "doNotDrink",
+                    "doNotUse"
+                  ]
+                },
+                "waterService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "availableWaterGallons": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "selectedProtection": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "openGapIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "identifiedGapIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "debrief": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "subjectIDs": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "eventIDs": {
+                        "maxItems": 5000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "nextActionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "subjectIDs",
+                      "eventIDs",
+                      "nextActionID"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "roomTemperatures": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "lowerC": {
+                        "type": "number"
+                      },
+                      "upperC": {
+                        "type": "number"
+                      },
+                      "model": {
+                        "type": "string",
+                        "const": "illustrative-room-range/2"
+                      },
+                      "assumption": {
+                        "type": "string",
+                        "maxLength": 600
+                      }
+                    },
+                    "required": [
+                      "lowerC",
+                      "upperC",
+                      "model",
+                      "assumption"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "shadedRoomIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "conditioningService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "roomCoolingCoverageUnknown": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "refugeRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "refugedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                }
+              },
+              "required": [
+                "mechanicsVersion",
+                "hazard",
+                "scene",
+                "objective",
+                "supportedActions",
+                "outsidePersonIDs",
+                "accountedPersonIDs",
+                "shelteredPersonIDs",
+                "destinationIDs",
+                "occupantRoomIDs",
+                "relocated",
+                "openGapIDs",
+                "identifiedGapIDs",
+                "debrief"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mechanicsVersion": {
+                  "type": "string",
+                  "const": "dryrun.hazard-mechanics/5"
+                },
+                "hazard": {
+                  "type": "string",
+                  "enum": [
+                    "freezePowerLoss",
+                    "heatGridStrain",
+                    "tornado",
+                    "flashFlood",
+                    "homeFire",
+                    "waterOutage"
+                  ]
+                },
+                "scene": {
+                  "type": "string",
+                  "enum": [
+                    "smoke-egress-accounting",
+                    "warning-shelter-exposure",
+                    "rising-water-access",
+                    "cold-continuity-energy",
+                    "heat-cooling-access",
+                    "service-advisory-water-use"
+                  ]
+                },
+                "objective": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "supportedActions": {
+                  "maxItems": 15,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "feasibleCommands": {
+                  "maxItems": 1000,
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "moveTo"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "takeSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "transferSupply"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "assignHelper"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "allocatePower"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "closeDoor"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "choose"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "escape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachHigherRefuge"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reachShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyEscape"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accompanyShelter"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "identifyGap"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "contact"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "accountOutside"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "leaveEarly"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "heatedAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "cooledAlternative"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "reduceSolarGain"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "warmLayers"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useWater"
+                          },
+                          "target": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "drink",
+                              "prepareFood",
+                              "hygiene",
+                              "boiledDrink"
+                            ]
+                          },
+                          "quantityLiters": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "maximum": 20
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "target",
+                          "value",
+                          "quantityLiters"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "useStoredWater"
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "essential",
+                              "all"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "const": "finish"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "outsidePersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "accountedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelteredPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "destinationIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "occupantRoomIDs": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "shelterRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "relocated": {
+                  "type": "boolean"
+                },
+                "temperature": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/1"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "lowerC": {
+                          "type": "number"
+                        },
+                        "upperC": {
+                          "type": "number"
+                        },
+                        "model": {
+                          "type": "string",
+                          "const": "illustrative-room-range/2"
+                        },
+                        "assumption": {
+                          "type": "string",
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "lowerC",
+                        "upperC",
+                        "model",
+                        "assumption"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "waterAdvisory": {
+                  "type": "string",
+                  "enum": [
+                    "quantityUnavailable",
+                    "unknownQuality",
+                    "boilWater",
+                    "doNotDrink",
+                    "doNotUse"
+                  ]
+                },
+                "waterService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "availableWaterGallons": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "selectedProtection": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "openGapIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "identifiedGapIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "debrief": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "subjectIDs": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "eventIDs": {
+                        "maxItems": 5000,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 200
+                        }
+                      },
+                      "nextActionID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "subjectIDs",
+                      "eventIDs",
+                      "nextActionID"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "roomTemperatures": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "lowerC": {
+                        "type": "number"
+                      },
+                      "upperC": {
+                        "type": "number"
+                      },
+                      "model": {
+                        "type": "string",
+                        "const": "illustrative-room-range/2"
+                      },
+                      "assumption": {
+                        "type": "string",
+                        "maxLength": 600
+                      }
+                    },
+                    "required": [
+                      "lowerC",
+                      "upperC",
+                      "model",
+                      "assumption"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "shadedRoomIDs": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "conditioningService": {
+                  "type": "string",
+                  "enum": [
+                    "operational",
+                    "degraded",
+                    "unavailable",
+                    "unknown"
+                  ]
+                },
+                "roomCoolingCoverageUnknown": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "refugeRoomID": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "refugedPersonIDs": {
+                  "maxItems": 20,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "escapeHelperByPersonID": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                }
+              },
+              "required": [
+                "mechanicsVersion",
+                "hazard",
+                "scene",
+                "objective",
+                "supportedActions",
+                "outsidePersonIDs",
+                "accountedPersonIDs",
+                "shelteredPersonIDs",
+                "destinationIDs",
+                "occupantRoomIDs",
+                "relocated",
+                "openGapIDs",
+                "identifiedGapIDs",
+                "debrief"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "assistance": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "personID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "helperID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "reachStatus": {
+                "type": "string",
+                "enum": [
+                  "reachable",
+                  "unreachable",
+                  "unknown",
+                  "missingHelper"
+                ]
+              },
+              "sharedWithPersonIDs": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "simultaneousCapacity": {
+                "type": "string",
+                "enum": [
+                  "notAssessed",
+                  "unknown"
+                ]
+              }
+            },
+            "required": [
+              "personID",
+              "reachStatus",
+              "sharedWithPersonIDs",
+              "simultaneousCapacity"
+            ],
+            "additionalProperties": false
+          }
         },
         "initialInventoryItemIDs": {
           "maxItems": 100,
@@ -548,6 +4775,28 @@
                       "minLength": 1,
                       "maxLength": 120
                     }
+                  },
+                  "recordedConditions": {
+                    "type": "string",
+                    "maxLength": 1200
+                  },
+                  "essentialMedication": {
+                    "type": "string",
+                    "maxLength": 1200
+                  },
+                  "communicationInstructions": {
+                    "type": "string",
+                    "maxLength": 1200
+                  },
+                  "helperPersonID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "startingRoomID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
                   }
                 },
                 "required": [
@@ -624,6 +4873,131 @@
                       "missing",
                       "unknown"
                     ]
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "requiresColdStorage": {
+                    "type": "boolean"
+                  },
+                  "storageInstructions": {
+                    "type": "string",
+                    "maxLength": 1200
+                  },
+                  "powerWatts": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "documentedBackupRuntimeHours": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "compatibleBackupIDs": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
                   }
                 },
                 "required": [
@@ -744,6 +5118,571 @@
                   "status",
                   "sourceIDs",
                   "fieldIDs"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "inventory": {
+              "type": "object",
+              "properties": {
+                "scope": {
+                  "type": "string",
+                  "const": "recordedHouseholdInventory"
+                },
+                "revision": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "asOf": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "items": {
+                  "maxItems": 500,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "category": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "quantity": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "sourceIDs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            }
+                          },
+                          "inputIDs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            }
+                          },
+                          "recordedAt": {
+                            "type": "string"
+                          },
+                          "verifiedAt": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "origin",
+                          "status",
+                          "sourceIDs",
+                          "inputIDs"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "unit": {
+                        "type": "string",
+                        "enum": [
+                          "liter",
+                          "usGallon",
+                          "count",
+                          "wattHour",
+                          "day"
+                        ]
+                      },
+                      "usableQuantity": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "number"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "sourceIDs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            }
+                          },
+                          "inputIDs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            }
+                          },
+                          "recordedAt": {
+                            "type": "string"
+                          },
+                          "verifiedAt": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "origin",
+                          "status",
+                          "sourceIDs",
+                          "inputIDs"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "accessible": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "boolean"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "status": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "sourceIDs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            }
+                          },
+                          "inputIDs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            }
+                          },
+                          "recordedAt": {
+                            "type": "string"
+                          },
+                          "verifiedAt": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "origin",
+                          "status",
+                          "sourceIDs",
+                          "inputIDs"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "locationID": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "expiresAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "subjectIDs": {
+                        "maxItems": 20,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "evidenceIDs": {
+                        "maxItems": 100,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "lastConfirmedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "preparationKind": {
+                        "type": "string",
+                        "enum": [
+                          "flashlight",
+                          "firstAidKit"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "category",
+                      "quantity",
+                      "unit",
+                      "usableQuantity",
+                      "accessible",
+                      "subjectIDs",
+                      "evidenceIDs"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "scope",
+                "revision",
+                "asOf",
+                "items"
+              ],
+              "additionalProperties": false
+            },
+            "backupPower": {
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "portableBatteryStation",
+                      "portableGenerator",
+                      "standbyGenerator",
+                      "solarWithBattery",
+                      "solarGridTiedOnly",
+                      "vehicleInverter",
+                      "powerBank",
+                      "deviceInternalBattery"
+                    ]
+                  },
+                  "usableEnergyWh": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "continuousOutputW": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "setupConfirmed": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "boolean"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "islandingConfirmed": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "boolean"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "safeOutdoorPlacementConfirmed": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "boolean"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "assumedEfficiency": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "id",
+                  "kind",
+                  "usableEnergyWh",
+                  "continuousOutputW",
+                  "setupConfirmed",
+                  "islandingConfirmed",
+                  "safeOutdoorPlacementConfirmed",
+                  "assumedEfficiency"
                 ],
                 "additionalProperties": false
               }
@@ -1053,6 +5992,338 @@
                 "hurricanePlan",
                 "sourceIDs",
                 "limitations"
+              ],
+              "additionalProperties": false
+            },
+            "supplies": {
+              "type": "object",
+              "properties": {
+                "storedWaterGallons": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "shelfStableFoodDays": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "flashlights": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "coolerAndIcePacks": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "firstAidKit": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "fireExtinguisher": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    },
+                    "origin": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "sourceIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "inputIDs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    },
+                    "verifiedAt": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "status",
+                    "sourceIDs",
+                    "inputIDs"
+                  ],
+                  "additionalProperties": false
+                },
+                "limitedStorageSpace": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "storedWaterGallons",
+                "shelfStableFoodDays",
+                "flashlights",
+                "coolerAndIcePacks",
+                "firstAidKit",
+                "fireExtinguisher",
+                "limitedStorageSpace"
               ],
               "additionalProperties": false
             }
@@ -2740,6 +8011,11 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 7
+            },
+            "quantityLiters": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 20
             }
           },
           "required": [
@@ -2785,6 +8061,11 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 7
+              },
+              "quantityLiters": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 20
               }
             },
             "required": [

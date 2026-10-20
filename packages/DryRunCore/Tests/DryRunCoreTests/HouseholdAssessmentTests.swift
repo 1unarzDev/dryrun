@@ -129,4 +129,23 @@ import Testing
         let decoded=try DryRunJSON.decoder().decode(PreparednessScorecard.self,from:DryRunJSON.encoder().encode(old))
         #expect(decoded.assessmentVersion==nil)
     }
+    @Test func removedReconnectionRecordCannotEstablishOfflineContactAccess() throws {
+        var h=SampleHouseholds.oak
+        h.contacts=[HouseholdContact(id:"trusted",role:.other,alias:"Trusted contact",phone:"5550100")]
+        let baseline=try facts(h)
+        for recorded in [true,false] {
+            h.preparedness=PreparednessRecord(items:["reconnect":PreparationFact(available:.confirmed(recorded),location:"Legacy arrangement",notes:"Preserve this owner text")])
+            let assessed=try facts(h)
+            #expect(predicate(assessed,"contact","usableContact")==true)
+            #expect(predicate(assessed,"contact","offlineAccess")==nil)
+            #expect(assessed.first{$0.criterionID=="contact"}?.evidenceIDs==["contacts"])
+            let rubric=try DryRunJSON.decoder().decode(RubricDefinition.self,from:Data(contentsOf:SimFixtures.repoRoot.appendingPathComponent("content/ai/rubric-v0.json")))
+            #expect(try ScoreCompiler.compile(rubric:rubric,assessments:assessed).overall==ScoreCompiler.compile(rubric:rubric,assessments:baseline).overall)
+            let restored=try DryRunJSON.decoder().decode(HouseholdProfile.self,from:DryRunJSON.encoder().encode(h))
+            #expect(restored.preparedness?.items["reconnect"]?.available.confirmedValue==recorded)
+            #expect(restored.preparedness?.items["reconnect"]?.notes=="Preserve this owner text")
+            #expect(restored.contacts==h.contacts)
+        }
+    }
+
 }

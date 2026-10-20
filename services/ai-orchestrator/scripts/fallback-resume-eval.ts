@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {Gateway} from '../src/gateway.js';
 import {GeminiProvider,SpendBudget,type AgentProvider} from '../src/provider.js';
-import {directorContext,minimizedSnapshot} from '../src/contracts.js';
+import {directorContext,minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import {executeDirectorTool} from './director-tools.js';
 const live=process.env.DRYRUN_RESUME_LIVE==='1';
 const provider:AgentProvider=live?new GeminiProvider(process.env.GOOGLE_AI_STUDIO_KEY??''):{async turn(input){
@@ -34,7 +34,7 @@ try {
  assert.equal(state.lastAction.id,'resumed-essential-use');assert.equal(state.lastAction.value,'essential');
  assert.deepEqual(state.recentActions.slice(-2).map((a:any)=>a.value),['all','essential']);
  const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
- const context=directorContext.parse({binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Resume the same exercise after the local pause. Inspect the latest committed essential-only action and actual remaining resources.','Existing pending events remain scheduled; do not duplicate them. Choose a useful next boundary or finish based on actual consequences.']});
+ const context=directorContext.parse({binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Resume the same exercise after the local pause. Inspect the latest committed essential-only action and actual remaining resources.','Existing pending events remain scheduled; do not duplicate them. Choose a useful next boundary or finish based on actual consequences.']});
  let result:any=await gateway.start('synthetic-resume',{contractVersion:'dryrun.ai/1',requestID:'return-to-director',role:'director',synthetic:true,context});
  trace.push({phase:'return-to-director',context});
  while(result.status==='needs_client_tools'){

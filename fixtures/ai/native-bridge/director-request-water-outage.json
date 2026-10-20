@@ -1,7 +1,7 @@
 {
   "context" : {
     "binding" : {
-      "contextDigest" : "811289bbc10e4463",
+      "contextDigest" : "6f5137b2100d04e8",
       "eventSequence" : 3,
       "homeRevision" : 1,
       "householdRevision" : 1,
@@ -1461,13 +1461,99 @@
       ]
     },
     "household" : {
+      "backupPower" : [
+        {
+          "assumedEfficiency" : 0.85,
+          "continuousOutputW" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "W",
+            "value" : 1200
+          },
+          "id" : "bk-station",
+          "islandingConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "portableBatteryStation",
+          "safeOutdoorPlacementConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "setupConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "usableEnergyWh" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "Wh",
+            "value" : 1000
+          }
+        }
+      ],
       "equipment" : [
         {
+          "compatibleBackupIDs" : [
+
+          ],
           "documentation" : "unknown",
+          "documentedBackupRuntimeHours" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
           "essential" : true,
           "id" : "eq-oxygen",
           "personID" : "p-oak-4",
-          "powerRequired" : true
+          "powerRequired" : true,
+          "powerWatts" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "purpose" : "oxygenConcentrator",
+          "requiresColdStorage" : false
         }
       ],
       "evidence" : [
@@ -1484,6 +1570,18 @@
 
           ],
           "status" : "confirmed"
+        },
+        {
+          "fieldIDs" : [
+            "backupPower"
+          ],
+          "id" : "recorded-backup-power",
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "uncertainty" : "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
         }
       ],
       "housing" : {
@@ -1524,29 +1622,35 @@
           "id" : "p-oak-1",
           "needs" : [
 
-          ]
+          ],
+          "startingRoomID" : "sp-bed1"
         },
         {
           "ageBand" : "adult",
           "id" : "p-oak-2",
           "needs" : [
 
-          ]
+          ],
+          "startingRoomID" : "sp-bed1"
         },
         {
           "ageBand" : "child",
+          "helperPersonID" : "p-oak-1",
           "id" : "p-oak-3",
           "needs" : [
 
-          ]
+          ],
+          "startingRoomID" : "sp-bed2"
         },
         {
           "ageBand" : "olderAdult",
+          "helperPersonID" : "p-oak-2",
           "id" : "p-oak-4",
           "needs" : [
             "coldSensitive",
             "limitedMobility"
-          ]
+          ],
+          "startingRoomID" : "sp-living"
         }
       ],
       "pets" : [
@@ -1573,6 +1677,76 @@
         "sourceIDs" : [
 
         ]
+      },
+      "supplies" : {
+        "coolerAndIcePacks" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "fireExtinguisher" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "firstAidKit" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "flashlights" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : 2
+        },
+        "limitedStorageSpace" : false,
+        "shelfStableFoodDays" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : 3
+        },
+        "storedWaterGallons" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "unit" : "gal",
+          "value" : 5
+        }
       },
       "transport" : "car"
     },

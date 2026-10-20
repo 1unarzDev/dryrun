@@ -4,7 +4,7 @@ import {Host} from './host.js';
 import {executeDirectorTool} from './director-tools.js';
 import {Gateway} from '../src/gateway.js';
 import {GeminiProvider} from '../src/provider.js';
-import {minimizedSnapshot} from '../src/contracts.js';
+import {minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 const provider=new GeminiProvider(process.env.GOOGLE_AI_STUDIO_KEY??'');
 const host=new Host(),trace:any[]=[],replies:any[]=[];
 const evidence:any={synthetic:true,liveModel:true,recordedAt:new Date().toISOString(),model:provider.model,sdk:'2.30.0',trace,replies};
@@ -14,7 +14,7 @@ try {
  const state=await host.request({op:'query',session:fixture.source});
  evidence.source=state;
  const binding={sessionID:state.session.id,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
- const context={initialInventoryItemIDs:state.session.inventory.ledger.items.map((item:any)=>item.id),binding,snapshot:minimizedSnapshot(state.receipt),profiles:state.directorProfiles.filter((p:any)=>fixture.profileIDs.includes(p.id)),homeScene:state.homeScene,household:state.householdContext,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,
+ const context={initialInventoryItemIDs:state.session.inventory.ledger.items.map((item:any)=>item.id),binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),profiles:state.directorProfiles.filter((p:any)=>fixture.profileIDs.includes(p.id)),homeScene:state.homeScene,household:state.householdContext,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,
  learningObjectives:[
  'Investigate recorded water storage with runCounterfactual under evt.home-fire.alarm and evt.home-fire.fire-origin; include a controlled retestPlan.',
  'Recorded water item water is in sp-kitchen. Before the hypothetical incident, p-oak-1 can takeSupply water, moveTo sp-living, and transferSupply water to sp-living.',

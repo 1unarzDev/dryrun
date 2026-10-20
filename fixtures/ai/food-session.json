@@ -1304,13 +1304,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -1325,6 +1381,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -1350,30 +1426,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -1398,6 +1549,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 1,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -1488,7 +1688,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -1582,7 +1781,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "b7c1ffc024547f4b",
+          "contextDigest": "736249df08fed66c",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -1590,6 +1789,92 @@
           },
           "eventSequence": 0,
           "events": [],
+          "experience": {
+            "accountedPersonIDs": [],
+            "availableWaterGallons": 50,
+            "debrief": [
+              {
+                "eventIDs": [],
+                "kind": "service-advisory-water-use",
+                "nextActionID": "prep.water",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ]
+              },
+              {
+                "eventIDs": [],
+                "kind": "tapServiceAvailable",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              }
+            ],
+            "destinationIDs": [],
+            "escapeHelperByPersonID": {},
+            "feasibleCommands": [
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "tap",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "tap",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "tap",
+                "value": "hygiene"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "hygiene"
+              }
+            ],
+            "hazard": "waterOutage",
+            "identifiedGapIDs": [],
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-bed1",
+              "p-oak-2": "sp-bed1",
+              "p-oak-3": "sp-bed2",
+              "p-oak-4": "sp-living"
+            },
+            "openGapIDs": [],
+            "outsidePersonIDs": [],
+            "relocated": false,
+            "scene": "service-advisory-water-use",
+            "shelterRoomID": "sp-closet",
+            "shelteredPersonIDs": [],
+            "supportedActions": [
+              "useWater",
+              "choose",
+              "takeSupply",
+              "identifyGap"
+            ],
+            "waterService": "operational"
+          },
           "finished": false,
           "inventory": {
             "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -3161,7 +3446,8 @@
               ],
               "revision": 1
             }
-          }
+          },
+          "mechanicsVersion": "dryrun.hazard-mechanics/5"
         }
       },
       "observed": {
@@ -4425,13 +4711,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -4446,6 +4788,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -4471,30 +4833,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -4519,6 +4956,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 1,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -4548,7 +5034,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -4642,7 +5127,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "3dfd495b01a6f80f",
+          "contextDigest": "b1e250ae818d58b2",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -4760,6 +5245,86 @@
               "titleKey": "scenario.common.res.food-depleted"
             }
           ],
+          "experience": {
+            "accountedPersonIDs": [],
+            "availableWaterGallons": 46,
+            "debrief": [
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "service-advisory-water-use",
+                "nextActionID": "prep.water",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ]
+              },
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "tapServiceUnavailable",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              },
+              {
+                "eventIDs": [
+                  "evt.water-outage.res.food-depleted"
+                ],
+                "kind": "req.food",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              }
+            ],
+            "destinationIDs": [],
+            "escapeHelperByPersonID": {},
+            "feasibleCommands": [
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "hygiene"
+              }
+            ],
+            "hazard": "waterOutage",
+            "identifiedGapIDs": [],
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-bed1",
+              "p-oak-2": "sp-bed1",
+              "p-oak-3": "sp-bed2",
+              "p-oak-4": "sp-living"
+            },
+            "openGapIDs": [],
+            "outsidePersonIDs": [],
+            "relocated": false,
+            "scene": "service-advisory-water-use",
+            "shelterRoomID": "sp-closet",
+            "shelteredPersonIDs": [],
+            "supportedActions": [
+              "useWater",
+              "choose",
+              "takeSupply",
+              "identifyGap"
+            ],
+            "waterService": "unavailable"
+          },
           "finished": false,
           "inventory": {
             "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -6383,7 +6948,8 @@
               ],
               "revision": 1
             }
-          }
+          },
+          "mechanicsVersion": "dryrun.hazard-mechanics/5"
         }
       },
       "context": {
@@ -6391,7 +6957,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 5,
-          "contextDigest": "3dfd495b01a6f80f",
+          "contextDigest": "b1e250ae818d58b2",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -6455,13 +7021,69 @@
           ]
         },
         "household": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -6476,6 +7098,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -6501,30 +7143,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -6549,6 +7266,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 1,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -7870,7 +8636,7 @@
               "sessionID": "synthetic-session",
               "revision": 3,
               "eventSequence": 5,
-              "contextDigest": "3dfd495b01a6f80f",
+              "contextDigest": "b1e250ae818d58b2",
               "householdRevision": 2,
               "homeRevision": 1
             },
@@ -7931,8 +8697,88 @@
                 "pets.waterNeeds"
               ]
             },
-            "contextDigest": "be215a0da4fae1dc",
+            "contextDigest": "164e2f3cc0c70ad3",
             "preview": {
+              "experience": {
+                "mechanicsVersion": "dryrun.hazard-mechanics/5",
+                "hazard": "waterOutage",
+                "scene": "service-advisory-water-use",
+                "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+                "supportedActions": [
+                  "useWater",
+                  "choose",
+                  "takeSupply",
+                  "identifyGap"
+                ],
+                "feasibleCommands": [
+                  {
+                    "kind": "useWater",
+                    "target": "water",
+                    "value": "drink",
+                    "quantityLiters": 0.25
+                  },
+                  {
+                    "kind": "useWater",
+                    "target": "water",
+                    "value": "prepareFood",
+                    "quantityLiters": 0.25
+                  },
+                  {
+                    "kind": "useWater",
+                    "target": "water",
+                    "value": "hygiene",
+                    "quantityLiters": 0.25
+                  }
+                ],
+                "outsidePersonIDs": [],
+                "accountedPersonIDs": [],
+                "shelteredPersonIDs": [],
+                "destinationIDs": [],
+                "occupantRoomIDs": {
+                  "p-oak-1": "sp-bed1",
+                  "p-oak-2": "sp-bed1",
+                  "p-oak-3": "sp-bed2",
+                  "p-oak-4": "sp-living"
+                },
+                "shelterRoomID": "sp-closet",
+                "relocated": false,
+                "waterService": "unavailable",
+                "availableWaterGallons": 45.833333333333336,
+                "openGapIDs": [],
+                "identifiedGapIDs": [],
+                "debrief": [
+                  {
+                    "kind": "service-advisory-water-use",
+                    "subjectIDs": [
+                      "p-oak-1",
+                      "p-oak-2",
+                      "p-oak-3",
+                      "p-oak-4"
+                    ],
+                    "eventIDs": [
+                      "user.submitted-conservation"
+                    ],
+                    "nextActionID": "prep.water"
+                  },
+                  {
+                    "kind": "tapServiceUnavailable",
+                    "subjectIDs": [],
+                    "eventIDs": [
+                      "user.submitted-conservation"
+                    ],
+                    "nextActionID": "prep.water"
+                  },
+                  {
+                    "kind": "req.food",
+                    "subjectIDs": [],
+                    "eventIDs": [
+                      "evt.water-outage.res.food-depleted"
+                    ],
+                    "nextActionID": "prep.water"
+                  }
+                ],
+                "escapeHelperByPersonID": {}
+              },
               "routes": [],
               "directorState": {
                 "activeIncidentCount": 0,
@@ -7981,7 +8827,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 5,
-          "contextDigest": "3dfd495b01a6f80f",
+          "contextDigest": "b1e250ae818d58b2",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -9273,13 +10119,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -9294,6 +10196,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -9319,30 +10241,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 1
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -9367,6 +10364,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 1,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -9396,7 +10442,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -9490,7 +10535,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "a451a8a58e318ecd",
+          "contextDigest": "bf850fe064f834d2",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": true,
@@ -9608,6 +10653,86 @@
               "titleKey": "scenario.common.res.food-depleted"
             }
           ],
+          "experience": {
+            "accountedPersonIDs": [],
+            "availableWaterGallons": 45.833333333333336,
+            "debrief": [
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "service-advisory-water-use",
+                "nextActionID": "prep.water",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ]
+              },
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "tapServiceUnavailable",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              },
+              {
+                "eventIDs": [
+                  "evt.water-outage.res.food-depleted"
+                ],
+                "kind": "req.food",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              }
+            ],
+            "destinationIDs": [],
+            "escapeHelperByPersonID": {},
+            "feasibleCommands": [
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "hygiene"
+              }
+            ],
+            "hazard": "waterOutage",
+            "identifiedGapIDs": [],
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-bed1",
+              "p-oak-2": "sp-bed1",
+              "p-oak-3": "sp-bed2",
+              "p-oak-4": "sp-living"
+            },
+            "openGapIDs": [],
+            "outsidePersonIDs": [],
+            "relocated": false,
+            "scene": "service-advisory-water-use",
+            "shelterRoomID": "sp-closet",
+            "shelteredPersonIDs": [],
+            "supportedActions": [
+              "useWater",
+              "choose",
+              "takeSupply",
+              "identifyGap"
+            ],
+            "waterService": "unavailable"
+          },
           "finished": false,
           "inventory": {
             "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -11243,11 +12368,12 @@
               ],
               "revision": 1
             }
-          }
+          },
+          "mechanicsVersion": "dryrun.hazard-mechanics/5"
         }
       },
       "scoreBefore": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "cap": 59,
         "capReasons": [
           "alarms",
@@ -11280,7 +12406,7 @@
         }
       },
       "scoreAfter": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "cap": 59,
         "capReasons": [
           "alarms",
@@ -11551,9 +12677,10 @@
           {}
         ],
         "outcomes": [],
+        "validationFailures": [],
         "prompt": {
-          "version": "director/7",
-          "sha256": "4a15a5f93bb98069c45995b050c0e4f1660c5dda1e5893f5d8567edb63e2ba3e"
+          "version": "director/29",
+          "sha256": "fc3031a2549569eb7048f6247766feaf04ed4a18127fae60b44186d967c5b499"
         }
       }
     },
@@ -12844,13 +13971,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -12865,6 +14048,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -12890,30 +14093,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -12938,6 +14216,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 3,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -13028,7 +14355,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -13122,7 +14448,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "64c3abad6667db59",
+          "contextDigest": "634a1508b309fe22",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -13130,6 +14456,92 @@
           },
           "eventSequence": 0,
           "events": [],
+          "experience": {
+            "accountedPersonIDs": [],
+            "availableWaterGallons": 50,
+            "debrief": [
+              {
+                "eventIDs": [],
+                "kind": "service-advisory-water-use",
+                "nextActionID": "prep.water",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ]
+              },
+              {
+                "eventIDs": [],
+                "kind": "tapServiceAvailable",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              }
+            ],
+            "destinationIDs": [],
+            "escapeHelperByPersonID": {},
+            "feasibleCommands": [
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "tap",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "tap",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "tap",
+                "value": "hygiene"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "hygiene"
+              }
+            ],
+            "hazard": "waterOutage",
+            "identifiedGapIDs": [],
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-bed1",
+              "p-oak-2": "sp-bed1",
+              "p-oak-3": "sp-bed2",
+              "p-oak-4": "sp-living"
+            },
+            "openGapIDs": [],
+            "outsidePersonIDs": [],
+            "relocated": false,
+            "scene": "service-advisory-water-use",
+            "shelterRoomID": "sp-closet",
+            "shelteredPersonIDs": [],
+            "supportedActions": [
+              "useWater",
+              "choose",
+              "takeSupply",
+              "identifyGap"
+            ],
+            "waterService": "operational"
+          },
           "finished": false,
           "inventory": {
             "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -14701,7 +16113,8 @@
               ],
               "revision": 1
             }
-          }
+          },
+          "mechanicsVersion": "dryrun.hazard-mechanics/5"
         }
       },
       "observed": {
@@ -15965,13 +17378,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -15986,6 +17455,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -16011,30 +17500,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -16059,6 +17623,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 3,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -16088,7 +17701,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -16182,7 +17794,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "2f9fb2d63ec0f598",
+          "contextDigest": "83870d11cf0c1985",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": false,
@@ -16278,6 +17890,78 @@
               "titleKey": "simulation.user.useStoredWater"
             }
           ],
+          "experience": {
+            "accountedPersonIDs": [],
+            "availableWaterGallons": 46,
+            "debrief": [
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "service-advisory-water-use",
+                "nextActionID": "prep.water",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ]
+              },
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "tapServiceUnavailable",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              }
+            ],
+            "destinationIDs": [],
+            "escapeHelperByPersonID": {},
+            "feasibleCommands": [
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "hygiene"
+              }
+            ],
+            "hazard": "waterOutage",
+            "identifiedGapIDs": [],
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-bed1",
+              "p-oak-2": "sp-bed1",
+              "p-oak-3": "sp-bed2",
+              "p-oak-4": "sp-living"
+            },
+            "openGapIDs": [],
+            "outsidePersonIDs": [],
+            "relocated": false,
+            "scene": "service-advisory-water-use",
+            "shelterRoomID": "sp-closet",
+            "shelteredPersonIDs": [],
+            "supportedActions": [
+              "useWater",
+              "choose",
+              "takeSupply",
+              "identifyGap"
+            ],
+            "waterService": "unavailable"
+          },
           "finished": false,
           "inventory": {
             "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -17897,7 +19581,8 @@
               ],
               "revision": 1
             }
-          }
+          },
+          "mechanicsVersion": "dryrun.hazard-mechanics/5"
         }
       },
       "context": {
@@ -17905,7 +19590,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 4,
-          "contextDigest": "2f9fb2d63ec0f598",
+          "contextDigest": "83870d11cf0c1985",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -17965,13 +19650,69 @@
           ]
         },
         "household": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -17986,6 +19727,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -18011,30 +19772,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -18059,6 +19895,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 3,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -19380,7 +21265,7 @@
               "sessionID": "synthetic-session",
               "revision": 3,
               "eventSequence": 4,
-              "contextDigest": "2f9fb2d63ec0f598",
+              "contextDigest": "83870d11cf0c1985",
               "householdRevision": 2,
               "homeRevision": 1
             },
@@ -19439,8 +21324,80 @@
                 "pets.waterNeeds"
               ]
             },
-            "contextDigest": "baf20139ef5d0a55",
+            "contextDigest": "d7de4f5e21f98dc4",
             "preview": {
+              "experience": {
+                "mechanicsVersion": "dryrun.hazard-mechanics/5",
+                "hazard": "waterOutage",
+                "scene": "service-advisory-water-use",
+                "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+                "supportedActions": [
+                  "useWater",
+                  "choose",
+                  "takeSupply",
+                  "identifyGap"
+                ],
+                "feasibleCommands": [
+                  {
+                    "kind": "useWater",
+                    "target": "water",
+                    "value": "drink",
+                    "quantityLiters": 0.25
+                  },
+                  {
+                    "kind": "useWater",
+                    "target": "water",
+                    "value": "prepareFood",
+                    "quantityLiters": 0.25
+                  },
+                  {
+                    "kind": "useWater",
+                    "target": "water",
+                    "value": "hygiene",
+                    "quantityLiters": 0.25
+                  }
+                ],
+                "outsidePersonIDs": [],
+                "accountedPersonIDs": [],
+                "shelteredPersonIDs": [],
+                "destinationIDs": [],
+                "occupantRoomIDs": {
+                  "p-oak-1": "sp-bed1",
+                  "p-oak-2": "sp-bed1",
+                  "p-oak-3": "sp-bed2",
+                  "p-oak-4": "sp-living"
+                },
+                "shelterRoomID": "sp-closet",
+                "relocated": false,
+                "waterService": "unavailable",
+                "availableWaterGallons": 45.833333333333336,
+                "openGapIDs": [],
+                "identifiedGapIDs": [],
+                "debrief": [
+                  {
+                    "kind": "service-advisory-water-use",
+                    "subjectIDs": [
+                      "p-oak-1",
+                      "p-oak-2",
+                      "p-oak-3",
+                      "p-oak-4"
+                    ],
+                    "eventIDs": [
+                      "user.submitted-conservation"
+                    ],
+                    "nextActionID": "prep.water"
+                  },
+                  {
+                    "kind": "tapServiceUnavailable",
+                    "subjectIDs": [],
+                    "eventIDs": [
+                      "user.submitted-conservation"
+                    ],
+                    "nextActionID": "prep.water"
+                  }
+                ],
+                "escapeHelperByPersonID": {}
+              },
               "routes": [],
               "directorState": {
                 "activeIncidentCount": 0,
@@ -19489,7 +21446,7 @@
           "sessionID": "synthetic-session",
           "revision": 3,
           "eventSequence": 4,
-          "contextDigest": "2f9fb2d63ec0f598",
+          "contextDigest": "83870d11cf0c1985",
           "householdRevision": 2,
           "homeRevision": 1
         },
@@ -20781,13 +22738,69 @@
           ]
         },
         "householdContext": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -20802,6 +22815,26 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+            },
+            {
+              "fieldIDs": [
+                "inventory"
+              ],
+              "id": "recorded-inventory",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
             }
           ],
           "housing": {
@@ -20827,30 +22860,105 @@
               "value": true
             }
           },
+          "inventory": {
+            "asOf": "2026-10-19T00:00:00Z",
+            "items": [
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "food",
+                "evidenceIDs": [
+                  "reviewed-household-days"
+                ],
+                "id": "food",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                },
+                "subjectIDs": [],
+                "unit": "day",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 3
+                }
+              },
+              {
+                "accessible": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": true
+                },
+                "category": "water",
+                "evidenceIDs": [
+                  "reviewed-container"
+                ],
+                "id": "water",
+                "lastConfirmedAt": "2026-10-19T00:00:00Z",
+                "quantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                },
+                "subjectIDs": [],
+                "unit": "usGallon",
+                "usableQuantity": {
+                  "inputIDs": [],
+                  "origin": "userConfirmed",
+                  "sourceIDs": [],
+                  "status": "confirmed",
+                  "value": 50
+                }
+              }
+            ],
+            "revision": 1,
+            "scope": "recordedHouseholdInventory"
+          },
           "limitedBudget": false,
           "people": [
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "adult",
               "id": "p-oak-2",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             },
             {
               "ageBand": "child",
+              "helperPersonID": "p-oak-1",
               "id": "p-oak-3",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed2"
             },
             {
               "ageBand": "olderAdult",
+              "helperPersonID": "p-oak-2",
               "id": "p-oak-4",
               "needs": [
                 "coldSensitive",
                 "limitedMobility"
-              ]
+              ],
+              "startingRoomID": "sp-living"
             }
           ],
           "pets": [
@@ -20875,6 +22983,55 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "day",
+              "value": 3,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 50,
+              "verifiedAt": "2026-10-19T00:00:00Z"
+            }
           },
           "transport": "car"
         },
@@ -20904,7 +23061,6 @@
           "prep.flashlight",
           "prep.food",
           "prep.pets",
-          "prep.reconnect",
           "prep.sanitation",
           "prep.water",
           "prep.fireDrill",
@@ -20998,7 +23154,7 @@
           }
         ],
         "receipt": {
-          "contextDigest": "d4e10288d15608b4",
+          "contextDigest": "bf714fd257c50291",
           "directorState": {
             "activeIncidentCount": 0,
             "awaitingUserAction": true,
@@ -21094,6 +23250,78 @@
               "titleKey": "simulation.user.useStoredWater"
             }
           ],
+          "experience": {
+            "accountedPersonIDs": [],
+            "availableWaterGallons": 45.833333333333336,
+            "debrief": [
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "service-advisory-water-use",
+                "nextActionID": "prep.water",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ]
+              },
+              {
+                "eventIDs": [
+                  "user.submitted-conservation"
+                ],
+                "kind": "tapServiceUnavailable",
+                "nextActionID": "prep.water",
+                "subjectIDs": []
+              }
+            ],
+            "destinationIDs": [],
+            "escapeHelperByPersonID": {},
+            "feasibleCommands": [
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "drink"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "prepareFood"
+              },
+              {
+                "kind": "useWater",
+                "quantityLiters": 0.25,
+                "target": "water",
+                "value": "hygiene"
+              }
+            ],
+            "hazard": "waterOutage",
+            "identifiedGapIDs": [],
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "objective": "Match each activity to an allowed accessible supply and conserve recorded stock.",
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-bed1",
+              "p-oak-2": "sp-bed1",
+              "p-oak-3": "sp-bed2",
+              "p-oak-4": "sp-living"
+            },
+            "openGapIDs": [],
+            "outsidePersonIDs": [],
+            "relocated": false,
+            "scene": "service-advisory-water-use",
+            "shelterRoomID": "sp-closet",
+            "shelteredPersonIDs": [],
+            "supportedActions": [
+              "useWater",
+              "choose",
+              "takeSupply",
+              "identifyGap"
+            ],
+            "waterService": "unavailable"
+          },
           "finished": false,
           "inventory": {
             "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -22727,11 +24955,12 @@
               ],
               "revision": 1
             }
-          }
+          },
+          "mechanicsVersion": "dryrun.hazard-mechanics/5"
         }
       },
       "scoreBefore": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "cap": 59,
         "capReasons": [
           "alarms",
@@ -22764,7 +24993,7 @@
         }
       },
       "scoreAfter": {
-        "assessmentVersion": "dryrun.household-assessment/6",
+        "assessmentVersion": "dryrun.household-assessment/7",
         "cap": 59,
         "capReasons": [
           "alarms",
@@ -23037,9 +25266,10 @@
           {}
         ],
         "outcomes": [],
+        "validationFailures": [],
         "prompt": {
-          "version": "director/7",
-          "sha256": "4a15a5f93bb98069c45995b050c0e4f1660c5dda1e5893f5d8567edb63e2ba3e"
+          "version": "director/29",
+          "sha256": "fc3031a2549569eb7048f6247766feaf04ed4a18127fae60b44186d967c5b499"
         }
       }
     }

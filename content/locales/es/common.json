@@ -699,6 +699,8 @@
   "ui.task.changedTitle": "Revisa las preparaciones actuales",
   "ui.task.changedBody": "Esta recomendación anterior ya no coincide con una preparación disponible. Abre la lista actual para revisar lo que aún necesita atención.",
   "ui.shelter.advanceReview": "Acuerda el acceso, el momento y la ayuda antes de una alerta de tornado. Estos campos registran acuerdos generales; no certifican protección contra tornados.",
+  "family.member": "Miembro del hogar",
+  "family.customRole": "Rol personalizado",
   "score.title": "Puntuación de preparación",
   "score.provisional": "Provisional",
   "score.outOf": "{score}/100",
@@ -845,5 +847,16 @@
   "practice.result": "Práctica {score}/100 · {assessed}/4 evaluadas",
   "practice.doneBody": "Las situaciones que esta app no puede evaluar para su hogar quedan sin evaluar; no cuentan como incorrectas. Puede practicar libremente en cualquier ejercicio; una prueba nueva empieza desde cero.",
   "practice.again": "Empezar una prueba nueva",
-  "practice.unavailable": "La prueba de práctica necesita el plano de su casa y una situación de agua compatible."
+  "practice.unavailable": "La prueba de práctica necesita el plano de su casa y una situación de agua compatible.",
+  "prep.ai.title": "Personalizar con Gemini",
+  "prep.ai.detail": "Solo hogar de ejemplo. Envía necesidades anonimizadas, equipos, suministros registrados e identificadores del plano de la casa (sin nombres, teléfonos ni dirección) a Google Gemini mediante el servidor de prueba de Dry Run. Gemini puede reordenar elementos de la misma prioridad y explicarlos para este hogar. La app comprueba cada uno con su lista; la prioridad, la puntuación y lo completado nunca cambian.",
+  "prep.ai.run": "Preguntar a Gemini",
+  "prep.ai.working": "Preguntando a Gemini…",
+  "prep.ai.applied": "Gemini ordenó {count} elementos para este hogar dentro de cada nivel de prioridad. Cada uno se comprobó con su lista.",
+  "prep.ai.rejected": "{count} sugerencias no coincidían con su lista y se omitieron.",
+  "prep.ai.unavailable": "Gemini no estaba disponible. La lista mantiene el orden de la app.",
+  "prep.ai.whyLabel": "Gemini, para este hogar",
+  "prep.ai.ideas": "Otras ideas de Gemini (sin puntuación)",
+  "prep.ai.question": "Gemini pregunta: {question}",
+  "prep.ai.reset": "Usar el orden de la app"
 }

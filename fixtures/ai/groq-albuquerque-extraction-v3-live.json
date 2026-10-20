@@ -1,0 +1,252 @@
+{
+  "synthetic": true,
+  "mode": "live-extraction-from-recorded-live-groq-evidence",
+  "sourceReceipt": "../../artifacts/ai/groq-search/2026-10-20T06-03-23-455Z/albuquerque.json",
+  "sourceRetrievedAt": "2026-10-20T06:03:28.864Z",
+  "newSearch": false,
+  "liveModelTested": true,
+  "result": {
+    "version": "dryrun.resource-discovery/1",
+    "status": "partial_sourced",
+    "taskID": "synthetic-pharmacy",
+    "brief": {
+      "taskID": "synthetic-pharmacy",
+      "locality": {
+        "city": "Albuquerque",
+        "administrativeArea": "New Mexico",
+        "countryCode": "US"
+      },
+      "capabilities": [
+        "pharmacy"
+      ],
+      "travelMode": "transit",
+      "maximumDistanceKm": 15,
+      "limitedBudget": true
+    },
+    "comparison": {
+      "options": [
+        {
+          "name": "Albuquerque City Drug",
+          "locality": "Albuquerque, NM",
+          "documentedService": "## A Focus on Patient Centered Care At Albuquerque City Drug our focus is not on filling prescriptions, but instead on you as a patient.",
+          "whyUseful": "Offers patient‑centered pharmacy services at a private pharmacy, potentially meeting medication needs.",
+          "nextAction": "Verify that the pharmacy is open, accepts prescriptions, and that public transit can reach the location.",
+          "unknowns": [
+            "opening hours",
+            "payment acceptance",
+            "site accessibility",
+            "transit feasibility"
+          ],
+          "sourceURLs": [
+            "https://www.abqcitydrug.com/"
+          ],
+          "publishedOrUpdatedAt": null
+        }
+      ],
+      "comparison": "Some researched options have supported source excerpts; other proposed options could not be validated.",
+      "limitations": [
+        "Availability of pharmacy services and transport routes are not confirmed; further verification required.",
+        "Unsupported options were omitted. Comparison and suitability require checking against the retained source excerpts."
+      ]
+    },
+    "attribution": {
+      "answer": "**Public pharmacy‑service options within 15 km of Albuquerque, NM**\n\n| # | Facility | Address & locality | Official service page | Transit access & practical notes |\n|---|----------|--------------------|-----------------------|-----------------------------------|\n| 1 | **Albuquerque City Drug** | 205 Silver Ave SW Suite D, Albuquerque, NM 87102 | https://www.abqcitydrug.com/ | • **Transit:** 15‑min walk from downtown (Blue Line). <br>• **Bus:** Route 7 (Southwest Blvd) stops 1‑2 stops away; stops “Silver Ave & SW” <br>• **Parking:** 5‑minute walk from downtown parking lots. <br>• **Opening hours:** Mon‑Fri 9 a.m.–5 p.m.; Sat‑Sun closed. |\n| 2 | **Public Health Pharmacy Clinic (PHPCABQ)** | 9204 Menaul Blvd NE Suite 4, Albuquerque, NM 87112 | https://www.phpcabq.net/ | • **Transit:** 15‑min ride from downtown via Route 5 (Menaul Blvd) or 10‑min ride from the University of New Mexico (UNM) via Route 6. <br>• **Bus:** Route 5 stops “Menaul Blvd & NE 91st Ave” <br>• **Parking:** 5‑minute walk from the Albuquerque Medical Center parking. <br>• **Opening hours:** Mon‑Fri 9 a.m.–5 p.m.; Sat‑Sun closed. |\n\n---\n\n### 1. Albuquerque City Drug\n\n- **Name & locality** – Albuquerque City Drug, City‑owned pharmacy.  \n- **Official page** – The homepage lists the full address, hours, and “Pharmacy Done Differently” mission. 【3†L1-L5】【3†L10-L13】  \n- **Service** – Retail pharmacy with prescription dispensing, immunizations, and health‑consultation services.  \n- **Transit details** – The facility is within walking distance of the downtown metro area. The Albuquerque Public Transit (APT) Blue Line runs along Silver Avenue, stopping just a few blocks from the address. Bus Route 7 (Southwest Blvd) also serves Silver Ave.  \n- **Practical notes** – The building is on a main street and is fully accessible via the APT Blue Line. There is no information on specialized disability access beyond the city’s general ADA compliance policy. The pharmacy is open 9 a.m.–5 p.m. on weekdays.\n\n### 2. Public Health Pharmacy Clinic (PHPCABQ)\n\n- **Name & locality** – Public Health Pharmacy Clinic (PHPCABQ), part of the Albuquerque Public Health Department.  \n- **Official page** – The site lists the address, hours, and contact information. 【2†L1-L8】【2†L24-L31】  \n- **Service** – Community‑focused pharmacy offering prescription dispensing, counseling, and vaccination services.  \n- **Transit details** – The pharmacy sits on Menaul Blvd NE, served by APT Route 5 (Menaul Blvd) and Route 6 (University of New Mexico). A 15‑minute bus ride from downtown or a 10‑minute ride from UNM places the pharmacy within easy reach.  \n- **Practical notes** – The pharmacy building is on a major boulevard and is accessible from the transit stops. No explicit step‑free description is provided on the page, but the facility’s location on a major thoroughfare suggests standard ADA compliance. Hours mirror Albuquerque City Drug (Mon‑Fri 9 a.m.–5 p.m.).\n\n---\n\n#### Quick comparison\n\n| Feature | Albuquerque City Drug | PHPCABQ |\n|---------|-----------------------|---------|\n| **Ownership** | City‑run | City public‑health department |\n| **Location** | Downtown (205 Silver Ave SW) | Northeast (9204 Menaul Blvd NE) |\n| **Transit proximity** | Blue Line/Route 7 | Route 5/6 |\n| **Opening hours** | 9 a.m.–5 p.m. Mon‑Fri | 9 a.m.–5 p.m. Mon‑Fri |\n| **Special services** | Immunizations, counseling | Immunizations, counseling |\n| **Step‑free access** | Implicit via city ADA policy | Implicit via city ADA policy |\n\n#### Practical checklist before traveling\n\n1. **Confirm hours** – Both pharmacies list Monday‑Friday 9 a.m.–5 p.m.; call ahead (505‑705‑3540 for Albuquerque City Drug, 505‑832‑7162 for PHPCABQ) to confirm today’s schedule.  \n2. **Transit plan** – Use the APT website or app to get exact route times from your starting point. Route 5 or 6 to PHPCABQ, Route 7 or Blue Line to Albuquerque City Drug.  \n3. **Accessibility** – If you need step‑free access, verify with the facility directly; both sites reference city ADA compliance but do not provide explicit details.  \n4. **Parking** – Both locations are within short walking distance of downtown or university parking; parking is free or low‑cost.  \n\nThese two facilities provide the most reliable public pharmacy services within a 15‑km radius of Albuquerque, offering straightforward transit options and similar operating hours.",
+      "citations": [
+        {
+          "url": "https://www.phpcabq.net/",
+          "title": "www.phpcabq.net - viewing lines [0 - 50] of 50",
+          "sourceID": "source-1"
+        },
+        {
+          "url": "https://www.abqcitydrug.com/",
+          "title": "www.abqcitydrug.com - viewing lines [0 - 50] of 50",
+          "sourceID": "source-12"
+        }
+      ],
+      "searchSuggestions": [],
+      "inspections": [
+        {
+          "url": "https://www.phpcabq.net/",
+          "status": "provider_returned_content"
+        },
+        {
+          "url": "https://www.abqcitydrug.com/",
+          "status": "provider_returned_content"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "source-1",
+          "url": "https://www.phpcabq.net/",
+          "title": "www.phpcabq.net - viewing lines [0 - 50] of 50",
+          "content": "L0: \nL1: URL: https://www.phpcabq.net/\nL2: HOME \\|Public Health Pharmacy Clinic \\| Wellness Center \\| Albuquerque \\| NM \\|\nL3: USA\nL4: \nL5: 9204 Menaul Blvd NE, Suite 4\nL6: \nL7: Albuquerque, NM 87112\nL8: \nL9: Pharmacist@PHPCABQ.net\nL10: \nL11: Call Us 505.832.7162 (+1-505-8327162)\nL12: \nL13: # C linic\nL14: \nL15: 3 John 2: Beloved, I pray that you May prosper in all things and be in health,\nL16: just as your soul prospers. NKJV\nL17: \nL18: ## US\nL19: \nL20: 505.832.7162 (+1-505-8327162)\nL21: \nL22: ## US\nL23: \nL24: Monday - Friday 9 am to 5pm\nL25: \nL26: Saturday Closed\nL27: \nL28: Sunday Closed\nL29: \nL30: ## US\nL31: \nL32: Fill out our\nL33: \nL34: Pharmacist@phpcabq.net\nL35: \nL36: Thanks for submitting!\nL37: \nL38: Hours\nL39: \nL40: - M-F 9AM-5PM\nL41: \nL42: - Saturdays Closed\nL43: \nL44: - Sunday Closed\nL45: \nL46: Address:\nL47: \nL48: 9204 Menaul Blvd NE Suite 4,\nL49: \nL50: Albuquerque, NM 87112",
+          "inspection": "opened"
+        },
+        {
+          "id": "source-12",
+          "url": "https://www.abqcitydrug.com/",
+          "title": "www.abqcitydrug.com - viewing lines [0 - 50] of 50",
+          "content": "L0: \nL1: URL: https://www.abqcitydrug.com/\nL2: Albuquerque City Drug\nL3: \nL4: - 205 Silver Avenue SW Suite D, Albuquerque, NM 87102· Hours: Monday-Friday:\nL5: 9a.m.-5p.m. · Saturday-Sunday: Closed · Phone: 505-705-3540 · Fax:\nL6: 505-247-0617\nL7: \nL8: - Book Vaccine Appointment\nL9: \nL10: ## Pharmacy Done Differently\nL11: \nL12: ## A Focus on Patient Centered Care\nL13: \nL14: At Albuquerque City Drug our focus is not on filling prescriptions, but instead\nL15: on you as a patient. You are a person with needs, preferences, and health goals\nL16: all your own. Here you are at the center of our care model. We take the time to\nL17: understand your preferences, concerns, and health status to help you achieve your\nL18: health care goals.\nL19: \nL20: We work diligently to ensure the safety and efficacy of your prescription\nL21: medications. Dealing with chronic health conditions and learning to lead a\nL22: healthy lifestyle can be daunting. Our clinical expertise is at your disposal to\nL23: help you achieve all your health and wellbeing goals.\nL24: \nL25: Not every pharmacy has what it takes to be a trusted partner in personalized\nL26: care. Contact us today to learn why pharmacy done differently is the right\nL27: prescription for a better pharmacy.\nL28: \nL29: - (US Federal Reserve FAQ regarding acceptance of cash as a form of payment)\nL30: \nL31: - Please note we are a cashless business and only accept card or check as forms\nL32: of payment.\nL33: \nL34: We Deliver Statewide\nL35: \nL36: Subscribe to our newsletter for seasonal promotions, health news and savings\nL37: \nL38: Subscribe\nL39: \nL40: ## Services\nL41: \nL42: Learn More >\nL43: \nL44: ## Health News\nL45: \nL46: Click Here >\nL47: \nL48: ## Location\nL49: \nL50: Get Directions >",
+          "inspection": "opened"
+        }
+      ],
+      "passages": [
+        {
+          "quote": "URL: https://www.phpcabq.net/ HOME \\|Public Health Pharmacy Clinic \\| Wellness Center \\| Albuquerque \\| NM \\| USA 9204 Menaul Blvd NE, Suite 4 Albuquerque, NM 87112 Pharmacist@PHPCABQ.net Call Us 505.832.7162 (+1-505-8327162)",
+          "scopeID": "source-1.scope-1",
+          "id": "source-1.passage-1",
+          "sourceID": "source-1"
+        },
+        {
+          "quote": "# C linic 3 John 2: Beloved, I pray that you May prosper in all things and be in health, just as your soul prospers. NKJV",
+          "scopeID": "source-1.scope-2",
+          "id": "source-1.passage-2",
+          "sourceID": "source-1"
+        },
+        {
+          "quote": "## US 505.832.7162 (+1-505-8327162)",
+          "scopeID": "source-1.scope-3",
+          "id": "source-1.passage-3",
+          "sourceID": "source-1"
+        },
+        {
+          "quote": "## US Fill out our Pharmacist@phpcabq.net Thanks for submitting! Hours - M-F 9AM-5PM - Saturdays Closed - Sunday Closed Address: 9204 Menaul Blvd NE Suite 4, Albuquerque, NM 87112",
+          "scopeID": "source-1.scope-5",
+          "id": "source-1.passage-5",
+          "sourceID": "source-1"
+        },
+        {
+          "quote": "URL: https://www.abqcitydrug.com/ Albuquerque City Drug - 205 Silver Avenue SW Suite D, Albuquerque, NM 87102· Hours: Monday-Friday: 9a.m.-5p.m. · Saturday-Sunday: Closed · Phone: 505-705-3540 · Fax: 505-247-0617 - Book Vaccine Appointment",
+          "scopeID": "source-12.scope-1",
+          "id": "source-12.passage-1",
+          "sourceID": "source-12"
+        },
+        {
+          "quote": "## Pharmacy Done Differently",
+          "scopeID": "source-12.scope-2",
+          "id": "source-12.passage-2",
+          "sourceID": "source-12"
+        },
+        {
+          "quote": "## A Focus on Patient Centered Care At Albuquerque City Drug our focus is not on filling prescriptions, but instead on you as a patient. You are a person with needs, preferences, and health goals all your own. Here you are at the center of our care model. We take the time to understand your preferences, concerns, and health status to help you achieve your health care goals. We work diligently to ensure the safety and efficacy of your prescription medications. Dealing with chronic health conditions and learning to lead a healthy lifestyle can be daunting. Our clinical expertise is at your disposal to help you achieve all your health and wellbeing goals. Not every pharmacy has what it takes to be a trusted partner in personalized care. Contact us today to learn why pharmacy done differently is the right prescription for a better pharmacy. - (US Federal Reserve FAQ regarding acceptance of cash as a form of payment) - Please note we are a cashless business and only accept card or check as forms of payment. We Deliver Statewide Subscribe to our newsletter for seasonal promotions, health news and savings Subscribe",
+          "scopeID": "source-12.scope-3",
+          "id": "source-12.passage-3",
+          "sourceID": "source-12"
+        },
+        {
+          "quote": "## Services Learn More >",
+          "scopeID": "source-12.scope-4",
+          "id": "source-12.passage-4",
+          "sourceID": "source-12"
+        }
+      ]
+    },
+    "retrievedAt": "2026-10-20T06:03:28.864Z",
+    "expiresAt": "2026-10-20T07:03:28.864Z",
+    "formattedAt": "2026-10-20T06:22:41.753Z",
+    "permissions": {
+      "presentation": "attributed_companion",
+      "mapPins": "native_independent_candidates_only",
+      "persistentResourceDatabase": false,
+      "pdfExport": false
+    },
+    "execution": {
+      "calls": 2,
+      "searchSteps": 2,
+      "urlInspectionSteps": 2,
+      "retrievalEvidence": "provider_tool_records",
+      "internalSearchCount": "provider_reported_steps_not_billing",
+      "extractionStatus": "unavailable",
+      "extractionFailure": {
+        "kind": "quota_exhausted",
+        "status": 429,
+        "retryAfterMs": 1092000,
+        "diagnostic": "rate_limit_exceeded"
+      },
+      "extractionErrors": [
+        "unsupported_research_identity_service_binding"
+      ]
+    },
+    "provider": {
+      "name": "groq",
+      "model": "openai/gpt-oss-20b",
+      "extractorModel": "openai/gpt-oss-20b",
+      "api": "chat/completions"
+    },
+    "usage": [
+      {
+        "queue_time": 0.837493803,
+        "prompt_tokens": 8170,
+        "prompt_time": 0.742909341,
+        "completion_tokens": 1440,
+        "completion_time": 1.523755382,
+        "total_tokens": 9610,
+        "total_time": 2.266664723,
+        "prompt_tokens_details": {
+          "cached_tokens": 2304
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 186
+        }
+      }
+    ]
+  },
+  "responses": [
+    {
+      "object": "chat.completion",
+      "created": 1792477361,
+      "model": "openai/gpt-oss-20b",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"options\":[{\"name\":\"Public Health Pharmacy Clinic\",\"locality\":\"Albuquerque, NM\",\"documentedService\":\"Hours - M-F 9AM-5PM - Saturdays Closed - Sunday Closed\",\"whyUseful\":\"Provides a pharmacy with known weekday hours, located within the 15 km transit radius, enabling medication access.\",\"nextAction\":\"Confirm the current opening hours and transit route to the pharmacy before traveling.\",\"unknowns\":[\"site-specific accessibility\",\"feasible transport via transit\"],\"publishedOrUpdatedAt\":null,\"support\":[\"source-1.passage-1\",\"source-1.passage-5\"]},{\"name\":\"Albuquerque City Drug\",\"locality\":\"Albuquerque, NM\",\"documentedService\":\"## A Focus on Patient Centered Care At Albuquerque City Drug our focus is not on filling prescriptions, but instead on you as a patient.\",\"whyUseful\":\"Offers patient‑centered pharmacy services at a private pharmacy, potentially meeting medication needs.\",\"nextAction\":\"Verify that the pharmacy is open, accepts prescriptions, and that public transit can reach the location.\",\"unknowns\":[\"opening hours\",\"payment acceptance\",\"site accessibility\",\"transit feasibility\"],\"publishedOrUpdatedAt\":null,\"support\":[\"source-12.passage-1\",\"source-12.passage-3\"]}],\"comparison\":\"Public Health Pharmacy Clinic operates Monday‑Friday 9 AM‑5 PM, while Albuquerque City Drug’s hours are not specified but emphasizes patient‑centered care; also payment methods differ (cashless vs unknown).\",\"limitations\":[\"Availability of pharmacy services and transport routes are not confirmed; further verification required.\"]}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "queue_time": 0.225305162,
+        "prompt_tokens": 1836,
+        "prompt_time": 0.157286688,
+        "completion_tokens": 1698,
+        "completion_time": 1.869153345,
+        "total_tokens": 3534,
+        "total_time": 2.026440033,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1363
+        }
+      },
+      "usage_breakdown": null,
+      "service_tier": "on_demand"
+    },
+    {
+      "error": {
+        "status": 429,
+        "code": "rate_limit_exceeded",
+        "type": "tokens",
+        "message": "Rate limit reached for model `openai/gpt-oss-20b` in organization `[redacted-org]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 200000, Requested 2526. Please try again in 18m11.232s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+        "failedToolNames": []
+      }
+    }
+  ],
+  "extractionInstructionVersion": 6,
+  "review": {
+    "approvedForFamilyDisplay": false,
+    "liveSearch": false,
+    "usefulDiscoveryGate": "not passed",
+    "actualLiveExtraction": true,
+    "retainedSupportedOptions": 1,
+    "sourceRetrievedAt": "2026-10-20T06:03:28.864Z",
+    "issues": [
+      "Rejected clinic option asserts uncomputed 15 km transit radius and uses identity/service across distinct source scopes.",
+      "Retained option still asserts unsupported private ownership and ignores documented statewide delivery and cashless payment.",
+      "Comparison misses supplied opening hours; unknown list labels supplied payment/hour facts unknown.",
+      "Repair hit quota, 1092s retry. No complete useful two-option comparison."
+    ],
+    "native": "pending",
+    "humanReview": "pending"
+  }
+}

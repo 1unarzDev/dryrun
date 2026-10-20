@@ -1,0 +1,96 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write sources
+[1/4] Write swift-version-24593BA9C3E375BF.txt
+[3/5] Compiling DryRunCoreTests RehearsalRouteCopyTests.swift
+[4/5] Emitting module DryRunCoreTests
+macro expansion #expect:1:87: warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+`- /repo/packages/DryRunCore/Tests/DryRunCoreTests/IntegratedAITests.swift:168:228: note: expanded code originates here
+166 |         try s.commit(.init(id:"answer",actor:"user",baseRevision:1,commands:[.init(kind:"useStoredWater",value:"all")]),library:SimFixtures.library)
+167 |         var local=IntegratedAIState(sessions:[s]);let attempt=try local.beginPractice(id:"a",variantID:"practice-check-a/0")
+168 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+    |         `- note: in expansion of macro 'expect' here
+    +--- macro expansion #expect ---------------------------------------
+    |1 | Testing.__checkClosureCall(throws: SessionError.invalidCommand,performing: {try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)},expression: .__fromSyntaxNode(#"try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)"#),comments: [],isRequired: false,sourceLocation: Testing.SourceLocation.__here()).__expected()
+    |  |                                                                                       `- warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+    +-------------------------------------------------------------------
+169 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+170 |         #expect(local.practiceAttempts[0].answers.isEmpty)
+
+/repo/packages/DryRunCore/Tests/DryRunCoreTests/IntegratedAITests.swift:168:63: warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+166 |         try s.commit(.init(id:"answer",actor:"user",baseRevision:1,commands:[.init(kind:"useStoredWater",value:"all")]),library:SimFixtures.library)
+167 |         var local=IntegratedAIState(sessions:[s]);let attempt=try local.beginPractice(id:"a",variantID:"practice-check-a/0")
+168 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+    |                                                               `- warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+169 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+170 |         #expect(local.practiceAttempts[0].answers.isEmpty)
+
+macro expansion #expect:1:87: warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+`- /repo/packages/DryRunCore/Tests/DryRunCoreTests/IntegratedAITests.swift:169:228: note: expanded code originates here
+167 |         var local=IntegratedAIState(sessions:[s]);let attempt=try local.beginPractice(id:"a",variantID:"practice-check-a/0")
+168 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+169 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+    |         `- note: in expansion of macro 'expect' here
+    +--- macro expansion #expect ---------------------------------------
+    |1 | Testing.__checkClosureCall(throws: SessionError.invalidCommand,performing: {try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)},expression: .__fromSyntaxNode(#"try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)"#),comments: [],isRequired: false,sourceLocation: Testing.SourceLocation.__here()).__expected()
+    |  |                                                                                       `- warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+    +-------------------------------------------------------------------
+170 |         #expect(local.practiceAttempts[0].answers.isEmpty)
+171 |     }
+
+/repo/packages/DryRunCore/Tests/DryRunCoreTests/IntegratedAITests.swift:169:63: warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+167 |         var local=IntegratedAIState(sessions:[s]);let attempt=try local.beginPractice(id:"a",variantID:"practice-check-a/0")
+168 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:1,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+169 |         #expect(throws:SessionError.invalidCommand){try local.recordPracticeAnswer(.init(competencyID:"initialResponse",credit:0,committedActionID:"answer",beforeFeedback:true),attemptID:attempt.id,library:SimFixtures.library)}
+    |                                                               `- warning: 'recordPracticeAnswer(_:attemptID:library:)' is deprecated: Use submitPracticeAction to atomically commit and grade before feedback [#DeprecatedDeclaration]
+170 |         #expect(local.practiceAttempts[0].answers.isEmpty)
+171 |     }
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[5/11] /repo/.build-linux/default/packages_DryRunCore/x86_64-unknown-linux-gnu/debug/DryRunCorePackageDiscoveredTests.derived/all-discovered-tests.swift
+[6/12] Write sources
+[8/15] Compiling DryRunCorePackageDiscoveredTests DryRunCoreTests.swift
+[9/15] Compiling DryRunCorePackageDiscoveredTests all-discovered-tests.swift
+[10/15] Emitting module DryRunCorePackageDiscoveredTests
+[11/13] Write Objects.LinkFileList
+[12/13] Linking DryRunCorePackageTests.xctest
+Build complete! (18.94s)
+Test Suite 'Selected tests' started at 2026-10-20 12:21:02.089
+Test Suite 'Selected tests' passed at 2026-10-20 12:21:02.090
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: x86_64-unknown-linux-gnu
+◇ Suite "Hazard route review copy" started.
+◇ Suite "Six hazard readiness setup and current-state scenes" started.
+◇ Test mismatchedHomeNeverRelabelsOldPathEvenWithoutRevisionBump() started.
+◇ Test floodDoesNotInventRefugeAndLabelsAnExplicitHigherDestination() started.
+◇ Test actualWaterAdvisoryPersistsAtLaterCursorBoundaries() started.
+◇ Test sixDesignsAndSetupVariantsRoundTripWithoutEditingFacts() started.
+◇ Test incrementalProjectionCarriesActualExperienceAndRejectsWrongHazard() started.
+◇ Test everyExperienceStringResolvesInEverySupportedLocale() started.
+◇ Test barsPreserveUnknownEmptyUnitsAndFiniteValues() started.
+◇ Test poweredHeatFollowupBranchesOnRecordedArrangementWithoutInventingOutage() started.
+◇ Test setupRejectsUnknownInputsAndSeparatesFocusFromFacts() started.
+◇ Test bottlenecksUseRoomFloorAndConnectionLabelsWithoutLeakingIdentifiers() started.
+◇ Test advisoryUsesOnlyAppliedVisibleEventsAndNeverLeaksAcrossHazards() started.
+◇ Test wellSetupCannotOfferMunicipalAdvisoryVariants() started.
+◇ Test actualFireAndInteriorObjectivesHaveDifferentEndpoints() started.
+◇ Test everySetupOptionRunsARealPackAgainstTheSameHome() started.
+✔ Test barsPreserveUnknownEmptyUnitsAndFiniteValues() passed after 0.001 seconds.
+✔ Test advisoryUsesOnlyAppliedVisibleEventsAndNeverLeaksAcrossHazards() passed after 0.002 seconds.
+✔ Test setupRejectsUnknownInputsAndSeparatesFocusFromFacts() passed after 0.006 seconds.
+✔ Test wellSetupCannotOfferMunicipalAdvisoryVariants() passed after 0.008 seconds.
+✔ Test actualWaterAdvisoryPersistsAtLaterCursorBoundaries() passed after 0.014 seconds.
+✔ Test poweredHeatFollowupBranchesOnRecordedArrangementWithoutInventingOutage() passed after 0.015 seconds.
+✔ Test incrementalProjectionCarriesActualExperienceAndRejectsWrongHazard() passed after 0.018 seconds.
+✔ Test everyExperienceStringResolvesInEverySupportedLocale() passed after 0.020 seconds.
+✔ Test bottlenecksUseRoomFloorAndConnectionLabelsWithoutLeakingIdentifiers() passed after 0.024 seconds.
+✔ Test mismatchedHomeNeverRelabelsOldPathEvenWithoutRevisionBump() passed after 0.029 seconds.
+✔ Test floodDoesNotInventRefugeAndLabelsAnExplicitHigherDestination() passed after 0.060 seconds.
+✔ Test actualFireAndInteriorObjectivesHaveDifferentEndpoints() passed after 0.296 seconds.
+✔ Suite "Hazard route review copy" passed after 0.297 seconds.
+✔ Test sixDesignsAndSetupVariantsRoundTripWithoutEditingFacts() passed after 0.374 seconds.
+✔ Test everySetupOptionRunsARealPackAgainstTheSameHome() passed after 0.774 seconds.
+✔ Suite "Six hazard readiness setup and current-state scenes" passed after 0.775 seconds.
+✔ Test run with 14 tests in 2 suites passed after 0.775 seconds.

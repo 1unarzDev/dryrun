@@ -14,7 +14,7 @@ public struct NextStep: Sendable, Hashable, Identifiable {
 }
 
 /// The household's preparations across scenarios: what to do, what is done, and which facts are still unknown.
-/// Ordered by the ranker's tier, then by how many scenarios raised it. There is no score.
+/// Ordered by the ranker's tier and dependency, then effort and how many scenarios raised it. There is no score.
 public struct NextStepsSummary: Sendable, Hashable {
     public var toDo: [NextStep]
     public var completed: [NextStep]
@@ -100,7 +100,7 @@ public enum NextSteps {
                      completedAt: household.completedPreparations.first { PreparationCompletion.isValid($0, for: value.rec, household: household, home: home) }?.completedAt)
         }
         .sorted {
-            ($0.recommendation.tier, RecommendationRanker.effortRank($0.recommendation.effort), -$0.scenarioIDs.count, $0.id) < ($1.recommendation.tier, RecommendationRanker.effortRank($1.recommendation.effort), -$1.scenarioIDs.count, $1.id)
+            RecommendationRanker.prepareOrderKey($0.recommendation, breadth: $0.scenarioIDs.count) < RecommendationRanker.prepareOrderKey($1.recommendation, breadth: $1.scenarioIDs.count)
         }
         return NextStepsSummary(
             toDo: steps.filter { $0.completedAt == nil },

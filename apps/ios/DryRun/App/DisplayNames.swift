@@ -34,7 +34,9 @@ enum DisplayNames {
     static func name(_ raw: String, localizer: Localizer) -> String {
         for key in ["equipment.\(raw)", "enum.\(raw)", "relationship.\(raw)", "common.need.\(raw)"] {
             let text = localizer.text(key)
-            if !text.isMissing { return text.text }
+            if !text.isMissing {
+                return key.hasPrefix("common.need.") ? text.text.prefix(1).uppercased() + text.text.dropFirst() : text.text
+            }
         }
         return name(raw)
     }

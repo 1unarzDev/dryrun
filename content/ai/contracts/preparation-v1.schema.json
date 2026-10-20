@@ -8,6 +8,282 @@
       "items": {
         "type": "object",
         "properties": {
+          "destination": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "contact"
+                  },
+                  "contactRole": {
+                    "type": "string",
+                    "enum": [
+                      "outOfAreaContact",
+                      "neighborHelper",
+                      "transportSupport",
+                      "careProvider",
+                      "utilityMedicalRegistry",
+                      "waterUtility",
+                      "other"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "contactRole"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "family"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "equipment"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind",
+                  "subjectID"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "meeting"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "enum": [
+                      "outsideMeetingPoint",
+                      "backupMeetingPlace",
+                      "fallbackDestination",
+                      "exteriorHydrant",
+                      "homeReference"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "purpose"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "home"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "checklist"
+                  },
+                  "checklistID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "titleKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind",
+                  "checklistID",
+                  "titleKey"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "backups"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "transport"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "homeSetup"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "review"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "water"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "communications"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "housing"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "supplies"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "bespoke": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "fact": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "implication": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "completionCheck": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "title",
+              "fact",
+              "implication",
+              "action",
+              "completionCheck"
+            ],
+            "additionalProperties": false
+          },
           "id": {
             "type": "string",
             "minLength": 1,
@@ -44,7 +320,6 @@
             }
           },
           "completionPredicates": {
-            "minItems": 1,
             "maxItems": 8,
             "type": "array",
             "items": {

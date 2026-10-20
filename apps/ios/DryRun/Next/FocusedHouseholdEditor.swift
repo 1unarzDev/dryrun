@@ -135,7 +135,7 @@ struct FocusedHouseholdEditor: View {
             if personID == nil { Section { TextField(l("family.identity"), text: binding(\.displayName)).accessibilityIdentifier("family.householdName") } }
             ForEach((draft?.people ?? []).filter { personID == nil || $0.id == personID }) { person in
                 if let i = draft?.people.firstIndex(where: { $0.id == person.id }) {
-                    Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
+                    Section(draft!.people[i].isSelf == true ? l("family.you") : l("family.member")) {
                         TextField(l("family.name"), text: binding(\.people[i].alias)).accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
                         if personID != nil { personDetails(i) }
                         else {
@@ -155,7 +155,6 @@ struct FocusedHouseholdEditor: View {
                     expandedPeople.insert(id)
                 }.accessibilityIdentifier("family.addPerson")
             }
-            preparationFields("reconnect")
             Section(l("family.review")) {
                 Toggle(l("family.reviewedTogether"), isOn: Binding(get: { draft?.preparedness?.jointlyReviewedAt != nil }, set: { reviewed in
                     if draft?.preparedness == nil { draft?.preparedness = PreparednessRecord() }
@@ -175,7 +174,7 @@ struct FocusedHouseholdEditor: View {
                             }
                         }
                         if draft!.people[i].relationship == .custom {
-                            TextField(l("family.relationship"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
+                            TextField(l("family.customRole"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
                         }
                         Picker(l("family.age"), selection: binding(\.people[i].ageBand)) {
                             ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
@@ -185,7 +184,7 @@ struct FocusedHouseholdEditor: View {
                         TextField(l("family.medication"), text: info(i, \.essentialMedication), axis: .vertical)
                         TextField(l("family.instructions"), text: info(i, \.responderInstructions), axis: .vertical)
                         ForEach(AssistanceNeed.allCases, id: \.self) { need in
-                            Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
+                            Toggle(DisplayNames.name(need.rawValue, localizer: l), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
                                 draft!.people[i].needs.removeAll { $0 == need }
                                 if on { draft!.people[i].needs.append(need) }
                             }))

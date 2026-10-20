@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {Gateway} from '../src/gateway.js';
 import {GeminiProvider,type AgentProvider} from '../src/provider.js';
-import {minimizedSnapshot} from '../src/contracts.js';
+import {minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import {executeDirectorTool} from './director-tools.js';
 const live=process.env.DRYRUN_LIVE_FOOD==='1';
 const branches:any[]=[],attempts:any[]=[];
@@ -27,7 +27,7 @@ try {
   assert.equal(state.receipt.snapshot.simMinute,1440);assert.equal(state.receipt.snapshot.resources['res.food.days'].amount,foodDays-1);
   const observed=structuredClone(state);
   const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
-  const context={binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,profiles:state.directorProfiles,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Inspect the actual recorded household food-days and current unmet requirements. Preview a useful next boundary; respond to depleted versus available food.','Food coverage is a recorded quantity, not proof of calories, storage or dietary suitability. Do not invent replenishment or punish a sound plan with forced new failures.']};
+  const context={binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,profiles:state.directorProfiles,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Inspect the actual recorded household food-days and current unmet requirements. Preview a useful next boundary; respond to depleted versus available food.','Food coverage is a recorded quantity, not proof of calories, storage or dietary suitability. Do not invent replenishment or punish a sound plan with forced new failures.']};
   let calls=0;
   const fixture:AgentProvider={async turn(){if(++calls===1){const call={type:'function_call' as const,id:'preview-food',name:'evaluateCandidateAction',arguments:{commands}};return {steps:[call],calls:[call],text:'',usage:{}};}return {steps:[],calls:[],usage:{},text:JSON.stringify({commands,purpose:foodDays===1?'Review the depleted recorded food supply.':'Acknowledge recorded coverage and review remaining uncertainties.',evidenceIDs:['res.food.days']})};}};
   const replies:any[]=[],trace:any[]=[];

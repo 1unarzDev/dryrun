@@ -1,3 +1,9 @@
+> Current checkout: `main` / `26332ded170f2fea414d581fb50d5de6f4093ab9` plus the existing dirty worktree. Transfer new/untracked files as well as tracked edits. The scenario setup/debrief additions and director29 finalization are covered by [the latest scenario handoff](scenario-experience-handoff.md) and [evaluation checkpoints](evaluation-report.md). Earlier “Latest” and baseline entries below are historical; they do not establish current native or live acceptance.
+
+> Corrective implementation update: read [current Mac handoff](mac-corrective-handoff.md), [six-scenario coverage](six-scenario-coverage.md), and [issue status](corrective-issue-status.md) before historical notes below. Current scope includes hazard-mechanics/1, full grounded task generation, automatic research, and retiring fixed-budget hazard anchors. Native and live-quality gates remain separately reported.
+
+Latest visual/readiness work: [scenario experience handoff](scenario-experience-handoff.md). Read it alongside [the current corrective handoff](mac-corrective-handoff.md); it provides the new Swift files, real setup variants, portable review traces, current verification and exact iPhone checks. Native incremental integration remains pending.
+
 > Current audit: read [ux-concentration-audit.md](ux-concentration-audit.md) and the latest block in BOTH wired-phone prompts before older notes below. Linux added narrow native UX edits, syntax parsed only. The seven native Gemini adapters/screens still need actual integration; existing rehearsal remains RehearsalCursor. Do not mark native acceptance from portable traces.
 
 # Claude/Mac integration handoff

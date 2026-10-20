@@ -1,24 +1,48 @@
 {
   "binding" : {
-    "contextDigest" : "fc0e1bbc5c1923fd",
+    "contextDigest" : "7eb026c1fb706e58",
     "eventSequence" : 5,
     "homeRevision" : 1,
     "householdRevision" : 1,
     "revision" : 2,
     "sessionID" : "native-home-fire"
   },
-  "contextDigest" : "fc0e1bbc5c1923fd",
+  "contextDigest" : "7eb026c1fb706e58",
   "observation" : {
     "dependencies" : [
       {
         "evidenceIDs" : [
-          "fc0e1bbc5c1923fd"
+          "7eb026c1fb706e58"
         ],
         "id" : "contact|channel",
         "kind" : "contactChannel",
         "status" : "recorded handset and cellular operational in exercise",
         "subjectIDs" : [
           "ct-oak-1"
+        ]
+      },
+      {
+        "evidenceIDs" : [
+          "7eb026c1fb706e58"
+        ],
+        "id" : "helperReach|p-oak-3",
+        "kind" : "helperReach",
+        "status" : "committed exercise reach: reachable; shared simultaneous capacity: notAssessed",
+        "subjectIDs" : [
+          "p-oak-3",
+          "p-oak-1"
+        ]
+      },
+      {
+        "evidenceIDs" : [
+          "7eb026c1fb706e58"
+        ],
+        "id" : "helperReach|p-oak-4",
+        "kind" : "helperReach",
+        "status" : "committed exercise reach: reachable; shared simultaneous capacity: notAssessed",
+        "subjectIDs" : [
+          "p-oak-4",
+          "p-oak-2"
         ]
       }
     ],

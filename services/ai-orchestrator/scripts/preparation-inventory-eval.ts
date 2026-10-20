@@ -27,6 +27,6 @@ try {
   assert.equal(untyped.assessments.find((a:any)=>a.criterionID==='essentials').predicates[predicate],undefined);
   results.push({kind,category,initial:before.assessments.find((a:any)=>a.criterionID==='essentials'),confirmed:after.assessments.find((a:any)=>a.criterionID==='essentials'),generic:untyped.assessments.find((a:any)=>a.criterionID==='essentials'),gap:stock.gaps.find((g:any)=>g.category===category),task:stock.taskCatalog.find((t:any)=>t.actionID===actionID),resourceRefreshChanged:true,preparation:[before.scorecard.preparation,after.scorecard.preparation]});
  }
- await writeFile('../../fixtures/ai/preparation-inventory-v2.json',JSON.stringify({synthetic:true,newModelCalls:0,assessmentVersion:'dryrun.household-assessment/6',results,limits:'Identity and usable count are reviewed; location, technique, kit suitability for specific needs and non-water consumption remain separately unassessed. Native review/save not tested.'},null,2)+'\n');
+ await writeFile('../../fixtures/ai/preparation-inventory-v2.json',JSON.stringify({synthetic:true,newModelCalls:0,assessmentVersion:'dryrun.household-assessment/7',results,limits:'Identity and usable count are reviewed; location, technique, kit suitability for specific needs and non-water consumption remain separately unassessed. Native review/save not tested.'},null,2)+'\n');
  console.log(JSON.stringify({status:'passed',kinds:results.length,realConfirmation:true,scorePropagation:true,resourceRefresh:true,genericIdentityClearsCredit:true,newModelCalls:0}));
 }finally{host.close();}

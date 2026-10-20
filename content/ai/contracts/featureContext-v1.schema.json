@@ -34,6 +34,28 @@
                   "minLength": 1,
                   "maxLength": 120
                 }
+              },
+              "recordedConditions": {
+                "type": "string",
+                "maxLength": 1200
+              },
+              "essentialMedication": {
+                "type": "string",
+                "maxLength": 1200
+              },
+              "communicationInstructions": {
+                "type": "string",
+                "maxLength": 1200
+              },
+              "helperPersonID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "startingRoomID": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
               }
             },
             "required": [
@@ -110,6 +132,131 @@
                   "missing",
                   "unknown"
                 ]
+              },
+              "purpose": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "requiresColdStorage": {
+                "type": "boolean"
+              },
+              "storageInstructions": {
+                "type": "string",
+                "maxLength": 1200
+              },
+              "powerWatts": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "documentedBackupRuntimeHours": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "compatibleBackupIDs": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
               }
             },
             "required": [
@@ -230,6 +377,571 @@
               "status",
               "sourceIDs",
               "fieldIDs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "inventory": {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "type": "string",
+              "const": "recordedHouseholdInventory"
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "asOf": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            },
+            "items": {
+              "maxItems": 500,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "category": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "quantity": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "liter",
+                      "usGallon",
+                      "count",
+                      "wattHour",
+                      "day"
+                    ]
+                  },
+                  "usableQuantity": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "number"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "accessible": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "boolean"
+                      },
+                      "origin": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "status": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "sourceIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "inputIDs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      },
+                      "verifiedAt": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "origin",
+                      "status",
+                      "sourceIDs",
+                      "inputIDs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "locationID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "expiresAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  },
+                  "subjectIDs": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "evidenceIDs": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "lastConfirmedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  },
+                  "preparationKind": {
+                    "type": "string",
+                    "enum": [
+                      "flashlight",
+                      "firstAidKit"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "category",
+                  "quantity",
+                  "unit",
+                  "usableQuantity",
+                  "accessible",
+                  "subjectIDs",
+                  "evidenceIDs"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "scope",
+            "revision",
+            "asOf",
+            "items"
+          ],
+          "additionalProperties": false
+        },
+        "backupPower": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "portableBatteryStation",
+                  "portableGenerator",
+                  "standbyGenerator",
+                  "solarWithBattery",
+                  "solarGridTiedOnly",
+                  "vehicleInverter",
+                  "powerBank",
+                  "deviceInternalBattery"
+                ]
+              },
+              "usableEnergyWh": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "continuousOutputW": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "setupConfirmed": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "boolean"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "islandingConfirmed": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "boolean"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "safeOutdoorPlacementConfirmed": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "boolean"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "sourceIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "inputIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    }
+                  },
+                  "recordedAt": {
+                    "type": "string"
+                  },
+                  "verifiedAt": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "origin",
+                  "status",
+                  "sourceIDs",
+                  "inputIDs"
+                ],
+                "additionalProperties": false
+              },
+              "assumedEfficiency": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "usableEnergyWh",
+              "continuousOutputW",
+              "setupConfirmed",
+              "islandingConfirmed",
+              "safeOutdoorPlacementConfirmed",
+              "assumedEfficiency"
             ],
             "additionalProperties": false
           }
@@ -541,6 +1253,338 @@
             "limitations"
           ],
           "additionalProperties": false
+        },
+        "supplies": {
+          "type": "object",
+          "properties": {
+            "storedWaterGallons": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "sourceIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "inputIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "recordedAt": {
+                  "type": "string"
+                },
+                "verifiedAt": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "origin",
+                "status",
+                "sourceIDs",
+                "inputIDs"
+              ],
+              "additionalProperties": false
+            },
+            "shelfStableFoodDays": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "sourceIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "inputIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "recordedAt": {
+                  "type": "string"
+                },
+                "verifiedAt": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "origin",
+                "status",
+                "sourceIDs",
+                "inputIDs"
+              ],
+              "additionalProperties": false
+            },
+            "flashlights": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "sourceIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "inputIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "recordedAt": {
+                  "type": "string"
+                },
+                "verifiedAt": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "origin",
+                "status",
+                "sourceIDs",
+                "inputIDs"
+              ],
+              "additionalProperties": false
+            },
+            "coolerAndIcePacks": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "boolean"
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "sourceIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "inputIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "recordedAt": {
+                  "type": "string"
+                },
+                "verifiedAt": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "origin",
+                "status",
+                "sourceIDs",
+                "inputIDs"
+              ],
+              "additionalProperties": false
+            },
+            "firstAidKit": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "boolean"
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "sourceIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "inputIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "recordedAt": {
+                  "type": "string"
+                },
+                "verifiedAt": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "origin",
+                "status",
+                "sourceIDs",
+                "inputIDs"
+              ],
+              "additionalProperties": false
+            },
+            "fireExtinguisher": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "boolean"
+                },
+                "origin": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "status": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "sourceIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "inputIDs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "recordedAt": {
+                  "type": "string"
+                },
+                "verifiedAt": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "origin",
+                "status",
+                "sourceIDs",
+                "inputIDs"
+              ],
+              "additionalProperties": false
+            },
+            "limitedStorageSpace": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "storedWaterGallons",
+            "shelfStableFoodDays",
+            "flashlights",
+            "coolerAndIcePacks",
+            "firstAidKit",
+            "fireExtinguisher",
+            "limitedStorageSpace"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -561,6 +1605,282 @@
       "items": {
         "type": "object",
         "properties": {
+          "destination": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "contact"
+                  },
+                  "contactRole": {
+                    "type": "string",
+                    "enum": [
+                      "outOfAreaContact",
+                      "neighborHelper",
+                      "transportSupport",
+                      "careProvider",
+                      "utilityMedicalRegistry",
+                      "waterUtility",
+                      "other"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "contactRole"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "family"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "equipment"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind",
+                  "subjectID"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "meeting"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "enum": [
+                      "outsideMeetingPoint",
+                      "backupMeetingPlace",
+                      "fallbackDestination",
+                      "exteriorHydrant",
+                      "homeReference"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "purpose"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "home"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "checklist"
+                  },
+                  "checklistID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "titleKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind",
+                  "checklistID",
+                  "titleKey"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "backups"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "transport"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "homeSetup"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "review"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "water"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "communications"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "housing"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "supplies"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "bespoke": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "fact": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "implication": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "completionCheck": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "title",
+              "fact",
+              "implication",
+              "action",
+              "completionCheck"
+            ],
+            "additionalProperties": false
+          },
           "id": {
             "type": "string",
             "minLength": 1,
@@ -597,7 +1917,6 @@
             }
           },
           "completionPredicates": {
-            "minItems": 1,
             "maxItems": 8,
             "type": "array",
             "items": {
@@ -714,6 +2033,282 @@
       "items": {
         "type": "object",
         "properties": {
+          "destination": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "contact"
+                  },
+                  "contactRole": {
+                    "type": "string",
+                    "enum": [
+                      "outOfAreaContact",
+                      "neighborHelper",
+                      "transportSupport",
+                      "careProvider",
+                      "utilityMedicalRegistry",
+                      "waterUtility",
+                      "other"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "contactRole"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "family"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "equipment"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind",
+                  "subjectID"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "meeting"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "enum": [
+                      "outsideMeetingPoint",
+                      "backupMeetingPlace",
+                      "fallbackDestination",
+                      "exteriorHydrant",
+                      "homeReference"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "purpose"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "home"
+                  },
+                  "subjectID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "checklist"
+                  },
+                  "checklistID": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "titleKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "kind",
+                  "checklistID",
+                  "titleKey"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "backups"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "transport"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "homeSetup"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "review"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "water"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "communications"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "housing"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "supplies"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "bespoke": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "fact": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "implication": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              },
+              "completionCheck": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "title",
+              "fact",
+              "implication",
+              "action",
+              "completionCheck"
+            ],
+            "additionalProperties": false
+          },
           "id": {
             "type": "string",
             "minLength": 1,
@@ -750,7 +2345,6 @@
             }
           },
           "completionPredicates": {
-            "minItems": 1,
             "maxItems": 8,
             "type": "array",
             "items": {

@@ -699,6 +699,8 @@
   "ui.task.changedTitle": "Xem lại các bước chuẩn bị hiện tại",
   "ui.task.changedBody": "Đề xuất trước đây không còn khớp với bước chuẩn bị hiện có. Mở danh sách hiện tại để xem việc nào vẫn cần chú ý.",
   "ui.shelter.advanceReview": "Sắp xếp quyền vào, thời điểm và hỗ trợ trước khi có cảnh báo lốc xoáy. Các mục điểm đến ghi lại kế hoạch chung; chúng không chứng nhận khả năng bảo vệ khỏi lốc xoáy.",
+  "family.member": "Thành viên gia đình",
+  "family.customRole": "Vai trò tùy chỉnh",
   "score.title": "Điểm chuẩn bị",
   "score.provisional": "Tạm thời",
   "score.outOf": "{score}/100",
@@ -845,5 +847,16 @@
   "practice.result": "Luyện tập {score}/100 · {assessed}/4 đã đánh giá",
   "practice.doneBody": "Những tình huống ứng dụng không thể đánh giá cho gia đình bạn vẫn chưa được đánh giá; chúng không bị tính là sai. Bạn có thể luyện tập thoải mái trong bất kỳ bài tập nào; bài kiểm tra mới sẽ bắt đầu lại từ đầu.",
   "practice.again": "Bắt đầu bài kiểm tra mới",
-  "practice.unavailable": "Bài kiểm tra luyện tập cần sơ đồ nhà và một tình huống nước được hỗ trợ."
+  "practice.unavailable": "Bài kiểm tra luyện tập cần sơ đồ nhà và một tình huống nước được hỗ trợ.",
+  "prep.ai.title": "Cá nhân hóa với Gemini",
+  "prep.ai.detail": "Chỉ dành cho hộ gia đình mẫu. Gửi nhu cầu đã ẩn danh, thiết bị, vật dụng đã ghi nhận và mã sơ đồ nhà (không có tên, số điện thoại hay địa chỉ) tới Google Gemini qua máy chủ thử nghiệm của Dry Run. Gemini có thể sắp xếp lại các mục cùng mức ưu tiên và giải thích cho hộ gia đình này. Ứng dụng kiểm tra từng mục với danh sách của bạn; mức ưu tiên, điểm số và những việc đã xong không bao giờ thay đổi.",
+  "prep.ai.run": "Hỏi Gemini",
+  "prep.ai.working": "Đang hỏi Gemini…",
+  "prep.ai.applied": "Gemini đã sắp xếp {count} mục cho hộ gia đình này trong từng mức ưu tiên. Mỗi mục đã được kiểm tra với danh sách của bạn.",
+  "prep.ai.rejected": "{count} gợi ý không khớp với danh sách của bạn và đã bị bỏ qua.",
+  "prep.ai.unavailable": "Gemini không khả dụng. Danh sách giữ thứ tự của ứng dụng.",
+  "prep.ai.whyLabel": "Gemini, cho hộ gia đình này",
+  "prep.ai.ideas": "Ý tưởng khác từ Gemini (không tính điểm)",
+  "prep.ai.question": "Gemini hỏi: {question}",
+  "prep.ai.reset": "Dùng thứ tự của ứng dụng"
 }

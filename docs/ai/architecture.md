@@ -1,3 +1,5 @@
+> Corrective implementation update: read [current Mac handoff](mac-corrective-handoff.md), [six-scenario coverage](six-scenario-coverage.md), and [issue status](corrective-issue-status.md) before historical notes below. Current scope includes hazard-mechanics/5 with frozen historical replay, full grounded task generation, automatic research, and retiring fixed-budget hazard anchors. Native and live-quality gates remain separately reported.
+
 # Integrated Gemini implementation
 
 The root implementation reference remains the specification. Baseline reconciliation is in implementation-map.md; official provider verification is in provider-research.md. Native files are deliberately untouched. Historical on-device intake, manual checklists, saved cards/PDFs and authored runs continue working.
@@ -27,3 +29,5 @@ Scoring is Core-only. Agents inspect the frozen rubric/evidence, identify incons
 Deployment limitations are deliberate fail-closed boundaries: synthetic-only fixture auth is loopback/dev, production App Attest verification and short-lived installation sessions remain an integration dependency. The release's private-data billing, audience/under-18 terms fit and native consent need actual approval. No production deployment or real family data test is claimed.
 
 Selected-frame calibration now has a local-only `RoomImageCaptureGeometry` companion and bounded optional encrypted `IntegratedAIState.imageGeometryRecords`. [image-geometry.md](image-geometry.md) defines exact transform inversion, camera rays, provenance checks and native byte/registration/deletion responsibilities. Neither the companion nor depth/pose data belongs in cloud contexts; a validated ray is not a world position or confirmed home fact.
+
+Current local continuation computes completion from the committed hazard objective before considering later scenario profiles. It ends supported actual flood/thermal departures and, in mechanics5, complete fire escape plus separate roster and all-person tornado arrivals. It never applies destination geometry or queued home events to a departed family. This is a next-proposal policy; committed history and replay remain unchanged. See `DepartureFallbackTests`, `departure-fallback-eval.ts` and the current corrective handoff. Native must commit/persist that proposal before rendering its result.

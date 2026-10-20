@@ -356,10 +356,12 @@ struct Graph {
             // Even an unconfirmed (scanned) narrow width is enough to rule an opening out.
             return "incompatibleMobility: clear width \(w) m below \(request.mobility.minimumClearWidthMeters) m"
         }
-        if p.clearWidthMeters.confirmedValue != nil {
-            // Confirmed and wide enough.
+        let capturedWidth=p.clearWidthMeters.origin == .scanObserved && p.clearWidthMeters.value.map{$0.isFinite && $0>0} == true
+        if p.clearWidthMeters.confirmedValue != nil || capturedWidth {
+            // Valid captured dimensions are accepted geometry, without a measurement chore.
+            // This does not establish operability, exterior adjacency or a step-free threshold.
         } else if request.mobility.requiresStepFree {
-            return p.clearWidthMeters.isKnown ? "incompatibleMobility: scanned clear width not confirmed" : "incompatibleMobility: clear width unknown (needs measurement)"
+            return p.clearWidthMeters.isKnown ? "incompatibleMobility: clear width unavailable" : "incompatibleMobility: clear width unknown (needs measurement)"
         } else {
             verificationNeeded[p.id, default: []].append("\(p.id).clearWidth")
         }

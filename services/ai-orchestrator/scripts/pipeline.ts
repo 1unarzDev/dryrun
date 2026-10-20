@@ -5,7 +5,7 @@ import {PublicEvidenceTools} from '../src/evidence.js';
 import {Host} from './host.js';
 import {GeminiProvider} from '../src/provider.js';
 import {Gateway} from '../src/gateway.js';
-import {minimizedSnapshot} from '../src/contracts.js';
+import {minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import {FeatureRunner,preparationOutput,resourceOutput,stressOutput,featureContext,rubricSchema} from '../src/features.js';
 const runID=new Date().toISOString().replace(/[:.]/g,'-');
 const outputPath=process.env.DRYRUN_PIPELINE_OUTPUT??'../../fixtures/ai/integrated-pipeline-'+runID+'.json';
@@ -49,7 +49,7 @@ try{
   state=await host.request({op:'commit',session:state.session,commit:{id:'water-policy',actor:'user',baseRevision:state.receipt.revision,commands:[{kind:'useStoredWater',value:sample==='oak'?'essential':'all'}]}});
   const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
   currentState=state;stage='director';
-  const directorContext={binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles??state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),learningObjectives:['Inspect committed water conservation consequences and direct the next useful incident or decision'],lastAction:state.lastAction,recentActions:state.recentActions};
+  const directorContext={binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles??state.profiles.map((p:any)=>({id:p.id,rule:p.rule,minute:p.minute})),learningObjectives:['Inspect committed water conservation consequences and direct the next useful incident or decision'],lastAction:state.lastAction,recentActions:state.recentActions};
   let directed:any=await gateway.start('synthetic-pipeline',{contractVersion:'dryrun.ai/1',requestID:'pipeline-'+sample,role:'director',synthetic:true,context:directorContext});
   const adaptiveTrace:unknown[]=[];
   while(directed.status==='needs_client_tools'){

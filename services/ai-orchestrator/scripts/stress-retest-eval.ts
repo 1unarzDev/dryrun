@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {executeDirectorTool} from './director-tools.js';
 import {Gateway} from '../src/gateway.js';
-import {directorToolSchemas,minimizedSnapshot,stressRetestPlan} from '../src/contracts.js';
+import {directorToolSchemas,minimizedSnapshot,minimizedAssistance,stressRetestPlan} from '../src/contracts.js';
 import type {AgentProvider} from '../src/provider.js';
 const host=new Host();
 try {
@@ -27,7 +27,7 @@ try {
  let turns=0;const trace:any[]=[];
  const fixture:AgentProvider={async turn(){turns++;if(turns<3){const call={type:'function_call' as const,id:'tool-'+turns,name:turns===1?'runCounterfactual':'evaluateCandidateAction',arguments:turns===1?{profileIDs,retestPlan}:{commands}};return {steps:[call],calls:[call],text:'',usage:{}};}return {steps:[],calls:[],text:JSON.stringify({commands,purpose:'Review the hypothetical storage comparison and ask before making real changes.',evidenceIDs:[]}),usage:{}};}};
  const gateway=new Gateway(fixture);
- let result:any=await gateway.start('synthetic-retest',{contractVersion:'dryrun.ai/1',requestID:'controlled-storage-retest',role:'director',synthetic:true,context:{initialInventoryItemIDs:source.inventory.ledger.items.map((item:any)=>item.id),binding,snapshot:minimizedSnapshot(state.receipt),profiles:state.directorProfiles,homeScene:state.homeScene,household:state.householdContext,directorPolicy:source.directorPolicy,directorState:state.receipt.directorState,learningObjectives:['Investigate recorded storage access using a controlled hypothetical retest.']}});
+ let result:any=await gateway.start('synthetic-retest',{contractVersion:'dryrun.ai/1',requestID:'controlled-storage-retest',role:'director',synthetic:true,context:{initialInventoryItemIDs:source.inventory.ledger.items.map((item:any)=>item.id),binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),profiles:state.directorProfiles,homeScene:state.homeScene,household:state.householdContext,directorPolicy:source.directorPolicy,directorState:state.receipt.directorState,learningObjectives:['Investigate recorded storage access using a controlled hypothetical retest.']}});
  while(result.status==='needs_client_tools'){
   const call=result.calls[0],response=await executeDirectorTool(host,state,binding,call);
   trace.push({call,result:response.result});

@@ -339,7 +339,7 @@
   "spatial.level-name": "Tên tầng hoặc cao độ",
   "spatial.level-order": "Thứ tự tương đối của tầng: {order}",
   "spatial.level-elevation": "Cao độ đã ghi so với tầng đầu (mét)",
-  "spatial.level-note": "Chỉ nhập tầng có thật. Dùng số thứ tự nhỏ hơn cho tầng thấp hơn. Cao độ và thứ tự không xác nhận mặt đất ngoài nhà; kiểm tra riêng từng tầng. Để bản nháp lại nếu chưa rõ quan hệ giữa các tầng.",
+  "spatial.level-note": "Chỉ thêm những tầng có thật. Số thứ tự nhỏ hơn là tầng thấp hơn. Thứ tự tầng không xác nhận lối ra ngoài hay cầu thang có thể sử dụng.",
   "spatial.save-level": "Thêm tầng này",
   "spatial.level-input-error": "Nhập tên tầng và cao độ hữu hạn đã ghi bằng mét.",
   "spatial.add-stairs": "Thêm lối nối cầu thang",
@@ -418,7 +418,7 @@
   "spatial.leak-location-unknown": "Chưa ghi vị trí rò rỉ",
   "spatial.floor.ground": "Tầng trệt",
   "spatial.marker-location": "Vị trí ký hiệu",
-  "spatial.marker-position-note": "Tọa độ tính bằng mét trong sơ đồ tầng này. Đối chiếu vị trí gợi ý với phòng thực tế. Áp dụng cập nhật bản nháp; Lưu giữ lại thay đổi. Xác nhận vị trí không xác nhận thiết bị hoạt động hay nơi trú ẩn bảo vệ được bạn.",
+  "spatial.marker-position-note": "Chọn một vị trí trong phòng. Áp dụng cập nhật bản nháp này; Lưu giữ lại bản nháp. Vị trí đã ghi nhận không xác nhận thiết bị hoạt động hay nơi trú ẩn có khả năng bảo vệ.",
   "spatial.marker-x": "Vị trí X (m)",
   "spatial.marker-y": "Vị trí Y (m)",
   "spatial.marker-location-checked": "Tôi đã kiểm tra vị trí này trong phòng thực tế",
@@ -428,5 +428,7 @@
   "spatial.marker-recorded": "Đã ghi vị trí; mức sẵn sàng được kiểm tra riêng",
   "spatial.marker-review": "Cần kiểm tra vị trí",
   "spatial.fire-no-elevators": "Bài tập cháy không dùng thang máy. Xem quy trình niêm yết của tòa nhà và kế hoạch hỗ trợ; nếu chưa có đường cầu thang phù hợp thì vấn đề vẫn chưa được giải quyết.",
-  "spatial.elevator-excluded": "Thang máy không được dùng trong đường thoát của bài tập"
+  "spatial.elevator-excluded": "Thang máy không được dùng trong đường thoát của bài tập",
+  "spatial.tap-placement": "Chạm vào vị trí trong phòng đã chọn.",
+  "spatial.use-room-position": "Dùng vị trí được gợi ý trong phòng"
 }

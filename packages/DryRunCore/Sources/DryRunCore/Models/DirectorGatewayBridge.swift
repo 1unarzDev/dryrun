@@ -98,8 +98,12 @@ public enum DirectorGatewayBridge {
         public var commands: [SessionCommand]?
         public var profileIDs: [String]?
         public var retestPlan: StressRetestPlan?
-        public init(command: SessionCommand? = nil, commands: [SessionCommand]? = nil, profileIDs: [String]? = nil, retestPlan: StressRetestPlan? = nil) {
+        /// Only for the gateway-owned `validateSuggestedActions` call, together with the proposal's `commands`.
+        public var suggestedActions: [SuggestedRehearsalAction]?
+        public init(command: SessionCommand? = nil, commands: [SessionCommand]? = nil, profileIDs: [String]? = nil, retestPlan: StressRetestPlan? = nil,
+                    suggestedActions: [SuggestedRehearsalAction]? = nil) {
             self.command = command; self.commands = commands; self.profileIDs = profileIDs; self.retestPlan = retestPlan
+            self.suggestedActions = suggestedActions
         }
     }
 
@@ -145,9 +149,15 @@ public enum DirectorGatewayBridge {
         public var contextDigest: String
         public var observation: Observation?
         public var preview: PreviewContext?
+        public var suggestionValidation: [SuggestionCheck]?
+    }
+    /// Feasibility of one suggested action after the proposal's own commands, as `suggestionValidation` in the contract.
+    public struct SuggestionCheck: Codable, Sendable, Equatable {
+        public var id: String; public var feasible: Bool; public var rejection: String?
     }
 
-    public static let toolNames: Set<String> = ["evaluateCandidateAction", "inspectScene", "queryRoutes", "evaluateResources", "inspectDependencies", "runCounterfactual"]
+    public static let toolNames: Set<String> = ["evaluateCandidateAction", "inspectScene", "queryRoutes", "evaluateResources", "inspectDependencies",
+                                                "runCounterfactual", "validateSuggestedActions"]
 
     /// Executes one whitelisted, read-only tool against the bound revision. Never commits; never returns raw receipts.
     public static func execute(_ call: ToolCall, session: SimulationSession, binding: AgentContextBinding,
@@ -156,7 +166,12 @@ public enum DirectorGatewayBridge {
         let current = try session.query(library: library)
         try binding.validate(receipt: current, household: session.initial.household, home: session.initial.home)
         let a = call.arguments
-        if kind == .evaluateCandidateAction {
+        if kind == .validateSuggestedActions {
+            guard a.command == nil, a.profileIDs == nil, a.retestPlan == nil, let commands = a.commands, (1...8).contains(commands.count),
+                  let actions = a.suggestedActions, (1...4).contains(actions.count) else { throw SessionError.invalidCommand }
+        } else if a.suggestedActions != nil {
+            throw SessionError.invalidCommand
+        } else if kind == .evaluateCandidateAction {
             guard (a.command == nil) != (a.commands == nil), a.profileIDs == nil, a.retestPlan == nil else { throw SessionError.invalidCommand }
         } else if kind == .runCounterfactual {
             guard a.command == nil, a.commands == nil, let ids = a.profileIDs, (1...8).contains(ids.count) else { throw SessionError.invalidCommand }
@@ -164,7 +179,7 @@ public enum DirectorGatewayBridge {
             guard a.command == nil, a.commands == nil, a.profileIDs == nil, a.retestPlan == nil else { throw SessionError.invalidCommand }
         }
         let request = SessionToolRequest(kind: kind, baseRevision: binding.revision, command: a.command, commands: a.commands,
-                                         profileIDs: a.profileIDs, retestPlan: a.retestPlan)
+                                         suggestedActions: a.suggestedActions, profileIDs: a.profileIDs, retestPlan: a.retestPlan)
         let response: SessionToolResponse
         do { response = try session.executeTool(request, library: library) }
         catch SessionError.invalidCommand where kind == .runCounterfactual {
@@ -195,6 +210,10 @@ public enum DirectorGatewayBridge {
                                              dependencyIDs: c.dependencyIDs, sourceConcernDigest: c.sourceConcernDigest,
                                              baseline: MinimizedSnapshot(c.baseline.snapshot), controlledRetest: c.controlledRetest.map { MinimizedSnapshot($0.snapshot) },
                                              comparison: c.comparison)
+        case .validateSuggestedActions:
+            // Only identity and outcome leave the device; preview receipts stay local. The contract caps a rejection at 120 characters.
+            guard let checks = response.suggestedActions else { throw SessionError.invalidCommand }
+            result.suggestionValidation = checks.map { SuggestionCheck(id: $0.action.id, feasible: $0.feasible, rejection: $0.rejection.map { String($0.prefix(120)) }) }
         }
         return result
     }
