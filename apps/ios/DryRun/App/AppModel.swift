@@ -717,6 +717,62 @@ final class AppModel {
         return await commitAdaptive(director: nil, narration: nil) { session in try session.commit(commit, library: scenarios) }
     }
 
+    // MARK: - Gemini preparation (fictional households, development gateway)
+
+    enum PreparationAIState: Equatable {
+        case working
+        case ready(PreparationFeatureBridge.Personalization)
+        case unavailable(String)
+    }
+    /// Bound to the household/home revisions and confirmed inventory it was computed from; any edit retires it.
+    struct PreparationAIKey: Equatable { var revision: RevisionKey; var inventoryRevision: Int }
+    private(set) var preparationAI: (key: PreparationAIKey, state: PreparationAIState)?
+
+    private var preparationAIKey: PreparationAIKey? {
+        currentKey.map { PreparationAIKey(revision: $0, inventoryRevision: aiState.inventory.revision) }
+    }
+    var preparationAIAvailable: Bool { DirectorGatewayClient.current != nil && household?.isFictional == true && rubric != nil }
+    /// The current state, or nil when nothing was asked for these exact inputs.
+    var preparationAIState: PreparationAIState? {
+        guard let preparationAI, preparationAI.key == preparationAIKey else { return nil }
+        return preparationAI.state
+    }
+    var preparationPersonalization: PreparationFeatureBridge.Personalization? {
+        if case .ready(let p) = preparationAIState { return p }
+        return nil
+    }
+
+    /// Asks Gemini (through the gateway) to choose, order and explain preparations for this household. Only an explicit
+    /// tap starts it. The answer is applied only if the inputs did not change meanwhile and only as Core accepts it.
+    func personalizePreparation() async {
+        guard preparationAIAvailable, let client = DirectorGatewayClient.current, let household, let rubric,
+              let key = preparationAIKey, nextStepResults != nil, preparationAIState != .working else { return }
+        let request: PreparationFeatureBridge.Request
+        do {
+            request = try PreparationFeatureBridge.request(requestID: "prep-\(UUID().uuidString)", household: household, home: home,
+                                                           inventory: aiState.inventory, rubric: rubric)
+        } catch {
+            preparationAI = (key, .unavailable("context"))
+            return
+        }
+        preparationAI = (key, .working)
+        workInFlight += 1
+        let outcome = await client.preparation(request)
+        workInFlight -= 1
+        guard preparationAIKey == key, let summary = nextSteps else { return }
+        switch outcome {
+        case .completed(let output, let revision) where revision == household.revision:
+            preparationAI = (key, .ready(PreparationFeatureBridge.accept(output, summary: summary, household: household)))
+        case .completed:
+            preparationAI = (key, .unavailable("stale"))
+        case .unavailable(let reason):
+            preparationAI = (key, .unavailable(reason))
+        }
+    }
+
+    /// Returns the Prepare list to the app's own order for these inputs.
+    func clearPreparationPersonalization() { preparationAI = nil }
+
     /// Opt-in for this app session only: Gemini directs the next moments of a fictional household's exercise.
     /// Requires a development gateway (launch arguments); real households never use it until production authorization.
     var cloudDirectorEnabled = false
@@ -975,9 +1031,22 @@ final class AppModel {
 
     // MARK: - Next steps and outage card
 
+    /// Inputs of the last summary. The summary merges six rehearsals and evaluates baseline preparedness three times,
+    /// and views read it several times per render; it is recomputed only when an input (or the day) changes.
+    private struct NextStepsInputs: Equatable {
+        var household: HouseholdProfile; var home: HomeModel?; var savedPlaces: [SavedPlace]; var results: [RehearsalResult]?; var day: Date
+    }
+    @ObservationIgnored private var nextStepsCache: (inputs: NextStepsInputs, summary: NextStepsSummary)?
+
     var nextSteps: NextStepsSummary? {
         guard let household else { return nil }
-        return NextSteps.summarize(nextStepResults ?? [], household: household, home: home, savedPlaces: savedPlaces)
+        let now = Date()
+        let inputs = NextStepsInputs(household: household, home: home, savedPlaces: savedPlaces, results: nextStepResults,
+                                     day: Calendar.current.startOfDay(for: now))
+        if let cache = nextStepsCache, cache.inputs == inputs { return cache.summary }
+        let summary = NextSteps.summarize(nextStepResults ?? [], household: household, home: home, savedPlaces: savedPlaces, referenceDate: now)
+        nextStepsCache = (inputs, summary)
+        return summary
     }
 
     /// Runs every scenario with default choices (off the main actor) unless results for this revision exist.
@@ -994,7 +1063,15 @@ final class AppModel {
         workInFlight += 1
         defer { workInFlight -= 1 }
         do {
-            let results = try await Task.detached(priority: .userInitiated) { try inputs.map { try engine.run($0) } }.value
+            // The six runs are independent: run them concurrently and keep the planner's scenario order.
+            let results = try await withThrowingTaskGroup(of: (Int, RehearsalResult).self) { group in
+                for (index, input) in inputs.enumerated() {
+                    group.addTask(priority: .userInitiated) { (index, try engine.run(input)) }
+                }
+                var ordered = [RehearsalResult?](repeating: nil, count: inputs.count)
+                for try await (index, result) in group { ordered[index] = result }
+                return ordered.compactMap { $0 }
+            }
             guard nextGate.shouldApply(ticket, current: currentKey) else { return }
             nextStepResults = results
         } catch {

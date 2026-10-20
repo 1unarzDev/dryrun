@@ -780,6 +780,8 @@ struct DebriefView: View {
                                 ForEach(scenario.debrief.pointKeys, id: \.self) { Text(l($0)).font(.footnote).foregroundStyle(.secondary) }
                             }
                         }
+                        // A container keeps the outcome section's own identifier (debrief.outcomes.<scenario>).
+                        .accessibilityElement(children: .contain)
                         .accessibilityIdentifier("debrief.hazard.\(design.scenarioID)")
                     }
                     Text(l("ui.debrief.intro")).font(.callout).foregroundStyle(.secondary)

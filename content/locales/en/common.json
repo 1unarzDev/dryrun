@@ -847,5 +847,16 @@
   "practice.result": "Practice {score}/100 · {assessed}/4 assessed",
   "practice.doneBody": "Situations this app cannot judge for your household stay unassessed; they are not counted as wrong. You can practice freely in any exercise; a new check starts fresh.",
   "practice.again": "Start a new check",
-  "practice.unavailable": "The practice check needs your home layout and a supported water situation."
+  "practice.unavailable": "The practice check needs your home layout and a supported water situation.",
+  "prep.ai.title": "Personalize with Gemini",
+  "prep.ai.detail": "Example household only. Sends anonymized needs, equipment, recorded supplies and home layout IDs (no names, phone numbers or address) to Google Gemini through the Dry Run test server. Gemini can reorder items within the same priority and explain them for this household. The app checks each one against your list; priority, the score and what is done never change.",
+  "prep.ai.run": "Ask Gemini",
+  "prep.ai.working": "Asking Gemini…",
+  "prep.ai.applied": "Gemini ordered {count} items for this household within each priority level. Each was checked against your list.",
+  "prep.ai.rejected": "{count} suggestions did not match your list and were left out.",
+  "prep.ai.unavailable": "Gemini was unavailable. The list stays in the app’s own order.",
+  "prep.ai.whyLabel": "Gemini, for this household",
+  "prep.ai.ideas": "Other ideas from Gemini (not scored)",
+  "prep.ai.question": "Gemini asks: {question}",
+  "prep.ai.reset": "Use the app’s order"
 }

@@ -26,6 +26,34 @@ struct RankingTests {
         #expect(RecommendationRanker.rank(ranked.reversed()) == ranked)
     }
 
+    @Test("Prepare order: within a tier, a life-sustaining medical dependency comes first, then life safety; never across tiers")
+    func dependencyWithinTier() {
+        let ranked = [
+            rec("prep.contact", .unmetEssentialRequirement, .noCost, scenarios: 6),
+            rec("prep.helper", .unmetEssentialRequirement, .noCost, scenarios: 3),
+            rec("act.medical.continuity-plan", .unmetEssentialRequirement, .moderate),
+            rec("prep.medicalBackup", .unmetEssentialRequirement, .noCost),
+            rec("prep.coldStorage", .blockingUnknownFact, .noCost),
+            rec("prep.water", .blockingUnknownFact, .noCost, scenarios: 6),
+        ].sorted { RecommendationRanker.prepareOrderKey($0, breadth: $0.scenarioIDs.count) < RecommendationRanker.prepareOrderKey($1, breadth: $1.scenarioIDs.count) }
+        #expect(ranked.map(\.actionID) == ["prep.medicalBackup", "act.medical.continuity-plan", "prep.helper", "prep.contact",
+                                          "prep.coldStorage", "prep.water"])
+    }
+
+    @Test("Every household's Prepare list is ordered by tier, then dependency")
+    func householdsPutMedicalDependencyFirst() throws {
+        for h in SampleHouseholds.all {
+            let results = try SimFixtures.scenarioIDs.map { try SimFixtures.run(h, $0) }
+            let toDo = NextSteps.summarize(results, household: h).toDo
+            let keys = toDo.map { ($0.recommendation.tier.rawValue, RecommendationRanker.dependencyRank($0.recommendation.actionID)) }
+            #expect(zip(keys, keys.dropFirst()).allSatisfy { $0 <= $1 }, "\(h.id): \(toDo.map(\.id))")
+            // A household relying on powered or refrigerated medical equipment sees that dependency at the top of its tier.
+            if let first = toDo.first, toDo.contains(where: { RecommendationRanker.dependencyRank($0.recommendation.actionID) == 0 && $0.recommendation.tier == first.recommendation.tier }) {
+                #expect(RecommendationRanker.dependencyRank(first.recommendation.actionID) == 0, "\(h.id) leads with \(first.id)")
+            }
+        }
+    }
+
     @Test("Duplicates merge to the most urgent tier")
     func merge() {
         let r = RecommendationRanker.rank([rec("act.x", .scenarioSupplyOrContinuityGap, .low), rec("act.x", .unmetEssentialRequirement, .low)])

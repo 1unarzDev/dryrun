@@ -5,6 +5,14 @@ public struct RubricCriterion: Codable, Sendable {
     public var id:String; public var domain:String; public var weight:Double
     public var predicateIDs:[String]; public var sourceIDs:[String]; public var critical:Bool
     public var applicabilityRule:String; public var freshnessDays:Int?
+    private enum CodingKeys:String,CodingKey {case id,domain,weight,predicateIDs,sourceIDs,critical,applicabilityRule,freshnessDays}
+    /// The frozen rubric contract (content/ai/rubric-v0.json, gateway rubricSchema) states "no freshness" as an explicit null.
+    public func encode(to encoder:Encoder)throws {
+        var c=encoder.container(keyedBy:CodingKeys.self)
+        try c.encode(id,forKey:.id);try c.encode(domain,forKey:.domain);try c.encode(weight,forKey:.weight)
+        try c.encode(predicateIDs,forKey:.predicateIDs);try c.encode(sourceIDs,forKey:.sourceIDs);try c.encode(critical,forKey:.critical)
+        try c.encode(applicabilityRule,forKey:.applicabilityRule);try c.encode(freshnessDays,forKey:.freshnessDays)
+    }
 }
 public struct RubricDefinition: Codable, Sendable {
     public var version:String; public var domainWeights:[String:Double]; public var criteria:[RubricCriterion]

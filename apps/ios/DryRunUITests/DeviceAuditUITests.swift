@@ -97,6 +97,37 @@ final class DeviceAuditUITests: XCTestCase {
 
     /// Live synthetic loop: committed family action -> Core -> Gemini (gateway) -> Core tool previews -> validated
     /// director commit -> next decision. Runs only when TEST_RUNNER_AIGATEWAY/_AIGATEWAYTOKEN are supplied at run time.
+    /// Prepare: an explicit tap asks Gemini to order and explain preparations for the fictional household; the app
+    /// shows only items Core accepted, labelled as Gemini's, and can return to its own order.
+    func testGeminiPersonalizesThePrepareListWithinPriority() throws {
+        let env = ProcessInfo.processInfo.environment
+        guard let gateway = env["AIGATEWAY"], let token = env["AIGATEWAYTOKEN"] else { throw XCTSkip("no development gateway supplied") }
+        let app = launch(["-demoHousehold", env["AIHOUSEHOLD"] ?? "hh-oak", "-demoHome", "ranch", "-demoTab", "prepare",
+                          "-aiGateway", gateway, "-aiGatewayToken", token])
+        XCTAssertTrue(element("next.actions", in: app).waitForExistence(timeout: 60))
+        shot("prep-ai-00-before", app)
+        let run = reveal("next.ai.run", in: app)
+        XCTAssertTrue(run.exists, "Gemini personalization is offered for the fictional household")
+        shot("prep-ai-01-optin", app)
+        run.tap()
+        let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Allow"]
+        if allow.waitForExistence(timeout: 3) { allow.tap() }
+        let applied = element("next.ai.applied", in: app), unavailable = app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'Gemini was unavailable'")).firstMatch
+        _ = XCTWaiter.wait(for: [expectation(for: NSPredicate(format: "exists == true"), evaluatedWith: applied)], timeout: 150)
+        shot("prep-ai-02-result", app)
+        XCTAssertFalse(unavailable.exists, "Gemini answered")
+        XCTAssertTrue(applied.exists, "an accepted personalization is shown")
+        for _ in 0..<10 { scroll(app, up: false) }
+        let why = element("next.step.aiWhy", in: app)
+        XCTAssertTrue(why.waitForExistence(timeout: 5), "a top item shows Gemini's household-specific reason")
+        XCTAssertFalse(why.label.contains("eq-") || why.label.contains("bk-"), "no internal IDs in family-facing text: \(why.label)")
+        shot("prep-ai-03-list", app)
+        let reset = reveal("next.ai.reset", in: app)
+        reset.tap()
+        XCTAssertTrue(element("next.ai.run", in: app).waitForExistence(timeout: 5), "the app's own order can be restored")
+        XCTAssertFalse(element("next.step.aiWhy", in: app).exists)
+    }
+
     func testGeminiDirectsTheFictionalApartmentFireThroughValidatedCommits() throws {
         let env = ProcessInfo.processInfo.environment
         guard let gateway = env["AIGATEWAY"], let token = env["AIGATEWAYTOKEN"] else { throw XCTSkip("no development gateway supplied") }
@@ -204,9 +235,10 @@ final class DeviceAuditUITests: XCTestCase {
         shot("inventory-05-recorded", app)
     }
 
-    /// Marker relocation from the Home marker list: invalid input keeps the editor open and the old marker intact;
-    /// a valid visible position is applied by Save without tapping Apply, and moving it needs location review again.
-    func testMarkerRelocationSaveWithoutApplyAndInvalidInputStaysOpen() {
+    /// Marker relocation from the Home marker list. The editor places a marker by tapping the plan or choosing a room
+    /// (no free-typed coordinates); Save applies the visible placement without Apply, and a moved marker needs its
+    /// location reviewed again.
+    func testMarkerRelocationSaveWithoutApplyNeedsReviewAgain() {
         let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "ranch"])
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 20))
         let open = reveal("next.home", in: app)
@@ -217,39 +249,31 @@ final class DeviceAuditUITests: XCTestCase {
         let keyToggle = app.buttons.matching(NSPredicate(format: "label == 'Safety markers'")).firstMatch
         if keyToggle.exists { keyToggle.tap() } else { key.tap() }
         let marker = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'home.marker.' AND NOT (identifier IN %@)",
-                                                      ["home.markerKey", "home.marker.x", "home.marker.y", "home.marker.apply", "home.marker.locationChecked"])).firstMatch
+                                                      ["home.markerKey", "home.marker.apply", "home.marker.locationChecked"])).firstMatch
         for _ in 0..<6 where !(marker.exists && marker.isHittable) { scroll(app, up: true) }
         XCTAssertTrue(marker.exists, "a recorded marker is listed")
         let markerID = marker.identifier
         marker.tap()
-        let x = app.textFields["home.marker.x"]
-        XCTAssertTrue(x.waitForExistence(timeout: 10))
+        let apply = reveal("home.marker.apply", in: app)
+        XCTAssertTrue(apply.waitForExistence(timeout: 10), "the tapped marker opens its own editor")
         shot("marker-01-editor", app)
-        let original = Double((x.value as? String) ?? "") ?? 1
-        func replace(_ field: XCUIElement, _ text: String) {
-            field.tap()
-            if let current = field.value as? String, !current.isEmpty {
-                field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count + 2))
-            }
-            field.typeText(text)
-        }
-        replace(x, "abc")
+        // Choose a different room: the editor proposes that room's suggested position and clears the location check.
+        let roomPicker = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Room'")).firstMatch
+        XCTAssertTrue(roomPicker.waitForExistence(timeout: 5))
+        let originalRoom = roomPicker.label
+        roomPicker.tap()
+        let choice = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Living room'")).firstMatch
+        XCTAssertTrue(choice.waitForExistence(timeout: 5))
+        choice.tap()
+        XCTAssertNotEqual(roomPicker.label, originalRoom)
+        shot("marker-02-moved-draft", app)
         app.navigationBars.buttons["Save"].tap()
-        XCTAssertTrue(x.waitForExistence(timeout: 3), "invalid input keeps the editor open")
-        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'previous marker is unchanged'")).firstMatch.exists)
-        shot("marker-02-invalid-kept-open", app)
-        let moved = String(format: "%.2f", max(0.3, original - 0.25))
-        replace(x, moved)
-        app.navigationBars.buttons["Save"].tap()
-        XCTAssertTrue(element("home.scene", in: app).waitForExistence(timeout: 10), "a valid visible placement saves without Apply")
+        XCTAssertTrue(element("home.scene", in: app).waitForExistence(timeout: 10), "a visible placement saves without Apply")
         let reopened = app.buttons[markerID]
         for _ in 0..<6 where !(reopened.exists && reopened.isHittable) { scroll(app, up: true) }
         XCTAssertTrue(reopened.label.contains("Location needs review"), "a moved marker needs its location reviewed again")
+        XCTAssertTrue(reopened.label.contains("Living room"), "the saved room is the one that was visible")
         shot("marker-03-saved-needs-review", app)
-        reopened.tap()
-        XCTAssertTrue(x.waitForExistence(timeout: 10))
-        XCTAssertEqual(Double((x.value as? String) ?? ""), Double(moved), "the saved position is the one that was visible")
-        shot("marker-04-reopened", app)
     }
 
     func testPracticeCheckRecordsFourFirstAnswersBeforeFeedback() {

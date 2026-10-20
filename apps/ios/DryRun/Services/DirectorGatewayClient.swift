@@ -59,6 +59,28 @@ struct DirectorGatewayClient: Sendable {
         await post("v1/continue", Continuation(token: token, binding: binding, callID: callID, result: result))
     }
 
+    enum PreparationOutcome: Sendable {
+        case completed(PreparationFeatureBridge.Output, householdRevision: Int)
+        case unavailable(String)
+    }
+
+    /// One `preparation` feature turn: Gemini selects, orders and explains up to three preparations. The answer is
+    /// only a proposal; `PreparationFeatureBridge.accept` decides what the Prepare tab may show.
+    func preparation(_ request: PreparationFeatureBridge.Request) async -> PreparationOutcome {
+        struct Response: Decodable {
+            let status: String; let reason: String?; let householdRevision: Int?; let proposal: PreparationFeatureBridge.Output?
+        }
+        switch await send("v1/features", request) {
+        case .failure(let failure): return .unavailable(failure.reason)
+        case .success(let data):
+            guard let decoded = try? DryRunJSON.decoder().decode(Response.self, from: data) else { return .unavailable("decode") }
+            guard decoded.status == "completed", let proposal = decoded.proposal, let revision = decoded.householdRevision else {
+                return .unavailable(decoded.reason ?? decoded.status)
+            }
+            return .completed(proposal, householdRevision: revision)
+        }
+    }
+
     /// Best effort: the gateway also disposes the job when the connection drops or its TTL passes.
     func cancel(token: String) async {
         struct Cancel: Encodable { let token: String }
@@ -66,6 +88,29 @@ struct DirectorGatewayClient: Sendable {
     }
 
     private func post(_ path: String, _ body: some Encodable) async -> Outcome {
+        switch await send(path, body) {
+        case .failure(let failure): return .unavailable(failure.reason)
+        case .success(let data):
+            guard let decoded = try? DryRunJSON.decoder().decode(Response.self, from: data) else { return .unavailable("decode") }
+            switch decoded.status {
+            case "completed":
+                guard let proposal = decoded.proposal else { return .unavailable("missing_proposal") }
+                return .completed(proposal)
+            case "needs_client_tools":
+                guard let token = decoded.token, let binding = decoded.binding, let call = decoded.calls?.first, decoded.calls?.count == 1 else {
+                    return .unavailable("invalid_tool_request")
+                }
+                return .needsTools(token: token, binding: binding, call: .init(id: call.id, name: call.name, arguments: call.arguments))
+            case "needs_user_action": return .needsUserAction
+            default: return .unavailable(decoded.reason ?? decoded.status)
+            }
+        }
+    }
+
+    private struct TransportFailure: Error { let reason: String }
+
+    /// POSTs one JSON body and returns the 200 response body; failures are reduced to a short code for the UI.
+    private func send(_ path: String, _ body: some Encodable) async -> Result<Data, TransportFailure> {
         do {
             var request = URLRequest(url: baseURL.appendingPathComponent(path))
             request.httpMethod = "POST"
@@ -79,27 +124,15 @@ struct DirectorGatewayClient: Sendable {
             let (data, response) = try await URLSession.shared.data(for: request)
             try Task.checkCancellation()
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-            guard status == 200 else { return .unavailable("http \(status)") }
-            let decoded = try DryRunJSON.decoder().decode(Response.self, from: data)
-            switch decoded.status {
-            case "completed":
-                guard let proposal = decoded.proposal else { return .unavailable("missing_proposal") }
-                return .completed(proposal)
-            case "needs_client_tools":
-                guard let token = decoded.token, let binding = decoded.binding, let call = decoded.calls?.first, decoded.calls?.count == 1 else {
-                    return .unavailable("invalid_tool_request")
-                }
-                return .needsTools(token: token, binding: binding, call: .init(id: call.id, name: call.name, arguments: call.arguments))
-            case "needs_user_action": return .needsUserAction
-            default: return .unavailable(decoded.reason ?? decoded.status)
-            }
+            guard status == 200 else { return .failure(.init(reason: "http \(status)")) }
+            return .success(data)
         } catch is CancellationError {
-            return .unavailable("cancelled")
+            return .failure(.init(reason: "cancelled"))
         } catch let error as URLError {
             // Transport detail (hosts, paths) stays out of the UI and logs; the numeric code is enough to diagnose.
-            return .unavailable("transport \(error.code.rawValue)")
+            return .failure(.init(reason: "transport \(error.code.rawValue)"))
         } catch {
-            return .unavailable("decode")
+            return .failure(.init(reason: "encode"))
         }
     }
 }

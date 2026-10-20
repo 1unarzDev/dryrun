@@ -82,6 +82,8 @@ struct RehearsalSetupView: View {
                 .disabled(model.isWorking)
                 .accessibilityIdentifier("rehearsal.setup.start")
         }
+        // A container keeps each option's own identifier and selected state (otherwise every child reports this one).
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("rehearsal.setup")
     }
     @ViewBuilder private func readinessContext(_ household: HouseholdProfile) -> some View {
@@ -107,7 +109,7 @@ struct RehearsalSetupView: View {
         if design.hazard == .waterOutage || design.hazard == .heatGridStrain || design.hazard == .freezePowerLoss {
             VStack(alignment: .leading, spacing: Theme.Space.xs) {
                 Text(household.supplies.storedWaterGallons.confirmedValue.map {
-                    "\(l("experience.scene.waterStock")): \(ServiceNames.quantity($0, unit: "gal", localizer: l))"
+                    "\(l("experience.scene.waterStock")): \(ServiceNames.quantity($0, unit: "gal", localizer: l, countryCode: household.privateLocation?.countryCode))"
                 } ?? l("experience.context.waterUnknown")).font(.callout.weight(.semibold))
                 Text(l("experience.context.water")).font(.footnote).foregroundStyle(.secondary)
             }
@@ -329,7 +331,7 @@ struct HazardStatusScene: View {
                 Label(ServiceNames.name(item.id, household: household, localizer: l), systemImage: tank ? "waterbottle" : "battery.75percent")
                     .font(.callout.weight(.semibold))
                 Spacer(minLength: Theme.Space.s)
-                Text(item.current.amount.map { ServiceNames.quantity($0, unit: item.current.unit, localizer: l) } ?? l("experience.scene.unknown"))
+                Text(item.current.amount.map { ServiceNames.quantity($0, unit: item.current.unit, localizer: l, countryCode: household.privateLocation?.countryCode) } ?? l("experience.scene.unknown"))
                     .font(.callout.monospacedDigit())
             }
             if let fraction = item.remainingFraction {
@@ -345,7 +347,7 @@ struct HazardStatusScene: View {
                         .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: Theme.Space.s) {
                             Text(l("experience.scene.remaining")).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                            Text(ServiceNames.quantity(item.current.amount ?? 0, unit: item.current.unit, localizer: l))
+                            Text(ServiceNames.quantity(item.current.amount ?? 0, unit: item.current.unit, localizer: l, countryCode: household.privateLocation?.countryCode))
                                 .font(.title2.weight(.bold).monospacedDigit())
                             Text(l("experience.scene.baselineScale")).font(.caption).foregroundStyle(.secondary)
                         }
@@ -361,11 +363,11 @@ struct HazardStatusScene: View {
             }
             if let change = item.change, change != 0 {
                 Text(l(change < 0 ? "experience.scene.usedSinceStart" : "experience.scene.addedSinceStart", [
-                    "quantity": ServiceNames.quantity(abs(change), unit: item.current.unit, localizer: l)
+                    "quantity": ServiceNames.quantity(abs(change), unit: item.current.unit, localizer: l, countryCode: household.privateLocation?.countryCode)
                 ])).font(.caption.weight(.semibold)).foregroundStyle(tint)
             }
             if let baseline = item.baseline, let amount = baseline.amount {
-                Text("\(l("experience.scene.baseline")): \(ServiceNames.quantity(amount, unit: baseline.unit, localizer: l))")
+                Text("\(l("experience.scene.baseline")): \(ServiceNames.quantity(amount, unit: baseline.unit, localizer: l, countryCode: household.privateLocation?.countryCode))")
                     .font(.caption).foregroundStyle(.secondary)
             }
         }
@@ -453,11 +455,11 @@ struct RehearsalDebriefOutcomes: View {
             ForEach(evidence.resourceReadings) { item in
                 VStack(alignment: .leading, spacing: Theme.Space.xs) {
                     Text(ServiceNames.name(item.id, household: household, localizer: l)).font(.callout.weight(.semibold))
-                    Text(item.current.amount.map { ServiceNames.quantity($0, unit: item.current.unit, localizer: l) } ?? l("experience.scene.unknown"))
+                    Text(item.current.amount.map { ServiceNames.quantity($0, unit: item.current.unit, localizer: l, countryCode: household.privateLocation?.countryCode) } ?? l("experience.scene.unknown"))
                         .font(.callout.monospacedDigit())
                     if let change = item.change, change != 0 {
                         Text(l(change < 0 ? "experience.scene.usedSinceStart" : "experience.scene.addedSinceStart", [
-                            "quantity": ServiceNames.quantity(abs(change), unit: item.current.unit, localizer: l)
+                            "quantity": ServiceNames.quantity(abs(change), unit: item.current.unit, localizer: l, countryCode: household.privateLocation?.countryCode)
                         ])).font(.footnote).foregroundStyle(.secondary)
                     }
                 }.accessibilityElement(children: .combine)
@@ -465,6 +467,7 @@ struct RehearsalDebriefOutcomes: View {
             Text(l("experience.debrief.unresolved", ["count": PlanFormatting.number(Double(evidence.unresolvedRequirementIDs.count), locale: l.locale)]))
                 .font(.footnote).foregroundStyle(.secondary)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("debrief.outcomes.\(evidence.scene.design.scenarioID)")
     }
 }

@@ -33,6 +33,7 @@ struct NextStepsView: View {
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
                     toDo(summary)
+                    if model.preparationAIAvailable { PreparationAICard() }
                     ScorecardCard()
                 } else {
                     SectionCard {
@@ -251,13 +252,19 @@ struct NextStepsView: View {
     @ViewBuilder
     private func toDo(_ summary: NextStepsSummary) -> some View {
         let l = model.localizer
-        let shown = showAll ? summary.toDo : Array(summary.toDo.prefix(3))
+        // Gemini may reorder within a priority tier only (PreparationFeatureBridge.order); otherwise the app's order.
+        let personalization = model.preparationPersonalization
+        let ordered = personalization.map { PreparationFeatureBridge.order(summary.toDo, by: $0) } ?? summary.toDo
+        let shown = showAll ? ordered : Array(ordered.prefix(3))
         SectionCard(title: l("ui.next.doNext") + " (\(summary.toDo.count))", systemImage: "list.bullet.clipboard") {
             if summary.toDo.isEmpty {
                 Text(l("ui.next.nothingLeft")).foregroundStyle(.secondary)
             }
             ForEach(shown) { step in
-                NavigationLink(value: step) { NextStepRow(step: step, isPrimary: step.id == shown.first?.id) }
+                NavigationLink(value: step) {
+                    NextStepRow(step: step, isPrimary: step.id == shown.first?.id,
+                                aiWhy: personalization?.ranked.first { $0.stepID == step.id }?.why)
+                }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("next.step.\(step.id)")
                 if step.id != shown.last?.id { Divider() }
@@ -347,6 +354,8 @@ struct NextStepRow: View {
     @Environment(AppModel.self) private var model
     let step: NextStep
     var isPrimary = false
+    /// Gemini's household-specific reason, already accepted by Core for this exact step. Labelled as Gemini's text.
+    var aiWhy: String? = nil
 
     var body: some View {
         let l = model.localizer
@@ -365,6 +374,13 @@ struct NextStepRow: View {
                     if let name = values[subjectID.hasPrefix("person.") ? "person" : "device"] { Text(name).font(.subheadline.weight(.semibold)) }
                 }
                 Text(l(r.whyKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
+                if let aiWhy {
+                    Label { Text(aiWhy).font(.footnote).multilineTextAlignment(.leading) } icon: { Image(systemName: "sparkles") }
+                        .foregroundStyle(Theme.accent)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(l("prep.ai.whyLabel") + ": " + aiWhy)
+                        .accessibilityIdentifier("next.step.aiWhy")
+                }
                 // Side by side when they fit; stacked at large text sizes instead of pushing the row off screen.
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: Theme.Space.s) {

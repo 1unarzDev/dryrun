@@ -319,10 +319,19 @@ struct FloorPlanView: View {
             // room list and the VoiceOver summary name every room.
             let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
             let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
+            // Wrapping happens between words only: a word wider than the room would otherwise break mid-word.
+            func widestWord(_ font: Font) -> CGFloat {
+                s.label.split(separator: " ").map { word -> CGFloat in
+                    let resolved: GraphicsContext.ResolvedText = ctx.resolve(Text(verbatim: String(word)).font(font))
+                    return resolved.measure(in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)).width
+                }.max() ?? 0
+            }
+            var drawn = false
             for font in [Font.caption2, .system(size: 8)] {
                 let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
                 let need = text.measure(in: CGSize(width: room.width, height: .infinity))
-                if need.width <= room.width && need.height <= room.height {
+                if need.width <= room.width && need.height <= room.height && widestWord(font) <= room.width {
+                    drawn = true
                     // Safety markers often sit at the room centre: move the name above one rather than cover it.
                     var c = f.pt(Geometry.centroid(s.polygon))
                     if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
@@ -332,6 +341,23 @@ struct FloorPlanView: View {
                     ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
                              with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
                     ctx.draw(text, in: rect)
+                    break
+                }
+            }
+            // A tall, narrow room (a corridor or stair landing) reads its name vertically instead of losing it.
+            if !drawn, room.height > room.width {
+                for font in [Font.caption2, .system(size: 8)] {
+                    let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
+                    let need = text.measure(in: CGSize(width: room.height, height: .infinity))
+                    guard need.width <= room.height, need.height <= room.width, widestWord(font) <= room.height else { continue }
+                    let c = f.pt(Geometry.centroid(s.polygon))
+                    var rotated = ctx
+                    rotated.translateBy(x: c.x, y: c.y)
+                    rotated.rotate(by: .degrees(-90))
+                    let rect = CGRect(x: -need.width / 2, y: -need.height / 2, width: need.width, height: need.height)
+                    rotated.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                                 with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
+                    rotated.draw(text, in: rect)
                     break
                 }
             }
