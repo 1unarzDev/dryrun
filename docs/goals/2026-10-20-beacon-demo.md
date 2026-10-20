@@ -35,8 +35,12 @@ owner explicitly approves real households (a hosted endpoint with a static token
 
 1. **Beacon everywhere, reliably (day 1).**
    - Rebrand the AI as Beacon.
-   - Add the local gateway config to the debug build, a one-command `scripts/mac/beacon-gateway.sh` (LAN IP, `.env`,
-     demo spend cap), and the replay fallback.
+   - Add the local gateway config to the debug build, a one-command `scripts/mac/beacon-gateway.sh` (`.env`, demo
+     spend cap) and the replay fallback. Filming happens at a friend's house, so the script must:
+     - detect the Mac's current Wi-Fi address and refresh the app's config;
+     - check that the phone can actually reach the Mac (some Wi-Fi blocks devices from talking to each other);
+     - offer `--tunnel`, a Cloudflare quick tunnel with no account, as a fallback;
+     - document a Personal Hotspot fallback.
    - Make Beacon on by default for the demo household: Prepare's top 3 are tailored on open, the rehearsal director is
      Beacon, and the debrief has a Beacon summary.
    - Raise or configure `DRYRUN_MAX_USD` for the demo, and use a model with available capacity.
