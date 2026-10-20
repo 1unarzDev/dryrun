@@ -29,6 +29,6 @@ try {
  state=await host.request({op:'directorCommit',session:state.session,proposal:result.proposal,binding});trace.push({committed:state});if(state.receipt.finished)break;
  }
  const replay=await host.request({op:'query',session:state.session});if(replay.receipt.contextDigest!==state.receipt.contextDigest)throw new Error('replay_mismatch');
- await writeFile(`../../fixtures/ai/adaptive-trace-${process.env.DRYRUN_ACTION??'all'}.json`,JSON.stringify({synthetic:true,model:process.env.DRYRUN_MODEL??'gemini-3.1-flash-lite',sdk:'2.30.0',recordedAt:new Date().toISOString(),metrics:gateway.metrics,trace},null,2));
+ await writeFile(process.env.DRYRUN_SMOKE_OUTPUT??`../../fixtures/ai/adaptive-trace-${process.env.DRYRUN_ACTION??'all'}.json`,JSON.stringify({synthetic:true,model:process.env.DRYRUN_MODEL??'gemini-3.1-flash-lite',sdk:'2.30.0',recordedAt:new Date().toISOString(),metrics:gateway.metrics,trace},null,2));
  console.log(JSON.stringify({status:'passed',calls:gateway.metrics.calls,revision:state.receipt.revision,digest:state.receipt.contextDigest}));
 }finally{host.close();}

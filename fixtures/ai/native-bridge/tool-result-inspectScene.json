@@ -1,0 +1,1557 @@
+{
+  "binding" : {
+    "contextDigest" : "7eb026c1fb706e58",
+    "eventSequence" : 5,
+    "homeRevision" : 1,
+    "householdRevision" : 1,
+    "revision" : 2,
+    "sessionID" : "native-home-fire"
+  },
+  "contextDigest" : "7eb026c1fb706e58",
+  "observation" : {
+    "kind" : "inspectScene",
+    "scene" : {
+      "connectors" : [
+        {
+          "fromPoint" : {
+            "x" : -1,
+            "y" : 8
+          },
+          "fromSpaceID" : "cm-corridor-3f",
+          "id" : "cn-common-upper-stairs",
+          "kind" : "stairs",
+          "toPoint" : {
+            "x" : -1,
+            "y" : 8
+          },
+          "toSpaceID" : "cm-corridor-2f",
+          "verification" : "verified"
+        },
+        {
+          "fromPoint" : {
+            "x" : -1,
+            "y" : 1
+          },
+          "fromSpaceID" : "cm-corridor-2f",
+          "id" : "cn-common-lower-stairs",
+          "kind" : "stairs",
+          "toPoint" : {
+            "x" : -1,
+            "y" : 1
+          },
+          "toSpaceID" : "cm-corridor-1f",
+          "verification" : "verified"
+        }
+      ],
+      "coordinateConvention" : "per-floor x/y right-handed; floor transforms to common",
+      "dwellingType" : "singleFamily",
+      "floors" : [
+        {
+          "elevation" : 6,
+          "exteriorGrade" : "aboveGround",
+          "id" : "fl-apt",
+          "level" : 2,
+          "transform" : {
+            "rotationRadians" : 0,
+            "translation" : {
+              "x" : 0,
+              "y" : 0
+            }
+          }
+        },
+        {
+          "elevation" : 0,
+          "exteriorGrade" : "ground",
+          "id" : "fl-common-ground",
+          "level" : 0,
+          "transform" : {
+            "rotationRadians" : 0,
+            "translation" : {
+              "x" : 0,
+              "y" : 0
+            }
+          }
+        },
+        {
+          "elevation" : 3,
+          "exteriorGrade" : "aboveGround",
+          "id" : "fl-common-middle",
+          "level" : 1,
+          "transform" : {
+            "rotationRadians" : 0,
+            "translation" : {
+              "x" : 0,
+              "y" : 0
+            }
+          }
+        }
+      ],
+      "homeRevision" : 1,
+      "homeSource" : "sample",
+      "objects" : [
+        {
+          "floorID" : "fl-apt",
+          "id" : "an-smoke-hall",
+          "kind" : "smokeAlarm",
+          "position" : {
+            "x" : 4.5,
+            "y" : 5.6
+          },
+          "roomID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-apt",
+          "id" : "an-tornado",
+          "kind" : "tornadoShelterCandidate",
+          "position" : {
+            "x" : 8,
+            "y" : 7.8
+          },
+          "roomID" : "sp-bath",
+          "verification" : "proposed"
+        },
+        {
+          "floorID" : "fl-apt",
+          "id" : "an-meeting",
+          "kind" : "outsideMeetingPoint",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-apt",
+          "id" : "an-breaker",
+          "kind" : "utilityShutoffElectric",
+          "position" : {
+            "x" : 8.7,
+            "y" : 5.5
+          },
+          "roomID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-apt",
+          "id" : "an-extinguisher",
+          "kind" : "fireExtinguisher",
+          "position" : {
+            "x" : 6.3,
+            "y" : 4.5
+          },
+          "roomID" : "sp-kitchen",
+          "verification" : "verified"
+        }
+      ],
+      "obstacles" : [
+
+      ],
+      "planningNeeds" : [
+        {
+          "editor" : "home",
+          "id" : "stairsSingleDependency|p-oak-1",
+          "relatedIDs" : [
+            "cn-common-lower-stairs",
+            "cn-common-upper-stairs"
+          ],
+          "scoreEffect" : "none; use existing rubric predicates only",
+          "suggestedActionID" : "prep.fireDrill"
+        },
+        {
+          "editor" : "home",
+          "id" : "stairsSingleDependency|p-oak-2",
+          "relatedIDs" : [
+            "cn-common-lower-stairs",
+            "cn-common-upper-stairs"
+          ],
+          "scoreEffect" : "none; use existing rubric predicates only",
+          "suggestedActionID" : "prep.fireDrill"
+        },
+        {
+          "editor" : "home",
+          "id" : "stairsSingleDependency|p-oak-3",
+          "relatedIDs" : [
+            "cn-common-lower-stairs",
+            "cn-common-upper-stairs"
+          ],
+          "scoreEffect" : "none; use existing rubric predicates only",
+          "suggestedActionID" : "prep.fireDrill"
+        },
+        {
+          "editor" : "home",
+          "id" : "stairsSingleDependency|p-oak-4",
+          "relatedIDs" : [
+            "cn-common-lower-stairs",
+            "cn-common-upper-stairs"
+          ],
+          "scoreEffect" : "none; use existing rubric predicates only",
+          "suggestedActionID" : "prep.fireDrill"
+        },
+        {
+          "editor" : "home",
+          "id" : "locationNotRecorded|supplies",
+          "relatedIDs" : [
+
+          ],
+          "scoreEffect" : "none; use existing rubric predicates only",
+          "suggestedActionID" : "prep.layout"
+        },
+        {
+          "editor" : "home",
+          "id" : "tornadoShelterNotEstablished",
+          "relatedIDs" : [
+
+          ],
+          "scoreEffect" : "none; use existing rubric predicates only",
+          "suggestedActionID" : "prep.layout"
+        }
+      ],
+      "planningRoutes" : [
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+
+          ],
+          "alternativeStatus" : "none",
+          "connectorIDs" : [
+            "cn-common-upper-stairs",
+            "cn-common-lower-stairs"
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-balcony",
+              "reason" : "notGroundLevelExit"
+            },
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-1",
+          "primaryPortalIDs" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-entry",
+            "pt-building-exit"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+
+          ],
+          "startRoomID" : "sp-bed1",
+          "stepFreeRequired" : false
+        },
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+
+          ],
+          "alternativeStatus" : "none",
+          "connectorIDs" : [
+            "cn-common-upper-stairs",
+            "cn-common-lower-stairs"
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-balcony",
+              "reason" : "notGroundLevelExit"
+            },
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-2",
+          "primaryPortalIDs" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-entry",
+            "pt-building-exit"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+
+          ],
+          "startRoomID" : "sp-bed1",
+          "stepFreeRequired" : false
+        },
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+
+          ],
+          "alternativeStatus" : "none",
+          "connectorIDs" : [
+            "cn-common-upper-stairs",
+            "cn-common-lower-stairs"
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-balcony",
+              "reason" : "notGroundLevelExit"
+            },
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-3",
+          "primaryPortalIDs" : [
+            "pt-bed2-hall",
+            "pt-living-hall",
+            "pt-entry",
+            "pt-building-exit"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+
+          ],
+          "startRoomID" : "sp-bed2",
+          "stepFreeRequired" : false
+        },
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+
+          ],
+          "alternativeStatus" : "none",
+          "connectorIDs" : [
+            "cn-common-upper-stairs",
+            "cn-common-lower-stairs"
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-balcony",
+              "reason" : "notGroundLevelExit"
+            },
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-4",
+          "primaryPortalIDs" : [
+            "pt-entry",
+            "pt-building-exit"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+
+          ],
+          "startRoomID" : "sp-living",
+          "stepFreeRequired" : false
+        }
+      ],
+      "portals" : [
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 1.5
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 2.4
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-entry",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "cm-corridor-3f",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 2,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 3.5,
+            "y" : 0
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 1.4
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-balcony",
+          "kind" : "slidingDoor",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 6,
+            "y" : 0.5
+          },
+          "b" : {
+            "x" : 6,
+            "y" : 4.5
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 4
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-living-kitchen",
+          "kind" : "opening",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "sp-kitchen",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 1,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 2,
+            "y" : 5
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 1
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-living-hall",
+          "kind" : "opening",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 2,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 2.8,
+            "y" : 6.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.8
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-bed1-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-bed1",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 5.8,
+            "y" : 6.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.8
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-bed2-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-bed2",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 7.6,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 8.3,
+            "y" : 6.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.7
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-bath-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-bath",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 1.5,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : 2.5,
+            "y" : 9.5
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-apt",
+          "id" : "pt-win-bed1",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : "sp-bed1",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 1.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 2.4
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-common-ground",
+          "id" : "pt-building-exit",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "cm-corridor-1f",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        }
+      ],
+      "rooms" : [
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-living",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 6,
+              "y" : 0
+            },
+            {
+              "x" : 6,
+              "y" : 5
+            },
+            {
+              "x" : 0,
+              "y" : 5
+            }
+          ],
+          "use" : "livingRoom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-kitchen",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 6,
+              "y" : 0
+            },
+            {
+              "x" : 9,
+              "y" : 0
+            },
+            {
+              "x" : 9,
+              "y" : 5
+            },
+            {
+              "x" : 6,
+              "y" : 5
+            }
+          ],
+          "use" : "kitchen"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-hall",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "x" : 9,
+              "y" : 5
+            },
+            {
+              "x" : 9,
+              "y" : 6.2
+            },
+            {
+              "x" : 0,
+              "y" : 6.2
+            }
+          ],
+          "use" : "hallway"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-bed1",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 6.2
+            },
+            {
+              "x" : 4,
+              "y" : 6.2
+            },
+            {
+              "x" : 4,
+              "y" : 9.5
+            },
+            {
+              "x" : 0,
+              "y" : 9.5
+            }
+          ],
+          "use" : "bedroom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-bed2",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 9.5
+            },
+            {
+              "x" : 4,
+              "y" : 9.5
+            }
+          ],
+          "use" : "bedroom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-bath",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 9,
+              "y" : 6.2
+            },
+            {
+              "x" : 9,
+              "y" : 9.5
+            },
+            {
+              "x" : 7,
+              "y" : 9.5
+            }
+          ],
+          "use" : "bathroom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-apt",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "cm-corridor-3f",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : -2,
+              "y" : 0
+            },
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 0,
+              "y" : 9.5
+            },
+            {
+              "x" : -2,
+              "y" : 9.5
+            }
+          ],
+          "use" : "hallway"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-common-middle",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "cm-corridor-2f",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : -2,
+              "y" : 0
+            },
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 0,
+              "y" : 9.5
+            },
+            {
+              "x" : -2,
+              "y" : 9.5
+            }
+          ],
+          "use" : "hallway"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-common-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "cm-corridor-1f",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : -2,
+              "y" : 0
+            },
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 0,
+              "y" : 9.5
+            },
+            {
+              "x" : -2,
+              "y" : 9.5
+            }
+          ],
+          "use" : "hallway"
+        }
+      ],
+      "schemaVersion" : "dryrun.home-scene/2",
+      "units" : "meter",
+      "unknowns" : [
+        "Window operability/exterior grade require recorded confirmation",
+        "Geometry does not establish structural shelter performance",
+        "Image observations cannot create graph edges",
+        "confirmed is room-use confirmation, not geometry or route verification",
+        "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
+      ],
+      "walls" : [
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 9,
+            "y" : 0
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-s",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 9,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 9,
+            "y" : 9.5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-e",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 9,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-n",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-w",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 9,
+            "y" : 5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-hall-s",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 9,
+            "y" : 6.2
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-hall-n",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 4,
+            "y" : 9.5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-bed-mid",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 9.5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-bath",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-cm-corridor-3f-0",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-cm-corridor-3f-1",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 9.5
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-cm-corridor-3f-2",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 0
+          },
+          "floorID" : "fl-apt",
+          "id" : "w-cm-corridor-3f-3",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-common-middle",
+          "id" : "w-cm-corridor-2f-0",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "floorID" : "fl-common-middle",
+          "id" : "w-cm-corridor-2f-1",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 9.5
+          },
+          "floorID" : "fl-common-middle",
+          "id" : "w-cm-corridor-2f-2",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 0
+          },
+          "floorID" : "fl-common-middle",
+          "id" : "w-cm-corridor-2f-3",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-common-ground",
+          "id" : "w-cm-corridor-1f-0",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "floorID" : "fl-common-ground",
+          "id" : "w-cm-corridor-1f-1",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 9.5
+          },
+          "floorID" : "fl-common-ground",
+          "id" : "w-cm-corridor-1f-2",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : -2,
+            "y" : 9.5
+          },
+          "b" : {
+            "x" : -2,
+            "y" : 0
+          },
+          "floorID" : "fl-common-ground",
+          "id" : "w-cm-corridor-1f-3",
+          "thicknessMeters" : 0.12
+        }
+      ]
+    }
+  },
+  "snapshot" : {
+    "firedEventIDs" : [
+      "evt.home-fire.alarm",
+      "evt.home-fire.assist.assigned.p-oak-3",
+      "evt.home-fire.meeting-point",
+      "evt.choice.home-fire.first-move",
+      "user.user-1"
+    ],
+    "resources" : {
+      "res.backup.bk-station" : {
+        "amount" : 1000,
+        "unit" : "Wh"
+      },
+      "res.device.eq-oxygen.runtime" : {
+        "unit" : "h"
+      },
+      "res.handset.hours" : {
+        "amount" : 18,
+        "unit" : "h"
+      },
+      "res.handset.powerBankCharges" : {
+        "amount" : 2,
+        "unit" : "charges"
+      },
+      "res.water.stored" : {
+        "amount" : 5,
+        "unit" : "gal"
+      }
+    },
+    "services" : {
+      "svc.alerts" : "operational",
+      "svc.cellular" : "operational",
+      "svc.cooling" : "operational",
+      "svc.destination" : "unavailable",
+      "svc.device.eq-oxygen" : "operational",
+      "svc.grid" : "operational",
+      "svc.handset" : "operational",
+      "svc.heat" : "operational",
+      "svc.power.home" : "operational",
+      "svc.refrigeration" : "operational",
+      "svc.roads" : "operational",
+      "svc.transport" : "operational",
+      "svc.water.safety" : "operational",
+      "svc.water.supply" : "operational",
+      "svc.wellPump" : "operational",
+      "svc.wifi" : "operational"
+    },
+    "simMinute" : 0,
+    "unknowns" : [
+      "backup.bk-station.setupConfirmed",
+      "equipment.eq-oxygen.backup",
+      "home.smokeAlarms",
+      "housing.wellPressureTankGallons",
+      "pets.waterNeeds"
+    ],
+    "unmetRequirements" : [
+
+    ]
+  }
+}

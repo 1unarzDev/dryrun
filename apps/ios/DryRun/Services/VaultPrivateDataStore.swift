@@ -39,8 +39,16 @@ struct VaultPrivateDataStore: PrivateDataStore {
             }
             let plan = payload.retainedPlans.max { $0.generatedAt < $1.generatedAt }
                 .flatMap { try? DryRunJSON.decoder().decode(PlanDocument.self, from: $0.document) }
+            var aiState: IntegratedAIState?
+            if let data = payload.integratedAIState {
+                // Unreadable local AI state is a recovery case, never an empty start the next save would overwrite.
+                guard let decoded = try? DryRunJSON.decoder().decode(IntegratedAIState.self, from: data) else {
+                    return .needsRecovery("Saved supplies, reviews or practice could not be read. The original file was kept.")
+                }
+                aiState = decoded
+            }
             return .loaded(PrivateSnapshot(household: household, home: payload.home, savedPlan: plan,
-                                           savedPlaces: payload.savedPlaces, integratedAIState: payload.integratedAIState))
+                                           savedPlaces: payload.savedPlaces, aiState: aiState))
         } catch {
             switch error {
             case .keyUnavailableWhileLocked:
@@ -69,7 +77,7 @@ struct VaultPrivateDataStore: PrivateDataStore {
         try await repository.save(VaultPayload(household: snapshot.household, home: snapshot.home,
                                                retainedPlans: plans, savedPlaces: snapshot.savedPlaces,
                                                homeGeometryIntentionallyAbsent: snapshot.home == nil,
-                                               integratedAIState: snapshot.integratedAIState))
+                                               integratedAIState: try snapshot.aiState.map { try DryRunJSON.encoder().encode($0) }))
     }
 
     func deleteAll() async throws {

@@ -7,15 +7,27 @@ struct PrivateSnapshot: Sendable, Equatable {
     var home: HomeModel?
     var savedPlan: PlanDocument?
     var savedPlaces: [SavedPlace]
-    var integratedAIState: Data?
+    /// Inventory, concern reviews, exercise sessions, practice attempts and scorecards. `nil` in a snapshot the app
+    /// is about to save means "keep the current state" (AppModel fills it in), so a household edit never erases it.
+    var aiState: IntegratedAIState?
 
     init(household: HouseholdProfile, home: HomeModel? = nil, savedPlan: PlanDocument? = nil,
-         savedPlaces: [SavedPlace] = [], integratedAIState: Data? = nil) {
+         savedPlaces: [SavedPlace] = [], aiState: IntegratedAIState? = nil) {
         self.household = household
         self.home = home
         self.savedPlan = savedPlan
         self.savedPlaces = savedPlaces
-        self.integratedAIState = integratedAIState
+        self.aiState = aiState
+    }
+
+    static func == (a: PrivateSnapshot, b: PrivateSnapshot) -> Bool {
+        a.household == b.household && a.home == b.home && a.savedPlan == b.savedPlan && a.savedPlaces == b.savedPlaces
+            && PrivateSnapshot.encoded(a.aiState) == PrivateSnapshot.encoded(b.aiState)
+    }
+
+    /// IntegratedAIState is not Equatable; its canonical JSON is the comparison.
+    static func encoded(_ state: IntegratedAIState?) -> Data? {
+        state.flatMap { try? DryRunJSON.encoder().encode($0) }
     }
 }
 

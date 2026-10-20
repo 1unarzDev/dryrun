@@ -1,0 +1,1864 @@
+{
+  "context" : {
+    "binding" : {
+      "contextDigest" : "6f5137b2100d04e8",
+      "eventSequence" : 3,
+      "homeRevision" : 1,
+      "householdRevision" : 1,
+      "revision" : 1,
+      "sessionID" : "native-water-outage"
+    },
+    "directorPolicy" : {
+      "allowedStageTransitions" : [
+
+      ],
+      "eventBudget" : 32,
+      "maximumActiveIncidents" : 1,
+      "maximumPendingEvents" : 8,
+      "permittedHazardFamilies" : [
+        "waterOutage"
+      ],
+      "schedulingHorizonMinutes" : 4320,
+      "version" : "dryrun.director-policy/1"
+    },
+    "directorState" : {
+      "activeIncidentCount" : 0,
+      "awaitingUserAction" : false,
+      "scheduledEventCount" : 1
+    },
+    "homeScene" : {
+      "connectors" : [
+
+      ],
+      "coordinateConvention" : "per-floor x/y right-handed; floor transforms to common",
+      "dwellingType" : "singleFamily",
+      "floors" : [
+        {
+          "elevation" : 0,
+          "exteriorGrade" : "unknown",
+          "id" : "fl-ground",
+          "level" : 0,
+          "transform" : {
+            "rotationRadians" : 0,
+            "translation" : {
+              "x" : 0,
+              "y" : 0
+            }
+          }
+        }
+      ],
+      "homeRevision" : 1,
+      "homeSource" : "sample",
+      "objects" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-hall",
+          "kind" : "smokeAlarm",
+          "position" : {
+            "x" : 6,
+            "y" : 5.6
+          },
+          "roomID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-bed1",
+          "kind" : "smokeAlarm",
+          "position" : {
+            "x" : 2.2,
+            "y" : 8.1
+          },
+          "roomID" : "sp-bed1",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-smoke-bed2",
+          "kind" : "smokeAlarm",
+          "position" : {
+            "x" : 9.5,
+            "y" : 8.1
+          },
+          "roomID" : "sp-bed2",
+          "verification" : "proposed"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-co-hall",
+          "kind" : "coAlarm",
+          "position" : {
+            "x" : 3,
+            "y" : 5.6
+          },
+          "roomID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-extinguisher",
+          "kind" : "fireExtinguisher",
+          "position" : {
+            "x" : 7.4,
+            "y" : 4.5
+          },
+          "roomID" : "sp-kitchen",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-shutoff-water",
+          "kind" : "utilityShutoffWater",
+          "position" : {
+            "x" : 11.6,
+            "y" : 4.6
+          },
+          "roomID" : "sp-kitchen",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-shutoff-elec",
+          "kind" : "utilityShutoffElectric",
+          "position" : {
+            "x" : 11.6,
+            "y" : 5.6
+          },
+          "roomID" : "sp-hall",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-supplies",
+          "kind" : "supplies",
+          "position" : {
+            "x" : 5.75,
+            "y" : 6.8
+          },
+          "roomID" : "sp-closet",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-medical",
+          "kind" : "medicalEquipment",
+          "position" : {
+            "x" : 6.4,
+            "y" : 0.6
+          },
+          "roomID" : "sp-living",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-tornado",
+          "kind" : "tornadoShelterCandidate",
+          "position" : {
+            "x" : 5.75,
+            "y" : 6.8
+          },
+          "roomID" : "sp-closet",
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-hydrant",
+          "kind" : "exteriorHydrant",
+          "position" : {
+            "x" : 14.5,
+            "y" : -4
+          },
+          "verification" : "verified"
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "an-meeting",
+          "kind" : "outsideMeetingPoint",
+          "position" : {
+            "x" : 3.45,
+            "y" : -8
+          },
+          "verification" : "verified"
+        }
+      ],
+      "obstacles" : [
+        {
+          "floorID" : "fl-ground",
+          "id" : "ob-sofa",
+          "polygon" : [
+            {
+              "x" : 1,
+              "y" : 3.4
+            },
+            {
+              "x" : 4,
+              "y" : 3.4
+            },
+            {
+              "x" : 4,
+              "y" : 4.3
+            },
+            {
+              "x" : 1,
+              "y" : 4.3
+            }
+          ]
+        },
+        {
+          "floorID" : "fl-ground",
+          "id" : "ob-island",
+          "polygon" : [
+            {
+              "x" : 8.8,
+              "y" : 2
+            },
+            {
+              "x" : 10.4,
+              "y" : 2
+            },
+            {
+              "x" : 10.4,
+              "y" : 3
+            },
+            {
+              "x" : 8.8,
+              "y" : 3
+            }
+          ]
+        }
+      ],
+      "planningNeeds" : [
+
+      ],
+      "planningRoutes" : [
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+            "pt-bed1-hall",
+            "pt-kitchen-hall",
+            "pt-back"
+          ],
+          "alternativeStatus" : "sharesChokepoint",
+          "connectorIDs" : [
+
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-bed2",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-living",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-1",
+          "primaryPortalIDs" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+            "pt-bed1-hall",
+            "sp-hall"
+          ],
+          "startRoomID" : "sp-bed1",
+          "stepFreeRequired" : false
+        },
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+            "pt-bed1-hall",
+            "pt-kitchen-hall",
+            "pt-back"
+          ],
+          "alternativeStatus" : "sharesChokepoint",
+          "connectorIDs" : [
+
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-bed2",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-living",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-2",
+          "primaryPortalIDs" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+            "pt-bed1-hall",
+            "sp-hall"
+          ],
+          "startRoomID" : "sp-bed1",
+          "stepFreeRequired" : false
+        },
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+            "pt-bed2-hall",
+            "pt-kitchen-hall",
+            "pt-living-kitchen",
+            "pt-front"
+          ],
+          "alternativeStatus" : "sharesChokepoint",
+          "connectorIDs" : [
+
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-bed2",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-living",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-3",
+          "primaryPortalIDs" : [
+            "pt-bed2-hall",
+            "pt-kitchen-hall",
+            "pt-back"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+            "pt-bed2-hall",
+            "pt-kitchen-hall",
+            "sp-hall",
+            "sp-kitchen"
+          ],
+          "startRoomID" : "sp-bed2",
+          "stepFreeRequired" : false
+        },
+        {
+          "alternativeConnectorIDs" : [
+
+          ],
+          "alternativePortalIDs" : [
+            "pt-living-kitchen",
+            "pt-back"
+          ],
+          "alternativeStatus" : "independent",
+          "connectorIDs" : [
+
+          ],
+          "exclusions" : [
+            {
+              "elementID" : "pt-win-bed1",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-bed2",
+              "reason" : "portalNotVerified"
+            },
+            {
+              "elementID" : "pt-win-living",
+              "reason" : "portalNotVerified"
+            }
+          ],
+          "personID" : "p-oak-4",
+          "primaryPortalIDs" : [
+            "pt-front"
+          ],
+          "scope" : "Recorded baseline geometry only; current incidents, occupants and assistance require host tools. A practice route is not real-time safety clearance.",
+          "sharedChokepointIDs" : [
+
+          ],
+          "startRoomID" : "sp-living",
+          "stepFreeRequired" : false
+        }
+      ],
+      "portals" : [
+        {
+          "a" : {
+            "x" : 3,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 3.9,
+            "y" : 0
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-front",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 2
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 2.9
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-back",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-kitchen",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 1
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 2.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 1.2
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-living-kitchen",
+          "kind" : "opening",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "sp-kitchen",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 5.9,
+            "y" : 5
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.9
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-living-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-living",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 8,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 8.86,
+            "y" : 5
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-kitchen-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-kitchen",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 3,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 3.85,
+            "y" : 6.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed1-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-bed1",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 9,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 9.86,
+            "y" : 6.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.86
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed2-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-bed2",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 5.2,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 5.9,
+            "y" : 6.2
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.7
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-closet-hall",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-closet",
+          "sideB" : "sp-hall",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 8
+          },
+          "b" : {
+            "x" : 4.5,
+            "y" : 8.75
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "m",
+            "value" : 0.75
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-bed1-bath",
+          "kind" : "door",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "sideA" : "sp-bed1",
+          "sideB" : "sp-bath",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "verification" : "verified"
+        },
+        {
+          "a" : {
+            "x" : 1.5,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 2.5,
+            "y" : 10
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-bed1",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : "sp-bed1",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : 9.5,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 10.5,
+            "y" : 10
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-bed2",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : "sp-bed2",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        },
+        {
+          "a" : {
+            "x" : 0.8,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 2,
+            "y" : 0
+          },
+          "clearWidth" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "floorID" : "fl-ground",
+          "id" : "pt-win-living",
+          "kind" : "window",
+          "operable" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "sideA" : "sp-living",
+          "sideB" : "exterior",
+          "stepFree" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : false
+          },
+          "verification" : "proposed"
+        }
+      ],
+      "rooms" : [
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-living",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 0
+            },
+            {
+              "x" : 7,
+              "y" : 0
+            },
+            {
+              "x" : 7,
+              "y" : 5
+            },
+            {
+              "x" : 0,
+              "y" : 5
+            }
+          ],
+          "use" : "livingRoom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-kitchen",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 0
+            },
+            {
+              "x" : 12,
+              "y" : 0
+            },
+            {
+              "x" : 12,
+              "y" : 5
+            },
+            {
+              "x" : 7,
+              "y" : 5
+            }
+          ],
+          "use" : "kitchen"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-hall",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 5
+            },
+            {
+              "x" : 12,
+              "y" : 5
+            },
+            {
+              "x" : 12,
+              "y" : 6.2
+            },
+            {
+              "x" : 0,
+              "y" : 6.2
+            }
+          ],
+          "use" : "hallway"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-bed1",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 0,
+              "y" : 6.2
+            },
+            {
+              "x" : 4.5,
+              "y" : 6.2
+            },
+            {
+              "x" : 4.5,
+              "y" : 10
+            },
+            {
+              "x" : 0,
+              "y" : 10
+            }
+          ],
+          "use" : "bedroom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : true,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-closet",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "value" : true
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4.5,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 7,
+              "y" : 7.4
+            },
+            {
+              "x" : 4.5,
+              "y" : 7.4
+            }
+          ],
+          "use" : "closet"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-bath",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 4.5,
+              "y" : 7.4
+            },
+            {
+              "x" : 7,
+              "y" : 7.4
+            },
+            {
+              "x" : 7,
+              "y" : 10
+            },
+            {
+              "x" : 4.5,
+              "y" : 10
+            }
+          ],
+          "use" : "bathroom"
+        },
+        {
+          "confirmed" : true,
+          "confirmedShelter" : false,
+          "floorID" : "fl-ground",
+          "geometryNeedsReview" : false,
+          "higherRefugeConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "id" : "sp-bed2",
+          "interiorNoWindowsConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "needsMeasurement" : false,
+          "polygon" : [
+            {
+              "x" : 7,
+              "y" : 6.2
+            },
+            {
+              "x" : 12,
+              "y" : 6.2
+            },
+            {
+              "x" : 12,
+              "y" : 10
+            },
+            {
+              "x" : 7,
+              "y" : 10
+            }
+          ],
+          "use" : "bedroom"
+        }
+      ],
+      "schemaVersion" : "dryrun.home-scene/2",
+      "units" : "meter",
+      "unknowns" : [
+        "Window operability/exterior grade require recorded confirmation",
+        "Geometry does not establish structural shelter performance",
+        "Image observations cannot create graph edges",
+        "confirmed is room-use confirmation, not geometry or route verification",
+        "confirmedShelter is a host-checked planning choice, not structural certification; geometry review and exterior grade remain explicit"
+      ],
+      "walls" : [
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 0
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-s",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-e",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 12,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-n",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 10
+          },
+          "b" : {
+            "x" : 0,
+            "y" : 0
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-ext-w",
+          "thicknessMeters" : 0.2
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 0
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 5
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-living-kitchen",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 5
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 5
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-south-hall",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 0,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 12,
+            "y" : 6.2
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-hall-north",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 4.5,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-bed1-east",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 4.5,
+            "y" : 7.4
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 7.4
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-closet-bath",
+          "thicknessMeters" : 0.12
+        },
+        {
+          "a" : {
+            "x" : 7,
+            "y" : 6.2
+          },
+          "b" : {
+            "x" : 7,
+            "y" : 10
+          },
+          "floorID" : "fl-ground",
+          "id" : "w-bed2-west",
+          "thicknessMeters" : 0.12
+        }
+      ]
+    },
+    "household" : {
+      "backupPower" : [
+        {
+          "assumedEfficiency" : 0.85,
+          "continuousOutputW" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "W",
+            "value" : 1200
+          },
+          "id" : "bk-station",
+          "islandingConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "kind" : "portableBatteryStation",
+          "safeOutdoorPlacementConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "setupConfirmed" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "usableEnergyWh" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "userConfirmed",
+            "sourceIDs" : [
+
+            ],
+            "status" : "confirmed",
+            "unit" : "Wh",
+            "value" : 1000
+          }
+        }
+      ],
+      "equipment" : [
+        {
+          "compatibleBackupIDs" : [
+
+          ],
+          "documentation" : "unknown",
+          "documentedBackupRuntimeHours" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "essential" : true,
+          "id" : "eq-oxygen",
+          "personID" : "p-oak-4",
+          "powerRequired" : true,
+          "powerWatts" : {
+            "inputIDs" : [
+
+            ],
+            "origin" : "unknown",
+            "sourceIDs" : [
+
+            ],
+            "status" : "unknown"
+          },
+          "purpose" : "oxygenConcentrator",
+          "requiresColdStorage" : false
+        }
+      ],
+      "evidence" : [
+        {
+          "fieldIDs" : [
+            "people.needs",
+            "pets",
+            "equipment",
+            "housing"
+          ],
+          "id" : "household-needs",
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed"
+        },
+        {
+          "fieldIDs" : [
+            "backupPower"
+          ],
+          "id" : "recorded-backup-power",
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "uncertainty" : "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+        }
+      ],
+      "housing" : {
+        "cooling" : "centralAC",
+        "floorCount" : 1,
+        "heatingFuel" : "electric",
+        "heatingNeedsElectricity" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "homeType" : "singleFamily",
+        "sanitation" : "septicGravity",
+        "tenancy" : "owner",
+        "waterSource" : "privateWell",
+        "wellPumpElectric" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        }
+      },
+      "limitedBudget" : false,
+      "people" : [
+        {
+          "ageBand" : "adult",
+          "id" : "p-oak-1",
+          "needs" : [
+
+          ],
+          "startingRoomID" : "sp-bed1"
+        },
+        {
+          "ageBand" : "adult",
+          "id" : "p-oak-2",
+          "needs" : [
+
+          ],
+          "startingRoomID" : "sp-bed1"
+        },
+        {
+          "ageBand" : "child",
+          "helperPersonID" : "p-oak-1",
+          "id" : "p-oak-3",
+          "needs" : [
+
+          ],
+          "startingRoomID" : "sp-bed2"
+        },
+        {
+          "ageBand" : "olderAdult",
+          "helperPersonID" : "p-oak-2",
+          "id" : "p-oak-4",
+          "needs" : [
+            "coldSensitive",
+            "limitedMobility"
+          ],
+          "startingRoomID" : "sp-living"
+        }
+      ],
+      "pets" : [
+        {
+          "count" : 1,
+          "id" : "pet-oak-dog",
+          "kind" : "dog"
+        }
+      ],
+      "regionID" : "48143",
+      "revision" : 1,
+      "site" : {
+        "elevationRecorded" : false,
+        "floodComparison" : "unknown",
+        "hurricanePlan" : "unknown",
+        "limitations" : [
+          "Planning evidence only; no current hazard or evacuation clearance",
+          "Terrain and indoor relative floor height do not establish finished-floor elevation",
+          "Wildfire community ratings do not establish individual-home risk",
+          "Hurricane route activation and current official orders require local verification",
+          "Wildfire and hurricane simulation and score coverage are outside the current reviewed rubric"
+        ],
+        "schemaVersion" : "dryrun.site-context/1",
+        "sourceIDs" : [
+
+        ]
+      },
+      "supplies" : {
+        "coolerAndIcePacks" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "fireExtinguisher" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "firstAidKit" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : true
+        },
+        "flashlights" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : 2
+        },
+        "limitedStorageSpace" : false,
+        "shelfStableFoodDays" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "value" : 3
+        },
+        "storedWaterGallons" : {
+          "inputIDs" : [
+
+          ],
+          "origin" : "userConfirmed",
+          "sourceIDs" : [
+
+          ],
+          "status" : "confirmed",
+          "unit" : "gal",
+          "value" : 5
+        }
+      },
+      "transport" : "car"
+    },
+    "learningObjectives" : [
+      "Compare stored-water use and protect continuity without inventing supplies"
+    ],
+    "profiles" : [
+      {
+        "canStart" : false,
+        "hazard" : "waterOutage",
+        "id" : "evt.water-outage.well-pump-failure",
+        "minute" : 0,
+        "roomRequired" : false,
+        "rule" : "rule.external.set",
+        "spatial" : false
+      },
+      {
+        "canStart" : false,
+        "hazard" : "waterOutage",
+        "id" : "evt.water-outage.well-quality-unknown",
+        "minute" : 361,
+        "roomRequired" : false,
+        "rule" : "rule.external.set",
+        "spatial" : false
+      },
+      {
+        "canStart" : false,
+        "hazard" : "waterOutage",
+        "id" : "evt.water-outage.checkpoint-24h",
+        "minute" : 1440,
+        "roomRequired" : false,
+        "rule" : "rule.checkpoint",
+        "spatial" : false
+      },
+      {
+        "canStart" : false,
+        "hazard" : "waterOutage",
+        "id" : "evt.water-outage.well-repaired",
+        "minute" : 2880,
+        "roomRequired" : false,
+        "rule" : "rule.external.set",
+        "spatial" : false
+      },
+      {
+        "canStart" : false,
+        "hazard" : "waterOutage",
+        "id" : "evt.water-outage.checkpoint-72h",
+        "minute" : 4320,
+        "roomRequired" : false,
+        "rule" : "rule.checkpoint",
+        "spatial" : false
+      }
+    ],
+    "snapshot" : {
+      "firedEventIDs" : [
+        "evt.water-outage.well-pump-failure",
+        "evt.water-outage.svc.wellPump.unavailable",
+        "evt.water-outage.svc.water.supply.unavailable"
+      ],
+      "resources" : {
+        "res.backup.bk-station" : {
+          "amount" : 1000,
+          "unit" : "Wh"
+        },
+        "res.device.eq-oxygen.runtime" : {
+          "unit" : "h"
+        },
+        "res.handset.hours" : {
+          "amount" : 18,
+          "unit" : "h"
+        },
+        "res.handset.powerBankCharges" : {
+          "amount" : 2,
+          "unit" : "charges"
+        },
+        "res.water.stored" : {
+          "amount" : 5,
+          "unit" : "gal"
+        }
+      },
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "operational",
+        "svc.water.supply" : "unavailable",
+        "svc.wellPump" : "unavailable",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 0,
+      "unknowns" : [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "unmetRequirements" : [
+
+      ]
+    }
+  },
+  "contractVersion" : "dryrun.ai/1",
+  "requestID" : "native-water-outage-1",
+  "role" : "director",
+  "synthetic" : true
+}

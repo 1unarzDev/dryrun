@@ -76,7 +76,8 @@ log "Installing"
 xcrun devicectl device install app --device "$DEVICE" "$APP" || exit 1
 log "Launching ${LAUNCH_ARGS[*]:-}"
 if ! xcrun devicectl device process launch --terminate-existing --device "$DEVICE" "$BUNDLE_ID" \
-    "${LAUNCH_ARGS[@]+"${LAUNCH_ARGS[@]}"}"; then
+    -- "${LAUNCH_ARGS[@]+"${LAUNCH_ARGS[@]}"}"; then
+  # `--` keeps app arguments such as -demoLocale from being parsed as devicectl options (-l).
   # The usual first-run failure with a free or new team: iOS will not launch an app from a developer it does not trust.
   warn "launch failed. If the phone is locked, unlock it. On a first install, trust the developer on the iPhone:"
   warn "Settings > General > VPN & Device Management > (your Apple Account) > Trust, then run this script again."

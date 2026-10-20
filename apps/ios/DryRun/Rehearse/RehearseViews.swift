@@ -29,6 +29,26 @@ struct RehearseTabView: View {
                     Label(s("Add and review a home layout to practice spatial routes. Other scenarios remain available."), systemImage: "house")
                         .font(.callout).foregroundStyle(.secondary)
                 }
+                NavigationLink(value: "practice:check") {
+                    HStack(spacing: Theme.Space.m) {
+                        Image(systemName: "checklist.checked").font(.title2).foregroundStyle(Theme.accent)
+                            .frame(width: 52, height: 52)
+                            .background(Theme.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(l("practice.title")).font(.body.weight(.semibold))
+                            Text(l("practice.cardDetail")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
+                    }
+                    .padding(Theme.Space.m)
+                    .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+                    .contentShape(Rectangle())
+                    .accessibilityElement(children: .combine)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("practice.open")
                 Text(l("common.chooseScenario")).font(.headline).padding(.top, Theme.Space.s)
                 ForEach(Self.scenarioIDs, id: \.self) { id in
                     NavigationLink(value: id) { ScenarioCard(id: id) }
@@ -40,7 +60,12 @@ struct RehearseTabView: View {
         }
         .background(Theme.background)
         .navigationTitle(l("common.tab.rehearse"))
-        .navigationDestination(for: String.self) { RehearsalView(scenarioID: $0) }
+        .navigationDestination(for: String.self) { id in
+            // "adaptive:<scenario>" opens the incremental exercise of the same scenario, inside the same stack.
+            if id.hasPrefix("adaptive:") { AdaptiveRehearsalView(scenarioID: String(id.dropFirst("adaptive:".count))) }
+            else if id == "practice:check" { PracticeCheckView() }
+            else { RehearsalView(scenarioID: id) }
+        }
     }
 }
 
@@ -119,6 +144,8 @@ struct RehearsalView: View {
                                               state: session.snapshotAtCursor?.spatialState,
                                               previous: session.spatialStateBeforeCursor,
                                               hazard: RehearsalExperienceDesign.design(scenarioID: scenarioID, household: model.household)?.hazard)
+                            // A container keeps children's own identifiers (e.g. rehearsal.noElevators).
+                            .accessibilityElement(children: .contain)
                             .accessibilityIdentifier("rehearsal.scene")
                     }
                     if session.result.input.home == nil { Label(model.localizer("map.layoutMissing"), systemImage: "house").font(.callout).foregroundStyle(.secondary) }
@@ -295,6 +322,14 @@ struct RehearsalView: View {
                 .font(.callout)
             if household.isFictional { StatusPill(text: l("family.example"), systemImage: "house", tint: Theme.caution) }
             Text(l("ui.rehearse.introHow")).font(.footnote).foregroundStyle(.secondary)
+            NavigationLink(value: "adaptive:\(scenarioID)") {
+                VStack(alignment: .leading, spacing: 2) {
+                    Label(l("adaptive.open"), systemImage: "point.3.connected.trianglepath.dotted").font(.callout.weight(.semibold))
+                    Text(l("adaptive.openDetail")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
+                }
+                .frame(maxWidth: .infinity, minHeight: Theme.minTap, alignment: .leading)
+            }
+            .accessibilityIdentifier("rehearsal.openAdaptive")
         }
         .accessibilityIdentifier("rehearsal.intro")
     }
@@ -406,6 +441,8 @@ struct SpatialRehearsalScene: View {
     let state: SpatialExerciseState?
     var previous: SpatialExerciseState? = nil
     var hazard: HazardKind? = nil
+    /// The elevator rule applies to the whole fire exercise, including stages before the fire is placed.
+    var isFireExercise = false
     @State private var personID: String?
     @State private var show3D = false
     @State private var selectedFloorID: String?
@@ -446,7 +483,7 @@ struct SpatialRehearsalScene: View {
             }
             if home.floors.count > 1 {
                 Picker(model.localizer("spatial.floor"), selection: Binding(get: { sceneFloorID ?? "" }, set: { selectedFloorID = $0 })) {
-                    ForEach(home.floors) { Text($0.label).tag($0.id) }
+                    ForEach(home.floors.sorted { ($0.level, $0.id) < ($1.level, $1.id) }) { Text($0.label).tag($0.id) }
                 }.accessibilityIdentifier("rehearsal.floor")
             }
             FloorPlanView(home: home, routes: currentPaths, highlightedFloorID: sceneFloorID,
@@ -467,7 +504,7 @@ struct SpatialRehearsalScene: View {
                 // Only when this stage has a route request: before the first route there is nothing to contradict later.
                 Text(model.localizer("spatial.start-room-unknown")).font(.footnote)
             }
-            if state?.hazard == .homeFire && (household.housing.homeType == .apartment || home.connectors.contains { $0.kind == .elevator }) {
+            if (isFireExercise || hazard == .homeFire || state?.hazard == .homeFire) && (household.housing.homeType == .apartment || home.connectors.contains { $0.kind == .elevator }) {
                 Label(model.localizer("spatial.fire-no-elevators"), systemImage: "exclamationmark.triangle")
                     .font(.callout).foregroundStyle(Theme.caution)
                     .accessibilityIdentifier("rehearsal.noElevators")

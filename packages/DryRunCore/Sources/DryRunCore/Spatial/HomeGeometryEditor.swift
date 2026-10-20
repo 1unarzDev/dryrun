@@ -20,6 +20,8 @@ public enum HomeGeometryEditor {
             var h = source
             h.revision = 0; h.label = ""; h.frame.note = nil; h.originalCapturedWalls = nil
             h.annotations = []; h.completenessNote = nil
+            // Recording the dwelling type moves no opening or route; shelter suitability reads it live instead.
+            h.dwellingType = nil
             for i in h.floors.indices { h.floors[i].label = ""; h.floors[i].capturedStory = nil }
             for i in h.spaces.indices {
                 h.spaces[i].label = ""; h.spaces[i].kind = .other; h.spaces[i].labelConfirmed = true

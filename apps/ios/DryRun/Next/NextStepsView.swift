@@ -1,8 +1,9 @@
 import SwiftUI
 import DryRunCore
 
-/// The first tab: what this household should do next, merged across all six rehearsals. Concrete items only —
-/// to do, done, or still unknown. No score, no percentage (docs/FRONTEND_HANDOFF.md §3).
+/// The first tab: what this household should do next, merged across all six rehearsals. Concrete items lead —
+/// to do, done, or still unknown. The provisional score follows them; it is compiled locally by Core under the
+/// versioned draft rubric (DryRun_AI_Implementation_Reference.md §12), with coverage and cap reasons beside it.
 struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
@@ -32,6 +33,7 @@ struct NextStepsView: View {
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
                     toDo(summary)
+                    ScorecardCard()
                 } else {
                     SectionCard {
                         HStack(spacing: Theme.Space.m) {
@@ -63,6 +65,7 @@ struct NextStepsView: View {
             }
         }
         .task(id: model.currentKey) { await model.refreshNextSteps() }
+        .task(id: model.scoreKey) { await model.refreshScorecard() }
         .task(id: BriefingRequest(source: briefingKey, expanded: showBriefing)) { await writeBriefing() }
     }
 
@@ -192,11 +195,7 @@ struct NextStepsView: View {
                                     .foregroundStyle(item.done ? .secondary : .primary)
                                     .multilineTextAlignment(.leading)
                                 Spacer(minLength: 0)
-                                if r.tier == .unmetEssentialRequirement {
-                Image(systemName: "exclamationmark.circle.fill").font(.caption)
-                    .foregroundStyle(Theme.critical).accessibilityLabel(l("common.critical"))
-            }
-            Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
+                                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
                             }
                             .frame(minHeight: Theme.minTap)
                             .contentShape(Rectangle())

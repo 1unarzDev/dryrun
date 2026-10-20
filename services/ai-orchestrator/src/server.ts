@@ -8,7 +8,7 @@ import {createServer} from 'node:http';
 import {Gateway,fixtureAuthorize} from './gateway.js';
 import {FeatureRunner} from './features.js';
 import {createAIRequestHandler} from './http.js';
-import {GeminiProvider,SpendBudget} from './provider.js';
+import {GeminiProvider,SpendBudget,type AgentProvider} from './provider.js';
 if(process.env.NODE_ENV==='production')throw new Error('production_authorization_provider_required');
 const secret=process.env.DRYRUN_DEV_TOKEN??'';
 if(secret.length<24)throw new Error('local_fixture_token_required');
@@ -17,6 +17,18 @@ const groqClients=process.env.GROQ_API_KEY?configuredGroqClients(process.env.GRO
 const groq=groqClients?.client,extractor=groqClients?.extractor;
 const privateProvider=groq?new GeminiPrimaryFallback(provider,groq):provider;
 const interpreter=new IntentInterpreter(privateProvider);
-const gateway=new Gateway(privateProvider);const features=new FeatureRunner(privateProvider,40,await PublicEvidenceTools.bundled('../..'));
+// DRYRUN_DIAGNOSTICS=1 (synthetic development only): log each director turn's tool names/arguments (IDs, minutes)
+// and the start of its JSON reply, so a validation failure can be traced. Never request context or headers.
+const directorProvider:AgentProvider=process.env.DRYRUN_DIAGNOSTICS==='1'?{async turn(input){
+ const reply=await privateProvider.turn(input);
+ console.log('director turn',JSON.stringify({calls:reply.calls.map(c=>({name:c.name,arguments:c.arguments})),reply:reply.text.slice(0,700)}));
+ return reply;
+}}:privateProvider;
+const gateway=new Gateway(directorProvider);const features=new FeatureRunner(privateProvider,40,await PublicEvidenceTools.bundled('../..'));
 const discovery=new ResourceDiscovery(provider,12,()=>new Date(),groq?new GroqResourceDiscovery(groq,()=>new Date(),extractor):undefined);
-createServer(createAIRequestHandler({gateway,features,interpreter,discovery,authorize:header=>fixtureAuthorize(header,secret,false)})).listen(Number(process.env.PORT??8788),'127.0.0.1');
+// Loopback unless DRYRUN_HOST is set for a wired-iPhone development session on a trusted local network.
+// Synthetic-only requests, the fixture token and the spend budget still apply; production fails closed above.
+const host=process.env.DRYRUN_HOST??'127.0.0.1';
+const handler=createAIRequestHandler({gateway,features,interpreter,discovery,authorize:header=>fixtureAuthorize(header,secret,false)});
+// Access log for development: path, status and duration only. Never headers, bodies or household fields.
+createServer((req,res)=>{const started=Date.now();res.once('finish',()=>console.log(`${new Date().toISOString()} ${req.method} ${req.url} ${res.statusCode} ${Date.now()-started}ms outcomes=${gateway.metrics.outcomes.slice(-1).join(',')}`));return handler(req,res);}).listen(Number(process.env.PORT??8788),host);

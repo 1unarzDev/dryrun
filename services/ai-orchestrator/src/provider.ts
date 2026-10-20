@@ -52,6 +52,7 @@ export class GeminiProvider implements AgentProvider {
  const steps=response.steps??[];return {steps,text:response.output_text??'',calls:steps.filter(s=>s.type==='function_call'),usage:response.usage};
  }catch(error){
  const failure=error instanceof ProviderFailure?error:geminiFailure(error,input.signal);
+ if(process.env.DRYRUN_DIAGNOSTICS==='1')console.error('provider error',failure.status,failure.kind,String(error instanceof Error?error.message:error).slice(0,400));
  if(entered){if(['rate_limit','quota_exhausted'].includes(failure.kind))circuit.failure(failure.retryAfterMs);else circuit.release();}
  if(error instanceof Error&&['spend_budget','request_budget'].includes(error.message))throw error;
  throw failure;

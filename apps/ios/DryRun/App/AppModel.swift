@@ -27,10 +27,11 @@ final class AppModel {
     var home: HomeModel?
     /// Explicitly saved geographic planning places. Coordinates remain separate from indoor floor-plan geometry.
     var savedPlaces: [SavedPlace] = []
+    /// Confirmed inventory, concern reviews, exercise sessions, practice attempts and scorecards, saved atomically
+    /// with the household. Changed only after `save(snapshot:)` succeeds so a failed write never publishes new state.
+    private(set) var aiState = IntegratedAIState()
     var locale: String = "en" { didSet { if locale != oldValue { invalidatePlans() } } }
     var savedPlan: PlanDocument?
-    /// Opaque versioned portable state is retained even before native AI screens are integrated.
-    private(set) var integratedAIState: Data?
     /// The family's choice of what the card shows, shared by the card view, Plan, Share/Print and saved plans so the
     /// preview always matches what is sent. Only these on/off choices are kept (in UserDefaults), never any content.
     var cardSelection: FamilyCardSelection = AppModel.storedCardSelection() {
@@ -51,6 +52,9 @@ final class AppModel {
     /// like other derived results; completions are applied on read, so marking one done does not re-run anything.
     var nextStepResults: [RehearsalResult]?
     var rehearsal: RehearsalCursor?
+    /// The open adaptive exercise: an incremental Core session whose receipts drive the scene. Unlike `rehearsal` it
+    /// is saved (in `aiState.sessions`) after every committed turn, so it resumes after a relaunch.
+    private(set) var adaptive: AdaptiveExercise?
     var comparison: RehearsalComparison?
     var lastError: String?
     /// Requests in flight (rehearsal runs, comparisons, plan builds). A count, not a flag, so one request finishing
@@ -68,6 +72,57 @@ final class AppModel {
     private var runGate = LatestRequestGate()
     private var planGate = LatestRequestGate()
     private var nextGate = LatestRequestGate()
+    private var scoreGate = LatestRequestGate()
+    /// Versioned draft rubric (content/ai/rubric-v0.json). The numbers are product policy, not safety thresholds.
+    private(set) var rubric: RubricDefinition?
+    /// Deterministic, local: accepted household facts, confirmed inventory, the reviewed fire stress envelope and
+    /// eligible practice. No model output can change it. Recomputed per revision; nil until computed.
+    private(set) var scorecard: Scorecard?
+
+    struct Scorecard: Sendable {
+        let key: RevisionKey
+        let card: PreparednessScorecard
+        let assessments: [CriterionAssessment]
+        /// The reviewed home-fire envelope run against this home; hypothetical, never a household fact.
+        let fireStress: StressTestFinding?
+    }
+
+    /// The score's inputs: household/home/content plus confirmed inventory and practice attempts.
+    var scoreKey: RevisionKey? {
+        guard var key = currentKey, let rubric else { return nil }
+        let answers = aiState.practiceAttempts.reduce(0) { $0 + ($1.observations?.count ?? $1.answers.count) }
+        key.algorithmVersion = "score/\(rubric.version)/inv\(aiState.inventory.revision)/practice\(aiState.practiceAttempts.count)-\(answers)"
+        return key
+    }
+
+    /// Computes the scorecard off the main actor unless the current one already matches every input.
+    func refreshScorecard() async {
+        guard let household, let scenarios, let rubric, let key = scoreKey, scorecard?.key != key else { return }
+        let home = self.home, places = savedPlaces, state = aiState
+        let ticket = scoreGate.begin(for: key)
+        do {
+            let result = try await Task.detached(priority: .utility) { () -> Scorecard in
+                let date = Date()
+                var fire: StressTestFinding?
+                if let home, let scenario = scenarios.scenario("home-fire") {
+                    let input = RehearsalInput(household: household, home: home, scenarioID: scenario.id, scenarioVersion: scenario.version,
+                                               contentVersion: key.contentVersion, seed: 1)
+                    // The reviewed baseline envelope only: the alarm and the fire's origin, no extra blockages.
+                    fire = try? PlanStressTester.execute(initial: input, profileIDs: ["evt.home-fire.alarm", "evt.home-fire.fire-origin"],
+                                                         library: scenarios)
+                }
+                let assessments = try HouseholdAssessment.assess(household: household, home: home, inventory: state.inventory,
+                                                                 places: places, stressFindings: fire.map { [$0] } ?? [], at: date)
+                let card = try state.compileScorecard(rubric: rubric, assessments: assessments, library: scenarios)
+                return Scorecard(key: key, card: card, assessments: assessments, fireStress: fire)
+            }.value
+            guard scoreGate.shouldApply(ticket, current: scoreKey) else { return }
+            scorecard = result
+        } catch {
+            guard scoreGate.shouldApply(ticket, current: scoreKey) else { return }
+            lastError = String(describing: error)
+        }
+    }
     private var privateWriteInFlight = false
 
     /// Identity of the current household/home/content. Results computed for anything else are discarded.
@@ -110,8 +165,10 @@ final class AppModel {
             let loaded = try await Task.detached(priority: .userInitiated) {
                 let c = try ContentLibrary.load(from: root)
                 let s = try ScenarioLibrary.load(from: root.appendingPathComponent("scenarios"))
-                return (c, s)
+                let r = try JSONDecoder().decode(RubricDefinition.self, from: Data(contentsOf: root.appendingPathComponent("ai/rubric-v0.json")))
+                return (c, s, r)
             }.value
+            rubric = loaded.2
             content = loaded.0
             scenarios = loaded.1
             engine = RehearsalEngine(library: loaded.1, planner: EgressPlanner())
@@ -257,7 +314,7 @@ final class AppModel {
             savedPlaces = HomeMeetingPlaces.placesIncludingLocalMeetup(home: snapshot.home, places: snapshot.savedPlaces, recordedAt: restored.updatedAt)
             home = snapshot.home.map { HomeMeetingPlaces.synchronize($0, places: savedPlaces) }
             savedPlan = snapshot.savedPlan
-            integratedAIState = snapshot.integratedAIState
+            aiState = snapshot.aiState ?? IntegratedAIState()
             locale = snapshot.household.preferredLocale
             configureRegionalResources()
             phase = .ready
@@ -297,8 +354,10 @@ final class AppModel {
         }
         let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: sampleHome, places: extraPlaces, recordedAt: sample.updatedAt)
         let candidateHome = HomeMeetingPlaces.synchronize(sampleHome, places: places)
-        let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: places)
+        let snapshot = PrivateSnapshot(household: sample, home: candidateHome, savedPlan: nil, savedPlaces: places, aiState: IntegratedAIState())
         guard await save(snapshot: snapshot) else { return }
+        aiState = IntegratedAIState()
+        adaptive = nil
         household = sample
         home = candidateHome
         savedPlaces = places
@@ -322,8 +381,11 @@ final class AppModel {
         }
         var candidateHousehold = candidateHousehold
         if candidateHousehold.homeID == nil { candidateHousehold.homeID = candidateHousehold.stableHomeID }
-        let snapshot = PrivateSnapshot(household: candidateHousehold, home: nil, savedPlan: nil, savedPlaces: [])
+        // Nothing recorded for the fictional example (supplies, reviews, practice) carries into a real household.
+        let snapshot = PrivateSnapshot(household: candidateHousehold, home: nil, savedPlan: nil, savedPlaces: [], aiState: IntegratedAIState())
         guard await save(snapshot: snapshot) else { return false }
+        aiState = IntegratedAIState()
+        adaptive = nil
         household = candidateHousehold
         home = nil
         savedPlaces = []
@@ -368,6 +430,41 @@ final class AppModel {
         return true
     }
 
+    /// Applies a local AI-state transaction (inventory confirmation, concern review, practice capture, scorecard) and the
+    /// household it changes in one atomic save. A thrown or failed transaction publishes nothing.
+    @discardableResult
+    func updateAIState(_ transaction: (inout IntegratedAIState, inout HouseholdProfile) throws -> Void) async -> Bool {
+        guard let previous = household else { return false }
+        var state = aiState, h = previous
+        do { try transaction(&state, &h) } catch { lastError = String(describing: error); return false }
+        let householdChanged = h != previous
+        guard await save(snapshot: PrivateSnapshot(household: h, home: home, savedPlan: savedPlan, savedPlaces: savedPlaces, aiState: state)) else { return false }
+        aiState = state
+        if householdChanged {
+            household = h
+            invalidateDerived()
+        }
+        return true
+    }
+
+    /// One reviewed batch of typed supply items into the confirmed ledger, with the household projection (stored water)
+    /// in the same atomic save. Bumps the household revision, so tasks, routes, resources and the score refresh.
+    @discardableResult
+    func confirmInventory(_ items: [InventoryItem]) async -> Bool {
+        guard !items.isEmpty else { return false }
+        let date = Date()
+        return await updateAIState { state, household in
+            try state.confirmInventory(items, household: &household, baseHouseholdRevision: household.revision,
+                                       baseInventoryRevision: state.inventory.revision, at: date) { _, _ in }
+        }
+    }
+
+    /// Deterministic gaps from confirmed inventory (water, household food days, reviewed flashlight/first-aid identity).
+    var inventoryGaps: [SupplyGap] {
+        guard let household else { return [] }
+        return (try? aiState.inventory.preparationGaps(personIDs: household.people.map(\.id), at: Date())) ?? []
+    }
+
     /// Focused forms retain their draft revision. A stale whole-household form must not overwrite later edits.
     @discardableResult
     func updateHousehold(_ candidate: HouseholdProfile) async -> Bool {
@@ -399,7 +496,12 @@ final class AppModel {
         candidate.preparedness?.items.removeValue(forKey: "coAlarms")
         candidate.preparedness?.items.removeValue(forKey: "extinguisher")
         candidate.bumpRevision()
-        guard await save(snapshot: PrivateSnapshot(household: candidate, home: nil, savedPlan: nil, savedPlaces: [])) else { return false }
+        // Supplies and practice history move with the family; reviews and exercises of the old home's rooms do not.
+        var movedState = aiState
+        movedState.concerns = ConcernLedger()
+        movedState.sessions = []
+        guard await save(snapshot: PrivateSnapshot(household: candidate, home: nil, savedPlan: nil, savedPlaces: [], aiState: movedState)) else { return false }
+        aiState = movedState
         household = candidate
         home = nil
         savedPlaces = []
@@ -552,6 +654,253 @@ final class AppModel {
         }
     }
 
+    // MARK: - Adaptive exercise
+
+    enum DirectorSource: String, Sendable { case local, gemini }
+
+    struct AdaptiveExercise: Sendable {
+        var session: SimulationSession
+        var receipt: SessionReceipt
+        /// The receipt before the newest commit, so the scene can say what this turn changed.
+        var previous: SessionReceipt?
+        /// Who proposed the newest director turn, and its unverified narration (Gemini only).
+        var lastDirector: DirectorSource?
+        var narration: String?
+        /// Household/home/content revision the session's frozen snapshot was taken from.
+        let sourceKey: RevisionKey
+    }
+
+    /// Exercises kept for resume/history; older finished ones are dropped first.
+    static let retainedSessions = 8
+
+    /// Opens the newest unfinished exercise of this scenario taken from the current household/home revision, or a new one.
+    func openAdaptive(scenarioID: String, restart: Bool = false) async {
+        guard let household, let content, let scenarios, let key = currentKey,
+              let scenario = scenarios.scenario(scenarioID) else { return }
+        if !restart, adaptive?.session.initial.scenarioID == scenarioID, adaptive?.sourceKey == key { return }
+        let home = self.home
+        if !restart, let resumable = aiState.sessions.last(where: { s in
+            s.initial.scenarioID == scenarioID && s.initial.household == household && s.initial.home == home
+                && s.initial.contentVersion == content.contentVersion && s.initial.scenarioVersion == scenario.version
+        }) {
+            let library = scenarios
+            let replay = Task.detached(priority: .userInitiated) { try resumable.query(library: library) }
+            if let receipt = try? await replay.value, !receipt.finished {
+                adaptive = AdaptiveExercise(session: resumable, receipt: receipt, previous: nil, lastDirector: nil, narration: nil, sourceKey: key)
+                return
+            }
+        }
+        let input = RehearsalInput(household: household, home: home, scenarioID: scenarioID, scenarioVersion: scenario.version,
+                                   contentVersion: content.contentVersion, seed: 1)
+        let library = scenarios
+        workInFlight += 1
+        defer { workInFlight -= 1 }
+        do {
+            let (session, receipt) = try await Task.detached(priority: .userInitiated) {
+                let session = try SimulationSession.initialize(id: "exercise-\(UUID().uuidString)", initial: input, library: library)
+                return (session, try session.query(library: library))
+            }.value
+            guard currentKey == key else { return }
+            adaptive = AdaptiveExercise(session: session, receipt: receipt, previous: nil, lastDirector: nil, narration: nil, sourceKey: key)
+            await advanceAdaptive()
+        } catch {
+            lastError = String(describing: error)
+        }
+    }
+
+    /// The family's action. Validated by the Core reducer; an infeasible action is reported, never mapped to a default.
+    @discardableResult
+    func submitAdaptive(_ commands: [SessionCommand]) async -> Bool {
+        guard let exercise = adaptive, !exercise.receipt.finished else { return false }
+        let commit = SessionCommit(id: "user-\(UUID().uuidString)", actor: "user", baseRevision: exercise.session.revision, commands: commands)
+        guard let scenarios else { return false }
+        return await commitAdaptive(director: nil, narration: nil) { session in try session.commit(commit, library: scenarios) }
+    }
+
+    /// Opt-in for this app session only: Gemini directs the next moments of a fictional household's exercise.
+    /// Requires a development gateway (launch arguments); real households never use it until production authorization.
+    var cloudDirectorEnabled = false
+    /// Why the last cloud turn fell back to this phone, shown beside the scene; nil when it did not.
+    private(set) var directorFallbackNote: String?
+
+    var cloudDirectorAvailable: Bool { DirectorGatewayClient.current != nil && household?.isFictional == true }
+
+    /// One director turn. With the cloud director enabled, Gemini proposes through the gateway (tool calls run
+    /// read-only on this phone at the same revision); otherwise, or whenever that fails, the local director proposes.
+    /// Either way Core validates the proposal before anything is saved or shown.
+    func advanceAdaptive() async {
+        guard let exercise = adaptive, let scenarios, !exercise.receipt.finished,
+              exercise.receipt.directorState?.awaitingUserAction != true else { return }
+        directorFallbackNote = nil
+        if cloudDirectorEnabled, cloudDirectorAvailable, let client = DirectorGatewayClient.current,
+           exercise.session.initial.household.isFictional {
+            workInFlight += 1
+            let outcome = await geminiProposal(client: client, exercise: exercise, library: scenarios)
+            workInFlight -= 1
+            switch outcome {
+            case .success(let proposal, let binding):
+                let applied = await commitAdaptive(director: .gemini, narration: proposal.purpose) { session in
+                    try proposal.commit(to: &session, binding: binding, library: scenarios, persist: { _ in })
+                }
+                if applied { return }
+                directorFallbackNote = localizer("adaptive.fallback.rejected")
+            case .waitingForFamily:
+                return
+            case .failure(let stage):
+                directorFallbackNote = localizer("adaptive.fallback.unavailable")
+                #if DEBUG
+                // Development builds name the failing stage (never payloads) so the wired-device loop can be diagnosed.
+                directorFallbackNote? += " [\(stage)]"
+                #endif
+            }
+        }
+        guard let current = adaptive, current.session.revision == exercise.session.revision,
+              let commit = LocalDirector.nextCommit(session: current.session, receipt: current.receipt, library: scenarios) else { return }
+        await commitAdaptive(director: .local, narration: nil) { session in try session.commit(commit, library: scenarios) }
+    }
+
+    private enum GeminiOutcome: Sendable { case success(DirectorProposal, AgentContextBinding), waitingForFamily, failure(String) }
+
+    /// Runs one gateway operation to completion. Each tool call executes through Core on the unchanged session; if the
+    /// family acts or the exercise changes meanwhile, the operation is cancelled and nothing from it is applied.
+    private func geminiProposal(client: DirectorGatewayClient, exercise: AdaptiveExercise, library: ScenarioLibrary) async -> GeminiOutcome {
+        let session = exercise.session, receipt = exercise.receipt
+        guard let request = try? DirectorGatewayBridge.operationRequest(requestID: "op-\(UUID().uuidString)", session: session,
+                                                                         receipt: receipt, library: library) else { return .failure("context") }
+        let binding = request.context.binding
+        var outcome = await client.start(request)
+        // The gateway allows at most 6 provider calls per operation (up to 5 model tool calls), then asks this phone
+        // to validate the final proposal's suggested actions once (validateSuggestedActions) before completing.
+        for _ in 0..<6 {
+            guard case .needsTools(let token, let toolBinding, let call) = outcome else { break }
+            guard toolBinding == binding, adaptive?.session.id == session.id, adaptive?.session.revision == session.revision else {
+                await client.cancel(token: token)
+                return .failure("stale")
+            }
+            let execution = Task.detached(priority: .userInitiated) {
+                try DirectorGatewayBridge.execute(call, session: session, binding: binding, library: library)
+            }
+            let result: DirectorGatewayBridge.ToolResult
+            do { result = try await execution.value } catch {
+                await client.cancel(token: token)
+                return .failure("tool \(call.name): \(error)")
+            }
+            outcome = await client.resume(token: token, binding: binding, callID: call.id, result: result)
+        }
+        switch outcome {
+        case .completed(let proposal):
+            guard adaptive?.session.id == session.id, adaptive?.session.revision == session.revision else { return .failure("stale") }
+            return .success(proposal, binding)
+        case .needsUserAction: return .waitingForFamily
+        case .unavailable(let reason): return .failure(reason)
+        case .needsTools: return .failure("tool_budget")
+        }
+    }
+
+    /// Whether a candidate user action is accepted by the host right now (preview only; nothing is committed).
+    func adaptiveAccepts(_ commands: [SessionCommand]) -> Bool {
+        guard let exercise = adaptive, let scenarios, !commands.isEmpty else { return false }
+        let commit = SessionCommit(id: "preview", actor: "user", baseRevision: exercise.session.revision, commands: commands)
+        return (try? exercise.session.preview(commit, library: scenarios)) != nil
+    }
+
+    /// Commit → save session with the household snapshot → publish. A failed save leaves the exercise unchanged.
+    @discardableResult
+    private func commitAdaptive(director: DirectorSource?, narration: String?,
+                                _ apply: @escaping @Sendable (inout SimulationSession) throws -> SessionReceipt) async -> Bool {
+        guard let exercise = adaptive, let household else { return false }
+        workInFlight += 1
+        defer { workInFlight -= 1 }
+        do {
+            let (session, receipt) = try await Task.detached(priority: .userInitiated) {
+                var candidate = exercise.session
+                let receipt = try apply(&candidate)
+                return (candidate, receipt)
+            }.value
+            var state = aiState
+            state.sessions.removeAll { $0.id == session.id }
+            state.sessions.append(session)
+            if state.sessions.count > Self.retainedSessions {
+                // Drop the oldest exercises first; the open one is always kept.
+                let overflow = state.sessions.count - Self.retainedSessions
+                // Practice sources are frozen evidence for recorded answers; they are never trimmed.
+                let practice = Set(state.practiceAttempts.flatMap { ($0.phaseSources ?? []) + ($0.source.map { [$0] } ?? []) }.map(\.sessionID))
+                let removable = state.sessions.filter { $0.id != session.id && !practice.contains($0.id) }.prefix(overflow).map(\.id)
+                state.sessions.removeAll { removable.contains($0.id) }
+            }
+            guard adaptive?.session.id == exercise.session.id, adaptive?.session.revision == exercise.session.revision else { return false }
+            guard await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: savedPlan, savedPlaces: savedPlaces, aiState: state)) else { return false }
+            aiState = state
+            adaptive = AdaptiveExercise(session: session, receipt: receipt, previous: exercise.receipt,
+                                        lastDirector: director ?? exercise.lastDirector, narration: director == nil ? exercise.narration : narration,
+                                        sourceKey: exercise.sourceKey)
+            return true
+        } catch {
+            lastError = String(describing: error)
+            return false
+        }
+    }
+
+    // MARK: - Practice check (four frozen situations, graded before feedback)
+
+    /// The newest check, complete or not. A newer incomplete check is the current practice result.
+    var latestPracticeCheck: PracticeAttempt? {
+        aiState.practiceAttempts.filter { $0.phaseSources != nil && $0.archivedUnverified != true }.max { $0.sequence < $1.sequence }
+    }
+
+    /// The next frozen situation and its competency, or nil when the check is complete.
+    func practiceStep() -> (attempt: PracticeAttempt, session: SimulationSession, competency: String)? {
+        guard let attempt = latestPracticeCheck, let scenarios,
+              let session = try? aiState.activePracticeCheckSession(attemptID: attempt.id, library: scenarios) else { return nil }
+        let order = IntegratedAIState.practiceOrder(attempt.variantID)
+        let index = attempt.observations?.count ?? 0
+        guard order.indices.contains(index) else { return nil }
+        return (attempt, session, order[index])
+    }
+
+    /// Builds the four situations from the current household and home and freezes them with the attempt in one save.
+    /// An unfinished check is resumed instead; nothing is re-rolled.
+    @discardableResult
+    func beginPracticeCheck() async -> Bool {
+        guard let household, let content, let scenarios else { return false }
+        if let latest = latestPracticeCheck, (latest.observations?.count ?? 0) < 4 { return true }
+        let home = self.home, library = scenarios, contentVersion = content.contentVersion
+        let variant = PracticeCheckSources.variant(previousAttempts: aiState.practiceAttempts.count)
+        let id = "check-\(UUID().uuidString)"
+        workInFlight += 1
+        defer { workInFlight -= 1 }
+        let build = Task.detached(priority: .userInitiated) {
+            try PracticeCheckSources.prepare(attemptID: id, variantID: variant, household: household, home: home,
+                                             contentVersion: contentVersion, library: library)
+        }
+        guard let sources = try? await build.value else { lastError = localizer("practice.unavailable"); return false }
+        return await updateAIState { state, _ in
+            state.sessions.append(contentsOf: sources)
+            try state.beginPracticeCheck(id: id, variantID: variant, sessionIDs: sources.map(\.id), library: library)
+        }
+    }
+
+    /// Records the family's first answer for the current situation before any feedback. Returns the stored observation.
+    func submitPracticeAnswer(_ command: SessionCommand) async -> PracticeObservation? {
+        guard let step = practiceStep(), let scenarios else { return nil }
+        let commit = SessionCommit(id: "answer-\(UUID().uuidString)", actor: "user", baseRevision: step.session.revision, commands: [command])
+        var observation: PracticeObservation?
+        let saved = await updateAIState { state, _ in
+            observation = try state.submitPracticeAction(attemptID: step.attempt.id, competencyID: step.competency, commit: commit, library: scenarios)
+        }
+        return saved ? observation : nil
+    }
+
+    /// Feedback is recorded as revealed (never changing the answer) before the screen shows it.
+    @discardableResult
+    func revealPracticeFeedback(attemptID: String, actionID: String) async -> Bool {
+        await updateAIState { state, _ in
+            _ = try state.revealPracticeFeedback(attemptID: attemptID, actionID: actionID)
+        }
+    }
+
+    func closeAdaptive() { adaptive = nil; directorFallbackNote = nil }
+
     // MARK: - Plans
 
     /// Builds a plan for the selected scenarios by running each deterministically, then saves it in the vault.
@@ -620,6 +969,8 @@ final class AppModel {
         runGate.invalidate()
         nextGate.invalidate()
         planGate.invalidate()
+        scorecard = nil
+        scoreGate.invalidate()
     }
 
     // MARK: - Next steps and outage card
@@ -709,20 +1060,17 @@ final class AppModel {
     /// Saves a complete candidate before publishing it to observable state. This keeps failed home/place writes
     /// from presenting a success state while the previous committed snapshot remains intact.
     @discardableResult
-    private func save(snapshot: PrivateSnapshot, preserveIntegratedAIState: Bool = true) async -> Bool {
+    private func save(snapshot: PrivateSnapshot) async -> Bool {
         guard !privateWriteInFlight else {
             lastError = "Another edit is still saving. Your draft was kept; try Save again."
             return false
         }
         privateWriteInFlight = true
         defer { privateWriteInFlight = false }
+        var snapshot = snapshot
+        if snapshot.aiState == nil { snapshot.aiState = aiState }
         do {
-            var candidate = snapshot
-            if preserveIntegratedAIState {
-                candidate.integratedAIState = household?.id == snapshot.household.id ? integratedAIState : snapshot.integratedAIState
-            }
-            try await store.save(candidate)
-            integratedAIState = candidate.integratedAIState
+            try await store.save(snapshot)
             return true
         } catch {
             lastError = String(describing: error)
@@ -730,24 +1078,18 @@ final class AppModel {
         }
     }
 
+    /// Canonical digest of the saved AI state, used by adapters that must reject a late response.
+    var aiStateDigest: String? { PrivateSnapshot.encoded(aiState).map(StableDigest.of) }
+
     /// Native AI/practice adapters stage the portable reducer here. The digest rejects late
     /// responses; the encrypted write completes before any observing screen sees new evidence.
     @discardableResult
     func updateIntegratedAIState(expectedDigest: String?, _ change: (inout IntegratedAIState) throws -> Void) async -> Bool {
-        guard let household, integratedAIState.map(StableDigest.of) == expectedDigest else {
+        guard household != nil, aiStateDigest == expectedDigest else {
             lastError = "The recorded evidence changed. Refresh this result before saving."
             return false
         }
-        do {
-            var candidate = try integratedAIState.map { try DryRunJSON.decoder().decode(IntegratedAIState.self, from: $0) } ?? IntegratedAIState()
-            try change(&candidate)
-            let data = try DryRunJSON.encoder().encode(candidate)
-            return await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: savedPlan,
-                savedPlaces: savedPlaces, integratedAIState: data), preserveIntegratedAIState: false)
-        } catch {
-            lastError = String(describing: error)
-            return false
-        }
+        return await updateAIState { state, _ in try change(&state) }
     }
 
     // MARK: - Private map places
@@ -792,7 +1134,8 @@ final class AppModel {
             try await store.deleteAll()
             LocalReviewReminderScheduler.shared.cancel()
             TemporaryExports.purgeAll()
-            integratedAIState = nil; household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
+            household = nil; home = nil; savedPlan = nil; savedPlaces = []; rehearsal = nil; comparison = nil; nextStepResults = nil
+            aiState = IntegratedAIState(); adaptive = nil
             cardSelection = FamilyCardSelection()
             runGate.invalidate(); planGate.invalidate(); nextGate.invalidate()
             phase = .onboarding

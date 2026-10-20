@@ -1,5 +1,19 @@
 > Integration target observed at commit/push: `origin/main` is `f9b296c` with eight newer wired-iPhone commits, including Core-session/Gemini integration. This Linux work is being pushed separately from base `26332de`; reconcile those native changes before integrating. Native-pending claims below describe this Linux checkout and verification scope, not an audit of the newer Mac implementation. Do not replace the newer session screen with the older authored-cursor screen wholesale.
 
+## Mac integration with `origin/main` f9b296c — 2026-10-20
+
+Branch `dryrun-six-hazard-continue` merges this work with the eight wired-iPhone commits. Resolutions:
+
+- **Director gateway:** prompt/30 = prompt/29 plus main's verified rule that an already-active incident is continued with `advanceIncident`, never restarted. Main's `incident_already_active` reason (with its repair hint) applies when the host context reports an active incident; a second start inside one proposal stays `invalid_incident`.
+- **Provider/server:** Gemini-primary/Groq-fallback wiring and typed `ProviderFailure` are kept; main's `DRYRUN_DIAGNOSTICS` director/provider logging, `DRYRUN_HOST` wired-device binding and access log are added on top.
+- **Persistence:** main's typed `PrivateSnapshot.aiState` is the single representation. The branch's opaque `integratedAIState: Data` is removed; `updateIntegratedAIState(expectedDigest:)` now runs over `aiState` via `aiStateDigest`, keeping late-response rejection.
+- **Home tab:** main's item-driven `EditorRequest` sheet (opens on the tapped marker) with this branch's semantics: scans open the editor directly, no blanket confirmation sheet, draft precedence and revision-checked `updateHome(_:expectedRevision:)`.
+- **Rehearse:** `SpatialRehearsalScene` keeps both `hazard` (objectives) and main's `isFireExercise` (adaptive and practice-check callers); the no-elevator rule honors either.
+- **Native bridge:** `DirectorGatewayBridge` now executes the gateway-owned `validateSuggestedActions` call through Core and returns only `suggestionValidation` `{id, feasible, rejection≤120}` (fixture `fixtures/ai/native-bridge/tool-result-validateSuggestedActions.json`, parsed by the gateway's Zod contract). The app's per-operation tool loop is 6 (5 model tools + host validation).
+- **Build fix found by Xcode:** a misplaced critical badge in `NextStepsView`'s finish-card list referenced an out-of-scope `r`; the badge remains in `NextStepRow`.
+
+Mac verification: Core 557/101 suites, Vault 39/7, gateway 215/25 files + TypeScript, public/localization 68 (all native macOS). Live provider calls: none.
+
 # Claude / Mac handoff: scenario experience and readiness setup
 
 Checkpoint: 2026-10-20, following the owner's additional 30-minute visual/experience slice. Continue the existing goal and dirty checkout; do not restart the implementation. Root `DryRun_AI_Implementation_Reference.md` is the complete specification. Sections 10 and 13 remain acceptance gates, not claims satisfied by this preview.
