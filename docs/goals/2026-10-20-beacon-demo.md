@@ -16,9 +16,11 @@ tailor what to buy, where to go and what to practice, before the next storm.
 - The AI is named **Beacon** in every user-facing string (EN/ES/VI). No "Gemini" in the UI. Remove the inline data-sent
   paragraph; keep one plain sentence in Settings → About ("Beacon uses Google Gemini; names, phone numbers and
   addresses are never sent"). Gemini stays disclosed in the video and written answers (Challenge rule).
-- **Hosted backend + demo replay.** Deploy `services/ai-orchestrator` to a free cloud host with the key server-side.
-  The app gets the gateway URL from a build setting, not launch arguments. A recorded Beacon session replays
-  automatically when the provider fails (503/429/timeout), labelled as a replay in the debug build.
+- **No hosting: the demo is filmed, judges won't run the app.** The Mac runs the gateway on the same Wi-Fi as the phone
+  (`DRYRUN_HOST=<Mac LAN IP>`); the phone needs no cable. The debug build carries the gateway URL and token from a
+  local, git-ignored config generated from the Mac's `.env`, not launch arguments, so the app works when opened
+  from the home screen. A recorded Beacon session replays automatically when the provider fails
+  (503/429/timeout/unreachable), labelled as a replay in the debug build. Keep the key off the phone.
 - **Shopping list uses curated price ranges**, not live web prices.
 - **Hero features (all four):** live alert → do this now; LiDAR scan → tailored drill; accessible shelter map; smart
   shopping list.
@@ -33,15 +35,16 @@ owner explicitly approves real households (a hosted endpoint with a static token
 
 1. **Beacon everywhere, reliably (day 1).**
    - Rebrand the AI as Beacon.
-   - Deploy the gateway to the hosted backend; add the replay fallback.
+   - Add the local gateway config to the debug build, a one-command `scripts/mac/beacon-gateway.sh` (LAN IP, `.env`,
+     demo spend cap), and the replay fallback.
    - Make Beacon on by default for the demo household: Prepare's top 3 are tailored on open, the rehearsal director is
      Beacon, and the debrief has a Beacon summary.
    - Raise or configure `DRYRUN_MAX_USD` for the demo, and use a model with available capacity.
-   - Work without the Mac: no launch arguments. Today, unplugged, the owner saw no AI toggle and only the Oak sample.
-     Add Settings → "Try a sample family" (Oak, Lake, Pine) with home choice, and turn Beacon on from the hosted
+   - Work without launch arguments. Today, unplugged, the owner saw no AI toggle and only the Oak sample.
+     Add Settings → "Try a sample family" (Oak, Lake, Pine) with home choice, and turn Beacon on from the local
      configuration.
-   - Acceptance: a fresh install opened from the home screen on cellular shows Beacon output on Prepare within 20 s,
-     or the replay.
+   - Acceptance: with the Mac gateway running, the app opened from the home screen (no cable) shows Beacon output on
+     Prepare within 20 s; with the gateway stopped, it shows the replay.
 2. **Live alert → "Do this now" (day 2).**
    - Fetch active National Weather Service alerts for Tarrant County (api.weather.gov; free, needs a User-Agent).
    - Map each alert type to the matching rehearsal: tornado warning, flash-flood warning, extreme heat, winter storm,
@@ -104,7 +107,6 @@ on. Milestones 1, 2 and 7 are mandatory; 3–5 are ordered by value.
 - An update to `docs/ai/wired-iphone-pass-2026-10-20.md`.
 
 **Needs the owner:**
-- Hosting: a friend's Oracle Cloud VM behind a Cloudflare Tunnel (HTTPS). Needs SSH access or the friend running `scripts/deploy/oracle-setup.sh`, the tunnel hostname, and a server-only Gemini key.
 - District TX-25 confirmed participating (2026-10-20).
 - Team member names for the video.
 - A native ES/VI reviewer, if available.
