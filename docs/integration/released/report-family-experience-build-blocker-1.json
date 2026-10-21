@@ -1,0 +1,47 @@
+{
+  "report_id": "report-family-experience-build-blocker-1",
+  "run_ids": [
+    "run-79296ea384ba42859dc3665067b98a56"
+  ],
+  "feature": "Signed physical test build diagnostic",
+  "review_kind": "synthetic agent engineering diagnostic; output reviewer only",
+  "versions": {
+    "destination": "plugged iPhone16Pro",
+    "derivedDataPath": ".build-mac/codex-iphone"
+  },
+  "criteria": [
+    {
+      "id": "MAC-01",
+      "verdict": "blocked before native execution"
+    }
+  ],
+  "synopsis": "The compiler rejects the new store-selection expression because its nested conditional infers two concrete store types before the outer existential annotation can resolve them. This is a compile-time isolation-selection issue, not native journey or provider evidence.",
+  "failures": [
+    {
+      "severity": "blocking",
+      "file": "apps/ios/DryRun/App/DryRunApp.swift",
+      "line": 23,
+      "expected": "Choose isolated encrypted store or in-memory store while storing the result through PrivateDataStore.",
+      "observed": "Nested conditional branches use different concrete conforming store types; Swift cannot unify the inner conditional.",
+      "correction": "Replace the nested conditional with explicit if / else if / else assignment to the typed store variable. First branch isolatedTestVault assigns VaultPrivateDataStore.makeDefault(); second branch demo.usesInMemoryStore || unitTestHost assigns InMemoryPrivateDataStore(); final branch assigns VaultPrivateDataStore.makeDefault(). This preserves current precedence while giving each assignment its existential context."
+    }
+  ],
+  "likely_stage": "native compilation; high confidence",
+  "references": [
+    "Protected stdout compiler diagnostic associated with DryRunApp.swift store-selection declaration; stderr failed-command summary corroborates."
+  ],
+  "recommendations": [
+    "Implementation owner applies the branch-based assignment; reviewer makes no production patch.",
+    "Rebuild signed build-for-testing with the same project/scheme/destination/derivedDataPath; no test launch until successful build."
+  ],
+  "retests": [
+    "Successful signed build; then verify unitTestHost and explicit -uiTestingInMemory launches select memory, isolated-vault persistence test uses only its intended namespace."
+  ],
+  "limitations": [
+    "No build rerun or device launch performed by this diagnostic.",
+    "Only this compiler blocker is established; later errors may appear after correction.",
+    "Independent family journey acceptance remains pending exclusive device handoff and successful current build."
+  ],
+  "next_owner": "orchestrator implementation owner for compile correction and rebuild; family_experience_review remains reviewer-only",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

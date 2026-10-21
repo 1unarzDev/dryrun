@@ -1,0 +1,31 @@
+{
+  "report_id": "report-core-preservation-regression-1",
+  "run_ids": [
+    "run-54888b6b6c0f426082ce897923eb0bf4"
+  ],
+  "feature": "Integrated competency preservation test reconciliation",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "47 tests across 14 suites executed; one historical test produced four failed expectations. New independent competency preservation conflicts with that older test whose name and assertions require a newly started incomplete equivalent check to erase all completed history.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticePhaseTests.swift",
+      "symbol": "newerIncompleteEquivalentVariantSupersedesCompletedHistory",
+      "lines": [
+        97,
+        100
+      ],
+      "diagnosis": "The historical test expects practice 0 with assessed count 0 immediately after starting a later check, then practice 0 with assessed count 1 after only continuity is answered. Those expectations encode the erasure the new requirement forbids.",
+      "fix": "Rename and rewrite the historical test around per-competency preservation: after later empty check, retain all four completed competencies; after later failed continuity, supersede continuity only while retaining the other three. Under the current four-equal-competency fixture the intended expectations are initially 100/4 and then 75/4. Keep eligible prior answers intact and check the new answer only replaces its exact scope."
+    }
+  ],
+  "recommendations": [
+    "Do not revert the new preservation behavior to satisfy the historical erasure assertions. Reconcile both test suites to the explicit user requirement.",
+    "Rerun the entire same selected set after the expectation update. New preservation, opening reclassification, matrix and integrated AI suites did not produce additional failures in this run."
+  ],
+  "limitations": [
+    "Raw failure output does not include actual numeric values for the failed expressions; recommended values derive from authored fixture/rubric semantics and need a fresh passing run.",
+    "No live provider or native scoring presentation claim follows from this portable test."
+  ],
+  "next_owner": "orchestrator and preparedness specialist",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

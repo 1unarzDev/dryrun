@@ -3,12 +3,15 @@ import DryRunCore
 
 // Manual mode: rectangular rooms, doors on real shared walls, verified exits, markers, meeting point.
 // Geometry rules live in DryRunCore.ManualLayout (tested). Every change bumps the draft revision.
-// Presented inside the caller's NavigationStack. AUTHORED, NOT COMPILED in this environment.
+// Presented inside the caller's NavigationStack; persistence remains with AppModel.
 
 struct ManualHomeEditorView: View {
     private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
-    let onSave: (HomeModel) -> Void
+    let onSave: @MainActor (HomeModel, Int?, String) async -> Bool
+    @State private var baseRevision: Int?
+    @State private var savedScopeSessionID: String
+    @State private var saving = false
     @State private var draft: HomeModel
     @State private var message: String?
     @State private var selectedID: String?
@@ -31,8 +34,6 @@ struct ManualHomeEditorView: View {
     @State private var newFloorOrder = 1
     @State private var newFloorElevation = ""
     @State private var landingPreviewTo = false
-    @State private var correctionWidth = ""
-    @State private var correctionDepth = ""
     @State private var landingFromRoom = ""
     @State private var landingToRoom = ""
     @State private var landingFromX = ""
@@ -49,7 +50,6 @@ struct ManualHomeEditorView: View {
     @State private var doorSide: ManualLayout.Side = .south
     @State private var doorKind: PortalKind = .door
     @State private var doorWidthText = ""
-    @State private var measuredWidthText = ""
 
     // Add-marker form
     @State private var markerKind: AnnotationKind = .smokeAlarm
@@ -60,8 +60,10 @@ struct ManualHomeEditorView: View {
     @State private var markerLocationChecked = false
     @State private var meetingLabel = ""
 
-    init(home: HomeModel, selectedElementID: String? = nil, onSave: @escaping (HomeModel) -> Void) {
+    init(home: HomeModel, selectedElementID: String? = nil, savedBaseRevision: Int?, scopeSessionID: String, onSave: @escaping @MainActor (HomeModel, Int?, String) async -> Bool) {
         self.onSave = onSave
+        _baseRevision = State(initialValue: savedBaseRevision)
+        _savedScopeSessionID = State(initialValue: scopeSessionID)
         _selectedID = State(initialValue: selectedElementID)
         _draft = State(initialValue: home)
         _anchorID = State(initialValue: home.spaces.first?.id ?? "")
@@ -80,6 +82,8 @@ struct ManualHomeEditorView: View {
         .onChange(of: draft) { old, _ in
             if undoing { undoing = false; resetContext() } else { history.append(old) }
         }
+        .disabled(saving)
+        .interactiveDismissDisabled(saving)
         .onAppear { resetContext() }
         .onChange(of: selectedID) { _, _ in resetContext() }
         .onChange(of: roomFloorID) { _, id in anchorID = draft.spaces.first(where: { $0.floorID == id })?.id ?? "" }
@@ -97,6 +101,7 @@ struct ManualHomeEditorView: View {
                     Text(s("Tap a room, opening or marker to edit it. The lists below provide the same controls.")).font(.footnote).foregroundStyle(.secondary)
                 }
             }
+            ScanCorrectionSection(draft: $draft)
             if draft.isFictional || draft.source == .sample {
                 Section {
                     Text(s("You're editing the fictional sample home. Start your own to describe your real layout."))
@@ -141,6 +146,7 @@ struct ManualHomeEditorView: View {
             Section(s("Rooms")) {
                 ForEach(draft.spaces) { space in
                     Button(roomFloorLabel(space)) { selectedID = space.id }
+                        .accessibilityIdentifier("home.editRoom.\(space.id)")
                 }
                 DisclosureGroup(s("Add a room"), isExpanded: $addingRoom) {
                 if draft.floors.count > 1 {
@@ -152,8 +158,6 @@ struct ManualHomeEditorView: View {
                     ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) }
                 }
                 TextField(s("New room name"), text: $roomLabel)
-                Stepper(model.localizer("spatial.width-value", ["value": roomWidth.formatted(.number.locale(Locale(identifier: model.locale)))]), value: $roomWidth, in: 1...15, step: 0.5)
-                Stepper(model.localizer("spatial.depth-value", ["value": roomDepth.formatted(.number.locale(Locale(identifier: model.locale)))]), value: $roomDepth, in: 1...15, step: 0.5)
                 if draft.spaces.contains(where: { $0.floorID == roomFloorID }) {
                     Picker(s("Next to"), selection: $anchorID) {
                         ForEach(draft.spaces.filter { $0.floorID == roomFloorID }) { Text($0.label).tag($0.id) }
@@ -164,14 +168,13 @@ struct ManualHomeEditorView: View {
                 }
                 Button(s("Add room"), systemImage: "plus.square") { addRoom() }
                     .accessibilityIdentifier("home.addRoom")
-                Text(model.localizer("spatial.sizes-are-estimates-and-are-marked-needs-measurement-until-you-measure-them"))
-                    .font(.caption).foregroundStyle(.secondary)
             }
 
             }
             Section(s("Doors and openings")) {
                 ForEach(draft.portals) { portal in
                     Button(openingLabel(portal)) { selectedID = portal.id }
+                        .accessibilityIdentifier("home.editOpening.\(portal.id)")
                 }
                 DisclosureGroup(s("Add an opening")) {
                 Picker(s("From room"), selection: $doorFrom) { roomOptions }
@@ -190,8 +193,6 @@ struct ManualHomeEditorView: View {
                     Text(s("Open doorway")).tag(PortalKind.opening)
                     Text(s("Window")).tag(PortalKind.window)
                 }
-                TextField(s("Measured clear width in metres (optional)"), text: $doorWidthText)
-                    .keyboardType(.decimalPad)
                 Button(s("Add opening"), systemImage: "door.left.hand.open") { addDoor() }
             }.disabled(draft.spaces.isEmpty)
 
@@ -236,33 +237,24 @@ struct ManualHomeEditorView: View {
             Button(s("Start my own home")) { startNew() }
         }
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button(s("Finish later")) { onSave(draft) } }
+            ToolbarItem(placement: .cancellationAction) { Button(s("Cancel")) { dismiss() } }
             ToolbarItem(placement: .topBarTrailing) { Button(s("Undo"), systemImage: "arrow.uturn.backward") {
                 if let previous = history.popLast() { undoing = true; draft = previous }
             }.disabled(history.isEmpty) }
-            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { onSave(draft) } }
+            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { save() }.accessibilityIdentifier("home.save") }
         }
     }
 
     @ViewBuilder private var contextualEditor: some View {
         Form {
-            FloorPlanView(home: draft, routes: [], highlightedFloorID: selectedFloorID, highlightedElementID: selectedID).frame(height: 180)
+            FloorPlanView(home: draft, routes: [], highlightedFloorID: selectedFloorID, highlightedElementID: selectedID,
+                          onSelect: { id in if applyPendingMarkerPlacement() { selectedID = id } }).frame(height: 180)
             if let index = draft.spaces.firstIndex(where: { $0.id == selectedID }) {
                 TextField(s("Room name"), text: $draft.spaces[index].label)
+                    .accessibilityIdentifier("home.roomName")
                 Picker(s("Room type"), selection: $draft.spaces[index].kind) {
                     ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) }
                 }
-                Text(s("Layout corrections can change connections. Review doors and routes after a correction.")).font(.footnote)
-                Toggle(s("Needs measurement"), isOn: $draft.spaces[index].needsMeasurement)
-                TextField(model.localizer("spatial.correct-width"), text: $correctionWidth).keyboardType(.decimalPad)
-                TextField(model.localizer("spatial.correct-depth"), text: $correctionDepth).keyboardType(.decimalPad)
-                Button(model.localizer("spatial.apply-outline")) { resizeRoom(index) }
-                    .accessibilityIdentifier("home.correctOutline")
-                Text(model.localizer("spatial.outline-note")).font(.footnote)
-                Button(s("Move 25 cm east")) { moveRoom(index, delta: Vec2(0.25, 0)) }
-                Button(s("Move 25 cm west")) { moveRoom(index, delta: Vec2(-0.25, 0)) }
-                Button(s("Move 25 cm north")) { moveRoom(index, delta: Vec2(0, 0.25)) }
-                Button(s("Move 25 cm south")) { moveRoom(index, delta: Vec2(0, -0.25)) }
                 Picker(model.localizer("spatial.refuge-check"), selection: Binding<Int>(get: {
                     draft.spaces[index].higherRefugeConfirmed?.confirmedValue.map { $0 ? 1 : 0 } ?? -1
                 }, set: { answer in
@@ -270,13 +262,6 @@ struct ManualHomeEditorView: View {
                     else { draft = HomeConfirmation.apply(.higherRefuge(spaceID: draft.spaces[index].id, hasWayOutAndIsNotClosedAttic: answer == 1), to: draft) }
                 })) { Text(s("Not sure")).tag(-1); Text(s("Yes")).tag(1); Text(s("No")).tag(0) }
                 Text(model.localizer("spatial.refuge-check-note")).font(.footnote)
-                if draft.spaces[index].geometryNeedsReview == true {
-                    Button(model.localizer("spatial.review-outline")) {
-                        let reviewed = HomeConfirmation.apply(.reviewRoomGeometry(spaceID: draft.spaces[index].id), to: draft)
-                        if reviewed != draft { draft = reviewed; message = nil }
-                        else { message = model.localizer("spatial.answer-refused") }
-                    }.accessibilityIdentifier("home.reviewOutline")
-                }
                 Picker(model.localizer("spatial.shelter-question"), selection: Binding<Int>(get: {
                     draft.spaces[index].interiorNoWindowsConfirmed.confirmedValue.map { $0 ? 1 : 0 } ?? -1
                 }, set: { answer in
@@ -295,18 +280,30 @@ struct ManualHomeEditorView: View {
                     Text(model.localizer("plan.shelter.manufactured")).font(.footnote)
                 }
             } else if let index = draft.portals.firstIndex(where: { $0.id == selectedID }) {
+                VStack(alignment: .leading, spacing: Theme.Space.s) {
+                    Text(s("Type")).font(.headline)
+                    ForEach([[PortalKind.door, .window], [.slidingDoor, .opening]], id: \.self) { row in
+                        HStack(spacing: Theme.Space.s) {
+                            ForEach(row, id: \.self) { kind in
+                                let selected = draft.portals[index].kind == kind
+                                Button {
+                                    try? HomeGeometryEditor.reclassifyOpening(in: &draft, portalID: draft.portals[index].id, kind: kind)
+                                } label: {
+                                    HStack {
+                                        Text(s(kind == .door ? "Door" : kind == .window ? "Window" : kind == .slidingDoor ? "Sliding door" : "Open doorway"))
+                                            .fixedSize(horizontal: false, vertical: true)
+                                        if selected { Image(systemName: "checkmark").accessibilityHidden(true) }
+                                    }
+                                }
+                                .buttonStyle(ChoiceButtonStyle(selected: selected))
+                                .accessibilityAddTraits(selected ? .isSelected : [])
+                                .accessibilityIdentifier("home.opening.type.\(kind.rawValue)")
+                            }
+                        }
+                    }
+                }.accessibilityElement(children: .contain).accessibilityIdentifier("home.opening.type")
                 portalEditor($draft.portals[index])
                 openingPlacementEditor(index)
-                TextField(s("Measured width in metres"), text: Binding(get: { measuredWidthText }, set: { text in
-                    measuredWidthText = text
-                    draft.portals[index].clearWidthMeters = HomeScenePresentation.editedWidth(text, previous: draft.portals[index].clearWidthMeters)
-                })).keyboardType(.decimalPad)
-                Button(model.localizer("spatial.width-unknown")) {
-                    measuredWidthText = ""; draft.portals[index].clearWidthMeters = .unknown
-                }
-                if !measuredWidthText.isEmpty && (decimal(measuredWidthText).map { $0 <= 0 } ?? true) {
-                    Text(model.localizer("spatial.width-invalid")).font(.footnote).foregroundStyle(Theme.caution)
-                }
                 if draft.portals[index].kind == .window {
                     Text(model.localizer("spatial.window-person-question")).font(.subheadline)
                     Text(model.localizer("spatial.window-person-note")).font(.footnote)
@@ -338,13 +335,26 @@ struct ManualHomeEditorView: View {
         .confirmationDialog(model.localizer("spatial.remove-item-confirm"), isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button(s("Remove"), role: .destructive) { removeSelected() }
         }
-        .navigationTitle(s("Selected home item"))
+        .navigationTitle(s("Edit home"))
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button(s("All items")) { if applyPendingMarkerPlacement() { selectedID = nil } } }
+            ToolbarItem(placement: .cancellationAction) { Button(s("All items")) { if applyPendingMarkerPlacement() { selectedID = nil } }.accessibilityIdentifier("home.allItems") }
             ToolbarItem(placement: .topBarTrailing) { Button(s("Undo")) {
                 if let previous = history.popLast() { undoing = true; draft = previous }
             }.disabled(history.isEmpty) }
-            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { if applyPendingMarkerPlacement() { draft.bumpRevision(); onSave(draft) } } }
+            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { save() }.accessibilityIdentifier("home.save") }
+        }
+    }
+
+    private func save() {
+        guard !saving, applyPendingMarkerPlacement() else { return }
+        saving = true
+        var candidate = draft
+        candidate.bumpRevision()
+        Task { @MainActor in
+            let saved = await onSave(candidate, baseRevision, savedScopeSessionID)
+            saving = false
+            if saved { dismiss() }
+            else { message = s("Could not save this home. Your edits are still here. Retry, or cancel and reopen the latest home.") }
         }
     }
 
@@ -360,27 +370,8 @@ struct ManualHomeEditorView: View {
         switch destination { case .space(let id): id; case .exterior: "outside"; case .commonArea: "common"; default: "unknown" }
     }
 
-    private func moveRoom(_ index: Int, delta: Vec2) {
-        let room = draft.spaces[index], size = HomeGeometryEditor.dimensions(of: room)
-        do {
-            try HomeGeometryEditor.correctRoom(in: &draft, roomID: room.id, width: size.x, depth: size.y, translation: delta)
-            message = nil
-        } catch { message = describe(error) }
-    }
-
-    private func resizeRoom(_ index: Int) {
-        guard let width = decimal(correctionWidth), let depth = decimal(correctionDepth) else {
-            message = invalidDimensionsMessage; return
-        }
-        do {
-            try HomeGeometryEditor.correctRoom(in: &draft, roomID: draft.spaces[index].id, width: width, depth: depth)
-            message = nil
-        } catch { message = describe(error) }
-    }
-
     private func resetContext() {
         message = nil
-        measuredWidthText = draft.portals.first(where: { $0.id == selectedID })?.clearWidthMeters.value.map(String.init(describing:)) ?? ""
         landingPreviewTo = false
         correctionSide = nil
         correctionFromRoom = ""; correctionToRoom = "unknown"
@@ -391,10 +382,6 @@ struct ManualHomeEditorView: View {
             markerLocationChecked = marker.verification == .verified
         } else {
             markerEditRoom = ""; markerX = ""; markerY = ""; markerLocationChecked = false
-        }
-        if let room = draft.spaces.first(where: { $0.id == selectedID }) {
-            let size = HomeGeometryEditor.dimensions(of: room)
-            correctionWidth = String(size.x); correctionDepth = String(size.y)
         }
         if let connector = draft.connectors.first(where: { $0.id == selectedID }) {
             landingFromRoom = connector.fromSpaceID; landingToRoom = connector.toSpaceID

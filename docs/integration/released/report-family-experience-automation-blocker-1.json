@@ -1,0 +1,26 @@
+{
+  "report_id": "report-family-experience-automation-blocker-1",
+  "run_ids": [
+    "run-53c46749c2ae421d86ebc640e3ce5cd6"
+  ],
+  "feature": "Independent physical family journeys",
+  "review_kind": "synthetic agent audit",
+  "synopsis": "The reserved physical UI runner could not initialize device automation within its timeout. No selected family-journey or home-persistence XCTest body executed; this is an infrastructure blocker, not an observed app failure. A single bounded retry will preserve the failed run and use the same isolated tests.",
+  "criteria": [
+    {
+      "id": "MAC-01/AUDIT-01",
+      "verdict": "UI execution blocked at automation initialization"
+    }
+  ],
+  "recommendations": [
+    "Owner may need to keep the plugged phone unlocked and approve any native developer automation prompt if present. Reviewer cannot establish whether such a prompt appeared.",
+    "Do not infer UI or persistence success from the earlier 50 passing native unit tests."
+  ],
+  "limitations": [
+    "No device settings changed by reviewer.",
+    "No app screen observed or app mutation established in this failed attempt.",
+    "Actual RoomPlan movement remains separately unverified."
+  ],
+  "next_owner": "family_experience_review retains reservation for one bounded retry; orchestrator for owner coordination if automation remains blocked",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

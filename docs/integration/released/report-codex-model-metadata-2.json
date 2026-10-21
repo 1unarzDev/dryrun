@@ -1,0 +1,27 @@
+{
+  "report_id": "report-codex-model-metadata-2",
+  "run_ids": [
+    "run-f21bd168ed884b34b5cea8c10d8a7e72"
+  ],
+  "feature": "LB model metadata discovery retest",
+  "review_kind": "synthetic agent audit",
+  "synopsis": "The candidate metadata path returns HTTP 200 application/json with a models array. The retained bounded prefix includes model entries whose slug fields are gpt-6.1-sol and gpt-6-astra. These are metadata-listed aliases, not yet inference-capacity or upstream-identity proof.",
+  "criteria": [
+    {
+      "id": "CODEX-01",
+      "verdict": "metadata route observed",
+      "evidence": "Authenticated GET exact supplied base plus /models returned JSON metadata."
+    }
+  ],
+  "recommendations": [
+    "Use metadata-listed gpt-6.1-sol for the unchanged synthetic read/tool/schema probe next; do not claim generation support until successful turn.",
+    "For full inventory, parse metadata incrementally or raise a justified bounded metadata cap while dropping large instruction bodies only in the engineering view. Preserve actual response in reviewer storage. The first 128000-byte prefix does not establish an exhaustive alias list."
+  ],
+  "limitations": [
+    "Response exceeded existing cap and process correctly exited nonzero. Two slugs were visible in the bounded prefix; rest of catalog unavailable.",
+    "Model base instructions and raw metadata remain protected; only support-relevant slugs/status released.",
+    "No inference, search or native provider behavior verified by metadata listing."
+  ],
+  "next_owner": "codex_integration and reviewer for live listed-alias probe",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

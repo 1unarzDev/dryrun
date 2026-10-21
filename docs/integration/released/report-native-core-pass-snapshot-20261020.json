@@ -1,0 +1,44 @@
+{
+  "report_id": "report-native-core-pass-snapshot-20261020",
+  "run_ids": [
+    "run-0c81eecf5fe94567889f1d12bb413981",
+    "run-764c589a39174c9cb44c65dd61dacc9a",
+    "run-aee83eff446b4dd7a0a795b2840ee712"
+  ],
+  "review_kind": "Dedicated reviewer verification of captured engineering checks",
+  "synopsis": "The diagnosed failures were resolved at this captured source snapshot. Targeted Core suites passed, the full Core run passed, and the regenerated unsigned generic-iOS test build succeeded. This report is historical snapshot evidence and does not cover later edits.",
+  "fact_findings": [
+    {
+      "run_id": "run-0c81eecf5fe94567889f1d12bb413981",
+      "result": "Exit zero; Swift Testing reported 7 tests in 2 suites passed. Coverage is the targeted historical adapter compatibility and independent competency evidence suites."
+    },
+    {
+      "run_id": "run-764c589a39174c9cb44c65dd61dacc9a",
+      "result": "Exit zero; Swift Testing reported 570 tests in 105 suites passed. One explicitly disabled exploration test was skipped. XCTest reported 17 cases, one skipped, zero failures. The skipped XCTest case is the opt-in native gateway input export, which requires explicit synthetic export paths. Capture elapsed time was 144.074 seconds."
+    },
+    {
+      "run_id": "run-aee83eff446b4dd7a0a795b2840ee712",
+      "result": "Exit zero; unsigned generic-iOS build-for-testing succeeded after project regeneration. Capture elapsed time was 45.966 seconds. This compiles native app and test targets; it does not execute native tests."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "result": "Current inspected test excludes only the newly added heat follow-up choice from historical alternate input. Historical digest assertions and earlier unused choice overrides remain. Targeted and full captured passes substantiate the prior input-construction diagnosis."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeEvidencePreservationTests.swift",
+      "result": "Coverage comparison now uses 1e-10 absolute tolerance. Assertions retaining independent competency evidence and fixed practice budgets remain intact and passed."
+    }
+  ],
+  "references": [
+    "report-native-core-compile-failures-20261020"
+  ],
+  "limitations": [
+    "No device, simulator, app execution, or new model calls were performed by this reviewer. Only existing captures and authored source were inspected.",
+    "The full Core result covers its captured source snapshot before subsequent IA10 and preference/reminder hardening edits; a later full run is required to cover those changes.",
+    "Native success establishes compilation only, without executed iOS unit tests, UI tests, physical-device usability, or runtime behavior.",
+    "Skipped opt-in export and exploration cases are not validated by this run.",
+    "These engineering passes do not alter independently retained model evaluation failures or establish live model quality."
+  ],
+  "next_owner": "parent integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

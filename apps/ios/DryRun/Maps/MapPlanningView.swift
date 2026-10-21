@@ -21,9 +21,16 @@ struct MapPlanningView: View {
     private let dismissAfterSave: Bool
     /// False when pushed onto an existing navigation stack (a preparation task), so stacks never nest.
     private let embedInNavigation: Bool
+    private let planningContext: MapPlanningContext
+    private let plannedExteriorHandoff: PlannedExteriorHandoff?
     @State private var showingSearch = false
     @State private var showingList = false
     @State private var discovery = NearbyDiscovery()
+    /// Places for the household's open preparation tasks (offline plans; listings stay on this phone).
+    @State private var taskSearch = TaskResourceSearch()
+    @State private var taskPlanRefresh: Task<Void, Never>?
+    /// Whether the listed task results were searched with Gemini's accepted plans (not merely whether plans arrived).
+    @State private var listFromGemini = false
     @State private var routeRequest = MapRoutePreviewModel()
     @State private var routeEndpoints: MapPlanningRouteEndpoints?
     @State private var mode: MapTravelMode = .walking
@@ -33,25 +40,68 @@ struct MapPlanningView: View {
     @State private var location = OptionalLocationService()
 
     init(content: ContentLibrary, client: PublicAPIClient, regionID: String,
-         purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true) {
+         purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true,
+         context: MapPlanningContext = MapPlanningContext(), plannedExteriorHandoff: PlannedExteriorHandoff? = nil) {
         _store = State(initialValue: RegionalResourcesStore(content: content, client: client, regionID: regionID))
         initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave; self.embedInNavigation = embedInNavigation
+        planningContext = context; self.plannedExteriorHandoff = plannedExteriorHandoff
     }
-    init(store: RegionalResourcesStore, purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true) {
+    init(store: RegionalResourcesStore, purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true,
+         context: MapPlanningContext = MapPlanningContext(), plannedExteriorHandoff: PlannedExteriorHandoff? = nil) {
         _store = State(initialValue: store)
         initialPurpose = purpose; self.dismissAfterSave = dismissAfterSave; self.embedInNavigation = embedInNavigation
+        planningContext = context; self.plannedExteriorHandoff = plannedExteriorHandoff
     }
     /// Choosing a meeting place is the task itself: a tapped result goes straight to its editor.
     private var choosingMeetup: Bool { initialPurpose == .outsideMeetingPoint || initialPurpose == .backupMeetingPlace }
     private var places: [SavedPlace] { model.savedPlaces.filter { $0.homeID == model.household?.stableHomeID } }
     private var officialResources: [PublicResource] { store.resources(for: model.household?.regionID ?? "") }
     private var route: MapTravelPreview? { routeRequest.result?.preview }
+    private var planningScope: MapPlanningScope? {
+        model.household.map { MapPlanningScope(householdID: $0.id, homeID: $0.stableHomeID,
+                                               isExample: $0.isFictional, homeCoordinate: homeCoordinate, sessionID: model.scopeSessionID) }
+    }
+    private struct DiscoveryScope: Hashable {
+        var household: MapPlanningScope?
+        var queries: [String]
+    }
+    private var discoveryScope: DiscoveryScope {
+        .init(household: planningScope, queries: MapDiscoveryNeeds.queries(for: model.household))
+    }
     private var homeCoordinate: GeographicCoordinate? {
         guard let p = model.household?.privateLocation, let lat = p.latitude, let lon = p.longitude else { return nil }
         return GeographicCoordinate(latitude: lat, longitude: lon)
     }
     private var hint: MapRegionHint? { (cameraCenter ?? homeCoordinate).map { MapRegionHint(center: $0, spanLatitude: radius / 55000, spanLongitude: radius / 55000) } }
     private func t(_ key: String) -> String { model.localizer("map.\(key)") }
+    private func planningText(_ key: String) -> String { MapPlanningCopy.text(key, locale: model.locale) }
+    private var hurricanePlanning: HurricanePlanningAvailability {
+        guard let household = model.household else { return .notRecorded }
+        return MapPlanningPolicy.hurricanePlanning(household: household, places: places,
+            approvedSourceURLs: store.reviewedPlanningSourceURLs(for: household.regionID), at: Date())
+    }
+    private var currentHandoff: PlannedExteriorHandoff? {
+        guard let handoff = plannedExteriorHandoff, let home = model.home, let household = model.household,
+              handoff.isCurrent(home: home, household: household, places: places) else { return nil }
+        return handoff
+    }
+    private var hasPlanningContext: Bool { planningContext.intent != .ordinary || planningContext.phase != .advance || hurricanePlanning != .notRecorded }
+    private var planningObjectiveKey: String {
+        if planningContext.phase == .advance && (planningContext.intent == .tornadoShelter || planningContext.intent == .structureFire) {
+            return planningContext.intent.rawValue + "Advance"
+        }
+        return planningContext.intent.rawValue
+    }
+    private var planningSummary: String {
+        if planningContext.intent == .ordinary {
+            switch hurricanePlanning {
+            case .available(let plan): return planningText("zone") + ": " + plan.zone
+            case .needsReview: return planningText("hurricaneReview")
+            case .notRecorded: break
+            }
+        }
+        return planningText(planningObjectiveKey)
+    }
 
     var body: some View {
         if embedInNavigation { NavigationStack { content } } else { content }
@@ -64,6 +114,13 @@ struct MapPlanningView: View {
                         .font(.headline).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).padding(.top, 8)
                 }
                 Text(t("privacy")).font(.caption).foregroundStyle(.secondary).padding(10)
+                if hasPlanningContext {
+                    HStack(alignment: .top) {
+                        Text(planningSummary).font(.caption)
+                        Spacer()
+                        Button(planningText("details")) { showingList = true }.font(.caption.weight(.semibold))
+                    }.padding(.horizontal).padding(.bottom, 8)
+                }
                 Picker(t("view"), selection: $showingList) { Text(t("map")).tag(false); Text(t("list")).tag(true) }
                     .pickerStyle(.segmented).padding(.horizontal)
                 HStack {
@@ -81,9 +138,12 @@ struct MapPlanningView: View {
                 if let error = discovery.error { Text(error).font(.caption).padding(.horizontal) }
                 if showingList { placeList } else { map }
                 if let route {
-                    HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                      HStack {
                         Text(model.localizer("map.routeSummary", ["mode": t(route.mode.rawValue), "distance": distance(route.distanceMeters), "duration": PlanningMeasurements.duration(seconds: route.expectedTravelTime, localizer: model.localizer)]))
                         Spacer(); Button(t("clear")) { routeRequest.cancel(clearPreview: true) }
+                      }
+                      Text(t("routeNote")).foregroundStyle(.secondary)
                     }.font(.caption).padding(10)
                 }
                 if let message { Text(message).font(.caption).padding(10) }
@@ -110,12 +170,14 @@ struct MapPlanningView: View {
                     deferredDestination = MapPlanningDestination(place: place)
                 })
             }
-            .task(id: homeCoordinate) {
-                discovery.cancel(clearResults: true); invalidateChangedRouteEndpoints(); cameraCenter = nil
-                if let homeCoordinate {
+            .task(id: discoveryScope) {
+                resetPlanningSession()
+                if let homeCoordinate, planningContext.allowsOrdinaryDirections {
                     let newHomeRegion = MapRegionHint(center: homeCoordinate, spanLatitude: radius / 55000, spanLongitude: radius / 55000)
                     camera = .region(newHomeRegion.mapRegion)
-                    await discovery.search(region: newHomeRegion, locale: model.locale)
+                    async let general: Void = discovery.search(region: newHomeRegion, locale: model.locale, queries: discoveryScope.queries)
+                    await refreshTaskSuggestions(home: homeCoordinate, scope: planningScope)
+                    await general
                 }
             }
             .onChange(of: selected?.id) { _, _ in routeRequest.cancel() }
@@ -132,7 +194,15 @@ struct MapPlanningView: View {
                 }
                 camera = .rect(rect.insetBy(dx: -rect.width * 0.15, dy: -rect.height * 0.15))
             }
-            .onDisappear { discovery.cancel(); routeRequest.cancel() }
+            .onDisappear { discovery.cancel(); taskPlanRefresh?.cancel(); taskSearch.cancel(); routeRequest.cancel() }
+            .onChange(of: model.cloudResourcesEnabled) { _, _ in
+                guard let homeCoordinate, !choosingMeetup else { return }
+                taskPlanRefresh?.cancel()
+                let scope = planningScope
+                taskPlanRefresh = Task {
+                    await refreshTaskSuggestions(home: homeCoordinate, scope: scope)
+                }
+            }
     }
 
     private var map: some View {
@@ -148,6 +218,16 @@ struct MapPlanningView: View {
             }
             ForEach(discovery.results) { result in
                 Annotation(result.name, coordinate: result.coordinate.cl) { Button { select(result) } label: { Image(systemName: "mappin.circle.fill").font(.title2).foregroundStyle(.orange).background(.background, in: Circle()) }.accessibilityLabel(result.name) }
+            }
+            ForEach(taskSearch.suggestions) { suggestion in
+                if let coordinate = suggestion.coordinate {
+                    Annotation(suggestion.name, coordinate: coordinate.cl) {
+                        Button { select(suggestion) } label: {
+                            Image(systemName: "checklist").font(.title3).foregroundStyle(.white).padding(6).background(.purple, in: Circle())
+                        }
+                        .accessibilityLabel(model.localizer("map.forTaskMarker", ["name": suggestion.name, "purpose": text(suggestion.purpose)]))
+                    }
+                }
             }
             ForEach(officialResources.filter { resource in !places.contains { $0.provenance == .officialDirectory && $0.sourceResourceID == resource.id } }) { resource in
                 if let coordinate = resource.planningCoordinate {
@@ -169,6 +249,7 @@ struct MapPlanningView: View {
 
     private var placeList: some View {
         List {
+            if hasPlanningContext { planningDetails }
             if let address = model.household?.privateLocation?.addressLine { Section(t("home")) { Text(address) } }
             Section(t("saved")) {
                 ForEach(places) { place in
@@ -178,11 +259,52 @@ struct MapPlanningView: View {
                 }
                 Button(t("textPlace")) { newPlace(coordinate: nil) }.accessibilityIdentifier("map.addText")
             }
+            if !choosingMeetup {
+                Section {
+                    if taskSearch.suggestions.isEmpty {
+                        Text(taskSearch.isLoading ? t("searching") : t(model.resourcePlans.isEmpty ? "forTasksNone" : "forTasksEmpty")).foregroundStyle(.secondary)
+                    }
+                    ForEach(taskSearch.suggestions) { suggestion in
+                        Button { select(suggestion) } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(suggestion.name).font(.headline)
+                                Text(text(suggestion.purpose)).font(.caption)
+                                if let task = model.preparationTitle(taskID: suggestion.taskID) {
+                                    Label(task, systemImage: "checklist").font(.caption2).foregroundStyle(.secondary)
+                                }
+                                if let homeCoordinate, let coordinate = suggestion.coordinate {
+                                    Text(distance(homeCoordinate.clLocation.distance(from: coordinate.clLocation))).font(.caption)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("map.forTask.\(suggestion.category)")
+                    }
+                } header: {
+                    Text(t("forTasks"))
+                } footer: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(t("forTasksFooter"))
+                        if model.cloudDirectorAvailable {
+                            Toggle(t("geminiPlans"), isOn: Bindable(model).cloudResourcesEnabled)
+                                .accessibilityIdentifier("map.geminiPlans")
+                            Text(t("geminiPlansDetail")).font(.caption2)
+                        }
+                        Label(t(listFromGemini ? "plannedByGemini" : "plannedOnPhone"),
+                              systemImage: listFromGemini ? "sparkles" : "iphone")
+                            .accessibilityIdentifier("map.planSource")
+                        if let note = model.resourcePlanNote { Text(note).foregroundStyle(Theme.caution) }
+                    }
+                }
+            }
             Section(t("suggestions")) {
                 if discovery.results.isEmpty { Text(discovery.isLoading ? t("searching") : t("empty")).foregroundStyle(.secondary) }
                 ForEach(discovery.results) { result in
                     Button { select(result) } label: { VStack(alignment: .leading) {
-                        Text(result.name).font(.headline); Text(t(["hospital", "pharmacy", "grocery"].contains(result.category ?? "") ? result.category! : "suggestion")); if let address = result.address { Text(address).font(.caption) }
+                        Text(result.name).font(.headline)
+                        Text(t(result.category == "hardware store" ? "hardware" : ["hospital", "pharmacy", "grocery"].contains(result.category ?? "") ? result.category! : "suggestion"))
+                        if result.category == "hardware store" { Text(t("hardwarePlanningNote")).font(.caption).foregroundStyle(.secondary) }
+                        if let address = result.address { Text(address).font(.caption) }
                         if let homeCoordinate { Text(distance(homeCoordinate.clLocation.distance(from: result.coordinate.clLocation))).font(.caption) }
                     } }.buttonStyle(.plain)
                 }
@@ -209,10 +331,49 @@ struct MapPlanningView: View {
         }
     }
 
+    @ViewBuilder private var planningDetails: some View {
+        Section(planningText("details")) {
+            Text(planningText(planningObjectiveKey)).font(.callout)
+            if planningContext.phase == .simulation { Text(planningText("simulation")).font(.caption.weight(.semibold)) }
+            if planningContext.intent == .structureFire || planningContext.intent == .flashFlood {
+                if let handoff = currentHandoff, let home = model.home {
+                    Text(planningText("plannedExit") + ": " + HomeScenePresentation.routeElementLabel(handoff.exitPortalID, in: home, localizer: model.localizer))
+                        .font(.callout)
+                    if let meeting = places.first(where: { $0.id == handoff.meetingPlaceID }) {
+                        Text(meeting.label).font(.headline)
+                        if let instructions = meeting.findingInstructions { Text(instructions).font(.callout) }
+                    } else { Text(planningText("missingGathering")).font(.callout) }
+                    Text(planningText("homeMarker")).font(.caption).foregroundStyle(.secondary)
+                } else { Text(planningText("reviewExit")).font(.callout) }
+            }
+            switch hurricanePlanning {
+            case .notRecorded:
+                if planningContext.intent == .hurricaneAdvance { Text(planningText("hurricaneUnknown")).font(.callout) }
+            case .needsReview:
+                Text(planningText("hurricaneReview")).font(.callout)
+            case .available(let plan):
+                Text(planningText("officialPlan")).font(.headline)
+                Text(planningText("zone") + ": " + plan.zone)
+                Text(plan.routeIDs.joined(separator: ", ")).font(.caption)
+                if !plan.instructions.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { Text(plan.instructions).font(.callout) }
+                if let url = URL(string: plan.source.url) { Link(plan.source.publisher, destination: url) }
+                Text(plan.source.retrievedAt.formatted(date: .abbreviated, time: .omitted)).font(.caption)
+                if let destination = places.first(where: { $0.id == plan.destinationPlaceID }) {
+                    Button(destination.label) { selected = MapPlanningDestination(place: destination) }
+                }
+                Text(planningText("officialBoundary")).font(.caption).foregroundStyle(.secondary)
+                if model.household.map({ HouseholdContextSnapshot($0).transport }) == "noCar" {
+                    Text(planningText("noCar")).font(.callout)
+                } else { Text(planningText("confirmTransport")).font(.caption) }
+            }
+        }
+    }
+
     private func destinationSheet(_ result: MapPlanningDestination) -> some View {
         let place = result.place
         return NavigationStack {
             Form {
+                if let suggestion = result.suggestion { suggestionSection(suggestion) }
                 Section {
                     Text(place.label).font(.headline)
                     if let address = place.addressText { Text(address) }
@@ -234,22 +395,22 @@ struct MapPlanningView: View {
                     Section(t("contact")) { Link(destination: url) { Label(phone, systemImage: "phone") } }
                 }
                 if let website = place.websiteURL, let url = URL(string: website) { Link(t("website"), destination: url) }
-                if place.coordinate != nil {
+                if place.coordinate != nil && planningContext.allowsOrdinaryDirections {
                     Section(t("directions")) {
                         Picker(t("origin"), selection: $originID) {
                             if homeCoordinate != nil { Text(t("home")).tag("home") }
                             ForEach(places.filter { $0.coordinate != nil }) { Text($0.label).tag($0.id) }
                             Text(t("current")).tag("current")
                         }
-                        Picker(t("mode"), selection: $mode) { ForEach(MapTravelMode.allCases) { Text(t($0.rawValue)).tag($0) } }
+                        Picker(t("mode"), selection: $mode) { ForEach(travelModes) { Text(t($0.rawValue)).tag($0) } }
                         Button(t("preview")) { preview(result) }.disabled(routeRequest.isLoading)
                         if let key = routeRequest.errorKey { Text(t(key)).font(.caption).foregroundStyle(.secondary) }
                         Text(t("routeNote")).font(.caption)
                     }
-                } else { Section { Text(t("noCoordinateDirections")).font(.caption) } }
+                } else { Section { Text(planningContext.allowsOrdinaryDirections ? t("noCoordinateDirections") : planningText(planningContext.intent.rawValue)).font(.caption) } }
                 Section {
                     Button(t("save")) { deferredPlace = place; selected = nil }
-                    if let coordinate = place.coordinate {
+                    if let coordinate = place.coordinate, planningContext.allowsOrdinaryDirections {
                         Button(t("openApple")) { let item = MKMapItem(placemark: MKPlacemark(coordinate: coordinate.cl)); item.name = place.label; item.openInMaps() }
                     }
                 }
@@ -266,6 +427,45 @@ struct MapPlanningView: View {
             purpose: initialPurpose ?? .fallbackDestination)
         if choosingMeetup { editedPlace = place } else { selected = MapPlanningDestination(place: place) }
     }
+    /// No driving option is offered to a household that has recorded it has no car.
+    private var travelModes: [MapTravelMode] {
+        model.household.map { HouseholdContextSnapshot($0).transport } == "noCar" ? MapTravelMode.allCases.filter { $0 != .driving } : MapTravelMode.allCases
+    }
+
+    /// Offline plan text is a localization key; Gemini plan text is shown as written.
+    private func text(_ keyOrText: String) -> String {
+        model.localizer.has(keyOrText, in: "en") ? model.localizer(keyOrText) : keyOrText
+    }
+
+    @ViewBuilder private func suggestionSection(_ suggestion: ResourceSuggestion) -> some View {
+        Section(t("forTask")) {
+            Text(text(suggestion.purpose)).font(.callout)
+            if let task = model.preparationTitle(taskID: suggestion.taskID) {
+                Label(model.localizer("map.forTaskTask", ["task": task]), systemImage: "checklist").font(.caption)
+            }
+            if !suggestion.unknowns.isEmpty {
+                Text(model.localizer("map.notVerified", ["items": suggestion.unknowns.map(text).joined(separator: "; ")])).font(.caption)
+            }
+            ForEach(suggestion.requiredEvidence, id: \.self) { Label(text($0), systemImage: "phone.arrow.up.right").font(.caption) }
+            let boundary = "resource.boundary.\(suggestion.category)"
+            if model.localizer.has(boundary, in: "en") { Text(model.localizer(boundary)).font(.caption).foregroundStyle(.secondary) }
+        }
+        .accessibilityIdentifier("map.suggestionDetail")
+    }
+
+    private func select(_ suggestion: ResourceSuggestion) {
+        guard let household = model.household else { return }
+        if let official = suggestion.official {
+            let place = SavedPlace.officialResource(official, homeID: household.stableHomeID, purpose: .fallbackDestination)
+            selected = MapPlanningDestination(place: place, officialResource: official, suggestion: suggestion)
+        } else if let result = suggestion.result {
+            let place = SavedPlace.appleSuggestion(sourceID: result.id, name: result.name, coordinate: result.coordinate,
+                address: result.address, phone: result.phone, website: result.website, homeID: household.stableHomeID, purpose: .fallbackDestination)
+            selected = MapPlanningDestination(place: place, suggestion: suggestion)
+        }
+        if suggestion.travelMode == "walking" || suggestion.travelMode == "transit" { mode = suggestion.travelMode == "transit" ? .transit : .walking }
+    }
+
     private func select(_ resource: PublicResource) {
         guard let household = model.household else { return }
         let place = SavedPlace.officialResource(resource, homeID: household.stableHomeID, purpose: initialPurpose ?? .fallbackDestination)
@@ -273,7 +473,38 @@ struct MapPlanningView: View {
     }
     private func discover() async {
         guard discovery.enabled, let hint else { message = t("noHome"); return }
-        await discovery.search(region: hint, locale: model.locale)
+        await discovery.search(region: hint, locale: model.locale, queries: discoveryScope.queries)
+    }
+    /// Clear private drafts as well as public results before starting another household's search.
+    /// Generation-based cancellation in both services rejects callbacks from the old scope.
+    private func resetPlanningSession() {
+        discovery.cancel(clearResults: true)
+        taskPlanRefresh?.cancel()
+        taskSearch.cancel(clearResults: true)
+        listFromGemini = false
+        routeRequest.cancel(clearPreview: true)
+        routeEndpoints = nil
+        pendingSearchResult = nil
+        deferredPlace = nil
+        deferredDestination = nil
+        contextualSaveFinished = false
+        selected = nil
+        editedPlace = nil
+        showingSearch = false
+        message = nil
+        originID = "home"
+        mode = .walking
+        cameraCenter = nil
+    }
+
+    private func refreshTaskSuggestions(home: GeographicCoordinate, scope: MapPlanningScope?) async {
+        guard !choosingMeetup, planningContext.allowsOrdinaryDirections else { return }
+        await model.refreshCloudResourcePlans()
+        guard !Task.isCancelled, scope == planningScope else { return }
+        let fromGemini = model.resourcePlansFromGemini
+        await taskSearch.search(plans: model.activeResourcePlans, home: home, official: officialResources)
+        guard !Task.isCancelled, scope == planningScope else { return }
+        listFromGemini = fromGemini
     }
     private func distance(_ meters: Double) -> String {
         PlanningMeasurements.distance(meters: meters, countryCode: model.household?.privateLocation?.countryCode, localizer: model.localizer)
@@ -285,7 +516,7 @@ struct MapPlanningView: View {
         else { editedPlace = place }
     }
     private func preview(_ destination: MapPlanningDestination) {
-        guard let coordinate = destination.place.coordinate else { return }
+        guard planningContext.allowsOrdinaryDirections, let coordinate = destination.place.coordinate else { return }
         let selectedOriginID = originID
         let savedOrigin = selectedOriginID == "home" ? homeCoordinate : places.first { $0.id == selectedOriginID }?.coordinate
         let origin: MapPlanningRouteEndpoints.Reference

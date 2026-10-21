@@ -1,0 +1,41 @@
+{
+  "report_id": "report-integrated-native-unit-core-pass",
+  "run_ids": [
+    "run-0680cab3581a4786af97f14558e1b790",
+    "run-3e45803eefa44bfe9845e4bb996c4870"
+  ],
+  "feature": "Integrated native unit and deterministic regression verification",
+  "review_kind": "synthetic agent engineering audit",
+  "versions": {
+    "physical_build": "run-d596f5dafad14c8da77784369c376dd1",
+    "device": "plugged iPhone16Pro"
+  },
+  "criteria": [
+    {
+      "id": "MAC-01",
+      "verdict": "physical unit tests passed",
+      "evidence": "48 XCTest methods; zero failures. Unit host explicitly launched with -uiTestingInMemory via protected copied xctestrun."
+    },
+    {
+      "id": "SCORE-01",
+      "verdict": "selected deterministic tests passed",
+      "evidence": "50 tests in 15 suites passed, including competency preservation and historical equivalent-check reconciliation."
+    },
+    {
+      "id": "HOME-02",
+      "verdict": "selected deterministic tests passed",
+      "evidence": "Opening reclassification and native stale-draft/atomic-save persistence regressions passed."
+    }
+  ],
+  "synopsis": "Fresh integrated physical unit suite resolves the baseline label-only evidence invalidation failure. Sidecar preservation, failed example switch, stale home drafts and household evidence tests now pass. Core selected tests confirm independent competency preservation and committed family-by-hazard coverage.",
+  "recommendations": [
+    "Retain the protected isolated xctestrun generation step for future unit-host runs. Matrix UI test currently running on same exclusively reserved physical device.",
+    "These counts describe actual executed tests, not simulator substitutes or RoomPlan scan acceptance."
+  ],
+  "limitations": [
+    "No physical LiDAR scan, real room/opening editing through UI, live provider quality or app-wide screen acceptance follows from unit tests.",
+    "Selected core regression command includes recorded contract tests; raw contract fixtures remain protected and were not released."
+  ],
+  "next_owner": "reviewer for physical matrix and matched captures; orchestrator for ledger",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,85 @@
+{
+  "report_id": "report-firewall-baseline",
+  "run_ids": [
+    "classification-baseline",
+    "firewall-preflight-v1"
+  ],
+  "feature": "Output-boundary baseline",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "authorized workspace; filename inventory and limited schema/source inspection",
+  "versions": {
+    "harness": "scripts/review/firewall.py v1"
+  },
+  "criteria": [
+    {
+      "id": "REVIEW-01",
+      "verdict": "partial",
+      "evidence": "Receipt-only command wrapper and reviewer-mediated structured release implemented. Live app capture remains unverified."
+    }
+  ],
+  "synopsis": "The existing evidence directories mix captures, accessibility dumps, archived runs, response fixtures and engineering notes. They must remain excluded from ordinary source reads and unrestricted test output. Source architecture documentation inspected in this review contains engineering descriptions suitable for implementation work.",
+  "fact_findings": [],
+  "failures": [
+    {
+      "severity": "high",
+      "cause": "Recorded evaluation fixtures contain trace and proposal/result fields, so fixture naming does not establish safe engineering-input status.",
+      "impact": "A broad fixture or historical-output read can disclose protected generated content."
+    }
+  ],
+  "likely_stage": "artifact classification and delivery",
+  "references": [
+    {
+      "path": "artifacts/",
+      "classification": "protected-or-uncertain",
+      "files": 5375,
+      "reason": "Native screenshots, accessibility text, archived capture bundles and logs coexist."
+    },
+    {
+      "path": "output/",
+      "classification": "protected-or-uncertain",
+      "files": 23,
+      "reason": "Rendered plan/PDF artifacts and extracted text audit coexist."
+    },
+    {
+      "path": "fixtures/ai/",
+      "classification": "protected-or-uncertain",
+      "files": 111,
+      "reason": "Evaluation schemas include trace/proposal/result. No blanket fixture clearance."
+    },
+    {
+      "path": "docs/ai/",
+      "classification": "mixed; individual release only",
+      "files": 30,
+      "cleared_read": "docs/ai/architecture.md",
+      "reason": "Architecture file inspected as engineering description; remaining notes are not cleared by this report."
+    },
+    {
+      "path": ".claude/worktrees/",
+      "classification": "exclude recursively",
+      "files": 77917,
+      "reason": "Historical build products and duplicate source/evidence trees; do not search or build indiscriminately."
+    }
+  ],
+  "recommendations": [
+    "Use python3 scripts/review/firewall.py capture -- COMMAND ARGUMENTS for commands that can emit protected content. Only opaque run receipts return; stdout/stderr stay in protected storage. Never put protected text or secrets in command arguments.",
+    "Reviewers inspect stdout/stderr using the opaque run folder under protected storage. Feature agents must not inspect these files, even after a successful command.",
+    "Parent can read docs/ai/architecture.md directly; do not infer that every linked document is cleared. Ask a dedicated reviewer for specific remaining notes or fixture projections.",
+    "Scope source reads to explicit current application/service/package files. Exclude artifacts, output, fixtures/ai, docs/ai except explicitly cleared paths, .claude/worktrees, build products and hidden runtime state. Inspect candidate source fixtures through a reviewer before broad content search if generation provenance is uncertain.",
+    "A reviewer writes a structured report outside the checkout and uses release only after semantic inspection. Allowed fields are fixed in the harness. The reviewer attestation is a procedural assertion; shared filesystem access is not OS enforced isolation.",
+    "Do not open native captures, accessibility trees or persisted AI text through tools that preview automatically. Assign reviewer-controlled capture and release flattened opaque masks preserving actual geometry before UI engineering reads.",
+    "For a resumed execution retain the complete runtime context in protected storage; provide engineers an authored cleared view with fact IDs and opaque protected references. Do not strip useful runtime context to simplify engineering access."
+  ],
+  "retests": [
+    "Before live evaluation, give a dedicated reviewer exact feature purpose, full execution input, expected deterministic outcomes, tool definitions and run handles.",
+    "Independently verify each future report for copied passages, cumulative reconstruction and unredacted assets. Marker checks alone cannot certify semantic non-disclosure.",
+    "Native capture-mask export and actual delegated child transport must be verified on their real tools before use."
+  ],
+  "limitations": [
+    "Classification is deliberately conservative; files were not all opened. Counts are a point-in-time inventory.",
+    "Synthetic preflight exercises capture success, stderr failure, assertion, malformed parsing, resumed input, capture-preview text and child-return analogue. It does not prove external UI tools or platform automatic delegation transport behavior.",
+    "No native/device, provider quality, real-family, clinical or emergency-responder verification performed.",
+    "Wrapper captures ordinary process output and suppresses exception strings, but does not sandbox subprocesses or redirect screenshots/files written directly by tools. Configure each command to write protected artifacts outside source directories."
+  ],
+  "next_owner": "orchestrator and dedicated output-review pool",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

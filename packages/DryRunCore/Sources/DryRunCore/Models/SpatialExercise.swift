@@ -16,7 +16,24 @@ public struct SpatialExerciseOptions: Codable, Sendable, Hashable {
     }
 }
 
+/// Committed exercise position, never evidence that a person physically completed an action.
+public struct ExerciseOccupantState: Codable, Sendable, Hashable {
+    public var personID: String
+    public var currentSpaceID: String?
+    public var exteriorExitPortalID: String?
+    public var shelteredSpaceID: String?
+    public var accountedOutside: Bool
+    public init(personID: String, currentSpaceID: String? = nil, exteriorExitPortalID: String? = nil,
+                shelteredSpaceID: String? = nil, accountedOutside: Bool = false) {
+        self.personID = personID; self.currentSpaceID = currentSpaceID
+        self.exteriorExitPortalID = exteriorExitPortalID; self.shelteredSpaceID = shelteredSpaceID
+        self.accountedOutside = accountedOutside
+    }
+}
+
 public struct SpatialExerciseState: Codable, Sendable, Hashable {
+    /// Absent in historical snapshots. Route overlays alone never establish arrival.
+    public var occupants: [ExerciseOccupantState]?
     public var hazard: HazardKind
     public var seed: UInt64
     public var stageID: String

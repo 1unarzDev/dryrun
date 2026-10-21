@@ -1,0 +1,190 @@
+{
+  "report_id": "report-family-experience-independent-native-1",
+  "run_ids": [
+    "run-4f94651a675b4fe485895c7e733a02d6",
+    "run-11486a3fc8e142c686824a522df60935",
+    "run-53c46749c2ae421d86ebc640e3ce5cd6",
+    "run-aed5cf96876943aa839c774f7a902fb5",
+    "run-5379bfc6aed44660aeaea9a5bfc09ea8"
+  ],
+  "feature": "Independent family understanding, preparation, practice and reopening audit",
+  "review_kind": "Synthetic agent audit; bounded physical acceptance review, not real-family study",
+  "versions": {
+    "candidate": "run-4f94651a675b4fe485895c7e733a02d6",
+    "device": "plugged iPhone16Pro",
+    "variant": "English; ordinary and launch-scoped accessibility XXL; existing dark appearance",
+    "bounds": "402x874 points; PNG 1206x2622",
+    "inputs": "Exact selected test source, isolated and AX xctestruns, household/launch/app-source snapshots retained with protected results; exact commands in run bundles",
+    "provider": "No native gateway configuration; no live native Codex operation"
+  },
+  "fixture_snapshot": "hh-oak fictional in-memory journeys; separate UUID-isolated encrypted synthetic home persistence fixture",
+  "criteria": [
+    {
+      "id": "MAC-01",
+      "verdict": "50 native units passed; 5 bounded UI methods passed; 1 six-screen AX tour method passed; initial UI automation failure retained and single retry recovered"
+    },
+    {
+      "id": "HOME-02",
+      "verdict": "Actual physical encrypted room/opening edit persisted after process relaunch; scan acquisition unverified"
+    },
+    {
+      "id": "PREP-01",
+      "verdict": "Useful direct family/home/card actions and recorded preparation in authored journey; model personalization unverified"
+    },
+    {
+      "id": "UI-01/UI-02",
+      "verdict": "Family-name wrapping and compact diagram labels improved; priority hierarchy and scene-to-choice distance remain material AX friction"
+    },
+    {
+      "id": "CODEX-01/CODEX-02/CTX-01",
+      "verdict": "Native connection, full-context decision use, retrieval-only fact and resume chain unverified; required gate open"
+    },
+    {
+      "id": "SCORE-01",
+      "verdict": "Selected deterministic native tests pass; actual family-visible score evidence, competency retirement and refreshed continuation not certified"
+    },
+    {
+      "id": "DEMO-01/HAZ-01..06/CTX-02",
+      "verdict": "Registry IDs hh-oak, hh-lake, hh-pine and six actual hazards identified; current independent review does not cover all 18 cells or causal alternatives"
+    },
+    {
+      "id": "AUDIT-01",
+      "verdict": "Bounded independent synthetic review completed; overall family-experience acceptance withheld pending listed gates"
+    }
+  ],
+  "synopsis": "The physical app supports a useful authored path from family details and preparations into a saved meetup, practice and the emergency card. Home edits now have direct physical persistence evidence. Large-text review confirms readable wrapping and a stable floor diagram, while revealing substantial navigation distance between a scene and its decisions. Actual native Codex/context/action/scoring evidence and controlled paired cases remain required.",
+  "fact_findings": [
+    {
+      "evidence": "HomePersistenceUITests body and retained physical opening screenshot",
+      "finding": "Restored room name appears in the diagram and selected opening description; Window is selected after relaunch. Per-person escape confirmation remains separate, so reclassification itself does not imply usable egress."
+    },
+    {
+      "evidence": "Prepare screenshot from testPreparationActionsLeadSupportingEditors",
+      "finding": "Prior urgency palette conflict is improved: urgent effort badges now share urgency treatment and warnings occupy a trailing column. Domain/title text still repeats an equipment subject in separate title and detail areas, adding density."
+    },
+    {
+      "evidence": "AX family editor original",
+      "finding": "Household name occupies multiple lines without clipping; editable name and age category remain distinguishable. Save and Cancel fit the toolbar."
+    },
+    {
+      "evidence": "AX Home 2D original",
+      "finding": "Room names use a consistent compact scale and fit inspected Oak rooms including storage. Home explanation wraps without overlap and view selector is readable."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "low",
+      "region": "Restored opening editor toolbar",
+      "observed": "Screen title truncates between a wide leading navigation control and Undo/Save at ordinary text size.",
+      "impact": "Selected-object identity relies on the inspector below rather than a readable screen title.",
+      "correction": "Use a shorter stable editor title or redistribute leading navigation width while preserving obvious Save."
+    },
+    {
+      "severity": "low",
+      "region": "Restored opening type segmented control",
+      "observed": "Longest opening-type segment truncates at ordinary size while selected Window remains legible.",
+      "impact": "An alternative classification label is harder to identify.",
+      "correction": "Use a compact picker or adaptive layout with full option labels at large text sizes."
+    },
+    {
+      "severity": "medium",
+      "requirement": "UI-01/PREP-01",
+      "kind": "observed native friction",
+      "region": "AX Prepare first viewport",
+      "expected": "Quickly identify the first useful action without excessive preamble.",
+      "observed": "Household label, fictional-mode badge and repeated hierarchy consume most of the first viewport. First priority row starts at y585.7 and is 953 points tall, exceeding the 874-point screen; next row starts at y1563.7.",
+      "impact": "Deep scrolling is needed to understand one complete priority; comparison is cumbersome.",
+      "fix": "Use one concise hierarchy and compact example disclosure; remove repeated subject and redundant decorative/status elements from priority previews; preserve full accessible detail through the direct task action. Recheck with actual AX scrolling.",
+      "likely_stage": "native presentation; high confidence"
+    },
+    {
+      "severity": "medium",
+      "requirement": "UI-02/HAZ-01..06",
+      "kind": "observed native friction and evidence gap",
+      "region": "AX fire/tornado decision viewport",
+      "expected": "Nearby household/scene context helps the family understand current choices.",
+      "observed": "Auto-positioned decision view shows options while the scene lies far above: fire diagram y-2850.3, tornado diagram y-1614.7. Repeated route/status explanations increase separation. New occupant-state renderer is outside the captured viewport.",
+      "impact": "Several screenfuls of scrolling and memory are needed to compare a route with the choice. Current captures cannot visually accept occupant statuses.",
+      "fix": "Keep one concise scene summary beside the decision and move secondary route explanations behind a direct detail action. Add bounded native instrumentation explicitly capturing the scene before/after committed fire/tornado choices and named occupant statuses. Preserve Dynamic Type sizing.",
+      "likely_stage": "native hierarchy and review instrumentation; high confidence"
+    }
+  ],
+  "references": [
+    {
+      "report": "report-family-experience-preregistered-plan-1",
+      "purpose": "Independent criteria and expected paired differences set before native output inspection"
+    },
+    {
+      "report": "report-family-experience-journey-persistence-1",
+      "purpose": "Detailed bounded action/persistence evidence"
+    },
+    {
+      "capture": "docs/integration/released/captures-family-experience-1/en-next-steps-xxl.png",
+      "clearance": "Original and opaque flattened derivative inspected; occupied text geometry preserved; no app wording substituted"
+    },
+    {
+      "capture": "docs/integration/released/captures-family-experience-1/en-family-editor-xxl.png",
+      "clearance": "Original and opaque flattened derivative inspected; occupied text geometry preserved; no app wording substituted"
+    },
+    {
+      "capture": "docs/integration/released/captures-family-experience-1/en-fire-decision-xxl.png",
+      "clearance": "Original and opaque flattened derivative inspected; occupied text geometry preserved; no app wording substituted"
+    },
+    {
+      "capture": "docs/integration/released/captures-family-experience-1/en-home-2d-xxl.png",
+      "clearance": "Original and opaque flattened derivative inspected; occupied text geometry preserved; no app wording substituted"
+    },
+    {
+      "capture": "docs/integration/released/captures-family-experience-1/en-apartment-fire-decision-xxl.png",
+      "clearance": "Original and opaque flattened derivative inspected; occupied text geometry preserved; no app wording substituted"
+    },
+    {
+      "capture": "docs/integration/released/captures-family-experience-1/en-tornado-decision-xxl.png",
+      "clearance": "Original and opaque flattened derivative inspected; occupied text geometry preserved; no app wording substituted"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "gate",
+      "owner": "Codex/context integration",
+      "action": "Configure an authorized synthetic native gateway profile; retain exact input bundle and receipts; demonstrate saved fact -> serialized context/retrieval -> actual model result -> validated action -> persisted evidence. Server probes, mocks and absence of logs cannot certify native acceptance."
+    },
+    {
+      "priority": "gate",
+      "owner": "Preparedness/assessment and native integration",
+      "action": "Test applicable check retirement, competency preservation, score-evidence refresh and useful next action in the real native journey. Practice navigation alone does not establish scoring."
+    },
+    {
+      "priority": "gate",
+      "owner": "Fixture/instrumentation implementer",
+      "action": "Provide isolated assistance, medication-storage, floor/access, owned-versus-missing inventory, budget/transport and prior-performance pairs with preregistered expectations from report-family-experience-preregistered-plan-1. Include a retrieval-only fact and post-resume test. Reviewer does not patch implementation."
+    },
+    {
+      "priority": "coverage",
+      "owner": "Scenario/house and reviewer",
+      "action": "Explicit matched native before/after scene capture and committed-state comparison are needed for the new fire/tornado occupant renderer; decision tour scrolls away from it."
+    },
+    {
+      "priority": "coverage",
+      "owner": "Independent acceptance reviewer",
+      "action": "Cover Lake/Pine, all six hazards, causal alternatives, switches during requests, reset/relaunch, late responses, offline states and ordinary/official/simulated routes. Record provider mode for each."
+    }
+  ],
+  "retests": [
+    "After fixes use the same fixture and ordinary/AX XXL text; verify initial priority visibility, complete option reachability, nearby scene context, family-name wrapping and room labels.",
+    "Repeat physical Save/relaunch after editor/persistence changes.",
+    "Physical RoomPlan acquisition needs owner movement; valid-dimension unit tests cannot replace acquisition evidence."
+  ],
+  "limitations": [
+    "Bounded synthetic agent audit; no real-family research, clinical validation or emergency-expert certification.",
+    "No native live Codex/full-context/retrieval observed; unconfigured client source is only an implementation path.",
+    "Current independent native journey coverage is Oak. Existing reports provide context but do not replace independent all-family/hazard/deep-branch acceptance.",
+    "No actual RoomPlan physical scan/movement.",
+    "AX captures show first or auto-positioned viewports; no complete scrolling, VoiceOver interaction, long translations, light mode or orientation acceptance.",
+    "Masks conservatively include aggregate regions, so hidden-content correctness and layout findings derive from reviewer inspection of originals; derivatives alone cannot establish them.",
+    "Initial automation failure and successful single retry both retained. No locale, system text size or device settings changed; AX is an app launch override.",
+    "All selected tests/tour ended, final tour terminated the fictional app; exclusive phone reservation is released now. No owner vault was used. Separate retained encrypted synthetic namespace is evidence only."
+  ],
+  "next_owner": "Orchestrator for phone reservation and remaining integration/assessment gates; UI/scenario/house owners for narrow fixes; fresh independent reviewer for a candidate incorporating these design suggestions",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

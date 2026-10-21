@@ -1,7 +1,8 @@
 import Foundation
 
 /// Deterministic launch configuration for screenshots, UI review, and device previews.
-/// Demo mode always uses the in-memory store and fictional sample households; it never reads or writes the vault.
+/// Demo mode uses memory and fictional samples. DEBUG persistence tests may explicitly
+/// select a UUID-isolated test vault with -uiTestingVaultID; never the owner's vault.
 ///
 ///   -demoHousehold hh-oak|hh-lake|hh-pine   load a fictional household (enables demo mode)
 ///   -demoLocale en|es|vi                    plan/UI language
@@ -28,6 +29,9 @@ struct DemoLaunch: Sendable, Equatable {
     var planScenarios: [String] = []
     var writePlanPDFs = false
     var disableAnimations = false
+    var adaptive = false
+    var homeFloor: Int?
+    var alert: String?
 
     static let allScenarios = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
     static let current = DemoLaunch(arguments: ProcessInfo.processInfo.arguments)
@@ -45,12 +49,15 @@ struct DemoLaunch: Sendable, Equatable {
         scenarioID = value("-demoScenario").flatMap { Self.allScenarios.contains($0) ? $0 : nil }
         step = value("-demoStep").flatMap(Step.init(rawValue:)) ?? .start
         homeMode = value("-demoHomeMode")
-        homeID = value("-demoHome").flatMap { ["ranch", "apartment", "apartment-complex", "manufactured", "twostory"].contains($0) ? "home-sample-" + $0 : nil }
+        homeID = value("-demoHome").flatMap { ["ranch", "apartment", "apartment-complex", "manufactured", "twostory", "scanned"].contains($0) ? "home-sample-" + $0 : nil }
         if let p = value("-demoPlan") {
             planScenarios = p == "all" ? Self.allScenarios : p.split(separator: ",").map(String.init).filter(Self.allScenarios.contains)
         }
         writePlanPDFs = arguments.contains("-demoWritePlanPDFs")
         disableAnimations = arguments.contains("-disableAnimations")
+        adaptive = arguments.contains("-demoAdaptive")
+        homeFloor = value("-demoHomeFloor").flatMap(Int.init).flatMap { (0..<8).contains($0) ? $0 : nil }
+        alert = value("-demoAlert").flatMap { ["tornado", "flash-flood", "heat", "winter"].contains($0) ? $0 : nil }
     }
 
     /// Demo mode is active when a sample household is requested.

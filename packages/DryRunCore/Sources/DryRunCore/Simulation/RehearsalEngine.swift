@@ -78,6 +78,7 @@ struct RunState {
     var model: DependencyModel
     let allocator = BackupAllocator()
 
+    var hazardProgress: HazardProgress?
     var minute = 0
     var external = Svc.externalDefaults
     var services: [String: ServiceState] = [:]
@@ -115,6 +116,7 @@ struct RunState {
     var idCounts: [String: Int] = [:]
     var currentRoutes: [String: RouteResult] = [:]
     var spatialState: SpatialExerciseState?
+    var occupants: [String: ExerciseOccupantState] = [:]
     var onBackup: Set<String> = []
     var phaseID: String
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
@@ -143,6 +145,7 @@ struct RunState {
     /// Explicit spatial options and the native variant path select the same authored exercise.
     var effectiveVariants: [String] {
         var variants = input.variants.filter { $0 != "householdLeak" }
+        if hazardProgress != nil {variants.append("adaptive-mechanics")}
         if scenario.hazard == .flashFlood && input.effectiveSpatialOptions.floodIsHouseholdLeak { variants.append("householdLeak") }
         return variants
     }
@@ -206,6 +209,7 @@ struct RunState {
     mutating func advance(to t: Int) {
         let dt = Double(max(0, t - minute))
         guard dt > 0 else { minute = max(minute, t); return }
+        advanceHazardTemperature(minutes:dt)
         if let w = storedWater { storedWater = max(0, w - waterDrawPerMinute * dt) }
         if tracksFood,let days=foodDays {foodDays=max(0,days-foodDrawPerMinute*dt)}
         if let hh = handsetHours { handsetHours = max(0, hh - handsetDrawPerMinute * dt) }
@@ -420,6 +424,7 @@ struct RunState {
     }
 
     mutating func snapshot() {
+        synchronizeOccupants()
         var res: [String: ResourceQuantity] = [
             "res.water.stored": ResourceQuantity(amount: storedWater.map(Fmt.round2), unit: "gal"),
             "res.handset.hours": ResourceQuantity(amount: handsetHours.map(Fmt.round2), unit: "h"),

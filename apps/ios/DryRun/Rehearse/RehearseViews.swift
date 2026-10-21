@@ -29,6 +29,11 @@ struct RehearseTabView: View {
                     Label(s("Add and review a home layout to practice spatial routes. Other scenarios remain available."), systemImage: "house")
                         .font(.callout).foregroundStyle(.secondary)
                 }
+                NavigationLink(value: "practice:check") {
+                    SectionCard(title: l("practice.title"), systemImage: "checklist.checked") {
+                        Text(l("practice.cardDetail")).font(.footnote).foregroundStyle(.secondary)
+                    }
+                }.buttonStyle(.plain).accessibilityIdentifier("practice.open")
                 Text(l("common.chooseScenario")).font(.headline).padding(.top, Theme.Space.s)
                 ForEach(Self.scenarioIDs, id: \.self) { id in
                     NavigationLink(value: id) { ScenarioCard(id: id) }
@@ -40,7 +45,11 @@ struct RehearseTabView: View {
         }
         .background(Theme.background)
         .navigationTitle(l("common.tab.rehearse"))
-        .navigationDestination(for: String.self) { RehearsalView(scenarioID: $0) }
+        .navigationDestination(for: String.self) { id in
+            if id.hasPrefix("adaptive:") { AdaptiveRehearsalView(scenarioID: String(id.dropFirst("adaptive:".count))) }
+            else if id == "practice:check" { PracticeCheckView() }
+            else { RehearsalView(scenarioID: id) }
+        }
     }
 }
 
@@ -257,6 +266,13 @@ struct RehearsalView: View {
                 .font(.callout)
             if household.isFictional { StatusPill(text: l("family.example"), systemImage: "house", tint: Theme.caution) }
             Text(l("ui.rehearse.introHow")).font(.footnote).foregroundStyle(.secondary)
+            NavigationLink(value: "adaptive:\(scenarioID)") {
+                VStack(alignment: .leading, spacing: Theme.Space.xs) {
+                    Label(l("adaptive.open"), systemImage: "point.3.connected.trianglepath.dotted")
+                        .font(.callout.weight(.semibold))
+                    Text(l("adaptive.openDetail")).font(.footnote).foregroundStyle(.secondary)
+                }.frame(minHeight: Theme.minTap)
+            }.accessibilityIdentifier("rehearsal.adaptive")
         }
         .accessibilityIdentifier("rehearsal.intro")
     }
@@ -325,7 +341,7 @@ struct RehearsalView: View {
         let canAdvance = session.pendingDecision == nil && session.revealed < session.result.events.count
         return AdaptiveStack(spacing: Theme.Space.s) {
             Button {
-                Task { await model.startRehearsal(scenarioID: scenarioID, variants: session.result.input.variants) }
+                Task { await model.startRehearsal(scenarioID: scenarioID, variants: session.result.input.variants, restart: true) }
             } label: {
                 Image(systemName: "arrow.counterclockwise").font(.body.weight(.semibold))
                     .frame(width: 48, height: 48)
@@ -365,10 +381,53 @@ struct SpatialRehearsalScene: View {
     @State private var personID: String?
     @State private var show3D = false
     @State private var selectedFloorID: String?
-    private var route: RouteResult? { state?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
+    private var selectedPersonID: String? { personID ?? household.people.first?.id }
+    private var occupant: ExerciseOccupantState? { state?.occupants?.first { $0.personID == selectedPersonID } }
+    private var route: RouteResult? {
+        guard occupant?.exteriorExitPortalID == nil else { return nil }
+        return state?.routes.first { $0.request.personID == selectedPersonID }
+    }
     private var previousRoute: RouteResult? { previous?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
     /// Only the selected person's current routes. An earlier route that is no longer valid is never drawn as available.
     private var currentPaths: [RoutePath] { [route?.primary, route?.alternative].compactMap { $0 } }
+
+    /// Planning only: a current indoor route can link to the outdoor gathering plan, never prove arrival.
+    /// The exited occupant case deliberately has no route and cannot reuse the previous stage's path.
+    private var plannedMapHandoff: PlannedExteriorHandoff? {
+        guard let state, state.hazard == .homeFire || state.hazard == .flashFlood,
+              model.household == household, model.home == home,
+              model.rehearsal?.snapshotAtCursor?.spatialState == state,
+              let route else { return nil }
+        return PlannedExteriorHandoff(route: route, home: home, household: household, places: model.savedPlaces)
+    }
+
+    private func mapPlanningLinkTitle(hasMeetingPoint: Bool) -> String {
+        switch model.locale {
+        case "es": hasMeetingPoint ? "Revisar el punto de reunión en el mapa" : "Elegir un punto de reunión exterior"
+        case "vi": hasMeetingPoint ? "Xem điểm tập trung trên bản đồ" : "Chọn điểm tập trung ngoài trời"
+        default: hasMeetingPoint ? "Review gathering point on map" : "Choose outdoor gathering point"
+        }
+    }
+
+    @ViewBuilder private func plannedMapDestination(_ handoff: PlannedExteriorHandoff, hazard: HazardKind, scopeID: String) -> some View {
+        // Navigation destinations can outlive their source row. Recheck both the canonical scene and scope.
+        if model.scopeSessionID == scopeID, let currentHandoff = plannedMapHandoff,
+           handoff.isCurrent(home: home, household: household, places: model.savedPlaces) {
+            if let store = model.regionalResources {
+                MapPlanningView(store: store, purpose: .outsideMeetingPoint, embedInNavigation: false,
+                    context: MapPlanningContext(hazard: hazard, phase: .simulation), plannedExteriorHandoff: currentHandoff)
+            } else if let content = model.content {
+                MapPlanningView(content: content, client: model.publicClient, regionID: household.regionID,
+                    purpose: .outsideMeetingPoint, embedInNavigation: false,
+                    context: MapPlanningContext(hazard: hazard, phase: .simulation), plannedExteriorHandoff: currentHandoff)
+            }
+        } else {
+            Text(model.locale == "es" ? "El plan cambió. Vuelva al ensayo para revisar la ruta actual." :
+                model.locale == "vi" ? "Kế hoạch đã thay đổi. Quay lại luyện tập để xem tuyến hiện tại." :
+                "The plan changed. Return to rehearsal to review the current route.")
+                .font(.callout).padding()
+        }
+    }
 
     /// What this stage changed compared with the previous one, in words.
     private var changes: [String] {
@@ -397,6 +456,20 @@ struct SpatialRehearsalScene: View {
                     ForEach(household.people) { Text($0.localizedLabel(model.localizer)).tag($0.id) }
                 }
                 .accessibilityIdentifier("rehearsal.person")
+            }
+            if let occupant, let person = household.people.first(where: { $0.id == occupant.personID }) {
+                if occupant.exteriorExitPortalID != nil {
+                    Label(model.localizer(occupant.accountedOutside ? "ui.scene.accountedOutside" : "ui.scene.exitedNeedsAccounting",
+                                          ["person": person.localizedLabel(model.localizer)]),
+                          systemImage: occupant.accountedOutside ? "person.crop.circle.badge.checkmark" : "figure.walk.arrival")
+                        .font(.callout.weight(.semibold))
+                        .accessibilityIdentifier("rehearsal.occupantOutside")
+                } else if let roomID = occupant.shelteredSpaceID {
+                    Label(model.localizer("ui.scene.reachedShelter", ["person": person.localizedLabel(model.localizer), "room": HomeScenePresentation.roomLabel(roomID, in: home)]),
+                          systemImage: "person.fill.checkmark")
+                        .font(.callout.weight(.semibold))
+                        .accessibilityIdentifier("rehearsal.occupantSheltered")
+                }
             }
             if home.floors.count > 1 {
                 Picker(model.localizer("spatial.floor"), selection: Binding(get: { sceneFloorID ?? "" }, set: { selectedFloorID = $0 })) {
@@ -444,12 +517,24 @@ struct SpatialRehearsalScene: View {
                     Label(model.localizer(HomeScenePresentation.alternativeKey(route)), systemImage: HomeScenePresentation.alternativeSymbol(route))
                         .font(.footnote).foregroundStyle(route.alternativeStatus == .independent ? Theme.accent : Theme.caution)
                         .accessibilityIdentifier("rehearsal.routeRedundancy")
-                    if !path.verificationNeeded.isEmpty { Text(s("Some opening measurements still need confirmation.")).font(.footnote) }
+                    if !path.verificationNeeded.isEmpty { Text(model.localizer("spatial.opening.review-required")).font(.footnote) }
+                    if let handoff = plannedMapHandoff, let hazard = state?.hazard {
+                        let scopeID = model.scopeSessionID
+                        NavigationLink {
+                            plannedMapDestination(handoff, hazard: hazard, scopeID: scopeID)
+                        } label: {
+                            Text(mapPlanningLinkTitle(hasMeetingPoint: handoff.meetingPlaceID != nil))
+                                .font(.callout.weight(.semibold))
+                        }
+                        .accessibilityIdentifier("rehearsal.plannedGatheringMap")
+                    }
                 } else {
                     Label(s(route.noRouteReason == .blockedByScenario ? "No supported route: the starting room or a required connection is affected." : "No supported route from the recorded starting room. Review the layout, destination and this person's access needs."), systemImage: "exclamationmark.triangle")
                         .font(.callout)
                 }
-            } else { Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary) }
+            } else if occupant?.exteriorExitPortalID == nil {
+                Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary)
+            }
             DisclosureGroup(s("Room list")) { HomeRoomListView(home: home, spatialState: state, selectedRoute: route) }
             DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
                 if show3D {

@@ -1,0 +1,26 @@
+{
+  "report_id": "report-codex-model-discovery-1",
+  "run_ids": [
+    "run-88986161a44b49b18f74f0c70144f442"
+  ],
+  "feature": "LB supported model metadata discovery",
+  "review_kind": "synthetic agent audit",
+  "synopsis": "The metadata request returned a body larger than the configured 128000-byte cap. The probe threw before emitting status or retained partial body, so no supported aliases or endpoint contract can be established.",
+  "failures": [
+    {
+      "stage": "probe metadata budget handling",
+      "severity": "blocking",
+      "impact": "Status/content type and valid model-list versus HTML fallback are unknown.",
+      "fix": "Record status, content-type and bounded partial body in protected capture before throwing on oversize. Emit no unreviewed body to engineering. A body-size limit is appropriate, but metadata should remain diagnosable on failure."
+    }
+  ],
+  "recommendations": [
+    "Have the service owner retain bounded metadata and release only schema-level diagnostics/supportable aliases after reviewer inspection. Do not guess a generation alias from this result.",
+    "Verify whether candidate /models is actually a documented LB metadata route; large response may be data or a fallback page and cannot be assumed either way."
+  ],
+  "limitations": [
+    "No model alias discovered; no response status retained by current probe; no new inference request made."
+  ],
+  "next_owner": "codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

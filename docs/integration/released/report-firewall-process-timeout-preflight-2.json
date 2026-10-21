@@ -1,0 +1,28 @@
+{
+  "report_id": "report-firewall-process-timeout-preflight-2",
+  "run_ids": [
+    "firewall-preflight-v2"
+  ],
+  "feature": "Receipt-only timeout descendant cleanup",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Capture infrastructure now starts its command in a dedicated process session and terminates that process group on timeout or interrupted capture. Synthetic preflight passed9 checks including a timed-out parent whose grandchild must not write its delayed sentinel.",
+  "criteria": [
+    {
+      "id": "REVIEW-01",
+      "verdict": "synthetic controls passed",
+      "evidence": "Success, stderr/failure, assertion, malformed parsing, resumed text, preview analogue, automatic-return analogue, blocked report and timeout descendant check all passed."
+    }
+  ],
+  "recommendations": [
+    "Use existing receipt-only capture interface with bounded timeout. No command exception text or protected output enters receipt.",
+    "Process-group cleanup only targets descendants in that newly created session; do not use it to terminate unrelated owner/system processes."
+  ],
+  "limitations": [
+    "No OS-enforced reader isolation claimed. Shared filesystem remains procedural access boundary.",
+    "Synthetic marker controls do not replace semantic review of reports or native capture redaction.",
+    "Process groups cannot guarantee cleanup of a child that deliberately detaches into another session; no such behavior was tested or claimed.",
+    "Change was loaded only by subsequent wrapper executions; already running Python captures kept their original in-memory implementation."
+  ],
+  "next_owner": "orchestrator and reviewer pool",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

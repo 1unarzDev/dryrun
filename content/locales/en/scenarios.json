@@ -339,5 +339,12 @@
   "scenario.household-leak.choice.help.get-help": "Contact a trusted adult, building manager or appropriate professional from a dry place",
   "scenario.household-leak.choice.help.get-help.feedback": "Use help appropriate to the situation. If there is immediate danger, contact the local emergency service. This exercise supplies no electrical or plumbing repair procedure.",
   "scenario.household-leak.choice.help.touch-electrics": "Touch wet electrical equipment to check it",
-  "scenario.household-leak.choice.help.touch-electrics.feedback": "Do not touch electrical equipment while wet or standing in water. Keep clear and seek appropriate help."
+  "scenario.household-leak.choice.help.touch-electrics.feedback": "Do not touch electrical equipment while wet or standing in water. Keep clear and seek appropriate help.",
+  "scenario.flash-flood.event.access-lost": "Exercise: access route no longer available",
+  "scenario.heat-grid-strain.variant.cooling-followup": "Cooling follow-up with power available",
+  "scenario.heat-grid-strain.choice.powered-evening.prompt": "The next hot day still has electricity. Which recorded cooling arrangement will you use?",
+  "scenario.heat-grid-strain.choice.powered-evening.relocate": "Use the recorded cooling alternative if transport and destination are available",
+  "scenario.heat-grid-strain.choice.powered-evening.relocate.feedback": "The host checks recorded transport and destination conditions. A missing arrangement stays a plan gap; choosing it does not invent a cooling center or travel clearance.",
+  "scenario.heat-grid-strain.choice.powered-evening.stay": "Continue the home cooling plan and reassess its dependencies",
+  "scenario.heat-grid-strain.choice.powered-evening.stay.feedback": "Electricity remains available in this exercise. The household stays at home with its recorded cooling and water dependencies; powered equipment alone does not establish adequate cooling or a medical tolerance."
 }

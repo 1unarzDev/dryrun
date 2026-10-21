@@ -1,0 +1,68 @@
+{
+ "version": "dryrun.places/tarrant-v1",
+ "region": "Tarrant County, TX",
+ "retrievedAt": "2026-10-20",
+ "note": "Public facilities only. Opening as a cooling or warming center is seasonal and announced by the city; nothing here says a place is open now, has backup power or is accessible unless the cited source says so. Coordinates are not stored: the app looks up each public address with Apple Maps.",
+ "places": [
+  {
+   "id": "fw-como-cc",
+   "name": "Como Community Center",
+   "kind": "coolingCenter",
+   "address": "4660 Horne St, Fort Worth, TX 76107",
+   "phone": "817-392-5300",
+   "source": "City of Fort Worth, Como Community Center page",
+   "sourceURL": "https://www.fortworthtexas.gov/departments/parks/services/community-centers/como-community-center",
+   "role": "Fort Worth Beat the Heat cooling center in the 2026 season (seasonal; the program ran through Sept. 19).",
+   "accessibility": null,
+   "roleSources": [
+    "https://www.keranews.org/texas-news/2026-07-20/dallas-fort-worth-heat-advisory-north-texas-temperatures",
+    "https://fortworthtexas.gov/departments/neighborhoods/cap/BeattheHeat"
+   ]
+  },
+  {
+   "id": "fw-mlk-cc",
+   "name": "Martin Luther King Jr. Community Center",
+   "kind": "coolingCenter",
+   "address": "5565 Truman Dr, Fort Worth, TX 76112",
+   "phone": "817-392-5966",
+   "source": "City of Fort Worth, Martin Luther King Jr. Community Center page",
+   "sourceURL": "https://www.fortworthtexas.gov/departments/parks/services/community-centers/martin-luther-king-jr-community-center",
+   "role": "Fort Worth Beat the Heat cooling center in the 2026 season (seasonal; the program ran through Sept. 19).",
+   "accessibility": null,
+   "roleSources": [
+    "https://www.keranews.org/texas-news/2026-07-20/dallas-fort-worth-heat-advisory-north-texas-temperatures",
+    "https://fortworthtexas.gov/departments/neighborhoods/cap/BeattheHeat"
+   ]
+  },
+  {
+   "id": "fw-northside-cc",
+   "name": "Northside Community Center",
+   "kind": "coolingCenter",
+   "address": "1100 NW 18th St, Fort Worth, TX 76164",
+   "phone": "817-392-5992",
+   "source": "City of Fort Worth, Northside Community Center page",
+   "sourceURL": "https://www.fortworthtexas.gov/departments/parks/services/community-centers/northside-community-center",
+   "role": "Fort Worth Beat the Heat cooling center in the 2026 season (seasonal; the program ran through Sept. 19).",
+   "accessibility": null,
+   "roleSources": [
+    "https://www.keranews.org/texas-news/2026-07-20/dallas-fort-worth-heat-advisory-north-texas-temperatures",
+    "https://fortworthtexas.gov/departments/neighborhoods/cap/BeattheHeat"
+   ]
+  },
+  {
+   "id": "fw-worth-heights-cc",
+   "name": "Worth Heights Community Center",
+   "kind": "coolingCenter",
+   "address": "3551 New York Ave, Fort Worth, TX 76110",
+   "phone": "817-392-8722",
+   "source": "City of Fort Worth, Worth Heights Community Center page",
+   "sourceURL": "https://www.fortworthtexas.gov/departments/parks/services/community-centers/worth-heights-community-center",
+   "role": "Fort Worth Beat the Heat cooling center in the 2026 season (seasonal; the program ran through Sept. 19).",
+   "accessibility": null,
+   "roleSources": [
+    "https://www.keranews.org/texas-news/2026-07-20/dallas-fort-worth-heat-advisory-north-texas-temperatures",
+    "https://fortworthtexas.gov/departments/neighborhoods/cap/BeattheHeat"
+   ]
+  }
+ ]
+}

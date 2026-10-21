@@ -290,7 +290,13 @@ struct SimulationTests {
         let ok = try SimFixtures.run(SampleHouseholds.oak, "home-fire")
         #expect(!ok.events.contains { $0.id.hasPrefix("evt.home-fire.assist.helper-blocked") })
         // Smoke in the hallway: the only way between the two bedrooms is blocked.
-        let r = try SimFixtures.run(SampleHouseholds.oak, "home-fire", variants: ["hallway-smoke"])
+        // Hold occupants inside until the authored smoke stage. Timely default evacuation
+        // now has a real effect and must not acquire a later indoor helper penalty.
+        let r = try SimFixtures.run(SampleHouseholds.oak, "home-fire",
+            choices: ["choice.home-fire.first-move": "grab-belongings"], variants: ["hallway-smoke"])
+        let timely = try SimFixtures.run(SampleHouseholds.oak, "home-fire", variants: ["hallway-smoke"])
+        #expect(timely.snapshots.last?.spatialState?.occupants?.first { $0.personID == "p-oak-3" }?.exteriorExitPortalID != nil)
+        #expect(!timely.events.contains { $0.id == "evt.home-fire.assist.helper-blocked.p-oak-3" })
         let e = try #require(r.events.first { $0.id == "evt.home-fire.assist.helper-blocked.p-oak-3" })
         #expect(e.templateValues["helper"] == "Parent A" && e.severity == .critical)
         #expect(e.evidence.causedByEventIDs == ["evt.home-fire.hallway-smoke"])

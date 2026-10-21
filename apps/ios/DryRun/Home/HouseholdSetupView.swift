@@ -157,9 +157,12 @@ struct HouseholdSetupView: View {
                         .accessibilityIdentifier("setup.name")
                     personSummary(draft.people[0])
                     ForEach(Array(draft.people.indices.dropFirst()), id: \.self) { i in
-                        TextField(draft.people[i].relationship.map { DisplayNames.name($0.rawValue, localizer: l) } ?? l("family.name"),
-                                  text: $draft.people[i].alias)
-                            .focused($focus, equals: .person(i))
+                        LabeledContent(l("family.name")) {
+                            TextField(l("family.name"), text: $draft.people[i].alias)
+                                .textContentType(.name)
+                                .multilineTextAlignment(.trailing)
+                                .focused($focus, equals: .person(i))
+                        }
                         personSummary(draft.people[i])
                     }
                     Button(l("family.add"), systemImage: "person.badge.plus") {

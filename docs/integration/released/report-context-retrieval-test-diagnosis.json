@@ -1,0 +1,43 @@
+{
+  "report_id": "report-context-retrieval-test-diagnosis",
+  "run_ids": [
+    "run-544a07f580004bd68ad648f2dd4233c9",
+    "run-1183ede8d7cb41ababff866e16c06e25"
+  ],
+  "feature": "Authorized private context retrieval and Codex synthetic transport",
+  "review_kind": "synthetic agent engineering audit",
+  "criteria": [
+    {
+      "id": "CTX-01",
+      "verdict": "test correction required",
+      "evidence": "17 server tests: 16 passed and one failed at its initial-history assertion before the intended read loop."
+    },
+    {
+      "id": "CTX-02",
+      "verdict": "Swift synthetic tests passed",
+      "evidence": "3 AuthorizedAIContextTests methods executed, zero failures."
+    }
+  ],
+  "synopsis": "The retrieval test detects a field-name substring in an ordinary evidence field ID, then incorrectly treats that as disclosure of the retrievable recorded value. The actual private storage instruction sentinel was absent from the first history. The failing assertion does not establish that private record payload leaked.",
+  "failures": [
+    {
+      "path": "services/ai-orchestrator/test/private-context.test.ts",
+      "lines": [
+        32
+      ],
+      "diagnosis": "The initial context intentionally includes an evidence fieldID naming equipment storage instructions. A broad not-to-contain check on storageInstructions therefore rejects a safe manifest/evidence pointer.",
+      "fix": "Keep exact sentinel value absence assertion. Parse the initial text JSON and assert privateContext.records and actual private values are absent while contextManifest is present. Permit field-ID pointers, which are necessary to guide meaningful retrieval. Then let the actual tool-read and paired-action assertions execute."
+    }
+  ],
+  "recommendations": [
+    "Do not remove relevant evidence field IDs from runtime context merely to make the substring assertion pass.",
+    "Rerun the pair after fixing the assertion, including actual Swift-wire environment input if claiming strict cross-language byte validation. The captured test count alone cannot prove that optional wire test received its environment path.",
+    "Codex-provider synthetic suite passed its boundary tests in this run; this still does not establish live provider capabilities."
+  ],
+  "limitations": [
+    "No live generated answer inspected; all tested payloads are authored synthetic fixtures.",
+    "Expected paired decision behavior was not reached in the one failed case because the initial assertion aborted it."
+  ],
+  "next_owner": "codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,52 @@
+{
+  "report_id": "report-native-unit-and-core-blockers",
+  "run_ids": [
+    "run-128a1fc4ea67496287966016b38edb48",
+    "run-ec0e901df1f045978fce9130e125467a",
+    "run-2bb37efe916e46998cf8d02835a407f7",
+    "run-0cb4b366e8384e1a9d2067a7126d572a"
+  ],
+  "feature": "Physical baseline unit tests and portable compile blockers",
+  "review_kind": "synthetic agent engineering audit",
+  "versions": {
+    "physical_build": "run-ac17fc7252364320984469c336ee00d0; compiled before later integrated home/score changes",
+    "device": "plugged iPhone 16 Pro"
+  },
+  "synopsis": "Physical XCTest executed 46 test methods. Forty-five methods passed; one persistence method failed at two assertions. Both assertions expected label-only home edits to retain existing exit/drill check timestamps. The current compiled baseline cleared them. Core suites are separately blocked before execution by a newly authored opening-test assignment using an incompatible wrapper.",
+  "failures": [
+    {
+      "severity": "high",
+      "path": "apps/ios/DryRunTests/AppPersistenceTests.swift",
+      "symbol": "testGeometryEditInvalidatesEscapeAndDrillChecksOnlyAfterSuccessfulSave",
+      "diagnosis": "The first label-only update erased clearExits and fireDrill checkedAt. Expected unchanged geometry to preserve this evidence. Source lines have shifted since compiled build; locate by method and the first pair of retained-date assertions.",
+      "fix": "Review updateHome preparation invalidation and its geometry fingerprint. Exclude display-label-only changes from route/drill material invalidation; preserve invalidation for real connectivity/operability/geometry changes and failed-save atomicity."
+    },
+    {
+      "severity": "blocking",
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/OpeningReclassificationTests.swift",
+      "lines": [
+        10
+      ],
+      "diagnosis": "emergencyEscapeConfirmed is optional Bool; test assigns a confirmed wrapper which belongs to different fact fields.",
+      "fix": "Assign true directly to emergencyEscapeConfirmed. Preserve the intended per-person clearing assertions and do not alter production field type to match the mistaken test."
+    },
+    {
+      "severity": "host",
+      "run": "run-ec0e901df1f045978fce9130e125467a",
+      "diagnosis": "Default compiler module cache write was denied by sandbox before manifest completion; no scenario tests ran."
+    }
+  ],
+  "recommendations": [
+    "Native housing, map cancellation/staleness, PDF export/selection, reminders, names/localization, RoomPlan identity and remaining persistence methods passed in the compiled baseline. These are XCTest observations, not RoomPlan physical-scan or full UI acceptance.",
+    "Rebuild after applying current integrated changes and retest the single persistence method plus affected native suite. Do not weaken the expected no-op/label preservation contract.",
+    "Physical screenshot tour is running under exclusive reviewer device reservation using explicit in-memory demo launch arguments; no simulator used.",
+    "Unit tests instantiate controlled/in-memory stores, but app-host launch arguments were empty in the generated xctestrun. I discovered this after the first test run. No owner vault content was inspected or exported; future unit-host runs must explicitly pass -uiTestingInMemory in a copied xctestrun before launch to prevent default-store startup. Do not claim this first host launch was fully isolated."
+  ],
+  "limitations": [
+    "46 methods and 2 failed assertions correspond to one failed test method; overall XCTest status failed.",
+    "A device diagnostic collection warning occurred after tests; it does not invalidate the executed assertion evidence. Protected xcresult remains reviewer-only.",
+    "Physical visual, persistence relaunch and actual LiDAR scan acceptance remain pending."
+  ],
+  "next_owner": "orchestrator for fixes and fresh build; reviewer holds device for bounded tour",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

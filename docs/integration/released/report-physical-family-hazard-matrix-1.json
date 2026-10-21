@@ -1,0 +1,79 @@
+{
+  "report_id": "report-physical-family-hazard-matrix-1",
+  "run_ids": [
+    "run-94edf3b2d46344dd888210652dc67967",
+    "run-38298df407324a62a95348bcb730b468"
+  ],
+  "feature": "Every selectable family by six-hazard physical smoke matrix",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": {
+    "families": [
+      "hh-oak",
+      "hh-lake",
+      "hh-pine"
+    ],
+    "hazards": [
+      "home-fire",
+      "tornado",
+      "flash-flood",
+      "freeze-power-loss",
+      "heat-grid-strain",
+      "water-outage"
+    ],
+    "mode": "local authored; no live provider",
+    "locale": "en"
+  },
+  "versions": {
+    "physical_build": "run-d596f5dafad14c8da77784369c376dd1",
+    "device": "plugged iPhone16Pro"
+  },
+  "criteria": [
+    {
+      "id": "DEMO-01",
+      "verdict": "bounded physical smoke passed",
+      "evidence": "All 18 cells launched a reachable choice, accepted first choice and rendered choiceFeedback. 36 native screenshots exported and reviewed. XCTest method passed without failed assertions."
+    },
+    {
+      "id": "HAZ-01..06",
+      "verdict": "partial; deeper causal gates open",
+      "evidence": "Distinct hazard decision panels and some household equipment/advisory differences visible, but first-choice feedback alone does not establish all required causal branches."
+    }
+  ],
+  "synopsis": "Every actual example launches every required hazard and accepts one native choice without crash. Hazard presentation differs by emergency and equipment effects distinguish the medical-continuity examples. Large option rows fit ordinary physical text size. Family relevance remains uneven: first decisions in fire, tornado and flood share the same options across all examples, while continuity state varies more visibly.",
+  "failures": [
+    {
+      "severity": "high",
+      "stage": "acceptance coverage",
+      "diagnosis": "The matrix checks an accepted feedback element but does not assert changed committed balances/routes, subsequent available choices, person outcomes or refreshed scores.",
+      "fix": "Add deterministic receipt/action assertions and second consequential gates, supported spatial alternatives and no-supported-action cases; keep this matrix labeled smoke only."
+    },
+    {
+      "severity": "medium",
+      "stage": "decision feasibility",
+      "diagnosis": "Relocation/cooling choices refer to previously arranged destinations generically. Feedback qualifies missing arrangements, but the row itself is not established as feasible for each family before selection.",
+      "fix": "Bind availability and labels to confirmed destination/transport state, or render an explicit preparation-needed option with its actual limited simulation effect."
+    },
+    {
+      "severity": "medium",
+      "stage": "native home copy",
+      "diagnosis": "Legacy measurement-confirmation wording remains visible above fire feedback in this compiled build, despite the requested removal of that workflow.",
+      "fix": "Trace and remove remaining user-facing confirmation warning when valid captured geometry is accepted, preserving separate operability/exterior-suitability unknowns."
+    }
+  ],
+  "recommendations": [
+    "Retain distinct hazard presentation and equipment status differences; they are visible value beyond simple title changes.",
+    "Do not count identical first decisions as proof of personalized Codex intelligence. No live Codex was invoked.",
+    "For family identity strengthen the test with the canonical selected family ID and committed household scope receipt. Launch arguments alone plus equipment text are incomplete isolation evidence.",
+    "Reviewer originals and matrix contact sheets remain protected; no unredacted matrix assets released."
+  ],
+  "retests": [
+    "Every family second gate, alternative choices with fixed schedule, full endings/debrief/practice-score refresh, switching/reset and in-flight isolation.",
+    "Varied layouts/origins/blocked connectors, unsupported destination and no-route states; accessibility size and selected languages."
+  ],
+  "limitations": [
+    "18 smoke cells and 36 inspected captures do not establish complete causal coverage, native family-experience acceptance or independent review.",
+    "I provided design diagnoses; a fresh independent reviewer must judge fixes before claiming independent acceptance."
+  ],
+  "next_owner": "orchestrator and scenario/house/assessment specialists",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

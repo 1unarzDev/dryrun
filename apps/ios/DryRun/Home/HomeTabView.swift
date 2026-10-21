@@ -13,10 +13,7 @@ struct HomeTabView: View {
     @State private var selectedElementID: String?
     @State private var scanning = false
     @State private var editingHousehold = false
-    @State private var confirming: HomeModel?
     @State private var showingMeetingPlaceMap = false
-    /// A finished scan waiting for the scan cover to finish dismissing before the confirmation sheet is presented.
-    @State private var pendingProposal: HomeModel?
 
     enum Mode: String, CaseIterable, Identifiable {
         case plan2D = "2D plan", dollhouse = "3D", rooms = "Room list"
@@ -99,12 +96,17 @@ struct HomeTabView: View {
                         .accessibilityIdentifier("home.markerKey")
                     }
                 }
+                Section {
+                    NavigationLink { SiteEvidenceView() } label: {
+                        Label(model.localizer("site.title"), systemImage: "map")
+                    }.accessibilityIdentifier("home.siteEvidence")
+                    NavigationLink { PhotoReviewView() } label: {
+                        Label(model.localizer("photo.title"), systemImage: "camera.viewfinder")
+                    }.accessibilityIdentifier("home.photoReview")
+                }
                 Section(s("Change the home")) {
-                    let pending = HomeConfirmation.steps(for: home).count
-                    if pending > 0 {
-                        Button(model.localizer("spatial.confirm-count", ["count": String(pending)]), systemImage: "checklist") { confirming = home }
-                    }
                     Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { selectedElementID = nil; editing = true }
+                        .accessibilityIdentifier("home.edit")
                     scanControls
                 }
                 if let household = model.household, !household.people.isEmpty {
@@ -153,7 +155,7 @@ struct HomeTabView: View {
                     }
                     Button(s("Choose on map"), systemImage: "map") { showingMeetingPlaceMap = true }
                 }
-                let issues = HomeValidator.validate(home)
+                let issues = HomeValidator.validate(home).filter { $0.kind != .spaceNeedsMeasurement && $0.kind != .spaceLabelUnconfirmed }
                 Section(model.localizer("spatial.issues-count", ["count": String(issues.count)])) {
                     if issues.isEmpty { Text(s("Nothing outstanding in the home model.")) }
                     ForEach(issues) { issue in
@@ -194,50 +196,33 @@ struct HomeTabView: View {
             }
         }
         .navigationTitle(model.localizer("common.tab.home"))
-        .sheet(isPresented: $editing, onDismiss: { selectedElementID = nil }) {
-            if let home = model.home ?? manualDraft {
+        .sheet(isPresented: $editing, onDismiss: { selectedElementID = nil; manualDraft = nil }) {
+            if let home = manualDraft ?? model.home {
                 NavigationStack {
-                    ManualHomeEditorView(home: home, selectedElementID: selectedElementID) { updated in
-                        Task {
-                            manualDraft = updated
-                            if await model.updateHome(updated) { editing = false; manualDraft = nil }
-                        }
+                    ManualHomeEditorView(home: home, selectedElementID: selectedElementID, savedBaseRevision: model.home?.revision, scopeSessionID: model.scopeSessionID) { updated, baseRevision, scope in
+                        manualDraft = updated
+                        let saved = await model.updateHome(updated, baseRevision: baseRevision, scopeSessionID: scope)
+                        if saved { editing = false; manualDraft = nil }
+                        return saved
                     }
                 }
                 .interactiveDismissDisabled()
             }
         }
-        .fullScreenCover(isPresented: $scanning, onDismiss: {
-            // A scan is only a proposal: go straight into the confirmation pass before it is saved. Presented from
-            // onDismiss because SwiftUI can drop a sheet requested while the cover is still dismissing.
-            if let proposed = pendingProposal {
-                pendingProposal = nil
-                confirming = proposed
-            }
-        }) {
-            RoomScanFlowView { proposed in
-                pendingProposal = proposed
-                scanning = false
-            }
-            .interactiveDismissDisabled()
+        .roomScanToHome(isPresented: $scanning)
+        .onChange(of: model.scopeSessionID) { _, _ in
+            scanning = false; editing = false; manualDraft = nil; selectedElementID = nil
         }
         .navigationDestination(isPresented: $editingHousehold) { FocusedHouseholdEditor(focus: .family) }
         .sheet(isPresented: $showingMeetingPlaceMap) {
             MeetingPlaceChooser(purpose: .outsideMeetingPoint)
         }
-        .sheet(item: $confirming) { draft in
-            NavigationStack {
-                HomeConfirmationView(home: draft) { confirmed in
-                    Task {
-                        if await model.updateHome(confirmed) { confirming = nil }
-                    }
-                }
-            }
-            .interactiveDismissDisabled()
-        }
     }
 
     @ViewBuilder private var scanControls: some View {
+        NavigationLink { ScannerHomeView() } label: {
+            Label(model.localizer("spatial.scanner.title"), systemImage: "sensor.tag.radiowaves.forward")
+        }.accessibilityIdentifier("home.scanner")
         switch model.capabilities.plan.scan {
         case .available:
             Button(s("Scan with RoomPlan"), systemImage: "camera.viewfinder") { scanning = true }

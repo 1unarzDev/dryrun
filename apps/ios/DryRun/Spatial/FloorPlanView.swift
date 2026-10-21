@@ -302,8 +302,11 @@ struct FloorPlanView: View {
             // A label that does not fit its room is shrunk, then dropped rather than drawn across a neighbour; the
             // room list and the VoiceOver summary name every room.
             let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
-            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
-            for font in [Font.caption2, .system(size: 8)] {
+            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 8, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 6)
+            guard room.width > 0, room.height > 0 else { continue }
+            // Diagram labels use one bounded geometry scale. Full Dynamic Type
+            // remains available in the accompanying room list and VoiceOver.
+            for font in [Font.system(size: 11), .system(size: 9)] {
                 let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
                 let need = text.measure(in: CGSize(width: room.width, height: .infinity))
                 if need.width <= room.width && need.height <= room.height {
@@ -312,10 +315,14 @@ struct FloorPlanView: View {
                     if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
                         c.y = max(c.y - need.height / 2 - 9, (ys.min() ?? c.y) + need.height / 2 + 1)
                     }
+                    c.x = min(max(c.x, (xs.min() ?? c.x) + need.width / 2 + 4), (xs.max() ?? c.x) - need.width / 2 - 4)
+                    c.y = min(max(c.y, (ys.min() ?? c.y) + need.height / 2 + 3), (ys.max() ?? c.y) - need.height / 2 - 3)
                     let rect = CGRect(x: c.x - need.width / 2, y: c.y - need.height / 2, width: need.width, height: need.height)
-                    ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                    var labelContext = ctx
+                    labelContext.clip(to: path(s.polygon, f, closed: true))
+                    labelContext.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
                              with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
-                    ctx.draw(text, in: rect)
+                    labelContext.draw(text, in: rect)
                     break
                 }
             }

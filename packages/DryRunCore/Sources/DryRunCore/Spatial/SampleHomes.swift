@@ -290,4 +290,17 @@ public enum SampleHomes {
         return h
     }
     public static var all: [HomeModel] { [ranch, twoStory, apartment, apartmentComplex, manufactured] }
+
+    /// Demo and UI-test stand-in for a RoomPlan capture of the ranch (fictional): scan source, ground floor confirmed,
+    /// every other opening still a proposal, and the frozen scan snapshot. Not part of `all`.
+    public static var scannedRanch: HomeModel {
+        var home = ranch
+        home.id = "home-sample-scanned"
+        home.label = "Scanned ranch (fictional demo)"
+        home.source = .roomPlanScan
+        for i in home.floors.indices { home.floors[i].exteriorGrade = .ground }
+        for i in home.portals.indices where i % 2 == 0 { home.portals[i].verification = .proposed }
+        home.scanSnapshot = ScanSnapshot(home)
+        return home
+    }
 }

@@ -4,10 +4,11 @@ Dry Run is an iOS app for families to rehearse the first minutes and the next 72
 household. The rehearsals show how one failure causes others, let the family compare preparations, and leave them
 with a plan they can open offline.
 
-> **October 17 revision: Implementation prepared; native build and device test pending.**
-> Portable core/vault/backend verification is recorded in [VERIFICATION](docs/VERIFICATION.md).
-> Earlier native results predate this revision. Continue native testing with
-> [CLAUDE_NATIVE_HANDOFF](docs/CLAUDE_NATIVE_HANDOFF.md). Safety text/translations remain unreviewed drafts.
+> **Current workflow: Mac implementation and continuous iPhone verification.**
+> The plugged-in iPhone 16 Pro is the primary native acceptance device. Current work,
+> verification dimensions and outstanding gates are tracked in the [integration ledger](docs/integration/ledger.md)
+> and [continuation note](docs/integration/continuation.md). Historical verification remains historical evidence.
+> App-AI responses, captures and logs are restricted to dedicated output reviewers.
 
 October 19 integrated Gemini portable work: [evaluation and limitations](docs/ai/evaluation-report.md), [Mac integration handoff](docs/ai/mac-integration-handoff.md), and [private synthetic gateway](services/ai-orchestrator/README.md). Native integration and production authorization remain pending.
 
@@ -15,7 +16,7 @@ October 19 integrated Gemini portable work: [evaluation and limitations](docs/ai
 
 | Component | How to run | Status |
 |---|---|---|
-| `packages/DryRunCore`: models, simulation, ranking, routing, plan builder (Foundation-only) | `scripts/swift.sh packages/DryRunCore test` (Swift 6.2 in Docker) or `swift test` on macOS | Tested |
+| `packages/DryRunCore`: models, simulation, ranking, routing, plan builder (Foundation-only) | Native `swift test` through the protected capture wrapper | Current evidence in integration ledger |
 | `packages/DryRunVault`: encrypted vault, public pack cache | `scripts/swift.sh packages/DryRunVault test` | Tested (Linux uses swift-crypto; Keychain/file protection need a device) |
 | `services/public-api`: Hono public-data Worker | `cd services/public-api && pnpm install && pnpm test` · local: `pnpm dev` | Tested locally, not deployed |
 | `apps/ios`: SwiftUI app | `cd apps/ios && xcodegen && open DryRun.xcodeproj` · `scripts/mac/verify.sh` | Current native build/UI/device checks pending |
@@ -44,9 +45,12 @@ run in Expo Go; use Xcode and `scripts/mac/device.sh` for iPhone installation.
 Every household, home, and phone number (555-01xx) in `fixtures/` and `content/` is fictional.
 
 ## On a Mac
-See `docs/MACOS_VERIFICATION.md`. `scripts/mac/verify.sh` produces one bundle to send back. For UI work, see
-`docs/FRONTEND_HANDOFF.md`, `scripts/mac/screens.sh`, and `scripts/mac/device.sh`. From Linux, an external Mac can
-be driven with `scripts/remote-mac.sh`.
+Start with the [current source map](docs/integration/source-map.md) and integration ledger. Use native Mac builds
+through `scripts/review/firewall.py capture -- <command>`; only designated reviewers inspect captured logs and
+release diagnostics. Regenerate the project with XcodeGen before building. Reserve the connected phone before
+launching, resetting, testing or capturing. Legacy Mac scripts remain available, but their raw screenshots,
+accessibility exports, logs and PDFs require reviewer handling. A simulator or portable pass does not establish
+physical-device verification. Safety text/translations remain unreviewed drafts.
 
 ## Docs
 `docs/FRONTEND_HANDOFF.md` · `docs/MACOS_VERIFICATION.md` · `docs/DEVICE_CHECKLIST.md` · `docs/ARCHITECTURE.md` · `docs/DECISIONS.md` · `docs/VERIFICATION.md` · `docs/SAFETY_AND_CONTENT.md` ·

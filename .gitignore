@@ -17,3 +17,5 @@ apps/ios/DryRun/Resources/DryRun.entitlements
 .env
 .env.local
 .dev.vars
+__pycache__/
+*.pyc

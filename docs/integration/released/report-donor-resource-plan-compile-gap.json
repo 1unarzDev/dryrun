@@ -1,0 +1,25 @@
+{
+  "report_id": "report-donor-resource-plan-compile-gap",
+  "run_ids": [
+    "run-51de95a3cdfd4851b61e7b2f891880ec"
+  ],
+  "feature": "Restored resource planner compile integration",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "One production compile mismatch blocks the restored Core modules: ResourceSuggestionPlanner constructs ResourceSearchPlan using an older initializer field set.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceSuggestionPlanner.swift",
+      "lines": [
+        69
+      ],
+      "symbol": "ResourceSearchPlan",
+      "diagnosis": "New canonical initializer requires hazardIDs, mandatoryCapabilities and cloudReturnPolicy not supplied by the restored caller.",
+      "fix": "Reconcile this local authored plan builder with the retained canonical model. Populate actual relevant hazard IDs from task semantics where supported, required service capability labels from the rule, and the existing local_only return policy. Use explicit empty hazard/capability arrays only where genuinely unspecified; do not invent activation or safe-route properties. Preserve current richer model rather than deleting required fields."
+    }
+  ],
+  "limitations": [
+    "Tests did not execute; no other compiler blocker is established yet. Full initializer reconciliation may reveal further diagnostics."
+  ],
+  "next_owner": "scenario_learning and maps integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

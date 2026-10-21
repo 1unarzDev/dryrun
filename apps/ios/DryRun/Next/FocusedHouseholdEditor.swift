@@ -127,11 +127,22 @@ struct FocusedHouseholdEditor: View {
     private var familyFields: some View {
         let l = model.localizer
         return Group {
-            if personID == nil { Section { TextField(l("family.identity"), text: binding(\.displayName)).accessibilityIdentifier("family.householdName") } }
+            if personID == nil {
+                Section(l("family.identity")) {
+                    TextField(l("family.identity"), text: binding(\.displayName), axis: .vertical)
+                        .lineLimit(1...4)
+                        .accessibilityIdentifier("family.householdName")
+                }
+            }
             ForEach((draft?.people ?? []).filter { personID == nil || $0.id == personID }) { person in
                 if let i = draft?.people.firstIndex(where: { $0.id == person.id }) {
                     Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
-                        TextField(l("family.name"), text: binding(\.people[i].alias)).accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
+                        LabeledContent(l("family.name")) {
+                            TextField(l("family.name"), text: binding(\.people[i].alias))
+                                .textContentType(.name)
+                                .multilineTextAlignment(.trailing)
+                                .accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
+                        }
                         if personID != nil { personDetails(i) }
                         else {
                             DisclosureGroup(isExpanded: Binding(get: { expandedPeople.contains(person.id) }, set: { open in
@@ -150,7 +161,6 @@ struct FocusedHouseholdEditor: View {
                     expandedPeople.insert(id)
                 }.accessibilityIdentifier("family.addPerson")
             }
-            preparationFields("reconnect")
             Section(l("family.review")) {
                 Toggle(l("family.reviewedTogether"), isOn: Binding(get: { draft?.preparedness?.jointlyReviewedAt != nil }, set: { reviewed in
                     if draft?.preparedness == nil { draft?.preparedness = PreparednessRecord() }

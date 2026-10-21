@@ -1,0 +1,46 @@
+{
+  "report_id": "report-core-final-versioned-spatial-pass",
+  "run_ids": [
+    "run-785367c583ef443badcdb35ed6407164",
+    "run-98a288d9123e44f792a766b68be7bcd6"
+  ],
+  "feature": "Full Core regression and versioned historical spatial contract",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Final full Core executed494 tests across91 suites with zero failures. Historical hash fixture remains unchanged. Versioned authored-adapter test preserves whole-result equality for12 nonspatial cases and projected equality for10 spatial cases; two successful tornado default cases use explicit arrival-route/input invariants instead of a historical digest.",
+  "criteria": [
+    {
+      "id": "HAZ-01..06",
+      "verdict": "full portable suite passed; native gates separate",
+      "evidence": "494/91 passing plus six targeted spatial causal tests in selected pass."
+    }
+  ],
+  "references": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "finding": "12 exact historical keys are oak/lake times freeze-power-loss, heat-grid-strain, water-outage times default/alternate."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "finding": "10 projected spatial keys are oak/lake times home-fire and flash-flood default/alternate, plus tornado alternate."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "finding": "Projection removes new occupant arrays, normalizes choice-event spatial stage IDs to previous stage, and restores only historical outside-call recommendation status before comparison."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "finding": "2 exception keys oak/tornado/default and lake/tornado/default require shelter-purpose/destination, arrival-route start consistency, unchanged original household/home inputs, and occupant identity invariants."
+    }
+  ],
+  "recommendations": [
+    "Record exact accepted spatial contract change rather than claiming byte-for-byte legacy compatibility for all24 cases.",
+    "Retain causal assertions proving successful arrival/accounting and delayed helper failure; do not rebaseline hashes indiscriminately.",
+    "For the two tornado exceptions, the replacement contract is narrower than a full semantic diff: allSatisfy route checks can be vacuous if there are no routes. Keep positive supported-arrival tests and consider requiring expected person/route counts where the fixture guarantees arrival."
+  ],
+  "limitations": [
+    "Two tornado default cases were not reconstructed against historical full outputs in this review; unrelated fields beyond explicit replacement invariants have reduced historical coverage.",
+    "Passing deterministic suites does not establish native outcomes/rendering or live Codex quality."
+  ],
+  "next_owner": "orchestrator for ledger and fresh native review; scenario specialist for any further narrow invariants",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

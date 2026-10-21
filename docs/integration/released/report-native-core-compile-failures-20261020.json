@@ -1,0 +1,58 @@
+{
+  "report_id": "report-native-core-compile-failures-20261020",
+  "run_ids": [
+    "run-c86b10954d62441da499dc3c1cb65061",
+    "run-853aedc220464929878f7d9092d6da3c"
+  ],
+  "review_kind": "Dedicated protected-output reviewer diagnosis",
+  "synopsis": "Unsigned native build has two missing-symbol diagnostics; Core has three issues in two tests, with no other failing tests reported. The coverage issue is floating-point evaluation order; the two historical adapter mismatches are isolated to alternate heat scenarios and correlate with a newly added inapplicable choice being inserted into encoded input by the test.",
+  "fact_findings": [
+    {
+      "path": "apps/ios/DryRun.xcodeproj/project.pbxproj",
+      "diagnosis": "MapPlanningCopy.swift exists in Maps but is absent from generated project file references and source membership. MapPlanningView planningText references its symbol at line 77. Regenerate project from apps/ios/project.yml, whose DryRun source directory already includes Maps."
+    },
+    {
+      "path": "apps/ios/DryRun/Maps/MapPlanningView.swift",
+      "diagnosis": "Captured build lacked planningDetails at the placeList reference (captured line 238). Current source now defines @ViewBuilder planningDetails at line 326 and uses it at line 244; this portion appears already repaired after capture. Verify regenerated current build before making additional edits."
+    },
+    {
+      "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparednessScorecard.swift",
+      "line": 136,
+      "symbol": "ScoreCompiler.compile practiceAnchorCoverage",
+      "diagnosis": "Production evaluates anchors divided by bank count then multiplied by 100; test evaluates 100 divided by bank count. For one of twelve anchors their rounded binary Double values differ by approximately 2e-15. No domain credit or evidence-preservation assertion failed."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "line": 14,
+      "symbol": "preservesLegacyResultsOutsideVersionedSpatialArrivalFields",
+      "diagnosis": "Alternate setup inserts last-option overrides for every current scenario choice, including newly introduced choice.heat-grid-strain.powered-evening. Its content applicability requires both no-rotating-outage and cooling-followup, absent from legacy input. The authored adapter correctly omits inapplicable choices from scheduling but returns actual input including the new unused override. The legacy hash includes every input field. Only alternate oak and lake heat cases mismatch; defaults and other nonspatial cases passed. This is a precise source-supported cause requiring targeted confirmation on rerun."
+    }
+  ],
+  "recommendations": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeEvidencePreservationTests.swift",
+      "line": 73,
+      "fix": "Use an absolute tolerance such as abs((coverage ?? 0)-100.0/Double(bank.count)) < 1e-10, as HazardPracticeChecksTests line 116 already does. Keep all practice scores, competency budget, prior-evidence and hazard-set assertions intact."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "line": 14,
+      "fix": "Preserve exact legacy input construction for this hash compatibility test: exclude only the explicitly new powered-evening choice from alternate legacy overrides, with a comment identifying the versioned added choice. Keep historical digest fixtures unchanged and keep byte-exact assertions. Do not broadly filter all inapplicable old choices because old inputs historically carried them. Add or retain separate behavior checks proving the new choice appears only in the two-variant follow-up and is absent from legacy scenarios."
+    },
+    "Regenerate the native project before retrying unsigned generic-iOS build. Do not remove MapPlanningCopy reference or planning details UI to silence compiler errors.",
+    "Run the two Core test suites first, then full Core if they pass. No device or simulator execution is needed or authorized here."
+  ],
+  "retests": [
+    "Unsigned generic-iOS build-for-testing after project generation",
+    "PracticeEvidencePreservationTests",
+    "AuthoredAdapterTests",
+    "Full DryRunCore suite"
+  ],
+  "limitations": [
+    "Inspected existing captured outputs and current authored source only; did not execute app, device, simulator, model, or new test run.",
+    "Core reports 565 Swift Testing tests with three issues plus 17 XCTest cases with one skipped; this is a diagnosis, not a passing validation.",
+    "Current source changed since native failed capture, so planningDetails is assessed against current file rather than reconstructed historical full snapshot."
+  ],
+  "next_owner": "parent source editor",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

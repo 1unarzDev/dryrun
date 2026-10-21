@@ -1,0 +1,32 @@
+{
+  "report_id": "report-final-supporting-feature-context-checks-20261021",
+  "run_ids": [
+    "run-a4343374d3b54161acf2f7544770c2b8",
+    "run-dd29781e102e429ca6bc36ff770083d0"
+  ],
+  "review_kind": "Dedicated reviewer supporting-feature final checks",
+  "synopsis": "Both targeted supporting-feature context tests passed after preserving the task comparison through deterministic full encoding. Latest unsigned generic-iOS build-for-testing also succeeded.",
+  "fact_findings": [
+    {
+      "run_id": "run-a4343374d3b54161acf2f7544770c2b8",
+      "result": "Exit zero; 2 tests in 1 Swift Testing suite passed, with no skips reported. Capture duration 11.630 seconds; test phase 0.091 seconds. The authored tests check resource-task preservation, private binding and record retention, locale, changed scope, and photo request image bytes/manifest binding."
+    },
+    {
+      "run_id": "run-dd29781e102e429ca6bc36ff770083d0",
+      "result": "Exit zero; generic unsigned iOS build-for-testing succeeded. Capture duration 43.267 seconds. Native app and test targets compiled; native tests were not executed."
+    }
+  ],
+  "references": [
+    "report-supporting-feature-test-equatable-diagnosis",
+    "report-night-final-mac-checks-20261021"
+  ],
+  "fixture_snapshot": "The targeted run used the authored supporting-wire export destination /private/tmp/dryrun-authored-support-wire-v1. Export is synthetic contract evidence. The photo bytes are authored placeholder data, not proof of a decodable photograph.",
+  "limitations": [
+    "This targeted result covers two supporting-context tests, not a new full Core run. Earlier full Core results retain their snapshot and skip limitations.",
+    "No real image validity, vision quality, live model behavior, external resource discovery, or end-to-end server acceptance is established by these two Swift tests.",
+    "No phone, simulator, native app, or native unit/UI test execution occurred.",
+    "Reviewer inspected existing captures only and performed no code edits or new test/model runs."
+  ],
+  "next_owner": "parent integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,55 @@
+{
+  "report_id": "report-host-test-and-device-readiness",
+  "run_ids": [
+    "run-8e3bc0c74c7b4958afd618451669464e",
+    "run-a379b393aeb84e0397d392ed495d2cd6"
+  ],
+  "feature": "Scenario test host diagnosis and physical baseline capture readiness",
+  "review_kind": "synthetic agent engineering audit",
+  "fixture_snapshot": "Existing core package test command; physical capture tools inspected without launch",
+  "criteria": [
+    {
+      "id": "HAZ-01..06",
+      "verdict": "blocked before tests",
+      "evidence": "Swift package manifest compilation did not complete."
+    },
+    {
+      "id": "REVIEW-01",
+      "verdict": "timeout extension verified",
+      "evidence": "Receipt-only capture accepted a 600-second setting and returned only safe metadata for a synthetic successful command."
+    }
+  ],
+  "synopsis": "The scenario run did not reach test compilation or execution. The host sandbox denied the default compiler module-cache output under the user home directory; standard-library loading failed as a consequence. This is a host/cache-access blocker rather than evidence of a scenario logic defect.",
+  "failures": [
+    {
+      "severity": "blocking",
+      "stage": "SwiftPM manifest compiler cache write",
+      "impact": "No six-hazard assertion ran; no pass/fail conclusion about scenario behavior is supported."
+    }
+  ],
+  "likely_stage": "host sandbox",
+  "references": [
+    "protected evidence handle run-8e3bc0c74c7b4958afd618451669464e",
+    "scripts/review/firewall.py",
+    "apps/ios/DryRunUITests/ScreenshotTourUITests.swift"
+  ],
+  "recommendations": [
+    "Because the required test failed on a sandbox write denial, rerun the command using the authorized escalation flow. Keep the full test output behind the capture wrapper. Do not label this a product test failure.",
+    "Capture now accepts python3 scripts/review/firewall.py capture --timeout 600 -- COMMAND ARGUMENTS. Default remains 120 seconds; allowed interval is 1 through 1800 seconds. Command exceptions still return a fixed blocked status without exception text.",
+    "Physical iPhone 16 Pro is reserved exclusively to this reviewer after the orchestrator finishes signed baseline build/install handoff. No simulator may substitute. No physical launch, settings change or capture has occurred yet.",
+    "Installed Xcode supplies xcrun devicectl device capture screenshot --device DEVICE --destination PROTECTED.png. Its help was verified; an actual successful device capture remains unverified.",
+    "XCTest capture and navigation are available through existing ScreenshotTourUITests and DemoJourneyUITests. Reviewer must run the tests with xcresult and all attachments outside ordinary source/evidence paths when content could contain generated text. Existing screenshot tour supports locale and screen filters and fictional demo launch arguments.",
+    "For first physical baseline provide exact installed app bundle ID, signed build path/commit and confirmation build access released. Reviewer will launch only isolated fictional demo states and retain original captures privately before semantic/geometry clearance."
+  ],
+  "retests": [
+    "Rerun six-hazard test through escalated capture and review actual test results.",
+    "After signed physical build completes, verify first launch and actual screenshot capture before scheduling broader native matrix."
+  ],
+  "limitations": [
+    "Device capture command capability is established from installed tool help only. No physical acceptance or UI fit evidence exists yet.",
+    "Timeout extension changes reviewer infrastructure only; no production code changed.",
+    "Synthetic execution validated flag parsing and safe receipt; it did not wait ten minutes."
+  ],
+  "next_owner": "orchestrator for host escalation and signed physical build; integration specialist for priority exact LB probe",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

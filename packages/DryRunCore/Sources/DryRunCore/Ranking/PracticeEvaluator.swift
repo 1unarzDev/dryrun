@@ -10,7 +10,7 @@ public enum PracticeEvaluator {
         guard supportedVersions.contains(evaluatorVersion) else {throw SessionError.invalidCommand}
         guard let index=session.commits.firstIndex(where:{$0.id==actionID && $0.actor=="user"}),
               session.commits[index].commands.count==1 else {throw SessionError.invalidCommand}
-        var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)
+        var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,mechanicsVersion:session.mechanicsVersion)
         var history=[try prefix.query(library:library)]
         for commit in session.commits.prefix(index) {history.append(try prefix.commit(commit,library:library))}
         let beforeSession=prefix

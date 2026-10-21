@@ -1,0 +1,28 @@
+{
+  "report_id": "report-supporting-feature-test-equatable-diagnosis",
+  "run_ids": [
+    "run-169e1448327b483cb9222d0166478426"
+  ],
+  "review_kind": "Dedicated reviewer compiler diagnosis",
+  "synopsis": "The targeted supporting-feature test run stopped compiling its new test source: array equality was requested for a Codable task type without Equatable conformance. No supporting-feature test executed.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SupportingFeatureContextTests.swift",
+      "line": 19,
+      "symbol": "resourcePlanningRetainsPrivateFactsWithoutChangingPublicSearchPlans",
+      "diagnosis": "The assertion directly compares two arrays of PreparationTaskProposal. Swift Array equality requires its element to conform to Equatable, but PreparationTaskProposal in AIContracts.swift line 81 declares Codable and Sendable only. Its nested BespokePreparation also lacks Equatable. This is a test-source type-check error, not an established bridge behavior failure.",
+      "fix": "Preserve full task comparison by encoding both task arrays with DryRunJSON.encoder() and comparing the resulting Data values. This encoder uses sorted keys, so comparison checks every encoded task field deterministically without requiring production model conformance changes. For example assign each try-encoded array to a local Data constant, then assert their equality. Keep all binding, context-record, locale, image, and changed-scope assertions."
+    }
+  ],
+  "recommendations": [
+    "Rerun SupportingFeatureContextTests with the same synthetic export environment and inspect the capture. Exported wire files are not established by this failed compile.",
+    "Do not reduce the assertion to task counts or IDs, because that would stop checking field preservation. No bridge production edits are justified by this compiler error."
+  ],
+  "limitations": [
+    "No tests executed and no new export success established.",
+    "Reviewer inspected existing capture and authored source only; no code edits, new tests, device, simulator, app, or model execution.",
+    "The separate generic native build success does not compile this Core test target and therefore does not resolve this test-source failure."
+  ],
+  "next_owner": "parent source editor",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

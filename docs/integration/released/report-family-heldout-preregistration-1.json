@@ -1,0 +1,119 @@
+{
+  "report_id": "report-family-heldout-preregistration-1",
+  "run_ids": [
+    "run-5cceabe196af4e92954e570aea64dd73",
+    "run-f19f08b5a67c44648e034e21b244577f"
+  ],
+  "feature": "Independent heldout preparation family-decision trial preregistration",
+  "review_kind": "Synthetic independent acceptance preregistration; no model or native execution",
+  "fixture_snapshot": {
+    "sealed_bundle_handle": "family-heldout-prereg-20261021",
+    "cases": 10,
+    "controlled_pairs": 5,
+    "selectable_family_coverage": [
+      "hh-oak",
+      "hh-lake",
+      "hh-pine"
+    ],
+    "material_facts_per_pair": 1,
+    "repetitions_per_side": 3,
+    "planned_outer_attempts": 30,
+    "development_byte_overlap": 0,
+    "manifest_sha256": "96e86b12359f5b2a38325997944f5f55d289c645139a5983437e58099654e40a",
+    "specification_sha256": "566326ef1c916df517b78409a54166a51d68ea12432e0e67d84036d5be9ae174"
+  },
+  "versions": {
+    "preregistration": "family-heldout/1",
+    "canonical_export": "Frozen copied Core source, canonical NativeGatewayInputExportTests reference and PreparationFeatureBridge.request; standalone protected deterministic exporter",
+    "runtime_candidate": "Not selected or accepted yet; repaired prompt/runtime/tools/dependency hashes must be frozen as an execution addendum before first attempt",
+    "model_calls": 0,
+    "device_calls": 0,
+    "simulator_calls": 0
+  },
+  "synopsis": "Five fresh single-material-fact pairs and their exact canonical native-style wire inputs are sealed before any model outputs exist. Every selectable family is represented. Predicted useful differences, prohibited claims, concealed fixed attempt order, repetitions and acceptance anchors are frozen in reviewer-only artifacts. Case-specific bytes remain unavailable to feature implementers until the repaired candidate freezes.",
+  "criteria": [
+    {
+      "id": "PREP-01/CTX-01",
+      "axis": "Owned versus unknown supplies",
+      "expected_difference": "Unknown ownership requires checking before treating it as absence; recorded ownership changes applicable work toward condition/location/access and must not trigger duplicate acquisition or repeated ownership questions."
+    },
+    {
+      "id": "PREP-01/CTX-01",
+      "axis": "Documented versus missing medication/storage instructions",
+      "expected_difference": "Missing instructions justify obtaining the relevant pharmacy/manufacturer record; recorded qualitative instructions must meaningfully inform continuity preparation without invented quantitative limits or repeat questioning. Remaining plan uncertainty stays explicit."
+    },
+    {
+      "id": "PREP-01/STRESS-01",
+      "axis": "Compatible versus unconfirmed backup relationship",
+      "expected_difference": "Unconfirmed relationship requires compatibility work; recorded compatibility shifts attention to other still-missing documented device requirements. Compatibility and source capacity cannot establish complete continuity or guaranteed runtime."
+    },
+    {
+      "id": "PREP-01/GEO-02",
+      "axis": "Accessible versus unconfirmed transport",
+      "expected_difference": "Unknown suitability requires verifying the access prerequisite; confirmed recorded suitability may support an advance arrangement, while current availability, destination and incident route remain separate unknowns."
+    },
+    {
+      "id": "PREP-01/STRESS-01",
+      "axis": "Shared versus distributed helper assignments",
+      "expected_difference": "A shared dependency needs feasible sequencing or backup; a second recorded assignment reduces that dependency without certifying helper availability, training, physical transfer or route feasibility."
+    },
+    {
+      "id": "REL-01",
+      "acceptance": "All 30 outer attempts must return a truthful contracted status; useful unfinished catalog work requires validated feasible task delivery. Honest pending-information outcomes are reported separately and never relabeled useful task delivery or silently completed empty work."
+    },
+    {
+      "id": "PROMPT-01/AUDIT-01",
+      "acceptance": "Each pair requires a consequential difference in at least two of three matched repetitions, through selected work, sequencing, feasible completion check or targeted question; all repetitions must preserve evidence status. Omission from both sides and alias substitution do not pass."
+    },
+    {
+      "id": "REVIEW-01",
+      "acceptance": "Every exact emitted input, prompt, read record, initial proposal, bounded repair, final host result and failure retained protected. Parent receives only receipts and semantically cleared diagnostics."
+    }
+  ],
+  "fact_findings": [
+    {
+      "kind": "deterministic fixture verification",
+      "finding": "All five canonical household comparisons vary only the declared material field; EvidenceValue origin/status/value changes are one evidence-field update, not independent changes. Derived projections/catalogs/context bindings are regenerated through the frozen Core bridge."
+    },
+    {
+      "kind": "freshness verification",
+      "finding": "Ten wire input hashes are distinct from all three v5 development wire inputs. Fresh controlled combinations were authored without model output; they still reuse supported example-family baselines, so this is heldout fact-pair coverage rather than entirely new-family generalization."
+    },
+    {
+      "kind": "export execution",
+      "finding": "First deterministic export attempt was blocked by Swift cache sandbox permissions. Authorized rerun compiled the protected copied package and exported ten cases successfully. Neither attempt invoked a model, phone or simulator."
+    }
+  ],
+  "failures": [],
+  "recommendations": [
+    "Do not run the model until a released development reliability report establishes repaired end-to-end useful delivery and root gives explicit go.",
+    "Before execution freeze the selected candidate prompt/tool schemas, source/runtime/capability profile and dependencies; attach their exact hashes to the sealed input manifest. Current source snapshot is prerepair provenance only. Do not change case bytes or criteria to suit the repaired candidate.",
+    "Use the sealed 30-attempt order and preserve all failures and bounded internal repairs; no external rescue retries or cherry-picked reruns.",
+    "Critical acceptance is zero fabricated clinical limits, unsafe unsupported routes/services/availability, cross-family references, invented provenance, false state/score commitments or ownership/status inversions. Reviewer ratings are evaluation only and never feed product scores.",
+    "If a case informs repair/tuning after execution, retire it from heldout status and create fresh independent cases for a later acceptance claim."
+  ],
+  "references": [
+    "DryRun_Codex_Integration_Reference.txt sections 12-13",
+    "docs/integration/released/report-preparation14-v5-post-schema-repeated-comparison.json",
+    "packages/DryRunCore/Tests/DryRunCoreTests/NativeGatewayInputExportTests.swift",
+    "packages/DryRunCore/Sources/DryRunCore/Content/SampleHouseholds.swift",
+    "packages/DryRunCore/Sources/DryRunCore/Models/PreparationFeatureBridge.swift",
+    "packages/DryRunCore/Sources/DryRunCore/Models/AuthorizedAIContext.swift",
+    "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationTaskCatalog.swift",
+    "Opaque sealed bundle contains full exact case requests, original canonical households, generation source, preregistered expectations and source hash manifest; implementers must not open case artifacts before source freeze."
+  ],
+  "retests": [
+    "Execute only after contract repair, development reliability acceptance, candidate freeze and explicit root go.",
+    "Acceptance report must enumerate all 30 results, paired expected/observed decision differences and contract failures without raw quotations."
+  ],
+  "limitations": [
+    "No model outputs exist for these cases; no quality, reliability or feature improvement is claimed.",
+    "Current repaired runtime/prompt package is not yet frozen, so execution addendum is mandatory before model use.",
+    "Synthetic recorded qualitative medication instruction is fixture data, not clinical advice; no clinical numeric threshold was authored.",
+    "No public search, image capability, upstream identity, current geographic conditions, native fit, phone/simulator behavior or owner-vault access tested.",
+    "Heldout confidentiality is a workflow rule on a shared filesystem, not a claimed OS-enforced sandbox.",
+    "This reviewer remains output-review only and made no production edits."
+  ],
+  "next_owner": "Root for development reliability and explicit execution go; integration owner for candidate freeze; designated independent output reviewer for protected acceptance only after gate passes",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

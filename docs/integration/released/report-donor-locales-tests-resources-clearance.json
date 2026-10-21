@@ -1,0 +1,666 @@
+{
+  "report_id": "report-donor-locales-tests-resources-clearance",
+  "run_ids": [
+    "donor-resource-classification-2",
+    "donor-locales-additive-reconciliation-1"
+  ],
+  "feature": "Restore authored native resources while protecting recorded Beacon content",
+  "review_kind": "synthetic agent engineering artifact audit",
+  "synopsis": "All48 donor EN/ES/VI localization dictionaries are static authored key-to-string resources and cleared at listed blobs. Missing keys were imported additively from six-hazard donor first and wired donor second; current values and root-added keys were preserved. Seven recorded Beacon replay assets remain protected and are preserved as opaque copies outside source search. Scoped native/Core test source clearance is listed separately.",
+  "criteria": [
+    {
+      "id": "SRC-01",
+      "verdict": "resource reconciliation performed",
+      "evidence": "2028 missing localization entries added across12 current files; zero existing values replaced. All8 dictionary key sets match across EN/ES/VI after reconciliation."
+    },
+    {
+      "id": "REVIEW-01",
+      "verdict": "replay boundary preserved",
+      "evidence": "No raw recorded answer imported into ordinary docs/source output. Opaque7-asset backup retained under protected storage; donor Git blobs unchanged."
+    }
+  ],
+  "references": {
+    "locales": [
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/actions.json",
+        "blob": "a47f6196d34b099a1abbaf9057ff90b7b82419f5",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/ai.json",
+        "blob": "0cd023d81a7a327a927ecaebfc96b901a539b929",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/common.json",
+        "blob": "fac55d885411ec4ee8843e6e2b6064a232f08db4",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/help.json",
+        "blob": "2292540f1ce6ef787930b251e80333650057e5df",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/native.json",
+        "blob": "1d8050c8f1c7354972bb3a91688f4b3330b133f1",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/plan.json",
+        "blob": "4b0d88a71a0219665259748223ae191f67c48d2b",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/scenarios.json",
+        "blob": "64da540d7c69faf12177dbb6db428d428fff0ba5",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/en/spatial.json",
+        "blob": "5aa653eaf4994b70381eda14c9de407e0ad8e12c",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/actions.json",
+        "blob": "af85ee34fced9f20f4956a84626b5f100c6d453a",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/ai.json",
+        "blob": "0c4dc6d9f8b32567467afaae8c9949ca4a38abd0",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/common.json",
+        "blob": "93c9a504fd787770a8f1fd82b4af83d3f165b43f",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/help.json",
+        "blob": "37388636dcbb6a7eb99535bf12026282b1f783c4",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/native.json",
+        "blob": "0e5da785036f4375474596369fecd84907c5ad69",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/plan.json",
+        "blob": "b780f8f7d3bd4552e2f907a048bda71deac33fd2",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/scenarios.json",
+        "blob": "3631cbcf19249b53f552082a0d70754cce337288",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/es/spatial.json",
+        "blob": "099e6e3392b36ccedf1ff8240dce35365a2f56a2",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/actions.json",
+        "blob": "f8bebcb1b5e24f39f96d439b2482dc5b456e66c5",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/ai.json",
+        "blob": "1b3fde2bea8e34fcf6b2ec4d03b4967c64e8af04",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/common.json",
+        "blob": "f177c03543575a5301b9eb965d03f5b426717711",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/help.json",
+        "blob": "16d634443c08f84e8f4595827ec727a60e3aed4c",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/native.json",
+        "blob": "c5cd5d5331cbabb6b023e41cf9e6e0bbb4915bfa",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/plan.json",
+        "blob": "9de7be5c2eac81bac93219461b36adb8c18f8554",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/scenarios.json",
+        "blob": "a723e20a1acaca54acf2ef8eaed433ac7db73f0c",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "content/locales/vi/spatial.json",
+        "blob": "043887fc0fd40279428b88c947a8e27fd706ade1",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/actions.json",
+        "blob": "a47f6196d34b099a1abbaf9057ff90b7b82419f5",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/ai.json",
+        "blob": "0cd023d81a7a327a927ecaebfc96b901a539b929",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/common.json",
+        "blob": "ffb9cc851d0222998f8f5e4f14cafc4b9334a34d",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/help.json",
+        "blob": "2292540f1ce6ef787930b251e80333650057e5df",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/native.json",
+        "blob": "af55099e1f396b9e08f1502a14ce68a35a4867e2",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/plan.json",
+        "blob": "4b0d88a71a0219665259748223ae191f67c48d2b",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/scenarios.json",
+        "blob": "52f7a42a0a417274d83c9a878fee005678a880f5",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/en/spatial.json",
+        "blob": "56fbb940527acab9452d3a94597d3caf06fe0b9d",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/actions.json",
+        "blob": "af85ee34fced9f20f4956a84626b5f100c6d453a",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/ai.json",
+        "blob": "0c4dc6d9f8b32567467afaae8c9949ca4a38abd0",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/common.json",
+        "blob": "b2cb82d5ca9ae5b7c3bca5a796572772b234cefe",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/help.json",
+        "blob": "37388636dcbb6a7eb99535bf12026282b1f783c4",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/native.json",
+        "blob": "36a55da4800d73947203b2c50acfc604ffb73c95",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/plan.json",
+        "blob": "b780f8f7d3bd4552e2f907a048bda71deac33fd2",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/scenarios.json",
+        "blob": "05ad2886e5e0df9af2ea589bf9b17353d3327343",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/es/spatial.json",
+        "blob": "ec7ce9d23dcc9ef1ea0f5f217e347d73fc84939a",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/actions.json",
+        "blob": "f8bebcb1b5e24f39f96d439b2482dc5b456e66c5",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/ai.json",
+        "blob": "1b3fde2bea8e34fcf6b2ec4d03b4967c64e8af04",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/common.json",
+        "blob": "115c5a70b8495d1fc7132d06142c320517062a2a",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/help.json",
+        "blob": "16d634443c08f84e8f4595827ec727a60e3aed4c",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/native.json",
+        "blob": "ed8ab041ab857b812937ea05d9ab5a59b4e61f53",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/plan.json",
+        "blob": "9de7be5c2eac81bac93219461b36adb8c18f8554",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/scenarios.json",
+        "blob": "77326ec6f7834e0731f1f4ab0b0f7e1172ff2462",
+        "classification": "authored-static-localization-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "content/locales/vi/spatial.json",
+        "blob": "a2a0b8caf630b5c53053c60ae70e4ee8aff7d39d",
+        "classification": "authored-static-localization-cleared"
+      }
+    ],
+    "tests": [
+      {
+        "ref": "5f95135",
+        "path": "apps/ios/DryRunTests/AppPersistenceTests.swift",
+        "blob": "65edf3779bf47bac7166539fca8b96a6b713467c",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/AIRecordedResourcesTests.swift",
+        "blob": "299063cfe53fbfa0f1c3a95e4ddfb7270eec8fcd",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/BackupPreparationConsistencyTests.swift",
+        "blob": "64b2635c1b4e6d4932b5b1856504a07412361905",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/DebriefFeatureBridgeTests.swift",
+        "blob": "3c6aded22e85d26545cbecc5890dde48f7c448cb",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/DirectorGatewayBridgeTests.swift",
+        "blob": "edf6f198f6c40acfdd028cc607223a3d7dff2216",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/DrillSetupBridgeTests.swift",
+        "blob": "f437ef798d56b4ea08a0b60c9bf74dab87bfb0ed",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/ExerciseAssistanceContextTests.swift",
+        "blob": "596dfe088208fdedb614076f7b0050808f51dc88",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/FamilyPreparationRevisionTests.swift",
+        "blob": "c312550b1a148141446a50a497af9c71f810a3dd",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/FireAccompanimentTests.swift",
+        "blob": "87c4e42760aa1cfcb99013d01230ecfd9cbfa1e0",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/FloodRefugeActionTests.swift",
+        "blob": "7c820605b554d915f36086a3be0b1ef1e76afd63",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/HazardPracticeChecksTests.swift",
+        "blob": "96a09eed9f1b4c8e0ab1198d6d4b4ae17808296a",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/HomeEditTransactionTests.swift",
+        "blob": "87c458b04617f7fd41cc74f183a5d364e2e7a829",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/LocalDirectorTests.swift",
+        "blob": "17ff1b0733057a68ac7bd9e1575f32c260d14f29",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeAdaptationTests.swift",
+        "blob": "093c39805ec9fc22d769970e0c1538ff10de39c2",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeCaptureTests.swift",
+        "blob": "e986478c65f3ecaad503810f9f0bae7ce114d164",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeCheckSourcesTests.swift",
+        "blob": "d6fa334624457c13b53cecb9fffd30c8753c868d",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeNonDeviceTests.swift",
+        "blob": "45303291e5e05d4ee374f03f44cea601958804cc",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticePhaseTests.swift",
+        "blob": "5be01e327f10a0bb15f59e076683be7a3cf33fe7",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationDraftTests.swift",
+        "blob": "9d8efc4f9cff76689190839d27dbcf9943b52f6a",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationEditTargetTests.swift",
+        "blob": "90f2a5a736a18b0bd6800450dd46d3d45dd32700",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationFeatureBridgeTests.swift",
+        "blob": "e5be1bd1062fff584695454150a8fedc6abb4ee1",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationInventoryTests.swift",
+        "blob": "ff1b97fc5b4610c1ae11cb0b7925461b5d1eb567",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationLoopTests.swift",
+        "blob": "83503b02d9d214710c16688683a7b423f99f3187",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/RecordedPreparationTests.swift",
+        "blob": "3af903bb449a8d6b55cfc0159eaf3c3bf7c37aa9",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/RehearsalDebriefEvidenceTests.swift",
+        "blob": "40d899abc90ef6812edeecddfaa6b4a45509ea92",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/ScanCorrectionsTests.swift",
+        "blob": "4434b7c4e126954d2785774046acd06063248be4",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/ShoppingListTests.swift",
+        "blob": "9429ff317469990a8f799b6d4351d30f28802a58",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "5f95135",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/SixHazardExperienceTests.swift",
+        "blob": "17d09bdebbcb27ed101ce42ae021be1f6219e863",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "apps/ios/DryRunTests/AppPersistenceTests.swift",
+        "blob": "37f0e8d1b7d215912f4e23a31ccb111d9fdeac67",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/BackupPreparationConsistencyTests.swift",
+        "blob": "64b2635c1b4e6d4932b5b1856504a07412361905",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/DirectorGatewayBridgeTests.swift",
+        "blob": "dd0ee0a8b29a3bb52624a8c0c4dc14360b654de3",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/FamilyPreparationRevisionTests.swift",
+        "blob": "c312550b1a148141446a50a497af9c71f810a3dd",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/HomeReviewBridgeTests.swift",
+        "blob": "6b58d648964deff5a606daab499a0f7e066b476d",
+        "classification": "reviewer-only-pending-fixture-projection"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/LocalDirectorTests.swift",
+        "blob": "17ff1b0733057a68ac7bd9e1575f32c260d14f29",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/OfficialSiteLookupTests.swift",
+        "blob": "cec5b7b21ecf6c5ae6af94a2c5e2797d700988be",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeAdaptationTests.swift",
+        "blob": "093c39805ec9fc22d769970e0c1538ff10de39c2",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeCaptureTests.swift",
+        "blob": "e986478c65f3ecaad503810f9f0bae7ce114d164",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeCheckSourcesTests.swift",
+        "blob": "d6fa334624457c13b53cecb9fffd30c8753c868d",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticeNonDeviceTests.swift",
+        "blob": "45303291e5e05d4ee374f03f44cea601958804cc",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PracticePhaseTests.swift",
+        "blob": "5be01e327f10a0bb15f59e076683be7a3cf33fe7",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationDraftTests.swift",
+        "blob": "9d8efc4f9cff76689190839d27dbcf9943b52f6a",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationEditTargetTests.swift",
+        "blob": "ebcc4500b72a016c8417707a01e2590d6a167a93",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationInventoryTests.swift",
+        "blob": "e6c3a897e24c86402c896d4e44db19dd35ad2c96",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/PreparationLoopTests.swift",
+        "blob": "83503b02d9d214710c16688683a7b423f99f3187",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/RecordedPreparationTests.swift",
+        "blob": "3af903bb449a8d6b55cfc0159eaf3c3bf7c37aa9",
+        "classification": "authored-test-source-cleared"
+      },
+      {
+        "ref": "a9efc8f",
+        "path": "packages/DryRunCore/Tests/DryRunCoreTests/ResourceSuggestionPlannerTests.swift",
+        "blob": "80d1034be22980734226e5add1ea54b5081ced92",
+        "classification": "authored-test-source-cleared"
+      }
+    ],
+    "replay": [
+      {
+        "path": "content/ai/replay/debrief-hh-lake-heat-grid-strain.json",
+        "blob": "20580fd2bcb8c89b9175d9d807cf1ec4b89dc99d",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/debrief-hh-lake-heat-grid-strain.json"
+      },
+      {
+        "path": "content/ai/replay/debrief-hh-oak-freeze-power-loss.json",
+        "blob": "dd3c06fd428f40fe20cdc8a954ebc170b4ab719e",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/debrief-hh-oak-freeze-power-loss.json"
+      },
+      {
+        "path": "content/ai/replay/debrief-hh-pine-tornado.json",
+        "blob": "85be8213e27051898a095a6001d05ab11de0f8d0",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/debrief-hh-pine-tornado.json"
+      },
+      {
+        "path": "content/ai/replay/drill-hh-oak-home-fire.json",
+        "blob": "6ab196bc19de91f2f2a11f529f83562b88f97be0",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/drill-hh-oak-home-fire.json"
+      },
+      {
+        "path": "content/ai/replay/preparation-hh-lake.json",
+        "blob": "b9739af39ff79047f8ca293b1fe66e82d47f7e7f",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/preparation-hh-lake.json"
+      },
+      {
+        "path": "content/ai/replay/preparation-hh-oak.json",
+        "blob": "4185e23852f8e47851b4e238234546bad03f5c7a",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/preparation-hh-oak.json"
+      },
+      {
+        "path": "content/ai/replay/preparation-hh-pine.json",
+        "blob": "4a94b7cf3da416e145d6a37641e28795c9f645e3",
+        "classification": "protected-generated-app-response",
+        "preserved_handle": "preserved-donor-replay-5f95135/preparation-hh-pine.json"
+      }
+    ],
+    "public_place_asset": {
+      "ref": "5f95135",
+      "path": "content/places/tarrant-v1.json",
+      "classification": "curated-public-records-cleared-unverified-currentness"
+    }
+  },
+  "fact_findings": [
+    {
+      "asset": "content/places/tarrant-v1.json",
+      "finding": "Four structured public-facility records with public address/contact/source URLs and explicitly seasonal role/unknown accessibility; no private family or generated response transcript fields. Asset may be read as public planning input. Current source truth, activation, accessibility and seasonal service availability were not independently verified."
+    },
+    {
+      "asset": "content/ai/replay/",
+      "finding": "Files contain recorded preparation/debrief/drill responses intended for Beacon fallback rendering; acceptance/persistence does not remove protected-output status."
+    }
+  ],
+  "recommendations": [
+    "Root may inspect cleared localization keys/values and integrate authored resources. Reconciliation touched only common/native/scenarios/spatial JSON for each locale; other dictionaries unchanged. Current common1151/native210/scenarios348/spatial490 keys per locale.",
+    "No whole-file donor replacement occurred. Conflicting existing keys retained current root values. Run content/localization validation and matched native captures after rebuild; key parity does not prove translation or rendering quality.",
+    "Root may inspect content/places/tarrant-v1.json at donor blob as curated public input, but do not treat its checked date or facility kind as current shelter/cooling activation. Import decision belongs to maps integrator; no public asset mutation made here.",
+    "Replay remains in donor Git and protected preserved-donor-replay-5f95135 handles. It was not copied into ordinary checkout. If shipping preserved replay support needs bundling, request reviewer-owned opaque artifact import with explicit source-search/diff exclusions or relocation mapping; never print its JSON in engineering tools.",
+    "Cleared scoped tests include both AppPersistenceTests and authored practice/hazard/bridge tests without recorded-fixture dependencies listed in manifest. Fixture-reading/writing files flagged reviewer-only-pending-fixture-projection remain uncleared by this report; use dedicated reviewer or extract authored methods safely.",
+    "Even cleared test source does not clear its execution outputs. Always capture logs/assertions because failure dumps may reproduce protected or persisted text."
+  ],
+  "limitations": [
+    "Artifact classification uses structural dictionary checks, keyword/provenance inspection and targeted semantic review; not a claim every translated value received professional language/safety review.",
+    "No new model calls, replay semantics review, device launch or native build performed during resource management.",
+    "Potential legacy localization instructions may conflict with revised product requirements; integrator should retain current values for conflicts and remove obsolete entry points through authored code changes."
+  ],
+  "next_owner": "root for integrated build; native/maps/scenario specialists for resources/tests; reviewer for opaque replay import if needed",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

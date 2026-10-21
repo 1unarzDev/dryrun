@@ -194,7 +194,7 @@ extension RunState {
                 emit("evt.home-fire.route.no-usual.\(p.id)", title: "scenario.home-fire.route.no-usual",
                      values: ["person": p.alias, "reason": r.noRouteReason?.rawValue ?? "unknown"], severity: .critical,
                      rule: "rule.fire.route", facts: ["person.\(p.id)", "home.portals"], causedBy: cause, sources: ["S19"])
-                requireSticky("req.egress.\(p.id)", cause: cause)
+                if !isOutside(p.id) { requireSticky("req.egress.\(p.id)", cause: cause) }
                 flags.insert("fire.noRoute")
             }
         }
@@ -265,7 +265,7 @@ extension RunState {
                 emit("evt.home-fire.route.none.\(p.id)", title: "scenario.home-fire.route.none",
                      values: ["person": p.alias, "reason": r.noRouteReason?.rawValue ?? "unknown"], severity: .critical,
                      rule: "rule.fire.route", facts: ["person.\(p.id)", "home.portals"], causedBy: cause, sources: ["S19"])
-                requireSticky("req.egress.\(p.id)", cause: cause)
+                if !isOutside(p.id) { requireSticky("req.egress.\(p.id)", cause: cause) }
                 flags.insert("fire.noRoute")
             }
             if r.primary != nil, r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
@@ -281,9 +281,10 @@ extension RunState {
     mutating func helperReachCheck(blockedSpaces: Set<String>, blockedPortals: Set<String>, cause: String) {
         guard let home else { return }
         for p in household.people.sorted(by: { $0.id < $1.id }) {
+            if isOutside(p.id) { continue }
             guard let hid = p.helperPersonID, let helper = household.people.first(where: { $0.id == hid }),
                   !flags.contains("fire.helperBlocked.\(p.id)") else { continue }
-            let from = startSpace(for: helper), to = startSpace(for: p)
+            let from = isOutside(helper.id) ? "unknown" : startSpace(for: helper), to = startSpace(for: p)
             let reach = planner.plan(RouteRequest(personID: helper.id, startSpaceID: from,
                 mobility: mobility(for: helper),
                 exclusions: ScenarioExclusions(blockedSpaceIDs: blockedSpaces.sorted(), blockedPortalIDs: blockedPortals.sorted()),
@@ -476,7 +477,17 @@ extension RunState {
             // Boiling only addresses a boil-water advisory, and needs a working heat source.
             return advisory == .boilWater && homePowerUp
         case "goToShelter":
-            return household.housing.homeType != .manufacturedHome && shelterSpace != nil
+            guard household.housing.homeType != .manufacturedHome, let home, let shelter = shelterSpace,
+                  !household.people.isEmpty else { return false }
+            // A suitable room is not an accessible plan. Use the same authoritative graph,
+            // mobility constraints and exercise exclusions as movement, for every occupant.
+            let exclusions = ScenarioExclusions(blockedSpaceIDs: spatialState?.affectedSpaceIDs ?? [],
+                                               blockedPortalIDs: spatialState?.affectedPortalIDs ?? [])
+            return household.people.allSatisfy { person in
+                planner.plan(RouteRequest(personID: person.id, startSpaceID: startSpace(for: person),
+                    mobility: mobility(for: person), exclusions: exclusions, purpose: .interiorShelter,
+                    destinationSpaceID: shelter.id), in: home).primary != nil
+            }
         case "useStoredWater":
             return (storedWater ?? 0) > 0
         case "tapForHygiene":
@@ -495,7 +506,9 @@ extension RunState {
             throw RehearsalError.invalidChoice(choiceID: c.id, optionID: chosenID)
         }
         decisions.append(DecisionPoint(id: c.id, simMinute: minute, promptKey: c.promptKey, options: c.options.map {
-            DecisionPoint.Option(id: $0.id, labelKey: $0.labelKey, feedbackKey: $0.feedbackKey, isRecommended: !$0.unsafe && feasible($0.effect))
+            let outsideAction = c.id == "choice.home-fire.outside" && $0.effect == "takeExit"
+            return DecisionPoint.Option(id: $0.id, labelKey: $0.labelKey, feedbackKey: $0.feedbackKey,
+                isRecommended: !$0.unsafe && feasible($0.effect) && (!outsideAction || household.people.contains { isOutside($0.id) }))
         }))
         let id = emit("evt.\(c.id)", title: opt.labelKey, detail: opt.feedbackKey, values: ["option": opt.id],
                       severity: opt.unsafe ? .critical : .info, rule: "rule.choice.\(opt.effect)", facts: [], causedBy: nil,
@@ -506,6 +519,7 @@ extension RunState {
             try reevaluate(trigger: id, emit: true)
             return
         }
+        applySpatialChoice(opt, choice: c, cause: id)
         switch opt.effect {
         case "relocate", "leaveEarly":
             if feasible(opt.effect) {

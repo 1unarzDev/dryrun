@@ -20,6 +20,8 @@ public enum HomeGeometryEditor {
             var h = source
             h.revision = 0; h.label = ""; h.frame.note = nil; h.originalCapturedWalls = nil
             h.annotations = []; h.completenessNote = nil
+            // Recording the dwelling type moves no opening or route; shelter suitability reads it live instead.
+            h.dwellingType = nil
             for i in h.floors.indices { h.floors[i].label = ""; h.floors[i].capturedStory = nil }
             for i in h.spaces.indices {
                 h.spaces[i].label = ""; h.spaces[i].kind = .other; h.spaces[i].labelConfirmed = true
@@ -159,6 +161,24 @@ public enum HomeGeometryEditor {
         corrected.fromPoint = fromPoint; corrected.toPoint = toPoint; corrected.verification = .proposed
         guard validLandings(corrected, in: home) else { throw CorrectionError.invalidLanding }
         home.edit { $0.connectors[index] = corrected }
+    }
+
+    /// Corrects classification without changing captured endpoints or stable identity. A change of
+    /// opening type invalidates prior escape suitability: a window cannot inherit a door's exit check.
+    public static func reclassifyOpening(in home: inout HomeModel, portalID: String, kind: PortalKind) throws {
+        guard let index = home.portals.firstIndex(where: { $0.id == portalID }) else { throw CorrectionError.unknownPortal }
+        guard home.portals[index].kind != kind else { return }
+        let previousKind = home.portals[index].kind
+        home.edit {
+            $0.portals[index].kind = kind
+            $0.portals[index].emergencyEscapeConfirmed = nil
+            $0.portals[index].emergencyEscapePersonIDs = nil
+            // An open doorway has no operable leaf. Reclassifying it must not manufacture
+            // confirmation that a newly classified door/window can actually be opened.
+            if previousKind == .opening || kind == .opening {
+                $0.portals[index].operable = .unknown
+            }
+        }
     }
 
     /// Repositions an existing opening on an explicitly selected real wall. Clear width/operability are retained;

@@ -1,0 +1,36 @@
+{
+  "report_id": "report-codex-typecheck-1",
+  "run_ids": [
+    "run-ef9ba07693fa4e6c9bc05b9631dfaac9"
+  ],
+  "feature": "Codex provider compile verification",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "The new provider has two localized type-contract gaps. Runtime success is not yet established.",
+  "failures": [
+    {
+      "path": "services/ai-orchestrator/src/codex-provider.ts",
+      "lines": [
+        39,
+        40
+      ],
+      "diagnosis": "A value permitted to be undefined reaches fields/calls requiring a definite string.",
+      "fix": "Narrow or validate the optional string before constructing the required request fields. Avoid a non-null assertion unless the preceding guard guarantees presence."
+    },
+    {
+      "path": "services/ai-orchestrator/src/codex-provider.ts",
+      "lines": [
+        81
+      ],
+      "diagnosis": "Function-call arguments are typed as arbitrary JSON, but the existing Step contract requires an object map; null and scalar JSON violate that contract.",
+      "fix": "Validate the runtime tool arguments as a non-null object and construct the existing FunctionCallStep using that narrowed object. Reject malformed arguments through the normal typed failure path rather than casting away the mismatch."
+    }
+  ],
+  "recommendations": [
+    "Retest TypeScript compiler after both fixes; then exercise malformed tool arguments as an actual boundary test."
+  ],
+  "limitations": [
+    "Only captured compiler diagnostics reviewed. No provider output, live endpoint or native behavior was inspected."
+  ],
+  "next_owner": "codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

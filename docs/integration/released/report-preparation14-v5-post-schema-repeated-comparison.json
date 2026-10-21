@@ -1,0 +1,216 @@
+{
+  "report_id": "report-preparation14-v5-post-schema-repeated-comparison",
+  "run_ids": [
+    "run-c55a0da944c24f2fb765e7eb28888211",
+    "run-df33a9c482c6491ca94baeff18059ba0"
+  ],
+  "review_kind": "Reviewer-only repeated development experiment; every initial proposal, repair, host result and failure inspected.",
+  "feature": "preparation14 versus preparation14+investigation1 after wire-only strict union repair",
+  "fixture_snapshot": {
+    "input_directory": "/private/tmp/dryrun-native-gateway-inputs-v5",
+    "same_frozen_inputs": true,
+    "oak_sha256": "67c684d5110928cff9d014abdc50e518b0bd74c095064c8fde547a578f416142",
+    "lake_sha256": "f8e063d7716a72d58f4e470062c2aef80e1eaa22f4c7bb7cf41df00d499887bc",
+    "pine_sha256": "793dcd113adab2dbfb95fc631b5232a471c47b89be54dee8721f8b80615c6207",
+    "source_archive": "/private/tmp/dryrun-protected/preparation14-schema-repair-source-freeze",
+    "source_manifest_sha256": "8e24ba3d38ff238e87b6e2996036a75523e37991ea6a940a47c2e078f7513685",
+    "source_files": 47,
+    "source_mismatches_before_and_after": 0,
+    "evidence_bundle": "/private/tmp/dryrun-protected/preparation14-v5-schema-repair-comparison"
+  },
+  "versions": {
+    "baseline": "preparation/14",
+    "candidate": "preparation/14+preparation-investigation/1",
+    "reader": "dryrun.context-reader/2",
+    "runtime": "0.163.0",
+    "requested_alias": "gpt-6.1-sol",
+    "selected_locale": "en",
+    "research": false,
+    "images": false,
+    "condition_attempt_budget": 6,
+    "operation_scoped_calls": 10
+  },
+  "synopsis": "Strict schema now accepts the rich native task shape and actual context retrieval succeeds. Both conditions complete2/6 HTTP requests, exclusively Lake question-only results; both deliver zero useful task proposals to the app. All twelve initial task proposals are rejected by a mismatched evidence-ID contract. The model repair then removes every task; critical-omission validation rejects Oak/Pine, while Lake returns an apparently completed empty preparation. Neither prompt package is promotable.",
+  "failures": [
+    {
+      "condition": "baseline",
+      "run_id": "run-c55a0da944c24f2fb765e7eb28888211",
+      "attempts": [
+        {
+          "family": "oak",
+          "repetition": 1,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 28212
+        },
+        {
+          "family": "oak",
+          "repetition": 2,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 30936
+        },
+        {
+          "family": "lake",
+          "repetition": 1,
+          "http_status": 200,
+          "completed": true,
+          "delivered_task_count": 0,
+          "elapsed_ms": 30482
+        },
+        {
+          "family": "lake",
+          "repetition": 2,
+          "http_status": 200,
+          "completed": true,
+          "delivered_task_count": 0,
+          "elapsed_ms": 33880
+        },
+        {
+          "family": "pine",
+          "repetition": 1,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 28113
+        },
+        {
+          "family": "pine",
+          "repetition": 2,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 28355
+        }
+      ],
+      "completed": 2,
+      "useful_task_delivery": 0
+    },
+    {
+      "condition": "investigation",
+      "run_id": "run-df33a9c482c6491ca94baeff18059ba0",
+      "attempts": [
+        {
+          "family": "oak",
+          "repetition": 1,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 25957
+        },
+        {
+          "family": "oak",
+          "repetition": 2,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 25532
+        },
+        {
+          "family": "lake",
+          "repetition": 1,
+          "http_status": 200,
+          "completed": true,
+          "delivered_task_count": 0,
+          "elapsed_ms": 25541
+        },
+        {
+          "family": "lake",
+          "repetition": 2,
+          "http_status": 200,
+          "completed": true,
+          "delivered_task_count": 0,
+          "elapsed_ms": 29465
+        },
+        {
+          "family": "pine",
+          "repetition": 1,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 31055
+        },
+        {
+          "family": "pine",
+          "repetition": 2,
+          "http_status": 503,
+          "completed": false,
+          "delivered_task_count": 0,
+          "elapsed_ms": 24644
+        }
+      ],
+      "completed": 2,
+      "useful_task_delivery": 0
+    }
+  ],
+  "likely_stage": {
+    "primary": "Host reference validation after successful retrieval and structured generation.",
+    "cause": "FeatureRunner.validateReferences accepts task evidence only from household.evidence, containing three coarse legacy IDs. The reader returns valid context.* record IDs, which every initial proposal cites. The model receives those canonical records but host validation rejects their provenance. This is a code contract mismatch, not missing retrieval or invalid upstream schema.",
+    "source": "services/ai-orchestrator/src/features.ts:168",
+    "repair_failure": "Repair text lists only legacy evidence and data.tasks IDs, which are empty in these inputs, despite a populated taskCatalog. Every repair returns zero tasks. Oak/Pine then violate the existing critical medical-backup requirement; Lake has no equivalent electrical-device requirement and passes with zero tasks. Generic unavailable hides this downstream validation chain.",
+    "preserve_authority": "Do not globally permit arbitrary evidence strings or remove mandatory critical work. Derive valid provenance from the same authorized snapshot and actually returned records, preserving status, scope, binding and host catalog ownership."
+  },
+  "fact_findings": [
+    {
+      "scope": "All twelve initial attempts",
+      "finding": "Actual reader calls used2\u20133 bounded tool turns and obtained decision-relevant family, medical, constraints, inventory, task, learning and score records. Initial proposals varied with substantive dependency differences rather than alias substitution. All were then blocked before app delivery. No first-stage evidence retrieval success is equivalent to end-to-end quality."
+    },
+    {
+      "scope": "Oak development pair",
+      "fact_ids": [
+        "context.medical.equipment.eq-oxygen",
+        "context.medical.backupPower.item.0.bk-station",
+        "context.family.person.p-oak-4"
+      ],
+      "finding": "Both packages correctly distinguished ownership/capacity from unknown compatibility, setup and runtime, and used the saved helper relationship. No invented device runtime or treatment was observed. Investigation was more selective in this pair, but host rejection prevents useful delivery and two repetitions cannot establish superiority."
+    },
+    {
+      "scope": "Lake development pair",
+      "fact_ids": [
+        "context.medical.equipment.eq-insulin",
+        "context.constraints.transport",
+        "context.constraints.limitedBudget",
+        "context.inventory.supplies",
+        "context.family.person.p-lake-1"
+      ],
+      "finding": "Initial proposals consistently respected refrigeration versus electrical-load distinction, unknown actual medicine limits, limited budget and unknown transit access. No duplicate purchase was inferred from unknown stock. The final question-only completions concern genuinely missing instructions, but lose the actionable task and are materially weaker than the initial proposals."
+    },
+    {
+      "scope": "Pine development pair",
+      "fact_ids": [
+        "context.home.housing",
+        "context.constraints.transport",
+        "context.family.person.p-pine-2",
+        "context.family.person.p-pine-3",
+        "context.medical.equipment.eq-chair"
+      ],
+      "finding": "Both packages recognized consequential manufactured-home/access/transport dependencies and incomplete equipment requirements. No invented incident-safe route, activated shelter, clinical limit or score/state commitment was observed. Shared-helper load was acknowledged more explicitly in one investigation repetition; it was not consistently resolved or delivered."
+    }
+  ],
+  "criteria": {
+    "Q1_consequential_fact_use": "Partial internal evidence: substantive facts affected rejected initial proposals across all families. End-user delivery fails; no controlled changed-fact causal pair was tested.",
+    "Q2_feasible_valid_action": "Initial proposals targeted supported catalog identities; host rebinding retained destination authority. Final app delivery has zero tasks across12 attempts. Question-only HTTP success is not acceptance of this preparation feature.",
+    "Q3_recorded_facts_and_unknowns": "No observed fabricated clinical thresholds, current route clearance, stock, scoring or state commitment. Missing supplier/pharmacy instructions and transfer arrangements are not saved facts in frozen inputs, so asking about them is justified. Provenance handling is nevertheless broken in host code.",
+    "Q4_reliability": "Failed: each condition2/6 HTTP completed,0/6 useful-task delivery; Oak/Pine0/2 each and Lake2/2 empty-task completions. No evidence of a reliability advantage. All attempts and repairs retained.",
+    "Q5_native_fit": "Unverified: no physical device or simulator execution. Prose inspected in protected response structure only; source brevity is not rendering evidence."
+  },
+  "recommendations": [
+    "Implement scoped evidence provenance bridging for actual reader-returned record IDs, with negative tests for fabricated IDs, wrong snapshot/owner/filter, unread records and stale bindings. Keep legacy IDs only where justified.",
+    "Make repair guidance reflect the actual taskCatalog and accepted provenance contract. Do not tell the model that no task IDs exist when catalog tasks are available.",
+    "Define an explicit question-only pending-information outcome or enforce at least one feasible next action when the catalog contains useful unfinished work; prevent completed from silently disguising task erasure after validation failure. Preserve honest consequential unknowns.",
+    "Add an authored end-to-end HTTP case using frozen native-style context, read tool, context evidence IDs, catalog task and repair. Current unit tests missed this cross-layer failure.",
+    "Retest the complete same twelve after code repair and freeze, retaining these failures. Prompt comparison remains secondary to contract repair. No rescue generations were run.",
+    "Only after reliable development delivery preregister fresh controlled pairs for owned-versus-unknown supplies, documented-versus-missing medication instructions, compatible-versus-unconfirmed backup, and accessible-versus-unconfirmed transport. Freeze expected action changes and forbidden claims before generation; assign an independent reviewer before first pass. Native-fit acceptance awaits connected hardware."
+  ],
+  "limitations": [
+    "Sequential labels were visible; this is not blinded independent acceptance or a heldout trial.",
+    "All twelve outer attempts each used one internal repair as bounded by existing code; no retries/restarts outside the planned twelve. Twenty-four protected runtime sessions are retained.",
+    "Prior twelve strict-schema failures and earlier preparation11 failures remain intact in separate bundles; they are not comparable prompt quality baselines.",
+    "Requested alias and observed runtime do not attest upstream model identity. Local synthetic profile is core-only; research/images and real-family authorization remain unqualified.",
+    "No phone, simulator, owner-vault, real-family cloud transfer, live public research or production deployment verification performed."
+  ],
+  "next_owner": "Codex integration specialist: evidence/repair outcome contracts; root: integration acceptance and independent heldout gate.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

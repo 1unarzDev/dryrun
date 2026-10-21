@@ -1,0 +1,53 @@
+{
+  "report_id": "report-codex-live-listed-alias-pass-1",
+  "run_ids": [
+    "run-ebdcbf69344143c39f2de8549f2ce8ac"
+  ],
+  "feature": "Real LB Codex dynamic context-read and structured-output compatibility",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "synthetic-context-v1; unchanged initial probe context; no household state commits",
+  "versions": {
+    "runtime": "codex-cli 0.163.0",
+    "requested_alias": "gpt-6.1-sol; observed metadata-listed",
+    "endpoint": "https://codex.lunarz.dev/backend-api/codex"
+  },
+  "criteria": [
+    {
+      "id": "CODEX-01",
+      "verdict": "bounded live inference passed",
+      "evidence": "Actual LB Responses transport completed successfully through installed runtime in approximately eight seconds overall."
+    },
+    {
+      "id": "CODEX-02",
+      "verdict": "initial tool/SSE/schema passed; remaining gates open",
+      "evidence": "One authorized dynamic context read, matched successful host tool result, 29 text delta events, successful terminal turn and final JSON matching requested field/type constraints."
+    },
+    {
+      "id": "CTX-01",
+      "verdict": "synthetic retrieval-only fact meaningfully used",
+      "evidence": "The decision-changing runtime fact was absent initially and obtained through the provided read tool. Final arithmetic matches deterministic expected shortfall and references the correct recorded fact; limitation stays within provided evidence."
+    }
+  ],
+  "synopsis": "A metadata-listed alias resolves the previous unavailable-model failure. The runtime actually requested and consumed the synthetic equipment record before answering. It used recorded quantities correctly, stayed within the requested compact schema and did not add clinical instructions or state commitments.",
+  "fact_findings": [
+    {
+      "fact_id": "equipment-a-runtime",
+      "status": "retrieved and correctly used"
+    }
+  ],
+  "recommendations": [
+    "Advance to exact same-thread follow-up continuation and cancellation tests, then real search/page-open and synthetic image checks if claimed. Successful first turn must not prematurely mark continuation/lifecycle/research true.",
+    "Keep requested alias and runtime version tied to released report provenance. Metadata and configured alias do not establish independent upstream model identity.",
+    "Next feature experiment should use actual full authorized context and useful deterministic tool previews rather than only this minimal compatibility fixture."
+  ],
+  "retests": [
+    "Follow-up retaining retrieved facts without replayed actions; cancelled/late result; timeout and 429; malformed schema; actual research source inspection; actual native fit."
+  ],
+  "limitations": [
+    "Single synthetic run, not repeated or held-out quality acceptance. No native app screen, gateway feature acceptance or physical family outcome verified.",
+    "No investigation/search, vision, follow-up turn, state commit, score update or production deployment exercised.",
+    "Reviewer-authored summary deliberately omits answer wording and full reconstructed fields."
+  ],
+  "next_owner": "codex_integration for remaining capability probes; fresh reviewer for eventual quality acceptance",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

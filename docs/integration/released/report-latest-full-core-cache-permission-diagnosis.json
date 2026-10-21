@@ -1,0 +1,29 @@
+{
+  "report_id": "report-latest-full-core-cache-permission-diagnosis",
+  "run_ids": [
+    "run-f1ee404d62d54960aa639fdf1d2d7d86"
+  ],
+  "review_kind": "Dedicated reviewer compile diagnosis",
+  "synopsis": "Latest full Core attempt failed before product compilation or tests because sandbox permissions prevented compiler module-cache writes. This is the same environment failure diagnosed in the earlier IA10 attempt.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Package.swift",
+      "stage": "SwiftPM manifest compilation",
+      "diagnosis": "Swift compiler could not write its user-level cache beneath /Users/nicholascheng/.cache/clang/ModuleCache, outside writable workspace roots. The standard-library loading diagnostic is consequential. Specifying a writable scratch build path does not redirect this separate compiler cache. No source syntax error or failed test assertion was established.",
+      "fix": "Rerun the same firewall-captured swift test command with require_escalated and the required sandbox-cache permission justification. Keep package and scratch paths unchanged. Do not edit manifest, product code, or tests on this evidence."
+    }
+  ],
+  "references": [
+    "report-ia10-core-cache-permission-diagnosis"
+  ],
+  "retests": [
+    "Full Core command using packages/DryRunCore and /private/tmp/dryrun-core-integrated-build after sandbox permission is granted."
+  ],
+  "limitations": [
+    "Capture exited after 1.253 seconds without establishing any new Core compilation or test coverage.",
+    "No native app, device, simulator, or model execution performed.",
+    "Earlier native and Core passing captures retain their own source-snapshot limits; this attempt does not validate subsequent reminder or IA10 edits."
+  ],
+  "next_owner": "parent integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

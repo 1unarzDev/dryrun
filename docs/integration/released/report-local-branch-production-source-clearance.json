@@ -1,0 +1,1710 @@
+{
+  "report_id": "report-local-branch-production-source-clearance",
+  "run_ids": [
+    "source-classification-a9efc8f",
+    "source-classification-5f95135"
+  ],
+  "feature": "Preserve completed native/adaptive/provider work during checkout reconciliation",
+  "review_kind": "synthetic agent engineering artifact-classification audit",
+  "versions": {
+    "wired_branch": "worktree-wired-iphone-pass a9efc8f",
+    "six_branch": "dryrun-six-hazard-continue 5f95135"
+  },
+  "synopsis": "The tracked production Swift/TypeScript sources listed in this report are cleared for engineering source inspection at their exact Git blobs. Automated content scans plus reviewer examination of flagged long literals found authored code, prompts, schemas and runtime data-handling references rather than embedded recorded app answers. This clearance permits source reconciliation, not reading resources, caches, logs or running AI-bearing previews.",
+  "criteria": [
+    {
+      "id": "REVIEW-01",
+      "verdict": "listed production-source blobs cleared",
+      "evidence": "Both branch source inventories scanned for recorded-response references, inline response-like content, multiline long literals, payload/fixture paths and replay handling. Flagged long literals are authored runtime instructions rather than saved generated answers."
+    }
+  ],
+  "references": [
+    {
+      "ref": "a9efc8f",
+      "safe_source_count": 190,
+      "cleared_sources": [
+        {
+          "path": "apps/ios/DryRun/App/AppModel.swift",
+          "blob": "07e5cf6c3840794d5a4d063804c6502da1a08307"
+        },
+        {
+          "path": "apps/ios/DryRun/App/DemoLaunch.swift",
+          "blob": "da143b0421d272087a6d21c3ae85ee4ab08e9faf"
+        },
+        {
+          "path": "apps/ios/DryRun/App/DisplayNames.swift",
+          "blob": "18fd9e45c014fbf1dfdc460c5382bacb69ef464d"
+        },
+        {
+          "path": "apps/ios/DryRun/App/DryRunApp.swift",
+          "blob": "ccc06c281f8903949e697c8485f4ef5dfa2a2bd5"
+        },
+        {
+          "path": "apps/ios/DryRun/App/Previews.swift",
+          "blob": "c47a847e4a7da7048a0b3b299b6b92ea99feead5"
+        },
+        {
+          "path": "apps/ios/DryRun/App/RootView.swift",
+          "blob": "a5b9751b64f10ede161316a25d84e9a2e812bfae"
+        },
+        {
+          "path": "apps/ios/DryRun/App/Theme.swift",
+          "blob": "f3d0b0a483f648c5b3b881167064baad1c3d7cbb"
+        },
+        {
+          "path": "apps/ios/DryRun/Help/HelpViews.swift",
+          "blob": "5eb4de2892da4b4c993b267498720f9eeb7b3775"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/DescribeHouseholdView.swift",
+          "blob": "341ab7d7367bbab18107ce6576d9e664beec2ac8"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/HomeConfirmationView.swift",
+          "blob": "536d56817bc42e8ceae68e7db73ef45d27ff5012"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/HomeTabView.swift",
+          "blob": "1ef8ecbbe06e4ac583cb0f56cfb437f5ddd840b7"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/HouseholdSetupView.swift",
+          "blob": "80d6de1ff6088d580320aabc78414524cfba3784"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/PhotoReviewView.swift",
+          "blob": "fb700015bcb2a50386741c36b26a1e77d84ea79b"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/SiteEvidenceView.swift",
+          "blob": "a3f3ec295932cdbcd6457e45cfc122c4e174af52"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/HomeAddressEditorView.swift",
+          "blob": "84735597ee0d09fa974b6b36bb15a4f161cb6e49"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapKitAdapters.swift",
+          "blob": "b6555e3fe144e4e576cc6d2530afae3ef73743e0"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapModels.swift",
+          "blob": "64adf661c1431ad7175fb974e0a924fce7ba3064"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapPlanningDestination.swift",
+          "blob": "aeb022de5022994a3939f6fd5dfabb614dfcb662"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapPlanningView.swift",
+          "blob": "1fa5c688c419a39266c96b1958dbc883af066828"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapRoutePreviewModel.swift",
+          "blob": "7e199930680654031ab576aff7451d9e6914a4d3"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/PlanMapSnapshotRenderer.swift",
+          "blob": "01bcd2b2fc48e1fa59dbc49de2d1ad82b87e872d"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/TaskResourceSearch.swift",
+          "blob": "de5c70c703390e6f6ca7e63ed9f1467e10589530"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/EquipmentEditorFields.swift",
+          "blob": "8a6ba741aab531b1bb1b655983ae007599eabc9e"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/FocusedHouseholdEditor.swift",
+          "blob": "bf488bc6d9299c334c053f42378d9c47687718ed"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/MedicalSetupView.swift",
+          "blob": "af4ffda5999d45a1ad8e0124e3c472b0b9ed3b7d"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/NextStepsView.swift",
+          "blob": "61a3b274b343b7540c2de778a313dd00f62e4f88"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/OutageCardView.swift",
+          "blob": "ccb84a2f965c0602ee23585c8fcd38e825420027"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/ScorecardCard.swift",
+          "blob": "1e3f4d541d13d7c5e987a581acd922615cd81f2a"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/SupplyInventoryView.swift",
+          "blob": "0ccbb351fbeb9fc376adfecd9d420b4103f0f520"
+        },
+        {
+          "path": "apps/ios/DryRun/Plan/PlanPDFRenderer.swift",
+          "blob": "080be540cae1dc9f25ceb0988bdc02f4849aa73f"
+        },
+        {
+          "path": "apps/ios/DryRun/Plan/PlanViews.swift",
+          "blob": "323a5f17ef41d5cdd59c7dda2755abc3c2f5eae2"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/AdaptiveRehearsalView.swift",
+          "blob": "f2a51bb5b00e48862d484f8dbc8ea55d21e2c132"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/ExerciseActions.swift",
+          "blob": "584381091badf2edfe8e3d450781bc1cd0f7b35e"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/Names.swift",
+          "blob": "fadb7e669006fa9d1c09847bd4822b103448ac99"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/PracticeCheckView.swift",
+          "blob": "993e520ae6c2b9de01a7875dc45e78b77b6170e7"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/RehearseViews.swift",
+          "blob": "a8a3340b519dee3361a40276967119bca250df30"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/AppAttestSession.swift",
+          "blob": "1e34d0c6e7eca4f5c5f94920ff2fb7ec03f917fb"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/AppServices.swift",
+          "blob": "2e725488dca8ccda9485a9f93e983fb5151da16c"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/DirectorGatewayClient.swift",
+          "blob": "d3916695821861c4a71ad22c9144357fbfddeece"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/ExplanationService.swift",
+          "blob": "e97bbe55a7e805da84491f10bde7e876a4a5e063"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/FamilyBriefingService.swift",
+          "blob": "706a269d73956c21c89e01d87fc06d055b49c641"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/IntakeAssistant.swift",
+          "blob": "ef2febbff644c10af553269369fddabc9d1e6c64"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/KeychainVaultKeyStore.swift",
+          "blob": "e6e87166fb28ab706dccd0787db0daa979f3c5a6"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/PrivateDataStore.swift",
+          "blob": "846e68faa712f36a1250e53f6b1b646ac0a1be1e"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/PublicAPIClient.swift",
+          "blob": "0452cbfbde7fc8d5801b705bc4769d033154764b"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/ReviewReminders.swift",
+          "blob": "215bc3176388d4c2b0c6f50c09467a75fd2cec5f"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/VaultFileProtection.swift",
+          "blob": "7567f781984053d70ea633e790d1c1a1338a7d2a"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/VaultPrivateDataStore.swift",
+          "blob": "99047090d157ecc10002a3ae63d2d6dd3ea9fc3b"
+        },
+        {
+          "path": "apps/ios/DryRun/Settings/ReviewReminderSection.swift",
+          "blob": "5fafb41347f73d91ff022b9212a0073987169755"
+        },
+        {
+          "path": "apps/ios/DryRun/Settings/SettingsView.swift",
+          "blob": "6d608dcd53814c4ac66876cfc1887e4ba1928adb"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/DollhouseView.swift",
+          "blob": "ec1c1739264b326621eda9c7b3b2b332743c0d98"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/FloorPlanView.swift",
+          "blob": "1df2fd1937de902ea31ba9e68da9d4530a50b278"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/HomeRoomListView.swift",
+          "blob": "4339f236019028537411455be2c39862990413dd"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/ManualHomeEditorView.swift",
+          "blob": "99777edf8e09eadcdc7324a276138fb94ffe3565"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/RoomCaptureContainer.swift",
+          "blob": "1bfef254b3a423830795181cb1f34957bc222598"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/RoomPlanMapping.swift",
+          "blob": "a18ce7c6aef0dd4f6f48c4532caa63636912582b"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/SpatialLocalization.swift",
+          "blob": "d16a310dc3d5557d3e8ba2a5ece5769c5709c4ca"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/ContentLibrary.swift",
+          "blob": "cb3a1edcacbcb51b0698d643efabd6ea5b3d3a88"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/Localizer.swift",
+          "blob": "be1b20bbf75af7c9fb4cc580978850f1f07d4ab4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/PlanningMeasurements.swift",
+          "blob": "c40ec2ab02d22e2283709e5e2507c8b6e5e81df4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/PublicDataPolicy.swift",
+          "blob": "809ec7366df7c1e927cb798296faa101f32abe26"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/SampleHouseholds.swift",
+          "blob": "d6ebe78e76df860106bdf95a91b8c1b8d0197280"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/AIContext.swift",
+          "blob": "ecbb8a50913a86524fe1697039bc670bf5cc5bd1"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/AIContracts.swift",
+          "blob": "1ec73a81abb4da0e1afb81ebb73cedb48e8fc076"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/AIInventory.swift",
+          "blob": "bcfa3b367813bc467aeecb467c8888b6744f1f47"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/CommittedUserActionContext.swift",
+          "blob": "a41574cd24015e92b61a926cd2f2abb57315b2c7"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/ConcernIntegration.swift",
+          "blob": "5f3fd3558e1b6b5252939c4aaa2a94cb2c5ac5cb"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/DirectorGatewayBridge.swift",
+          "blob": "c344111e82c98b03a167547ae2a27ac2f89f08c3"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Evidence.swift",
+          "blob": "946a2c898fda6ee10381c8aa95215b431bafdd9d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Home.swift",
+          "blob": "58af7aa152dbf986a25f1d648315eec141d1a1e8"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HomeConcernReview.swift",
+          "blob": "8030825262bbd4aef3678387508698bcb1207a5d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HomeLocationChange.swift",
+          "blob": "d90da792e37c42e2782187cbc371dfdbd5a6ab0f"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HomeReviewBridge.swift",
+          "blob": "640953e685e8530fa6890719645ed6adc5ba0432"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Household.swift",
+          "blob": "9ccb3079312b934d32e0090af7fbc8a61b56e960"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HouseholdEditing.swift",
+          "blob": "0bdcd6a4c08b2fffb2fb1827dbdbcb34344fc829"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HouseholdIntake.swift",
+          "blob": "bdfcf7a3beb787585bd7c051d09cc88b96507443"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/IntegratedAIState.swift",
+          "blob": "047f8cc5d86212f092ea760a21d8cb957b4741ba"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/OfficialSiteLookup.swift",
+          "blob": "180290d545b54543d56e0d41ba4727933ca98b46"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/PrivatePlaces.swift",
+          "blob": "0395f7cbf5675aadfa33aa74e67a24d55d618405"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/PublicData.swift",
+          "blob": "745a9eff6ea38600bfebc25570125702f073ebdf"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Rehearsal.swift",
+          "blob": "37f5f6f1c9ea5aa57b57ed2f108598e147503945"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/SiteHazards.swift",
+          "blob": "40dc49a6bc5e4a3b497a813017069072ebc40924"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/SpatialExercise.swift",
+          "blob": "47846d2a363eeb341c67a7716d871ab3d1176292"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/UserActionIntent.swift",
+          "blob": "f976cfc8166a9e9311746c7c8c0b4229ee3e5b55"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/FamilyEmergencyCard.swift",
+          "blob": "acb6e72632b97b7e5df5d67b4e523afbc83d2572"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/FamilyPlanExportRequest.swift",
+          "blob": "7d3ac60874b1d92b703dd37d7fa61fb4abf1cf71"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/OutageCard.swift",
+          "blob": "94c7a515e82506c221c729063d700adbb8b2f041"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanBuilder.swift",
+          "blob": "2d36988abdf48ab3623e2f901d4de64af835f92d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanDocument.swift",
+          "blob": "9d3970ccf83c0699c8d7af80c1b207ae2a9746d1"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanHomePanel.swift",
+          "blob": "a070a456b0aefee763dee70f0cfb80f7c2cf5f43"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanMapPresentation.swift",
+          "blob": "f95d1ec69b957de2932c6ce8c332da555761c24a"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanMapSelection.swift",
+          "blob": "b0bacd1747395239298e298809a411451dd98503"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanPlacePresentation.swift",
+          "blob": "b67486d80d9d688f141eba4bd77f7411e2a1d0cd"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/ActionCatalog.swift",
+          "blob": "8380bec99e245acb2010e112d430c433dda9b989"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/BaselinePreparedness.swift",
+          "blob": "1b37a92c67582745d8d49b5943b92c9542a58554"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/HouseholdAssessment.swift",
+          "blob": "bb5016008140953ade40bc195e3ce7d17efa724f"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/MedicalBackupReadiness.swift",
+          "blob": "563608f182f65effe8b36118148ac4e28b3d0a36"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/NextSteps.swift",
+          "blob": "5ac522e39b922ec460c9a1adb257319273ee3037"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PlanBriefing.swift",
+          "blob": "c927f40d56305bd02e8cf02228483cc5986f96e6"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeCapture.swift",
+          "blob": "bf4e15c31e1410db660dc5a4f1fbfe3c3cae85e8"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeCheckSources.swift",
+          "blob": "8375ff761f472e88f2754d36748aa27dd673f6fd"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeEvaluator.swift",
+          "blob": "346a762459cde59af99ee5a15469872a268390bc"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticePhases.swift",
+          "blob": "3a7ab6c4b1f4325aa8a4b35f211409b4c0355b00"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationCompletion.swift",
+          "blob": "f6a739c75f1d18e3228a579a4e5c27cefbde2ebe"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationDraft.swift",
+          "blob": "6559522f54794993ad4be80da96468e3f9651d5c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationEditTarget.swift",
+          "blob": "954adb711964ad542ed411a5f6e5a2b7eac5c456"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationPresentation.swift",
+          "blob": "e7a6a5cecb49898e209203b6d1804f8907ddabb3"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationTaskCatalog.swift",
+          "blob": "03c6e63c1a34854219cc93254b850de2ce62ecf3"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparednessScorecard.swift",
+          "blob": "d1d38047c978d6a609461627ef2a057db20a9614"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/RecommendationRanker.swift",
+          "blob": "9737d73de902ff2da3a5847475b3b1e120070c85"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/TransportReadiness.swift",
+          "blob": "649cfcb29618727f686e88a7bef5416f7533f8d9"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/Capabilities.swift",
+          "blob": "7bf7ac02ca226ae71fb79beedf0320eacfdaaa14"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/CaptureCallbackGate.swift",
+          "blob": "078ebb7728dec0092a664389ec17c90bfe064ecb"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/HomeConfirmation.swift",
+          "blob": "b40e0c001b6f6f8b3976f6a4d2d4c14b36cd332f"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/HomeMeetingPlaces.swift",
+          "blob": "e968d657a539ea50b2a9794f21792822b3b354bb"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/RehearsalCursor.swift",
+          "blob": "5974a20c135055b3d30fa7c2a1b01cdc20f55578"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceStrategyBridge.swift",
+          "blob": "2aaca05cd078691c6741c6e51627166a641aaf7d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceStrategyInputs.swift",
+          "blob": "7298e4fd573c0de16d03c73f9d77bf4bd6e1f0d4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceStrategyRefresh.swift",
+          "blob": "5e41dd83a31b83f7bad9679df04b478a3edddcd6"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceSuggestionPlanner.swift",
+          "blob": "6f31938e5a58a6f23ad043200f2aeff539167d7d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/AuthoredSessionAdapter.swift",
+          "blob": "10e9587e618d48912fbc7ddb626e4dd9dea1aee4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/BackupAllocation.swift",
+          "blob": "e90a7a536ca012ac27cb2d5e2be8cd4d6905d9a2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/ConcernRoutePlanner.swift",
+          "blob": "eff4c24a3f5073e182ef16f9e6822e6ba1a024a5"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/DependencyModel.swift",
+          "blob": "8b5fb528f8004aee9e4591c0f1c3a6ef9a59b845"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/DirectorPolicy.swift",
+          "blob": "cd8ac451eb5785950d652f90513660dc4d592d89"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/HazardRules.swift",
+          "blob": "fe7086969ac7353f0c8e0ad093eb92d4c9df2fc2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/IncrementalSession.swift",
+          "blob": "4d80fe2ceed31b64b88df4397630514216339a02"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/Interventions.swift",
+          "blob": "92fd4e8206c62057d3c447a74b1efde26726ceb4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/LocalDirector.swift",
+          "blob": "a3a0e6f4e3b162ad950392d2c818e72b4ff8893e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/PlanStressTest.swift",
+          "blob": "50e2cd1dc262402ae604d13234e8818e6a758304"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalEngine.swift",
+          "blob": "97f0cffd34f0e6193ed0e0bd7b8af47f8ec68f73"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/ScenarioDefinition.swift",
+          "blob": "a51da1338d017f7ef52e3cd1276097c923e4f06e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionAssistance.swift",
+          "blob": "f8f0b3c6ae7145bdb6bdd783698b1d8857d1783d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionInventory.swift",
+          "blob": "daea38412b9a400417d8b894fc8d0c9aadd62b15"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionPacing.swift",
+          "blob": "d3c891afced0703ff1d6fe675ce7dbc199ef61e5"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionTools.swift",
+          "blob": "cf83bb7ee3473966784963afb42bdf188d4cb955"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionTransitionReducer.swift",
+          "blob": "160d21a54a01c3d64391c50e532e6457ff666a7d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/AIPlanDiagram.swift",
+          "blob": "515ef76d2aa658fadb3f37977230b77f75ea86d7"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/EgressPlanner.swift",
+          "blob": "ad62f1a9bf606bbcc05f65e5804bcc72612b495b"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/Geometry.swift",
+          "blob": "39409607d7fb57f1a479e10a67597d03412a3534"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeGeometryEditor.swift",
+          "blob": "57d1d29de87ff9b1485abe117e484d86177ab427"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeModelExport.swift",
+          "blob": "83546bd890348c3c37e378bbfb45a2b14231b200"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeRenderGeometry.swift",
+          "blob": "9f727a2e14e345726e2e2c34542df2b49bd90138"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeRoomAssociations.swift",
+          "blob": "cefd76c563384856000c5d553912bc984459489a"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeSafetyMarkers.swift",
+          "blob": "4f984a46b869ca72871a3dc798e9672d56c78c24"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeScenePresentation.swift",
+          "blob": "f0abbecb1aab710fbb89f6e6cc9e97da53883599"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeValidator.swift",
+          "blob": "7c5f7d1f9a75e17001888e1fd39c8689ba22f7a2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HousingPlanning.swift",
+          "blob": "58f843829ea8dd986332e48b8a3d9b041cd3a087"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ManualLayout.swift",
+          "blob": "ea84c50e0032de6691c252c2412a4260c28349a1"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/PortalAttachment.swift",
+          "blob": "c025f79255e4cad1316bc39e4f08f4d6dc68f2ab"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/RoomImageGeometry.swift",
+          "blob": "e15e99d7370c9f3cdad323acefab5f3c5254d5a3"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/RouteCache.swift",
+          "blob": "a8731c06631bb7ebf8a9a1b644009c6ba9f9cd5c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/SampleHomes.swift",
+          "blob": "8f42a8f6c5ad4b802b92378d30f3abfd86492744"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ScanImport.swift",
+          "blob": "1fbf521597980b863f707d2bd07c1a73d4eec756"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ShelterSuitability.swift",
+          "blob": "e843189368a78513a42b6449c98dfe9a8e9acb4e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunHost/main.swift",
+          "blob": "4c06265c7984dfc87a744de5edd988491f21645b"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/AtomicFile.swift",
+          "blob": "632811e2d75b7d7b6f2d1a7444fb7d073f7b46be"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/CryptoShim.swift",
+          "blob": "f488af5f9fa85c6c4a001dde76a1f92cabbcc7ed"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/FileProtection.swift",
+          "blob": "939ea8f5378afdc57d01146481f9f0b08b0ad827"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/HouseholdVaultRepository.swift",
+          "blob": "9cc762b9b7cc459a361a0cb79fad25f7dc728ad6"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/PublicPackStore.swift",
+          "blob": "f907e07ed49b52b7c6017ceff0476fc7e4ce6876"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/VaultKeyStore.swift",
+          "blob": "22bd1d8282042b33dcafdd450329e2c03a7b923f"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/VaultModels.swift",
+          "blob": "57fd40967e5b1f4a8aada3a72a2048cf855bb2bc"
+        },
+        {
+          "path": "services/ai-orchestrator/src/app-attest.ts",
+          "blob": "3b2fdc7bc3b62032c9b24842415762cecf77f451"
+        },
+        {
+          "path": "services/ai-orchestrator/src/contracts.ts",
+          "blob": "ec2e1ed16fc866cab114c63416631d82198d3e64"
+        },
+        {
+          "path": "services/ai-orchestrator/src/director-envelope.ts",
+          "blob": "64f62d3cbd570117c75ae40b75d09fa0913da0ad"
+        },
+        {
+          "path": "services/ai-orchestrator/src/evidence.ts",
+          "blob": "a0272d8440b92b5311a92f1e42670c595a963aa0"
+        },
+        {
+          "path": "services/ai-orchestrator/src/features.ts",
+          "blob": "46bc3e1983bb6ad4cf992c66b525528973d587ae"
+        },
+        {
+          "path": "services/ai-orchestrator/src/gateway.ts",
+          "blob": "ad84e7c13a26dc92325d8280c8a7197cd5067887"
+        },
+        {
+          "path": "services/ai-orchestrator/src/home-review.ts",
+          "blob": "b54a9e16774ea3416ba44ebde1755b15e44df4a3"
+        },
+        {
+          "path": "services/ai-orchestrator/src/http.ts",
+          "blob": "2dc6b7925b6466abbcb4ce004fdd5ad72870a70d"
+        },
+        {
+          "path": "services/ai-orchestrator/src/intents.ts",
+          "blob": "b9848a759a454edd3e861982a60fe19e5d93cb78"
+        },
+        {
+          "path": "services/ai-orchestrator/src/output-quality.ts",
+          "blob": "347d046e0b2bd710496f3ffa14317f5d87d15907"
+        },
+        {
+          "path": "services/ai-orchestrator/src/practice-contracts.ts",
+          "blob": "4c049759d930493b7dd1ce7fa108efc46f7e04d3"
+        },
+        {
+          "path": "services/ai-orchestrator/src/provider.ts",
+          "blob": "1ff084235db7eb435ead1a66683e394643eca3d2"
+        },
+        {
+          "path": "services/ai-orchestrator/src/resource-refresh-contracts.ts",
+          "blob": "94aa17f97ed2553f3eb8ecd79bcd91a48282875a"
+        },
+        {
+          "path": "services/ai-orchestrator/src/server.ts",
+          "blob": "7a6cd7115286ab587b910ad07c8198a41a797266"
+        },
+        {
+          "path": "services/public-api/src/agent/brief.ts",
+          "blob": "65017d6a4910b64e604ebb2a0038ecdbd5f7f21e"
+        },
+        {
+          "path": "services/public-api/src/agent/extract.ts",
+          "blob": "e95a00cac692b4563bb8d33d6bccfdd8ba8f0815"
+        },
+        {
+          "path": "services/public-api/src/agent/fetchSource.ts",
+          "blob": "1b26e3c7b2f7899be49b74f7fbcddb776f4cbdb0"
+        },
+        {
+          "path": "services/public-api/src/agent/model.ts",
+          "blob": "62de24f566054aaed305afee65c00d1f6912b546"
+        },
+        {
+          "path": "services/public-api/src/agent/publicURL.ts",
+          "blob": "b5a6e6ecf11596e58e222d2ed2e88bf1feb2649c"
+        },
+        {
+          "path": "services/public-api/src/agent/run.ts",
+          "blob": "77af13ebb010f39c4266dba2a9b66d720aa97141"
+        },
+        {
+          "path": "services/public-api/src/agent/types.ts",
+          "blob": "0650eac1ccd6b6f903b7b01ad8597181f1499359"
+        },
+        {
+          "path": "services/public-api/src/app.ts",
+          "blob": "71ffdd4b2468084643c73000400f63a0b0a99b49"
+        },
+        {
+          "path": "services/public-api/src/cache.ts",
+          "blob": "7bf60b09ba2f9836012178b2f6be976854ca544c"
+        },
+        {
+          "path": "services/public-api/src/fema.ts",
+          "blob": "d4e1224327f13f47585deae820976c4f5eac52c1"
+        },
+        {
+          "path": "services/public-api/src/index.ts",
+          "blob": "98ec12aa8bd4949415dec8011684a42f7bad400d"
+        },
+        {
+          "path": "services/public-api/src/nws.ts",
+          "blob": "97f72b99eed958a089a051d4e7cdc2e2958329c0"
+        },
+        {
+          "path": "services/public-api/src/schema.ts",
+          "blob": "a622ea1f63e5523600c54a1bf06517c7a33ea9f1"
+        }
+      ]
+    },
+    {
+      "ref": "5f95135",
+      "safe_source_count": 220,
+      "cleared_sources": [
+        {
+          "path": "apps/ios/DryRun/App/AppModel.swift",
+          "blob": "d2fbb9201576d2a73f727f393eae2687798c8633"
+        },
+        {
+          "path": "apps/ios/DryRun/App/DemoLaunch.swift",
+          "blob": "32513228a6193c71af64b6343b83decf7316f1c6"
+        },
+        {
+          "path": "apps/ios/DryRun/App/DisplayNames.swift",
+          "blob": "c72db763687c4319780b595a3fa77cf27cf71957"
+        },
+        {
+          "path": "apps/ios/DryRun/App/DryRunApp.swift",
+          "blob": "ccc06c281f8903949e697c8485f4ef5dfa2a2bd5"
+        },
+        {
+          "path": "apps/ios/DryRun/App/Previews.swift",
+          "blob": "c47a847e4a7da7048a0b3b299b6b92ea99feead5"
+        },
+        {
+          "path": "apps/ios/DryRun/App/RootView.swift",
+          "blob": "ac0d91fba30299fd3c5da3621032051b9840ed9c"
+        },
+        {
+          "path": "apps/ios/DryRun/App/Theme.swift",
+          "blob": "f3d0b0a483f648c5b3b881167064baad1c3d7cbb"
+        },
+        {
+          "path": "apps/ios/DryRun/Help/HelpViews.swift",
+          "blob": "5eb4de2892da4b4c993b267498720f9eeb7b3775"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/DescribeHouseholdView.swift",
+          "blob": "341ab7d7367bbab18107ce6576d9e664beec2ac8"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/HomeConfirmationView.swift",
+          "blob": "536d56817bc42e8ceae68e7db73ef45d27ff5012"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/HomeTabView.swift",
+          "blob": "20754cd883df2faacd810c12a3276894652bcccd"
+        },
+        {
+          "path": "apps/ios/DryRun/Home/HouseholdSetupView.swift",
+          "blob": "80d6de1ff6088d580320aabc78414524cfba3784"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/HomeAddressEditorView.swift",
+          "blob": "84735597ee0d09fa974b6b36bb15a4f161cb6e49"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapKitAdapters.swift",
+          "blob": "c53e2a0b1f7b4e7654457010ffaed432ea7b3f92"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapModels.swift",
+          "blob": "64adf661c1431ad7175fb974e0a924fce7ba3064"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapPlanningDestination.swift",
+          "blob": "6397690833f3aa558f25153d73ee9edfdf9d75bc"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapPlanningView.swift",
+          "blob": "82f58cc75eae40d90b523a38c06ec5e127c46bae"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/MapRoutePreviewModel.swift",
+          "blob": "7e199930680654031ab576aff7451d9e6914a4d3"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/PlanMapSnapshotRenderer.swift",
+          "blob": "01bcd2b2fc48e1fa59dbc49de2d1ad82b87e872d"
+        },
+        {
+          "path": "apps/ios/DryRun/Maps/WhereToGoView.swift",
+          "blob": "e4367238f35e049dc9e2b4ef4264bbdd6cfccb31"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/AlertBannerCard.swift",
+          "blob": "445546122b99cd0455759595c950b08dd9b4670a"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/EquipmentEditorFields.swift",
+          "blob": "8a6ba741aab531b1bb1b655983ae007599eabc9e"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/FocusedHouseholdEditor.swift",
+          "blob": "e109754da6e7e57538bf10ec2775a64ca77dcbca"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/MedicalSetupView.swift",
+          "blob": "af4ffda5999d45a1ad8e0124e3c472b0b9ed3b7d"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/NextStepsView.swift",
+          "blob": "7af773d662231b7e40a804105632f44978a329b3"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/OutageCardView.swift",
+          "blob": "ccb84a2f965c0602ee23585c8fcd38e825420027"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/PreparationAICard.swift",
+          "blob": "a240a1c30e85bd7522b9b01a4c6c276b2d19982f"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/ProgressRingsCard.swift",
+          "blob": "7a58862deb20b52422ea7516c43d0d5ae38d572c"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/ScorecardCard.swift",
+          "blob": "1e3f4d541d13d7c5e987a581acd922615cd81f2a"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/ShoppingListView.swift",
+          "blob": "18413dff57b9db0e023a315a565890805d9e702f"
+        },
+        {
+          "path": "apps/ios/DryRun/Next/SupplyInventoryView.swift",
+          "blob": "0ccbb351fbeb9fc376adfecd9d420b4103f0f520"
+        },
+        {
+          "path": "apps/ios/DryRun/Plan/PlanPDFRenderer.swift",
+          "blob": "080be540cae1dc9f25ceb0988bdc02f4849aa73f"
+        },
+        {
+          "path": "apps/ios/DryRun/Plan/PlanViews.swift",
+          "blob": "323a5f17ef41d5cdd59c7dda2755abc3c2f5eae2"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/AdaptiveRehearsalView.swift",
+          "blob": "c458abef2900e3d3399cd1147c02d9937012281b"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/BeaconDebriefCard.swift",
+          "blob": "81e842ad86fa7e490e3ba8b9f2968407bdedbe48"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/ExerciseActions.swift",
+          "blob": "584381091badf2edfe8e3d450781bc1cd0f7b35e"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/Names.swift",
+          "blob": "fadb7e669006fa9d1c09847bd4822b103448ac99"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/PracticeCheckView.swift",
+          "blob": "993e520ae6c2b9de01a7875dc45e78b77b6170e7"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/RehearseViews.swift",
+          "blob": "dde78e5cf3b07b390909793305ead2426338583f"
+        },
+        {
+          "path": "apps/ios/DryRun/Rehearse/ScenarioExperienceViews.swift",
+          "blob": "aa79a8427e92785e09e337cb1f7c1631d8de06da"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/AppServices.swift",
+          "blob": "2e725488dca8ccda9485a9f93e983fb5151da16c"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/DirectorGatewayClient.swift",
+          "blob": "766d6819a44da3c9a99651535d19eb1ce914f619"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/ExplanationService.swift",
+          "blob": "e97bbe55a7e805da84491f10bde7e876a4a5e063"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/FamilyBriefingService.swift",
+          "blob": "706a269d73956c21c89e01d87fc06d055b49c641"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/IntakeAssistant.swift",
+          "blob": "ef2febbff644c10af553269369fddabc9d1e6c64"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/KeychainVaultKeyStore.swift",
+          "blob": "e6e87166fb28ab706dccd0787db0daa979f3c5a6"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/PrivateDataStore.swift",
+          "blob": "846e68faa712f36a1250e53f6b1b646ac0a1be1e"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/PublicAPIClient.swift",
+          "blob": "0452cbfbde7fc8d5801b705bc4769d033154764b"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/ReviewReminders.swift",
+          "blob": "215bc3176388d4c2b0c6f50c09467a75fd2cec5f"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/VaultFileProtection.swift",
+          "blob": "7567f781984053d70ea633e790d1c1a1338a7d2a"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/VaultPrivateDataStore.swift",
+          "blob": "99047090d157ecc10002a3ae63d2d6dd3ea9fc3b"
+        },
+        {
+          "path": "apps/ios/DryRun/Services/WeatherAlertService.swift",
+          "blob": "e420fe1cae7bc80f51f08b491a43d79a72cb1071"
+        },
+        {
+          "path": "apps/ios/DryRun/Settings/ReviewReminderSection.swift",
+          "blob": "5fafb41347f73d91ff022b9212a0073987169755"
+        },
+        {
+          "path": "apps/ios/DryRun/Settings/SettingsView.swift",
+          "blob": "154b85460b9bdfc2f7fd47539db75438cffc9809"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/DollhouseView.swift",
+          "blob": "ec1c1739264b326621eda9c7b3b2b332743c0d98"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/FloorPlanView.swift",
+          "blob": "9c0746ed4d42333b301934b4bdad8b4eb0568da3"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/HomeRoomListView.swift",
+          "blob": "96bed7215f370b4c897da34cc921dd2c1e9a2255"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/LiDARDepthPreview.swift",
+          "blob": "e2dd0260647ecb0a9f5a5e497bdef482f21a5f35"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/ManualHomeEditorView.swift",
+          "blob": "8a745fba2295a49ba15ee6d005d777fb2b8df875"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/RoomCaptureContainer.swift",
+          "blob": "1bfef254b3a423830795181cb1f34957bc222598"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/RoomPlanMapping.swift",
+          "blob": "a18ce7c6aef0dd4f6f48c4532caa63636912582b"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/ScanCorrectionViews.swift",
+          "blob": "70f2110c432c0c90a66884c25ebfac6c04ec71fd"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/ScannerHomeView.swift",
+          "blob": "cc97726abaea8152c255ccb7aec1511fd83075f6"
+        },
+        {
+          "path": "apps/ios/DryRun/Spatial/SpatialLocalization.swift",
+          "blob": "d16a310dc3d5557d3e8ba2a5ece5769c5709c4ca"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Alerts/AlertResponse.swift",
+          "blob": "c7f795ed2cd6140c02a61c25cbe726f107283306"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Alerts/WeatherAlerts.swift",
+          "blob": "f126d298f5c18724cb113b93caf6991ad3e6e24c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/ContentLibrary.swift",
+          "blob": "cb3a1edcacbcb51b0698d643efabd6ea5b3d3a88"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/Localizer.swift",
+          "blob": "be1b20bbf75af7c9fb4cc580978850f1f07d4ab4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/PlanningMeasurements.swift",
+          "blob": "c40ec2ab02d22e2283709e5e2507c8b6e5e81df4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/PublicDataPolicy.swift",
+          "blob": "809ec7366df7c1e927cb798296faa101f32abe26"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Content/SampleHouseholds.swift",
+          "blob": "d6ebe78e76df860106bdf95a91b8c1b8d0197280"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/AIContext.swift",
+          "blob": "86045706ee12d5efd35c6bab388ea1d48eb50829"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/AIContracts.swift",
+          "blob": "72939aec096ab796cdd5b2e535fbb28dac420663"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/AIInventory.swift",
+          "blob": "bcfa3b367813bc467aeecb467c8888b6744f1f47"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/CommittedUserActionContext.swift",
+          "blob": "a9c8aab7eaa7fd10e0a3df59bca09ca022d685a7"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/ConcernIntegration.swift",
+          "blob": "5f3fd3558e1b6b5252939c4aaa2a94cb2c5ac5cb"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/DebriefFeatureBridge.swift",
+          "blob": "832b00a8e9e0dc976f14821f5c3f1f2cd312b944"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/DirectorGatewayBridge.swift",
+          "blob": "2aa3e2fa4b54bc8b5f0f13df486a440bfb4a8941"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/DrillSetupBridge.swift",
+          "blob": "6a9386bff614bfacffbd6a382318647f9bd1698c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Evidence.swift",
+          "blob": "946a2c898fda6ee10381c8aa95215b431bafdd9d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/ExerciseAssistanceContext.swift",
+          "blob": "3f3b2cc21de042973452ce931cacdfcca8405838"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Home.swift",
+          "blob": "8c2f69f43814dfe87901be7996df242b3e886301"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HomeConcernReview.swift",
+          "blob": "8030825262bbd4aef3678387508698bcb1207a5d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HomeLocationChange.swift",
+          "blob": "d90da792e37c42e2782187cbc371dfdbd5a6ab0f"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Household.swift",
+          "blob": "9ccb3079312b934d32e0090af7fbc8a61b56e960"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HouseholdEditing.swift",
+          "blob": "0bdcd6a4c08b2fffb2fb1827dbdbcb34344fc829"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/HouseholdIntake.swift",
+          "blob": "bdfcf7a3beb787585bd7c051d09cc88b96507443"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/IntegratedAIState.swift",
+          "blob": "ef73cf1ed40d87b0e53d335c0b8f37464d7fbf76"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/PreparationFeatureBridge.swift",
+          "blob": "7c6868028ddfa7ce372fed63d477327ca8d3cedc"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/PrivatePlaces.swift",
+          "blob": "0395f7cbf5675aadfa33aa74e67a24d55d618405"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/PublicData.swift",
+          "blob": "745a9eff6ea38600bfebc25570125702f073ebdf"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/Rehearsal.swift",
+          "blob": "37f5f6f1c9ea5aa57b57ed2f108598e147503945"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/SiteHazards.swift",
+          "blob": "40dc49a6bc5e4a3b497a813017069072ebc40924"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/SpatialExercise.swift",
+          "blob": "47846d2a363eeb341c67a7716d871ab3d1176292"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Models/UserActionIntent.swift",
+          "blob": "c992fa0fc23da8330c6d08232bab773b2f9d3ba5"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Places/PublicPlaces.swift",
+          "blob": "437a40ad00aa38926c1068299000e74dacc7f457"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/FamilyEmergencyCard.swift",
+          "blob": "acb6e72632b97b7e5df5d67b4e523afbc83d2572"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/FamilyPlanExportRequest.swift",
+          "blob": "7d3ac60874b1d92b703dd37d7fa61fb4abf1cf71"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/OutageCard.swift",
+          "blob": "94c7a515e82506c221c729063d700adbb8b2f041"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanBuilder.swift",
+          "blob": "2d36988abdf48ab3623e2f901d4de64af835f92d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanDocument.swift",
+          "blob": "9d3970ccf83c0699c8d7af80c1b207ae2a9746d1"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanHomePanel.swift",
+          "blob": "a070a456b0aefee763dee70f0cfb80f7c2cf5f43"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanMapPresentation.swift",
+          "blob": "f95d1ec69b957de2932c6ce8c332da555761c24a"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanMapSelection.swift",
+          "blob": "b0bacd1747395239298e298809a411451dd98503"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Plan/PlanPlacePresentation.swift",
+          "blob": "b67486d80d9d688f141eba4bd77f7411e2a1d0cd"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/ActionCatalog.swift",
+          "blob": "8380bec99e245acb2010e112d430c433dda9b989"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/BaselinePreparedness.swift",
+          "blob": "09a781543711891976597ccbdd99b135c4f17732"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/HazardPracticeChecks.swift",
+          "blob": "cc18af1c3fdfc152c913d1617e990a3cb60ed5c9"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/HouseholdAssessment.swift",
+          "blob": "63226eef55b9f4f109d53b7ff362c8344a35f1f9"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/MedicalBackupReadiness.swift",
+          "blob": "563608f182f65effe8b36118148ac4e28b3d0a36"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/NextSteps.swift",
+          "blob": "d2a9a14c2e4f1ee55c03d6b85678b51aac9ab263"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PlanBriefing.swift",
+          "blob": "c927f40d56305bd02e8cf02228483cc5986f96e6"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeCapture.swift",
+          "blob": "90071086dd4310dff8334b89e2e0d4b7e0001b17"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeCheckSources.swift",
+          "blob": "8375ff761f472e88f2754d36748aa27dd673f6fd"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeDependencyFingerprint.swift",
+          "blob": "c785b53f67a090520a83e23b28a427113e3d74ff"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticeEvaluator.swift",
+          "blob": "7823b3636140d06aa98fb6dda89b3526d500d7d9"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PracticePhases.swift",
+          "blob": "0fa2b26461c91bbfe632f8ab56a2b131f2dfd295"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationCompletion.swift",
+          "blob": "f6a739c75f1d18e3228a579a4e5c27cefbde2ebe"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationDraft.swift",
+          "blob": "6559522f54794993ad4be80da96468e3f9651d5c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationEditTarget.swift",
+          "blob": "a2f78c2d04dcb96b15b18e1ceab5d534c074627c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationPresentation.swift",
+          "blob": "e7a6a5cecb49898e209203b6d1804f8907ddabb3"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparationTaskCatalog.swift",
+          "blob": "435cfc7eb51ed3738546fff5de4a1a41019acf71"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/PreparednessScorecard.swift",
+          "blob": "584d107c0728f41fb1e013ae75658b876e20f813"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/RecommendationRanker.swift",
+          "blob": "cf402a89f61e2193d5356ac6b02a2539b596b1b5"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Ranking/TransportReadiness.swift",
+          "blob": "649cfcb29618727f686e88a7bef5416f7533f8d9"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/Capabilities.swift",
+          "blob": "7bf7ac02ca226ae71fb79beedf0320eacfdaaa14"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/CaptureCallbackGate.swift",
+          "blob": "078ebb7728dec0092a664389ec17c90bfe064ecb"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/HomeConfirmation.swift",
+          "blob": "b40e0c001b6f6f8b3976f6a4d2d4c14b36cd332f"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/HomeMeetingPlaces.swift",
+          "blob": "e968d657a539ea50b2a9794f21792822b3b354bb"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/RehearsalCursor.swift",
+          "blob": "5974a20c135055b3d30fa7c2a1b01cdc20f55578"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceStrategyInputs.swift",
+          "blob": "7298e4fd573c0de16d03c73f9d77bf4bd6e1f0d4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Session/ResourceStrategyRefresh.swift",
+          "blob": "5e41dd83a31b83f7bad9679df04b478a3edddcd6"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Shopping/ShoppingList.swift",
+          "blob": "b8deb1fe4080c3e4ebcea9d5f334583c8ed378f4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/AuthoredSessionAdapter.swift",
+          "blob": "10e9587e618d48912fbc7ddb626e4dd9dea1aee4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/BackupAllocation.swift",
+          "blob": "e90a7a536ca012ac27cb2d5e2be8cd4d6905d9a2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/ConcernRoutePlanner.swift",
+          "blob": "eff4c24a3f5073e182ef16f9e6822e6ba1a024a5"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/DependencyModel.swift",
+          "blob": "8b5fb528f8004aee9e4591c0f1c3a6ef9a59b845"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/DirectorPolicy.swift",
+          "blob": "cd8ac451eb5785950d652f90513660dc4d592d89"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/HazardExperience.swift",
+          "blob": "8e411902120ee54389c13c5c8719b63335b2a22c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/HazardRules.swift",
+          "blob": "fe7086969ac7353f0c8e0ad093eb92d4c9df2fc2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/IncrementalSession.swift",
+          "blob": "5eac3077c4c26df98888bb1a1906d2ac9a8a38b7"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/Interventions.swift",
+          "blob": "92fd4e8206c62057d3c447a74b1efde26726ceb4"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/LocalDirector.swift",
+          "blob": "a3a0e6f4e3b162ad950392d2c818e72b4ff8893e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/PlanStressTest.swift",
+          "blob": "50e2cd1dc262402ae604d13234e8818e6a758304"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalDebriefEvidence.swift",
+          "blob": "738e4b63c8905faee188a1053ea6941c81828a26"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalEngine.swift",
+          "blob": "dbaf1d8c55c80626f4392ca200921760bd3c7516"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/RehearsalExperienceDesign.swift",
+          "blob": "a8709044c096e1bb3e7b7b9de86e6d61c733fac7"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/ScenarioDefinition.swift",
+          "blob": "a51da1338d017f7ef52e3cd1276097c923e4f06e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionAssistance.swift",
+          "blob": "70bfad716baee1467933e383a00f69560e42c4e2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionInventory.swift",
+          "blob": "daea38412b9a400417d8b894fc8d0c9aadd62b15"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionPacing.swift",
+          "blob": "d3c891afced0703ff1d6fe675ce7dbc199ef61e5"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionTools.swift",
+          "blob": "124aef02b717cce12d6d72aa19504dc10cf79320"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Simulation/SessionTransitionReducer.swift",
+          "blob": "160d21a54a01c3d64391c50e532e6457ff666a7d"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/AIPlanDiagram.swift",
+          "blob": "515ef76d2aa658fadb3f37977230b77f75ea86d7"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/EgressPlanner.swift",
+          "blob": "0b4a3d644d74807af0c732c9c39990e17a96010e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/Geometry.swift",
+          "blob": "39409607d7fb57f1a479e10a67597d03412a3534"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeEditTransaction.swift",
+          "blob": "b6e186d62e8ba9d4ea4347ffe3d931b2ed2844a2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeGeometryEditor.swift",
+          "blob": "57d1d29de87ff9b1485abe117e484d86177ab427"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeModelExport.swift",
+          "blob": "83546bd890348c3c37e378bbfb45a2b14231b200"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeRenderGeometry.swift",
+          "blob": "9f727a2e14e345726e2e2c34542df2b49bd90138"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeRoomAssociations.swift",
+          "blob": "cefd76c563384856000c5d553912bc984459489a"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeSafetyMarkers.swift",
+          "blob": "4f984a46b869ca72871a3dc798e9672d56c78c24"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeScenePresentation.swift",
+          "blob": "36021dfda4771a828229dc930ecb21b7623db7d2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HomeValidator.swift",
+          "blob": "7c5f7d1f9a75e17001888e1fd39c8689ba22f7a2"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/HousingPlanning.swift",
+          "blob": "58f843829ea8dd986332e48b8a3d9b041cd3a087"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ManualLayout.swift",
+          "blob": "ea84c50e0032de6691c252c2412a4260c28349a1"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/PortalAttachment.swift",
+          "blob": "c025f79255e4cad1316bc39e4f08f4d6dc68f2ab"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/RoomImageGeometry.swift",
+          "blob": "e15e99d7370c9f3cdad323acefab5f3c5254d5a3"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/RouteCache.swift",
+          "blob": "a8731c06631bb7ebf8a9a1b644009c6ba9f9cd5c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/SampleHomes.swift",
+          "blob": "a8f8042750bd449ff0eee0626e00dbb2e1487950"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ScanCorrections.swift",
+          "blob": "a1212d83f44a911a585a2bfc9be4be94be332535"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ScanImport.swift",
+          "blob": "e37fd967d835fb968ec2f51fbb42ba0c04cb8b3c"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunCore/Spatial/ShelterSuitability.swift",
+          "blob": "e843189368a78513a42b6449c98dfe9a8e9acb4e"
+        },
+        {
+          "path": "packages/DryRunCore/Sources/DryRunHost/main.swift",
+          "blob": "76d0a8d3228a85afcb237c814fad5a119d2f421f"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/AtomicFile.swift",
+          "blob": "632811e2d75b7d7b6f2d1a7444fb7d073f7b46be"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/CryptoShim.swift",
+          "blob": "f488af5f9fa85c6c4a001dde76a1f92cabbcc7ed"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/FileProtection.swift",
+          "blob": "939ea8f5378afdc57d01146481f9f0b08b0ad827"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/HouseholdVaultRepository.swift",
+          "blob": "9cc762b9b7cc459a361a0cb79fad25f7dc728ad6"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/PublicPackStore.swift",
+          "blob": "f907e07ed49b52b7c6017ceff0476fc7e4ce6876"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/VaultKeyStore.swift",
+          "blob": "22bd1d8282042b33dcafdd450329e2c03a7b923f"
+        },
+        {
+          "path": "packages/DryRunVault/Sources/DryRunVault/VaultModels.swift",
+          "blob": "57fd40967e5b1f4a8aada3a72a2048cf855bb2bc"
+        },
+        {
+          "path": "services/ai-orchestrator/src/claim-language.ts",
+          "blob": "05d3b6f8e081e100e2ea220a11ab8959826dae64"
+        },
+        {
+          "path": "services/ai-orchestrator/src/cli-provider.ts",
+          "blob": "430f6ce55a8a87d3ab2541c6a3798839f4ab058f"
+        },
+        {
+          "path": "services/ai-orchestrator/src/contracts.ts",
+          "blob": "99afe1009da365575bbf82706780e218ece47881"
+        },
+        {
+          "path": "services/ai-orchestrator/src/director-boundaries.ts",
+          "blob": "7bd0cb565c16e3101d035432f473f072c8ceaf3e"
+        },
+        {
+          "path": "services/ai-orchestrator/src/director-envelope.ts",
+          "blob": "bb721044d1cccf392305cc3d3f44257cba3dec66"
+        },
+        {
+          "path": "services/ai-orchestrator/src/director-provider-schema.ts",
+          "blob": "7083d2ab40768db56b652486ba87eb543610ce7b"
+        },
+        {
+          "path": "services/ai-orchestrator/src/discovery-evidence.ts",
+          "blob": "0fa87312ad6511ecd73a1361b382b0ebdea2e8ac"
+        },
+        {
+          "path": "services/ai-orchestrator/src/evidence.ts",
+          "blob": "a0272d8440b92b5311a92f1e42670c595a963aa0"
+        },
+        {
+          "path": "services/ai-orchestrator/src/features.ts",
+          "blob": "99359c0655f8ba9c8eeab67948e3a1e5f6ec5d80"
+        },
+        {
+          "path": "services/ai-orchestrator/src/gateway.ts",
+          "blob": "bb509badc5821ae79c66aa81177eea04a0ef4b9f"
+        },
+        {
+          "path": "services/ai-orchestrator/src/groq-director.ts",
+          "blob": "b95bfa709890df37115a891f672ca784e204e280"
+        },
+        {
+          "path": "services/ai-orchestrator/src/groq-discovery.ts",
+          "blob": "ffb4065b544af9cabbbe726e9fafb57c35b615f4"
+        },
+        {
+          "path": "services/ai-orchestrator/src/groq.ts",
+          "blob": "f1cde7e5ba6153e9a2ee23a846ea6f97ab4cf53e"
+        },
+        {
+          "path": "services/ai-orchestrator/src/home-review.ts",
+          "blob": "b54a9e16774ea3416ba44ebde1755b15e44df4a3"
+        },
+        {
+          "path": "services/ai-orchestrator/src/http.ts",
+          "blob": "d5610c3d09d382c54b7455c08a72fef827a31690"
+        },
+        {
+          "path": "services/ai-orchestrator/src/intents.ts",
+          "blob": "0531232c436346825e0a94fd2a4ce9b5bfeb7ba7"
+        },
+        {
+          "path": "services/ai-orchestrator/src/output-quality.ts",
+          "blob": "347d046e0b2bd710496f3ffa14317f5d87d15907"
+        },
+        {
+          "path": "services/ai-orchestrator/src/practice-contracts.ts",
+          "blob": "c7d61e186df9a97e3e2767047f147148ea1fefcc"
+        },
+        {
+          "path": "services/ai-orchestrator/src/provider-capabilities.ts",
+          "blob": "01233ff3f16138332e531c1258e3834678e1c678"
+        },
+        {
+          "path": "services/ai-orchestrator/src/provider-failure.ts",
+          "blob": "35f074269d3c8b34cc34e6bc39258da81397d17c"
+        },
+        {
+          "path": "services/ai-orchestrator/src/provider-fallback.ts",
+          "blob": "85536652824612e3dc958917f29e4f3eaf4ae62e"
+        },
+        {
+          "path": "services/ai-orchestrator/src/provider.ts",
+          "blob": "0e5deb7e1ab86f8b54755e990159d2534e0f1751"
+        },
+        {
+          "path": "services/ai-orchestrator/src/resource-discovery.ts",
+          "blob": "cdc20a4b757b5efa8ee64b46c46f63f0d2ff6c2a"
+        },
+        {
+          "path": "services/ai-orchestrator/src/resource-refresh-contracts.ts",
+          "blob": "94aa17f97ed2553f3eb8ecd79bcd91a48282875a"
+        },
+        {
+          "path": "services/ai-orchestrator/src/server.ts",
+          "blob": "9115d69317127510cb71172b8ecb65a092227bbb"
+        },
+        {
+          "path": "services/ai-orchestrator/src/user-commands.ts",
+          "blob": "ab8892affa4506d68efe3b0fe7287689e3c6c037"
+        },
+        {
+          "path": "services/public-api/src/agent/brief.ts",
+          "blob": "65017d6a4910b64e604ebb2a0038ecdbd5f7f21e"
+        },
+        {
+          "path": "services/public-api/src/agent/extract.ts",
+          "blob": "e95a00cac692b4563bb8d33d6bccfdd8ba8f0815"
+        },
+        {
+          "path": "services/public-api/src/agent/fetchSource.ts",
+          "blob": "1b26e3c7b2f7899be49b74f7fbcddb776f4cbdb0"
+        },
+        {
+          "path": "services/public-api/src/agent/model.ts",
+          "blob": "62de24f566054aaed305afee65c00d1f6912b546"
+        },
+        {
+          "path": "services/public-api/src/agent/publicURL.ts",
+          "blob": "b5a6e6ecf11596e58e222d2ed2e88bf1feb2649c"
+        },
+        {
+          "path": "services/public-api/src/agent/run.ts",
+          "blob": "77af13ebb010f39c4266dba2a9b66d720aa97141"
+        },
+        {
+          "path": "services/public-api/src/agent/types.ts",
+          "blob": "0650eac1ccd6b6f903b7b01ad8597181f1499359"
+        },
+        {
+          "path": "services/public-api/src/app.ts",
+          "blob": "71ffdd4b2468084643c73000400f63a0b0a99b49"
+        },
+        {
+          "path": "services/public-api/src/cache.ts",
+          "blob": "7bf60b09ba2f9836012178b2f6be976854ca544c"
+        },
+        {
+          "path": "services/public-api/src/fema.ts",
+          "blob": "d4e1224327f13f47585deae820976c4f5eac52c1"
+        },
+        {
+          "path": "services/public-api/src/index.ts",
+          "blob": "98ec12aa8bd4949415dec8011684a42f7bad400d"
+        },
+        {
+          "path": "services/public-api/src/nws.ts",
+          "blob": "97f72b99eed958a089a051d4e7cdc2e2958329c0"
+        },
+        {
+          "path": "services/public-api/src/schema.ts",
+          "blob": "a622ea1f63e5523600c54a1bf06517c7a33ea9f1"
+        }
+      ]
+    }
+  ],
+  "fact_findings": [
+    {
+      "path": "apps/ios/DryRun/App/AppModel.swift",
+      "finding": "Source contains adaptive/session/practice/inventory state logic and runtime generated-answer cache/replay handling. Code can be read; actual cached values remain protected."
+    },
+    {
+      "path": "apps/ios/DryRun/Services/DirectorGatewayClient.swift",
+      "finding": "Six-hazard branch loads recorded Beacon responses from bundled content/ai/replay and labels replay state. Read loader code only, never referenced response JSON as engineering input."
+    },
+    {
+      "path": "apps/ios/DryRun/Services/AppAttestSession.swift",
+      "finding": "Wired branch has actual native AppAttest transport source. Base64 operations encode runtime attestations/assertions; no captured owner attestation payload was disclosed by this audit."
+    },
+    {
+      "path": "apps/ios/DryRun/Next/PreparationAICard.swift",
+      "finding": "Six-hazard branch contains a replay status label and rendering code, not an embedded recorded answer literal. Rendered output may still be protected."
+    }
+  ],
+  "recommendations": [
+    "Priority staged clearance granted wherever present in exact manifests: App/AppModel.swift; Services/PrivateDataStore.swift, VaultPrivateDataStore.swift, AppAttestSession.swift, DirectorGatewayClient.swift; Rehearse/AdaptiveRehearsalView.swift and PracticeCheckView.swift; Next/SupplyInventoryView.swift and ScorecardCard.swift; six-hazard PreparationAICard/BeaconDebriefCard and associated bridge sources.",
+    "Use git show REF:PATH or git diff scoped only to listed source paths. Exact blob clearance does not automatically clear uncommitted worktree copies or unrelated Git diff resources.",
+    "Retain completed native views, typed sidecar/state, session/client and fallback work by reconciling contracts against current changes. This report makes no merge or replacement recommendation and does not certify behavioral correctness.",
+    "Explicitly exclude content/ai/replay recursively, every fixtures/ai tree, artifacts, output, generated captures, persisted app/cached Beacon values, .xcresult/build logs, transcripts, worktree archives, reports with copied responses, and source-linked replay JSON. These are protected or uncertain even if the app accepted them.",
+    "Tests, test fixtures, eval scripts, docs and README files are NOT blanket-cleared by this production-source report. Some test/eval paths intentionally load recorded provider responses; route execution stdout/stderr and attachments through reviewer capture.",
+    "All source APIs that read persisted generated plans, debriefs or task wording must preserve complete runtime context while engineering receives opaque references/cleared projections. Do not erase cached context just to make engineering views readable.",
+    "Native launches/SwiftUI previews can invoke loaders and render recorded content. Output reviewer must own such tools/session even though the underlying source is cleared."
+  ],
+  "limitations": [
+    "This is artifact classification, not exhaustive code correctness/security review or semantic comparison across branches.",
+    "Clearance uses source-content scanning and targeted semantic inspection of flagged regions, not a claim every line of all410 listed files was manually reviewed.",
+    "No owner .env, keychain, app vault, persisted Beacon cache, real family data or physical device inspected.",
+    "No raw recorded answers are reproduced in this report. Existing referenced replay assets remain restricted."
+  ],
+  "next_owner": "orchestrator and integration specialists for scoped source reconciliation",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -9,6 +9,7 @@ public struct PracticeAttemptSource:Codable,Sendable,Equatable {
     public var startingEventSequence:Int
     /// Missing on persisted capture/1 sources means anchors/1; never regrade old answers.
     public var evaluatorVersion:String? = nil
+    public var startingReceiptDigest:String? = nil
 }
 public struct PracticeObservation:Codable,Sendable,Equatable {
     public var competencyID:String
@@ -18,6 +19,8 @@ public struct PracticeObservation:Codable,Sendable,Equatable {
     /// nil means unsupported/unassessed. It remains in the fixed competency denominator.
     public var credit:Double?
     public var feedbackRevealed:Bool
+    /// Explicit Next acknowledgement. Missing in old snapshots remains recoverable.
+    public var feedbackAcknowledged:Bool? = false
 }
 
 public extension IntegratedAIState {
@@ -27,7 +30,7 @@ public extension IntegratedAIState {
         library:ScenarioLibrary,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeAttempt {
         guard !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
-           latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4 {return latest}
+           latest.checkID==nil,latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4 {return latest}
         guard !Self.phasedPracticeVariants.contains(variantID),let session=sessions.first(where:{$0.id==sessionID}),session.concernSeed==nil,
               !practiceAttempts.contains(where:{$0.source?.sessionID==sessionID}) else {throw SessionError.invalidCommand}
         let receipt=try session.query(library:library)
@@ -104,6 +107,7 @@ public extension IntegratedAIState {
     /// the numeric compiler. Legacy imported answers have no chronology proof and earn no credit.
     func eligiblePracticeAttempts(library:ScenarioLibrary)throws->[PracticeAttempt] {
         try practiceAttempts.map {attempt in
+            if attempt.checkID != nil {return try validateHazardCheck(attempt,library:library)}
             if attempt.phaseSources != nil {return try validatePhasedPractice(attempt,library:library)}
             var accepted=attempt;accepted.answers=[]
             guard let source=attempt.source else {return accepted}
@@ -115,7 +119,7 @@ public extension IntegratedAIState {
                   observations.map(\.acceptedRevision)==observations.map(\.acceptedRevision).sorted(),
                   observations.map(\.competencyID)==Array(Self.practiceOrder(attempt.variantID).prefix(observations.count)) else {throw SessionError.invalidCommand}
             try Self.validatePracticeChronology(source:source,observations:observations,session:session)
-            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy)
+            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,mechanicsVersion:session.mechanicsVersion)
             var found=0
             let initialReceipt=try prefix.query(library:library)
             guard source.startingRevision>=0,source.startingRevision<=session.revision else {throw SessionError.invalidCommand}
@@ -138,8 +142,9 @@ public extension IntegratedAIState {
             return accepted
         }
     }
-    func compileScorecard(rubric:RubricDefinition,assessments:[CriterionAssessment],library:ScenarioLibrary)throws->PreparednessScorecard {
-        try ScoreCompiler.compile(rubric:rubric,assessments:assessments,attempts:eligiblePracticeAttempts(library:library))
+    func compileScorecard(rubric:RubricDefinition,assessments:[CriterionAssessment],library:ScenarioLibrary,currentHousehold:HouseholdProfile?=nil,currentHome:HomeModel?=nil)throws->PreparednessScorecard {
+        let evidence=try currentHousehold.map{try currentPracticeEvidence(household:$0,home:currentHome,library:library)} ?? eligiblePracticeAttempts(library:library)
+        return try ScoreCompiler.compile(rubric:rubric,assessments:assessments,attempts:evidence)
     }
     private static func validatePracticeChronology(source:PracticeAttemptSource,observations:[PracticeObservation],session:SimulationSession)throws {
         guard source.startingRevision>=0,source.startingRevision<=session.commits.count,
@@ -154,9 +159,10 @@ public extension IntegratedAIState {
         var inventory:SessionInventorySeed?
         var directorPolicy:DirectorPolicy?
         var concernSeed:ConcernExerciseSeed?
+        var mechanicsVersion:String?
     }
     static func practiceSourceDigest(_ session:SimulationSession)throws->String {
-        StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)))
+        StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,mechanicsVersion:session.mechanicsVersion)))
     }
     static func practiceOrder(_ variantID:String)->[String] {
         switch variantID {

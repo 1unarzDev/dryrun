@@ -5,6 +5,14 @@ public struct RubricCriterion: Codable, Sendable {
     public var id:String; public var domain:String; public var weight:Double
     public var predicateIDs:[String]; public var sourceIDs:[String]; public var critical:Bool
     public var applicabilityRule:String; public var freshnessDays:Int?
+    private enum CodingKeys:String,CodingKey {case id,domain,weight,predicateIDs,sourceIDs,critical,applicabilityRule,freshnessDays}
+    /// The frozen rubric contract (content/ai/rubric-v0.json, gateway rubricSchema) states "no freshness" as an explicit null.
+    public func encode(to encoder:Encoder)throws {
+        var c=encoder.container(keyedBy:CodingKeys.self)
+        try c.encode(id,forKey:.id);try c.encode(domain,forKey:.domain);try c.encode(weight,forKey:.weight)
+        try c.encode(predicateIDs,forKey:.predicateIDs);try c.encode(sourceIDs,forKey:.sourceIDs);try c.encode(critical,forKey:.critical)
+        try c.encode(applicabilityRule,forKey:.applicabilityRule);try c.encode(freshnessDays,forKey:.freshnessDays)
+    }
 }
 public struct RubricDefinition: Codable, Sendable {
     public var version:String; public var domainWeights:[String:Double]; public var criteria:[RubricCriterion]
@@ -33,19 +41,23 @@ public struct PracticeAttempt: Codable, Sendable {
     public var source:PracticeAttemptSource?
     /// Four frozen independent situations for version-1 checks, in the variant competency order.
     public var phaseSources:[PracticeAttemptSource]?
+    public var checkID:String?
+    public var checkVariant:String?
     public var observations:[PracticeObservation]?
     public init(id:String,sequence:Int,variantID:String,answers:[PracticeAnswer],coached:Bool=false){self.id=id;self.sequence=sequence;self.variantID=variantID;self.answers=answers;self.coached=coached}
 }
 public struct PreparednessScorecard: Codable, Sendable {
     public var assessmentVersion:String?
     public var practiceEvaluatorVersion:String? = nil
+    public var practiceAnchorCoverage:Double? = nil
+    public var practiceHazardsAssessed:[String]? = nil
     public var rubricVersion:String; public var preparation:Double?; public var practice:Double
     public var overall:Double?; public var evidenceCoverage:Double; public var practiceAssessed:Int
     public var provisional:Bool; public var cap:Double; public var capReasons:[String]; public var statuses:[String:CriterionStatus]
 }
 public enum ScoreCompiler {
     public static let competencies=["initialResponse","adaptation","communication","continuity"]
-    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2"]
+    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","hazard-check/1"]
     public static func compile(rubric:RubricDefinition,assessments:[CriterionAssessment],attempts:[PracticeAttempt]=[]) throws -> PreparednessScorecard {
         guard rubric.preparationWeight==0.9,rubric.practiceWeight==0.1,
               rubric.domainWeights.values.allSatisfy({$0.isFinite && $0>0}),
@@ -86,16 +98,42 @@ public enum ScoreCompiler {
         for domain in rubric.domainWeights.keys.sorted() {let w=rubric.domainWeights[domain]!;if let possible=domainPossible[domain],possible>0{earned += w*(domainEarned[domain,default:0]/possible);coverage += w*(domainAssessed[domain,default:0]/possible);weight += w}}
         let preparation=hasAssessed && weight>0 ? 100*earned/weight : nil
         var practice=0.0,practiceAssessed=0
-        // Latest attempt governs even if interrupted. Historical successful result cannot hide contrary evidence.
-        if let latest=attempts.max(by:{$0.sequence<$1.sequence}) {
-            guard variants.contains(latest.variantID),Set(latest.answers.map(\.competencyID)).count==latest.answers.count,
-                  Set(latest.answers.map(\.committedActionID)).count==latest.answers.count else {throw SessionError.invalidCommand}
-            for a in latest.answers {
-                guard competencies.contains(a.competencyID),[0,0.5,1].contains(a.credit),!a.committedActionID.isEmpty else {throw SessionError.invalidCommand}
-                if !latest.coached && a.beforeFeedback {practice += 25*a.credit;practiceAssessed += 1}
+        // The fixed 25-point competency budgets are preserved. A short check changes
+        // its own competency only; untouched independent four-phase evidence survives.
+        var independent:[String:(PracticeAttempt,PracticeAnswer)]=[:]
+        var latestAnchors:[String:(PracticeAttempt,PracticeAnswer)]=[:]
+        for attempt in attempts.sorted(by:{$0.sequence<$1.sequence}) {
+            guard variants.contains(attempt.variantID),Set(attempt.answers.map(\.competencyID)).count==attempt.answers.count,
+                  Set(attempt.answers.map(\.committedActionID)).count==attempt.answers.count else {throw SessionError.invalidCommand}
+            for answer in attempt.answers {
+                guard competencies.contains(answer.competencyID),[0,0.5,1].contains(answer.credit),!answer.committedActionID.isEmpty else {throw SessionError.invalidCommand}
+            }
+            guard !attempt.coached,attempt.archivedUnverified != true else {continue}
+            if let id=attempt.checkID {
+                guard let check=HazardPracticeCheck.bank.first(where:{$0.id==id}) else {throw SessionError.invalidCommand}
+                if let answer=attempt.answers.first(where:{$0.competencyID==check.competencyID}) {latestAnchors[id]=(attempt,answer)}
+            } else {
+                for answer in attempt.answers where answer.beforeFeedback {independent[answer.competencyID]=(attempt,answer)}
             }
         }
-        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,practiceEvaluatorVersion:attempts.max(by:{$0.sequence<$1.sequence})?.source.map{$0.evaluatorVersion ?? PracticeEvaluator.legacyVersion},rubricVersion:rubric.version,preparation:preparation,practice:practice,
+        var assessedHazards=Set<String>(),anchors=0
+        for check in HazardPracticeCheck.bank {
+            if let (_,answer)=latestAnchors[check.id],answer.beforeFeedback {anchors += 1;assessedHazards.insert(check.scenarioID)}
+        }
+        for competency in competencies {
+            let checks=HazardPracticeCheck.bank.filter{$0.competencyID==competency}
+            let checked=checks.compactMap{latestAnchors[$0.id]}
+            let latest=checked.map{$0.0.sequence}.max() ?? Int.min
+            if let (attempt,answer)=independent[competency],attempt.sequence>=latest {
+                practice += 25*answer.credit;practiceAssessed += 1
+            } else if !checked.isEmpty {
+                let eligible=checked.filter{$0.1.beforeFeedback}
+                practice += 25*eligible.reduce(0){$0+$1.1.credit}/Double(checks.count)
+                if !eligible.isEmpty {practiceAssessed += 1}
+            }
+        }
+        let hasHazardChecks=attempts.contains{$0.checkID != nil}
+        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,practiceEvaluatorVersion:attempts.max(by:{$0.sequence<$1.sequence})?.source.map{$0.evaluatorVersion ?? PracticeEvaluator.legacyVersion},practiceAnchorCoverage:hasHazardChecks ? Double(anchors)/Double(HazardPracticeCheck.bank.count)*100:nil,practiceHazardsAssessed:hasHazardChecks ? assessedHazards.sorted():nil,rubricVersion:rubric.version,preparation:preparation,practice:practice,
             overall:preparation.map{min(0.9*$0+0.1*practice,cap)},evidenceCoverage:weight>0 ? 100*coverage/weight : 0,
             practiceAssessed:practiceAssessed,provisional:true,cap:cap,capReasons:reasons.sorted(),statuses:statuses)
     }

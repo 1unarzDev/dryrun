@@ -69,8 +69,8 @@ struct HomeRoomListView: View {
         let doors = home.portals.filter { p in p.sideA == .space(space.id) || p.sideB == .space(space.id) }
         let area = abs(Geometry.signedArea(space.polygon)).formatted(.number.precision(.fractionLength(0)).locale(Locale(identifier: model.locale)))
         return VStack(alignment: .leading, spacing: 2) {
-            Text(space.label + (space.labelConfirmed ? "" : " " + s("(name not confirmed)")))
-            Text(model.localizer("spatial.room-area", ["area": area]) + (space.needsMeasurement ? " · " + s("needs measurement") : ""))
+            Text(space.label)
+            Text(model.localizer("spatial.room-area", ["area": area]))
                 .font(.caption).foregroundStyle(.secondary)
             if space.geometryNeedsReview == true { Text(model.localizer("spatial.issue.correctedGeometryNeedsReview")).font(.caption) }
             ForEach(doors) { p in

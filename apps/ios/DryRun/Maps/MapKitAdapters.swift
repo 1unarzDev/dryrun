@@ -181,11 +181,13 @@ final class NearbyDiscovery {
     private let makeService: @MainActor () -> any MapSearching
     init(makeService: @escaping @MainActor () -> any MapSearching = { AppleMapSearchService() }) { self.makeService = makeService }
     func cancel(clearResults: Bool = false) { generation += 1; services.forEach { $0.cancel() }; services = []; isLoading = false; if clearResults { results = []; error = nil } }
-    func search(region: MapRegionHint, locale: String) async {
+    func search(region: MapRegionHint, locale: String, queries requestedQueries: [String] = ["hospital", "pharmacy", "grocery"]) async {
         cancel(); guard enabled else { return }
         generation += 1; let ticket = generation
         isLoading = true; error = nil
-        let queries = ["hospital", "pharmacy", "grocery"]
+        var queryIDs = Set<String>()
+        let queries = Array(requestedQueries.filter { queryIDs.insert($0).inserted }.prefix(5))
+        guard !queries.isEmpty else { isLoading = false; results = []; return }
         services = queries.map { _ in makeService() }
         let requests = services
         // One task per category runs concurrently; each owns its own service, so cancelling one never cancels another.
@@ -202,6 +204,8 @@ final class NearbyDiscovery {
         var seen = Set<String>()
         results = found.flatMap { pair in
             (pair.1 ?? []).filter { center.distance(from: $0.coordinate.clLocation) <= maxDistance }
+                // A hospital query can return veterinary facilities; retain Apple's hospital category only.
+                .filter { queries[pair.0] != "hospital" || $0.category == MKPointOfInterestCategory.hospital.rawValue }
                 .sorted { center.distance(from: $0.coordinate.clLocation) < center.distance(from: $1.coordinate.clLocation) }
                 .prefix(3).map { result in
                     AppleMapSearchResult(id: result.id, name: result.name, coordinate: result.coordinate, address: result.address,

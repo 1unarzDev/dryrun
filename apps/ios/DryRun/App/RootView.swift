@@ -6,7 +6,7 @@ struct RootView: View {
     @State private var tab = Tab(rawValue: DemoLaunch.current.tab ?? "") ?? (DemoLaunch.current.scenarioID != nil ? .rehearse : .prepare)
     @State private var showSettings = false
     @State private var prepareRootVersion = 0
-    @State private var rehearsePath: [String] = DemoLaunch.current.scenarioID.map { [$0] } ?? []
+    @State private var rehearsePath: [String] = DemoLaunch.current.scenarioID.map { [DemoLaunch.current.adaptive ? "adaptive:\($0)" : $0] } ?? []
 
     enum Tab: String, Hashable { case prepare, rehearse, plan }
 

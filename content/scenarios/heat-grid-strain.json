@@ -34,6 +34,10 @@
     {
       "id": "no-rotating-outage",
       "labelKey": "scenario.heat-grid-strain.variant.no-rotating-outage"
+    },
+    {
+      "id": "cooling-followup",
+      "labelKey": "scenario.heat-grid-strain.variant.cooling-followup"
     }
   ],
   "events": [
@@ -201,6 +205,36 @@
       ],
       "when": [
         "!variant:no-rotating-outage"
+      ]
+    },
+    {
+      "id": "choice.heat-grid-strain.powered-evening",
+      "minute": 1560,
+      "phaseID": "strain",
+      "promptKey": "scenario.heat-grid-strain.choice.powered-evening.prompt",
+      "defaultOptionID": "stay",
+      "options": [
+        {
+          "id": "relocate",
+          "labelKey": "scenario.heat-grid-strain.choice.powered-evening.relocate",
+          "feedbackKey": "scenario.heat-grid-strain.choice.powered-evening.relocate.feedback",
+          "effect": "relocate",
+          "unsafe": false
+        },
+        {
+          "id": "stay",
+          "labelKey": "scenario.heat-grid-strain.choice.powered-evening.stay",
+          "feedbackKey": "scenario.heat-grid-strain.choice.powered-evening.stay.feedback",
+          "effect": "shelterInPlace",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S21"
+      ],
+      "when": [
+        "variant:no-rotating-outage",
+        "variant:cooling-followup"
       ]
     }
   ],

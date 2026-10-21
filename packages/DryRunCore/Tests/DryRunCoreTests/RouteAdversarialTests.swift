@@ -192,7 +192,7 @@ struct RouteAdversarialTests {
         }
     }
 
-    @Test("ScanImport never produces verified anything; wall-only L-shaped room is flagged for measurement")
+    @Test("Scan dimensions are accepted independently of unverified exits; wall-only outline remains uncertain")
     func scanImportProposalsOnly() throws {
         func wall(_ id: String, _ a: Vec2, _ b: Vec2, _ cat: ScanSurfaceCategory = .wall) -> ScanSurface {
             let c = Vec2((a.x + b.x) / 2, (a.y + b.y) / 2), d = b - a
@@ -208,7 +208,7 @@ struct RouteAdversarialTests {
         #expect(h.portals.allSatisfy { $0.verification == .proposed && !$0.leadsToExterior && $0.operable.value == nil })
         #expect(h.connectors.allSatisfy { $0.verification == .proposed })
         #expect(h.spaces.allSatisfy { !$0.labelConfirmed })
-        #expect(h.portals.allSatisfy { !$0.clearWidthMeters.isConfirmed })
+        #expect(h.portals.allSatisfy { $0.clearWidthMeters.isConfirmed && $0.clearWidthMeters.origin == .scanObserved })
         #expect(planner.plan(RouteRequest(startSpaceID: h.spaces[0].id), in: h).primary == nil)
         #expect(h.spaces[0].needsMeasurement)
         #expect(throws: ScanImportError.self) {

@@ -1,0 +1,44 @@
+{
+  "report_id": "report-prep15-stale-binding-fixture-alias-diagnosis",
+  "run_ids": [
+    "run-70f8fcabd1a74a59a0f65e43d36bd283"
+  ],
+  "review_kind": "Dedicated reviewer authored HTTP test diagnosis",
+  "synopsis": "Escalated HTTP tests reached substantive assertions. The only failure is a stale-binding test whose authored input aliases the binding revisions object with the private snapshot revisions object. Its mutation changes both copies, so it never creates the mismatch it intends to test.",
+  "fact_findings": [
+    {
+      "path": "services/ai-orchestrator/test/preparation-provenance-http.test.ts",
+      "lines": [
+        10,
+        13,
+        34,
+        35
+      ],
+      "diagnosis": "input() assigns the shared binding directly as contextBinding, then shallow-spreads binding into privateContext. Both references therefore share revisions. structuredClone preserves internal object aliasing. Mutating context.contextBinding.revisions.stateFingerprint also changes context.privateContext.revisions.stateFingerprint. The reader correctly sees equal revisions and reaches the provider, which this negative fixture intentionally makes throw; transport classifies that downstream failure as provider unavailability. The assertion expecting request rejection therefore fails because the stale condition was never constructed."
+    },
+    {
+      "path": "services/ai-orchestrator/src/private-context.ts",
+      "lines": [
+        22,
+        23
+      ],
+      "diagnosis": "The reader explicitly compares full expected scope, revisions, snapshot ID, and home ID before use. The capture does not demonstrate a missing production stale-context guard."
+    },
+    "Captured counts: 30 tests across 3 files, 28 passed, 1 failed, 1 skipped. The HTTP/ledger file had 9 tests with only this stale-binding case failing. The earlier socket permission blockage was resolved."
+  ],
+  "recommendations": [
+    {
+      "path": "services/ai-orchestrator/test/preparation-provenance-http.test.ts",
+      "line": 34,
+      "fix": "After cloning the input, replace context.contextBinding.revisions with a new spread object containing the stale fingerprint instead of mutating its shared property. Alternatively construct independent deep copies of binding for contextBinding and privateContext in input(). Assert the private snapshot fingerprint remains the original and differs from the request binding before issuing HTTP. Preserve both the rejected-status assertion and zero-provider-calls assertion."
+    },
+    "Rerun the same three-suite command through the firewall with already required localhost permission. Do not weaken the rejection expectation or alter production HTTP error mapping to satisfy this fixture error."
+  ],
+  "limitations": [
+    "No product code edits or new test/model runs performed by reviewer.",
+    "All inspected provider response fixtures here are authored synthetic content, but this report discloses only semantic engineering diagnosis.",
+    "The zero-provider-calls assertion appears after the failed status assertion and was not reached in this capture; provider entry is inferred from matching aliased input and the deliberate throwing provider source."
+  ],
+  "next_owner": "codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

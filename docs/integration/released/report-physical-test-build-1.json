@@ -1,0 +1,29 @@
+{
+  "report_id": "report-physical-test-build-1",
+  "run_ids": [
+    "run-8d11f640138a4ad091d7a2424a5893aa"
+  ],
+  "feature": "Physical baseline build-for-testing",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "The fresh build reaches native test compilation but HousingDemoTests uses ambiguous shorthand for static fixture properties. The expected type is inferred as HomeModel; the two shorthand members are declared on SampleHomes instead.",
+  "failures": [
+    {
+      "severity": "blocking",
+      "path": "apps/ios/DryRunTests/HousingDemoTests.swift",
+      "lines": [
+        18
+      ],
+      "diagnosis": "Array shorthand resolves manufactured and twoStory against HomeModel, producing unresolved members.",
+      "fix": "Replace the array with [SampleHomes.apartmentComplex, SampleHomes.manufactured, SampleHomes.twoStory]. This keeps all intended fixture coverage and changes no production behavior."
+    }
+  ],
+  "recommendations": [
+    "Apply only the explicit fixture qualification, then repeat physical build-for-testing with the same signed configuration. No source reason to disable HousingDemoTests.",
+    "Do not claim new AppPersistenceTests failed from this run: they were compiled in the same batch but the observed blocker is HousingDemoTests."
+  ],
+  "limitations": [
+    "No test execution, installation or physical launch occurred. No other fresh compiler blocker was observed in the captured run; additional diagnostics may appear after correction."
+  ],
+  "next_owner": "orchestrator",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}
