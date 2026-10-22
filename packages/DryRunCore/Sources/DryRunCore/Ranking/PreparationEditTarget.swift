@@ -43,6 +43,8 @@ public enum PreparationEditTarget: Codable, Sendable, Hashable {
             if let subject = recommendation.subjectID {
                 return .checklist(id: "medication.\(subject)", titleKey: "prep.medication.title")
             }
+        case "prep.stairPlan":
+            if let id = subject("person") { return .checklist(id: "stairPlan.person.\(id)", titleKey: "prep.stairPlan.title") }
         case "prep.equipmentSupplies":
             if let id = subject("equipment") { return .checklist(id: "equipmentSupplies.\(id)", titleKey: "prep.equipmentSupplies.title") }
         case "prep.alerts", "act.alerts.enroll-local": return .checklist(id: "alerts", titleKey: "prep.alerts.title")

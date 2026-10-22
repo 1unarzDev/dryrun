@@ -45,7 +45,8 @@ struct RankingTests {
         for h in SampleHouseholds.all {
             let results = try SimFixtures.scenarioIDs.map { try SimFixtures.run(h, $0) }
             let toDo = NextSteps.summarize(results, household: h).toDo
-            let keys = toDo.map { ($0.recommendation.tier.rawValue, RecommendationRanker.dependencyRank($0.recommendation.actionID)) }
+            // A tight budget sequences free steps before purchases after the medical dependency (MaterialFactPreparationTests).
+            let keys = toDo.map { ($0.recommendation.tier.rawValue, h.supplies.limitedBudget ? min(1, RecommendationRanker.dependencyRank($0.recommendation.actionID)) : RecommendationRanker.dependencyRank($0.recommendation.actionID)) }
             #expect(zip(keys, keys.dropFirst()).allSatisfy { $0 <= $1 }, "\(h.id): \(toDo.map(\.id))")
             // A household relying on powered or refrigerated medical equipment sees that dependency at the top of its tier.
             if let first = toDo.first, toDo.contains(where: { RecommendationRanker.dependencyRank($0.recommendation.actionID) == 0 && $0.recommendation.tier == first.recommendation.tier }) {
