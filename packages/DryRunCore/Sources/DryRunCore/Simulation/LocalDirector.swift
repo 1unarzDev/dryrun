@@ -86,7 +86,8 @@ public enum LocalDirector {
     /// and never disconnecting a device as "preparation").
     public static func isOutagePreparation(_ command: SessionCommand) -> Bool {
         switch command.kind {
-        case "warmLayers", "heatedAlternative", "cooledAlternative", "reduceSolarGain": return true
+        // moveTo: heat moves into a shaded room; v7 freeze gathers in the room of the person hardest to move.
+        case "warmLayers", "heatedAlternative", "cooledAlternative", "reduceSolarGain", "moveTo": return true
         case "allocatePower": return command.value != "none"
         default: return false
         }

@@ -9,9 +9,14 @@ final class HazardChoiceUITests: XCTestCase {
     private func launch(_ household: String, _ home: String, _ scenario: String) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-uiTestingInMemory", "-disableAnimations", "-demoLocale", "en",
-                               "-demoHousehold", household, "-demoHome", home, "-demoScenario", scenario, "-demoAdaptive"]
+                               "-demoHousehold", household, "-demoHome", home, "-demoScenario", scenario, "-demoAdaptive",
+                               // These scripts document local-director turns; the cloud director is covered elsewhere.
+                               "-localDirector"]
         app.launch()
         XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30), "\(scenario) adaptive exercise opens")
+        // -localDirector pins Beacon's cloud director off; the switch shows only where a gateway is configured.
+        let cloud = element("adaptive.cloudToggle", in: app)
+        if cloud.exists { XCTAssertEqual(cloud.value as? String, "0", "the cloud director starts off under -localDirector") }
         return app
     }
     private func element(_ id: String, in app: XCUIApplication) -> XCUIElement {
@@ -137,5 +142,19 @@ final class HazardChoiceUITests: XCTestCase {
         shot("water-02-advisory", app)
         tap(boiled, in: app)
         XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15))
+    }
+
+    /// Freeze, unedited Oak family in the ranch (mechanics v7, G1): before the outage Parent A can join Grandpa
+    /// in the living room (a physical choice without recorded warmth or backup); the move is not offered again. Mirrors
+    /// `HazardMechanicsV7Tests.freezeOpeningOffersAPhysicalChoiceForEverySampleHousehold`.
+    func testFreezeOpeningOffersGathering() {
+        let app = launch("hh-oak", "ranch", "freeze-power-loss")
+        let gather = advance(until: "rehearsal.cmd.moveTo.p-oak-1.sp-living", in: app, steps: 4, answer: false)
+        XCTAssertTrue(gather.exists, "Parent A joining Grandpa in the living room is offered at the freeze opening")
+        shot("freeze-01-opening", app)
+        tap(gather, in: app)
+        XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15))
+        shot("freeze-02-gathered", app)
+        XCTAssertFalse(prefixed("rehearsal.cmd.moveTo.p-oak-1.", in: app).waitForExistence(timeout: 5), "the same move is not offered again")
     }
 }

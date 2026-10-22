@@ -35,7 +35,35 @@ final class SixHazardUITests: XCTestCase {
     private func reveal(_ control: XCUIElement, in app: XCUIApplication, steps: Int = 14) -> XCUIElement {
         _ = control.waitForExistence(timeout: 3)
         for _ in 0..<steps where !(control.exists && control.isHittable) { scroll(app, up: true) }
+        settle(control)
         return control
+    }
+    /// Waits for scroll momentum to stop, so a tap lands on the control that was found and not on a neighbour that
+    /// slid under the same point (the wave-2 water-outage run opened the Home fire setup).
+    private func settle(_ control: XCUIElement) {
+        guard control.exists else { return }
+        var last = control.frame
+        for _ in 0..<10 {
+            Thread.sleep(forTimeInterval: 0.15)
+            guard control.exists else { return }
+            let now = control.frame
+            if now == last { return }
+            last = now
+        }
+    }
+    /// Opens a scenario card and checks that its own setup opened: setup option identifiers carry the scenario ID
+    /// (`rehearsal.setup.<scenario>.<question>.<option>`), so another hazard's setup cannot pass.
+    private func openSetup(_ scenario: String, in app: XCUIApplication) {
+        let card = reveal(element("scenario.\(scenario)", in: app), in: app)
+        XCTAssertTrue(card.exists, "\(scenario) card is listed")
+        card.tap()
+        XCTAssertTrue(element("rehearsal.setup", in: app).waitForExistence(timeout: 10), "\(scenario) opens its setup")
+        let own = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "rehearsal.setup.\(scenario).")).firstMatch
+        if !own.waitForExistence(timeout: 5) {
+            shot("\(scenario)-00-wrong-setup", app)
+            let other = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'rehearsal.setup.' AND NOT (identifier BEGINSWITH 'rehearsal.setup.start')")).firstMatch
+            XCTFail("\(scenario) card opened a different setup (first setup control: \(other.exists ? other.identifier : "none")); card routing or a mis-tap")
+        }
     }
 
     func testFireSetupToDebrief() { run(0) }
@@ -48,12 +76,8 @@ final class SixHazardUITests: XCTestCase {
     private func run(_ index: Int) {
         let (scenario, option) = Self.setupChoices[index]
         let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "ranch", "-demoTab", "rehearse"])
-        let card = reveal(element("scenario.\(scenario)", in: app), in: app)
-        XCTAssertTrue(card.exists, "\(scenario) card is listed")
-        card.tap()
-
         // Normal entry opens setup first; nothing starts until Start.
-        XCTAssertTrue(element("rehearsal.setup", in: app).waitForExistence(timeout: 10), "\(scenario) opens its setup")
+        openSetup(scenario, in: app)
         shot("\(scenario)-01-setup", app)
         let choice = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@",
                                                       "rehearsal.setup.", ".\(option)")).firstMatch

@@ -24,7 +24,7 @@ import Testing
     }
 
     @Test func versionLevelsAndNewSessionsUseV6() throws {
-        #expect(HazardExperience.version=="dryrun.hazard-mechanics/6")
+        #expect(HazardExperience.level(HazardExperience.version)>=6)  // v7 (freeze gathering) is additive; see HazardMechanicsV7Tests
         #expect(HazardExperience.supportedVersions.contains("dryrun.hazard-mechanics/5"))
         #expect(HazardExperience.level("dryrun.hazard-mechanics/5")==5)
         #expect(HazardExperience.level(nil)==0)
@@ -107,7 +107,8 @@ import Testing
         let waited=try act(&after,[.init(kind:"wait")])
         #expect(LocalDirector.nextCommit(session:after,receipt:waited,library:library)?.commands != [.init(kind:"requestDecision")])
         var bare=SimFixtures.input(SampleHouseholds.oak,"freeze-power-loss");bare.household.equipment=[];bare.household.preparedness=nil
-        var none=try start(bare)
+        // v6 pins the "no supported preparation" case; v7 adds freeze gathering (HazardMechanicsV7Tests).
+        var none=try start(bare,version:"dryrun.hazard-mechanics/6")
         let n1=try none.commit(LocalDirector.nextCommit(session:none,receipt:try none.query(library:library),library:library)!,library:library)
         #expect(LocalDirector.nextCommit(session:none,receipt:n1,library:library)?.commands != [.init(kind:"requestDecision")])
         var v5=try start(freezeInput(),version:"dryrun.hazard-mechanics/5")

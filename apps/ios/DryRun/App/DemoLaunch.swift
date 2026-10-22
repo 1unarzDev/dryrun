@@ -19,6 +19,8 @@ import DryRunCore
 ///   -demoWritePlanPDFs                      DEBUG only: write EN/ES/VI PDFs + JSON to Documents/demo-plans, then DONE
 ///   -disableAnimations                      steadier screenshots
 ///   -uiTestingInMemory                      in-memory store without loading a household
+///   -localDirector                          DEBUG only: start adaptive rehearsals with Beacon's cloud director off
+///                                           (this phone's local director), for UI tests that script local-director turns
 struct DemoLaunch: Sendable, Equatable {
     enum Step: String, Sendable { case start, decision, end }
 
@@ -37,6 +39,8 @@ struct DemoLaunch: Sendable, Equatable {
     var homeFloor: Int?
     var alert: String?
     var address: DemoAddressCheck?
+    /// DEBUG only: pins `AppModel.cloudDirectorEnabled` to false at launch. Release builds ignore the flag.
+    var localDirector = false
 
     static let allScenarios = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
     static let current = DemoLaunch(arguments: ProcessInfo.processInfo.arguments)
@@ -63,6 +67,9 @@ struct DemoLaunch: Sendable, Equatable {
         adaptive = arguments.contains("-demoAdaptive")
         homeFloor = value("-demoHomeFloor").flatMap(Int.init).flatMap { (0..<8).contains($0) ? $0 : nil }
         address = value("-demoAddress").flatMap(DemoAddressCheck.init(rawValue:))
+        #if DEBUG
+        localDirector = arguments.contains("-localDirector")
+        #endif
         alert = value("-demoAlert").flatMap { ["tornado", "flash-flood", "heat", "winter"].contains($0) ? $0 : nil }
     }
 

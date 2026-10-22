@@ -10,6 +10,8 @@ public struct HazardChoice: Sendable, Hashable, Identifiable {
         case shelter, accompanyShelter
         case refuge, depart
         case warmth, shade, moveToShade
+        /// Mechanics v7 freeze: a person joins the room of the household member hardest to move.
+        case gather
         case power, contact, water, carrySupply, placeSupply
         case recognizeGap
     }
@@ -47,7 +49,7 @@ public enum HazardChoices {
         case .homeFire: order = [.accompanyEscape, .escape, .accountOutside]
         case .tornado: order = [.accompanyShelter, .shelter, .contact]
         case .flashFlood: order = [.depart, .refuge, .carrySupply, .placeSupply]
-        case .freezePowerLoss: order = [.warmth, .power, .depart]
+        case .freezePowerLoss: order = [.warmth, .power, .gather, .depart]
         case .heatGridStrain: order = [.shade, .moveToShade, .depart, .power]
         case .waterOutage: order = [.water]
         }
@@ -116,9 +118,14 @@ public enum HazardChoices {
         case "reduceSolarGain":
             c.purpose = .shade; c.roomID = command.target
         case "moveTo":
-            // Offered by the host only for heat: a heat-sensitive person into an already shaded room.
-            guard receipt.experience?.hazard == .heatGridStrain else { return nil }
-            c.purpose = .moveToShade; c.personID = command.target; c.roomID = command.value
+            // Offered by the host only for heat (a heat-sensitive person into an already shaded room) and, from
+            // mechanics v7, freeze (gathering in the room of the person hardest to move).
+            switch receipt.experience?.hazard {
+            case .heatGridStrain?: c.purpose = .moveToShade
+            case .freezePowerLoss? where HazardExperience.level(receipt.experience?.mechanicsVersion) >= 7: c.purpose = .gather
+            default: return nil
+            }
+            c.personID = command.target; c.roomID = command.value
         case "allocatePower":
             c.purpose = .power; c.equipmentID = command.target; c.backupID = command.value
         case "contact":

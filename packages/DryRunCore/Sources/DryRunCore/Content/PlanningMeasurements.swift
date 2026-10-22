@@ -72,11 +72,18 @@ extension SimulationEvent {
             return nil
         }
         if let household {
-            if values["device"] != nil, let id = subject("equipment", household.equipment.map(\.id)), let device = household.equipment.first(where: { $0.id == id }) {
-                values["device"] = device.localizedLabel(localizer)
+            // A device event without an equipment fact still names its device service (svc.device.<id>).
+            let changedDevice = serviceChanges.keys.sorted().compactMap { key -> String? in
+                guard key.hasPrefix("svc.device.") else { return nil }
+                let id = String(key.dropFirst("svc.device.".count))
+                return household.equipment.contains(where: { $0.id == id }) ? id : nil
+            }.first
+            if values["device"] != nil, let id = subject("equipment", household.equipment.map(\.id)) ?? changedDevice,
+               let device = household.equipment.first(where: { $0.id == id }) {
+                values["device"] = device.receiptName(localizer)
             }
             if values["backup"] != nil, let id = subject("backup", household.backupPower.map(\.id)), let backup = household.backupPower.first(where: { $0.id == id }) {
-                values["backup"] = backup.localizedLabel(localizer)
+                values["backup"] = backup.receiptName(localizer)
             }
             if values["person"] != nil, let id = subject("person", household.people.map(\.id)), let person = household.people.first(where: { $0.id == id }) {
                 values["person"] = person.localizedLabel(localizer)
@@ -93,5 +100,11 @@ extension SimulationEvent {
             values["reason"] = localizer.has(key, in: "en") ? localizer(key) : localizer("common.status.unknown")
         }
         return values
+    }
+
+    /// The event's title as the family reads it (receipt labels sent with a debrief, timeline rows): household
+    /// subjects resolved, device and backup names via `receiptName`, never a blank name.
+    public func receiptTitle(household: HouseholdProfile?, localizer: Localizer) -> String {
+        localizer(titleKey, localizedTemplateValues(household: household, localizer: localizer))
     }
 }

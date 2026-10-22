@@ -24,7 +24,7 @@ export function requireCompletedFireActions(commands:readonly {kind:string}[],ex
  * geometry, temperature, services and equipment continuity are not established.
  * This governs new proposals only; the Core reducer still replays old commits. */
 export function completedHomeDeparture(experience?:{mechanicsVersion:string;hazard:string;relocated:boolean}):boolean {
- return !!experience&&['dryrun.hazard-mechanics/4','dryrun.hazard-mechanics/5','dryrun.hazard-mechanics/6'].includes(experience.mechanicsVersion)&&['flashFlood','freezePowerLoss','heatGridStrain'].includes(experience.hazard)&&experience.relocated;
+ return !!experience&&['dryrun.hazard-mechanics/4','dryrun.hazard-mechanics/5','dryrun.hazard-mechanics/6','dryrun.hazard-mechanics/7'].includes(experience.mechanicsVersion)&&['flashFlood','freezePowerLoss','heatGridStrain'].includes(experience.hazard)&&experience.relocated;
 }
 export function requireDepartureDebrief(commands:readonly {kind:string}[],experience?:{mechanicsVersion:string;hazard:string;relocated:boolean}) {
  if(completedHomeDeparture(experience)&&(commands.length!==1||commands[0]?.kind!=='finish'))throw new Error(experience!.hazard==='flashFlood'?'departed_flood_requires_debrief':'departed_thermal_requires_debrief');
