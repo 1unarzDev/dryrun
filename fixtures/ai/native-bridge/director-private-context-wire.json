@@ -1,7 +1,7 @@
 {
   "context" : {
     "binding" : {
-      "contextDigest" : "1eea0399faa37e48",
+      "contextDigest" : "8c62bf2bab7e7c9d",
       "eventSequence" : 0,
       "homeRevision" : 1,
       "householdRevision" : 1,
@@ -14,14 +14,14 @@
         "home" : 1,
         "household" : 1,
         "inventory" : 0,
-        "stateFingerprint" : "ec53b1dc8a55a44b"
+        "stateFingerprint" : "478bef5c20b92382"
       },
       "scope" : {
         "householdID" : "hh-oak",
         "origin" : "example",
         "sessionID" : "family-scope-a"
       },
-      "snapshotID" : "ctx-603f464ea9cdea49"
+      "snapshotID" : "ctx-f40410b30f157c48"
     },
     "directorPolicy" : {
       "allowedStageTransitions" : [
@@ -125,7 +125,7 @@
       "identifiedGapIDs" : [
 
       ],
-      "mechanicsVersion" : "dryrun.hazard-mechanics/5",
+      "mechanicsVersion" : "dryrun.hazard-mechanics/6",
       "objective" : "Match each activity to an allowed accessible supply and conserve recorded stock.",
       "occupantRoomIDs" : {
         "p-oak-1" : "sp-bed1",
@@ -5832,7 +5832,7 @@
 
               ]
             },
-            "mechanicsVersion" : "dryrun.hazard-mechanics/5"
+            "mechanicsVersion" : "dryrun.hazard-mechanics/6"
           }
         },
         {
@@ -5913,14 +5913,14 @@
         "home" : 1,
         "household" : 1,
         "inventory" : 0,
-        "stateFingerprint" : "ec53b1dc8a55a44b"
+        "stateFingerprint" : "478bef5c20b92382"
       },
       "scope" : {
         "householdID" : "hh-oak",
         "origin" : "example",
         "sessionID" : "family-scope-a"
       },
-      "snapshotID" : "ctx-603f464ea9cdea49",
+      "snapshotID" : "ctx-f40410b30f157c48",
       "version" : "dryrun.private-context/1"
     },
     "profiles" : [
