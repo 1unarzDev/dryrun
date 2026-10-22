@@ -13,7 +13,7 @@ it('rejects a bespoke task attributed to an invented person and forbidden privat
  const repairs:string[]=[];
  const runner=new FeatureRunner({async turn(input){repairs.push(JSON.stringify(input.history.at(-1)));return {text:JSON.stringify({tasks:[{id:'task',actionID:'prep.bespoke',criterionID:'unscored',subjectID:'invented-person',why:'Specific supported improvement',bespoke:{title:'Task',fact:'Recorded fact',implication:'Practical implication',action:'Concrete action',completionCheck:'Observable completion'},evidenceIDs:['recorded'],completionPredicates:[],editor:'family',dependencyIDs:[],priority:2}],inventoryObservations:[],question:null}),steps:[],calls:[],usage:{}};}});
  // The bounded repair names the rejection; a repeated invented attribution ends as a typed unavailable failure.
- await expect(runner.run('preparation',context)).rejects.toThrow('codex_unavailable');
+ await expect(runner.run('preparation',context)).rejects.toThrow('provider_validation_failure');
  expect(repairs).toHaveLength(2);expect(repairs[1]).toContain('unsupported_bespoke_task');
 });
 it('keeps catalog routing and predicates host-owned while retaining model reasoning',async()=>{
