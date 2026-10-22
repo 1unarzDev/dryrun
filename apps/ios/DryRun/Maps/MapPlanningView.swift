@@ -113,11 +113,16 @@ struct MapPlanningView: View {
                     Label(t(initialPurpose.rawValue), systemImage: initialPurpose.mapSymbol)
                         .font(.headline).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).padding(.top, 8)
                 }
-                Text(t("privacy")).font(.caption).foregroundStyle(.secondary).padding(10)
+                // A safety qualifier: it must wrap, never truncate, even when the map below claims the height (PLAN-06,
+                // es at AX). Vertical fixedSize keeps its full height inside this VStack.
+                Text(t("privacy")).font(.caption).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(10)
                 HomeOriginStatusView(resolver: originResolver, key: originKey).padding(.horizontal).padding(.bottom, 6)
                 if hasPlanningContext {
                     HStack(alignment: .top) {
-                        Text(planningSummary).font(.caption)
+                        Text(planningSummary).font(.caption).fixedSize(horizontal: false, vertical: true)
                         Spacer()
                         Button(planningText("details")) { showingList = true }.font(.caption.weight(.semibold))
                     }.padding(.horizontal).padding(.bottom, 8)
@@ -144,7 +149,7 @@ struct MapPlanningView: View {
                         Text(model.localizer("map.routeSummary", ["mode": t(route.mode.rawValue), "distance": distance(route.distanceMeters), "duration": PlanningMeasurements.duration(seconds: route.expectedTravelTime, localizer: model.localizer)]))
                         Spacer(); Button(t("clear")) { routeRequest.cancel(clearPreview: true) }
                       }
-                      Text(t("routeNote")).foregroundStyle(.secondary)
+                      Text(t("routeNote")).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                     }.font(.caption).padding(10)
                 }
                 if let message { Text(message).font(.caption).padding(10) }

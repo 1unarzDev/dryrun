@@ -328,6 +328,47 @@ struct AdaptiveStack<Content: View>: View {
     }
 }
 
+/// Debug builds only: which provider served a Beacon result, from the gateway's allowlisted `servedBy`
+/// ("codex", "gemini", "groq") or "local" when this phone produced it. Any other value, and every release build,
+/// renders nothing. Copy: `beacon.servedBy.*` (en/es/vi).
+struct BeaconServedByLabel: View {
+    @Environment(AppModel.self) private var model
+    let servedBy: String?
+
+    static let providers: Set<String> = ["codex", "gemini", "groq", "local"]
+
+    var body: some View {
+        #if DEBUG
+        if let servedBy, Self.providers.contains(servedBy) {
+            Label(model.localizer("beacon.servedBy.\(servedBy)"), systemImage: servedBy == "local" ? "iphone" : "server.rack")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .accessibilityIdentifier("beacon.servedBy")
+        }
+        #endif
+    }
+}
+
+/// A form picker whose chosen value stays readable at accessibility text sizes. The inline menu row puts label and
+/// value on one line and truncates the value mid-word at AX sizes (PREP-08); there it becomes a navigation-link row,
+/// whose label and value wrap, and the choices open as a full-width list. Ordinary sizes keep the compact menu.
+/// Use only inside a navigation stack (every Form editor in the app is pushed or wrapped in one).
+struct ReadablePickerStyle: ViewModifier {
+    @Environment(\.dynamicTypeSize) private var size
+
+    func body(content: Content) -> some View {
+        if size.isAccessibilitySize {
+            content.pickerStyle(.navigationLink)
+        } else {
+            content.pickerStyle(.menu)
+        }
+    }
+}
+
+extension View {
+    func readablePickerStyle() -> some View { modifier(ReadablePickerStyle()) }
+}
+
 /// An in-card text action ("Show all", "Undo / reopen", "Correct"): semibold callout in the accent color, at least
 /// `Theme.minTap` tall and leading-aligned so it lines up with the card's text edge.
 struct InlineActionButtonStyle: ButtonStyle {
