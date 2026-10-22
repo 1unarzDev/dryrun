@@ -15,7 +15,8 @@ final class ShoppingListTests: XCTestCase {
         let water = try XCTUnwrap(items.first { $0.priceID == "water-gallon" })
         XCTAssertEqual(water.quantity, people * 3, "one gallon per person per day for three days (S26)")
         XCTAssertEqual(items.first { $0.priceID == "food-person-day" }?.quantity, people * 3)
-        XCTAssertEqual(items.first { $0.priceID == "flashlight" }?.quantity, people)
+        // One per person minus the flashlights Oak already recorded.
+        XCTAssertEqual(items.first { $0.priceID == "flashlight" }?.quantity, people - Double(oak.supplies.flashlights.confirmedValue ?? 0))
         // Oak's oxygen concentrator has no confirmed compatible backup: a station sized for 12 hours.
         let station = try XCTUnwrap(items.first { $0.priceID == "battery-station-wh" })
         XCTAssertEqual(station.values["equipment"], .equipment("eq-oxygen"))

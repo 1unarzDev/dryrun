@@ -89,14 +89,25 @@ public enum ShoppingList {
 
         // Life safety.
         let people = max(household.people.count, 1)
-        if household.supplies.fireExtinguisher.confirmedValue != true {
+        // Something the household recorded owning is never suggested as a purchase; Prepare asks for its location
+        // or a maintenance check instead. Same availability rule as the Prepare checklist.
+        func owned(_ checklistID: String) -> Bool { BaselinePreparedness.recordedSupplyAvailability(checklistID, household: household) == true }
+        if !owned("extinguisher") {
             add("fire-extinguisher", .lifeSafety, quantity: 1, benefit: 60, reason: "extinguisher", sources: ["S53"])
         }
-        if !inventory.items.contains(where: { $0.preparationKind == .flashlight && $0.quantity.confirmedValue ?? 0 > 0 }) {
-            add("flashlight", .lifeSafety, quantity: Double(people), benefit: 40, reason: "flashlight")
-            add("batteries-aa", .lifeSafety, quantity: 1, benefit: 15, reason: "batteries")
+        // One flashlight per person, minus the ones already recorded (reviewed inventory identity first, then the
+        // household's count). Owned with no count recorded: nothing to buy; Prepare asks where they are.
+        let reviewedLights = inventory.items.filter { $0.preparationKind == .flashlight }
+        let recordedLights: Double? = reviewedLights.isEmpty
+            ? household.supplies.flashlights.confirmedValue.map(Double.init)
+            : reviewedLights.reduce(0) { $0 + ($1.usableQuantity.confirmedValue ?? $1.quantity.confirmedValue ?? 0) }
+        if !(owned("flashlight") && recordedLights == nil) {
+            add("flashlight", .lifeSafety, quantity: Double(people) - (recordedLights ?? 0), benefit: 40, reason: "flashlight")
+            if (recordedLights ?? 0) == 0 { add("batteries-aa", .lifeSafety, quantity: 1, benefit: 15, reason: "batteries") }
         }
-        add("weather-radio", .lifeSafety, quantity: 1, benefit: 35, reason: "radio")
+        if household.communications.batteryOrCrankRadio.confirmedValue != true {
+            add("weather-radio", .lifeSafety, quantity: 1, benefit: 35, reason: "radio")
+        }
         if let cold = household.people.first(where: { $0.needs.contains(.coldSensitive) || $0.ageBand == .infant || $0.ageBand == .olderAdult }) {
             add("emergency-blankets", .lifeSafety, quantity: Double(people), benefit: 20, reason: "blankets",
                 values: ["person": .person(cold.id)])
@@ -113,7 +124,7 @@ public enum ShoppingList {
             let days = (food.deficit ?? food.required).rounded(.up)
             add("food-person-day", .basics, quantity: days * Double(people), benefit: 45, reason: "food", sources: food.sourceIDs)
         }
-        if !inventory.items.contains(where: { $0.preparationKind == .firstAidKit && $0.quantity.confirmedValue ?? 0 > 0 }) {
+        if !owned("firstAid"), !inventory.items.contains(where: { $0.preparationKind == .firstAidKit && $0.quantity.confirmedValue ?? 0 > 0 }) {
             add("first-aid-kit", .basics, quantity: 1, benefit: 30, reason: "first-aid")
         }
         if household.communications.powerBankCharges.confirmedValue ?? 0 < 1 {
@@ -174,6 +185,27 @@ public enum ShoppingList {
         }
     }
 
+    /// Ownership a check-off establishes for items that have no inventory identity of their own (an extinguisher, a
+    /// radio). It records availability only: never a location, a functional check or family awareness, so Prepare moves
+    /// on to "find it" and "check it" rather than "buy it".
+    public static func recordOwnership(_ item: Item, in household: inout HouseholdProfile, at date: Date) {
+        func mark(_ checklistID: String) {
+            var record = household.preparedness ?? PreparednessRecord(items: [:])
+            // A newly bought item has no recorded location, check or awareness yet; earlier notes are kept.
+            record.items[checklistID] = PreparationFact(available: .confirmed(true, verifiedAt: date), notes: record.items[checklistID]?.notes ?? "")
+            household.preparedness = record
+        }
+        switch item.priceID {
+        case "fire-extinguisher":
+            household.supplies.fireExtinguisher = .confirmed(true, verifiedAt: date)
+            mark("extinguisher")
+        case "weather-radio":
+            household.communications.batteryOrCrankRadio = .confirmed(true, verifiedAt: date)
+            mark("radio")
+        default: break
+        }
+    }
+
     static let categories: [String: String] = [
         "flashlight": "light", "batteries-aa": "light", "first-aid-kit": "firstAid", "weather-radio": "communication",
         "power-bank": "power", "battery-station-wh": "power", "medication-cooler": "medication", "pet-food-week": "petSupplies",
@@ -182,5 +214,19 @@ public enum ShoppingList {
 
     public static func total(_ items: [Item]) -> (low: Double, high: Double) {
         (items.reduce(0) { $0 + $1.low }, items.reduce(0) { $0 + $1.high })
+    }
+}
+
+public extension IntegratedAIState {
+    /// Checking a shopping item off: its confirmed inventory and any ownership fact it establishes are saved in one
+    /// revision-checked transaction, so the list, Prepare and the score all read the same record.
+    mutating func recordPurchase(_ item: ShoppingList.Item, household: inout HouseholdProfile, baseHouseholdRevision: Int, at date: Date,
+                                 persist: (HouseholdProfile, IntegratedAIState) throws -> Void) throws {
+        guard household.revision == baseHouseholdRevision else { throw SessionError.stale }
+        var h = household
+        ShoppingList.recordOwnership(item, in: &h, at: date)
+        try confirmInventory([ShoppingList.purchase(item, household: h, at: date)], household: &h, baseHouseholdRevision: baseHouseholdRevision,
+                             baseInventoryRevision: inventory.revision, at: date, persist: persist)
+        household = h
     }
 }
