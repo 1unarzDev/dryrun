@@ -66,11 +66,16 @@ public enum ScanCorrections {
     public static func setNotUsable(_ id: String, _ notUsable: Bool, in home: inout HomeModel) throws {
         guard let index = home.portals.firstIndex(where: { $0.id == id }) else { throw CorrectionError.missingOpening }
         if notUsable { home.portals[index].operable = .confirmed(false); return }
+        // The earlier editor's one-way "Mark as not usable" stored a rejected connection. Turning Not usable off
+        // reopens it for review; it never becomes a verified connection without the household saying so.
+        if home.portals[index].verification == .rejected { home.portals[index].verification = .proposed }
         let scanned = home.scanSnapshot?.portals.first { $0.id == id }?.operable
         home.portals[index].operable = scanned.flatMap { $0.confirmedValue == false ? nil : $0 } ?? (home.portals[index].kind == .opening ? .confirmed(true) : .unknown)
     }
 
-    public static func isNotUsable(_ portal: Portal) -> Bool { portal.operable.confirmedValue == false }
+    public static func isNotUsable(_ portal: Portal) -> Bool {
+        portal.operable.confirmedValue == false || portal.verification == .rejected
+    }
 
     /// "Restore what the scan saw" for one opening (also brings back one marked "Not an opening").
     public static func restore(_ id: String, in home: inout HomeModel) throws {

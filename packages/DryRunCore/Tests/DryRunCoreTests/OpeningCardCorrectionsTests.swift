@@ -91,6 +91,17 @@ final class OpeningCardCorrectionsTests: XCTestCase {
         XCTAssertThrowsError(try ScanCorrections.restore("pt-front", in: &home), "no scan means nothing to restore")
     }
 
+    func testLegacyRejectedOpeningShowsNotUsableAndReopensOnlyForReview() throws {
+        var home = scanned
+        let index = try XCTUnwrap(home.portals.firstIndex { $0.id == "pt-front" })
+        home.portals[index].verification = .rejected
+        XCTAssertTrue(ScanCorrections.isNotUsable(home.portals[index]))
+        try ScanCorrections.setNotUsable("pt-front", false, in: &home)
+        XCTAssertFalse(ScanCorrections.isNotUsable(home.portal("pt-front")!))
+        XCTAssertEqual(home.portal("pt-front")?.verification, .proposed, "reopened for review, never silently verified")
+        XCTAssertFalse(EgressPlanner().plan(request(), in: home).primary?.portalSequence.contains("pt-front") ?? false)
+    }
+
     func testRevertWholeHomeAfterManyEditsMatchesTheScanAndItsRoutes() throws {
         let original = scanned
         var home = original
@@ -104,6 +115,28 @@ final class OpeningCardCorrectionsTests: XCTestCase {
         for room in original.spaces.map(\.id) {
             XCTAssertEqual(EgressPlanner().plan(request(room), in: home).primary, EgressPlanner().plan(request(room), in: original).primary)
         }
+    }
+
+    func testSaveKeepsTheOriginalScanSnapshotImmutable() throws {
+        var current = scanned
+        current.sourceCaptureFrameID = "capture-1"
+        var draft = current
+        try ScanCorrections.setType("pt-front", to: .window, in: &draft)
+        draft.scanSnapshot = ScanSnapshot(draft) // a draft must not be able to rewrite what the scan saw
+        let saved = try XCTUnwrap(HomeEditTransaction.prepare(draft, baseRevision: current.revision, current: current, homeID: current.id))
+        XCTAssertEqual(saved.scanSnapshot, current.scanSnapshot)
+        XCTAssertEqual(saved.portal("pt-front")?.kind, .window, "the edit itself is saved")
+        XCTAssertNil(HomeEditTransaction.prepare(draft, baseRevision: current.revision - 1, current: current, homeID: current.id), "stale base")
+
+        var rescan = draft
+        rescan.sourceCaptureFrameID = "capture-2"
+        rescan.scanSnapshot = ScanSnapshot(rescan)
+        XCTAssertEqual(HomeEditTransaction.prepare(rescan, baseRevision: current.revision, current: current, homeID: current.id)?.scanSnapshot,
+                       rescan.scanSnapshot, "a new capture brings its own snapshot")
+        var manual = ManualLayout.emptyHome(id: current.id)
+        manual.revision = current.revision
+        XCTAssertNil(HomeEditTransaction.prepare(manual, baseRevision: current.revision, current: current, homeID: current.id)?.scanSnapshot,
+                     "a replacement hand-built home has no scan")
     }
 
     func testCommittedRoutesFollowTheSavedHomeAndReportMissingStarts() throws {
