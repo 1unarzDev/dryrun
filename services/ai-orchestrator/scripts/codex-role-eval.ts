@@ -24,6 +24,9 @@ import {minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import {Host} from './host.js';
 import {executeDirectorTool} from './director-tools.js';
 import {GeminiPrimaryFallback,type ProviderAttemptEvent} from '../src/provider-fallback.js';
+import {CodexFailure} from '../src/codex-errors.js';
+import {quotaLimitsFromEnv} from '../src/owner-window-quota.js';
+import type {AgentProvider} from '../src/provider.js';
 
 const receiptPath=process.env.DRYRUN_SAFE_RECEIPT;if(!receiptPath)throw new Error('safe_receipt_path_required');
 const [debriefDir,resourcesRequest,hazardList]=process.argv.slice(2);
@@ -31,13 +34,21 @@ const service=parseEnv(await readFile(serviceEnvFile(),'utf8'));
 const env={...service,...process.env,DRYRUN_PROVIDER:'codex',DRYRUN_CODEX_CAPABILITIES_FILE:process.env.DRYRUN_CODEX_CAPABILITIES_FILE??new URL('../profiles/codex-local-synthetic.json',import.meta.url).pathname,DRYRUN_MAX_USD:process.env.DRYRUN_MAX_USD??'1'};
 process.env.DRYRUN_MAX_USD=env.DRYRUN_MAX_USD;
 const notes:string[]=[];
-const {provider,codex,groqClients}=await configuredProviders(env,line=>notes.push(line.split(':')[0]!));
+const configured=await configuredProviders(env,line=>notes.push(line.split(':')[0]!));const {codex,groqClients}=configured;
+/** Forced-fallback modes (labelled in the receipt as simulated): codex_deadline_after_tool makes the real Codex
+ * session's first turn after it issued a tool call fail as a deadline; +gemini_unavailable also makes Gemini fail
+ * as overloaded so Groq serves. Everything else is the production chain. */
+const force=process.env.DRYRUN_EVAL_FORCE??'';if(force&&!['codex_deadline_after_tool','codex_deadline_after_tool+gemini_unavailable'].includes(force))throw new Error('unknown_force_mode');
+function forcedCodex(inner:AgentProvider):AgentProvider{return {providerID:'codex',async turn(){throw new Error('unscoped');},scope(options){const scoped=inner.scope?inner.scope(options):inner;return {providerID:'codex',disposeOperation:history=>scoped.disposeOperation?.(history),async turn(input){if(input.history.some(step=>step.type==='function_call'))throw new CodexFailure('deadline');return scoped.turn(input);}};}};}
+const forcedGemini:AgentProvider={providerID:'gemini',async turn(){throw new Error('provider_overloaded');}};
+const provider=force&&codex?new GeminiPrimaryFallback(force.includes('gemini_unavailable')?forcedGemini:configured.gemini,groqClients?.client,45000,{provider:forcedCodex(codex),images:false,research:false,turnMs:45000,fallbackReserveMs:25000}):configured.provider;
 // Per-hop provider metadata (allowlisted machine fields) for the protected bundle and the receipt.
 const hops:ProviderAttemptEvent[]=[];if(provider instanceof GeminiPrimaryFallback)provider.observe=event=>{hops.push(event);console.log(JSON.stringify({event:'provider_attempt',...event}));};
 const hopSummary=(from:number)=>hops.slice(from).map(h=>[h.provider,h.result,h.kind,h.status,h.diagnostic].filter(v=>v!==undefined).map(v=>typeof v==='number'?String(v):code(v)).join(':'));
 // Optional resources locale override for paired en/es checks (DRYRUN_RESOURCES_LOCALES=en,es).
 const resourceLocales=(process.env.DRYRUN_RESOURCES_LOCALES??'').split(',').filter(l=>['en','es','vi'].includes(l));
-const features=new FeatureRunner(provider,40,await PublicEvidenceTools.bundled('../..'));const gateway=new Gateway(provider);
+const limits=quotaLimitsFromEnv();
+const features=new FeatureRunner(provider,limits.featureTurns,await PublicEvidenceTools.bundled('../..'));const gateway=new Gateway(provider,undefined,limits.directorTurns,limits.directorStarts);
 const secret=randomBytes(32).toString('base64url');
 const server=createServer(createAIRequestHandler({gateway,features,interpreter:new IntentInterpreter(provider),authorize:header=>fixtureAuthorize(header,secret,false)}));
 server.listen(0,'127.0.0.1');await once(server,'listening');const address=server.address();if(!address||typeof address==='string')throw new Error('listen_failed');
@@ -53,8 +64,9 @@ try{
   const request=JSON.parse(await readFile(`${debriefDir}/debrief-${family}.json`,'utf8'));request.requestID=randomUUID();featureContext.parse(request.context);
   const runID=randomUUID(),start=Date.now(),usageStart=features.usage.length,hopStart=hops.length;
   console.log(JSON.stringify({event:'exact_execution_input',runID,role:'debrief',family,request}));
+  const rehearsalReceipt=!!request.context?.debrief?.rehearsal;
   try{const r=await post('v1/features',request);console.log(JSON.stringify({event:'protected_feature_response',runID,response:r}));
-   record({runID,role:'debrief',family,input:`${debriefDir}/debrief-${family}.json`,httpStatus:r.status,status:code(r.body?.status),reason:code(r.body?.reason),provider:code(r.body?.provider),diagnostic:code(r.body?.diagnostic),servedBy:servedBy(features.usage.slice(usageStart)),hops:hopSummary(hopStart),elapsedMS:Date.now()-start});}
+   record({runID,role:'debrief',family,input:`${debriefDir}/debrief-${family}.json`,rehearsalReceipt,httpStatus:r.status,status:code(r.body?.status),reason:code(r.body?.reason),provider:code(r.body?.provider),diagnostic:code(r.body?.diagnostic),responseServedBy:code(r.body?.servedBy),servedBy:servedBy(features.usage.slice(usageStart)),hops:hopSummary(hopStart),elapsedMS:Date.now()-start});}
   catch{record({runID,role:'debrief',family,status:'transport_or_deadline',servedBy:servedBy(features.usage.slice(usageStart)),elapsedMS:Date.now()-start});}
  }
  if(resourcesRequest){
@@ -63,7 +75,7 @@ try{
   const runID=randomUUID(),start=Date.now(),usageStart=features.usage.length,hopStart=hops.length;
   console.log(JSON.stringify({event:'exact_execution_input',runID,role:'resources',request}));
   try{const r=await post('v1/features',request);console.log(JSON.stringify({event:'protected_feature_response',runID,response:r}));
-   record({runID,role:'resources',locale:locale??code(request.context.locale)??'en',input:resourcesRequest,httpStatus:r.status,status:code(r.body?.status),reason:code(r.body?.reason),provider:code(r.body?.provider),diagnostic:code(r.body?.diagnostic),servedBy:servedBy(features.usage.slice(usageStart)),hops:hopSummary(hopStart),elapsedMS:Date.now()-start});}
+   record({runID,role:'resources',locale:locale??code(request.context.locale)??'en',input:resourcesRequest,httpStatus:r.status,status:code(r.body?.status),reason:code(r.body?.reason),provider:code(r.body?.provider),diagnostic:code(r.body?.diagnostic),responseServedBy:code(r.body?.servedBy),servedBy:servedBy(features.usage.slice(usageStart)),hops:hopSummary(hopStart),elapsedMS:Date.now()-start});}
   catch{record({runID,role:'resources',status:'transport_or_deadline',servedBy:servedBy(features.usage.slice(usageStart)),hops:hopSummary(hopStart),elapsedMS:Date.now()-start});}
   }
  }
@@ -72,7 +84,7 @@ try{
   const host=new Host();
   try{
    for(const hazard of hazards){
-    const runID=randomUUID(),start=Date.now(),usageStart=gateway.metrics.usage.length,outcomeStart=gateway.metrics.outcomes.length,validationStart=gateway.metrics.validationFailures.length,hopStart=hops.length;let toolRounds=0,status='not_started',reason:string|undefined,responseOutcome:string|undefined,responseProvider:string|undefined,committed=false,offered=0,hostAccepted=0,generation:number|undefined;
+    const runID=randomUUID(),start=Date.now(),usageStart=gateway.metrics.usage.length,outcomeStart=gateway.metrics.outcomes.length,validationStart=gateway.metrics.validationFailures.length,hopStart=hops.length;let toolRounds=0,status='not_started',reason:string|undefined,responseOutcome:string|undefined,responseProvider:string|undefined,responseServedBy:string|undefined,committed=false,offered=0,hostAccepted=0,generation:number|undefined;
     try{
      const state=await host.request({op:'initialize',scenarioID:hazard});
      const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
@@ -85,7 +97,7 @@ try{
       console.log(JSON.stringify({event:'host_tool_result',runID,tool:call.name,result:tool.result}));
       r=await post('v1/continue',{token:r.body.token,binding,callID:call.id,result:tool.result});console.log(JSON.stringify({event:'protected_director_response',runID,response:r}));
      }
-     status=code(r.body?.status)??'other';reason=code(r.body?.reason);responseOutcome=code(r.body?.outcome);responseProvider=code(r.body?.provider);generation=typeof r.body?.providerAttemptGeneration==='number'?r.body.providerAttemptGeneration:undefined;
+     status=code(r.body?.status)??'other';reason=code(r.body?.reason);responseOutcome=code(r.body?.outcome);responseProvider=code(r.body?.provider);responseServedBy=code(r.body?.servedBy);generation=typeof r.body?.providerAttemptGeneration==='number'?r.body.providerAttemptGeneration:undefined;
      if(r.body?.status==='completed'){
       // Deterministic Core authority: the host must accept the proposal and preview each offered action.
       try{const after=await host.request({op:'directorCommit',session:state.session,proposal:r.body.proposal,binding});committed=true;
@@ -93,7 +105,7 @@ try{
       }catch{committed=false;}
      }
     }catch{status=status==='not_started'?'harness_failure':status;}
-    record({runID,role:'director',hazard,status,reason,outcome:responseOutcome,provider:responseProvider,hops:hopSummary(hopStart),toolRounds,hostCommitAccepted:committed,suggestedActionsOffered:offered,suggestedActionsHostAccepted:hostAccepted,providerAttemptGeneration:generation,servedBy:servedBy(gateway.metrics.usage.slice(usageStart)),
+    record({runID,role:'director',hazard,status,reason,outcome:responseOutcome,provider:responseProvider,responseServedBy,hops:hopSummary(hopStart),toolRounds,hostCommitAccepted:committed,suggestedActionsOffered:offered,suggestedActionsHostAccepted:hostAccepted,providerAttemptGeneration:generation,servedBy:servedBy(gateway.metrics.usage.slice(usageStart)),
      // Gateway machine codes only; a schema failure keeps just its category before ':'.
      gatewayOutcomes:gateway.metrics.outcomes.slice(outcomeStart).map(code),validationFailures:gateway.metrics.validationFailures.slice(validationStart).map(v=>code(v.split(':')[0])),elapsedMS:Date.now()-start});
    }
@@ -101,6 +113,6 @@ try{
  }
 }finally{
  server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));
- await writeFile(receiptPath,JSON.stringify({receipt:'dryrun.codex-role-eval/2',promptVersions:{debrief:'debrief/'+featurePromptVersions.debrief,resources:'resources/'+featurePromptVersions.resources,director:directorPrompt.version},chain:[...(codex?['codex']:[]),'gemini',...(groqClients?['groq']:[])],configurationNotes:notes.map(code),codexModel:codex?.capabilities.model,codexRuntime:codex?.capabilities.runtimeVersion,attempts},null,1),{mode:0o600});
+ await writeFile(receiptPath,JSON.stringify({receipt:'dryrun.codex-role-eval/3',forcedFallback:force||undefined,promptVersions:{debrief:'debrief/'+featurePromptVersions.debrief,resources:'resources/'+featurePromptVersions.resources,director:directorPrompt.version},chain:[...(codex?['codex']:[]),'gemini',...(groqClients?['groq']:[])],configurationNotes:notes.map(code),codexModel:codex?.capabilities.model,codexRuntime:codex?.capabilities.runtimeVersion,attempts},null,1),{mode:0o600});
 }
 process.exit(attempts.every(a=>a.status==='completed'&&(a.role!=='director'||a.hostCommitAccepted===true))?0:1);
