@@ -44,6 +44,11 @@ struct SettingsView: View {
                     Text(t("deleteFooter"))
                 }
                 Section(t("about")) {
+                    // Who Beacon is, which providers serve it (Codex first, Gemini/Groq fallback, photos Gemini only),
+                    // what an example household sends, and what works offline.
+                    Text(t("aboutBeacon"))
+                        .font(.footnote)
+                        .accessibilityIdentifier("settings.aboutBeacon")
                     Text(t("prototype"))
                         .font(.footnote)
                 }

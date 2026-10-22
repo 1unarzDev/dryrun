@@ -199,7 +199,7 @@
   "experience.route.shared": "Shared bottleneck: {connections}",
   "experience.setup.startingRooms": "Where does everyone start?",
   "experience.setup.startingRooms.why": "Use recorded rooms or choose exercise starting rooms. This does not move people in your household record.",
-  "native.aboutBeacon": "Beacon is Dry Run's assistant. It runs on AI models from Google (Gemini), Anthropic (Claude), OpenAI or Groq, depending on how this build is set up; names, phone numbers and addresses are never sent.",
+  "native.aboutBeacon": "Beacon is Dry Run's assistant for example households. It uses OpenAI Codex first, then Google Gemini or Groq if Codex is unavailable; home photos go only to Google Gemini. Beacon gets the example family's full record, including names, needs, medicines, contacts and phone numbers, the home and its address. Without a connection, Dry Run plans, rehearses and scores on this phone. Your own household is not sent.",
   "native.sampleFamily": "Try a sample family",
   "native.sampleFamilyDetail": "Fictional families and homes to explore the app. They replace the example on this phone; your own household is never replaced from here.",
   "native.sampleFamilyPick": "Family",

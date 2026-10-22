@@ -199,7 +199,7 @@
   "experience.route.shared": "Điểm thắt chung: {connections}",
   "experience.setup.startingRooms": "Mỗi người bắt đầu ở đâu?",
   "experience.setup.startingRooms.why": "Dùng phòng đã ghi nhận hoặc chọn phòng bắt đầu cho bài tập. Việc này không thay đổi vị trí của mọi người trong hồ sơ gia đình.",
-  "native.aboutBeacon": "Beacon là trợ lý của Dry Run. Beacon chạy trên các mô hình AI của Google (Gemini), Anthropic (Claude), OpenAI hoặc Groq, tùy theo cách cài đặt bản này; tên, số điện thoại và địa chỉ không bao giờ được gửi đi.",
+  "native.aboutBeacon": "Beacon là trợ lý của Dry Run dành cho các gia đình mẫu. Beacon dùng OpenAI Codex trước; nếu Codex không khả dụng thì dùng Google Gemini hoặc Groq; ảnh ngôi nhà chỉ gửi đến Google Gemini. Beacon nhận toàn bộ hồ sơ của gia đình mẫu, gồm tên, nhu cầu, thuốc, người liên lạc và số điện thoại, ngôi nhà và địa chỉ. Khi không có mạng, Dry Run lập kế hoạch, diễn tập và chấm điểm trên điện thoại này. Thông tin của chính gia đình bạn không được gửi đi.",
   "native.sampleFamily": "Thử một gia đình mẫu",
   "native.sampleFamilyDetail": "Các gia đình và ngôi nhà hư cấu để khám phá ứng dụng. Chúng thay thế ví dụ trên điện thoại này; hộ gia đình thật của bạn không bao giờ bị thay thế từ đây.",
   "native.sampleFamilyPick": "Gia đình",
