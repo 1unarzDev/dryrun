@@ -1168,5 +1168,13 @@
   "site.lookup.elevationFilled": "Ground elevation was filled in from USGS. This result does not state a datum or an uncertainty, so enter both from the USGS source before saving.",
   "site.lookup.noElevation": "USGS has no elevation for this point.",
   "site.lookup.failed": "The lookup did not work. Check your connection, or enter the record by hand.",
-  "prep.ai.detail": "Example household only. Sends anonymized needs, equipment, recorded supplies and home layout IDs (no names, phone numbers or address) to Google Gemini through the Dry Run test server. Gemini can reorder items within the same priority and explain them for this household. The app checks each one against your list; priority, the score and what is done never change."
+  "prep.ai.detail": "Example household only. Sends anonymized needs, equipment, recorded supplies and home layout IDs (no names, phone numbers or address) to Google Gemini through the Dry Run test server. Gemini can reorder items within the same priority and explain them for this household. The app checks each one against your list; priority, the score and what is done never change.",
+  "ui.familyPanel.stepFree": "Needs a step-free way out",
+  "ui.familyPanel.power": "Depends on power for {device}",
+  "ui.familyPanel.cold": "{device} must stay cold",
+  "ui.familyPanel.none": "No mobility, hearing, vision or medical-equipment needs are recorded. Add them if anyone has them.",
+  "ui.familyPanel.editAll": "See or correct everyone",
+  "ui.familyPanel.correctHint": "Opens these details so you can correct them.",
+  "ui.next.about": "About this list",
+  "rings.about": "About this score"
 }

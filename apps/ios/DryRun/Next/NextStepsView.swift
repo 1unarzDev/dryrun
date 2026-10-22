@@ -7,6 +7,9 @@ import DryRunCore
 struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
+    @State private var showAllQuestions = false
+    @State private var showAllRecorded = false
+    @State private var showAbout = false
     @State private var finishSheet: FinishSheet?
     @State private var briefing: FamilyBriefingService.Briefing?
     @State private var writingBriefing = false
@@ -32,6 +35,8 @@ struct NextStepsView: View {
                 header
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
+                    // Progress first, then the next three actions (Beacon demo goal milestone 6).
+                    ProgressRingsCard()
                     toDo(summary)
                     if model.preparationAIAvailable { PreparationAICard() }
                 } else {
@@ -46,6 +51,7 @@ struct NextStepsView: View {
                 quickActions
                 finishCard
                 if let summary = model.nextSteps, model.nextStepResults != nil {
+                    FamilySummaryCard()
                     familyBriefing
                     SectionCard(title: l("family.supplies"), systemImage: "shippingbox") {
                         NavigationLink { SupplyInventoryView() } label: {
@@ -60,7 +66,6 @@ struct NextStepsView: View {
                     recorded(summary)
                     done(summary)
                 }
-                Text(l("ui.next.footer")).font(.footnote).foregroundStyle(.secondary)
             }
             .padding()
         }
@@ -131,16 +136,8 @@ struct NextStepsView: View {
             SectionCard {
                 DisclosureGroup(isExpanded: $showBriefing) {
                     VStack(alignment: .leading, spacing: Theme.Space.m) {
-                    if let household = model.household {
-                        LabeledContent(l("ui.setup.homeType"), value: DisplayNames.name(household.housing.homeType.rawValue, localizer: l))
-                        ForEach(household.people.filter { !$0.needs.isEmpty }) { person in
-                            LabeledContent(person.localizedLabel(l), value: person.needs.map { DisplayNames.name($0.rawValue, localizer: l) }.joined(separator: ", "))
-                        }
-                        ForEach(household.equipment.filter { $0.isEssential }) { equipment in
-                            Label(DisplayNames.equipment(equipment, localizer: l), systemImage: equipment.requiresColdStorage ? "snowflake" : "bolt.heart")
-                                .font(.callout)
-                        }
-                    }
+                    // The people/equipment roster that used to open this card now lives in FamilySummaryCard,
+                    // with implications and a correction route; this card keeps only the written briefing.
                     if writingBriefing {
                         HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
                     }
@@ -173,7 +170,8 @@ struct NextStepsView: View {
                     }
                     }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, Theme.Space.s)
                 } label: {
-                    Label(l("ui.brief.title"), systemImage: "person.2.fill").font(.headline)
+                    // person.2.fill belongs to the family panel; one symbol per meaning (visual rule 6).
+                    Label(l("ui.brief.title"), systemImage: "text.quote").font(.headline)
                 }
                 .accessibilityIdentifier("next.briefing.expand")
             }
@@ -236,7 +234,22 @@ struct NextStepsView: View {
                 Text(h.displayName).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary)
             }
             if model.household?.isFictional == true { StatusPill(text: l("family.example"), systemImage: "house", tint: Theme.caution) }
-            Text(l("ui.next.headline")).font(.title2.weight(.bold))
+            HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
+                Text(l("ui.next.headline")).font(.title2.weight(.bold))
+                Spacer(minLength: 0)
+                // How the list is built and what it cannot predict, behind ⓘ so the actions lead.
+                InfoButton(label: l("ui.next.about"), isExpanded: $showAbout)
+                    .accessibilityIdentifier("next.info")
+            }
+            if showAbout {
+                VStack(alignment: .leading, spacing: Theme.Space.xs) {
+                    Text(l("ui.next.subhead"))
+                    Text(l("ui.next.footer"))
+                }
+                .font(.callout).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("next.about")
+            }
         }
     }
 
@@ -265,7 +278,7 @@ struct NextStepsView: View {
         let l = model.localizer
         let personalization = model.preparationPersonalization
         let ordered = personalization.map { PreparationFeatureBridge.order(summary.toDo, by: $0) } ?? summary.toDo
-        let shown = showAll ? ordered : Array(ordered.prefix(3))
+        let shown = showAll ? ordered : Array(ordered.prefix(Theme.previewCount))
         SectionCard(title: l("ui.next.doNext") + " (\(summary.toDo.count))", systemImage: "list.bullet.clipboard") {
             if summary.toDo.isEmpty {
                 Text(l("ui.next.nothingLeft")).foregroundStyle(.secondary)
@@ -277,12 +290,8 @@ struct NextStepsView: View {
                     .accessibilityIdentifier("next.step.\(step.id)")
                 if step.id != shown.last?.id { Divider() }
             }
-            if summary.toDo.count > 3 {
-                Button(showAll ? l("ui.showFewer") : l("common.showAll", ["count": "\(summary.toDo.count)"])) { showAll.toggle() }
-                    .font(.callout.weight(.semibold))
-                    .frame(minHeight: Theme.minTap)
-                    .accessibilityIdentifier("next.showAll")
-            }
+            ShowAllButton(total: summary.toDo.count, showAll: $showAll)
+                .accessibilityIdentifier("next.showAll")
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("next.actions")
@@ -294,12 +303,16 @@ struct NextStepsView: View {
         if !summary.unknownFacts.isEmpty {
             SectionCard(title: l("ui.next.questions"), systemImage: "questionmark.circle", tint: Theme.caution) {
                 Text(l("ui.next.questionsWhy")).font(.footnote).foregroundStyle(.secondary)
-                ForEach(summary.unknownFacts.prefix(6), id: \.self) { id in
+                ForEach(showAllQuestions ? summary.unknownFacts : Array(summary.unknownFacts.prefix(Theme.previewCount)), id: \.self) { id in
                     IconRow(systemImage: "questionmark", tint: Theme.caution,
                             title: UnknownNames.describe(id, household: model.household, localizer: l))
                 }
+                ShowAllButton(total: summary.unknownFacts.count, showAll: $showAllQuestions)
+                    .accessibilityIdentifier("next.questions.showAll")
                 Text(l("ui.next.answerViaTasks")).font(.footnote).foregroundStyle(.secondary)
             }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("next.questions")
         }
     }
 
@@ -308,12 +321,16 @@ struct NextStepsView: View {
         if !summary.recorded.isEmpty {
             SectionCard(title: model.localizer("family.recordedPreparations"), systemImage: "checkmark.circle", tint: Theme.success) {
                 Text(model.localizer("family.recordedExplanation")).font(.footnote).foregroundStyle(.secondary)
-                ForEach(summary.recorded) { step in
+                ForEach(showAllRecorded ? summary.recorded : Array(summary.recorded.prefix(Theme.previewCount))) { step in
                     NavigationLink { PreparationTaskEditor(step: step, reviewingRecordedFacts: true) } label: {
                         Label(model.localizer(step.recommendation.titleKey, step.recommendation.localizedTemplateValues(household: model.household, localizer: model.localizer)), systemImage: "checkmark")
+                            .frame(maxWidth: .infinity, minHeight: Theme.minTap, alignment: .leading)
+                            .contentShape(Rectangle())
                     }
                     .accessibilityIdentifier("next.recorded.\(step.id)")
                 }
+                ShowAllButton(total: summary.recorded.count, showAll: $showAllRecorded)
+                    .accessibilityIdentifier("next.recorded.showAll")
             }
             // .contain keeps each row's own identifier and label; a bare container identifier would replace them.
             .accessibilityElement(children: .contain)
@@ -331,6 +348,7 @@ struct NextStepsView: View {
                             title: l(step.recommendation.titleKey, step.recommendation.localizedTemplateValues(household: model.household, localizer: l)),
                             subtitle: step.completedAt.map { l("ui.next.doneOn", ["date": $0.formatted(date: .abbreviated, time: .omitted)]) })
                     Button(l("family.reopen")) { Task { await model.reopenPreparation(step.id) } }
+                        .buttonStyle(.inline)
                         .accessibilityIdentifier("next.reopen.\(step.id)")
                 }
             }

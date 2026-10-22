@@ -31,10 +31,7 @@ struct RehearseTabView: View {
                 }
                 NavigationLink(value: "practice:check") {
                     HStack(spacing: Theme.Space.m) {
-                        Image(systemName: "checklist.checked").font(.title2).foregroundStyle(Theme.accent)
-                            .frame(width: 52, height: 52)
-                            .background(Theme.accent.opacity(0.14), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            .accessibilityHidden(true)
+                        SymbolTile(systemImage: "checklist.checked")
                         VStack(alignment: .leading, spacing: 2) {
                             Text(l("practice.title")).font(.body.weight(.semibold))
                             Text(l("practice.cardDetail")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
@@ -42,8 +39,7 @@ struct RehearseTabView: View {
                         Spacer(minLength: 0)
                         Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
                     }
-                    .padding(Theme.Space.m)
-                    .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+                    .cardSurface(padding: Theme.Space.m)
                     .contentShape(Rectangle())
                     .accessibilityElement(children: .combine)
                 }
@@ -77,12 +73,7 @@ struct ScenarioCard: View {
         let l = model.localizer
         let tint = RehearseTabView.tints[id] ?? Theme.accent
         HStack(spacing: Theme.Space.m) {
-            Image(systemName: RehearseTabView.symbols[id] ?? "exclamationmark.triangle")
-                .font(.title2)
-                .foregroundStyle(tint)
-                .frame(width: 52, height: 52)
-                .background(tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .accessibilityHidden(true)
+            SymbolTile(systemImage: RehearseTabView.symbols[id] ?? "exclamationmark.triangle", tint: tint)
             VStack(alignment: .leading, spacing: 2) {
                 Text(l("common.scenario.\(id)")).font(.body.weight(.semibold))
                 Text(l(RehearsalExperienceDesign.design(scenarioID: id)?.objectiveKey ?? "ui.scenario.\(id).blurb")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.leading)
@@ -90,8 +81,7 @@ struct ScenarioCard: View {
             Spacer(minLength: 0)
             Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
         }
-        .padding(Theme.Space.m)
-        .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+        .cardSurface(padding: Theme.Space.m)
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }
@@ -630,7 +620,7 @@ struct PracticeBanner: View {
         Label(text, systemImage: "figure.walk.motion")
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(Theme.accent)
-            .padding(.horizontal, 12).padding(.vertical, 6)
+            .padding(.horizontal, Theme.Space.m).padding(.vertical, Theme.Space.xs + 2)
             .background(Theme.accent.opacity(0.12), in: Capsule())
             .accessibilityAddTraits(.isHeader)
     }
