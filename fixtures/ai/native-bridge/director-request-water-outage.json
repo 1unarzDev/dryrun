@@ -1,7 +1,7 @@
 {
   "context" : {
     "binding" : {
-      "contextDigest" : "6f5137b2100d04e8",
+      "contextDigest" : "ca45d622c8e44c59",
       "eventSequence" : 3,
       "homeRevision" : 1,
       "householdRevision" : 1,
@@ -92,7 +92,7 @@
       "identifiedGapIDs" : [
 
       ],
-      "mechanicsVersion" : "dryrun.hazard-mechanics/5",
+      "mechanicsVersion" : "dryrun.hazard-mechanics/6",
       "objective" : "Match each activity to an allowed accessible supply and conserve recorded stock.",
       "occupantRoomIDs" : {
         "p-oak-1" : "sp-bed1",
