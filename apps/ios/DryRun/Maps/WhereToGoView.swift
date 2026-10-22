@@ -17,6 +17,7 @@ struct WhereToGoView: View {
     @State private var routeFailed = false
     @State private var camera: MapCameraPosition = .automatic
     @State private var activeDirections: MKDirections?
+    @State private var resolver = HomeOriginResolver()
     let context: MapPlanningContext
 
     init(context: MapPlanningContext = MapPlanningContext()) { self.context = context }
@@ -37,10 +38,12 @@ struct WhereToGoView: View {
     }
     private var routeKey: RouteKey { RouteKey(scope: planningScope, destination: selected, walking: walking, context: context) }
 
+    private var originKey: HomeOriginResolver.Key? { HomeOriginResolver.key(model.household, sessionID: model.scopeSessionID) }
+    /// Saved pin, or the saved address placed by Apple when its candidates agree (this session only).
     private var origin: CLLocationCoordinate2D? {
-        guard let location = model.household?.privateLocation, let lat = location.latitude, let lon = location.longitude else { return nil }
-        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        resolver.coordinate(for: originKey).map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
     }
+    private var originCoordinate: GeographicCoordinate? { resolver.coordinate(for: originKey) }
 
     var body: some View {
         let l = model.localizer
@@ -55,9 +58,10 @@ struct WhereToGoView: View {
                 }
                 if let address = model.household?.privateLocation?.addressLine, origin != nil {
                     Label(l("places.from", ["place": address]), systemImage: "house").font(.footnote)
-                } else {
+                } else if HomeOriginPolicy.geocodingQuery(model.household?.privateLocation) == nil {
                     Text(l("places.noOrigin")).font(.footnote).foregroundStyle(.secondary)
                 }
+                HomeOriginStatusView(resolver: resolver, key: originKey)
             }
             Section {
                 map.frame(height: 300).listRowInsets(EdgeInsets())
@@ -112,7 +116,8 @@ struct WhereToGoView: View {
             await load()
         }
         .task(id: routeKey) { await computeRoute() }
-        .onDisappear { activeDirections?.cancel(); activeDirections = nil }
+        .task(id: originKey) { await resolver.resolve(originKey) }
+        .onDisappear { activeDirections?.cancel(); activeDirections = nil; resolver.cancel() }
     }
 
     private var map: some View {
@@ -134,7 +139,8 @@ struct WhereToGoView: View {
 
     private func row(_ place: PublicPlace) -> some View {
         let l = model.localizer
-        let powered = model.household?.equipment.contains { $0.isEssential && $0.requiresElectricalPower } == true
+        let relevance = model.household.map { ResourceRelevancePolicy.forPublicPlace(place, household: $0, origin: originCoordinate) }
+        let powered = relevance?.prepareNow.contains(.confirmMedicalPower) == true
         return Button { selected = place.id } label: {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -144,14 +150,20 @@ struct WhereToGoView: View {
                 }
                 Text(l("places.kind.\(place.kind.rawValue)")).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                 Text(place.address).font(.footnote).foregroundStyle(.secondary)
+                // The seasonal role as the curated source words it: never presented as open now.
+                if let role = place.role { Text(role).font(.caption).foregroundStyle(.secondary) }
                 if place.stated.isEmpty {
                     Text(l("places.noAccessInfo")).font(.caption).foregroundStyle(.secondary)
                 } else {
                     ForEach(place.stated, id: \.fact) { fact in
-                        Label(l("places.stated.\(fact.fact).\(fact.value)"), systemImage: fact.value ? "figure.roll" : "exclamationmark.triangle")
+                        // FEMA wording names FEMA; a curated page's statement is attributed to that source.
+                        Label(place.kind == .openShelter ? l("places.stated.\(fact.fact).\(fact.value)")
+                                : MapPlanningCopy.text("stated.\(fact.fact).\(fact.value)", locale: model.locale),
+                              systemImage: fact.value ? "figure.roll" : "exclamationmark.triangle")
                             .font(.caption)
                     }
                 }
+                if let relevance { ResourceRelevanceView(relevance: relevance, omitted: [.confirmMedicalPower]) }
                 if let pets = place.petsAsPublished { Text(l("places.pets", ["text": pets])).font(.caption) }
                 if powered {
                     Label(l("places.callPower"), systemImage: "bolt.heart").font(.caption.weight(.semibold)).foregroundStyle(Theme.caution)
@@ -191,10 +203,10 @@ struct WhereToGoView: View {
         let all = shelters + curated
         if let origin {
             let nearby = PublicPlaces.near(all, latitude: origin.latitude, longitude: origin.longitude, kilometers: 80)
-            places = nearby
+            places = ResourceRelevancePolicy.order(nearby, context: context)
             if case .loading = femaState { femaState = .loaded(nearby.filter { $0.kind == .openShelter }.count) }
         } else {
-            places = all.filter { $0.kind != .openShelter } + all.filter { $0.kind == .openShelter }.prefix(20)
+            places = ResourceRelevancePolicy.order(all.filter { $0.kind != .openShelter } + all.filter { $0.kind == .openShelter }.prefix(20), context: context)
             if case .loading = femaState { femaState = .loaded(shelters.count) }
         }
         if selected == nil { selected = places.first { $0.latitude != nil }?.id }

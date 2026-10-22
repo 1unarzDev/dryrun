@@ -38,6 +38,7 @@ struct MapPlanningView: View {
     @State private var message: String?
     @State private var radius = 5000.0
     @State private var location = OptionalLocationService()
+    @State private var originResolver = HomeOriginResolver()
 
     init(content: ContentLibrary, client: PublicAPIClient, regionID: String,
          purpose: SavedPlacePurpose? = nil, dismissAfterSave: Bool = false, embedInNavigation: Bool = true,
@@ -68,10 +69,9 @@ struct MapPlanningView: View {
     private var discoveryScope: DiscoveryScope {
         .init(household: planningScope, queries: MapDiscoveryNeeds.queries(for: model.household))
     }
-    private var homeCoordinate: GeographicCoordinate? {
-        guard let p = model.household?.privateLocation, let lat = p.latitude, let lon = p.longitude else { return nil }
-        return GeographicCoordinate(latitude: lat, longitude: lon)
-    }
+    private var originKey: HomeOriginResolver.Key? { HomeOriginResolver.key(model.household, sessionID: model.scopeSessionID) }
+    /// Saved pin, or the saved address placed by Apple for this session when its candidates agree.
+    private var homeCoordinate: GeographicCoordinate? { originResolver.coordinate(for: originKey) }
     private var hint: MapRegionHint? { (cameraCenter ?? homeCoordinate).map { MapRegionHint(center: $0, spanLatitude: radius / 55000, spanLongitude: radius / 55000) } }
     private func t(_ key: String) -> String { model.localizer("map.\(key)") }
     private func planningText(_ key: String) -> String { MapPlanningCopy.text(key, locale: model.locale) }
@@ -114,6 +114,7 @@ struct MapPlanningView: View {
                         .font(.headline).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal).padding(.top, 8)
                 }
                 Text(t("privacy")).font(.caption).foregroundStyle(.secondary).padding(10)
+                HomeOriginStatusView(resolver: originResolver, key: originKey).padding(.horizontal).padding(.bottom, 6)
                 if hasPlanningContext {
                     HStack(alignment: .top) {
                         Text(planningSummary).font(.caption)
@@ -194,7 +195,8 @@ struct MapPlanningView: View {
                 }
                 camera = .rect(rect.insetBy(dx: -rect.width * 0.15, dy: -rect.height * 0.15))
             }
-            .onDisappear { discovery.cancel(); taskPlanRefresh?.cancel(); taskSearch.cancel(); routeRequest.cancel() }
+            .task(id: originKey) { await originResolver.resolve(originKey) }
+            .onDisappear { discovery.cancel(); taskPlanRefresh?.cancel(); taskSearch.cancel(); routeRequest.cancel(); originResolver.cancel() }
             .onChange(of: model.cloudResourcesEnabled) { _, _ in
                 guard let homeCoordinate, !choosingMeetup else { return }
                 taskPlanRefresh?.cancel()
@@ -251,6 +253,7 @@ struct MapPlanningView: View {
         List {
             if hasPlanningContext { planningDetails }
             if let address = model.household?.privateLocation?.addressLine { Section(t("home")) { Text(address) } }
+            if !choosingMeetup { meetupsSection }
             Section(t("saved")) {
                 ForEach(places) { place in
                     Button { editedPlace = place } label: {
@@ -328,6 +331,51 @@ struct MapPlanningView: View {
                 } }
             }
             Section { Text(t("offline")).font(.footnote) }
+        }
+    }
+
+    /// Contextual meeting purposes reuse saved meetups and the out-of-area contact; no separate reconnection flow.
+    @ViewBuilder private var meetupsSection: some View {
+        if let household = model.household {
+            let needs = MeetingPlanPolicy.needs(context: planningContext, household: household, places: places)
+            Section {
+                ForEach(needs, id: \.purpose) { need in
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text(planningText("meet.\(need.purpose.rawValue)")).font(.subheadline.weight(.semibold))
+                            if need.isPrimary { Spacer(); Text(planningText("meet.primary")).font(.caption2).foregroundStyle(Theme.accent) }
+                        }
+                        switch need.status {
+                        case .place(let id):
+                            if let place = places.first(where: { $0.id == id }) {
+                                Button(place.label) { editedPlace = place }.font(.callout)
+                                if let instructions = place.findingInstructions { Text(instructions).font(.caption).foregroundStyle(.secondary) }
+                            }
+                        case .contact(let id):
+                            if let contact = household.contacts.first(where: { $0.id == id }) {
+                                if let url = contact.telephoneURL {
+                                    Link(destination: url) { Label("\(contact.alias) · \(contact.phone ?? "")", systemImage: "phone") }.font(.callout)
+                                } else { Text(contact.alias).font(.callout) }
+                            }
+                        case .missing:
+                            if let purpose = MeetingPlanPolicy.savedPurpose(need.purpose) {
+                                HStack {
+                                    Text(planningText("meet.missingPlace")).font(.caption).foregroundStyle(.secondary)
+                                    Spacer()
+                                    Button(planningText("meet.choose")) { newPlace(coordinate: nil, purpose: purpose) }.font(.caption.weight(.semibold))
+                                }
+                            } else { Text(planningText("meet.missingContact")).font(.caption).foregroundStyle(.secondary) }
+                        }
+                    }
+                    .accessibilityIdentifier("map.meetup.\(need.purpose.rawValue)")
+                }
+            } header: { Text(planningText("meetups")) } footer: {
+                switch planningContext.intent {
+                case .tornadoShelter: Text(planningText("meet.shelterFirst"))
+                case .freezeContinuity, .heatContinuity, .waterContinuity: Text(planningText("meet.stayHome"))
+                default: EmptyView()
+                }
+            }
         }
     }
 
@@ -447,6 +495,14 @@ struct MapPlanningView: View {
                 Text(model.localizer("map.notVerified", ["items": suggestion.unknowns.map(text).joined(separator: "; ")])).font(.caption)
             }
             ForEach(suggestion.requiredEvidence, id: \.self) { Label(text($0), systemImage: "phone.arrow.up.right").font(.caption) }
+            if let household = model.household {
+                let access = OrdinaryAccess.of(destination: suggestion.coordinate, origin: homeCoordinate, household: household)
+                if let meters = access.straightLineMeters {
+                    Text(planningText("access.distance").replacingOccurrences(of: "{distance}", with: distance(meters))).font(.caption)
+                }
+                if access.withinOrdinaryRange == false { Text(planningText("access.beyond")).font(.caption) }
+                else if !access.plannableModes.contains("driving") { Text(planningText("access.noCar")).font(.caption) }
+            }
             let boundary = "resource.boundary.\(suggestion.category)"
             if model.localizer.has(boundary, in: "en") { Text(model.localizer(boundary)).font(.caption).foregroundStyle(.secondary) }
         }
@@ -509,9 +565,10 @@ struct MapPlanningView: View {
     private func distance(_ meters: Double) -> String {
         PlanningMeasurements.distance(meters: meters, countryCode: model.household?.privateLocation?.countryCode, localizer: model.localizer)
     }
-    private func newPlace(coordinate: GeographicCoordinate?, label: String = "", address: String? = nil, provenance: SavedPlaceProvenance = .userSelected) {
+    private func newPlace(coordinate: GeographicCoordinate?, label: String = "", address: String? = nil, provenance: SavedPlaceProvenance = .userSelected,
+                          purpose: SavedPlacePurpose? = nil) {
         guard let household = model.household else { return }
-        let place = SavedPlace(homeID: household.stableHomeID, purpose: initialPurpose ?? .fallbackDestination, label: label, coordinate: coordinate, addressText: address, provenance: provenance)
+        let place = SavedPlace(homeID: household.stableHomeID, purpose: purpose ?? initialPurpose ?? .fallbackDestination, label: label, coordinate: coordinate, addressText: address, provenance: provenance)
         if selected != nil { deferredPlace = place; selected = nil }
         else { editedPlace = place }
     }
