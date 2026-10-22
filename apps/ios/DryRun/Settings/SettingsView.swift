@@ -19,6 +19,7 @@ struct SettingsView: View {
                             Text(model.content?.localeManifest?.entry(code)?.nativeName ?? code).tag(code)
                         }
                     }
+                    .accessibilityIdentifier("settings.language")
                     Text(t("translationNotice"))
                         .font(.footnote)
                 }
@@ -38,6 +39,7 @@ struct SettingsView: View {
                 if model.managesPersonalReminders { ReviewReminderSection() }
                 Section {
                     Button(t("delete"), role: .destructive) { confirmDelete = true }
+                        .accessibilityIdentifier("settings.delete")
                 } footer: {
                     Text(t("deleteFooter"))
                 }
@@ -47,7 +49,7 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle(t("settings"))
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(t("done")) { dismiss() } } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(t("done")) { dismiss() }.accessibilityIdentifier("settings.done") } }
             .confirmationDialog(t("deleteConfirm"), isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button(t("deleteEverything"), role: .destructive) {
                     Task { if await model.deleteAllPrivateData() { dismiss() } }
