@@ -1,0 +1,133 @@
+{
+  "report_id": "report-phone-review-0112025-wave3-consolidated-en-std-20261022",
+  "run_ids": [
+    "run-243b2c6d454e4056a6c5477c71a537ce",
+    "run-33918eb1d6de4e138f6ae222df69400e",
+    "run-8668048b3577429db7155340daefdaff",
+    "run-c8cd486d511c4f75a310cb74584919b9",
+    "run-fe2472135845401cb853f93b205f56e9",
+    "run-b6c06efe2aaa471283fd72c63a423f48",
+    "run-8ebc15467a0c4546a2f6f67f895a856b",
+    "run-6a4decac3d564162bb6f41ebb9a345a3",
+    "run-e381e9601ed548fe90cb7d8c91163c12",
+    "run-bd251296fe4a48578d4e76532f584d59",
+    "run-5e1cad4bca6545cea823248b0e2aea97",
+    "run-47d6e601110a4fbf94f1b2b99cf5ac12",
+    "run-7451efd1ee1d45fab2b61dae55f8b831",
+    "run-2c0ec91593134c91b018368cb83d3227",
+    "run-cea28e7cf0a24a2c8f1580cdd883b20e",
+    "run-a868aab007d5488380c4d24a00f2f596",
+    "run-08064d755df8402eab600bd5cbe73196",
+    "run-097b8ea7a1c64ab7b205ad0b52f42365",
+    "run-5c5964009ab544f1a15cb8572d1ca72f"
+  ],
+  "feature": "Wave 3 physical-iPhone review of codex/native-integration-20261021 at 0112025 (reference 12.4, 12.5): unit + UI suites, lead-requested English checks (director deadline/breaker, late-result isolation, hazard choices, freeze opening, Codex-served Beacon, About copy, scan-edit on the fictional scanned home).",
+  "review_kind": "synthetic agent audit (dedicated output reviewer + family experience reviewer); not real-family, clinical, responder or competition-judge validation",
+  "fixture_snapshot": {
+    "build": "codex/native-integration-20261021 at 0112025, Debug, bundle com.dryrun.dev.mdd7d3htmp; built from a detached review worktree of 0112025 plus the git-ignored BeaconGateway.json and a disposable reviewer probe UI-test file (never committed; app target source identical). App left installed at this build (in-place install via test-without-building).",
+    "device": "iPhone 16 Pro 00008140-0002703A2242801C, iOS 26.6.1, wired; exclusive reservation held for the pass and released",
+    "data": "Only -uiTestingInMemory with -demoHousehold hh-oak/hh-lake, or a fresh UUID -uiTestingVaultID namespace for the scan-edit relaunch check. Unit tests run in the XCTest host, which uses an in-memory store. The owner's household and real scanned home were never opened, edited or captured. No uninstall, reset, Delete everything, Start over or restore.",
+    "gateway": "scripts/mac/beacon-gateway.sh (Codex primary: provider_chain codex,gemini,groq), started WITHOUT --install because the script's --install path calls device.sh, which launches the app with no arguments (the owner's household); config already pointed at the .local address so no rebuild was needed. Phone reached it over the cable through the owner-approved IPv6-to-IPv4 forwarder. Stall checks: TEST-NET address override (fails fast) and an IPv6 accept-and-never-answer socket on the real config path. Everything started here was stopped at the end.",
+    "locale_and_size": "English, standard text size only (owner instruction)"
+  },
+  "criteria": [
+    "Each failure classed as product, test drift, probe/harness or environment, with assertion and screen evidence",
+    "Director: stalled first turn falls back after ~18 s with a note; later turns local within ~1 s with no note; toggle re-arms",
+    "Late result never lands on another example family; returning family gets a fresh or own-input result",
+    "Hazard choices commit and are not re-offered; freeze opening offers a physical choice",
+    "Live director and Prepare served by Codex (served-by label and gateway servedBy counts only)",
+    "No AI output quoted or paraphrased"
+  ],
+  "synopsis": "Suites: DryRunTests 80/80 passed, including all 6 DirectorDeadlineTests (testSecondTurnAfterADeadlineIsLocalWithinOneSecond and testTransportFailuresOpenTheBreakerButHostOutcomesDoNot pass). SixHazardUITests 6/6 passed (water-outage card opens the water setup). BeaconUnpluggedUITests 1/1 passed, Codex-served. DeviceAuditUITests 8 passed, 2 skipped (live-Gemini tests), 0 failed, so both adaptive apartment-fire and water-policy tests now pass. HazardChoiceUITests 2/5 passed (tornado, freeze opening), 3 failed (heat, fire, water). DemoJourneyUITests 10/11; the address/meetup journey fails because an app error alert covers the first fire decision, not because of layout. Device director checks: a true stall shows the fallback note at about 19 s (18 s deadline plus polling), the next turn is local and immediate with no note, and the toggle off/on re-arms (the next turn again waits about 19 s and falls back). A 20 s injected late result on a director turn hits the deadline and opens the breaker. Prepare late-result isolation A->B->A passed. Codex served every live gateway answer in this pass: 17 feature calls and 2 director continuations with servedBy=codex, none by Gemini or Groq. The Beacon rehearsal debrief cannot be reached in the native UI at this build: BeaconDebriefCard is defined but no view renders it.",
+  "fact_findings": [
+    "DirectorDeadlineTests 6/6 pass on device (unit run).",
+    "Breaker, true stall (bundled config, IPv6 accept-never-answer): the director start was in flight when the session opened. The first Next turn stayed in flight with End enabled; the fallback note appeared at 19.2 s and the moment advanced on the phone. The next Next turn finished locally with no in-flight state and no new note. After switching 'Let Beacon choose' off and on, the next turn went to the gateway again and fell back at 19.4 s with the note. PASS.",
+    "Breaker, unreachable host (fast transport failure: TEST-NET or refused port): turns never waited, so the deadline was not involved, and turns were local immediately. The start-of-session failure that opened the breaker showed no fallback note, so the family is not told Beacon was skipped; only the header line 'chosen on this phone' signals it. After re-arming, a failed turn showed the note within 1 s. Minor copy gap.",
+    "Late result, Prepare (-aiGatewayLateResultDelay 20, hh-oak scanned): Oak's request was in flight, then the family switched to Lake. Over 45 s the Lake Beacon card never contained Oak person names; Lake's own result arrived about 44 s later, naming Lake's person. Switching back to Oak started a fresh request, and its result named Oak's person. The stale in-flight Oak answer never appeared for either family. PASS for A->B->A.",
+    "Reset example A (Oak's Beacon result via next.ai.reset), then switch to Lake: Lake started a fresh request. Every example switch re-requests, so 'B untouched' can only be read as 'no cross-family contamination'. No contamination seen; there is no per-family saved result to compare.",
+    "Late result, director (delay 20 s): the turn hit the deadline at 19.0 s, the note appeared and the breaker opened. The next turn was local in under 2 s. PASS. The in-flight director family switch was not completed: the probe could not reach Settings from the rehearsal screen (probe harness), so there is no verdict on that half.",
+    "Live director with gateway reachable (hh-oak ranch freeze, cloud on): two director turns ran about 18.6-19.6 s and settled without the fallback note. The gateway log shows both continuations completed servedBy=codex, and the screen shows the 'Served by OpenAI Codex' label. These Codex turns finish only just inside the 18 s deadline (gateway time about 17 s), so real use could often fall back. Once, End read as disabled during an in-flight turn (turn 4 of the live run). In every other in-flight observation (stall, delayed, live turn 2) End stayed enabled. Unconfirmed, so it needs one targeted recheck.",
+    "Beacon debrief: no native entry point. BeaconDebriefCard (Rehearse/BeaconDebriefCard.swift) and AppModel.requestBeaconDebrief exist, but no view instantiates the card, so neither the adaptive finished card nor the scripted debrief issues a debrief request. The requested mechanics-v7 debrief served-by check could not be run from the app. Repeating late-result isolation for the debrief was also impossible.",
+    "Freeze opening (hh-oak ranch, -localDirector, cloud off): the opening offers 'goes to Living room' moves for Parent A, Parent B and Kid under 'What your household can do now', with Next enabled. After Parent A gathers, Parent A's move is no longer offered (remaining: Parent B, Kid). HazardChoice testFreezeOpeningOffersGathering passes. 'Keep watching for now' appears as a choice-card row in later moments, beside the moves.",
+    "Settings > About (deterministic copy): states Codex first, Gemini/Groq fallback, photos only to Gemini, that example-family data is sent, offline behaviour, and that the user's own household is not sent. Honest and consistent with the gateway provider chain.",
+    "HazardChoice testHeatShadeThenMove: shading the living room committed. After the probe tapped 'B\u00e0 moves to the shaded Living room', the screen shows the clock advanced to +1h and B\u00e0 still in the Main bedroom, so the move was not committed. The option sat at the bottom of the scroll. The most likely cause is the tap landing on the bottom Next bar: the test's reveal() lacks the bottom-bar guard that DemoJourney's helper has (adaptive.next/adaptive.end). Class: TEST HARNESS (probable); a product commit failure is not indicated.",
+    "HazardChoice testWaterAllocationUnderAdvisory: advisory gating works. In the 6 h 40 m tree, rehearsal.cmd.useWater.tap.boiledDrink is offered, tap.drink is not, and stored-water uses remain. The tap on boiled water produced no 'You did' card and the clock advanced, the same bottom-bar mis-tap pattern. Class: TEST HARNESS (probable).",
+    "HazardChoice testFireEscapeAccountOrderedDebrief: the home-fire adaptive opening now presents the authored decision (decision.option.get-out and three others), and no rehearsal.cmd.escape choices appear until it is answered. The test advances with answer:false, so it stops at the authored question. Class: TEST DRIFT after the wave-3 merge, or an intentional behaviour change; the scenario owner should confirm that escape choices are meant to wait for the authored question.",
+    "HazardChoice tornado PASS (accompany committed, reachShelter choices committed until none remain).",
+    "DemoJourney testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected: decision.option.get-out is at y 391 (mid-screen, well above the Next/End bar at y 731) and is covered by the app's generic error alert, 'Could not finish that step', with the saveError message. It is raised from model.lastError after saving an address and backup meetup and then starting the scripted home-fire rehearsal. This answers the lead's question: neither layout nor test, it is a PRODUCT ERROR STATE. Which write failed is not identified; candidates are the private-write-in-flight guards (AppModel lines 1973, 2060) or the rehearsal-choice save (line 1011) racing the Prepare recompute. A layout screenshot was not needed.",
+    "Scan-edit (fictional scanned sample, fresh UUID vault): openings pt-back, pt-front and pt-living-kitchen are listed under 'Edit rooms, doors, and markers'. pt-back changed from door to window, Save, relaunch with only the vault ID: the type persisted as window and 'Restore what the scan saw' is offered. PASS for type persistence. Tapping Restore left the type as window and the Restore control still shown, read immediately after the tap: INCONCLUSIVE, possible restore failure, needs a manual recheck. Leads-to was not changed (the probe's menu selection missed), and 'Revert whole home to scan' was found but not hittable in the probe (the confirmation flow was not exercised). No retry beyond one probe fix, per owner instruction.",
+    "Unit-test run side effect: the gateway log shows one director operation, a continuation and a cancel during the DryRunTests window (about 18:29). The hosted unit tests or the app host appear to reach the bundled gateway config. These are fictional/in-memory requests, not owner data, but unit tests should not depend on a live gateway."
+  ],
+  "failures": [
+    {
+      "test": "HazardChoiceUITests.testHeatShadeThenMove",
+      "class": "test harness (probable bottom-bar mis-tap)",
+      "owner": "lead3 scenario"
+    },
+    {
+      "test": "HazardChoiceUITests.testWaterAllocationUnderAdvisory",
+      "class": "test harness (probable bottom-bar mis-tap); advisory gating itself verified",
+      "owner": "lead3 scenario"
+    },
+    {
+      "test": "HazardChoiceUITests.testFireEscapeAccountOrderedDebrief",
+      "class": "test drift or behaviour change (authored question precedes escape choices)",
+      "owner": "lead3 scenario"
+    },
+    {
+      "test": "DemoJourneyUITests.testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected",
+      "class": "product error state (generic save-error alert during scripted fire rehearsal)",
+      "owner": "integration lead / persistence owner"
+    },
+    {
+      "test": "Beacon debrief (manual)",
+      "class": "product wiring gap: BeaconDebriefCard never rendered",
+      "owner": "lead3 codex-context"
+    },
+    {
+      "test": "Scan-edit restore (manual probe)",
+      "class": "inconclusive, possible product",
+      "owner": "house owner"
+    },
+    {
+      "test": "Reviewer probes: director in-flight family switch, freeze probe first pass, scan probe first pass",
+      "class": "reviewer probe harness",
+      "owner": "reviewer"
+    }
+  ],
+  "likely_stage": "Native UI wiring (debrief card), persistence write concurrency (DemoJourney alert), and UI-test maintenance (hazard reveal helper, fire answer:false). Director deadline/breaker and late-result isolation behave as designed on device.",
+  "references": [
+    "DryRun_Codex_Integration_Reference.txt 12.4, 12.5",
+    "apps/ios/DryRun/Rehearse/BeaconDebriefCard.swift (no call site)",
+    "apps/ios/DryRun/App/RootView.swift:41-45 (lastError alert)",
+    "apps/ios/DryRun/App/AppModel.swift:1011,1973,2060",
+    "apps/ios/DryRunUITests/HazardChoiceUITests.swift:40-46,81-83,92,144",
+    "apps/ios/DryRunUITests/DemoJourneyUITests.swift:68-69,322-330",
+    "apps/ios/DryRun/Rehearse/AdaptiveRehearsalView.swift:96-112,436",
+    "apps/ios/DryRun/Spatial/ScanCorrectionViews.swift:38-75,168-190"
+  ],
+  "recommendations": [
+    "Render BeaconDebriefCard (for example in the adaptive finished card and the scripted debrief for fictional households), then rerun the mechanics-v7 debrief served-by and late-result debrief isolation checks",
+    "Find which write sets lastError in the address -> meetup -> scripted fire journey (log the lastError source in DEBUG) and serialize or retry the conflicting write; the alert currently blocks the rehearsal",
+    "Give HazardChoiceUITests.reveal the same bottom-bar guard DemoJourney uses (adaptive.next/adaptive.end frames) and wait for scroll to settle before tapping",
+    "Fire choice test: answer the authored opening question, or confirm the product intent that escape choices wait for it",
+    "Show the fallback note (or an equivalent one-line note) when the breaker opens at session start on a fast transport failure",
+    "Codex director turns take about 17 s at the gateway against the 18 s deadline; consider a smaller director context or a lower Codex reasoning effort so live turns do not routinely fall back",
+    "Keep unit tests off the bundled gateway config (for example, honour -noBeaconConfig or XCTest detection in DirectorGatewayClient.current)"
+  ],
+  "retests": [
+    "Manual: scan-edit Leads to change, Restore what the scan saw, and Revert whole home to scan with confirm, on the fictional scanned sample with a UUID vault",
+    "Director in-flight family switch (Oak turn in flight -> Lake) with -aiGatewayLateResultDelay 20",
+    "End enabled while a live Codex director turn is in flight (one targeted check)",
+    "HazardChoice heat/water/fire after the test fixes; DemoJourney address journey after the lastError fix"
+  ],
+  "limitations": [
+    "English, standard text size only; es/vi and accessibility sizes skipped by owner instruction",
+    "One pass per check; one probe-fix rerun for scan-edit and director checks only; no fixes to product or tests",
+    "beacon-gateway.sh --install was intentionally not used because its device.sh step launches the app with no arguments, which would open the owner's household; the app was installed in place by xcodebuild test-without-building from the same commit",
+    "Provider attribution comes only from gateway servedBy codes and the on-screen served-by label; no AI output is quoted or paraphrased",
+    "Mis-tap and alert-source causes are inferred from hierarchy/screens, not from device logs"
+  ],
+  "next_owner": "lead3 codex-context (debrief card wiring, unit-test gateway isolation, director latency), lead3 scenario (HazardChoice tests, fire opening intent), integration lead (DemoJourney lastError), house owner (scan restore/revert recheck)",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

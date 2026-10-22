@@ -162,3 +162,10 @@ Codex output-reviewer reports recorded at this checkpoint (cleared, in `docs/int
 - `report-family-heldout-1-acceptance-review-20261022`: 30 sealed attempts, REL-01 NOT MET 29/30 (attempt 30 `transport_or_deadline`, consistent with host sleep but not independently proven). Critical checks PASS on all 29 delivered results. PROMPT-01 pairs: f02 3/3 PASS, f04 3/3 PASS, f03 marginal 2/2 evaluable, f01 FAIL 0/3 (lighting omitted both sides), f05 FAIL 1/3 (shared helper). preparation/16: DO NOT PROMOTE. f01-f05 are retired from held-out status; a later acceptance claim needs a fresh sealed set.
 
 Not done: no native unit/UI tests executed, no simulator or phone launch by agents, no live provider calls by the integrator. Nothing in this wave is agent-device-verified. No prompt promoted.
+
+## Wave 3 phone review and audit (2026-10-22)
+
+- Consolidated English/standard-size phone review of 0112025: `released/report-phone-review-0112025-wave3-consolidated-en-std-20261022.json` (device, agent-observed). Spanish/Vietnamese and accessibility sizes were out of scope by owner instruction.
+- Independent audit gate: HOLD for the English demo, lifted by: (a) DemoJourney saveError alert over the first fire decision; (b) HazardChoice reveal bottom-bar guard + heat/water commit rerun, fire authored-question intent; (c) BeaconDebriefCard unwired since f627aa3 — wire it or keep debrief out of the demo; (d) Codex director latency (~17 s vs 18 s deadline) or film with the local director and say so; (e) re-pull Beacon replays; (f) this report recorded here.
+- Held-out family-heldout/1 executed (29/30 at receipt level; attempt 30 lost to host sleep): `released/report-family-heldout-1-acceptance-review-20261022.json` — DO NOT PROMOTE preparation/16; no held-out-validated claim in the demo.
+- Fallback validators: `released/report-wave3-debrief5-fallback-validators-six-run-review-20261022.json` — safe (no unsafe deliveries) but 0/24 useful fallback answers; make no claim of working fallback content.
