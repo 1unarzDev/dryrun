@@ -132,6 +132,7 @@ enum ExerciseActions {
         case .warmth: return "thermometer.snowflake"
         case .shade: return "blinds.horizontal.closed"
         case .moveToShade: return "figure.walk"
+        case .gather: return "person.3"
         case .power: return "bolt"
         case .contact: return "phone"
         case .water: return "drop"
@@ -171,6 +172,9 @@ enum ExerciseActions {
             return l("rehearsal.cmd.reduceSolarGain", ["room": room(c.roomID)])
         case .moveToShade:
             return l("rehearsal.cmd.moveToShade", ["person": person(c.personID), "room": room(c.roomID)])
+        case .gather:
+            // "{person} goes to {room}": existing neutral copy, present in every bundled language (no new keys).
+            return l("rehearsal.cmd.reachShelter", ["person": person(c.personID), "room": room(c.roomID)])
         case .power:
             guard let equipment = c.equipmentID else { return nil }
             let device = HouseholdLabels.equipment(equipment, in: h, localizer: l)

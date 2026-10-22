@@ -5,9 +5,13 @@ public struct HazardExperience: Codable, Sendable, Equatable {
     /// Version 6 (additive over 5): an explicit fire incident origin is excluded from routes from the
     /// alarm onward, thermal outages record what was in place when power failed, and the family can
     /// explicitly keep watching (`wait`) when a decision is requested without an authored question.
+    /// Version 7 (additive over 6): in a freeze, before relocation, the rest of the household can gather in the
+    /// room of the person hardest to move (recorded cold sensitivity first, then a recorded mobility need) by a
+    /// supported path, so the freeze opening offers a physical choice even without recorded warmth or a
+    /// compatible backup. Gathering credits no warmth and changes no temperature; the route owner moves people.
     /// Earlier versions replay exactly as before; every capability below is gated by `level`.
-    public static let version = "dryrun.hazard-mechanics/6"
-    public static let supportedVersions = ["dryrun.hazard-mechanics/1","dryrun.hazard-mechanics/2","dryrun.hazard-mechanics/3","dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5",version]
+    public static let version = "dryrun.hazard-mechanics/7"
+    public static let supportedVersions = ["dryrun.hazard-mechanics/1","dryrun.hazard-mechanics/2","dryrun.hazard-mechanics/3","dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5","dryrun.hazard-mechanics/6",version]
     /// Numeric mechanics level of a persisted version string; 0 for authored/legacy sessions without one.
     public static func level(_ version:String?)->Int {
         guard let version,version.hasPrefix("dryrun.hazard-mechanics/"),let n=Int(version.dropFirst("dryrun.hazard-mechanics/".count)) else {return 0}
@@ -67,6 +71,8 @@ struct HazardProgress {
     /// Version 6: explicit incident origin excluded at the alarm; outage readiness; explicit wait.
     var supportsOriginExclusion:Bool {level>=6}
     var supportsOutageReadiness:Bool {level>=6}
+    /// Version 7: freeze gathering moves (`moveTo` into the anchor person's room) are offered.
+    var supportsFreezeGathering:Bool {level>=7}
     var protection: String?
     var mechanicsVersion:String
     var roomTemperatures:[String:EducationalTemperature]=[:]
@@ -145,6 +151,16 @@ extension RunState {
         }.map(\.id).sorted()
     }
     /// Same route authority and exclusions as the session's `moveTo` command.
+    /// Version 7 freeze: the room of the first person at home (household order) with a recorded cold sensitivity,
+    /// else with a recorded mobility need. Nil without such a person, a home, or a recorded room for them.
+    func freezeGatheringRoom()->String? {
+        guard let home else {return nil}
+        let atHome=household.people.filter{!isOutside($0.id)}
+        let mobility:Set<AssistanceNeed>=[.limitedMobility,.usesWheelchair,.cannotUseStairs,.needsHelperToEvacuate]
+        guard let anchor=atHome.first(where:{$0.needs.contains(.coldSensitive)}) ?? atHome.first(where:{!mobility.isDisjoint(with:$0.needs)}) else {return nil}
+        let room=startSpace(for:anchor)
+        return home.space(room) != nil ? room : nil
+    }
     func canMove(_ person:Person,to destination:String)->Bool {
         guard let home,home.space(destination) != nil,!isOutside(person.id),startSpace(for:person) != destination else {return false}
         return planner.plan(RouteRequest(personID:person.id,startSpaceID:startSpace(for:person),mobility:mobility(for:person),
@@ -395,6 +411,11 @@ extension RunState {
                 for room in progress.shadedRoomIDs.sorted() where canMove(person,to:room) {valid.append(.init(kind:"moveTo",target:person.id,value:room))}
             }
         }
+        // Freeze (v7): the rest of the household gathers in the room of the person hardest to move, by a
+        // supported path. Requires a recorded layout and a recorded room for that person; no warmth is credited.
+        if scenario.hazard == .freezePowerLoss,hazardProgress?.supportsFreezeGathering==true,!relocated,let room=freezeGatheringRoom() {
+            for person in household.people where canMove(person,to:room) {valid.append(.init(kind:"moveTo",target:person.id,value:room))}
+        }
         if scenario.hazard == .tornado,services[Svc.handset] == .operational,services[Svc.cellular] == .operational {
             for contact in household.contacts where contact.isComplete {valid.append(.init(kind:"contact",target:contact.id))}
         }
@@ -433,7 +454,7 @@ extension RunState {
             actions=["leaveEarly","moveTo","takeSupply"]+(progress.supportsRefugeArrival ? ["reachHigherRefuge","transferSupply"]:[]);next=progress.supportsRefugeArrival ? "prep.floodPlan":"prep.relocation"
         case .freezePowerLoss:
             scene="cold-continuity-energy";objective="Maintain documented essential loads and compare warmth or a recorded alternative."
-            actions=["allocatePower","warmLayers","heatedAlternative"];next="prep.medicalBackup"
+            actions=["allocatePower","warmLayers","heatedAlternative"]+(progress.supportsFreezeGathering ? ["moveTo"]:[]);next="prep.medicalBackup"
         case .heatGridStrain:
             scene="heat-cooling-access";objective="Maintain workable cooling and adapt when it becomes unavailable."
             actions=["reduceSolarGain","cooledAlternative","allocatePower"];next=progress.supportsRefugeArrival ? "prep.heatCold":"prep.coolingPlan"

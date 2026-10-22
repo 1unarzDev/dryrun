@@ -21,7 +21,7 @@
       }
     ],
     "binding" : {
-      "contextDigest" : "9535c01badeb8cbf",
+      "contextDigest" : "1194f55eb2288640",
       "eventSequence" : 5,
       "homeRevision" : 1,
       "householdRevision" : 1,
@@ -266,7 +266,7 @@
       "identifiedGapIDs" : [
 
       ],
-      "mechanicsVersion" : "dryrun.hazard-mechanics/6",
+      "mechanicsVersion" : "dryrun.hazard-mechanics/7",
       "objective" : "Exit by a supported clear path and account outside; never re-enter.",
       "occupantRoomIDs" : {
         "p-oak-1" : "sp-bed1",

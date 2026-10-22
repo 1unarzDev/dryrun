@@ -1401,7 +1401,7 @@ final class AppModel {
         }, uniquingKeysWith: { a, _ in a })
         // Host receipt labels: the app's own text for the rehearsal's events and the family's chosen options.
         var labels: [String: String] = [:]
-        for event in result.events { labels[event.id] = localizer(event.titleKey, event.templateValues) }
+        for event in result.events { labels[event.id] = event.receiptTitle(household: household, localizer: localizer) }
         for decision in result.decisions { for option in decision.options { labels[option.labelKey] = localizer(option.labelKey) } }
         guard var request = try? DebriefFeatureBridge.request(requestID: "debrief-\(UUID().uuidString)", scenarioID: result.input.scenarioID,
                                                               recommendations: result.recommendations, readable: readable,
@@ -1428,7 +1428,8 @@ final class AppModel {
     /// Requires a development gateway (launch arguments); real households never use it until production authorization.
     /// On by default wherever Beacon is configured (fictional households only); the switch turns it off for the session.
     /// Switching it on again also re-arms the circuit breaker below.
-    var cloudDirectorEnabled = DirectorGatewayClient.current != nil {
+    /// DEBUG `-localDirector` launches start with it off, so local-director UI scripts never wait on a gateway turn.
+    var cloudDirectorEnabled = DirectorGatewayClient.current != nil && !DemoLaunch.current.localDirector {
         didSet { if cloudDirectorEnabled != oldValue { cloudDirectorSuspended = false } }
     }
     /// Circuit breaker: after one director deadline or gateway transport failure, the rest of this app session uses
