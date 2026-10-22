@@ -1150,5 +1150,13 @@
   "site.lookup.elevationFilled": "La elevación del terreno se completó con datos de USGS. Este resultado no indica un datum ni una incertidumbre, así que ingrese ambos desde la fuente de USGS antes de guardar.",
   "site.lookup.noElevation": "USGS no tiene elevación para este punto.",
   "site.lookup.failed": "La consulta no funcionó. Revise su conexión o ingrese el registro a mano.",
-  "prep.ai.detail": "Solo hogar de ejemplo. Envía necesidades anonimizadas, equipos, suministros registrados e identificadores del plano de la casa (sin nombres, teléfonos ni dirección) a Google Gemini mediante el servidor de prueba de Dry Run. Gemini puede reordenar elementos de la misma prioridad y explicarlos para este hogar. La app comprueba cada uno con su lista; la prioridad, la puntuación y lo completado nunca cambian."
+  "prep.ai.detail": "Solo hogar de ejemplo. Envía necesidades anonimizadas, equipos, suministros registrados e identificadores del plano de la casa (sin nombres, teléfonos ni dirección) a Google Gemini mediante el servidor de prueba de Dry Run. Gemini puede reordenar elementos de la misma prioridad y explicarlos para este hogar. La app comprueba cada uno con su lista; la prioridad, la puntuación y lo completado nunca cambian.",
+  "ui.familyPanel.stepFree": "Necesita una salida sin escalones",
+  "ui.familyPanel.power": "Depende de la electricidad para {device}",
+  "ui.familyPanel.cold": "{device} debe mantenerse frío",
+  "ui.familyPanel.none": "No hay necesidades registradas de movilidad, audición, visión o equipo médico. Agréguelas si alguien las tiene.",
+  "ui.familyPanel.editAll": "Ver o corregir a todos",
+  "ui.familyPanel.correctHint": "Abre estos datos para que pueda corregirlos.",
+  "ui.next.about": "Sobre esta lista",
+  "rings.about": "Sobre esta puntuación"
 }

@@ -274,7 +274,15 @@ final class DemoJourneyUITests: XCTestCase {
         let recorded = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'next.recorded.prep.backupMeetup'")).firstMatch
         // Prepare recomputes after the edit; give it time, then scroll to the recorded list.
         _ = element("next.recordedSection", in: app).waitForExistence(timeout: 20)
-        for _ in 0..<16 where !recorded.waitForExistence(timeout: 1) { scroll(app, up: true) }
+        // The recorded list previews three items; open the rest when the meetup is not among them.
+        let showAllRecorded = element("next.recorded.showAll", in: app)
+        var expandedRecorded = false
+        for _ in 0..<16 where !recorded.waitForExistence(timeout: 1) {
+            if !expandedRecorded && showAllRecorded.exists && showAllRecorded.isHittable {
+                showAllRecorded.tap(); expandedRecorded = true; continue
+            }
+            scroll(app, up: true)
+        }
         XCTAssertTrue(recorded.exists, "The saved backup meetup should appear as a recorded preparation")
         app.tabBars.buttons.element(boundBy: 1).tap()
         tap("scenario.home-fire", in: app)

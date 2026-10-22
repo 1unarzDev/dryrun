@@ -1150,5 +1150,13 @@
   "site.lookup.elevationFilled": "Độ cao mặt đất đã được điền từ USGS. Kết quả này không nêu hệ quy chiếu độ cao hay sai số, vì vậy hãy nhập cả hai từ nguồn USGS trước khi lưu.",
   "site.lookup.noElevation": "USGS không có độ cao cho điểm này.",
   "site.lookup.failed": "Tra cứu không thành công. Hãy kiểm tra kết nối, hoặc nhập thông tin bằng tay.",
-  "prep.ai.detail": "Chỉ dành cho hộ gia đình mẫu. Gửi nhu cầu đã ẩn danh, thiết bị, vật dụng đã ghi nhận và mã sơ đồ nhà (không có tên, số điện thoại hay địa chỉ) tới Google Gemini qua máy chủ thử nghiệm của Dry Run. Gemini có thể sắp xếp lại các mục cùng mức ưu tiên và giải thích cho hộ gia đình này. Ứng dụng kiểm tra từng mục với danh sách của bạn; mức ưu tiên, điểm số và những việc đã xong không bao giờ thay đổi."
+  "prep.ai.detail": "Chỉ dành cho hộ gia đình mẫu. Gửi nhu cầu đã ẩn danh, thiết bị, vật dụng đã ghi nhận và mã sơ đồ nhà (không có tên, số điện thoại hay địa chỉ) tới Google Gemini qua máy chủ thử nghiệm của Dry Run. Gemini có thể sắp xếp lại các mục cùng mức ưu tiên và giải thích cho hộ gia đình này. Ứng dụng kiểm tra từng mục với danh sách của bạn; mức ưu tiên, điểm số và những việc đã xong không bao giờ thay đổi.",
+  "ui.familyPanel.stepFree": "Cần lối ra không có bậc thang",
+  "ui.familyPanel.power": "Cần điện cho {device}",
+  "ui.familyPanel.cold": "{device} phải được giữ lạnh",
+  "ui.familyPanel.none": "Chưa ghi nhận nhu cầu nào về đi lại, nghe, nhìn hoặc thiết bị y tế. Hãy thêm nếu có người cần.",
+  "ui.familyPanel.editAll": "Xem hoặc sửa thông tin mọi người",
+  "ui.familyPanel.correctHint": "Mở thông tin này để bạn sửa.",
+  "ui.next.about": "Về danh sách này",
+  "rings.about": "Về điểm số này"
 }
