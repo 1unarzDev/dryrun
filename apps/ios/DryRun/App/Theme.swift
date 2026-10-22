@@ -133,10 +133,7 @@ struct SectionCard<Content: View>: View {
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(Theme.Space.l)
-        .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
-            .strokeBorder(Color.primary.opacity(0.06)))
+        .cardSurface()
     }
 }
 
@@ -403,5 +400,30 @@ struct LabeledTextField: View {
                 .multilineTextAlignment(.trailing)
                 .accessibilityIdentifier(fieldID ?? "")
         }
+    }
+}
+
+/// The square symbol tile that leads a navigation card (scenario, practice check): one size and corner everywhere.
+struct SymbolTile: View {
+    let systemImage: String
+    var tint: Color = Theme.accent
+
+    var body: some View {
+        Image(systemName: systemImage)
+            .font(.title2)
+            .foregroundStyle(tint)
+            .frame(width: Theme.comfortableTap, height: Theme.comfortableTap)
+            .background(tint.opacity(0.14), in: RoundedRectangle(cornerRadius: Theme.Radius.control, style: .continuous))
+            .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// Surface, corner and hairline shared by `SectionCard` and tappable navigation cards, so both read as one family.
+    func cardSurface(padding: CGFloat = Theme.Space.l) -> some View {
+        self.padding(padding)
+            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.06)))
     }
 }
