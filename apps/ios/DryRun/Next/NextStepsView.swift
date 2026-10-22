@@ -311,6 +311,8 @@ struct NextStepsView: View {
                     .accessibilityIdentifier("next.questions.showAll")
                 Text(l("ui.next.answerViaTasks")).font(.footnote).foregroundStyle(.secondary)
             }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("next.questions")
         }
     }
 
