@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {executeDirectorTool} from './director-tools.js';
 import {Gateway} from '../src/gateway.js';
-import {toolResult,minimizedSnapshot} from '../src/contracts.js';
+import {toolResult,minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import type {AgentProvider} from '../src/provider.js';
 const host=new Host();
 try {
@@ -18,7 +18,7 @@ try {
   return {steps:[],calls:[],usage:{},text:JSON.stringify({commands,purpose:'The corrected hypothetical transfer preserves recorded water; other gaps and unknowns remain.',evidenceIDs:['res.water.stored']})};
  }};
  const gateway=new Gateway(provider);
- let result:any=await gateway.start('synthetic-repair',{contractVersion:'dryrun.ai/1',requestID:'retest-host-repair',role:'director',synthetic:true,context:{binding,snapshot:minimizedSnapshot(state.receipt),initialInventoryItemIDs:state.session.inventory.ledger.items.map((i:any)=>i.id),profiles:state.directorProfiles,homeScene:state.homeScene,household:state.householdContext,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,learningObjectives:['Review the controlled storage improvement.']}});
+ let result:any=await gateway.start('synthetic-repair',{contractVersion:'dryrun.ai/1',requestID:'retest-host-repair',role:'director',synthetic:true,context:{binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),initialInventoryItemIDs:state.session.inventory.ledger.items.map((i:any)=>i.id),profiles:state.directorProfiles,homeScene:state.homeScene,household:state.householdContext,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,learningObjectives:['Review the controlled storage improvement.']}});
  while(result.status==='needs_client_tools'){
   const call=result.calls[0],response=await executeDirectorTool(host,state,binding,call);trace.push({call,result:response.result});
   assert.deepEqual((await host.request({op:'query',session:state.session})).receipt,state.receipt);

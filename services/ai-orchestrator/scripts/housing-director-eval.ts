@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {Host} from './host.js';
 import {Gateway} from '../src/gateway.js';
 import {GeminiProvider} from '../src/provider.js';
-import {minimizedSnapshot} from '../src/contracts.js';
+import {minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import {executeDirectorTool} from './director-tools.js';
 const path=process.env.DRYRUN_HOUSING_DIRECTOR_OUTPUT??'../../fixtures/ai/housing-director-live-'+Date.now()+'.json';
 try{await access(path);throw new Error('output_already_exists');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
@@ -24,7 +24,7 @@ try{
  state=await host.request({op:'commit',session:state.session,commit:{id:'submitted-move-to-living',actor:'user',baseRevision:0,commands:[{kind:'moveTo',target:input.household.people[0].id,value:'sp-living'}]}});
  const afterAction=structuredClone(state);
  const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:input.household.revision,homeRevision:input.home.revision};
- const context={binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles,learningObjectives:[elevatorOnly?'Respond to committed living-room move. Elevator-only graph has no supported egress. Preview kitchen fire, pause for posted-procedure/assistance review. Never invent an exit or occupant action.':'Respond to the committed living-room move; preview a hypothetical kitchen-origin fire and the shared apartment stair dependency, then pause for a useful family decision. No occupant action commits.'],lastAction:state.lastAction,recentActions:state.recentActions};
+ const context={binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles,learningObjectives:[elevatorOnly?'Respond to committed living-room move. Elevator-only graph has no supported egress. Preview kitchen fire, pause for posted-procedure/assistance review. Never invent an exit or occupant action.':'Respond to the committed living-room move; preview a hypothetical kitchen-origin fire and the shared apartment stair dependency, then pause for a useful family decision. No occupant action commits.'],lastAction:state.lastAction,recentActions:state.recentActions};
  const gateway=new Gateway({async turn(input){const reply=await provider.turn(input);replies.push({text:reply.text,calls:reply.calls.map(c=>({name:c.name,arguments:c.arguments})),usage:reply.usage});return reply;}});
  let result:any=await gateway.start('synthetic-housing-director',{contractVersion:'dryrun.ai/1',requestID:'apartment-action-follow-up',role:'director',synthetic:true,context});
  while(result.status==='needs_client_tools'){

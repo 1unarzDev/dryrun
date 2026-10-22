@@ -74,6 +74,7 @@
       "id" : "eq-chair",
       "isEssential" : true,
       "label" : "Power wheelchair charger",
+      "labelIsCustom" : true,
       "needsRefrigeration" : false,
       "personID" : "p-pine-2",
       "powerWatts" : {

@@ -72,7 +72,7 @@ final class PlanGenerationPrivacyTests: XCTestCase {
     }
     func testSelectedScenarioDocumentIncludesTheSameCurrentRoutesUsedByItsPanels() async throws {
         let (model, _) = await makeModel()
-        let savedHome = await model.updateHome(SampleHomes.ranch)
+        let savedHome = await model.updateHome(SampleHomes.ranch, expectedRevision: model.home?.revision)
         XCTAssertTrue(savedHome)
         let generated = await model.generatePlan(scenarioIDs: ["home-fire"], includePrivateNotes: false)
         let document = try XCTUnwrap(generated)
@@ -123,7 +123,7 @@ final class PlanGenerationPrivacyTests: XCTestCase {
 
     func testSelectedPlanRetainsPracticedOriginAndLeakAssumptions() async throws {
         let (model, _) = await makeModel()
-        let saved = await model.updateHome(SampleHomes.ranch)
+        let saved = await model.updateHome(SampleHomes.ranch, expectedRevision: model.home?.revision)
         XCTAssertTrue(saved)
         await model.startRehearsal(scenarioID: "home-fire", variants: ["origin:sp-kitchen", "start:p-oak-1|sp-living"])
         let practiced = try XCTUnwrap(model.rehearsal?.result)

@@ -1149,5 +1149,6 @@
   "site.lookup.ambiguous": "This point touches more than one FEMA flood zone. Check the map yourself at msc.fema.gov.",
   "site.lookup.elevationFilled": "Ground elevation was filled in from USGS. This result does not state a datum or an uncertainty, so enter both from the USGS source before saving.",
   "site.lookup.noElevation": "USGS has no elevation for this point.",
-  "site.lookup.failed": "The lookup did not work. Check your connection, or enter the record by hand."
+  "site.lookup.failed": "The lookup did not work. Check your connection, or enter the record by hand.",
+  "prep.ai.detail": "Example household only. Sends anonymized needs, equipment, recorded supplies and home layout IDs (no names, phone numbers or address) to Google Gemini through the Dry Run test server. Gemini can reorder items within the same priority and explain them for this household. The app checks each one against your list; priority, the score and what is done never change."
 }

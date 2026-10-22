@@ -1,0 +1,134 @@
+{
+  "binding" : {
+    "contextDigest" : "f58fbafcc145e834",
+    "eventSequence" : 5,
+    "homeRevision" : 1,
+    "householdRevision" : 1,
+    "revision" : 2,
+    "sessionID" : "native-home-fire"
+  },
+  "contextDigest" : "f58fbafcc145e834",
+  "observation" : {
+    "baseline" : {
+      "firedEventIDs" : [
+
+      ],
+      "resources" : {
+        "res.backup.bk-station" : {
+          "amount" : 1000,
+          "unit" : "Wh"
+        },
+        "res.device.eq-oxygen.runtime" : {
+          "unit" : "h"
+        },
+        "res.handset.hours" : {
+          "amount" : 18,
+          "unit" : "h"
+        },
+        "res.handset.powerBankCharges" : {
+          "amount" : 2,
+          "unit" : "charges"
+        },
+        "res.water.stored" : {
+          "amount" : 5,
+          "unit" : "gal"
+        }
+      },
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "operational",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 4320,
+      "unknowns" : [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "home.smokeAlarms",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "unmetRequirements" : [
+
+      ]
+    },
+    "criterionID" : "advisory",
+    "dependencyIDs" : [
+
+    ],
+    "failed" : false,
+    "kind" : "runCounterfactual",
+    "scope" : "initial_household_with_selected_profiles"
+  },
+  "snapshot" : {
+    "firedEventIDs" : [
+      "evt.home-fire.alarm",
+      "evt.home-fire.assist.assigned.p-oak-3",
+      "evt.home-fire.meeting-point",
+      "evt.choice.home-fire.first-move",
+      "user.user-1"
+    ],
+    "resources" : {
+      "res.backup.bk-station" : {
+        "amount" : 1000,
+        "unit" : "Wh"
+      },
+      "res.device.eq-oxygen.runtime" : {
+        "unit" : "h"
+      },
+      "res.handset.hours" : {
+        "amount" : 18,
+        "unit" : "h"
+      },
+      "res.handset.powerBankCharges" : {
+        "amount" : 2,
+        "unit" : "charges"
+      },
+      "res.water.stored" : {
+        "amount" : 5,
+        "unit" : "gal"
+      }
+    },
+    "services" : {
+      "svc.alerts" : "operational",
+      "svc.cellular" : "operational",
+      "svc.cooling" : "operational",
+      "svc.destination" : "unavailable",
+      "svc.device.eq-oxygen" : "operational",
+      "svc.grid" : "operational",
+      "svc.handset" : "operational",
+      "svc.heat" : "operational",
+      "svc.power.home" : "operational",
+      "svc.refrigeration" : "operational",
+      "svc.roads" : "operational",
+      "svc.transport" : "operational",
+      "svc.water.safety" : "operational",
+      "svc.water.supply" : "operational",
+      "svc.wellPump" : "operational",
+      "svc.wifi" : "operational"
+    },
+    "simMinute" : 0,
+    "unknowns" : [
+      "backup.bk-station.setupConfirmed",
+      "equipment.eq-oxygen.backup",
+      "home.smokeAlarms",
+      "housing.wellPressureTankGallons",
+      "pets.waterNeeds"
+    ],
+    "unmetRequirements" : [
+
+    ]
+  }
+}

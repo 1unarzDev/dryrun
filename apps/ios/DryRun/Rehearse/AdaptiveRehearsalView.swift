@@ -30,7 +30,8 @@ struct AdaptiveRehearsalView: View {
                         if let home = exercise.session.initial.home, Self.spatial.contains(scenarioID) {
                             SpatialRehearsalScene(home: home, household: exercise.session.initial.household,
                                                   state: exercise.receipt.snapshot.spatialState,
-                                                  previous: exercise.previous?.snapshot.spatialState)
+                                                  previous: exercise.previous?.snapshot.spatialState,
+                                                  isFireExercise: scenarioID == "home-fire")
                                 .accessibilityElement(children: .contain)
                                 .accessibilityIdentifier("adaptive.scene")
                         }

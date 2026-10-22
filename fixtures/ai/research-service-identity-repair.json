@@ -1,0 +1,50 @@
+{
+  "version": "dryrun.research-service-identity-repair/1",
+  "synthetic": true,
+  "liveModelRepair": false,
+  "originalSearch": "groq-albuquerque-search-v5-live.json",
+  "originalExtraction": "groq-albuquerque-extraction-v5-live.json",
+  "note": "Authored synthetic correction of a recorded live failure; not a successful live-provider repair or a fresh search.",
+  "syntheticRepair": {
+    "options": [
+      {
+        "name": "Increasing Access to Prescriptions",
+        "locality": "Albuquerque, New Mexico",
+        "documentedService": "Our on-site pharmacy fills prescriptions from our providers at AHCH, as well as provides medication for uninsured individuals regardless of ability to pay.",
+        "whyUseful": "The published program explicitly serves uninsured individuals and mentions AHCH-provider prescriptions. That is a specific lead for the public brief’s budget constraint, but this search does not establish that the person is eligible or that their prescription can be filled.",
+        "nextAction": "Check the organization’s prescription-source and eligibility requirements, current hours, needed-medication availability, site access and a feasible transit approach before considering travel.",
+        "unknowns": [
+          "Personal eligibility and accepted prescription source",
+          "Current opening and medication availability",
+          "Site-specific step-free access",
+          "Feasible transit approach"
+        ],
+        "publishedOrUpdatedAt": null,
+        "support": [
+          "source-5.passage-2"
+        ]
+      },
+      {
+        "name": "Public Health Pharmacy Clinic",
+        "locality": "Albuquerque, New Mexico",
+        "documentedService": "Call Us 505.832.7162",
+        "whyUseful": "The source supplies a named clinic and contact number. This is a contact-only planning lead: its name does not establish general prescription dispensing or whether it can address the pharmacy need in this brief.",
+        "nextAction": "Use the published contact details to establish whether the needed service is offered, then check current opening, eligibility, accessibility and a feasible transit approach before travel.",
+        "unknowns": [
+          "Whether the needed prescription service is offered",
+          "Current opening and personal eligibility",
+          "Site-specific accessibility",
+          "Feasible transit approach"
+        ],
+        "publishedOrUpdatedAt": null,
+        "support": [
+          "source-1.passage-1"
+        ]
+      }
+    ],
+    "comparison": "The named prescription program documents a restricted service relevant to the budget constraint; the clinic excerpt establishes only a contact lead. Neither source establishes a feasible transit journey or current medication stock.",
+    "limitations": [
+      "Published service and contact information do not establish personal eligibility, stock, activation or travel feasibility."
+    ]
+  }
+}

@@ -77,7 +77,9 @@
       },
       "id" : "eq-insulin",
       "isEssential" : true,
-      "label" : "Refrigerated medication",
+      "label" : "",
+      "labelIsCustom" : false,
+      "legacyOriginalLabel" : "Refrigerated medication",
       "needsRefrigeration" : true,
       "personID" : "p-lake-1",
       "powerWatts" : {

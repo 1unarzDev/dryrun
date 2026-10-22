@@ -1,8 +1,9 @@
 import SwiftUI
 import DryRunCore
 
-/// The first tab: what this household should do next, merged across all six rehearsals. Concrete items only —
-/// to do, done, or still unknown. Evidence coverage follows the concrete next actions.
+/// The first tab: what this household should do next, merged across all six rehearsals. Concrete items lead —
+/// to do, done, or still unknown. The provisional score follows them; it is compiled locally by Core under the
+/// versioned draft rubric (DryRun_AI_Implementation_Reference.md §12), with coverage and cap reasons beside it.
 struct NextStepsView: View {
     @Environment(AppModel.self) private var model
     @State private var showAll = false
@@ -129,6 +130,17 @@ struct NextStepsView: View {
         if !model.preparationAIAvailable, !topSteps.isEmpty, FamilyBriefingService.canWrite(locale: model.locale) {
             SectionCard {
                 DisclosureGroup(isExpanded: $showBriefing) {
+                    VStack(alignment: .leading, spacing: Theme.Space.m) {
+                    if let household = model.household {
+                        LabeledContent(l("ui.setup.homeType"), value: DisplayNames.name(household.housing.homeType.rawValue, localizer: l))
+                        ForEach(household.people.filter { !$0.needs.isEmpty }) { person in
+                            LabeledContent(person.localizedLabel(l), value: person.needs.map { DisplayNames.name($0.rawValue, localizer: l) }.joined(separator: ", "))
+                        }
+                        ForEach(household.equipment.filter { $0.isEssential }) { equipment in
+                            Label(DisplayNames.equipment(equipment, localizer: l), systemImage: equipment.requiresColdStorage ? "snowflake" : "bolt.heart")
+                                .font(.callout)
+                        }
+                    }
                     if writingBriefing {
                         HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("ui.brief.writing")).foregroundStyle(.secondary) }
                     }
@@ -159,6 +171,7 @@ struct NextStepsView: View {
                             }
                         }
                     }
+                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, Theme.Space.s)
                 } label: {
                     Label(l("ui.brief.title"), systemImage: "person.2.fill").font(.headline)
                 }
@@ -373,11 +386,11 @@ struct NextStepRow: View {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: Theme.Space.s) {
                         StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
-                        ScenarioIcons(ids: step.scenarioIDs)
+                        ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement)
                     }
                     VStack(alignment: .leading, spacing: Theme.Space.xs) {
                         StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
-                        ScenarioIcons(ids: step.scenarioIDs)
+                        ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement)
                     }
                 }
             }
@@ -404,11 +417,12 @@ struct NextStepRow: View {
 struct ScenarioIcons: View {
     @Environment(AppModel.self) private var model
     let ids: [String]
+    var urgent = false
 
     var body: some View {
         HStack(spacing: 4) {
             ForEach(ids, id: \.self) { id in
-                Image(systemName: RehearseTabView.symbols[id] ?? "circle").font(.caption).foregroundStyle(.secondary)
+                Image(systemName: RehearseTabView.symbols[id] ?? "circle").font(.caption).foregroundStyle(urgent ? Theme.critical : .secondary)
             }
         }
         .accessibilityElement()
@@ -434,10 +448,10 @@ struct NextStepDetailView: View {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 Text(l(r.titleKey, r.localizedTemplateValues(household: model.household, localizer: l))).font(.title2.weight(.bold))
                 ViewThatFits(in: .horizontal) {
-                    HStack { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                             ScenarioIcons(ids: step.scenarioIDs) }
-                    VStack(alignment: .leading) { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
-                                                  ScenarioIcons(ids: step.scenarioIDs) }
+                    HStack { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
+                             ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement) }
+                    VStack(alignment: .leading) { StatusPill(text: l("common.effort.\(r.effort.rawValue)"), systemImage: "dollarsign.circle", tint: r.tier == .unmetEssentialRequirement ? Theme.critical : Theme.accent)
+                                                  ScenarioIcons(ids: step.scenarioIDs, urgent: r.tier == .unmetEssentialRequirement) }
                 }
                 SectionCard(title: l("common.why"), systemImage: "lightbulb") {
                     Text(l(r.whyKey, r.localizedTemplateValues(household: model.household, localizer: l)))

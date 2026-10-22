@@ -1,0 +1,3 @@
+(node:3350562) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"newProviderCalls":0,"newSearch":false,"recordedFailureRejected":true,"syntheticRepairAccepted":true,"liveRepairVerified":false,"report":"artifacts/ai/resource-service-evidence/report.json"}

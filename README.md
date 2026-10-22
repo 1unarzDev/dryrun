@@ -10,7 +10,9 @@ with a plan they can open offline.
 > and [continuation note](docs/integration/continuation.md). Historical verification remains historical evidence.
 > App-AI responses, captures and logs are restricted to dedicated output reviewers.
 
-October 19 integrated Gemini portable work: [evaluation and limitations](docs/ai/evaluation-report.md), [Mac integration handoff](docs/ai/mac-integration-handoff.md), and [private synthetic gateway](services/ai-orchestrator/README.md). Native integration and production authorization remain pending.
+Current corrective work implements six distinct portable hazard mechanics, grounded Gemini task generation, automatic resource research, and retiring practice checks. Read the [six-scenario coverage](docs/ai/six-scenario-coverage.md), [current evaluation](docs/ai/evaluation-report.md), and [exact Mac/iPhone handoff](docs/ai/mac-corrective-handoff.md). Native integration/device checks and independent content review remain required; this is not a completed native release.
+
+The complete supplied specification is [DryRun_AI_Implementation_Reference.md](DryRun_AI_Implementation_Reference.md); the requested `.txt` file is absent. `scripts/verify-ai-portable.sh` runs offline checks. The [private gateway](services/ai-orchestrator/README.md) has separate synthetic live evaluations; provider secrets stay server-side.
 
 ## What runs today
 
@@ -56,3 +58,6 @@ physical-device verification. Safety text/translations remain unreviewed drafts.
 `docs/FRONTEND_HANDOFF.md` · `docs/MACOS_VERIFICATION.md` · `docs/DEVICE_CHECKLIST.md` · `docs/ARCHITECTURE.md` · `docs/DECISIONS.md` · `docs/VERIFICATION.md` · `docs/SAFETY_AND_CONTENT.md` ·
 `docs/AI_ASSISTANCE.md` · `docs/STUDENT_IMPLEMENTATION.md` · `docs/REVIEW.md` · `docs/BACKLOG.md` · `docs/CONTRACTS.md`
 · lane reports and adversarial reviews in `docs/lanes/`.
+
+
+Current synthetic live results and failures: [live corrective audit](docs/ai/live-corrective-audit.md). Authorized-key availability and official zero-spend options: [Gemini free limits](docs/ai/gemini-free-limits.md). The latest complete Gemini attempt passed2/6 bounded executable continuation checks (with known wording defects); the latest Groq completion attempt finished0/6 because of quota/circuit blocking, while all six deterministic hazard rows and24 branch replays pass. Native integration/device and independent human checks remain open.

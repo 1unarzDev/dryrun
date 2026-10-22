@@ -1149,5 +1149,6 @@
   "site.lookup.ambiguous": "Este punto toca más de una zona de inundación de FEMA. Revise el mapa usted mismo en msc.fema.gov.",
   "site.lookup.elevationFilled": "La elevación del terreno se completó con datos de USGS. Este resultado no indica un datum ni una incertidumbre, así que ingrese ambos desde la fuente de USGS antes de guardar.",
   "site.lookup.noElevation": "USGS no tiene elevación para este punto.",
-  "site.lookup.failed": "La consulta no funcionó. Revise su conexión o ingrese el registro a mano."
+  "site.lookup.failed": "La consulta no funcionó. Revise su conexión o ingrese el registro a mano.",
+  "prep.ai.detail": "Solo hogar de ejemplo. Envía necesidades anonimizadas, equipos, suministros registrados e identificadores del plano de la casa (sin nombres, teléfonos ni dirección) a Google Gemini mediante el servidor de prueba de Dry Run. Gemini puede reordenar elementos de la misma prioridad y explicarlos para este hogar. La app comprueba cada uno con su lista; la prioridad, la puntuación y lo completado nunca cambian."
 }

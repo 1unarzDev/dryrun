@@ -5,7 +5,7 @@
   "sourceHashes": {
     "scripts/elevator-fire-eval.ts": "47684ce554db7bf0223d3db343029f17a1463d2e941096f3f5eee754af6e4ce2",
     "src/output-quality.ts": "70792b6a2c6b551e977399a3b34698ad913448873b477357f8eb77abaaf5f9f2",
-    "../../packages/DryRunCore/Sources/DryRunCore/Spatial/EgressPlanner.swift": "f7ccb828ed257a0f9f378e91c28a3670e89bc213cdf24f6884f26cbf0be8718e",
+    "../../packages/DryRunCore/Sources/DryRunCore/Spatial/EgressPlanner.swift": "5142a3b7372d233e14a2f86f25ae0feba91b8c3e25e2694de05bc3bae82ae3ec",
     "../../packages/DryRunCore/Sources/DryRunCore/Spatial/HousingPlanning.swift": "89e5b57804e341265b16fc1a7dd48c828ec180aa2b6cc820e29d87a894ce5780",
     "../../fixtures/homes/home-sample-apartment-complex.json": "f7a5f0912af6669369311bbfabe62e6909da14ae64700af580c00a822f01fba5"
   },
@@ -1473,17 +1473,74 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "household": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -1498,6 +1555,16 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
           "housing": {
@@ -1528,7 +1595,8 @@
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -1553,6 +1621,52 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 3
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 5
+            }
           },
           "transport": "car"
         },
@@ -2913,7 +3027,8 @@
         "instruction": "Explain this exact host result for a fictional apartment fire. Never use an elevator; no supported route stays unresolved. Review building-specific assistance rather than inventing a stair, carry technique or window descent. Feasibility is only under recorded assumptions."
       },
       "receipt": {
-        "contextDigest": "7ea166a585e1dc42",
+        "assistance": [],
+        "contextDigest": "c9f6f32be4c44225",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -2971,6 +3086,78 @@
             "titleKey": "scenario.home-fire.route.alternative"
           }
         ],
+        "experience": {
+          "accountedPersonIDs": [],
+          "availableWaterGallons": 5,
+          "debrief": [
+            {
+              "eventIDs": [],
+              "kind": "smoke-egress-accounting",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": [
+                "p-oak-1"
+              ]
+            },
+            {
+              "eventIDs": [],
+              "kind": "outsideAccounting",
+              "nextActionID": "prep.nearMeetup",
+              "subjectIDs": [
+                "p-oak-1"
+              ]
+            },
+            {
+              "eventIDs": [],
+              "kind": "noIndependentSecondEscape",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": [
+                "p-oak-1"
+              ]
+            },
+            {
+              "eventIDs": [],
+              "kind": "excludedEscapeConnections",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": [
+                "p-oak-1",
+                "pt-balcony",
+                "pt-win-bed1",
+                "sp-kitchen",
+                "synthetic-elevator-0",
+                "synthetic-elevator-1"
+              ]
+            }
+          ],
+          "destinationIDs": [],
+          "escapeHelperByPersonID": {},
+          "feasibleCommands": [
+            {
+              "kind": "escape",
+              "target": "p-oak-1",
+              "value": "pt-building-exit"
+            }
+          ],
+          "hazard": "homeFire",
+          "identifiedGapIDs": [],
+          "mechanicsVersion": "dryrun.hazard-mechanics/5",
+          "objective": "Exit by a supported clear path and account outside; never re-enter.",
+          "occupantRoomIDs": {
+            "p-oak-1": "sp-bed1"
+          },
+          "openGapIDs": [],
+          "outsidePersonIDs": [],
+          "relocated": false,
+          "scene": "smoke-egress-accounting",
+          "shelteredPersonIDs": [],
+          "supportedActions": [
+            "escape",
+            "accountOutside",
+            "closeDoor",
+            "accompanyEscape",
+            "identifyGap"
+          ],
+          "waterService": "operational"
+        },
         "finished": false,
         "pending": [],
         "revision": 1,
@@ -4785,17 +4972,74 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       },
       "context": {
         "household": {
+          "backupPower": [
+            {
+              "assumedEfficiency": 0.85,
+              "continuousOutputW": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "W",
+                "value": 1200
+              },
+              "id": "bk-station",
+              "islandingConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "kind": "portableBatteryStation",
+              "safeOutdoorPlacementConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "setupConfirmed": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "usableEnergyWh": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "unit": "Wh",
+                "value": 1000
+              }
+            }
+          ],
           "equipment": [
             {
+              "compatibleBackupIDs": [],
               "documentation": "unknown",
+              "documentedBackupRuntimeHours": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
               "essential": true,
               "id": "eq-oxygen",
               "personID": "p-oak-4",
-              "powerRequired": true
+              "powerRequired": true,
+              "powerWatts": {
+                "inputIDs": [],
+                "origin": "unknown",
+                "sourceIDs": [],
+                "status": "unknown"
+              },
+              "purpose": "oxygenConcentrator",
+              "requiresColdStorage": false
             }
           ],
           "evidence": [
@@ -4810,6 +5054,16 @@
               "origin": "userConfirmed",
               "sourceIDs": [],
               "status": "confirmed"
+            },
+            {
+              "fieldIDs": [
+                "backupPower"
+              ],
+              "id": "recorded-backup-power",
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
             }
           ],
           "housing": {
@@ -4840,7 +5094,8 @@
             {
               "ageBand": "adult",
               "id": "p-oak-1",
-              "needs": []
+              "needs": [],
+              "startingRoomID": "sp-bed1"
             }
           ],
           "pets": [
@@ -4865,6 +5120,52 @@
             ],
             "schemaVersion": "dryrun.site-context/1",
             "sourceIDs": []
+          },
+          "supplies": {
+            "coolerAndIcePacks": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "fireExtinguisher": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "firstAidKit": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "flashlights": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 2
+            },
+            "limitedStorageSpace": false,
+            "shelfStableFoodDays": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 3
+            },
+            "storedWaterGallons": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "gal",
+              "value": 5
+            }
           },
           "transport": "car"
         },
@@ -6080,7 +6381,8 @@
         "instruction": "Explain this exact host result for a fictional apartment fire. Never use an elevator; no supported route stays unresolved. Review building-specific assistance rather than inventing a stair, carry technique or window descent. Feasibility is only under recorded assumptions."
       },
       "receipt": {
-        "contextDigest": "99bfebad04813536",
+        "assistance": [],
+        "contextDigest": "4d337bb4774691c9",
         "directorState": {
           "activeIncidentCount": 1,
           "awaitingUserAction": false,
@@ -6136,6 +6438,87 @@
             "titleKey": "scenario.home-fire.route.none"
           }
         ],
+        "experience": {
+          "accountedPersonIDs": [],
+          "availableWaterGallons": 5,
+          "debrief": [
+            {
+              "eventIDs": [],
+              "kind": "smoke-egress-accounting",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": [
+                "p-oak-1"
+              ]
+            },
+            {
+              "eventIDs": [],
+              "kind": "outsideAccounting",
+              "nextActionID": "prep.nearMeetup",
+              "subjectIDs": [
+                "p-oak-1"
+              ]
+            },
+            {
+              "eventIDs": [],
+              "kind": "noSupportedEscape",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": [
+                "p-oak-1"
+              ]
+            },
+            {
+              "eventIDs": [],
+              "kind": "excludedEscapeConnections",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": [
+                "p-oak-1",
+                "pt-balcony",
+                "pt-win-bed1",
+                "sp-kitchen",
+                "synthetic-elevator-0",
+                "synthetic-elevator-1"
+              ]
+            },
+            {
+              "eventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "kind": "req.egress.p-oak-1",
+              "nextActionID": "prep.fireDrill",
+              "subjectIDs": []
+            }
+          ],
+          "destinationIDs": [],
+          "escapeHelperByPersonID": {},
+          "feasibleCommands": [
+            {
+              "kind": "identifyGap",
+              "target": "escapeRoute"
+            }
+          ],
+          "hazard": "homeFire",
+          "identifiedGapIDs": [],
+          "mechanicsVersion": "dryrun.hazard-mechanics/5",
+          "objective": "Exit by a supported clear path and account outside; never re-enter.",
+          "occupantRoomIDs": {
+            "p-oak-1": "sp-bed1"
+          },
+          "openGapIDs": [
+            "escapeRoute"
+          ],
+          "outsidePersonIDs": [],
+          "relocated": false,
+          "scene": "smoke-egress-accounting",
+          "shelteredPersonIDs": [],
+          "supportedActions": [
+            "escape",
+            "accountOutside",
+            "closeDoor",
+            "accompanyEscape",
+            "identifyGap"
+          ],
+          "waterService": "operational"
+        },
         "finished": false,
         "pending": [],
         "revision": 1,

@@ -86,7 +86,8 @@ struct PracticeCheckView: View {
         Text(l("practice.separate")).font(.footnote).foregroundStyle(.secondary)
         if let receipt {
             if let home = step.session.initial.home, step.session.initial.scenarioID == "home-fire" {
-                SpatialRehearsalScene(home: home, household: step.session.initial.household, state: receipt.snapshot.spatialState)
+                SpatialRehearsalScene(home: home, household: step.session.initial.household, state: receipt.snapshot.spatialState,
+                                      isFireExercise: true)
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("practice.scene")
             }

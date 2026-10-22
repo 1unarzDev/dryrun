@@ -26,7 +26,9 @@
         "status" : "unknown"
       },
       "kind" : "portableBatteryStation",
-      "label" : "Portable battery station",
+      "label" : "",
+      "labelIsCustom" : false,
+      "legacyOriginalLabel" : "Portable battery station",
       "safeOutdoorPlacementConfirmed" : {
         "inputIDs" : [
 
@@ -137,7 +139,9 @@
       },
       "id" : "eq-oxygen",
       "isEssential" : true,
-      "label" : "Oxygen concentrator",
+      "label" : "",
+      "labelIsCustom" : false,
+      "legacyOriginalLabel" : "Oxygen concentrator",
       "needsRefrigeration" : false,
       "personID" : "p-oak-4",
       "powerWatts" : {

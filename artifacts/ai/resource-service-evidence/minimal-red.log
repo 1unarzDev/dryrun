@@ -1,0 +1,33 @@
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/ai-orchestrator
+
+ ❯ test/discovery-evidence.test.ts (10 tests | 1 failed | 9 skipped) 7ms
+   × does not treat a service word inside the facility name as evidence of that service 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/discovery-evidence.test.ts > does not treat a service word inside the facility name as evidence of that service
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ test/discovery-evidence.test.ts:86:106
+     84|  const passages=[{sourceID:'clinic',scopeID:'header',quote:'Public Hea…
+     85|  for(const documentedService of ['Pharmacy','pharmacy','Public Health …
+     86|   expect(()=>assertSourceBoundOption({name:'Public Health Pharmacy Cli…
+       |                                                                                                          ^
+     87|  // Contact-only evidence can remain a qualified lead; the name never …
+     88|  expect(()=>assertSourceBoundOption({name:'Public Health Pharmacy Clin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 skipped (10)
+   Start at  07:07:06
+   Duration  135ms (transform 57%, import 20%, tests 16%, worker 7%)
+

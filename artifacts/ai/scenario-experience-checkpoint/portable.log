@@ -1,0 +1,1655 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version-24593BA9C3E375BF.txt
+Build complete! (0.19s)
+Test Suite 'All tests' started at 2026-10-20 11:52:59.653
+Test Suite 'debug.xctest' started at 2026-10-20 11:52:59.654
+Test Suite 'debug.xctest' passed at 2026-10-20 11:52:59.654
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+Test Suite 'All tests' passed at 2026-10-20 11:52:59.654
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: x86_64-unknown-linux-gnu
+◇ Suite "Recorded supply requirement arithmetic" started.
+◇ Suite "Capability matrix" started.
+◇ Suite "Public data policy" started.
+◇ Suite "Geographic and indoor meeting place linkage" started.
+◇ Suite "Selectable content languages" started.
+◇ Suite "Egress routes" started.
+◇ Suite "Focused household deletion" started.
+◇ Suite "Lead core adversarial probes" started.
+◇ Suite "AI boundary regressions" started.
+◇ Suite "Inventory evidence, zero stock and read validation" started.
+◇ Suite "Rehearsal cursor and stale-result gate" started.
+◇ Suite "Family preparation revision" started.
+◇ Suite "Selected family export transaction" started.
+◇ Suite "Score evidence invariants" started.
+◇ Suite "Public data contract (shared JSON with services/public-api)" started.
+◇ Suite "October 17 spatial contracts" started.
+◇ Suite "Authored adapter compatibility" started.
+◇ Suite "Demo dump (opt-in)" started.
+◇ Suite "Fixture households" started.
+◇ Suite "Computed fire accompaniment" started.
+◇ Suite "Route adversarial probes" started.
+◇ Suite "Counterfactual" started.
+◇ Suite "Manual home layout" started.
+◇ Suite "Minimized safety-relevant home scene" started.
+◇ Suite "Source-bound recorded access dependencies" started.
+◇ Suite "Next steps" started.
+◇ Suite "Six hazard readiness setup and current-state scenes" started.
+◇ Suite "Describe your family: intake proposals" started.
+◇ Suite "Confirmed inventory identity drives existing preparations" started.
+◇ Suite "Geometry and scan import" started.
+◇ Suite "Spatial fixtures and validation" started.
+◇ Suite "Consistent map extents, route endpoints and exported place facts" started.
+◇ Suite "Alarm records across rehearsal and preparation" started.
+◇ Suite "Guided home confirmation" started.
+◇ Suite "Simultaneous resource boundaries" started.
+◇ Suite "Medical power-outage card" started.
+◇ Suite "Spatial identity and assistance" started.
+◇ Suite "Completed departure survives provider loss" started.
+◇ Suite "Versioned committed-route adaptation anchors" started.
+◇ Suite "Ordinary map estimate presentation" started.
+◇ Suite "Rehearsal without a home layout" started.
+◇ Suite "AI source review, refresh and migration" started.
+◇ Suite "Six hazard differentiation gates" started.
+◇ Suite "Local image transform and calibration provenance" started.
+◇ Suite "Director policy, stages and recorded origins" started.
+◇ Suite "Living family plan and private place snapshot" started.
+◇ Suite "Concentrated preparation and home presentation" started.
+◇ Suite "Current shelter suitability" started.
+◇ Suite "Plan builder and localization" started.
+◇ Suite "Exercise inventory conservation and access" started.
+◇ Suite "Direct home editing save transaction" started.
+◇ Suite "Recorded household food-days in the shared exercise reducer" started.
+◇ Suite "Real preparation completion loops" started.
+◇ Suite "Director context follows actual user commits" started.
+◇ Suite "Continuity destinations in the family card and plan" started.
+◇ Suite "Household geometry corrections" started.
+◇ Suite "Controlled stress comparison" started.
+◇ Suite "Layoutless baseline readiness coverage" started.
+◇ Suite "Private geographic planning places" started.
+◇ Suite "Host-owned pre-feedback practice capture" started.
+◇ Suite "Local leak plan content" started.
+◇ Suite "Recorded backup and transport prerequisites" started.
+◇ Suite "Recorded resource context" started.
+◇ Suite "Committed helper reach" started.
+◇ Suite "Confirmed household food coverage" started.
+◇ Suite "Coordinated phone and print home panels" started.
+◇ Suite "Ranking" started.
+◇ Suite "Housing, site hazards and shared model representations" started.
+◇ Suite "Connected map planning records" started.
+◇ Suite "End-to-end offline integration" started.
+◇ Suite "Submitted user intent boundary" started.
+◇ Suite "Canonical home scene presentation" started.
+◇ Suite "Preparation task editor routing" started.
+◇ Suite "Versioned non-device practice anchors" started.
+◇ Suite "Movement preserves hazard route purpose" started.
+◇ Suite "Retiring hazard checks and local score refresh" started.
+◇ Suite "Simulation" started.
+◇ Suite "Explicit supported public coverage" started.
+◇ Suite "Versioned household evidence assessment" started.
+◇ Suite "Flood higher-refuge action" started.
+◇ Test subjectUnitsExpiryAndIdentityCannotInflateCredit() started.
+◇ Test demoAlertNeverCurrent() started.
+◇ Test missingTimesAreUnknown() started.
+◇ Suite "Current exercise assistance transport" started.
+◇ Test incompleteControlsAndBrokenPlaceholdersCannotBeOfferedAsCompleteLanguages() started.
+◇ Test liveFreshAlertIsCurrent() started.
+◇ Test queryBuilderRejectsUnexpectedValues() started.
+◇ Suite "Host wait predicates and submitted door posture" started.
+◇ Suite "Family card layout parts" started.
+◇ Test poiIsNeverActivatedShelterWithoutEvidence() started.
+◇ Test legacyMarkerTypeNamesLocalizeWithoutChangingCustomOrStoredLabels() started.
+◇ Suite "Rendered English" started.
+◇ Suite "Home review to preparation and hypothetical exercise" started.
+◇ Test regionAllowlist() started.
+◇ Test "Canvas edits and deletion update only the linked destination and every derived plan/task" started.
+◇ Suite "Controlled supply relocation retests" started.
+◇ Test oldCopyIsStaleNotCurrent() started.
+◇ Test namedGeographicMeetupUpdatesIndoorReferenceWithoutInventingCoordinates() started.
+➜ Test simulationExploreDump() skipped.
+◇ Suite "For your family: briefing inputs and acceptance" started.
+◇ Test "Removing an accidental resident clears only their references and preserves equipment and the identifiable self" started.
+◇ Test bundledLanguagesIncludeCompleteDraftsAndKeepTheirReviewState() started.
+◇ Test "Proposed or unlinked homes cannot silently supply a confirmed family destination" started.
+◇ Suite "Integrated AI authority and deterministic host" started.
+◇ Suite "Factual preparation progress" started.
+◇ Test editDeleteAndUnrelatedResourcePreserveCorrectAssociations() started.
+◇ Suite "Four frozen situations in one provisional practice check" started.
+◇ Test inaccessibleInventoryAndAtomicProjection() started.
+◇ Suite "Preparation drafts preserve unrelated evidence" started.
+◇ Suite "Relevant resource refresh and debounce" started.
+◇ Test expiredAlertNeverCurrentEvenIfCached() started.
+◇ Test "Confirmation: ground floor exits work when the home has a basement" started.
+◇ Suite "Selected-language plan and card content" started.
+◇ Test spatialPickerValuesHaveSelectedLanguageText() started.
+◇ Test "Private care-plan notes never appear without consent, in any locale" started.
+◇ Test "Fire page lists a route per person-mobility, not just per start room" started.
+◇ Suite "Counterfactual relocation" started.
+◇ Test "The transactional home candidate drops only deleted residents' window suitability with one revision change" started.
+◇ Test nearTouchingRoomsDoNotBecomeAdjacent() started.
+◇ Test thickScannedWallsRouteWithCleanGeometryOnceConfirmed() started.
+◇ Test "Assumed or unconfirmed stored water is not printed as a fact" started.
+◇ Test "No English words injected into translated route lines without a fallback flag" started.
+◇ Test "Gate rejects late results, including after a locale-only change" started.
+◇ Test decodedUnconfirmedOriginCannotBypassQuantityOrAccessChecks() started.
+◇ Test "Prohibitions keep prohibition styling in every locale" started.
+◇ Test "Confirmation: a window is not turned into a walking exit by the generic exterior answer" started.
+◇ Test overflowCannotBecomeInfiniteStockInGapsOrExercise() started.
+◇ Test "Cursor finishes cleanly when all decisions are answered" started.
+◇ Test duplicateBatchAndPersistenceFailureDoNotPublish() started.
+◇ Test movedResidentOverridesRecordedStartAndReplays() started.
+◇ Test mobilityIncompatibleStepsAndUnknownClearanceCannotMasquerade() started.
+◇ Test "Self and the last legacy resident cannot be deleted; failed or missing deletions leave the draft intact" started.
+◇ Test emptyAccessibleContainerCannotEarnAccessCredit() started.
+◇ Test confirmedZeroIsKnownDespiteUnknownUsabilityAndAccess() started.
+◇ Test "Destructive explanations resolve in EN, ES and VI with exact subject names" started.
+◇ Test "Removing equipment clears exact item evidence without deleting shared sources or unrelated people and facts" started.
+◇ Test genericRequirementsRespectReservedStockEvenWithoutNamedSubjects() started.
+◇ Test "A confirmed local landmark migrates into card and preparation without inventing geographic coordinates" started.
+◇ Test windowsAndUnknownPortalsAreNotExits() started.
+◇ Test "Placeholder filling is single-pass and user text with braces does not invalidate a plan" started.
+◇ Test "Cursor stops at an unanswered decision and resumes after the re-run includes the choice" started.
+◇ Test "Draft banner and fallback note present whenever any localized string is draft or fallback" started.
+◇ Test fingerprintDistinguishesNaNHomesAndIsCurrentChecksContent() started.
+◇ Test "Changing geographic destinations clears a stale local marker position; migration retains its own position" started.
+◇ Test "Generic marker types never become named family meeting places during migration" started.
+◇ Test practiceCreditMustMatchHostAnchor() started.
+◇ Test taskSubjectsAndFingerprintsDoNotLeakAcrossDevices() started.
+◇ Test twoExitHomeHasPrimaryAndIndependentAlternative() started.
+◇ Test "Key-moment stepping skips no event and still stops at every decision and warning" started.
+◇ Test pathsSharingAHallwayAreNotAdvertisedAsIndependent() started.
+◇ Test "Deselected clinical content is one neutral line that never counts as missing" started.
+◇ Test upperFloorWindowsAndBalconiesAreNotGroundExits() started.
+◇ Test editingDoorVerificationInvalidatesCachedRoute() started.
+◇ Test blockingOneExitFindsTheOtherAndBlockingBothYieldsNoRoute() started.
+◇ Test legacyLabelsAndOriginalMedicineAnswersSurviveMigration() started.
+◇ Test "A late result from an older request is rejected; so is a result for an older household revision" started.
+◇ Test subjectRestrictedStockNeverBecomesSharedHouseholdStock() started.
+◇ Test subjectSupplyFactsReachTheNoLayoutCardOnlyUnderTheirOwnSelections() started.
+◇ Test medicationStorageDoesNotBecomeElectricalEquipment() started.
+◇ Test "Shelter spot must be on the lowest floor, and the plan prints only a verified shelter" started.
+◇ Test droppedPinMeetupsKeepTheirLocationAsTextInACardWithoutMaps() started.
+◇ Test "Changing equipment type resets support evidence while retaining a genuine custom name" started.
+◇ Test oversizedInstructionsFollowTheMainCardWithoutRewritingOrHidingTheirSelection() started.
+◇ Test outOfAreaContactKeepsItsRoleAndInternationalPhoneWithoutAProseRelationship() started.
+◇ Test mixedRequirementsTrackPowerAndColdStorage() started.
+◇ Test cardUsesRecordedSupplyOwnershipAndWaterQuantityWithoutCertifyingContradictions() started.
+◇ Test universalCardIncludesSelectedContinuityWithoutInferringSupportOrLeakingNotes() started.
+◇ Test cardExistsWithoutMedicalEquipmentOrLayoutAndHonorsSelections() started.
+◇ Test legacyNonMedicationStorageCanBeClarifiedWithoutChangingItsPowerRequirement() started.
+◇ Test "Switching backup kind retains ownership/custom name but requires fresh setup and device compatibility" started.
+◇ Test medicineAndEquipmentCardSelectionsAreIndependent() started.
+◇ Test alarmMarkerDoesNotCompleteFunctionalCheck() started.
+◇ Test cornerCaseNaiveLineCrossesWallButRouteDetours() started.
+◇ Test tx25PackCoversThirteenCountiesWithExplicitStatus() started.
+◇ Test "An unrelated rescan, geometry replacement or deleted room does not delete geographic plans" started.
+◇ Test "Higher refuge needs an explicit not-closed-attic and way-out confirmation" started.
+◇ Test planningIsDeterministic() started.
+◇ Test "Legacy card review never becomes a joint family review" started.
+◇ Test "Flood refuge and tornado shelter scenes preserve subjects, floors and mobility across the same fixtures" started.
+◇ Test "Excluded start exposure is retained, and duplicate identities fail without a crash" started.
+◇ Test "A personal manual draft has no assumed geometry and keeps its identity when the first room is entered" started.
+◇ Test "Cursor reveals same-minute events that precede a minute-0 decision" started.
+◇ Test "Region frames are deliberate and only verified offices receive pins" started.
+◇ Test orderingAndUnrelatedShoppingCannotClearDeviceCap() started.
+◇ Test alertsFixtureDecodesAndIsDemo() started.
+◇ Test "Studio, concave, basement, walkout, split, shared corridor, missing and narrow fixtures remain conservative" started.
+◇ Test "A window inventory and operability confirmation are insufficient escape evidence" started.
+◇ Suite "TypeScript Swift recorded contracts" started.
+◇ Test "Household fixtures contain no real-looking phone numbers outside the 555-01xx fictional range" started.
+◇ Test namedContactWithoutPhoneIsIncompleteAndInternationalNumberIsPreserved() started.
+◇ Test regionPacksDecode() started.
+◇ Test "Capture cancellation, retry, repeated Finish and late callbacks use originating tokens" started.
+◇ Test maintenanceUsesRecordedDatesAndStaysBelowEssentialGaps() started.
+◇ Test "Item changes reopen physical checks and their coverage or awareness without invalidating note edits" started.
+◇ Test rotatedAndTranslatedHomePreservesTopologyAndLength() started.
+◇ Test "Interior shelter routing ends in the actual confirmed room, never at an exterior exit" started.
+◇ Test "Rendered wall segments omit the same portal span" started.
+◇ Test dump() started.
+◇ Test placeOrderDoesNotInvalidateAPlanButAChangedMeetupDoes() started.
+◇ Test accompanimentMovesBothPeopleThroughTheExactExitWithoutAutomaticAccounting() started.
+◇ Test roomsThatOnlyNearTouchHaveNoSharedWall() started.
+◇ Test heatingFuelAloneCannotDismissCOAlarmReview() started.
+◇ Test historicalMechanicsFourNeverReinterpretsSoloEscape() started.
+◇ Test failedRequestedGenerationCannotExportEvenWhenACardIsAvailable() started.
+◇ Test "Fire chooses one room by ID and per-stage routes never retain a superseded path" started.
+◇ Test "Location denied: manual region picker still works" started.
+◇ Test currentSelectionsApplyToEveryPageAndCardIsIncludedExactlyOnce() started.
+◇ Test "Every modelable recommendation changes something in its replay" started.
+◇ Test missingApproachAndFailedPersistenceCannotPartiallyMoveAnyone() started.
+◇ Test cardOnlyExportCannotInheritAnotherPlansPrivatePagesOrGeometry() started.
+◇ Test preservesTwentyFourLegacyRuns() started.
+◇ Test completedShelterAndThermalActionsLeaveCurrentAffordances() started.
+◇ Test manualHomeBuildsAVerifiedRouteOnlyAfterConfirmation() started.
+◇ Test compoundChoicesUseIndependentProspectiveCopiesBeforeAnyPersistence() started.
+◇ Test "Fire room origins and resident starts share exclusions across diverse layouts and blocked exits" started.
+◇ Test "Try-this-change preserves the baseline and isolates the change" started.
+◇ Test composedEscapeRetiresTheExistingAnchorWithOnePersistedCredit() started.
+◇ Test "Expected-outcome fixtures for the flagship freeze cascade" started.
+◇ Test "Bundled households are fictional, round-trip, and match fixtures/households JSON" started.
+◇ Test "Worst case (no LiDAR, no model, everything denied, offline) keeps the full core product" started.
+◇ Test carryingReplacesStorageAndLegacySourcesKeepOldInspection() started.
+◇ Test leavingAloneRemovesTheHelpersAbilityToReenterForAnotherPerson() started.
+◇ Test "Model unavailable on a LiDAR device: templates only, scanning unaffected" started.
+◇ Test "Unknown evidence decodes from a minimal JSON object and is never treated as confirmed" started.
+◇ Test "Captured story and unknown grade never establish ground, including a legacy scan" started.
+◇ Test "Rotated and translated floor coordinates preserve topology and length" started.
+◇ Test unknownAndEmptyStockAreNotInventedAndStressUsesActualSource() started.
+◇ Test "Verified exterior door on an upper floor is not a walking exit" started.
+◇ Test "Deterministic under ties and input permutation" started.
+◇ Test "No LiDAR: scanning unavailable, but manual layout, rehearsals, and plans remain" started.
+◇ Test "Scanned home with realistic wall thickness can route once the household verifies its doors" started.
+◇ Test "Offline: cached alerts only; every required feature still available" started.
+◇ Test historicalSceneDecodesWithoutInventingNewSafetyEvidence() started.
+◇ Test "Preparations are merged across scenarios, each listed once, ordered by tier" started.
+◇ Test "Door near a room corner: route still found (functional probe)" started.
+◇ Test contextRetainsEvidenceButRemovesPrivateLabelsNotesAndOriginalScan() started.
+◇ Test "ScanImport never produces verified anything; wall-only L-shaped room is flagged for measurement" started.
+◇ Test barsPreserveUnknownEmptyUnitsAndFiniteValues() started.
+◇ Test recordedSafetyFactsExplainHostSuitabilityWithoutOverridingIt() started.
+◇ Test "Two routes through the same hallway to different exits are not advertised as independent" started.
+◇ Test "Spanish, with and without accents" started.
+◇ Test incrementalProjectionCarriesActualExperienceAndRejectsWrongHazard() started.
+◇ Test "Sanitizing bounds a model's output: one speaker, no orphan owners, no repeats, sane counts" started.
+◇ Test actualWaterAdvisoryPersistsAtLaterCursorBoundaries() started.
+◇ Test "Step-free request rejects unknown width and unknown threshold" started.
+◇ Test "Fire rehearsal: no practice route enters an authored blocked space, including the start room" started.
+◇ Test "Camera denied is distinct from unsupported hardware" started.
+◇ Test "Obstacle on the naive line forces a detour that keeps clear of it" started.
+◇ Test "Proposed, unknown-destination, common-area, and unconfirmed-window portals never become exits" started.
+◇ Test "The summary does not depend on the order results arrive in" started.
+◇ Test "An empty or unrelated description proposes nothing" started.
+◇ Test "English: people, who uses which device, follow-up pronouns, home and pets" started.
+◇ Test destinationReviewDoesNotInferActivationOrLeakLabels() started.
+◇ Test "Grounding keeps model facts the words support and adds the speaker's own keyword needs" started.
+◇ Test sixDesignsAndSetupVariantsRoundTripWithoutEditingFacts() started.
+◇ Test "Near-touching rooms (9 cm gap, no explicit walls) do not become adjacent through a portal in the gap" started.
+◇ Test "Water storage change extends stored water and resolves the water requirement" started.
+◇ Test "Negation and look-alike words are not read as facts" started.
+◇ Test storageUsesCommittedStockAndNeverClaimsRoomCausedExpiry() started.
+◇ Test "Scan-observed (unconfirmed) operability/step-free values never satisfy hard requirements (was a defect; fixed)" started.
+◇ Test invalidMappingFractionalCountsAndFailedSavesDoNotPublish() started.
+◇ Test everyExperienceStringResolvesInEverySupportedLocale() started.
+◇ Test stairsWithoutTheOtherFloorAreFlaggedNotInvented() started.
+◇ Test "The speaker's own needs go to the existing 'you' person" started.
+◇ Test "Unverified stairs are not used; verified stairs are excluded for step-free routes" started.
+◇ Test everySetupOptionRunsARealPackAgainstTheSameHome() started.
+◇ Test interruptedCaptureRemainsIncompleteEvenWithSeveralSavedRooms() started.
+◇ Test "Cache never serves a route after an edit; isCurrent must not trust revision alone" started.
+◇ Test "Vietnamese keeps tone marks: ông bà is two grandparents, and mẹ is not the English 'me'" started.
+◇ Test "Grounding drops a need the family never mentioned and restores the device the model missed" started.
+◇ Test "Marking a preparation completed moves it from to-do to completed" started.
+◇ Test nearTouchingScannedRoomsWithoutADoorAreNotConnected() started.
+◇ Test phoneAndExportExtentsKeepTextOnlyNumbersAndReportPartialFailure() started.
+◇ Test selectedResourceContactProvenanceAndHonestStatusAreSharedInAllLanguages() started.
+◇ Test onlyChangedOrDeletedEndpointsInvalidateDirections() started.
+◇ Test ranchHasNoBlockingIssuesAndFlagsWhatNeedsConfirmation() started.
+◇ Test wellSetupCannotOfferMunicipalAdvisoryVariants() started.
+◇ Test "Apply never overwrites what the family entered and adds nothing confirmed" started.
+◇ Test rotatedTranslatedScanPreservesUnitsAndTopologyAndStaysProposed() started.
+◇ Test roomOverlapDistinguishesAlignedStripsFromSharedWallsAndConcaveNotches() started.
+◇ Test expiryScopeAndUnknownsOverrideOlderPositiveTotals() started.
+◇ Test categoryAloneDoesNotInferIdentityAndReplacementClearsProjection() started.
+◇ Test recognisedRoomTypeIsOnlyAnUnconfirmedPrefill() started.
+◇ Test confirmationPropagatesWithoutMarkingUnreviewedChecksComplete() started.
+◇ Test phoneAndWaterDepletionBothExecuteAtSameMinute() started.
+◇ Test homeFixturesMatchSampleHomes() started.
+◇ Test "Alarm review instructions are complete in each supported language" started.
+◇ Test concavePolygonTriangulationPreservesAreaAndRejectsBowties() started.
+◇ Test "L-shaped room: path bends around the reflex corner and never crosses a boundary" started.
+◇ Test "Verified markers cannot substitute for presence, location, coverage or a functional check" started.
+◇ Test independentlyScannedRoomsAreNeverPlacedByGuessing() started.
+◇ Test "Only the injected baseline date reopens alarm maintenance; the exercise remains identical" started.
+◇ Test computedAlternativeCanEarnCreditWithoutMakingRouteDisappear() started.
+◇ Test primitivesUseNamedTolerancesWithoutSnapping() started.
+◇ Test advisoryUsesOnlyAppliedVisibleEventsAndNeverLeaksAcrossHazards() started.
+◇ Test "Scan import retains originating frame and room evidence when capture order changes" started.
+◇ Test "A household without essential equipment gets no cards" started.
+◇ Test "One card per essential device; it validates in EN, ES and VI with no unresolved keys or placeholders" started.
+◇ Test invalidAndOverlappingGeometryIsReported() started.
+◇ Test "An unknown runtime is printed as unknown, never estimated, and missing facts are listed as gaps" started.
+◇ Test "Recorded facts appear on the card and close their gaps" started.
+◇ Test distanceUsesHomeUnitsAndSelectedLanguageWithoutChangingGeometry() started.
+◇ Test localFireRequiresSeparateRosterAndTornadoRequiresEveryArrival() started.
+◇ Test fallbackEndsTheActualHomeBoundaryWithoutApplyingPendingEvents() started.
+◇ Test unfinishedFloodStillOffersTheSameHomeDecision() started.
+◇ Test "Absent geometry is neither evidence of stairs nor evidence of their absence" started.
+◇ Test "Rehearsal event subjects use exact evidence IDs, localized defaults and recorded custom names" started.
+◇ Test "Household-only comparisons work without creating a layout or editing real facts" started.
+◇ Test "A hypothetical shelter cannot supply missing geometry or establish a shelter" started.
+◇ Test setupRejectsUnknownInputsAndSeparatesFocusFromFacts() started.
+◇ Test "Skipping leaves an opening unknown and out of every route; windows are never made walking exits by a door answer" started.
+◇ Test "Window suitability is person-specific and a legacy generic answer cannot authorize anyone" started.
+◇ Test "Complete alarm records close the real engine gap without a marker or home layout and survive reload" started.
+◇ Test unsafeMovementEarnsZeroAndUnchangedRouteProvesNoAdaptation() started.
+◇ Test concernAuthorityAndMaterialEvidenceDedup() started.
+◇ Test tornadoArrivalAndAccessVariantAreComputed() started.
+◇ Test "Rejected doors never route; upper-floor openings cannot be marked as exits" started.
+◇ Test "An unresolved interior side can be assigned without claiming operability, and measured exterior width is retained" started.
+◇ Test "Meeting point and shelter spot become verified only through explicit answers; shelter carries the not-engineered note" started.
+◇ Test v2HeatReducedCoolingDiffersFromFullLossAndFactsStayQualified() started.
+◇ Test apartmentAndTwoStoryIssues() started.
+◇ Test "A destination not confirmed with its host is never printed as a place to go" started.
+◇ Test v2PortableACDoesNotManufactureCoolingCoverageForEveryRoom() started.
+◇ Test accompanimentComputesHelperApproachAndBothShelterArrivalsWithoutTeleporting() started.
+◇ Test waterUseConservesVolumeAndChemicalAdvisoryCannotBeBoiledAway() started.
+◇ Test thermalChoicesChangeComputedTrendsAndKeepHeatPowerInitiallyAvailable() started.
+◇ Test floodEarlyDepartureDiffersFromLostAccessAndNoTransport() started.
+◇ Test "All six hazards retain deterministic decisions and household preparations without spatial claims" started.
+◇ Test "A detached portal cannot suppress the rehearsal's blocked-helper preparation" started.
+◇ Test selectedHazardSurvivesFallbackAndPersistenceFailure() started.
+◇ Test everySelectedHazardCarriesExecutableMechanicsAndDistinctScene() started.
+◇ Test cloudRevokeCancelsStaleRefreshButKeepsLocalPlans() started.
+◇ Test v2HeatShadingIsRoomScopedAndComposedSelectionsPersist() started.
+◇ Test staleImageHomeFrameAndTimeCannotEstablishCalibration() started.
+◇ Test "Water presentation agrees across recommendations, authored events and full plans without rewriting facts" started.
+◇ Test practiceRestartCannotEraseUnfinishedAttempt() started.
+◇ Test "Helper routes obey attachment, width, corrected geometry and helper mobility" started.
+◇ Test "A local leak has its own choices and never borrows regional road, utility, well or evacuation effects" started.
+◇ Test "A scanned home has no verified route until the household answers the confirmation steps" started.
+◇ Test "Room ordinal collisions do not preserve occupant assignments across unrelated captures" started.
+◇ Test invalidOriginsHazardsAndImplicitStageBypassesFailAtomically() started.
+◇ Test "A family can answer every decision and finish each no-layout exercise" started.
+◇ Test "Critical selection applies to scenario recommendations and diagram annotation labels; notes consent is independent" started.
+◇ Test equalTimeOrderingAndRegionalWarningsRemainHazardSpecific() started.
+◇ Test budgetsAndPersistedForwardStages() started.
+◇ Test "Plan diagrams and text use the final scenario stage, including blocked paths, and reject legacy history" started.
+◇ Test "A household without geometry has a basic card and keeps international contacts and text meetups" started.
+◇ Test directorChoosesARealRoomAndHostComputesConsequences() started.
+◇ Test markerRelocationRetainsPrivateContextWithoutCreatingShelterCredit() started.
+◇ Test "Shelter export follows the current supported scene and never relabels an interior path as outside" started.
+◇ Test "Legacy private places and plans decode without newer optional visual or instruction fields" started.
+◇ Test "Geographic meetup additions, edits and removals invalidate the matching document; other homes are excluded" started.
+◇ Test duplicateRoomNamesStayDistinctAcrossFloors() started.
+◇ Test v2UnknownCoolingRemainsUnknownInsteadOfBecomingAnOutage() started.
+◇ Test "Care-plan notes are left out unless the household chooses to include them" started.
+◇ Test "Sensitive fields are selected independently and no home is needed for their preview" started.
+◇ Test missingInventoryAndDeviceDocumentationAreUnknown() started.
+◇ Test failedDurableWriteNeverCreatesAReconciliationReceipt() started.
+◇ Test captureRecordsVersionAndLegacySourceKeepsOriginalAnchors() started.
+◇ Test redactionsAndInconsistentTransformsKeepEvidenceInSubmittedImage() started.
+◇ Test lostCommitAcknowledgementReconcilesDurableStateWithoutRepeatingWaterUse() started.
+◇ Test "Current floor grade and legacy ground semantics agree in confirmation and routing" started.
+◇ Test "Both selection and room evidence must be current; a negative answer only clears its own room" started.
+◇ Test "Changing a shelter floor to unknown requeues review and requires explicit reconfirmation" started.
+◇ Test debriefOpensRecordedFactWithCanonicalIdentityAndExactSubject() started.
+◇ Test invalidEstimatesStayUnknownRatherThanDisplayingNaNOrNegativeTravel() started.
+◇ Test "Unknown device runtime is printed as unknown, never as an estimate" started.
+◇ Test debriefFactsFollowActualConditioningAndWaterActions() started.
+◇ Test "The near-home meeting purpose precedes backup regardless of IDs or save order" started.
+◇ Test invalidCalibrationAndUnalignedDepthRemainUnavailable() started.
+◇ Test fullProposalEnvelopeBindsSourceAndRejectsIncompleteMetadata() started.
+◇ Test apartmentElevatorsCannotReplaceStairsInHostToolsOrFireSimulation() started.
+◇ Test cropResizeRotationUsesOriginalIntrinsicsAndNeverMutatesHome() started.
+◇ Test "Choosing a shelter in comparison creates only hypothetical evidence and retains hard exclusions" started.
+◇ Test selectedFrameMetadataIsBoundedAndTransactionalAcrossRestoreAndDelete() started.
+◇ Test everyQuarterTurnPreservesAnalyticallySpecifiedOriginalCorners() started.
+◇ Test "Fire page explains no-route and shared-chokepoint results instead of inventing an exit" started.
+◇ Test expiryIsMandatoryBoundaryAndUnknownNeverBecomesKnown() started.
+◇ Test storageBlockedVersusSuppliesCarriedBeforeIncident() started.
+◇ Test exactConsumptionReplayAndNoHouseholdMutation() started.
+◇ Test mixedUnitsConserveEachPhysicalContainer() started.
+◇ Test fractionalExpiryRoundsConservatively() started.
+◇ Test failurePreservesDraftAndCurrentAndRetryCanSucceed() started.
+◇ Test authorityMovementAndAtomicPersistence() started.
+◇ Test doorWindowCorrectionKeepsGeometryAndDropsOldExitEligibility() started.
+◇ Test rescanReplacesGeometryWithoutMistakingCaptureIDForHomeIdentity() started.
+◇ Test saveIsDurableBeforePublishAndAdvancesOnlyOnce() started.
+◇ Test carriedFoodRetainsAccessWhenOriginalStorageIsBlocked() started.
+◇ Test legacySourcesRemainWaterOnlyAndFailedWritesDoNotConsumeFood() started.
+◇ Test consumesRecordedCoverageWithoutInferringNutritionAndStopsAtDepletion() started.
+◇ Test missingAmountsPackagesAndPartialScopeStayUnknown() started.
+◇ Test "Missing and present layouts round-trip while corrupt present layouts still fail" started.
+◇ Test expirySettlesActualUseWithoutConsumingExpiredStock() started.
+◇ Test multiplePhysicalStocksConserveCoverageAndRejectOverflow() started.
+◇ Test recordedPowerGapCheckNamesTheActualUnknownWithoutDisconnectingOrConfirmingIt() started.
+◇ Test policiesAreValidatedAndIncludedInSourceBinding() started.
+◇ Test "A newly recorded lower level invalidates a historical marker without deleting its evidence" started.
+◇ Test "Editing household or home revision makes a saved plan stale" started.
+◇ Test markerSuggestionStaysInsideConcaveGeometryAndNeverConfirmsItsLocation() started.
+◇ Test "Missing translation falls back to English visibly and the document carries the fallback note" started.
+◇ Test "Flood planning closes its preparation without certifying a route, refuge or exercise outcome" started.
+◇ Test "Water storage target is 1 gal/person/day x 3 days and labeled as a storage target" started.
+◇ Test "English plan for every sample household validates with no unresolved keys or placeholders" started.
+◇ Test "Window inventory contradicts a no-window shelter even when rejected as an escape option" started.
+◇ Test "Real ES/VI packs, when present, keep numbers, units, phone numbers, and are labeled draft" started.
+◇ Test modelAndVisualRouteStatusRetainSharedStairDependencies() started.
+◇ Test simultaneousWaterAndFoodDepletionConservesBoth() started.
+◇ Test fireEscapeAndAccountingAreSeparateAndCannotReenter() started.
+◇ Test "Private care-plan notes are excluded by default and included only by explicit option" started.
+◇ Test "Plan dates are the household's local calendar day, not the UTC day" started.
+◇ Test "Well-test planning applies only to a private well and is independent from flood planning or water safety" started.
+◇ Test batchOrderBoundAndMinimizationComeFromValidatedLog() started.
+◇ Test "Prohibitions keep their emphasis in every locale (styled from the source text, not translated words)" started.
+◇ Test "Simulation does not announce or route to a stale candidate rejected by the planner" started.
+◇ Test "Unknown, assumed, refused and blank destinations never appear as confirmed places to go" started.
+◇ Test "Every home-validation issue and confirmation question resolves in all supported languages" started.
+◇ Test "Adding the utility role preserves legacy contacts and international values on round trip" started.
+◇ Test followupSupersedesOriginalAndDirectorCommitsCannotReplaceIt() started.
+◇ Test landingCorrectionCannotConfirmOrTeleportAndMobilityStillExcludesStairs() started.
+◇ Test "A confirmed continuity destination survives reload and appears in both portable documents without becoming a meetup" started.
+◇ Test "A named, usable water-utility contact closes only the municipal utility task" started.
+◇ Test "Layoutless households get reception readiness without irrelevant clinical, pet, or unsupported enrollment tasks" started.
+◇ Test newLevelAndStairsRequireExplicitRoomsLandingsAndExteriorReview() started.
+◇ Test "Current unfinished records merge to one focused preparation per action, including retained exercise results" started.
+◇ Test "Saved place keeps geographic coordinates distinct from indoor Vec2" started.
+◇ Test "Pet supplies require both availability and location and only apply to actual recorded pets" started.
+◇ Test "Coordinates reject partial, non-finite, and out-of-range values" started.
+◇ Test oldCallerFlagsHaveNoEligibilityAndFreshCheckNeedsFreshSession() started.
+◇ Test openingPlacementUsesAnActualConcaveBoundaryAndRejectsOversizedOrNonfiniteInputs() started.
+◇ Test "Baseline subjects and missing-location explanations resolve in every supported language without leaking record IDs" started.
+◇ Test rejectedEditsAreTransactionalAndConcaveOutlineIsPreserved() started.
+◇ Test "A household's public-site confirmation stays qualified and cannot certify current official activation" started.
+◇ Test "Manufactured home tornado page directs to a pre-planned sturdy building, not an interior closet" started.
+◇ Test correctionRetainsIndependentCapturedBarrierAndDynamicWallsFollowRoomInventory() started.
+◇ Test oldHomePayloadHasNoInventedCorrectionHistory() started.
+◇ Test concernHypothesesCannotBecomeApprovedPracticeVariants() started.
+◇ Test sameScheduleRetestDelaysDepletionWithoutChangingFacts() started.
+◇ Test "Water amount and storage location are independent facts; checklist ownership never supplies a missing quantity" started.
+◇ Test alteredCreditSourceOrReceiptCannotPassRevalidation() started.
+◇ Test "Canonical supplies can establish having an item, while unknown location and conflicting ownership remain unresolved" started.
+◇ Test "A physical drill has its own dated record; an exit check or a digital exercise never supplies it" started.
+◇ Test capturesBeforeFeedbackAndCannotRerollUnsafeAnswer() started.
+◇ Test unknownAnchorsRemainUnknownAndCoachingCannotEarnPoints() started.
+◇ Test "Medication availability is scoped to recorded need and independent of cold-storage and electrical evidence" started.
+◇ Test genericSessionActionsCannotBeHiddenBeforeScoredAnswers() started.
+◇ Test physicalEscapeReviewTracksOnlyRelevantLayoutChanges() started.
+◇ Test reassignmentRecomputesActualReachWithoutChangingRealHousehold() started.
+◇ Test retainsResourceFactsAndLinksWithoutPrivateLabels() started.
+◇ Test "Recorded reception and enrollment close equivalent derived tasks without changing hypothetical service outcomes" started.
+◇ Test incompatibleCountsAndSubjectCoverageCannotInventDays() started.
+◇ Test "Radio ownership needs a findable location; an explicit alternate plan does not change modeled radio ownership" started.
+◇ Test outlineCorrectionRetainsCaptureAndRequiresReviewSeparateFromConnections() started.
+◇ Test "Equipment supplies and unassigned medicines keep exact subject keys and cannot be completed by another device" started.
+◇ Test "Missing content uses readable qualifications rather than raw localization keys" started.
+◇ Test placingOpeningPreservesEvidenceButRequiresARealWallAndReview() started.
+◇ Test "Low cost never outranks a critical dependency; ties break by effort, breadth, then ID" started.
+◇ Test "Every key the engine can emit exists in English" started.
+◇ Test atomicCapturePersistsNeitherActionNorGradeOnFailure() started.
+◇ Test "Optional wattage is not fabricated; known limits and a depleted source remain binding" started.
+◇ Test "content/actions/actions.json matches ActionCatalog.builtIn" started.
+◇ Test "Regional flood exports retain official-direction guidance while no-layout leaks retain their identity" started.
+◇ Test "Local leak exports use localized leak instructions, affected rooms, source scope and visual labels" started.
+◇ Test "A checked source cannot close generator or solar prerequisites, or generate a switch instruction" started.
+◇ Test "Legacy snapshots recover the same localized qualifications after panelDetails is absent" started.
+◇ Test "A second shared load cannot fit around an unknown draw, in either deterministic ID order" started.
+◇ Test markerEditsAreValidatedLocatedAndDoNotConfirmEquipmentReadiness() started.
+◇ Test "Medicine private-note selection survives cold-only power independence and every selected locale" started.
+◇ Test "An upstairs-only path retains lower affected, exposed, opening and destination floors" started.
+◇ Test capturedWindowsRemainProposalsButExcludeWindowlessShelter() started.
+◇ Test meetingPinsKeepTheirSlotsAndOriginalNumbersAheadOfOptionalResources() started.
+◇ Test oldPlaceSnapshotsDecodeWithoutNewSourceAndContactMetadata() started.
+◇ Test appleSuggestionsRetainSourceIdentityWithoutBecomingAMeetupOrClaimingReview() started.
+◇ Test addressUnitAndNoOpEditsRetainExplicitCoverageWithoutInferringANewRegion() started.
+◇ Test textOnlyMeetingPlacesNeverInventPinsAndNoHomeUsesTheNearMeetingOrigin() started.
+◇ Test officialCoordinateAndListOnlySourcesStayUsefulAfterSavingAndReloading() started.
+◇ Test "Every household x scenario runs offline, deterministically, and every emitted key resolves in English" started.
+◇ Test "Fire rehearsal in the verified sample home yields practice routes tied to the home revision" started.
+◇ Test "All six scenario packs load with distinct IDs" started.
+◇ Test "Editing a door's verification changes fire routes and invalidates a saved plan" started.
+◇ Test sharingExposesUnknownCapacityAndAssignmentIsUserOwned() started.
+◇ Test "An alternative usable source can close the task while rejected candidates stay visibly qualified" started.
+◇ Test confirmedFoodSupersedesLegacyAndExpiredQuantityCannotEarnCredit() started.
+◇ Test "No-layout transport preparation requires recorded wheelchair access, including agreed rides" started.
+◇ Test commitsActualInputOnceAndReplaysWithoutTranscript() started.
+◇ Test "Failed current paths preserve exclusions and explanations without reviving route history" started.
+◇ Test "Every route floor and exact alternative legs share the same qualified panel contract" started.
+◇ Test manufacturedClosetNeverBecomesTornadoShelterAndThresholdsMatter() started.
+◇ Test "Every card explains what, why, causes, effect, unconfirmed facts and sources" started.
+◇ Test completedCheckAllowsLaterTrainingWithoutRewritingAnswers() started.
+◇ Test locationEvidenceUsesCompatibleDatumUncertaintyFreshnessAndScale() started.
+◇ Test "Floor selection follows the selected resident, permits explicit review and rejects stale floor IDs" started.
+◇ Test "Clearing a measured threshold restores unknown and invalidates wheelchair use without losing invalid drafts" started.
+◇ Test "Focused highlights resolve either stair landing, annotations and shelter room without floor-order guesses" started.
+◇ Test "Exit style follows routing evidence and grade rather than a verified label alone" started.
+◇ Test "Room markers stay inside a concave outline and do not fabricate coordinates for absent geometry" started.
+◇ Test "Windows never receive ordinary exit styling and detached openings stay unconfirmed" started.
+◇ Test firstFireDecisionCreditsIntentNotMobilityAndRejectsUnsafeOptions() started.
+◇ Test gradingDoesNotConsumeTheConfirmedInventoryLedger() started.
+◇ Test fullCheckNeedsNoPoweredEquipmentAndBudgetDoesNotChangeCredit() started.
+◇ Test conservationCreditUsesTwoHostProjectionsWithoutCommittingEither() started.
+◇ Test tornadoMovementNeverReplacesShelterWithExteriorRoute() started.
+◇ Test typeScriptValidatedHostFixtureAndHistoricalContextDecode() started.
+◇ Test "Each scenario produces a distinct event set for the same household (not just a different title)" started.
+◇ Test retirementRelaunchAndIndependentCompetencyRefresh() started.
+◇ Test failedWriteRetainsQueueBalanceAndScoreAndForgeryIsRejected() started.
+◇ Test completedFirstResponseSurvivesContinuedExerciseAndFinish() started.
+◇ Test apartmentComplexHasActualExteriorAndStairDependencies() started.
+◇ Test sameGeometryProducesTwoAndThreeDimensionalArtifacts() started.
+◇ Test dwellingEditsUpdateHomeContextAndStagedSiteEditsLeaveRevisionToTransactionOwner() started.
+◇ Test "Plans in EN/ES/VI validate: no unresolved keys, visible draft/fallback labels, facts preserved" started.
+◇ Test supportedMechanicsVersionsRetainIndependentPracticeEvidenceAfterRelaunch() started.
+◇ Test factualActionsOpenFocusedInputsWithoutLayoutRequirements() started.
+◇ Test "Authored stage exclusions remove exit styling and retain an exposed resident's recorded room" started.
+◇ Test siteEditPersistsLocallyAndOnlyMinimizedEvidenceGoesToGemini() started.
+◇ Test foodConfirmationAndProjectionAreAtomic() started.
+◇ Test "Duplicates merge to the most urgent tier" started.
+◇ Test persistenceFailureCannotBeReinterpretedAsUnsupported() started.
+◇ Test exactSpatialSubjectsArePreservedAndInventoryWindowsAreNotDefaultExitReviews() started.
+◇ Test rejectsWrongInputSourceDirectorCommandsAndClarification() started.
+◇ Test laterCorrectActionCannotRewriteAnUnsuccessfulFirstResponse() started.
+◇ Test "Advisory types are distinct service effects" started.
+◇ Test "Tornado: manufactured home, preselected shelter, night alerting, no distant travel during a warning" started.
+◇ Test "No-car household cannot complete a vehicle-dependent relocation without an explicit alternative" started.
+◇ Test intentionalRetestPreservesOtherHazardAnchorAndDoesNotUseBestResult() started.
+◇ Test "Unknown essential-device runtime stays unknown and yields a verification action" started.
+◇ Test manufacturedHousingOverridesLegacyShelterMarkersInScoreAndContext() started.
+◇ Test dependencyFingerprintsIgnoreRenamesAndScopeMedicationStorageToContinuity() started.
+◇ Test bankCoversAllHazardsWithDifferentExecutableActions() started.
+◇ Test infeasibleCompoundHasNoPartialEffectsAndNoDefaultChoice() started.
+◇ Test "Handset depletion, charging, Wi-Fi loss and cellular loss are distinct outcomes" started.
+◇ Test "Authored events at the same minute order by priority then ID" started.
+◇ Test "Shared backup output and energy are never double-allocated or negative" started.
+◇ Test "Electric well loses water with power; municipal water does not" started.
+◇ Test "Unsafe options are never defaults, never recommended, and never improve outcomes" started.
+◇ Test "Each scenario produces distinct events, decisions and results for the same household" started.
+◇ Test "Gas heat with unknown blower dependency stays unknown, not working or failed" started.
+◇ Test "No compatible backup: essential device stops; unknown setup stays unknown, never operational" started.
+◇ Test "AND/OR algebra: OR keeps a working backup; AND fails on any unavailable input" started.
+◇ Test "Grid-tied solar and an unplaced generator are not outage backup" started.
+◇ Test "Chemical do-not-drink / do-not-use never recommend boiling" started.
+◇ Test "Grid strain is distinct from an authored outage" started.
+◇ Test policyVersionsCannotMixAndLegacyScoresStillDecode() started.
+◇ Test removedReconnectionRecordCannotEstablishOfflineContactAccess() started.
+◇ Test shelterUsesConfirmedInteriorObjectiveAndActualRoutes() started.
+◇ Test invalidatedShelterCannotEarnSuitabilityOrBorrowExteriorRoute() started.
+◇ Test "Identical inputs give identical results, including equal-time ordering" started.
+◇ Test locationDoesNotProveFoodAccessAndConfirmationPropagates() started.
+◇ Test absentStartAndDisconnectedGeometryRemainUnknown() started.
+◇ Test waterDisjunctionPreservesUnknownAndConfirmedNegative() started.
+◇ Test availableButUnverifiedPathCannotEarnConfirmedCredit() started.
+◇ Test carrierAndTransportAbsenceAreUnknown() started.
+◇ Test helperApplicabilityAndIdentityUseRecordedEvidence() started.
+◇ Test "Library validation rejects unknown rules and unsafe defaults; dependency evaluation has a hard bound" started.
+◇ Test medicalAvailabilityOpensItsOwnRecordInsteadOfElectricalEquipment() started.
+◇ Test "Fire: blocked usual route finds a modelled alternative; both blocked gives a typed no-route" started.
+◇ Test "Power restoration does not clear advisories, refill storage, or certify devices" started.
+◇ Test "Fire: a helper who cannot reach the person they help is not counted on, and is never sent in" started.
+◇ Test "Library loads six distinct, fictional, draft-reviewed packs" started.
+◇ Test supportedCountiesExactlyMatchBundledCoverage() started.
+◇ Test unansweredAttemptCannotCaptureAfterAnUnobservedRevisionChange() started.
+◇ Test explicitRetestCannotBypassSituationalPrerequisites() started.
+◇ Test contactsMeetingPurposesAndPeopleKeepTheirIntendedContext() started.
+◇ Test wireDestinationRoundTripsAllExistingEditorsWithoutLocalizedTitleInference() started.
+◇ Test "Water outage: stored-water use decision; chemical advisories never reward boiling or tap use" started.
+◇ Test sourceEditReopensOnlyDependentCheckAndRefreshesCurrentScore() started.
+◇ Test uncoveredUSAndForeignLocationsCannotBuildPublicRequestsOrInheritTexasResources() started.
+◇ Test "Confirmed compatible backup supplies its intended load during the outage" started.
+◇ Test "Flash flood: never a route through water; no-car early leave is blocked without an arrangement" started.
+◇ Test followsOnlyTheComputedRefugeAndPersistsActualArrivalWithoutDepartureOrSafetyClaims() started.
+◇ Test persistenceFailureDoesNotMoveAnyoneOrRetireTheirAction() started.
+◇ Test noTeleportationOrInventedRefugeAcrossAccessAndEvidenceVariants() started.
+◇ Test unassessedAndAssessedEmptySummariesRemainDistinct() started.
+◇ Test actualGatewayProjectionMatchesCurrentHostWhileRecordedHouseholdStaysFrozen() started.
+✔ Test subjectUnitsExpiryAndIdentityCannotInflateCredit() passed after 4.695 seconds.
+✔ Test missingTimesAreUnknown() passed after 4.701 seconds.
+◇ Test nextIncidentDurationAndPolicyHorizonAreDistinct() started.
+◇ Test invalidWaitIntentsAndDoorPermissionsFailAtomically() started.
+◇ Test waitUsesHostDepletionAndRetainsCompletedState() started.
+◇ Test aRequestedDecisionCannotBeSkippedOrFollowedByHiddenEffects() started.
+◇ Test actualUserChoiceOverridesAnEarlierHypotheticalInterventionChoice() started.
+◇ Test unrelatedMandatoryBoundaryInterruptsAndUnknownIsNotSuccess() started.
+◇ Test spatialBatchPreviewIsReadOnlyAndShowsAppliedEffects() started.
+◇ Test finiteQuantitiesCannotOverflowDepletionTime() started.
+◇ Test partsNeverAddTextAndMissingFactsAreFlagged() started.
+◇ Test "No raw IDs, enum codes, or unfilled placeholders reach rendered text" started.
+◇ Test controlledConcernStressPreservesAssumptionsButCannotAlterScorePredicates() started.
+◇ Test confirmedCreatesOneLinkedTaskButNoHouseholdFactsOrPoints() started.
+◇ Test unchangedImageDoesNotRepeatDismissedReviewAfterHomeRevision() started.
+◇ Test uncertainNeedsExplicitPermissionAndManualOpeningIdentity() started.
+◇ Test staleUnknownTaskRedactionAndPersistenceFailWithoutPublishing() started.
+◇ Test sameIncidentExecutesConfirmedUserPreparationWithoutChangingRealFacts() started.
+◇ Test betterDurationDoesNotClaimCompleteResolutionAndLegacyMetadataRemainsAbsent() started.
+◇ Test invalidPreparationsFailInsteadOfSilentlyChangingTheComparison() started.
+✔ Test regionAllowlist() passed after 4.762 seconds.
+✔ Test liveFreshAlertIsCurrent() passed after 4.762 seconds.
+◇ Test "Model inputs carry no names, custom labels, notes, contacts or address" started.
+◇ Test "Generated sentences may not add numbers, links, or clinical and certainty words" started.
+✔ Test queryBuilderRejectsUnexpectedValues() passed after 4.762 seconds.
+✔ Test "Proposed or unlinked homes cannot silently supply a confirmed family destination" passed after 4.762 seconds.
+◇ Test inventoryUnknownsDedupAndConversion() started.
+◇ Test scoreIsIndependentOfRubricAndDictionaryOrder() started.
+◇ Test permissionsSchedulingAndDepletion() started.
+◇ Test actionConservationReplayAndAtomicity() started.
+◇ Test rubricMutationsAndLatestPractice() started.
+◇ Test controlledStressRetestAndAllHazards() started.
+◇ Test "Two people's medicine preparations close independently and do not fabricate generic completion records" started.
+◇ Test "Contact and meetup records close their tasks and stay reviewable across reload without a layout" started.
+◇ Test "Alarm ownership, coverage, location, and an explicit current functional check remain separate" started.
+✔ Test editDeleteAndUnrelatedResourcePreserveCorrectAssociations() passed after 4.762 seconds.
+◇ Test interruptionsCannotRerollWrongFirstAnswerOrFutureSituations() started.
+◇ Test tamperedSourcesCreditsAndUncapturedActionsFailRevalidation() started.
+◇ Test allFourCompetenciesAreActuallyExecutableAndReplayBeforeFeedback() started.
+◇ Test saveFailureAndOutOfOrderSubmissionsPublishNothing() started.
+◇ Test missingPhaseMetadataReusedSourcesAndUnknownActionsCannotManufactureCredit() started.
+◇ Test newerIncompleteEquivalentVariantSupersedesCompletedHistory() started.
+✔ Test poiIsNeverActivatedShelterWithoutEvidence() passed after 4.763 seconds.
+◇ Test comparisonReportsTheResolvedDeviceWhileAnotherSameActionRemains() started.
+◇ Test recordingALocationOrContactPreservesCanonicalOwnership() started.
+◇ Test explicitOwnershipCorrectionsAndUnknownsUpdateOnlyThatItem() started.
+◇ Test selectedFlashlightAnswerRetainsActualPositiveCount() started.
+◇ Test searchPlanMustMatchFrozenTasksTravelAndFiniteExpansion() started.
+◇ Test equivalentGapAndTaskOrderingDeduplicateAndLegacyKeysDecode() started.
+◇ Test revertingToAcceptedInputsCancelsPendingResponseWithoutAnotherCall() started.
+◇ Test debounceInvalidatesBeforeDeadlineAndKeepsUsefulResults() started.
+◇ Test stationAndMeetupCategoriesKeepLocalPolicyAndTaskBinding() started.
+◇ Test quantitiesUnknownsAndExplicitDependenciesInvalidateWhileWordingDoesNot() started.
+✔ Test expiredAlertNeverCurrentEvenIfCached() passed after 4.798 seconds.
+◇ Test "Official English resource notes retain their source wording with visible fallback provenance in translated plans" started.
+◇ Test "Emergency instructions use a known country number or the localized local-number phrase throughout the document" started.
+◇ Test "All no-route reasons and missing start text resolve in exported EN/ES/VI documents without changing route evidence" started.
+◇ Test "A fallback inside the family card is identified and retained with a visible document notice" started.
+◇ Test "Long responder instructions cannot steal translation provenance from the critical line" started.
+◇ Test "App dates, decimal quantities and empty self labels use selected language while recorded medicine text stays exact" started.
+◇ Test "Default annotation labels localize in text and selected visual snapshots without repopulating redacted labels" started.
+◇ Test "User-facing validation descriptions are localized and omit raw IDs, template text and private notes" started.
+✔ Test demoAlertNeverCurrent() passed after 4.800 seconds.
+◇ Test "Trying an arranged relocation takes the relocation branch in the replay only" started.
+✔ Test "The transactional home candidate drops only deleted residents' window suitability with one revision change" passed after 4.882 seconds.
+✔ Test "Removing an accidental resident clears only their references and preserves equipment and the identifiable self" passed after 4.883 seconds.
+✔ Test thickScannedWallsRouteWithCleanGeometryOnceConfirmed() passed after 4.883 seconds.
+✔ Test "Gate rejects late results, including after a locale-only change" passed after 4.884 seconds.
+✔ Test spatialPickerValuesHaveSelectedLanguageText() passed after 4.884 seconds.
+✔ Test decodedUnconfirmedOriginCannotBypassQuantityOrAccessChecks() passed after 4.884 seconds.
+✔ Test "Confirmation: a window is not turned into a walking exit by the generic exterior answer" passed after 4.884 seconds.
+✔ Test nearTouchingRoomsDoNotBecomeAdjacent() passed after 4.884 seconds.
+✔ Test duplicateBatchAndPersistenceFailureDoNotPublish() passed after 4.887 seconds.
+✔ Test namedGeographicMeetupUpdatesIndoorReferenceWithoutInventingCoordinates() passed after 4.888 seconds.
+✔ Test inaccessibleInventoryAndAtomicProjection() passed after 4.887 seconds.
+✔ Test "Self and the last legacy resident cannot be deleted; failed or missing deletions leave the draft intact" passed after 5.010 seconds.
+✔ Test overflowCannotBecomeInfiniteStockInGapsOrExercise() passed after 5.020 seconds.
+✔ Test "Removing equipment clears exact item evidence without deleting shared sources or unrelated people and facts" passed after 5.021 seconds.
+✔ Test genericRequirementsRespectReservedStockEvenWithoutNamedSubjects() passed after 5.020 seconds.
+✔ Test "Confirmation: ground floor exits work when the home has a basement" passed after 5.021 seconds.
+✔ Test oldCopyIsStaleNotCurrent() passed after 5.021 seconds.
+✔ Test "Cursor finishes cleanly when all decisions are answered" passed after 5.021 seconds.
+✔ Test "Cursor stops at an unanswered decision and resumes after the re-run includes the choice" passed after 5.020 seconds.
+✔ Test legacyMarkerTypeNamesLocalizeWithoutChangingCustomOrStoredLabels() passed after 5.021 seconds.
+✔ Test "Changing geographic destinations clears a stale local marker position; migration retains its own position" passed after 5.026 seconds.
+✔ Test emptyAccessibleContainerCannotEarnAccessCredit() passed after 5.026 seconds.
+✔ Test "Generic marker types never become named family meeting places during migration" passed after 5.027 seconds.
+✔ Test taskSubjectsAndFingerprintsDoNotLeakAcrossDevices() passed after 5.026 seconds.
+✔ Test practiceCreditMustMatchHostAnchor() passed after 5.027 seconds.
+✔ Test confirmedZeroIsKnownDespiteUnknownUsabilityAndAccess() passed after 5.027 seconds.
+✔ Test "Canvas edits and deletion update only the linked destination and every derived plan/task" passed after 5.027 seconds.
+✔ Test "Assumed or unconfirmed stored water is not printed as a fact" passed after 5.027 seconds.
+✔ Test "A confirmed local landmark migrates into card and preparation without inventing geographic coordinates" passed after 5.027 seconds.
+✔ Test fingerprintDistinguishesNaNHomesAndIsCurrentChecksContent() passed after 5.027 seconds.
+✔ Test legacyLabelsAndOriginalMedicineAnswersSurviveMigration() passed after 5.026 seconds.
+✔ Test "A late result from an older request is rejected; so is a result for an older household revision" passed after 5.026 seconds.
+✔ Test twoExitHomeHasPrimaryAndIndependentAlternative() passed after 5.027 seconds.
+✔ Test subjectRestrictedStockNeverBecomesSharedHouseholdStock() passed after 5.027 seconds.
+✔ Test medicationStorageDoesNotBecomeElectricalEquipment() passed after 5.026 seconds.
+✔ Test pathsSharingAHallwayAreNotAdvertisedAsIndependent() passed after 5.027 seconds.
+✔ Test upperFloorWindowsAndBalconiesAreNotGroundExits() passed after 5.027 seconds.
+✔ Test "Changing equipment type resets support evidence while retaining a genuine custom name" passed after 5.026 seconds.
+✔ Test "Deselected clinical content is one neutral line that never counts as missing" passed after 5.029 seconds.
+✔ Test "Destructive explanations resolve in EN, ES and VI with exact subject names" passed after 5.030 seconds.
+✔ Test droppedPinMeetupsKeepTheirLocationAsTextInACardWithoutMaps() passed after 5.029 seconds.
+✔ Test mobilityIncompatibleStepsAndUnknownClearanceCannotMasquerade() passed after 5.030 seconds.
+✔ Test bundledLanguagesIncludeCompleteDraftsAndKeepTheirReviewState() passed after 5.030 seconds.
+✔ Test oversizedInstructionsFollowTheMainCardWithoutRewritingOrHidingTheirSelection() passed after 5.029 seconds.
+✔ Test mixedRequirementsTrackPowerAndColdStorage() passed after 5.029 seconds.
+✔ Test "Switching backup kind retains ownership/custom name but requires fresh setup and device compatibility" passed after 5.029 seconds.
+✔ Test incompleteControlsAndBrokenPlaceholdersCannotBeOfferedAsCompleteLanguages() passed after 5.030 seconds.
+✔ Test "Shelter spot must be on the lowest floor, and the plan prints only a verified shelter" passed after 5.030 seconds.
+✔ Test legacyNonMedicationStorageCanBeClarifiedWithoutChangingItsPowerRequirement() passed after 5.029 seconds.
+✔ Test tx25PackCoversThirteenCountiesWithExplicitStatus() passed after 5.029 seconds.
+✔ Test "An unrelated rescan, geometry replacement or deleted room does not delete geographic plans" passed after 5.030 seconds.
+✔ Test "Higher refuge needs an explicit not-closed-attic and way-out confirmation" passed after 5.029 seconds.
+✔ Test alarmMarkerDoesNotCompleteFunctionalCheck() passed after 5.074 seconds.
+✔ Test "Legacy card review never becomes a joint family review" passed after 5.073 seconds.
+✔ Test outOfAreaContactKeepsItsRoleAndInternationalPhoneWithoutAProseRelationship() passed after 5.074 seconds.
+✔ Test "Excluded start exposure is retained, and duplicate identities fail without a crash" passed after 5.073 seconds.
+✔ Test "A personal manual draft has no assumed geometry and keeps its identity when the first room is entered" passed after 5.073 seconds.
+✔ Test windowsAndUnknownPortalsAreNotExits() passed after 5.074 seconds.
+✔ Test blockingOneExitFindsTheOtherAndBlockingBothYieldsNoRoute() passed after 5.074 seconds.
+✔ Test "Region frames are deliberate and only verified offices receive pins" passed after 5.074 seconds.
+✔ Test alertsFixtureDecodesAndIsDemo() passed after 5.074 seconds.
+✔ Test orderingAndUnrelatedShoppingCannotClearDeviceCap() passed after 5.073 seconds.
+✔ Test "A window inventory and operability confirmation are insufficient escape evidence" passed after 5.073 seconds.
+◇ Test imageManifestsAndLiveDirectorProposalDecode() started.
+✔ Test "Household fixtures contain no real-looking phone numbers outside the 555-01xx fictional range" passed after 5.073 seconds.
+✔ Test namedContactWithoutPhoneIsIncompleteAndInternationalNumberIsPreserved() passed after 5.074 seconds.
+✔ Test subjectSupplyFactsReachTheNoLayoutCardOnlyUnderTheirOwnSelections() passed after 5.074 seconds.
+✔ Test medicineAndEquipmentCardSelectionsAreIndependent() passed after 5.074 seconds.
+✔ Test cardExistsWithoutMedicalEquipmentOrLayoutAndHonorsSelections() passed after 5.074 seconds.
+✔ Test "Capture cancellation, retry, repeated Finish and late callbacks use originating tokens" passed after 5.074 seconds.
+✔ Test "Item changes reopen physical checks and their coverage or awareness without invalidating note edits" passed after 5.074 seconds.
+✔ Test regionPacksDecode() passed after 5.074 seconds.
+✔ Test "Rendered wall segments omit the same portal span" passed after 5.074 seconds.
+✔ Test dump() passed after 5.074 seconds.
+✔ Test maintenanceUsesRecordedDatesAndStaysBelowEssentialGaps() passed after 5.074 seconds.
+✔ Test editingDoorVerificationInvalidatesCachedRoute() passed after 5.075 seconds.
+✔ Test roomsThatOnlyNearTouchHaveNoSharedWall() passed after 5.074 seconds.
+✔ Test heatingFuelAloneCannotDismissCOAlarmReview() passed after 5.074 seconds.
+✔ Test "No English words injected into translated route lines without a fallback flag" passed after 5.075 seconds.
+✔ Test cornerCaseNaiveLineCrossesWallButRouteDetours() passed after 5.075 seconds.
+✔ Test movedResidentOverridesRecordedStartAndReplays() passed after 5.075 seconds.
+✔ Test "Location denied: manual region picker still works" passed after 5.074 seconds.
+✔ Test placeOrderDoesNotInvalidateAPlanButAChangedMeetupDoes() passed after 5.074 seconds.
+✔ Test "Interior shelter routing ends in the actual confirmed room, never at an exterior exit" passed after 5.074 seconds.
+✔ Test cardUsesRecordedSupplyOwnershipAndWaterQuantityWithoutCertifyingContradictions() passed after 5.074 seconds.
+✔ Test failedRequestedGenerationCannotExportEvenWhenACardIsAvailable() passed after 5.074 seconds.
+✔ Test currentSelectionsApplyToEveryPageAndCardIsIncludedExactlyOnce() passed after 5.074 seconds.
+✔ Test "Fire page lists a route per person-mobility, not just per start room" passed after 5.075 seconds.
+✔ Test "Placeholder filling is single-pass and user text with braces does not invalidate a plan" passed after 5.075 seconds.
+✔ Test universalCardIncludesSelectedContinuityWithoutInferringSupportOrLeakingNotes() passed after 5.075 seconds.
+✔ Test manualHomeBuildsAVerifiedRouteOnlyAfterConfirmation() passed after 5.074 seconds.
+✔ Test cardOnlyExportCannotInheritAnotherPlansPrivatePagesOrGeometry() passed after 5.074 seconds.
+✔ Test "Try-this-change preserves the baseline and isolates the change" passed after 5.074 seconds.
+✔ Test rotatedAndTranslatedHomePreservesTopologyAndLength() passed after 5.075 seconds.
+✔ Test "Bundled households are fictional, round-trip, and match fixtures/households JSON" passed after 5.074 seconds.
+✔ Test "Worst case (no LiDAR, no model, everything denied, offline) keeps the full core product" passed after 5.074 seconds.
+✔ Test "Expected-outcome fixtures for the flagship freeze cascade" passed after 5.074 seconds.
+✔ Test "Cursor reveals same-minute events that precede a minute-0 decision" passed after 5.075 seconds.
+✔ Test "Model unavailable on a LiDAR device: templates only, scanning unaffected" passed after 5.074 seconds.
+✔ Test "Unknown evidence decodes from a minimal JSON object and is never treated as confirmed" passed after 5.074 seconds.
+✔ Test "Captured story and unknown grade never establish ground, including a legacy scan" passed after 5.074 seconds.
+✔ Test "Key-moment stepping skips no event and still stops at every decision and warning" passed after 5.075 seconds.
+✔ Test "Draft banner and fallback note present whenever any localized string is draft or fallback" passed after 5.075 seconds.
+✔ Test "Verified exterior door on an upper floor is not a walking exit" passed after 5.074 seconds.
+✔ Test "Rotated and translated floor coordinates preserve topology and length" passed after 5.074 seconds.
+✔ Test "No LiDAR: scanning unavailable, but manual layout, rehearsals, and plans remain" passed after 5.074 seconds.
+✔ Test "Scanned home with realistic wall thickness can route once the household verifies its doors" passed after 5.074 seconds.
+✔ Test "Offline: cached alerts only; every required feature still available" passed after 5.074 seconds.
+✔ Test historicalSceneDecodesWithoutInventingNewSafetyEvidence() passed after 5.074 seconds.
+✔ Test planningIsDeterministic() passed after 5.075 seconds.
+✔ Test "Door near a room corner: route still found (functional probe)" passed after 5.074 seconds.
+✔ Test "ScanImport never produces verified anything; wall-only L-shaped room is flagged for measurement" passed after 5.074 seconds.
+✔ Test contextRetainsEvidenceButRemovesPrivateLabelsNotesAndOriginalScan() passed after 5.074 seconds.
+✔ Test barsPreserveUnknownEmptyUnitsAndFiniteValues() passed after 5.074 seconds.
+✔ Test recordedSafetyFactsExplainHostSuitabilityWithoutOverridingIt() passed after 5.074 seconds.
+✔ Test "Private care-plan notes never appear without consent, in any locale" passed after 5.076 seconds.
+✔ Test "Deterministic under ties and input permutation" passed after 5.074 seconds.
+✔ Test "Spanish, with and without accents" passed after 5.074 seconds.
+✔ Test "Sanitizing bounds a model's output: one speaker, no orphan owners, no repeats, sane counts" passed after 5.074 seconds.
+✔ Test actualWaterAdvisoryPersistsAtLaterCursorBoundaries() passed after 5.074 seconds.
+✔ Test "Step-free request rejects unknown width and unknown threshold" passed after 5.074 seconds.
+✔ Test "Two routes through the same hallway to different exits are not advertised as independent" passed after 5.074 seconds.
+✔ Test "Camera denied is distinct from unsupported hardware" passed after 5.075 seconds.
+✔ Test incrementalProjectionCarriesActualExperienceAndRejectsWrongHazard() passed after 5.074 seconds.
+✔ Test "Proposed, unknown-destination, common-area, and unconfirmed-window portals never become exits" passed after 5.074 seconds.
+✔ Test "Obstacle on the naive line forces a detour that keeps clear of it" passed after 5.074 seconds.
+✔ Test "An empty or unrelated description proposes nothing" passed after 5.074 seconds.
+✔ Test "English: people, who uses which device, follow-up pronouns, home and pets" passed after 5.074 seconds.
+✔ Test destinationReviewDoesNotInferActivationOrLeakLabels() passed after 5.074 seconds.
+✔ Test "Fire chooses one room by ID and per-stage routes never retain a superseded path" passed after 5.075 seconds.
+✔ Test "Near-touching rooms (9 cm gap, no explicit walls) do not become adjacent through a portal in the gap" passed after 5.074 seconds.
+✔ Test "Grounding keeps model facts the words support and adds the speaker's own keyword needs" passed after 5.074 seconds.
+✔ Test "Water storage change extends stored water and resolves the water requirement" passed after 5.074 seconds.
+✔ Test "Negation and look-alike words are not read as facts" passed after 5.074 seconds.
+✔ Test "Studio, concave, basement, walkout, split, shared corridor, missing and narrow fixtures remain conservative" passed after 5.076 seconds.
+✔ Test "Scan-observed (unconfirmed) operability/step-free values never satisfy hard requirements (was a defect; fixed)" passed after 5.075 seconds.
+✔ Test invalidMappingFractionalCountsAndFailedSavesDoNotPublish() passed after 5.074 seconds.
+✔ Test historicalMechanicsFourNeverReinterpretsSoloEscape() passed after 5.075 seconds.
+✔ Test stairsWithoutTheOtherFloorAreFlaggedNotInvented() passed after 5.074 seconds.
+✔ Test "The speaker's own needs go to the existing 'you' person" passed after 5.074 seconds.
+✔ Test completedShelterAndThermalActionsLeaveCurrentAffordances() passed after 5.075 seconds.
+✔ Test "Unverified stairs are not used; verified stairs are excluded for step-free routes" passed after 5.074 seconds.
+✔ Test interruptedCaptureRemainsIncompleteEvenWithSeveralSavedRooms() passed after 5.074 seconds.
+✔ Test everyExperienceStringResolvesInEverySupportedLocale() passed after 5.074 seconds.
+✔ Test "Vietnamese keeps tone marks: ông bà is two grandparents, and mẹ is not the English 'me'" passed after 5.074 seconds.
+✔ Test "Grounding drops a need the family never mentioned and restores the device the model missed" passed after 5.074 seconds.
+✔ Test "Prohibitions keep prohibition styling in every locale" passed after 5.077 seconds.
+✔ Test nearTouchingScannedRoomsWithoutADoorAreNotConnected() passed after 5.074 seconds.
+✔ Test phoneAndExportExtentsKeepTextOnlyNumbersAndReportPartialFailure() passed after 5.074 seconds.
+✔ Test "Cache never serves a route after an edit; isCurrent must not trust revision alone" passed after 5.075 seconds.
+✔ Test onlyChangedOrDeletedEndpointsInvalidateDirections() passed after 5.074 seconds.
+✔ Test ranchHasNoBlockingIssuesAndFlagsWhatNeedsConfirmation() passed after 5.074 seconds.
+✔ Test wellSetupCannotOfferMunicipalAdvisoryVariants() passed after 5.075 seconds.
+✔ Test "Apply never overwrites what the family entered and adds nothing confirmed" passed after 5.074 seconds.
+✔ Test "The summary does not depend on the order results arrive in" passed after 5.075 seconds.
+✔ Test roomOverlapDistinguishesAlignedStripsFromSharedWallsAndConcaveNotches() passed after 5.075 seconds.
+✔ Test rotatedTranslatedScanPreservesUnitsAndTopologyAndStaysProposed() passed after 5.074 seconds.
+✔ Test expiryScopeAndUnknownsOverrideOlderPositiveTotals() passed after 5.075 seconds.
+✔ Test categoryAloneDoesNotInferIdentityAndReplacementClearsProjection() passed after 5.075 seconds.
+✔ Test recognisedRoomTypeIsOnlyAnUnconfirmedPrefill() passed after 5.075 seconds.
+✔ Test confirmationPropagatesWithoutMarkingUnreviewedChecksComplete() passed after 5.075 seconds.
+✔ Test phoneAndWaterDepletionBothExecuteAtSameMinute() passed after 5.074 seconds.
+✔ Test homeFixturesMatchSampleHomes() passed after 5.074 seconds.
+✔ Test concavePolygonTriangulationPreservesAreaAndRejectsBowties() passed after 5.075 seconds.
+✔ Test "L-shaped room: path bends around the reflex corner and never crosses a boundary" passed after 5.075 seconds.
+✔ Test selectedResourceContactProvenanceAndHonestStatusAreSharedInAllLanguages() passed after 5.075 seconds.
+✔ Test independentlyScannedRoomsAreNeverPlacedByGuessing() passed after 5.075 seconds.
+✔ Test "Alarm review instructions are complete in each supported language" passed after 5.074 seconds.
+✔ Test "Only the injected baseline date reopens alarm maintenance; the exercise remains identical" passed after 5.074 seconds.
+✔ Test primitivesUseNamedTolerancesWithoutSnapping() passed after 5.075 seconds.
+✔ Test advisoryUsesOnlyAppliedVisibleEventsAndNeverLeaksAcrossHazards() passed after 5.075 seconds.
+✔ Test "Scan import retains originating frame and room evidence when capture order changes" passed after 5.074 seconds.
+✔ Test "A household without essential equipment gets no cards" passed after 5.074 seconds.
+✔ Test storageUsesCommittedStockAndNeverClaimsRoomCausedExpiry() passed after 5.075 seconds.
+✔ Test invalidAndOverlappingGeometryIsReported() passed after 5.075 seconds.
+✔ Test "Preparations are merged across scenarios, each listed once, ordered by tier" passed after 5.076 seconds.
+✔ Test computedAlternativeCanEarnCreditWithoutMakingRouteDisappear() passed after 5.075 seconds.
+✔ Test "An unknown runtime is printed as unknown, never estimated, and missing facts are listed as gaps" passed after 5.075 seconds.
+✔ Test distanceUsesHomeUnitsAndSelectedLanguageWithoutChangingGeometry() passed after 5.074 seconds.
+✔ Test "Recorded facts appear on the card and close their gaps" passed after 5.075 seconds.
+✔ Test carryingReplacesStorageAndLegacySourcesKeepOldInspection() passed after 5.076 seconds.
+✔ Test "Absent geometry is neither evidence of stairs nor evidence of their absence" passed after 5.075 seconds.
+✔ Test "Rehearsal event subjects use exact evidence IDs, localized defaults and recorded custom names" passed after 5.075 seconds.
+✔ Test unfinishedFloodStillOffersTheSameHomeDecision() passed after 5.075 seconds.
+✔ Test "A hypothetical shelter cannot supply missing geometry or establish a shelter" passed after 5.075 seconds.
+✔ Test setupRejectsUnknownInputsAndSeparatesFocusFromFacts() passed after 5.075 seconds.
+✔ Test "Skipping leaves an opening unknown and out of every route; windows are never made walking exits by a door answer" passed after 5.075 seconds.
+✔ Test "Household-only comparisons work without creating a layout or editing real facts" passed after 5.075 seconds.
+✔ Test fallbackEndsTheActualHomeBoundaryWithoutApplyingPendingEvents() passed after 5.075 seconds.
+✔ Test "Marking a preparation completed moves it from to-do to completed" passed after 5.076 seconds.
+✔ Test concernAuthorityAndMaterialEvidenceDedup() passed after 5.075 seconds.
+✔ Test "Rejected doors never route; upper-floor openings cannot be marked as exits" passed after 5.075 seconds.
+✔ Test "An unresolved interior side can be assigned without claiming operability, and measured exterior width is retained" passed after 5.075 seconds.
+✔ Test "Meeting point and shelter spot become verified only through explicit answers; shelter carries the not-engineered note" passed after 5.075 seconds.
+✔ Test sixDesignsAndSetupVariantsRoundTripWithoutEditingFacts() passed after 5.076 seconds.
+✔ Test "Window suitability is person-specific and a legacy generic answer cannot authorize anyone" passed after 5.075 seconds.
+✔ Test v2HeatReducedCoolingDiffersFromFullLossAndFactsStayQualified() passed after 5.075 seconds.
+✔ Test apartmentAndTwoStoryIssues() passed after 5.075 seconds.
+✔ Test "A destination not confirmed with its host is never printed as a place to go" passed after 5.075 seconds.
+✔ Test v2PortableACDoesNotManufactureCoolingCoverageForEveryRoom() passed after 5.075 seconds.
+✔ Test "Fire rehearsal: no practice route enters an authored blocked space, including the start room" passed after 5.076 seconds.
+✔ Test unsafeMovementEarnsZeroAndUnchangedRouteProvesNoAdaptation() passed after 5.075 seconds.
+✔ Test waterUseConservesVolumeAndChemicalAdvisoryCannotBeBoiledAway() passed after 5.075 seconds.
+✔ Test thermalChoicesChangeComputedTrendsAndKeepHeatPowerInitiallyAvailable() passed after 5.075 seconds.
+✔ Test unknownAndEmptyStockAreNotInventedAndStressUsesActualSource() passed after 5.076 seconds.
+✔ Test floodEarlyDepartureDiffersFromLostAccessAndNoTransport() passed after 5.078 seconds.
+✔ Test "One card per essential device; it validates in EN, ES and VI with no unresolved keys or placeholders" passed after 5.078 seconds.
+✔ Test cloudRevokeCancelsStaleRefreshButKeepsLocalPlans() passed after 5.078 seconds.
+✔ Test "Complete alarm records close the real engine gap without a marker or home layout and survive reload" passed after 5.079 seconds.
+✔ Test staleImageHomeFrameAndTimeCannotEstablishCalibration() passed after 5.078 seconds.
+✔ Test "All six hazards retain deterministic decisions and household preparations without spatial claims" passed after 5.079 seconds.
+✔ Test practiceRestartCannotEraseUnfinishedAttempt() passed after 5.078 seconds.
+✔ Test v2HeatShadingIsRoomScopedAndComposedSelectionsPersist() passed after 5.079 seconds.
+✔ Test "A detached portal cannot suppress the rehearsal's blocked-helper preparation" passed after 5.079 seconds.
+✔ Test "A scanned home has no verified route until the household answers the confirmation steps" passed after 5.079 seconds.
+✔ Test "Room ordinal collisions do not preserve occupant assignments across unrelated captures" passed after 5.079 seconds.
+✔ Test accompanimentComputesHelperApproachAndBothShelterArrivalsWithoutTeleporting() passed after 5.079 seconds.
+✔ Test "Water presentation agrees across recommendations, authored events and full plans without rewriting facts" passed after 5.079 seconds.
+✔ Test "Critical selection applies to scenario recommendations and diagram annotation labels; notes consent is independent" passed after 5.079 seconds.
+✔ Test "Helper routes obey attachment, width, corrected geometry and helper mobility" passed after 5.079 seconds.
+✔ Test "A local leak has its own choices and never borrows regional road, utility, well or evacuation effects" passed after 5.079 seconds.
+✔ Test "A family can answer every decision and finish each no-layout exercise" passed after 5.079 seconds.
+✔ Test "A household without geometry has a basic card and keeps international contacts and text meetups" passed after 5.078 seconds.
+✔ Test preservesTwentyFourLegacyRuns() passed after 5.081 seconds.
+✔ Test markerRelocationRetainsPrivateContextWithoutCreatingShelterCredit() passed after 5.078 seconds.
+✔ Test invalidOriginsHazardsAndImplicitStageBypassesFailAtomically() passed after 5.079 seconds.
+✔ Test "Plan diagrams and text use the final scenario stage, including blocked paths, and reject legacy history" passed after 5.079 seconds.
+✔ Test "Shelter export follows the current supported scene and never relabels an interior path as outside" passed after 5.078 seconds.
+✔ Test duplicateRoomNamesStayDistinctAcrossFloors() passed after 5.078 seconds.
+✔ Test "Legacy private places and plans decode without newer optional visual or instruction fields" passed after 5.078 seconds.
+✔ Test "Geographic meetup additions, edits and removals invalidate the matching document; other homes are excluded" passed after 5.078 seconds.
+✔ Test v2UnknownCoolingRemainsUnknownInsteadOfBecomingAnOutage() passed after 5.079 seconds.
+✔ Test missingInventoryAndDeviceDocumentationAreUnknown() passed after 5.078 seconds.
+✔ Test accompanimentMovesBothPeopleThroughTheExactExitWithoutAutomaticAccounting() passed after 5.081 seconds.
+✔ Test "Sensitive fields are selected independently and no home is needed for their preview" passed after 5.078 seconds.
+✔ Test redactionsAndInconsistentTransformsKeepEvidenceInSubmittedImage() passed after 5.079 seconds.
+✔ Test failedDurableWriteNeverCreatesAReconciliationReceipt() passed after 5.079 seconds.
+✔ Test leavingAloneRemovesTheHelpersAbilityToReenterForAnotherPerson() passed after 5.081 seconds.
+✔ Test directorChoosesARealRoomAndHostComputesConsequences() passed after 5.079 seconds.
+✔ Test "Care-plan notes are left out unless the household chooses to include them" passed after 5.079 seconds.
+✔ Test debriefOpensRecordedFactWithCanonicalIdentityAndExactSubject() passed after 5.079 seconds.
+✔ Test "Changing a shelter floor to unknown requeues review and requires explicit reconfirmation" passed after 5.078 seconds.
+✔ Test lostCommitAcknowledgementReconcilesDurableStateWithoutRepeatingWaterUse() passed after 5.079 seconds.
+✔ Test "Unknown device runtime is printed as unknown, never as an estimate" passed after 5.078 seconds.
+✔ Test "Both selection and room evidence must be current; a negative answer only clears its own room" passed after 5.079 seconds.
+✔ Test tornadoArrivalAndAccessVariantAreComputed() passed after 5.082 seconds.
+✔ Test invalidCalibrationAndUnalignedDepthRemainUnavailable() passed after 5.081 seconds.
+✔ Test debriefFactsFollowActualConditioningAndWaterActions() passed after 5.081 seconds.
+✔ Test everySetupOptionRunsARealPackAgainstTheSameHome() passed after 5.083 seconds.
+✔ Test cropResizeRotationUsesOriginalIntrinsicsAndNeverMutatesHome() passed after 5.081 seconds.
+✔ Test fullProposalEnvelopeBindsSourceAndRejectsIncompleteMetadata() passed after 5.081 seconds.
+✔ Test everyQuarterTurnPreservesAnalyticallySpecifiedOriginalCorners() passed after 5.081 seconds.
+✔ Test selectedFrameMetadataIsBoundedAndTransactionalAcrossRestoreAndDelete() passed after 5.081 seconds.
+✔ Test "The near-home meeting purpose precedes backup regardless of IDs or save order" passed after 5.081 seconds.
+✔ Test "Fire page explains no-route and shared-chokepoint results instead of inventing an exit" passed after 5.081 seconds.
+✔ Test "Choosing a shelter in comparison creates only hypothetical evidence and retains hard exclusions" passed after 5.081 seconds.
+✔ Test invalidEstimatesStayUnknownRatherThanDisplayingNaNOrNegativeTravel() passed after 5.082 seconds.
+✔ Test mixedUnitsConserveEachPhysicalContainer() passed after 5.080 seconds.
+✔ Test failurePreservesDraftAndCurrentAndRetryCanSucceed() passed after 5.080 seconds.
+✔ Test fractionalExpiryRoundsConservatively() passed after 5.081 seconds.
+✔ Test doorWindowCorrectionKeepsGeometryAndDropsOldExitEligibility() passed after 5.080 seconds.
+✔ Test rescanReplacesGeometryWithoutMistakingCaptureIDForHomeIdentity() passed after 5.080 seconds.
+✔ Test apartmentElevatorsCannotReplaceStairsInHostToolsOrFireSimulation() passed after 5.081 seconds.
+✔ Test saveIsDurableBeforePublishAndAdvancesOnlyOnce() passed after 5.080 seconds.
+✔ Test equalTimeOrderingAndRegionalWarningsRemainHazardSpecific() passed after 5.082 seconds.
+✔ Test "Current floor grade and legacy ground semantics agree in confirmation and routing" passed after 5.081 seconds.
+✔ Test captureRecordsVersionAndLegacySourceKeepsOriginalAnchors() passed after 5.082 seconds.
+✔ Test "Missing and present layouts round-trip while corrupt present layouts still fail" passed after 5.082 seconds.
+✔ Test "Verified markers cannot substitute for presence, location, coverage or a functional check" passed after 5.083 seconds.
+✔ Test missingAmountsPackagesAndPartialScopeStayUnknown() passed after 5.080 seconds.
+✔ Test expirySettlesActualUseWithoutConsumingExpiredStock() passed after 5.080 seconds.
+✔ Test recordedPowerGapCheckNamesTheActualUnknownWithoutDisconnectingOrConfirmingIt() passed after 5.082 seconds.
+✔ Test "A newly recorded lower level invalidates a historical marker without deleting its evidence" passed after 5.081 seconds.
+✔ Test markerSuggestionStaysInsideConcaveGeometryAndNeverConfirmsItsLocation() passed after 5.081 seconds.
+✔ Test "Editing household or home revision makes a saved plan stale" passed after 5.080 seconds.
+✔ Test expiryIsMandatoryBoundaryAndUnknownNeverBecomesKnown() passed after 5.081 seconds.
+✔ Test policiesAreValidatedAndIncludedInSourceBinding() passed after 5.081 seconds.
+✔ Test "Missing translation falls back to English visibly and the document carries the fallback note" passed after 5.081 seconds.
+✔ Test "Water storage target is 1 gal/person/day x 3 days and labeled as a storage target" passed after 5.081 seconds.
+✔ Test authorityMovementAndAtomicPersistence() passed after 5.081 seconds.
+✔ Test "English plan for every sample household validates with no unresolved keys or placeholders" passed after 5.081 seconds.
+✔ Test multiplePhysicalStocksConserveCoverageAndRejectOverflow() passed after 5.081 seconds.
+✔ Test modelAndVisualRouteStatusRetainSharedStairDependencies() passed after 5.081 seconds.
+✔ Test legacySourcesRemainWaterOnlyAndFailedWritesDoNotConsumeFood() passed after 5.081 seconds.
+✔ Test "Window inventory contradicts a no-window shelter even when rejected as an escape option" passed after 5.081 seconds.
+✔ Test "Plan dates are the household's local calendar day, not the UTC day" passed after 5.081 seconds.
+✔ Test "Private care-plan notes are excluded by default and included only by explicit option" passed after 5.081 seconds.
+✔ Test "Flood planning closes its preparation without certifying a route, refuge or exercise outcome" passed after 5.081 seconds.
+✔ Test "Real ES/VI packs, when present, keep numbers, units, phone numbers, and are labeled draft" passed after 5.081 seconds.
+✔ Test "Prohibitions keep their emphasis in every locale (styled from the source text, not translated words)" passed after 5.080 seconds.
+✔ Test batchOrderBoundAndMinimizationComeFromValidatedLog() passed after 5.081 seconds.
+✔ Test "Every home-validation issue and confirmation question resolves in all supported languages" passed after 5.081 seconds.
+✔ Test "Adding the utility role preserves legacy contacts and international values on round trip" passed after 5.081 seconds.
+✔ Test "Unknown, assumed, refused and blank destinations never appear as confirmed places to go" passed after 5.081 seconds.
+✔ Test followupSupersedesOriginalAndDirectorCommitsCannotReplaceIt() passed after 5.081 seconds.
+✔ Test landingCorrectionCannotConfirmOrTeleportAndMobilityStillExcludesStairs() passed after 5.081 seconds.
+✔ Test consumesRecordedCoverageWithoutInferringNutritionAndStopsAtDepletion() passed after 5.081 seconds.
+✔ Test "Layoutless households get reception readiness without irrelevant clinical, pet, or unsupported enrollment tasks" passed after 5.081 seconds.
+✔ Test newLevelAndStairsRequireExplicitRoomsLandingsAndExteriorReview() passed after 5.081 seconds.
+✔ Test "Simulation does not announce or route to a stale candidate rejected by the planner" passed after 5.081 seconds.
+✔ Test "Saved place keeps geographic coordinates distinct from indoor Vec2" passed after 5.081 seconds.
+✔ Test "Pet supplies require both availability and location and only apply to actual recorded pets" passed after 5.081 seconds.
+✔ Test "Coordinates reject partial, non-finite, and out-of-range values" passed after 5.081 seconds.
+✔ Test "A named, usable water-utility contact closes only the municipal utility task" passed after 5.081 seconds.
+✔ Test openingPlacementUsesAnActualConcaveBoundaryAndRejectsOversizedOrNonfiniteInputs() passed after 5.081 seconds.
+✔ Test "Flood refuge and tornado shelter scenes preserve subjects, floors and mobility across the same fixtures" passed after 5.085 seconds.
+✔ Test "A confirmed continuity destination survives reload and appears in both portable documents without becoming a meetup" passed after 5.081 seconds.
+✔ Test rejectedEditsAreTransactionalAndConcaveOutlineIsPreserved() passed after 5.081 seconds.
+✔ Test "Manufactured home tornado page directs to a pre-planned sturdy building, not an interior closet" passed after 5.081 seconds.
+✔ Test "Baseline subjects and missing-location explanations resolve in every supported language without leaking record IDs" passed after 5.081 seconds.
+✔ Test oldHomePayloadHasNoInventedCorrectionHistory() passed after 5.081 seconds.
+✔ Test correctionRetainsIndependentCapturedBarrierAndDynamicWallsFollowRoomInventory() passed after 5.081 seconds.
+✔ Test "Well-test planning applies only to a private well and is independent from flood planning or water safety" passed after 5.081 seconds.
+✔ Test "Water amount and storage location are independent facts; checklist ownership never supplies a missing quantity" passed after 5.081 seconds.
+✔ Test sameScheduleRetestDelaysDepletionWithoutChangingFacts() passed after 5.081 seconds.
+✔ Test budgetsAndPersistedForwardStages() passed after 5.083 seconds.
+✔ Test "Canonical supplies can establish having an item, while unknown location and conflicting ownership remain unresolved" passed after 5.081 seconds.
+✔ Test "A household's public-site confirmation stays qualified and cannot certify current official activation" passed after 5.081 seconds.
+✔ Test exactConsumptionReplayAndNoHouseholdMutation() passed after 5.082 seconds.
+✔ Test "Medication availability is scoped to recorded need and independent of cold-storage and electrical evidence" passed after 5.081 seconds.
+✔ Test simultaneousWaterAndFoodDepletionConservesBoth() passed after 5.081 seconds.
+✔ Test physicalEscapeReviewTracksOnlyRelevantLayoutChanges() passed after 5.081 seconds.
+✔ Test genericSessionActionsCannotBeHiddenBeforeScoredAnswers() passed after 5.081 seconds.
+✔ Test retainsResourceFactsAndLinksWithoutPrivateLabels() passed after 5.081 seconds.
+✔ Test capturesBeforeFeedbackAndCannotRerollUnsafeAnswer() passed after 5.081 seconds.
+✔ Test incompatibleCountsAndSubjectCoverageCannotInventDays() passed after 5.081 seconds.
+✔ Test "Radio ownership needs a findable location; an explicit alternate plan does not change modeled radio ownership" passed after 5.081 seconds.
+✔ Test outlineCorrectionRetainsCaptureAndRequiresReviewSeparateFromConnections() passed after 5.081 seconds.
+✔ Test "Equipment supplies and unassigned medicines keep exact subject keys and cannot be completed by another device" passed after 5.081 seconds.
+✔ Test "Current unfinished records merge to one focused preparation per action, including retained exercise results" passed after 5.081 seconds.
+✔ Test placingOpeningPreservesEvidenceButRequiresARealWallAndReview() passed after 5.081 seconds.
+✔ Test "Low cost never outranks a critical dependency; ties break by effort, breadth, then ID" passed after 5.081 seconds.
+✔ Test "Missing content uses readable qualifications rather than raw localization keys" passed after 5.081 seconds.
+✔ Test "Recorded reception and enrollment close equivalent derived tasks without changing hypothetical service outcomes" passed after 5.081 seconds.
+✔ Test "content/actions/actions.json matches ActionCatalog.builtIn" passed after 5.081 seconds.
+✔ Test "Optional wattage is not fabricated; known limits and a depleted source remain binding" passed after 5.081 seconds.
+✔ Test alteredCreditSourceOrReceiptCannotPassRevalidation() passed after 5.081 seconds.
+✔ Test unknownAnchorsRemainUnknownAndCoachingCannotEarnPoints() passed after 5.081 seconds.
+✔ Test "Local leak exports use localized leak instructions, affected rooms, source scope and visual labels" passed after 5.081 seconds.
+✔ Test atomicCapturePersistsNeitherActionNorGradeOnFailure() passed after 5.081 seconds.
+✔ Test storageBlockedVersusSuppliesCarriedBeforeIncident() passed after 5.085 seconds.
+✔ Test markerEditsAreValidatedLocatedAndDoNotConfirmEquipmentReadiness() passed after 5.084 seconds.
+✔ Test "A second shared load cannot fit around an unknown draw, in either deterministic ID order" passed after 5.084 seconds.
+✔ Test "An upstairs-only path retains lower affected, exposed, opening and destination floors" passed after 5.086 seconds.
+✔ Test capturedWindowsRemainProposalsButExcludeWindowlessShelter() passed after 5.086 seconds.
+✔ Test meetingPinsKeepTheirSlotsAndOriginalNumbersAheadOfOptionalResources() passed after 5.086 seconds.
+✔ Test oldPlaceSnapshotsDecodeWithoutNewSourceAndContactMetadata() passed after 5.086 seconds.
+✔ Test appleSuggestionsRetainSourceIdentityWithoutBecomingAMeetupOrClaimingReview() passed after 5.086 seconds.
+✔ Test addressUnitAndNoOpEditsRetainExplicitCoverageWithoutInferringANewRegion() passed after 5.086 seconds.
+✔ Test textOnlyMeetingPlacesNeverInventPinsAndNoHomeUsesTheNearMeetingOrigin() passed after 5.086 seconds.
+✔ Test officialCoordinateAndListOnlySourcesStayUsefulAfterSavingAndReloading() passed after 5.086 seconds.
+✔ Test "Legacy snapshots recover the same localized qualifications after panelDetails is absent" passed after 5.086 seconds.
+✔ Test carriedFoodRetainsAccessWhenOriginalStorageIsBlocked() passed after 5.087 seconds.
+✔ Test "All six scenario packs load with distinct IDs" passed after 5.086 seconds.
+✔ Test missingApproachAndFailedPersistenceCannotPartiallyMoveAnyone() passed after 5.091 seconds.
+✔ Test "Regional flood exports retain official-direction guidance while no-layout leaks retain their identity" passed after 5.086 seconds.
+✔ Test "Fire rehearsal in the verified sample home yields practice routes tied to the home revision" passed after 5.086 seconds.
+✔ Test confirmedFoodSupersedesLegacyAndExpiredQuantityCannotEarnCredit() passed after 5.086 seconds.
+✔ Test "No-layout transport preparation requires recorded wheelchair access, including agreed rides" passed after 5.086 seconds.
+✔ Test "An alternative usable source can close the task while rejected candidates stay visibly qualified" passed after 5.087 seconds.
+✔ Test "Medicine private-note selection survives cold-only power independence and every selected locale" passed after 5.087 seconds.
+✔ Test commitsActualInputOnceAndReplaysWithoutTranscript() passed after 5.087 seconds.
+✔ Test "Failed current paths preserve exclusions and explanations without reviving route history" passed after 5.087 seconds.
+✔ Test oldCallerFlagsHaveNoEligibilityAndFreshCheckNeedsFreshSession() passed after 5.088 seconds.
+✔ Test "A checked source cannot close generator or solar prerequisites, or generate a switch instruction" passed after 5.087 seconds.
+✔ Test locationEvidenceUsesCompatibleDatumUncertaintyFreshnessAndScale() passed after 5.087 seconds.
+✔ Test "Floor selection follows the selected resident, permits explicit review and rejects stale floor IDs" passed after 5.087 seconds.
+✔ Test "Every route floor and exact alternative legs share the same qualified panel contract" passed after 5.087 seconds.
+✔ Test "Focused highlights resolve either stair landing, annotations and shelter room without floor-order guesses" passed after 5.087 seconds.
+✔ Test "Exit style follows routing evidence and grade rather than a verified label alone" passed after 5.087 seconds.
+✔ Test "Clearing a measured threshold restores unknown and invalidates wheelchair use without losing invalid drafts" passed after 5.087 seconds.
+✔ Test "Windows never receive ordinary exit styling and detached openings stay unconfirmed" passed after 5.087 seconds.
+✔ Test "Room markers stay inside a concave outline and do not fabricate coordinates for absent geometry" passed after 5.087 seconds.
+✔ Test manufacturedClosetNeverBecomesTornadoShelterAndThresholdsMatter() passed after 5.087 seconds.
+✔ Test everySelectedHazardCarriesExecutableMechanicsAndDistinctScene() passed after 5.090 seconds.
+✔ Test "Editing a door's verification changes fire routes and invalidates a saved plan" passed after 5.087 seconds.
+✔ Test "A physical drill has its own dated record; an exit check or a digital exercise never supplies it" passed after 5.088 seconds.
+✔ Test typeScriptValidatedHostFixtureAndHistoricalContextDecode() passed after 5.087 seconds.
+✔ Test "Every modelable recommendation changes something in its replay" passed after 5.092 seconds.
+✔ Test "Each scenario produces a distinct event set for the same household (not just a different title)" passed after 5.087 seconds.
+✔ Test "Every card explains what, why, causes, effect, unconfirmed facts and sources" passed after 5.087 seconds.
+✔ Test conservationCreditUsesTwoHostProjectionsWithoutCommittingEither() passed after 5.087 seconds.
+✔ Test apartmentComplexHasActualExteriorAndStairDependencies() passed after 5.087 seconds.
+✔ Test failedWriteRetainsQueueBalanceAndScoreAndForgeryIsRejected() passed after 5.087 seconds.
+✔ Test dwellingEditsUpdateHomeContextAndStagedSiteEditsLeaveRevisionToTransactionOwner() passed after 5.088 seconds.
+✔ Test sameGeometryProducesTwoAndThreeDimensionalArtifacts() passed after 5.087 seconds.
+✔ Test concernHypothesesCannotBecomeApprovedPracticeVariants() passed after 5.088 seconds.
+✔ Test factualActionsOpenFocusedInputsWithoutLayoutRequirements() passed after 5.087 seconds.
+✔ Test "Authored stage exclusions remove exit styling and retain an exposed resident's recorded room" passed after 5.087 seconds.
+✔ Test siteEditPersistsLocallyAndOnlyMinimizedEvidenceGoesToGemini() passed after 5.087 seconds.
+✔ Test foodConfirmationAndProjectionAreAtomic() passed after 5.088 seconds.
+✔ Test "Duplicates merge to the most urgent tier" passed after 5.088 seconds.
+✔ Test completedCheckAllowsLaterTrainingWithoutRewritingAnswers() passed after 5.088 seconds.
+✔ Test exactSpatialSubjectsArePreservedAndInventoryWindowsAreNotDefaultExitReviews() passed after 5.087 seconds.
+✔ Test persistenceFailureCannotBeReinterpretedAsUnsupported() passed after 5.087 seconds.
+✔ Test rejectsWrongInputSourceDirectorCommandsAndClarification() passed after 5.087 seconds.
+✔ Test "Advisory types are distinct service effects" passed after 5.087 seconds.
+✔ Test laterCorrectActionCannotRewriteAnUnsuccessfulFirstResponse() passed after 5.087 seconds.
+✔ Test "No-car household cannot complete a vehicle-dependent relocation without an explicit alternative" passed after 5.087 seconds.
+✔ Test completedFirstResponseSurvivesContinuedExerciseAndFinish() passed after 5.087 seconds.
+✔ Test "Unknown essential-device runtime stays unknown and yields a verification action" passed after 5.087 seconds.
+✔ Test manufacturedHousingOverridesLegacyShelterMarkersInScoreAndContext() passed after 5.087 seconds.
+✔ Test dependencyFingerprintsIgnoreRenamesAndScopeMedicationStorageToContinuity() passed after 5.087 seconds.
+✔ Test bankCoversAllHazardsWithDifferentExecutableActions() passed after 5.090 seconds.
+✔ Test intentionalRetestPreservesOtherHazardAnchorAndDoesNotUseBestResult() passed after 5.090 seconds.
+✔ Test infeasibleCompoundHasNoPartialEffectsAndNoDefaultChoice() passed after 5.090 seconds.
+✔ Test "Handset depletion, charging, Wi-Fi loss and cellular loss are distinct outcomes" passed after 5.090 seconds.
+✔ Test "Authored events at the same minute order by priority then ID" passed after 5.090 seconds.
+✔ Test "Shared backup output and energy are never double-allocated or negative" passed after 5.090 seconds.
+✔ Test "Electric well loses water with power; municipal water does not" passed after 5.090 seconds.
+✔ Test "Tornado: manufactured home, preselected shelter, night alerting, no distant travel during a warning" passed after 5.090 seconds.
+✔ Test "Unsafe options are never defaults, never recommended, and never improve outcomes" passed after 5.090 seconds.
+✔ Test "Gas heat with unknown blower dependency stays unknown, not working or failed" passed after 5.090 seconds.
+✔ Test "AND/OR algebra: OR keeps a working backup; AND fails on any unavailable input" passed after 5.090 seconds.
+✔ Test "No compatible backup: essential device stops; unknown setup stays unknown, never operational" passed after 5.090 seconds.
+✔ Test "Grid-tied solar and an unplaced generator are not outage backup" passed after 5.090 seconds.
+✔ Test "Grid strain is distinct from an authored outage" passed after 5.090 seconds.
+✔ Test policyVersionsCannotMixAndLegacyScoresStillDecode() passed after 5.090 seconds.
+✔ Test removedReconnectionRecordCannotEstablishOfflineContactAccess() passed after 5.090 seconds.
+✔ Test "Chemical do-not-drink / do-not-use never recommend boiling" passed after 5.090 seconds.
+✔ Test "Every household x scenario runs offline, deterministically, and every emitted key resolves in English" passed after 5.091 seconds.
+✔ Test tornadoMovementNeverReplacesShelterWithExteriorRoute() passed after 5.091 seconds.
+✔ Test locationDoesNotProveFoodAccessAndConfirmationPropagates() passed after 5.090 seconds.
+✔ Test invalidatedShelterCannotEarnSuitabilityOrBorrowExteriorRoute() passed after 5.133 seconds.
+✔ Test waterDisjunctionPreservesUnknownAndConfirmedNegative() passed after 5.133 seconds.
+✔ Test shelterUsesConfirmedInteriorObjectiveAndActualRoutes() passed after 5.133 seconds.
+✔ Test carrierAndTransportAbsenceAreUnknown() passed after 5.133 seconds.
+✔ Test helperApplicabilityAndIdentityUseRecordedEvidence() passed after 5.132 seconds.
+✔ Test "Library validation rejects unknown rules and unsafe defaults; dependency evaluation has a hard bound" passed after 5.131 seconds.
+✔ Test medicalAvailabilityOpensItsOwnRecordInsteadOfElectricalEquipment() passed after 5.231 seconds.
+✔ Test availableButUnverifiedPathCannotEarnConfirmedCredit() passed after 5.233 seconds.
+✔ Test "Power restoration does not clear advisories, refill storage, or certify devices" passed after 5.297 seconds.
+✔ Test absentStartAndDisconnectedGeometryRemainUnknown() passed after 5.367 seconds.
+✔ Test "Library loads six distinct, fictional, draft-reviewed packs" passed after 5.534 seconds.
+✔ Test supportedCountiesExactlyMatchBundledCoverage() passed after 6.774 seconds.
+✔ Test unansweredAttemptCannotCaptureAfterAnUnobservedRevisionChange() passed after 7.030 seconds.
+✔ Test composedEscapeRetiresTheExistingAnchorWithOnePersistedCredit() passed after 7.036 seconds.
+✔ Test contactsMeetingPurposesAndPeopleKeepTheirIntendedContext() passed after 7.039 seconds.
+✔ Test wireDestinationRoundTripsAllExistingEditorsWithoutLocalizedTitleInference() passed after 7.042 seconds.
+✔ Test explicitRetestCannotBypassSituationalPrerequisites() passed after 7.059 seconds.
+✔ Test "Each scenario produces distinct events, decisions and results for the same household" passed after 7.060 seconds.
+✔ Test uncoveredUSAndForeignLocationsCannotBuildPublicRequestsOrInheritTexasResources() passed after 7.034 seconds.
+✔ Test "Confirmed compatible backup supplies its intended load during the outage" passed after 7.040 seconds.
+✔ Test retirementRelaunchAndIndependentCompetencyRefresh() passed after 7.061 seconds.
+✔ Test "Water outage: stored-water use decision; chemical advisories never reward boiling or tap use" passed after 7.040 seconds.
+✔ Test "Fire: blocked usual route finds a modelled alternative; both blocked gives a typed no-route" passed after 7.057 seconds.
+✔ Test "Flash flood: never a route through water; no-car early leave is blocked without an arrangement" passed after 7.060 seconds.
+✔ Test "Every key the engine can emit exists in English" passed after 7.064 seconds.
+✔ Test "Fire: a helper who cannot reach the person they help is not counted on, and is never sent in" passed after 7.063 seconds.
+✔ Suite "Recorded supply requirement arithmetic" passed after 7.076 seconds.
+✔ Suite "Public data policy" passed after 7.076 seconds.
+✔ Test "Plans in EN/ES/VI validate: no unresolved keys, visible draft/fallback labels, facts preserved" passed after 7.067 seconds.
+✔ Test nextIncidentDurationAndPolicyHorizonAreDistinct() passed after 2.370 seconds.
+✔ Test persistenceFailureDoesNotMoveAnyoneOrRetireTheirAction() passed after 6.875 seconds.
+✔ Test invalidWaitIntentsAndDoorPermissionsFailAtomically() passed after 2.370 seconds.
+✔ Test waitUsesHostDepletionAndRetainsCompletedState() passed after 2.370 seconds.
+✔ Test unrelatedMandatoryBoundaryInterruptsAndUnknownIsNotSuccess() passed after 2.370 seconds.
+✔ Test aRequestedDecisionCannotBeSkippedOrFollowedByHiddenEffects() passed after 2.370 seconds.
+✔ Test finiteQuantitiesCannotOverflowDepletionTime() passed after 2.370 seconds.
+✔ Test followsOnlyTheComputedRefugeAndPersistsActualArrivalWithoutDepartureOrSafetyClaims() passed after 6.875 seconds.
+✔ Test partsNeverAddTextAndMissingFactsAreFlagged() passed after 2.370 seconds.
+✔ Test confirmedCreatesOneLinkedTaskButNoHouseholdFactsOrPoints() passed after 2.337 seconds.
+✔ Test actualUserChoiceOverridesAnEarlierHypotheticalInterventionChoice() passed after 2.370 seconds.
+✔ Test unchangedImageDoesNotRepeatDismissedReviewAfterHomeRevision() passed after 2.326 seconds.
+✔ Test unassessedAndAssessedEmptySummariesRemainDistinct() passed after 2.434 seconds.
+✔ Test staleUnknownTaskRedactionAndPersistenceFailWithoutPublishing() passed after 2.326 seconds.
+✔ Test spatialBatchPreviewIsReadOnlyAndShowsAppliedEffects() passed after 2.371 seconds.
+✔ Test noTeleportationOrInventedRefugeAcrossAccessAndEvidenceVariants() passed after 6.876 seconds.
+✔ Test "Model inputs carry no names, custom labels, notes, contacts or address" passed after 2.312 seconds.
+✔ Test "Generated sentences may not add numbers, links, or clinical and certainty words" passed after 2.312 seconds.
+✔ Suite "Geographic and indoor meeting place linkage" passed after 7.077 seconds.
+✔ Test inventoryUnknownsDedupAndConversion() passed after 2.312 seconds.
+✔ Test scoreIsIndependentOfRubricAndDictionaryOrder() passed after 2.312 seconds.
+✔ Test permissionsSchedulingAndDepletion() passed after 2.312 seconds.
+✔ Test actionConservationReplayAndAtomicity() passed after 2.312 seconds.
+✔ Test rubricMutationsAndLatestPractice() passed after 2.312 seconds.
+✔ Test fireEscapeAndAccountingAreSeparateAndCannotReenter() passed after 7.069 seconds.
+✔ Test "Two people's medicine preparations close independently and do not fabricate generic completion records" passed after 2.312 seconds.
+✔ Test "Contact and meetup records close their tasks and stay reviewable across reload without a layout" passed after 2.312 seconds.
+✔ Test "Alarm ownership, coverage, location, and an explicit current functional check remain separate" passed after 2.312 seconds.
+✔ Test gradingDoesNotConsumeTheConfirmedInventoryLedger() passed after 7.067 seconds.
+✔ Test controlledStressRetestAndAllHazards() passed after 2.312 seconds.
+✔ Test tamperedSourcesCreditsAndUncapturedActionsFailRevalidation() passed after 2.312 seconds.
+✔ Test "Identical inputs give identical results, including equal-time ordering" passed after 7.066 seconds.
+✔ Test "Fire room origins and resident starts share exclusions across diverse layouts and blocked exits" passed after 7.073 seconds.
+✔ Test supportedMechanicsVersionsRetainIndependentPracticeEvidenceAfterRelaunch() passed after 7.067 seconds.
+✔ Test comparisonReportsTheResolvedDeviceWhileAnotherSameActionRemains() passed after 2.311 seconds.
+✔ Test recordingALocationOrContactPreservesCanonicalOwnership() passed after 2.311 seconds.
+✔ Test explicitOwnershipCorrectionsAndUnknownsUpdateOnlyThatItem() passed after 2.311 seconds.
+✔ Test selectedFlashlightAnswerRetainsActualPositiveCount() passed after 2.311 seconds.
+✔ Test searchPlanMustMatchFrozenTasksTravelAndFiniteExpansion() passed after 2.311 seconds.
+✔ Test equivalentGapAndTaskOrderingDeduplicateAndLegacyKeysDecode() passed after 2.311 seconds.
+✔ Test revertingToAcceptedInputsCancelsPendingResponseWithoutAnotherCall() passed after 2.311 seconds.
+✔ Test debounceInvalidatesBeforeDeadlineAndKeepsUsefulResults() passed after 2.311 seconds.
+✔ Test stationAndMeetupCategoriesKeepLocalPolicyAndTaskBinding() passed after 2.311 seconds.
+✔ Test quantitiesUnknownsAndExplicitDependenciesInvalidateWhileWordingDoesNot() passed after 2.311 seconds.
+✔ Test saveFailureAndOutOfOrderSubmissionsPublishNothing() passed after 2.312 seconds.
+✔ Test "Official English resource notes retain their source wording with visible fallback provenance in translated plans" passed after 2.275 seconds.
+✔ Test "Emergency instructions use a known country number or the localized local-number phrase throughout the document" passed after 2.275 seconds.
+✔ Test "A fallback inside the family card is identified and retained with a visible document notice" passed after 2.278 seconds.
+✔ Test "Long responder instructions cannot steal translation provenance from the critical line" passed after 2.278 seconds.
+✔ Test "App dates, decimal quantities and empty self labels use selected language while recorded medicine text stays exact" passed after 2.278 seconds.
+✔ Test "User-facing validation descriptions are localized and omit raw IDs, template text and private notes" passed after 2.278 seconds.
+✔ Test "Default annotation labels localize in text and selected visual snapshots without repopulating redacted labels" passed after 2.278 seconds.
+✔ Suite "Focused household deletion" passed after 7.080 seconds.
+✔ Test "Trying an arranged relocation takes the relocation branch in the replay only" passed after 2.196 seconds.
+✔ Suite "Egress routes" passed after 7.081 seconds.
+✔ Suite "Lead core adversarial probes" passed after 7.080 seconds.
+✔ Suite "Selectable content languages" passed after 7.081 seconds.
+✔ Suite "Inventory evidence, zero stock and read validation" passed after 7.081 seconds.
+✔ Suite "AI boundary regressions" passed after 7.081 seconds.
+✔ Suite "Rehearsal cursor and stale-result gate" passed after 7.081 seconds.
+✔ Suite "Family preparation revision" passed after 7.081 seconds.
+✔ Suite "Selected family export transaction" passed after 7.081 seconds.
+✔ Suite "Public data contract (shared JSON with services/public-api)" passed after 7.081 seconds.
+✔ Suite "Score evidence invariants" passed after 7.081 seconds.
+✔ Test sharingExposesUnknownCapacityAndAssignmentIsUserOwned() passed after 7.071 seconds.
+✔ Suite "Fixture households" passed after 7.081 seconds.
+✔ Suite "Demo dump (opt-in)" passed after 7.081 seconds.
+✔ Suite "Manual home layout" passed after 7.081 seconds.
+✔ Suite "Capability matrix" passed after 7.081 seconds.
+✔ Suite "Counterfactual" passed after 7.081 seconds.
+✔ Suite "Route adversarial probes" passed after 7.081 seconds.
+✔ Suite "Minimized safety-relevant home scene" passed after 7.081 seconds.
+✔ Suite "Six hazard readiness setup and current-state scenes" passed after 7.081 seconds.
+✔ Suite "Describe your family: intake proposals" passed after 7.081 seconds.
+✔ Suite "Source-bound recorded access dependencies" passed after 7.081 seconds.
+✔ Suite "Confirmed inventory identity drives existing preparations" passed after 7.081 seconds.
+✔ Suite "Geometry and scan import" passed after 7.081 seconds.
+✔ Suite "Consistent map extents, route endpoints and exported place facts" passed after 7.081 seconds.
+✔ Suite "Spatial fixtures and validation" passed after 7.081 seconds.
+✔ Suite "Next steps" passed after 7.081 seconds.
+✔ Suite "Simultaneous resource boundaries" passed after 7.081 seconds.
+✔ Suite "Alarm records across rehearsal and preparation" passed after 7.081 seconds.
+✔ Suite "Spatial identity and assistance" passed after 7.081 seconds.
+✔ Suite "Medical power-outage card" passed after 7.081 seconds.
+✔ Suite "Versioned committed-route adaptation anchors" passed after 7.081 seconds.
+✔ Suite "Ordinary map estimate presentation" passed after 7.081 seconds.
+✔ Suite "Rehearsal without a home layout" passed after 7.081 seconds.
+✔ Suite "Guided home confirmation" passed after 7.081 seconds.
+✔ Suite "AI source review, refresh and migration" passed after 7.081 seconds.
+✔ Suite "Local image transform and calibration provenance" passed after 7.081 seconds.
+✔ Suite "Living family plan and private place snapshot" passed after 7.081 seconds.
+✔ Suite "Authored adapter compatibility" passed after 7.081 seconds.
+✔ Suite "Concentrated preparation and home presentation" passed after 7.081 seconds.
+✔ Suite "Director policy, stages and recorded origins" passed after 7.081 seconds.
+✔ Suite "Current shelter suitability" passed after 7.081 seconds.
+✔ Suite "Plan builder and localization" passed after 7.081 seconds.
+✔ Suite "Exercise inventory conservation and access" passed after 7.081 seconds.
+✔ Suite "Direct home editing save transaction" passed after 7.081 seconds.
+✔ Suite "Recorded household food-days in the shared exercise reducer" passed after 7.081 seconds.
+✔ Suite "Real preparation completion loops" passed after 7.081 seconds.
+✔ Suite "Director context follows actual user commits" passed after 7.081 seconds.
+✔ Suite "Continuity destinations in the family card and plan" passed after 7.081 seconds.
+✔ Suite "Household geometry corrections" passed after 7.081 seconds.
+✔ Suite "Layoutless baseline readiness coverage" passed after 7.081 seconds.
+✔ Suite "Private geographic planning places" passed after 7.082 seconds.
+✔ Test imageManifestsAndLiveDirectorProposalDecode() passed after 2.004 seconds.
+✔ Suite "Controlled stress comparison" passed after 7.081 seconds.
+✔ Suite "Host-owned pre-feedback practice capture" passed after 7.081 seconds.
+✔ Suite "Recorded resource context" passed after 7.081 seconds.
+✔ Suite "Confirmed household food coverage" passed after 7.081 seconds.
+✔ Suite "Coordinated phone and print home panels" passed after 7.082 seconds.
+✔ Test "All no-route reasons and missing start text resolve in exported EN/ES/VI documents without changing route evidence" passed after 2.276 seconds.
+✔ Test betterDurationDoesNotClaimCompleteResolutionAndLegacyMetadataRemainsAbsent() passed after 2.313 seconds.
+✔ Suite "Local leak plan content" passed after 7.084 seconds.
+✔ Suite "Recorded backup and transport prerequisites" passed after 7.084 seconds.
+✔ Suite "Connected map planning records" passed after 7.084 seconds.
+✔ Suite "Housing, site hazards and shared model representations" passed after 7.084 seconds.
+✔ Suite "Submitted user intent boundary" passed after 7.084 seconds.
+✔ Suite "Canonical home scene presentation" passed after 7.084 seconds.
+✔ Suite "Preparation task editor routing" passed after 7.084 seconds.
+✔ Suite "Movement preserves hazard route purpose" passed after 7.084 seconds.
+✔ Suite "Versioned household evidence assessment" passed after 7.084 seconds.
+✔ Suite "Explicit supported public coverage" passed after 7.084 seconds.
+✔ Suite "Ranking" passed after 7.084 seconds.
+✔ Suite "End-to-end offline integration" passed after 7.084 seconds.
+✔ Suite "Simulation" passed after 7.084 seconds.
+✔ Suite "Host wait predicates and submitted door posture" passed after 7.085 seconds.
+✔ Suite "Flood higher-refuge action" passed after 7.084 seconds.
+✔ Suite "Family card layout parts" passed after 7.084 seconds.
+✔ Suite "For your family: briefing inputs and acceptance" passed after 7.085 seconds.
+✔ Suite "Factual preparation progress" passed after 7.083 seconds.
+✔ Suite "Integrated AI authority and deterministic host" passed after 7.083 seconds.
+✔ Suite "Preparation drafts preserve unrelated evidence" passed after 7.083 seconds.
+✔ Suite "October 17 spatial contracts" passed after 7.085 seconds.
+✔ Suite "Relevant resource refresh and debounce" passed after 7.084 seconds.
+✔ Suite "Counterfactual relocation" passed after 7.083 seconds.
+✔ Suite "Selected-language plan and card content" passed after 7.085 seconds.
+✔ Suite "TypeScript Swift recorded contracts" passed after 7.082 seconds.
+✔ Test selectedHazardSurvivesFallbackAndPersistenceFailure() passed after 7.197 seconds.
+✔ Suite "Six hazard differentiation gates" passed after 7.206 seconds.
+✔ Test invalidPreparationsFailInsteadOfSilentlyChangingTheComparison() passed after 2.765 seconds.
+✔ Test reassignmentRecomputesActualReachWithoutChangingRealHousehold() passed after 7.606 seconds.
+✔ Suite "Committed helper reach" passed after 7.618 seconds.
+✔ Test sourceEditReopensOnlyDependentCheckAndRefreshesCurrentScore() passed after 7.740 seconds.
+✔ Suite "Retiring hazard checks and local score refresh" passed after 7.750 seconds.
+✔ Test firstFireDecisionCreditsIntentNotMobilityAndRejectsUnsafeOptions() passed after 7.811 seconds.
+✔ Test interruptionsCannotRerollWrongFirstAnswerOrFutureSituations() passed after 3.105 seconds.
+✔ Test compoundChoicesUseIndependentProspectiveCopiesBeforeAnyPersistence() passed after 8.113 seconds.
+✔ Suite "Computed fire accompaniment" passed after 8.117 seconds.
+✔ Test missingPhaseMetadataReusedSourcesAndUnknownActionsCannotManufactureCredit() passed after 3.528 seconds.
+✔ Test localFireRequiresSeparateRosterAndTornadoRequiresEveryArrival() passed after 8.398 seconds.
+✔ Suite "Completed departure survives provider loss" passed after 8.404 seconds.
+✔ Test newerIncompleteEquivalentVariantSupersedesCompletedHistory() passed after 3.773 seconds.
+✔ Test controlledConcernStressPreservesAssumptionsButCannotAlterScorePredicates() passed after 3.959 seconds.
+✔ Test allFourCompetenciesAreActuallyExecutableAndReplayBeforeFeedback() passed after 3.963 seconds.
+✔ Suite "Four frozen situations in one provisional practice check" passed after 8.726 seconds.
+✔ Test actualGatewayProjectionMatchesCurrentHostWhileRecordedHouseholdStaysFrozen() passed after 4.591 seconds.
+✔ Suite "Current exercise assistance transport" passed after 9.231 seconds.
+✔ Test uncertainNeedsExplicitPermissionAndManualOpeningIdentity() passed after 4.497 seconds.
+✔ Suite "Home review to preparation and hypothetical exercise" passed after 9.247 seconds.
+✔ Test sameIncidentExecutesConfirmedUserPreparationWithoutChangingRealFacts() passed after 4.493 seconds.
+✔ Suite "Controlled supply relocation retests" passed after 9.255 seconds.
+✔ Test fullCheckNeedsNoPoweredEquipmentAndBudgetDoesNotChangeCredit() passed after 9.483 seconds.
+✔ Suite "Versioned non-device practice anchors" passed after 9.492 seconds.
+✔ Test "No raw IDs, enum codes, or unfilled placeholders reach rendered text" passed after 4.756 seconds.
+✔ Suite "Rendered English" passed after 9.493 seconds.
+✔ Test run with 533 tests in 95 suites passed after 9.496 seconds.
+[0/1] Planning build
+Building for debugging...
+[0/2] Write swift-version-24593BA9C3E375BF.txt
+Build complete! (2.53s)
+Test Suite 'All tests' started at 2026-10-20 11:53:12.462
+Test Suite 'debug.xctest' started at 2026-10-20 11:53:12.462
+Test Suite 'debug.xctest' passed at 2026-10-20 11:53:12.462
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+Test Suite 'All tests' passed at 2026-10-20 11:53:12.462
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.2.4 (5ee435b15ad40ec)
+↳ Target Platform: x86_64-unknown-linux-gnu
+◇ Suite "Additive integrated AI vault payload" started.
+◇ Suite "Public request builder never carries private data" started.
+◇ Suite "Public cache region checks" started.
+◇ Suite "Intentional layout absence" started.
+◇ Suite "Vault review fixes (docs/lanes/review-privacy.md)" started.
+◇ Suite "Encrypted household vault" started.
+◇ Suite "Public pack known-good cache" started.
+◇ Test saveRefusesToOverwriteVaultSealedWithAnotherKey() started.
+◇ Test alertsForWrongCountyRejectedAndCacheKept() started.
+◇ Test packMustContainRequestedRegionAndIsFoundByRegionOffline() started.
+◇ Test frozenPracticeSituationsAndWrongFirstAnswerSurviveEncryptedSave() started.
+◇ Test privateSiteRoutesAndMarkerNotesSurviveOnlyEncryptedStorage() started.
+◇ Test selectedCameraMetadataIsEncryptedAndDeletionPersists() started.
+◇ Test canaryCannotEnterAnyRequest() started.
+◇ Test failedAtomicSavePreservesPriorData() started.
+◇ Test eachSaveUsesFreshNonce() started.
+◇ Test activeWithoutExpiryRejected() started.
+◇ Test firstLaunchReturnsNil() started.
+◇ Test acceptsValidPackAndKeepsKnownGoodOnBadUpdates() started.
+◇ Test unknownKeysAreDroppedNotPersisted() started.
+◇ Test invalidCoordinateAndMapSpanPairsAreRejected() started.
+◇ Test schemaVersionOnePayloadWithoutSavedPlacesStillLoads() started.
+◇ Test successfulMigrationRuns() started.
+◇ Test pruneStaleDropsResultsForOldRevisions() started.
+◇ Test failedMigrationPreservesData() started.
+◇ Test tamperedHeaderMetadataFailsAuthentication() started.
+◇ Test roundTripAndNoPlaintextOnDisk() started.
+◇ Test legacyPayloadAndVersionedSidecarRoundTrip() started.
+◇ Test keyLossIsNotSilentEmptyOnboarding() started.
+◇ Test expiredCachedAlertNeverCurrentOffline() started.
+◇ Test exportIsOnlyPlaintextAndCleanupRemovesIt() started.
+◇ Test lockedKeyIsNotCorruption() started.
+◇ Test deleteAllPurgesPrivateButKeepsPublic() started.
+◇ Test finalFileIsProtectedAfterAtomicReplace() started.
+◇ Test derivedCacheInvalidatesOnRevisionChange() started.
+◇ Test tamperedCiphertextFailsWithoutDestroyingVault() started.
+◇ Test newerVaultIsRefusedNotOverwritten() started.
+◇ Test recoveryCopyIsNotClaimedWhenItCouldNotBeWritten() started.
+◇ Test removeExportIgnoresSiblingDirectories() started.
+◇ Test repeatedLoadsOfCorruptVaultKeepOneRecoveryCopy() started.
+◇ Test exportFailingVerificationIsRemoved() started.
+◇ Test unreadableFileWithKeyIsNotLocked() started.
+◇ Test saveRefusesToOverwriteCorruptVaultUnlessExplicit() started.
+◇ Test deleteAllRemovesOrphanedTempFiles() started.
+◇ Test legacyMissingGeometryDoesNotBecomeAValidPersonalLayout() started.
+◇ Test personalHouseholdWithoutLayoutPersistsWithoutFictionalGeometry() started.
+✔ Test firstLaunchReturnsNil() passed after 0.015 seconds.
+✔ Test activeWithoutExpiryRejected() passed after 0.015 seconds.
+✔ Test pruneStaleDropsResultsForOldRevisions() passed after 0.016 seconds.
+✔ Test invalidCoordinateAndMapSpanPairsAreRejected() passed after 0.016 seconds.
+✔ Test schemaVersionOnePayloadWithoutSavedPlacesStillLoads() passed after 0.016 seconds.
+✔ Test canaryCannotEnterAnyRequest() passed after 0.016 seconds.
+✔ Test alertsForWrongCountyRejectedAndCacheKept() passed after 0.017 seconds.
+✔ Test unknownKeysAreDroppedNotPersisted() passed after 0.016 seconds.
+✔ Test packMustContainRequestedRegionAndIsFoundByRegionOffline() passed after 0.017 seconds.
+✔ Test acceptsValidPackAndKeepsKnownGoodOnBadUpdates() passed after 0.016 seconds.
+✔ Test expiredCachedAlertNeverCurrentOffline() passed after 0.016 seconds.
+✔ Test roundTripAndNoPlaintextOnDisk() passed after 0.016 seconds.
+✔ Test lockedKeyIsNotCorruption() passed after 0.016 seconds.
+✔ Test successfulMigrationRuns() passed after 0.016 seconds.
+✔ Test failedMigrationPreservesData() passed after 0.016 seconds.
+✔ Test newerVaultIsRefusedNotOverwritten() passed after 0.015 seconds.
+✔ Test keyLossIsNotSilentEmptyOnboarding() passed after 0.016 seconds.
+✔ Test derivedCacheInvalidatesOnRevisionChange() passed after 0.017 seconds.
+✔ Test saveRefusesToOverwriteVaultSealedWithAnotherKey() passed after 0.017 seconds.
+✔ Test removeExportIgnoresSiblingDirectories() passed after 0.015 seconds.
+✔ Test exportFailingVerificationIsRemoved() passed after 0.015 seconds.
+✔ Suite "Public pack known-good cache" passed after 0.017 seconds.
+✔ Suite "Public request builder never carries private data" passed after 0.017 seconds.
+✔ Suite "Public cache region checks" passed after 0.017 seconds.
+✔ Test finalFileIsProtectedAfterAtomicReplace() passed after 0.016 seconds.
+✔ Test eachSaveUsesFreshNonce() passed after 0.017 seconds.
+✔ Test exportIsOnlyPlaintextAndCleanupRemovesIt() passed after 0.016 seconds.
+✔ Test legacyMissingGeometryDoesNotBecomeAValidPersonalLayout() passed after 0.014 seconds.
+✔ Test failedAtomicSavePreservesPriorData() passed after 0.021 seconds.
+✔ Test selectedCameraMetadataIsEncryptedAndDeletionPersists() passed after 0.021 seconds.
+✔ Test unreadableFileWithKeyIsNotLocked() passed after 0.020 seconds.
+✔ Test privateSiteRoutesAndMarkerNotesSurviveOnlyEncryptedStorage() passed after 0.022 seconds.
+✔ Test legacyPayloadAndVersionedSidecarRoundTrip() passed after 0.023 seconds.
+✔ Test personalHouseholdWithoutLayoutPersistsWithoutFictionalGeometry() passed after 0.020 seconds.
+✔ Suite "Intentional layout absence" passed after 0.024 seconds.
+✔ Test deleteAllRemovesOrphanedTempFiles() passed after 0.023 seconds.
+✔ Test recoveryCopyIsNotClaimedWhenItCouldNotBeWritten() passed after 0.024 seconds.
+✔ Test frozenPracticeSituationsAndWrongFirstAnswerSurviveEncryptedSave() passed after 0.027 seconds.
+✔ Suite "Additive integrated AI vault payload" passed after 0.027 seconds.
+✔ Test tamperedCiphertextFailsWithoutDestroyingVault() passed after 0.026 seconds.
+✔ Test repeatedLoadsOfCorruptVaultKeepOneRecoveryCopy() passed after 0.028 seconds.
+✔ Test deleteAllPurgesPrivateButKeepsPublic() passed after 0.032 seconds.
+✔ Test tamperedHeaderMetadataFailsAuthentication() passed after 0.033 seconds.
+✔ Suite "Encrypted household vault" passed after 0.033 seconds.
+✔ Test saveRefusesToOverwriteCorruptVaultUnlessExplicit() passed after 0.032 seconds.
+✔ Suite "Vault review fixes (docs/lanes/review-privacy.md)" passed after 0.035 seconds.
+✔ Test run with 39 tests in 7 suites passed after 0.035 seconds.
+$ node scripts/bundle-content.mjs
+bundled 2 region packs, locales: en(8) es(8) vi(8)
+$ vitest run
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/public-api
+
+
+ Test Files  4 passed (4)
+      Tests  68 passed (68)
+   Start at  06:53:12
+   Duration  791ms (tests 56%, transform 23%, import 20%, worker 1%)
+
+$ tsc --noEmit
+$ vitest run
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/ai-orchestrator
+
+
+ Test Files  24 passed (24)
+      Tests  199 passed (199)
+   Start at  06:53:14
+   Duration  1.26s (import 43%, transform 37%, tests 19%, worker 1%)
+
+  Transform  transforming modules took 4.64s · 37% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+$ tsx scripts/evaluate.ts
+(node:3299528) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":60,"development":40,"holdout":20}
+(node:3300532) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","kinds":2,"realConfirmation":true,"scorePropagation":true,"resourceRefresh":true,"genericIdentityClearsCredit":true,"newModelCalls":0}
+(node:3300864) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","zeroNotUnknown":true,"emptyNoAccessCredit":true,"unknownPreserved":true,"decodedOriginRejected":true,"duplicateBatchRejected":true,"overflowRejected":true,"modelCalls":0}
+(node:3301140) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","actualSourceCases":60,"development":40,"holdout":20,"modelCalls":0}
+(node:3302049) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","shelterPreparation":[23.333333333333336,31.666666666666664],"foodPreparation":[31.666666666666664,40],"modelCalls":0}
+(node:3302354) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"variants":3,"legacyDataAndContactsPreserved":true,"noReconnectionTask":true,"noOfflineCopyInference":true,"sameScoreAndCoverage":true,"replay":"exact","liveModelCalls":0,"native":"pending"}
+(node:3302928) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3303022) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"cases":2,"liveModel":false,"calls":0,"budgetAccountedUSD":0}
+(node:3303338) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"cases":6,"featureHouseholds":0,"liveModel":false,"calls":0,"budgetAccountedUSD":0}
+(node:3303793) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"cases":58,"fields":288,"depthFlags":122,"lengthFlags":1,"claimReviewFlags":70,"humanReviewPending":true}
+(node:3303864) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"synthetic":true,"modelCalls":0,"cases":4,"hostSuitabilityAndRoutesAgree":true,"noPrivateLabelsOrNotes":true,"readOnly":true,"historicalV1Accepted":true,"strictVersionAndShape":true}
+(node:3304239) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","liveReturnToGemini":false,"newModelCalls":0,"revision":8,"simMinute":420,"pausePreserved":true,"pendingPreserved":true,"latestAction":"resumed-essential-use","replay":true}
+(node:3304553) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"mode":"offline","receiptReplay":true,"sourceUnchanged":true,"pendingPreservedAtPause":true,"latestCommittedAction":true,"newModelCalls":0}
+{"mode":"live","receiptReplay":true,"sourceUnchanged":true,"pendingPreservedAtPause":true,"latestCommittedAction":true,"newModelCalls":0}
+(node:3304800) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"action":"all","replayed":true,"revision":5}
+{"action":"essential","replayed":true,"revision":5}
+(node:3305046) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"fixture":"spatial-policy","replay":true,"origin":"sp-kitchen","awaitingUserAction":false,"finished":false}
+{"fixture":"spatial-policy-live","replay":true,"origin":"sp-kitchen","awaitingUserAction":true,"finished":false}
+(node:3305298) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","confirmedContainers":1,"blockedGallons":0,"transferredGallons":5,"replay":true,"realFactsUnchanged":true,"stressUsesInventory":true,"recordedAccessDependencies":true}
+(node:3306612) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","liveModel":false,"providerCalls":0,"foodDepletionMinutes":[1440,4320],"scoreImprovement":4.166666666666671,"exerciseDoesNotChangeScore":true,"replayExact":true}
+(node:3307106) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","retainedLiveModel":false,"branches":2,"receiptReplay":true,"toolReplay":true,"stressReplay":true,"sourceAndScoreUnchanged":true,"historicalCardVersionPreserved":true,"comparison":"Exact card when versions match; explicit /5-to-/7 non-manufactured numeric/status comparison otherwise (legacy accepted predicates absent).","modelCalls":0}
+{"status":"passed","retainedLiveModel":true,"branches":2,"receiptReplay":true,"toolReplay":true,"stressReplay":true,"sourceAndScoreUnchanged":true,"historicalCardVersionPreserved":true,"comparison":"Exact card when versions match; explicit /5-to-/7 non-manufactured numeric/status comparison otherwise (legacy accepted predicates absent).","modelCalls":0}
+(node:3307384) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","recordedVision":true,"uncertainPermission":true,"taskLinked":true,"openingExcluded":true,"sceneSynced":true,"replay":true,"sourceUnchanged":true,"controlledStress":true,"scoreUnchanged":true,"unchangedEvidenceAfterHomeRevisionRejected":true,"concernPracticeVariantRejected":true}
+(node:3307990) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","actualInventoryArithmetic":true,"changedDeficitInvalidates":true,"wordingIgnored":true,"explicitDependencyInvalidates":true,"unrelatedDisplayEditIgnored":true}
+(node:3308297) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","preFeedbackCapture":true,"restored":true,"practice":25,"unassessed":3,"tamperingRejected":true,"hiddenFirstResponseRejected":true}
+(node:3308556) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","evaluatorVersion":"dryrun.practice-anchors/3","alternateMovement":1,"blockedMovement":0,"practiceAssessed":1,"replayExact":true,"modelCalls":0}
+(node:3308822) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"modelCalls":0,"variantID":"practice-check-a/1","equipmentRequired":true,"competencies":4,"correctPractice":100,"wrongFirstPractice":75,"resumedWithoutReroll":true,"preFeedbackCapture":true,"sourcePreserved":true,"roundTrip":true,"tamperingRejected":true,"provisional":true}
+(node:3309137) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"modelCalls":0,"variantID":"practice-check-a/1","branches":2,"actionAndReceiptReplay":true,"preFeedbackGradeReplay":true,"scoreReplay":true,"allFourCompetencies":true}
+(node:3309469) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"modelCalls":0,"variantID":"practice-check-a/2","equipmentRequired":false,"competencies":4,"correctPractice":100,"wrongFirstPractice":75,"resumedWithoutReroll":true,"preFeedbackCapture":true,"sourcePreserved":true,"roundTrip":true,"tamperingRejected":true,"provisional":true}
+(node:3310206) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"modelCalls":0,"variantID":"practice-check-a/2","branches":2,"actionAndReceiptReplay":true,"preFeedbackGradeReplay":true,"scoreReplay":true,"allFourCompetencies":true}
+(node:3310620) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"modelCalls":0,"variantID":"practice-check-b/1","equipmentRequired":true,"competencies":4,"correctPractice":100,"wrongFirstPractice":75,"resumedWithoutReroll":true,"preFeedbackCapture":true,"sourcePreserved":true,"roundTrip":true,"tamperingRejected":true,"provisional":true}
+{"passed":true,"modelCalls":0,"variantID":"practice-check-b/1","branches":2,"actionAndReceiptReplay":true,"preFeedbackGradeReplay":true,"scoreReplay":true,"allFourCompetencies":true}
+{"passed":true,"modelCalls":0,"variantID":"practice-check-b/2","equipmentRequired":false,"competencies":4,"correctPractice":100,"wrongFirstPractice":75,"resumedWithoutReroll":true,"preFeedbackCapture":true,"sourcePreserved":true,"roundTrip":true,"tamperingRejected":true,"provisional":true}
+{"passed":true,"modelCalls":0,"variantID":"practice-check-b/2","branches":2,"actionAndReceiptReplay":true,"preFeedbackGradeReplay":true,"scoreReplay":true,"allFourCompetencies":true}
+{"passed":true,"modelCalls":0,"reverseVariants":2,"gradedBranches":4,"exactReplay":true,"sameFrozenSources":true,"correctCompetencyCreditParity":true,"humanComparability":"pending"}
+(node:3311952) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"status":"passed","reach":["unreachable","reachable"],"capacity":"unknown","sourceUnchanged":true,"replay":true}
+(node:3312428) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"baselineDepletion":1800,"retestDepletion":4320,"readTools":4}
+(node:3312899) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"liveModel":false,"providerCalls":0,"fixtureProtocolTurns":3,"baselineAccessible":false,"retestAccessible":true,"conservedGallons":5,"readOnly":true,"exactReplay":true}
+(node:3314438) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"protocolTurns":4,"providerCalls":0,"hostRejectedBeforeRepair":true,"correctedRetestGallons":5,"staleRemainsFatal":true,"sourceUnchanged":true}
+(node:3315737) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"retainedLiveModel":false,"toolReplay":true,"proposalReplay":true,"realSourceAndScoreUnchanged":true,"newModelCalls":0}
+{"passed":true,"retainedLiveModel":true,"toolReplay":true,"proposalReplay":true,"realSourceAndScoreUnchanged":true,"newModelCalls":0}
+(node:3317234) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"synthetic":true,"passed":true,"cases":60,"independentHostProcesses":3,"permutedRubric":true,"exactNumberEquality":true,"hashes":["a90670b2f620f0451dfcb4cdbddbd62be3714b898fad5a6becf33959b206b5ea","a90670b2f620f0451dfcb4cdbddbd62be3714b898fad5a6becf33959b206b5ea","a90670b2f620f0451dfcb4cdbddbd62be3714b898fad5a6becf33959b206b5ea"]}
+{"environment":"production","rejected":true,"reason":"production_authorization_provider_required"}
+{"environment":"development","rejected":true,"reason":"missing_provider_secret"}
+(node:3318677) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:3318787) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"hazard":"home-fire","status":"passed"}
+{"hazard":"tornado","status":"passed"}
+{"hazard":"flash-flood","status":"passed"}
+{"hazard":"freeze-power-loss","status":"passed"}
+{"hazard":"heat-grid-strain","status":"passed"}
+{"hazard":"water-outage","status":"passed"}
+(node:3319665) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"liveModelCalls":0,"syntheticProviderCalls":2,"allOfferedActionsExecutable":true,"computedRefugeArrival":true,"carriedCaseFollowsPerson":true,"recordedLedgerUnchanged":true,"partialHouseholdAccess":true,"native":"pending"}
+(node:3320189) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"liveModelCalls":0,"syntheticProviderCalls":2,"twoComputedExits":true,"separateRosterChoices":true,"noReentry":true,"replay":"exact","practiceCredit":"existing anchor once","relaunch":"passed","native":"pending"}
+(node:3320953) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"liveModelCalls":0,"providerPaths":2,"contextVariants":3,"syntheticHTTP":6,"recordedHouseholdPreserved":true,"approachDoesNotImplyExit":true,"currentHelperActuallyEscapes":true,"replay":"exact","native":"pending"}
+(node:3322926) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"hazards":5,"actualDepartureRequired":true,"fireRosterSeparate":true,"tornadoEveryArrivalRequired":true,"retainedPendingNotApplied":true,"timeAndResourcesUnchanged":true,"replay":"exact","liveModelCalls":0,"native":"pending"}
+(node:3323350) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"hazards":3,"rejectedBeforeHostPreview":9,"finishCommitAndExactReplay":3,"pendingTimeResourcesPreserved":true,"liveModelCalls":0,"native":"pending"}
+(node:3323660) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"invalidCommitRejected":true,"wholeSequenceRejected":true,"boundedRepair":true,"independentHostCopies":true,"actualAccompaniment":true,"exactReplay":true}
+(node:3324255) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"synthetic":true,"hazards":6,"branches":24,"replay":"exact","modelCalls":0,"native":"pending"}
+(node:3324575) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"runID":"2026-10-20T03-09-42-374Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T03-09-42-374Z","hazard":"tornado","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T03-09-42-374Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T03-09-42-374Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T03-09-42-374Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T03-09-42-374Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v1.json","modelCalls":0,"replayed":6,"originalLivePassed":1,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T03-29-19-573Z","hazard":"flash-flood","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T03-29-19-573Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T03-29-19-573Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T03-29-19-573Z","hazard":"tornado","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T03-29-19-573Z","hazard":"water-outage","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T03-29-19-573Z","hazard":"home-fire","replay":"exact","liveStatus":"passed"}
+{"file":"corrective-live-traces.json","modelCalls":0,"replayed":6,"originalLivePassed":6,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T04-21-57-194Z","hazard":"home-fire","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T04-21-57-194Z","hazard":"tornado","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T04-21-57-194Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T04-21-57-194Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T04-21-57-194Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T04-21-57-194Z","hazard":"water-outage","replay":"exact","liveStatus":"passed"}
+{"file":"corrective-live-v2.json","modelCalls":0,"replayed":6,"originalLivePassed":5,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T04-49-36-858Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T04-49-36-858Z","hazard":"tornado","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T04-49-36-858Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T04-49-36-858Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T04-49-36-858Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T04-49-36-858Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v3.json","modelCalls":0,"replayed":6,"originalLivePassed":0,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T05-04-18-465Z","hazard":"home-fire","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-04-18-465Z","hazard":"tornado","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-04-18-465Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-04-18-465Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-04-18-465Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-04-18-465Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v4.json","modelCalls":0,"replayed":6,"originalLivePassed":4,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T05-08-56-075Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-08-56-075Z","hazard":"tornado","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-08-56-075Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-08-56-075Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-08-56-075Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-08-56-075Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v5.json","modelCalls":0,"replayed":6,"originalLivePassed":1,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T05-31-52-536Z","hazard":"home-fire","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-31-52-536Z","hazard":"tornado","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-31-52-536Z","hazard":"flash-flood","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T05-31-52-536Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-31-52-536Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T05-31-52-536Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v6.json","modelCalls":0,"replayed":6,"originalLivePassed":2,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T06-07-55-600Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-07-55-600Z","hazard":"tornado","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-07-55-600Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-07-55-600Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-07-55-600Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-07-55-600Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v7-groq.json","modelCalls":0,"replayed":6,"originalLivePassed":0,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T06-43-58-436Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-43-58-436Z","hazard":"tornado","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-43-58-436Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-43-58-436Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-43-58-436Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T06-43-58-436Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v8-groq.json","modelCalls":0,"replayed":6,"originalLivePassed":0,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T07-00-15-360Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T07-00-15-360Z","hazard":"tornado","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T07-00-15-360Z","hazard":"flash-flood","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T07-00-15-360Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T07-00-15-360Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T07-00-15-360Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v9.json","modelCalls":0,"replayed":6,"originalLivePassed":2,"note":"Replay validates committed state only; failed live rows remain failed"}
+{"runID":"2026-10-20T11-19-50-440Z","hazard":"home-fire","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T11-19-50-440Z","hazard":"tornado","replay":"exact","liveStatus":"passed"}
+{"runID":"2026-10-20T11-19-50-440Z","hazard":"flash-flood","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T11-19-50-440Z","hazard":"freeze-power-loss","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T11-19-50-440Z","hazard":"heat-grid-strain","replay":"exact","liveStatus":"failed"}
+{"runID":"2026-10-20T11-19-50-440Z","hazard":"water-outage","replay":"exact","liveStatus":"failed"}
+{"file":"corrective-live-v10.json","modelCalls":0,"replayed":6,"originalLivePassed":1,"note":"Replay validates committed state only; failed live rows remain failed"}
+(node:3325310) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"hazard":"home-fire","status":"passed"}
+{"hazard":"tornado","status":"passed"}
+{"hazard":"flash-flood","status":"passed"}
+{"hazard":"freeze-power-loss","status":"passed"}
+{"hazard":"heat-grid-strain","status":"passed"}
+{"hazard":"water-outage","status":"passed"}
+(node:3326369) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"practice":8.333333333333334,"retired":"water.activity/1","relaunch":"passed","duplicate":"rejected","continuedExercisePreservesFirstResponse":true,"laterResourceUseActuallyCommitted":true}
+(node:3326792) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"synthetic":true,"passed":true,"modelCalls":0,"lostAcknowledgement":"reconciled","resourceEffects":1,"conflictingID":"rejected","duplicate":"rejected","durableStorage":"synthetic serialized snapshot; native pending"}
+(node:3327131) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"hazard":"home-fire","passed":true,"provider":"Groq adapter with synthetic HTTP responses","primary429":"injected","stateContinuity":true,"replay":"exact","lostAcknowledgement":"reconciled","duplicate":"rejected","liveModelTested":false}
+{"hazard":"tornado","passed":true,"provider":"Groq adapter with synthetic HTTP responses","primary429":"injected","stateContinuity":true,"replay":"exact","lostAcknowledgement":"reconciled","duplicate":"rejected","liveModelTested":false}
+{"hazard":"flash-flood","passed":true,"provider":"Groq adapter with synthetic HTTP responses","primary429":"injected","stateContinuity":true,"replay":"exact","lostAcknowledgement":"reconciled","duplicate":"rejected","liveModelTested":false}
+{"hazard":"freeze-power-loss","passed":true,"provider":"Groq adapter with synthetic HTTP responses","primary429":"injected","stateContinuity":true,"replay":"exact","lostAcknowledgement":"reconciled","duplicate":"rejected","liveModelTested":false}
+{"hazard":"heat-grid-strain","passed":true,"provider":"Groq adapter with synthetic HTTP responses","primary429":"injected","stateContinuity":true,"replay":"exact","lostAcknowledgement":"reconciled","duplicate":"rejected","liveModelTested":false}
+{"hazard":"water-outage","passed":true,"provider":"Groq adapter with synthetic HTTP responses","primary429":"injected","stateContinuity":true,"replay":"exact","lostAcknowledgement":"reconciled","duplicate":"rejected","liveModelTested":false}
+{"hazards":6,"syntheticAdapterCalls":12,"liveModelCalls":0,"scoreCredit":"no score operation or preparation fact mutation; separate practice score suite"}
+(node:3327578) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"liveModelCalls":0,"primaryCalls":1,"secondaryCalls":1,"recordedInventoryUnchanged":true,"privateResourceFactsPreserved":true,"publicBriefMinimized":true,"artifact":"../../artifacts/ai/recorded-resource-context/result.json"}
+(node:3327868) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"passed":true,"mode":"recorded-live-response-revalidation","liveCalls":0,"newSearch":false,"originalPrimaryFailure":"injected Gemini 429 during original search","originalSearchSteps":1,"originalOpenSteps":5,"options":[{"name":"Albuquerque City Drug","documentedService":"They offer services such as Delivery, Durable Medical Equipment, Handicapped Accessible, and Immunizations.","unknowns":["Current inventory of needed prescription medications is unknown.","Exact hours beyond today’s listed closing time are not confirmed.","Whether the location is reachable via public transit routes is not confirmed."]},{"name":"Highland Pharmacy","documentedService":"They offer services such as Compounding, Delivery, Drive‑Up Window, Durable Medical Equipment, Handicapped Accessible, and Immunizations.","unknowns":["Stock levels for specific prescriptions are not known.","Transit stop proximity is not confirmed.","Whether the Drive‑Up Window is usable for someone without a car is unclear."]},{"name":"University Hospital Outpatient Pharmacy","documentedService":"They offer services such as Compounding, Delivery, Durable Medical Equipment, Handicapped Accessible, Medicaid, and Walk‑In Clinic.","unknowns":["Medicaid acceptance is listed, but specific insurance coverage details are unknown.","Current stock and waiting times are not provided.","Public‑transit accessibility to the hospital pharmacy has not been confirmed."]}],"comparison":"All three pharmacies provide Delivery and Handicapped Accessible services, but Highland adds a Drive‑Up Window and Compounding, University Hospital adds Medicaid and a Walk‑In Clinic, while Albuquerque City Drug includes Immunizations. The presence of Medicaid at University Hospital is a material difference for cost‑constrained travelers, whereas the Drive‑Up Window at Highland is less useful without a personal vehicle.","retrievedAt":"2026-10-20T05:04:25.241Z","expiresAt":"2026-10-20T06:04:25.241Z","native":"pending","humanReview":"pending"}
+(node:3327946) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"sample":"oak","matchedLiveReceipt":true,"matchedFrozenScore":true,"oldScore":22.5,"currentScore":24.25,"currentCoverage":37.222222222222214,"assessmentVersion":"dryrun.household-assessment/7"}
+{"sample":"lake","matchedLiveReceipt":true,"matchedFrozenScore":true,"oldScore":16.5625,"currentScore":18.125,"currentCoverage":28.81944444444444,"assessmentVersion":"dryrun.household-assessment/7"}

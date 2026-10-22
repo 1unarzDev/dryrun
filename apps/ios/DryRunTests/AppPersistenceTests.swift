@@ -51,6 +51,27 @@ final class AppPersistenceTests: XCTestCase {
         return try XCTUnwrap(accepted.first?.commands.first)
     }
 
+    func testPortableEvidenceSurvivesOrdinaryEditsAndFailedWrites() async throws {
+        let store = ControlledStore()
+        let model = makeModel(store: store)
+        model.household = SampleHouseholds.oak; model.home = SampleHomes.ranch
+        let wrote = await model.updateIntegratedAIState(expectedDigest: model.aiStateDigest) { state in
+            state.imageGeometryRecords = []
+        }
+        XCTAssertTrue(wrote)
+        let data = try XCTUnwrap(PrivateSnapshot.encoded(model.aiState))
+        let edited = await model.updateHousehold { $0.displayName = "Renamed family" }
+        XCTAssertTrue(edited)
+        XCTAssertEqual(PrivateSnapshot.encoded(model.aiState), data)
+        if case .loaded(let snapshot) = await store.load() { XCTAssertEqual(PrivateSnapshot.encoded(snapshot.aiState), data) }
+        else { XCTFail("No durable snapshot") }
+        await store.failWrites()
+        let failed = await model.updateIntegratedAIState(expectedDigest: StableDigest.of(data)) { $0.imageGeometryRecords = nil }
+        XCTAssertFalse(failed); XCTAssertEqual(PrivateSnapshot.encoded(model.aiState), data)
+        let stale = await model.updateIntegratedAIState(expectedDigest: "stale") { $0.sessions = [] }
+        XCTAssertFalse(stale); XCTAssertEqual(PrivateSnapshot.encoded(model.aiState), data)
+    }
+
     func testPracticeSameRevisionPhasesRejectPreviouslyDisplayedCommands() async throws {
         let model = makeModel(store: ControlledStore())
         await model.start(); await model.useSampleHousehold(SampleHouseholds.oak)

@@ -32,7 +32,6 @@ struct ManualHomeEditorView: View {
     @State private var roomFloorID = ""
     @State private var newFloorLabel = ""
     @State private var newFloorOrder = 1
-    @State private var newFloorElevation = ""
     @State private var landingPreviewTo = false
     @State private var landingFromRoom = ""
     @State private var landingToRoom = ""
@@ -97,7 +96,7 @@ struct ManualHomeEditorView: View {
                         .font(.callout).foregroundStyle(.secondary)
                 } else {
                     FloorPlanView(home: draft, routes: [], highlightedFloorID: nil, highlightedElementID: selectedID,
-                                  onSelect: { selectedID = $0 }).frame(height: 280)
+                                  onSelect: { selectElement($0) }).frame(height: 280)
                     Text(s("Tap a room, opening or marker to edit it. The lists below provide the same controls.")).font(.footnote).foregroundStyle(.secondary)
                 }
             }
@@ -136,7 +135,6 @@ struct ManualHomeEditorView: View {
                 DisclosureGroup(model.localizer("spatial.add-level")) {
                     TextField(model.localizer("spatial.level-name"), text: $newFloorLabel)
                     Stepper(model.localizer("spatial.level-order", ["order": String(newFloorOrder)]), value: $newFloorOrder, in: -10...100)
-                    TextField(model.localizer("spatial.level-elevation"), text: $newFloorElevation).keyboardType(.numbersAndPunctuation)
                     Text(model.localizer("spatial.level-note")).font(.footnote)
                     Button(model.localizer("spatial.save-level")) { addFloor() }
                         .accessibilityIdentifier("home.addFloor")
@@ -145,7 +143,7 @@ struct ManualHomeEditorView: View {
 
             Section(s("Rooms")) {
                 ForEach(draft.spaces) { space in
-                    Button(roomFloorLabel(space)) { selectedID = space.id }
+                    Button(roomFloorLabel(space)) { selectElement(space.id) }
                         .accessibilityIdentifier("home.editRoom.\(space.id)")
                 }
                 DisclosureGroup(s("Add a room"), isExpanded: $addingRoom) {
@@ -173,7 +171,7 @@ struct ManualHomeEditorView: View {
             }
             Section(s("Doors and openings")) {
                 ForEach(draft.portals) { portal in
-                    Button(openingLabel(portal)) { selectedID = portal.id }
+                    Button(openingLabel(portal)) { selectElement(portal.id) }
                         .accessibilityIdentifier("home.editOpening.\(portal.id)")
                 }
                 DisclosureGroup(s("Add an opening")) {
@@ -201,7 +199,7 @@ struct ManualHomeEditorView: View {
                 Section(s("Stairs and floor connections")) {
                     ForEach(draft.connectors) { connector in
                         Button("\(draft.space(connector.fromSpaceID)?.label ?? connector.fromSpaceID) ↔ \(draft.space(connector.toSpaceID)?.label ?? connector.toSpaceID)") {
-                            selectedID = connector.id
+                            selectElement(connector.id)
                         }
                     }
                     DisclosureGroup(model.localizer("spatial.add-stairs")) {
@@ -214,7 +212,7 @@ struct ManualHomeEditorView: View {
             }
             Section(s("Safety markers")) {
                 ForEach(draft.annotations) { a in
-                    Button("\(a.localizedLabel(model.localizer)) — \(a.spaceID.flatMap { id in draft.space(id).map { HomeScenePresentation.roomLabel($0.id, in: draft) } } ?? s("outside"))") { selectedID = a.id }
+                    Button("\(a.localizedLabel(model.localizer)) — \(a.spaceID.flatMap { id in draft.space(id).map { HomeScenePresentation.roomLabel($0.id, in: draft) } } ?? s("outside"))") { selectElement(a.id) }
                 }
                 .onDelete { idx in draft.edit { $0.annotations.remove(atOffsets: idx) } }
                 Picker(s("Marker"), selection: $markerKind) {
@@ -248,7 +246,7 @@ struct ManualHomeEditorView: View {
     @ViewBuilder private var contextualEditor: some View {
         Form {
             FloorPlanView(home: draft, routes: [], highlightedFloorID: selectedFloorID, highlightedElementID: selectedID,
-                          onSelect: { id in if applyPendingMarkerPlacement() { selectedID = id } }).frame(height: 180)
+                          onSelect: { selectElement($0) }).frame(height: 220)
             if let index = draft.spaces.firstIndex(where: { $0.id == selectedID }) {
                 TextField(s("Room name"), text: $draft.spaces[index].label)
                     .accessibilityIdentifier("home.roomName")
@@ -343,6 +341,12 @@ struct ManualHomeEditorView: View {
             }.disabled(history.isEmpty) }
             ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { save() }.accessibilityIdentifier("home.save") }
         }
+    }
+
+    /// Selecting another element first applies a pending marker placement; reselecting the current one is a no-op.
+    private func selectElement(_ id: String) {
+        guard id != selectedID, applyPendingMarkerPlacement() else { return }
+        selectedID = id
     }
 
     private func save() {
@@ -448,6 +452,25 @@ struct ManualHomeEditorView: View {
         }
     }
 
+    /// Captured positions stay intact until a direct placement; numeric transforms are never an editing chore.
+    @ViewBuilder private func locationCanvas(roomID: String, x: Binding<String>, y: Binding<String>) -> some View {
+        if let room = draft.space(roomID) {
+            let point: Vec2? = decimal(x.wrappedValue).flatMap { px in decimal(y.wrappedValue).map { Vec2(px, $0) } }
+            Text(model.localizer("spatial.tap-placement")).font(.footnote)
+            FloorPlanView(home: draft, routes: [], highlightedFloorID: room.floorID, highlightedElementID: roomID,
+                onSelectPoint: { point, floorID in
+                    guard floorID == room.floorID, Geometry.contains(room.polygon, point) else {
+                        message = model.localizer("spatial.marker-invalid"); return
+                    }
+                    x.wrappedValue = String(point.x); y.wrappedValue = String(point.y); message = nil
+                }, placementPoint: point).frame(height: 180)
+            Button(model.localizer("spatial.use-room-position")) {
+                guard let point = suggestedMarkerPosition(in: room) else { return }
+                x.wrappedValue = String(point.x); y.wrappedValue = String(point.y); message = nil
+            }
+        }
+    }
+
     private func landingInputsMatch(_ connector: FloorConnector) -> Bool {
         landingFromRoom == connector.fromSpaceID && landingToRoom == connector.toSpaceID
             && decimal(landingFromX) == connector.fromPoint.x && decimal(landingFromY) == connector.fromPoint.y
@@ -459,14 +482,12 @@ struct ManualHomeEditorView: View {
             Text(s("Choose a room")).tag("")
             ForEach(draft.spaces) { Text(roomFloorLabel($0)).tag($0.id) }
         }
-        TextField(model.localizer("spatial.landing-from-x"), text: $landingFromX).keyboardType(.numbersAndPunctuation)
-        TextField(model.localizer("spatial.landing-from-y"), text: $landingFromY).keyboardType(.numbersAndPunctuation)
+        locationCanvas(roomID: landingFromRoom, x: $landingFromX, y: $landingFromY)
         Picker(model.localizer("spatial.stair-to"), selection: $landingToRoom) {
             Text(s("Choose a room")).tag("")
             ForEach(draft.spaces) { Text(roomFloorLabel($0)).tag($0.id) }
         }
-        TextField(model.localizer("spatial.landing-to-x"), text: $landingToX).keyboardType(.numbersAndPunctuation)
-        TextField(model.localizer("spatial.landing-to-y"), text: $landingToY).keyboardType(.numbersAndPunctuation)
+        locationCanvas(roomID: landingToRoom, x: $landingToX, y: $landingToY)
     }
 
     @ViewBuilder private func landingEditor(_ index: Int) -> some View {
@@ -583,13 +604,13 @@ struct ManualHomeEditorView: View {
 
     private func addFloor() {
         let name = newFloorLabel.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty, let elevation = decimal(newFloorElevation) else {
+        guard !name.isEmpty else {
             message = model.localizer("spatial.level-input-error"); return
         }
         do {
-            let floor = try ManualLayout.addFloor(to: &draft, label: name, level: newFloorOrder, elevationMeters: elevation)
+            let floor = try ManualLayout.addFloor(to: &draft, label: name, level: newFloorOrder, elevationMeters: Double(newFloorOrder) * 3)
             roomFloorID = floor.id; anchorID = ""; addingRoom = true
-            newFloorLabel = ""; newFloorElevation = ""; message = nil
+            newFloorLabel = ""; message = nil
         } catch { message = describe(error) }
     }
 
@@ -608,12 +629,11 @@ struct ManualHomeEditorView: View {
     private func addDoor() {
         // Both pickers list every room; a door from a room to itself is not a connection.
         guard doorTo != doorFrom else { message = model.localizer("spatial.different-rooms-error"); return }
-        let width = Double(doorWidthText.replacingOccurrences(of: ",", with: "."))
         do {
             try ManualLayout.addPortal(to: &draft, kind: doorKind, from: doorFrom,
                                        to: doorTo == "outside" ? .exterior : .space(doorTo),
                                        exteriorSide: doorTo == "outside" ? doorSide : nil,
-                                       width: width ?? (doorKind == .opening ? 1.0 : 0.8), widthMeasured: width != nil)
+                                       width: doorKind == .opening ? 1.0 : 0.8, widthMeasured: false)
             message = model.localizer("spatial.opening-added")
         } catch { message = describe(error) }
     }
@@ -635,10 +655,7 @@ struct ManualHomeEditorView: View {
                 ForEach(draft.spaces) { room in Text(roomFloorLabel(room)).tag(room.id) }
             }
             Text(model.localizer("spatial.marker-position-note")).font(.footnote).foregroundStyle(.secondary)
-            TextField(model.localizer("spatial.marker-x"), text: Binding(get: { markerX }, set: { markerX = $0; markerLocationChecked = false })).keyboardType(.numbersAndPunctuation)
-                .accessibilityIdentifier("home.marker.x")
-            TextField(model.localizer("spatial.marker-y"), text: Binding(get: { markerY }, set: { markerY = $0; markerLocationChecked = false })).keyboardType(.numbersAndPunctuation)
-                .accessibilityIdentifier("home.marker.y")
+            locationCanvas(roomID: markerEditRoom, x: Binding(get: { markerX }, set: { markerX = $0; markerLocationChecked = false }), y: Binding(get: { markerY }, set: { markerY = $0; markerLocationChecked = false }))
             Toggle(model.localizer("spatial.marker-location-checked"), isOn: $markerLocationChecked)
                 .accessibilityIdentifier("home.marker.locationChecked")
             Button(model.localizer("spatial.marker-apply"), systemImage: "mappin.and.ellipse") { applyMarkerPlacement(index) }

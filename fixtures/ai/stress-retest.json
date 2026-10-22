@@ -1501,7 +1501,8 @@
         ],
         "revision": 1
       }
-    }
+    },
+    "mechanicsVersion": "dryrun.hazard-mechanics/5"
   },
   "profileIDs": [
     "evt.home-fire.alarm",
@@ -3194,7 +3195,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "e98dd307ce8daeb8",
+          "contextDigest": "922491dedbd7223a",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -3253,7 +3254,7 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "e98dd307ce8daeb8",
+        "contextDigest": "922491dedbd7223a",
         "observation": {
           "kind": "runCounterfactual",
           "scope": "initial_household_with_selected_profiles",
@@ -3443,7 +3444,7 @@
           "sessionID": "synthetic-session",
           "revision": 0,
           "eventSequence": 0,
-          "contextDigest": "e98dd307ce8daeb8",
+          "contextDigest": "922491dedbd7223a",
           "householdRevision": 3,
           "homeRevision": 1
         },
@@ -3502,8 +3503,172 @@
             "pets.waterNeeds"
           ]
         },
-        "contextDigest": "b7a048205df68f0b",
+        "contextDigest": "c945fff7f6609035",
         "preview": {
+          "experience": {
+            "mechanicsVersion": "dryrun.hazard-mechanics/5",
+            "hazard": "homeFire",
+            "scene": "smoke-egress-accounting",
+            "objective": "Exit by a supported clear path and account outside; never re-enter.",
+            "supportedActions": [
+              "escape",
+              "accountOutside",
+              "closeDoor",
+              "accompanyEscape",
+              "identifyGap"
+            ],
+            "feasibleCommands": [
+              {
+                "kind": "escape",
+                "target": "p-oak-1",
+                "value": "pt-front"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-1",
+                "value": "pt-back"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-2",
+                "value": "pt-front"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-2",
+                "value": "pt-back"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-3",
+                "value": "pt-front"
+              },
+              {
+                "kind": "accompanyEscape",
+                "target": "p-oak-3",
+                "value": "pt-front"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-3",
+                "value": "pt-back"
+              },
+              {
+                "kind": "accompanyEscape",
+                "target": "p-oak-3",
+                "value": "pt-back"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-4",
+                "value": "pt-front"
+              },
+              {
+                "kind": "accompanyEscape",
+                "target": "p-oak-4",
+                "value": "pt-front"
+              },
+              {
+                "kind": "escape",
+                "target": "p-oak-4",
+                "value": "pt-back"
+              },
+              {
+                "kind": "accompanyEscape",
+                "target": "p-oak-4",
+                "value": "pt-back"
+              }
+            ],
+            "outsidePersonIDs": [],
+            "accountedPersonIDs": [],
+            "shelteredPersonIDs": [],
+            "destinationIDs": [],
+            "occupantRoomIDs": {
+              "p-oak-1": "sp-kitchen",
+              "p-oak-2": "sp-kitchen",
+              "p-oak-3": "sp-kitchen",
+              "p-oak-4": "sp-kitchen"
+            },
+            "shelterRoomID": "sp-closet",
+            "relocated": false,
+            "waterService": "operational",
+            "availableWaterGallons": 5,
+            "openGapIDs": [],
+            "identifiedGapIDs": [],
+            "debrief": [
+              {
+                "kind": "smoke-egress-accounting",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ],
+                "eventIDs": [],
+                "nextActionID": "prep.fireDrill"
+              },
+              {
+                "kind": "outsideAccounting",
+                "subjectIDs": [
+                  "p-oak-1",
+                  "p-oak-2",
+                  "p-oak-3",
+                  "p-oak-4"
+                ],
+                "eventIDs": [],
+                "nextActionID": "prep.nearMeetup"
+              },
+              {
+                "kind": "escapeRouteUnassessed",
+                "subjectIDs": [
+                  "p-oak-1"
+                ],
+                "eventIDs": [],
+                "nextActionID": "prep.fireDrill"
+              },
+              {
+                "kind": "escapeRouteUnassessed",
+                "subjectIDs": [
+                  "p-oak-2"
+                ],
+                "eventIDs": [],
+                "nextActionID": "prep.fireDrill"
+              },
+              {
+                "kind": "escapeRouteUnassessed",
+                "subjectIDs": [
+                  "p-oak-3"
+                ],
+                "eventIDs": [],
+                "nextActionID": "prep.fireDrill"
+              },
+              {
+                "kind": "escapeRouteUnassessed",
+                "subjectIDs": [
+                  "p-oak-4"
+                ],
+                "eventIDs": [],
+                "nextActionID": "prep.fireDrill"
+              }
+            ],
+            "escapeHelperByPersonID": {}
+          },
+          "assistance": [
+            {
+              "personID": "p-oak-3",
+              "helperID": "p-oak-1",
+              "reachStatus": "reachable",
+              "sharedWithPersonIDs": [],
+              "simultaneousCapacity": "notAssessed"
+            },
+            {
+              "personID": "p-oak-4",
+              "helperID": "p-oak-2",
+              "reachStatus": "reachable",
+              "sharedWithPersonIDs": [],
+              "simultaneousCapacity": "notAssessed"
+            }
+          ],
           "routes": [],
           "directorState": {
             "activeIncidentCount": 0,
@@ -3524,7 +3689,7 @@
       "sessionID": "synthetic-session",
       "revision": 0,
       "eventSequence": 0,
-      "contextDigest": "e98dd307ce8daeb8",
+      "contextDigest": "922491dedbd7223a",
       "householdRevision": 3,
       "homeRevision": 1
     },
@@ -4805,13 +4970,69 @@
       ]
     },
     "householdContext": {
+      "backupPower": [
+        {
+          "assumedEfficiency": 0.85,
+          "continuousOutputW": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "W",
+            "value": 1200
+          },
+          "id": "bk-station",
+          "islandingConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "kind": "portableBatteryStation",
+          "safeOutdoorPlacementConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "setupConfirmed": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "usableEnergyWh": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "Wh",
+            "value": 1000
+          }
+        }
+      ],
       "equipment": [
         {
+          "compatibleBackupIDs": [],
           "documentation": "unknown",
+          "documentedBackupRuntimeHours": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
           "essential": true,
           "id": "eq-oxygen",
           "personID": "p-oak-4",
-          "powerRequired": true
+          "powerRequired": true,
+          "powerWatts": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "purpose": "oxygenConcentrator",
+          "requiresColdStorage": false
         }
       ],
       "evidence": [
@@ -4826,6 +5047,26 @@
           "origin": "userConfirmed",
           "sourceIDs": [],
           "status": "confirmed"
+        },
+        {
+          "fieldIDs": [
+            "backupPower"
+          ],
+          "id": "recorded-backup-power",
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "uncertainty": "Recorded source list only; individual specification/setup fields retain their own confirmation status. No inferred compatibility or runtime."
+        },
+        {
+          "fieldIDs": [
+            "inventory"
+          ],
+          "id": "recorded-inventory",
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "uncertainty": "Recorded ledger only; quantities, access, expiry and member restrictions retain their own evidence. This is not the simulated remaining stock or current incident access."
         }
       ],
       "housing": {
@@ -4851,30 +5092,75 @@
           "value": true
         }
       },
+      "inventory": {
+        "asOf": "2026-10-19T00:00:00Z",
+        "items": [
+          {
+            "accessible": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "category": "water",
+            "evidenceIDs": [
+              "synthetic-intake"
+            ],
+            "id": "water",
+            "lastConfirmedAt": "2026-10-19T00:00:00Z",
+            "locationID": "sp-kitchen",
+            "quantity": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 5
+            },
+            "subjectIDs": [],
+            "unit": "usGallon",
+            "usableQuantity": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": 5
+            }
+          }
+        ],
+        "revision": 1,
+        "scope": "recordedHouseholdInventory"
+      },
       "limitedBudget": false,
       "people": [
         {
           "ageBand": "adult",
           "id": "p-oak-1",
-          "needs": []
+          "needs": [],
+          "startingRoomID": "sp-bed1"
         },
         {
           "ageBand": "adult",
           "id": "p-oak-2",
-          "needs": []
+          "needs": [],
+          "startingRoomID": "sp-bed1"
         },
         {
           "ageBand": "child",
+          "helperPersonID": "p-oak-1",
           "id": "p-oak-3",
-          "needs": []
+          "needs": [],
+          "startingRoomID": "sp-bed2"
         },
         {
           "ageBand": "olderAdult",
+          "helperPersonID": "p-oak-2",
           "id": "p-oak-4",
           "needs": [
             "coldSensitive",
             "limitedMobility"
-          ]
+          ],
+          "startingRoomID": "sp-living"
         }
       ],
       "pets": [
@@ -4900,6 +5186,53 @@
         "schemaVersion": "dryrun.site-context/1",
         "sourceIDs": []
       },
+      "supplies": {
+        "coolerAndIcePacks": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": true
+        },
+        "fireExtinguisher": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": true
+        },
+        "firstAidKit": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": true
+        },
+        "flashlights": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": 2
+        },
+        "limitedStorageSpace": false,
+        "shelfStableFoodDays": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "value": 3
+        },
+        "storedWaterGallons": {
+          "inputIDs": [],
+          "origin": "userConfirmed",
+          "sourceIDs": [],
+          "status": "confirmed",
+          "unit": "gal",
+          "value": 5,
+          "verifiedAt": "2026-10-19T00:00:00Z"
+        }
+      },
       "transport": "car"
     },
     "preparationActions": [
@@ -4920,7 +5253,6 @@
       "prep.flashlight",
       "prep.food",
       "prep.pets",
-      "prep.reconnect",
       "prep.sanitation",
       "prep.water",
       "prep.fireDrill",
@@ -4988,7 +5320,139 @@
       }
     ],
     "receipt": {
-      "contextDigest": "c462371c28f158ed",
+      "assistance": [
+        {
+          "helperID": "p-oak-1",
+          "personID": "p-oak-3",
+          "reachStatus": "reachable",
+          "route": {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "space:sp-kitchen",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 9.5,
+                      "y": 1.5
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 0,
+              "portalSequence": [],
+              "spaceSequence": [
+                "sp-kitchen"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "destinationSpaceID": "sp-kitchen",
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": []
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "helperReach",
+              "startSpaceID": "sp-kitchen"
+            },
+            "sharedChokepoints": []
+          },
+          "sharedWithPersonIDs": [],
+          "simultaneousCapacity": "notAssessed"
+        },
+        {
+          "helperID": "p-oak-2",
+          "personID": "p-oak-4",
+          "reachStatus": "reachable",
+          "route": {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "space:sp-kitchen",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 9.5,
+                      "y": 1.5
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 0,
+              "portalSequence": [],
+              "spaceSequence": [
+                "sp-kitchen"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "destinationSpaceID": "sp-kitchen",
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": []
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-2",
+              "purpose": "helperReach",
+              "startSpaceID": "sp-kitchen"
+            },
+            "sharedChokepoints": []
+          },
+          "sharedWithPersonIDs": [],
+          "simultaneousCapacity": "notAssessed"
+        }
+      ],
+      "contextDigest": "5bc78fe15ced7c5d",
       "directorState": {
         "activeIncidentCount": 0,
         "awaitingUserAction": true,
@@ -4996,6 +5460,154 @@
       },
       "eventSequence": 0,
       "events": [],
+      "experience": {
+        "accountedPersonIDs": [],
+        "availableWaterGallons": 5,
+        "debrief": [
+          {
+            "eventIDs": [],
+            "kind": "smoke-egress-accounting",
+            "nextActionID": "prep.fireDrill",
+            "subjectIDs": [
+              "p-oak-1",
+              "p-oak-2",
+              "p-oak-3",
+              "p-oak-4"
+            ]
+          },
+          {
+            "eventIDs": [],
+            "kind": "outsideAccounting",
+            "nextActionID": "prep.nearMeetup",
+            "subjectIDs": [
+              "p-oak-1",
+              "p-oak-2",
+              "p-oak-3",
+              "p-oak-4"
+            ]
+          },
+          {
+            "eventIDs": [],
+            "kind": "escapeRouteUnassessed",
+            "nextActionID": "prep.fireDrill",
+            "subjectIDs": [
+              "p-oak-1"
+            ]
+          },
+          {
+            "eventIDs": [],
+            "kind": "escapeRouteUnassessed",
+            "nextActionID": "prep.fireDrill",
+            "subjectIDs": [
+              "p-oak-2"
+            ]
+          },
+          {
+            "eventIDs": [],
+            "kind": "escapeRouteUnassessed",
+            "nextActionID": "prep.fireDrill",
+            "subjectIDs": [
+              "p-oak-3"
+            ]
+          },
+          {
+            "eventIDs": [],
+            "kind": "escapeRouteUnassessed",
+            "nextActionID": "prep.fireDrill",
+            "subjectIDs": [
+              "p-oak-4"
+            ]
+          }
+        ],
+        "destinationIDs": [],
+        "escapeHelperByPersonID": {},
+        "feasibleCommands": [
+          {
+            "kind": "escape",
+            "target": "p-oak-1",
+            "value": "pt-front"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-1",
+            "value": "pt-back"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-2",
+            "value": "pt-front"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-2",
+            "value": "pt-back"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-3",
+            "value": "pt-front"
+          },
+          {
+            "kind": "accompanyEscape",
+            "target": "p-oak-3",
+            "value": "pt-front"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-3",
+            "value": "pt-back"
+          },
+          {
+            "kind": "accompanyEscape",
+            "target": "p-oak-3",
+            "value": "pt-back"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-4",
+            "value": "pt-front"
+          },
+          {
+            "kind": "accompanyEscape",
+            "target": "p-oak-4",
+            "value": "pt-front"
+          },
+          {
+            "kind": "escape",
+            "target": "p-oak-4",
+            "value": "pt-back"
+          },
+          {
+            "kind": "accompanyEscape",
+            "target": "p-oak-4",
+            "value": "pt-back"
+          }
+        ],
+        "hazard": "homeFire",
+        "identifiedGapIDs": [],
+        "mechanicsVersion": "dryrun.hazard-mechanics/5",
+        "objective": "Exit by a supported clear path and account outside; never re-enter.",
+        "occupantRoomIDs": {
+          "p-oak-1": "sp-kitchen",
+          "p-oak-2": "sp-kitchen",
+          "p-oak-3": "sp-kitchen",
+          "p-oak-4": "sp-kitchen"
+        },
+        "openGapIDs": [],
+        "outsidePersonIDs": [],
+        "relocated": false,
+        "scene": "smoke-egress-accounting",
+        "shelterRoomID": "sp-closet",
+        "shelteredPersonIDs": [],
+        "supportedActions": [
+          "escape",
+          "accountOutside",
+          "closeDoor",
+          "accompanyEscape",
+          "identifyGap"
+        ],
+        "waterService": "operational"
+      },
       "finished": false,
       "inventory": {
         "foodPolicyVersion": "dryrun.exercise-food/1",
@@ -6588,7 +7200,8 @@
           ],
           "revision": 1
         }
-      }
+      },
+      "mechanicsVersion": "dryrun.hazard-mechanics/5"
     }
   }
 }

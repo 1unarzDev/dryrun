@@ -66,6 +66,11 @@ struct FocusedHouseholdEditor: View {
                 }
             }
         }
+        // A save made elsewhere while this form is open (e.g. confirming supply items from it) refreshes an untouched
+        // draft. An edited draft is kept and still reports the conflict on Save instead of overwriting newer facts.
+        .onChange(of: model.household?.revision) { _, _ in
+            if draft == original { draft = model.household; original = model.household }
+        }
         .confirmationDialog(l("native.removePersonConfirm", ["person": removingPersonLabel]), isPresented: $confirmingPersonRemoval, titleVisibility: .visible) {
             Button(l("native.removePerson"), role: .destructive) {
                 if let id = removingPersonID, var edited = draft {
@@ -136,7 +141,7 @@ struct FocusedHouseholdEditor: View {
             }
             ForEach((draft?.people ?? []).filter { personID == nil || $0.id == personID }) { person in
                 if let i = draft?.people.firstIndex(where: { $0.id == person.id }) {
-                    Section(draft!.people[i].isSelf == true ? l("family.you") : draft!.people[i].alias) {
+                    Section(draft!.people[i].isSelf == true ? l("family.you") : l("family.member")) {
                         LabeledContent(l("family.name")) {
                             TextField(l("family.name"), text: binding(\.people[i].alias))
                                 .textContentType(.name)
@@ -180,7 +185,7 @@ struct FocusedHouseholdEditor: View {
                             }
                         }
                         if draft!.people[i].relationship == .custom {
-                            TextField(l("family.relationship"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
+                            TextField(l("family.customRole"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
                         }
                         Picker(l("family.age"), selection: binding(\.people[i].ageBand)) {
                             ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
@@ -190,7 +195,7 @@ struct FocusedHouseholdEditor: View {
                         TextField(l("family.medication"), text: info(i, \.essentialMedication), axis: .vertical)
                         TextField(l("family.instructions"), text: info(i, \.responderInstructions), axis: .vertical)
                         ForEach(AssistanceNeed.allCases, id: \.self) { need in
-                            Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
+                            Toggle(DisplayNames.name(need.rawValue, localizer: l), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
                                 draft!.people[i].needs.removeAll { $0 == need }
                                 if on { draft!.people[i].needs.append(need) }
                             }))
@@ -286,8 +291,23 @@ struct FocusedHouseholdEditor: View {
     private var waterFields: some View {
         let l = model.localizer
         return Group {
+            Section {
+                NavigationLink { SupplyInventoryView() } label: {
+                    Label(l("inventory.open"), systemImage: "checklist").font(.body.weight(.semibold))
+                }
+                .accessibilityIdentifier("supplies.inventory")
+            } footer: {
+                Text(l("inventory.openDetail"))
+            }
             Section(l("prep.water.title")) {
-                WaterStorageEvidenceRow(value: waterQuantity, countryCode: draft?.privateLocation?.countryCode)
+                if model.aiState.inventory.items.contains(where: { $0.category == "water" }) {
+                    // Item-by-item water is the single source of the total; it is edited there, never twice.
+                    let gallons = draft?.supplies.storedWaterGallons.confirmedValue
+                    LabeledContent(l("inventory.kind.water"), value: gallons.map { PlanningMeasurements.water(gallons: $0, countryCode: draft?.privateLocation?.countryCode, localizer: l) } ?? l("family.unknown"))
+                    NavigationLink(l("inventory.managedThere")) { SupplyInventoryView() }
+                } else {
+                    WaterStorageEvidenceRow(value: waterQuantity, countryCode: draft?.privateLocation?.countryCode)
+                }
                 Text(l("prep.water.why", ["target": PlanningMeasurements.water(gallons: Double((draft?.people.count ?? 1) * 3), countryCode: draft?.privateLocation?.countryCode, localizer: l)])).font(.footnote)
             }
             TextField(l("family.locationOfItem"), text: fact("water").location, axis: .vertical)

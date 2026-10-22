@@ -53,6 +53,10 @@ targets:
         CFBundleLocalizations: [en, es, vi]
         CFBundleDevelopmentRegion: en
         ITSAppUsesNonExemptEncryption: false
+        # Development gateway on the local network only (DEBUG launch arguments); internet ATS is unchanged.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        NSLocalNetworkUsageDescription: "Development builds only: reach a Dry Run test server on this network when a tester turns it on. No household information is sent from a real household."
         UIRequiredDeviceCapabilities: [arm64]
     entitlements:
       path: DryRun/Resources/DryRun.entitlements

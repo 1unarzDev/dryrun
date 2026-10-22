@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "options": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 180
+          },
+          "locality": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "documentedService": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "whyUseful": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "nextAction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "unknowns": {
+            "minItems": 1,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "sourceURLs": {
+            "minItems": 1,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "publishedOrUpdatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "locality",
+          "documentedService",
+          "whyUseful",
+          "nextAction",
+          "unknowns",
+          "sourceURLs",
+          "publishedOrUpdatedAt"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "comparison": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "limitations": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 600
+      }
+    }
+  },
+  "required": [
+    "options",
+    "comparison",
+    "limitations"
+  ],
+  "additionalProperties": false
+}

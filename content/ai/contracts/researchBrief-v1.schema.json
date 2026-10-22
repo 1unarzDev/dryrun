@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "taskID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "locality": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "administrativeArea": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "countryCode": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$"
+        }
+      },
+      "required": [
+        "city",
+        "administrativeArea",
+        "countryCode"
+      ],
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "drinkingWater",
+          "foodAssistance",
+          "pharmacy",
+          "equipmentSupport",
+          "extinguisher",
+          "cooling",
+          "warming",
+          "stepFree",
+          "delivery",
+          "emergencyDepartment",
+          "emergencyManagement",
+          "fireStation",
+          "policeStation",
+          "shelter",
+          "hardware",
+          "warmClothing"
+        ]
+      }
+    },
+    "travelMode": {
+      "type": "string",
+      "enum": [
+        "walking",
+        "transit",
+        "driving",
+        "assistance"
+      ]
+    },
+    "maximumDistanceKm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 100
+    },
+    "limitedBudget": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "taskID",
+    "locality",
+    "capabilities",
+    "travelMode",
+    "maximumDistanceKm",
+    "limitedBudget"
+  ],
+  "additionalProperties": false
+}

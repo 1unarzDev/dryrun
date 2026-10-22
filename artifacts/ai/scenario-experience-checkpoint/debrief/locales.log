@@ -1,0 +1,12 @@
+$ node scripts/bundle-content.mjs
+bundled 2 region packs, locales: en(8) es(8) vi(8)
+$ vitest run
+
+ RUN  v5.0.3 /home/lunarz/dryrun/services/public-api
+
+
+ Test Files  4 passed (4)
+      Tests  68 passed (68)
+   Start at  07:17:16
+   Duration  1.24s (tests 45%, import 29%, transform 25%, worker 1%)
+
