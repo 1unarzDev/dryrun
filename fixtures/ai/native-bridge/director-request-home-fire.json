@@ -211,6 +211,17 @@
             "pt-balcony",
             "pt-win-bed1"
           ]
+        },
+        {
+          "eventIDs" : [
+            "user.user-1"
+          ],
+          "kind" : "action.choose",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "choice.home-fire.first-move",
+            "get-out"
+          ]
         }
       ],
       "destinationIDs" : [
