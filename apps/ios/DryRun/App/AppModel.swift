@@ -1479,7 +1479,7 @@ final class AppModel {
             case .waitingForFamily:
                 return
             case .deadline:
-                directorFallbackNote = localizer("adaptive.fallback.deadline")
+                directorFallbackNote = localizer("adaptive.director.fallbackNote")
             case .failure:
                 directorFallbackNote = localizer("adaptive.fallback.unavailable")
             }

@@ -93,6 +93,11 @@ struct AdaptiveRehearsalView: View {
                 Text(narration).font(.callout).foregroundStyle(.secondary)
                 Text(l("adaptive.narrationNote")).font(.caption).foregroundStyle(.secondary)
             }
+            if model.directorTurnInFlight {
+                // Brief progress while a gateway turn runs; End stays available, and past the deadline this phone takes the step.
+                Label(l("adaptive.director.inFlight"), systemImage: "hourglass").font(.footnote).foregroundStyle(.secondary)
+                    .accessibilityIdentifier("adaptive.director.inFlight")
+            }
             if let note = model.directorFallbackNote {
                 Label(note, systemImage: "iphone").font(.footnote).foregroundStyle(Theme.caution)
                     .accessibilityIdentifier("adaptive.fallbackNote")
@@ -121,6 +126,8 @@ struct AdaptiveRehearsalView: View {
         if let director = exercise.lastDirector {
             Label(model.localizer("adaptive.director.\(director.rawValue)"), systemImage: director.isRemote ? "sparkles" : "iphone")
                 .fixedSize(horizontal: false, vertical: true)
+            // Debug builds only: the allowlisted provider that served the turn (nothing for an unreported one).
+            BeaconServedByLabel(servedBy: director == .beacon ? nil : director.rawValue)
         }
     }
 
