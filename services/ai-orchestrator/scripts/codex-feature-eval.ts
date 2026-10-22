@@ -28,6 +28,13 @@ const sha=(bytes:string|Buffer)=>createHash('sha256').update(bytes).digest('hex'
 const sourceFiles=['features.ts','prompt-experiments.ts','output-quality.ts','private-context.ts','claim-language.ts','codex-provider.ts','codex-schema.ts','codex-runtime.ts','provider-failure.ts','http.ts'];
 const sourceHashes=Object.fromEntries(await Promise.all(sourceFiles.map(async f=>[f,sha(await readFile(new URL('../src/'+f,import.meta.url)))])));
 const profileHash=sha(await readFile(process.env.DRYRUN_CODEX_CAPABILITIES_FILE));
+// Frozen held-out execution: DRYRUN_FROZEN_ADDENDUM names a JSON file {sourceSha256,capabilityProfileSha256,promptVersion}.
+// Any difference from the running source refuses the run before a model call, so a held-out set cannot run on an unfrozen candidate.
+if(process.env.DRYRUN_FROZEN_ADDENDUM){const frozen=JSON.parse(await readFile(process.env.DRYRUN_FROZEN_ADDENDUM,'utf8'));
+ const mismatched=sourceFiles.filter(f=>frozen.sourceSha256?.[f]!==sourceHashes[f]);if(mismatched.length||frozen.capabilityProfileSha256!==profileHash||frozen.promptVersion!==promptVersion){console.error(JSON.stringify({event:'frozen_source_mismatch',files:mismatched}));throw new Error('frozen_source_mismatch');}}
+// Harness call allowance per owner window (production default 40; the development harness used 100). Held-out may raise it
+// so a quota window can never fail a sealed attempt; the value is recorded in the receipt.
+const callAllowance=Number(process.env.DRYRUN_EVAL_FEATURE_CALLS??100);if(!Number.isInteger(callAllowance)||callAllowance<1||callAllowance>1000)throw new Error('bounded_call_allowance_required');
 type Case={file:string;label:string;repetition:number};
 const cases:Case[]=[];
 if(orderFile){
@@ -37,7 +44,7 @@ if(orderFile){
 const provider=await configuredCodexProvider();const secret=randomBytes(32).toString('base64url');
 let current:{runID:string;contextReads:number;returned:number;validation:string[]}|undefined;
 const observe=(event:FeatureEvent)=>{if(!current)return;console.log(JSON.stringify({event:'protected_feature_event',runID:current.runID,detail:event}));if(event.event==='context_read'){current.contextReads++;current.returned+=event.returned;}else current.validation.push(event.code);};
-const server=createServer(createAIRequestHandler({gateway:new Gateway(provider),features:new FeatureRunner(provider,100,undefined,{preparationInvestigation:condition==='investigation',preparationPrompt:condition==='candidate'?16:15},{},observe),interpreter:new IntentInterpreter(provider),authorize:header=>fixtureAuthorize(header,secret,false)}));
+const server=createServer(createAIRequestHandler({gateway:new Gateway(provider),features:new FeatureRunner(provider,callAllowance,undefined,{preparationInvestigation:condition==='investigation',preparationPrompt:condition==='candidate'?16:15},{},observe),interpreter:new IntentInterpreter(provider),authorize:header=>fixtureAuthorize(header,secret,false)}));
 server.listen(0,'127.0.0.1');await once(server,'listening');const address=server.address();if(!address||typeof address==='string')throw new Error('listen_failed');
 let failed=0;
 // Optional engineering-visible receipt: allowlisted machine fields only, never request/response content.
@@ -59,5 +66,5 @@ try{
  console.log(JSON.stringify({event:'complete_attempt_receipt',attempts:cases.length,failed,promptVersion}));
  if(failed)process.exitCode=1;
 }finally{current=undefined;server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));
- if(process.env.DRYRUN_SAFE_RECEIPT)await writeFile(process.env.DRYRUN_SAFE_RECEIPT,JSON.stringify({receipt:'dryrun.codex-feature-eval/2',inputDirectory:directory,caseOrder:orderFile?'sealed':'development',condition,promptVersion,model:provider.capabilities.model,runtime:provider.capabilities.runtimeVersion,capabilityProfileSha256:profileHash,sourceSha256:sourceHashes,attempts},null,1),{mode:0o600});
+ if(process.env.DRYRUN_SAFE_RECEIPT)await writeFile(process.env.DRYRUN_SAFE_RECEIPT,JSON.stringify({receipt:'dryrun.codex-feature-eval/2',inputDirectory:directory,caseOrder:orderFile?'sealed':'development',condition,promptVersion,model:provider.capabilities.model,runtime:provider.capabilities.runtimeVersion,capabilityProfileSha256:profileHash,sourceSha256:sourceHashes,callAllowance,frozenAddendum:process.env.DRYRUN_FROZEN_ADDENDUM?'verified':'none',attempts},null,1),{mode:0o600});
 }

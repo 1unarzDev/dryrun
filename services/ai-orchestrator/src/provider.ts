@@ -4,10 +4,14 @@ export type History = Interactions.Step[];
 export type ProviderReply = { steps: History; text: string; calls: Interactions.FunctionCallStep[]; usage: unknown };
 export type ProviderID='gemini'|'groq'|'codex';
 /** timeoutMs is the caller's whole-operation bound, so one router can leave time for a fallback inside it. */
-export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number;timeoutMs?:number};
+export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number;timeoutMs?:number;fallbackReserveMs?:number};
 /** defaultConsent: providers an omitted consent list may use (the deployment's configured chain, never Groq).
  * attemptProvider: which provider served the latest turn of a scoped operation (machine metadata only). */
-export interface AgentProvider { readonly providerID?:ProviderID;readonly defaultConsent?:readonly ProviderID[];readonly attemptProvider?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
+export interface AgentProvider { readonly providerID?:ProviderID;failover?(history:History):Promise<boolean>;readonly defaultConsent?:readonly ProviderID[];readonly attemptProvider?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
+/** Allowlisted serving-provider ID for wire responses (servedBy): the provider that served the final turn, or 'host'
+ * when the host answered without a model call. Anything else is not reported. */
+export type ServedBy='codex'|'gemini'|'groq'|'host';
+export function servedProviderID(provider:AgentProvider):Exclude<ServedBy,'host'>|undefined{const id=provider.attemptProvider??provider.providerID;return id==='codex'||id==='gemini'||id==='groq'?id:undefined;}
 /** Omitted consent uses the explicitly configured deployment provider; explicit lists never expand. */
 export function configuredProviderConsent(provider:AgentProvider,requested?:readonly string[]){return requested??provider.defaultConsent??[provider.providerID??'gemini'];}
 export function scopeProvider(provider:AgentProvider,options:ProviderScope):AgentProvider {
@@ -54,8 +58,12 @@ export class GeminiProvider implements AgentProvider {
  const rates=tokenRates(model);
  const upperBoundUSD=(tokenBound*rates.input+6000*rates.output)/1000000;
  const reservationEpoch=this.budget.reserve(upperBoundUSD);this.lastCall=Date.now();
+ // Finalization is explicit (toolMode none) or follows tool results, including host records carried over from another
+ // provider on a restart (report-codex-deadline-restart-gemini-debrief-director-review: a restarted Gemini director
+ // finalized without response_format and failed directorOutput twice).
+ const retrieved=input.history.some(s=>s.type==='function_result'||s.type==='user_input'&&JSON.stringify(s.content??'').includes('hostRetrievedRecords'));
  const request=this.ai.interactions.create({model,store:false,input:input.history,system_instruction:input.instruction,tools:input.tools,
- response_format:input.outputSchema&&(!input.tools.length||input.history.some(s=>s.type==='function_result'))?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:6000,thinking_level:model==='gemini-2.5-flash'?undefined:'high',tool_choice:input.tools.length?(input.toolMode??(!input.history.some(s=>s.type==='function_result')?'any':'none')):undefined}},{signal:input.signal,retries:{strategy:'none'}});
+ response_format:input.outputSchema&&(!input.tools.length||input.toolMode==='none'||retrieved)?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:6000,thinking_level:model==='gemini-2.5-flash'?undefined:'high',tool_choice:input.tools.length?(input.toolMode??(!retrieved?'any':'none')):undefined}},{signal:input.signal,retries:{strategy:'none'}});
  // Enforce our deadline even if an SDK/network path does not promptly honor abort.
  // Keep the reservation for an unknown outcome; reconcile exactly once if usage arrives later.
  const accounted=request.then(response=>{this.budget.charge(response.usage,model,upperBoundUSD,reservationEpoch);return response;});

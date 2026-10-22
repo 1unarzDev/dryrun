@@ -15,8 +15,8 @@ import {RequestWindow,RequestWindowFailure} from './request-window.js';
  * preparation/debrief/drillSetup/stress, 70 s for resources/home), so a Codex attempt plus a fallback can finish. */
 export function featureTimeoutMs(role:string){return role==='resources'||role==='home'?65000:88000;}
 /** Transport adapter only. Production verification remains an explicit startup dependency. */
-export function createAIRequestHandler({gateway,features,interpreter,authorize,attest,discovery}:{gateway:Gateway;features:FeatureRunner;interpreter:IntentInterpreter;authorize:(header:string|undefined)=>string;attest?:InstallationAuth;discovery?:ResourceDiscovery}):RequestListener {
- const requests=new RequestWindow();
+export function createAIRequestHandler({gateway,features,interpreter,authorize,attest,discovery,maximumRequests}:{gateway:Gateway;features:FeatureRunner;interpreter:IntentInterpreter;authorize:(header:string|undefined)=>string;attest?:InstallationAuth;discovery?:ResourceDiscovery;maximumRequests?:number}):RequestListener {
+ const requests=new RequestWindow(maximumRequests);
 return async(req,res)=>{
  const controller=new AbortController();
  const disconnected=()=>{if(!res.writableEnded)controller.abort()};
@@ -24,7 +24,7 @@ return async(req,res)=>{
  res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
  // Opt-in operator log for the Mac demo gateway: method, path, HTTP status, outcome status/reason and time only.
  if(process.env.DRYRUN_ACCESS_LOG==='1'){const started=Date.now();const end=res.end.bind(res);let outcome='';
-  res.end=((chunk?:unknown,...rest:unknown[])=>{try{const o=typeof chunk==='string'?JSON.parse(chunk):undefined;outcome=[o?.status,o?.reason,o?.diagnostic].filter(v=>typeof v==='string').join(' ');}catch{}return(end as (...a:unknown[])=>typeof res)(chunk,...rest);}) as typeof res.end;
+  res.end=((chunk?:unknown,...rest:unknown[])=>{try{const o=typeof chunk==='string'?JSON.parse(chunk):undefined;outcome=[o?.status,o?.reason,o?.diagnostic,o?.outcome,o?.provider&&'provider='+o.provider,o?.servedBy&&'servedBy='+o.servedBy].filter(v=>typeof v==='string'&&/^[a-zA-Z0-9_=]{1,64}$/.test(v)).join(' ');}catch{}return(end as (...a:unknown[])=>typeof res)(chunk,...rest);}) as typeof res.end;
   res.once('finish',()=>console.log(`${new Date().toISOString()} ${req.method} ${req.url} ${res.statusCode} ${outcome} ${Date.now()-started}ms`));}
  try{
  if(req.url==='/health'&&req.method==='GET'){res.end(JSON.stringify({status:'ok'}));return;}
@@ -56,7 +56,8 @@ return async(req,res)=>{
  requests.claim(owner,r.requestID);
  const timeoutMs=featureTimeoutMs(r.role);
  const proposal=r.role==='council'?await features.council(r.context,controller.signal,owner,r.providerConsent):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(timeoutMs)]),r.images,owner,r.providerConsent,timeoutMs);
- res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,contextBinding:r.context.contextBinding,proposal,...(r.role==='home'?{reviewProposals:normalizeHomeReview(proposal,r.context)}:{})}));return;
+ const servedBy=features.servedBy?.(proposal);
+ res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,contextBinding:r.context.contextBinding,...(servedBy?{servedBy}:{}),proposal,...(r.role==='home'?{reviewProposals:normalizeHomeReview(proposal,r.context)}:{})}));return;
  }
  const result=req.url==='/v1/operations'?await gateway.start(owner,input,controller.signal):req.url==='/v1/continue'?await gateway.resume(owner,input,controller.signal):req.url==='/v1/cancel'&&typeof input==='object'&&input!==null&&'token'in input&&typeof input.token==='string'?gateway.cancel(owner,input.token):{status:'rejected',reason:'unknown_endpoint'};
  res.end(JSON.stringify(result));}catch(error){

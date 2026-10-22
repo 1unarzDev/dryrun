@@ -28,8 +28,10 @@ it('bounds repeated retrieval without turning it into a preview or client mutati
  const result=await new Gateway(provider).start('owner-a',request()) as {status:string};expect(result.status).toBe('unavailable');expect(calls).toBe(5);
 });
 
-it.skipIf(!process.env.DRYRUN_DIRECTOR_WIRE_PATH)('validates exact native director bytes and retrieves canonical score/history',async()=>{
- const request=operationRequest.parse(JSON.parse(await readFile(process.env.DRYRUN_DIRECTOR_WIRE_PATH!,'utf8')));
+// Core writes these bytes on every `swift test` (DirectorPrivateContextTests); the checked-in copy keeps this in the standard check.
+it('validates exact native director bytes and retrieves canonical score/history',async()=>{
+ const request=operationRequest.parse(JSON.parse(await readFile(process.env.DRYRUN_DIRECTOR_WIRE_PATH??new URL('../../../fixtures/ai/native-bridge/director-private-context-wire.json',import.meta.url),'utf8')));
+ expect(request.providerConsent).toEqual(['codex','gemini','groq']);
  const reader=authorizedContextReader(request.context.privateContext,'authored-owner',request.context.contextBinding);
  const result=reader.read({snapshotID:reader.manifest.snapshotID,sections:['scores']});
  expect(result.records.some(record=>record.sourcePath==='currentHostScorecard'&&record.status==='recorded')).toBe(true);

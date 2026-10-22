@@ -98,8 +98,9 @@ describe('authorized retrievable private context',()=>{
   expect(history).toEqual(nested);
   const first=reader.read({...base,valuePath:['storageInstructions']});expect(()=>reader.read({...base,valuePath:['history'],cursor:first.nextCursor})).toThrow('invalid_context_cursor');
  });
- it.skipIf(!process.env.DRYRUN_CONTEXT_WIRE_PATH)('validates actual Swift-encoded bytes through the strict server schema',async()=>{
-  const data=privateContext.parse(JSON.parse(await readFile(process.env.DRYRUN_CONTEXT_WIRE_PATH!,'utf8')));
+ // Core writes these bytes on every `swift test` (AuthorizedAIContextTests); the checked-in copy keeps this in the standard check.
+ it('validates actual Swift-encoded bytes through the strict server schema',async()=>{
+  const data=privateContext.parse(JSON.parse(await readFile(process.env.DRYRUN_CONTEXT_WIRE_PATH??new URL('../../../fixtures/ai/native-bridge/authorized-context-wire.json',import.meta.url),'utf8')));
   expect(data.scope.sessionID).toBe('synthetic-session');
   const reader=authorizedContextReader(data,'synthetic-owner',binding(data));
   const page=reader.read({snapshotID:data.snapshotID,sections:['family','medical'],subjectIDs:['person-a']});

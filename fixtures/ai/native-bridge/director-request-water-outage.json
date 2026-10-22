@@ -1953,6 +1953,11 @@
     }
   },
   "contractVersion" : "dryrun.ai/1",
+  "providerConsent" : [
+    "codex",
+    "gemini",
+    "groq"
+  ],
   "requestID" : "native-water-outage-1",
   "role" : "director",
   "synthetic" : true

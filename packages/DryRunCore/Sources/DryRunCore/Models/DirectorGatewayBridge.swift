@@ -51,8 +51,14 @@ public enum DirectorGatewayBridge {
         public var requestID: String
         public var role = "director"
         public var synthetic = true
+        /// Providers the gateway may use, in order. Fictional households consent to the whole chain (Codex, then Gemini,
+        /// then Groq) like the other Beacon features; nil would leave the gateway's default (Codex, Gemini, never Groq).
+        public var providerConsent: [String]?
         public var context: DirectorContext
     }
+
+    /// The provider chain a fictional household's director turn may use.
+    public static let fictionalProviderConsent = ["codex", "gemini", "groq"]
 
     /// Authored per-hazard objectives: what the exercise practices, never model-written.
     public static func learningObjectives(_ hazard: HazardKind) -> [String] {
@@ -98,7 +104,7 @@ public enum DirectorGatewayBridge {
             homeScene: home.map { HomeSceneContext($0, household: household) }, profiles: Array(profiles.prefix(40)),
             learningObjectives: learningObjectives(scenario.hazard), lastAction: actions.last,
             recentActions: actions.isEmpty ? nil : actions)
-        return OperationRequest(requestID: requestID, context: context)
+        return OperationRequest(requestID: requestID, providerConsent: household.isFictional ? fictionalProviderConsent : nil, context: context)
     }
 
     // MARK: Client tools

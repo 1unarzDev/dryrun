@@ -56,7 +56,8 @@ struct DirectorGatewayClient: Sendable {
     struct ToolCall: Decodable, Sendable { let id: String; let name: String; let arguments: DirectorGatewayBridge.ToolArguments }
 
     enum Outcome: Sendable {
-        case completed(DirectorProposal)
+        /// `servedBy`: the provider the gateway reports as having served the final turn (codex, gemini, groq), if any.
+        case completed(DirectorProposal, servedBy: String?)
         case needsTools(token: String, binding: AgentContextBinding, call: DirectorGatewayBridge.ToolCall)
         case needsUserAction
         case unavailable(String)
@@ -70,6 +71,7 @@ struct DirectorGatewayClient: Sendable {
         let calls: [ToolCall]?
         let proposal: DirectorProposal?
         let contextBinding: AuthorizedAIContext.Binding?
+        let servedBy: String?
     }
 
     private struct Continuation: Encodable {
@@ -322,7 +324,8 @@ struct DirectorGatewayClient: Sendable {
             switch decoded.status {
             case "completed":
                 guard let proposal = decoded.proposal else { return .unavailable("missing_proposal") }
-                return .completed(proposal)
+                let served = decoded.servedBy.flatMap { ["codex", "gemini", "groq"].contains($0) ? $0 : nil }
+                return .completed(proposal, servedBy: served)
             case "needs_client_tools":
                 guard let token = decoded.token, let binding = decoded.binding, let call = decoded.calls?.first, decoded.calls?.count == 1 else {
                     return .unavailable("invalid_tool_request")
@@ -374,5 +377,66 @@ struct SignInReason {
         } else if (error as NSError).domain == "com.apple.devicecheck.error" {
             text = "sign-in devicecheck \((error as NSError).code)"
         } else { return nil }
+    }
+}
+
+/// The director operation transport AppModel drives. `DirectorGatewayClient` is the app's only conformer; unit tests
+/// supply a fake (for example one that stalls) to check the turn deadline and local fallback.
+protocol DirectorTransport: Sendable {
+    func start(_ request: DirectorGatewayBridge.OperationRequest) async -> DirectorGatewayClient.Outcome
+    func resume(token: String, binding: AgentContextBinding, callID: String, result: DirectorGatewayBridge.ToolResult,
+                expectedContextBinding: AuthorizedAIContext.Binding?) async -> DirectorGatewayClient.Outcome
+    func cancel(token: String) async
+}
+
+extension DirectorGatewayClient: DirectorTransport {}
+
+/// The latest gateway continuation token of a director turn, so a deadline can cancel the gateway job.
+final class DirectorTokenBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var token: String?
+    var current: String? {
+        get { lock.lock(); defer { lock.unlock() }; return token }
+        set { lock.lock(); token = newValue; lock.unlock() }
+    }
+}
+
+/// First of: the work's result, the deadline, or an explicit `finish` (family action). Resolves at once even when the
+/// work ignores cancellation; whatever the work returns later is discarded.
+final class DirectorRace<Value: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var result: Value?
+    private var waiter: CheckedContinuation<Value, Never>?
+    private var timer: Task<Void, Never>?
+    private var watcher: Task<Void, Never>?
+
+    init(_ work: Task<Value, Never>, deadline: Duration, timeout: Value) {
+        watcher = Task { [weak self] in let value = await work.value; self?.finish(value) }
+        timer = Task { [weak self] in
+            do { try await Task.sleep(for: deadline) } catch { return }
+            self?.finish(timeout)
+        }
+    }
+
+    func finish(_ value: Value) {
+        lock.lock()
+        guard result == nil else { lock.unlock(); return }
+        result = value
+        let waiting = waiter; waiter = nil
+        let pending = timer; timer = nil
+        lock.unlock()
+        pending?.cancel()
+        waiting?.resume(returning: value)
+    }
+
+    var value: Value {
+        get async {
+            await withCheckedContinuation { continuation in
+                lock.lock()
+                if let result { lock.unlock(); continuation.resume(returning: result); return }
+                waiter = continuation
+                lock.unlock()
+            }
+        }
     }
 }

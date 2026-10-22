@@ -49,6 +49,8 @@ export type GroqMessage={role:'system'|'user'|'assistant'|'tool';content:string|
 export type GroqRequestKind='search'|'functions'|'structured'|'text';
 export class GroqClient {
  readonly model:string;private circuit=new QuotaCircuit();private tokenWindow?:{remaining:number;resetAt:number};private tokenCeiling?:number;private configurationFailure?:ProviderFailure;
+ /** Advertised per-minute token ceiling learned from response headers (undefined until the first response). */
+ get knownTokenCeiling(){return this.tokenCeiling;}
  constructor(private key:string,model=process.env.DRYRUN_GROQ_MODEL??'openai/gpt-oss-120b',private transport:typeof fetch=fetch,private observeSyntheticResponse?:(raw:unknown,kind:GroqRequestKind)=>void){if(!key)throw new ProviderFailure('configuration','groq');if(!['openai/gpt-oss-120b','openai/gpt-oss-20b'].includes(model))throw new ProviderFailure('unsupported','groq');this.model=model;}
  async request(messages:GroqMessage[],operation:ProviderOperation,options:{search?:boolean;schema?:Record<string,unknown>;functions?:{type:'function';function:{name:string;description?:string;parameters?:Record<string,unknown>}}[];toolMode?:'required'|'auto'|'none';signal?:AbortSignal;reasoningEffort?:'low'|'medium'|'high';maximumOutputTokens?:number}={}):Promise<unknown>{
   if((options.search||options.functions?.length)&&options.schema)throw new ProviderFailure('unsupported','groq');

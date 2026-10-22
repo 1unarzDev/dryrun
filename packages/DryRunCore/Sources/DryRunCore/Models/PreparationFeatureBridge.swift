@@ -7,8 +7,13 @@ import Foundation
 /// data; the app's transport does, and only for fictional households.
 public enum PreparationFeatureBridge {
     public struct Context: Encodable, Sendable {
-        /// Set only for the `debrief` role: which rehearsal just finished.
-        public struct Debrief: Encodable, Sendable { public var scenarioID: String }
+        /// Set only for the `debrief` role: which rehearsal just finished and, when supplied, the host receipt of what
+        /// the family actually committed in it (DebriefFeatureBridge.RehearsalReceipt).
+        public struct Debrief: Encodable, Sendable {
+            public var scenarioID: String
+            public var rehearsal: DebriefFeatureBridge.RehearsalReceipt?
+            public init(scenarioID: String, rehearsal: DebriefFeatureBridge.RehearsalReceipt? = nil) { self.scenarioID = scenarioID; self.rehearsal = rehearsal }
+        }
         public var debrief: Debrief?
         public var household: HouseholdContextSnapshot
         public var tasks: [PreparationTaskProposal] = []
