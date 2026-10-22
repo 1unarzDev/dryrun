@@ -128,7 +128,9 @@ public struct AuthorizedAIContext: Codable, Sendable {
             return String(hash, radix:16)
         }
         revisions = Revisions(household:h.revision, home:home?.revision, inventory:state.inventory.revision,
-                              stateFingerprint:fingerprint(try encoder.encode(state)))
+                              // Household-specific: two example families with an empty state at identical
+                              // revisions must never share a fingerprint (A->B->A late-result isolation).
+                              stateFingerprint:fingerprint(Data(h.id.utf8) + Data([0]) + (try encoder.encode(state))))
         snapshotID = "ctx-" + fingerprint(try encoder.encode(scope) + encoder.encode(revisions) + encoder.encode(facts))
     }
 }

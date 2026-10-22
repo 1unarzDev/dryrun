@@ -41,6 +41,18 @@ struct DirectorGatewayClient: Sendable {
         #endif
     }()
 
+    #if DEBUG
+    /// DEBUG late-result injection for isolation checks: `-aiGatewayLateResultDelay <seconds>` (1...120) holds every
+    /// gateway answer (features, director start/continue; not cancel) for that long after it arrives, even if the
+    /// request was cancelled meanwhile. Absent by default; never compiled into release builds.
+    static let debugLateResultDelay: Duration? = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-aiGatewayLateResultDelay"), i + 1 < args.count,
+              let seconds = Int(args[i + 1]), (1...120).contains(seconds) else { return nil }
+        return .seconds(seconds)
+    }()
+    #endif
+
     private static func make(_ raw: String, _ token: String) -> DirectorGatewayClient? {
         guard let url = URL(string: raw), ["http", "https"].contains(url.scheme ?? ""), token.count >= 24 else { return nil }
         return DirectorGatewayClient(baseURL: url, credential: .fixture(token))
@@ -354,6 +366,13 @@ struct DirectorGatewayClient: Sendable {
             let (data, response) = try await URLSession.shared.data(for: request)
             try Task.checkCancellation()
             let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            #if DEBUG
+            if let delay = Self.debugLateResultDelay, path != "v1/cancel" {
+                // Deliberately ignores cancellation: the answer arrives late, as from a slow provider, so reviewers can
+                // check that a switched-away family (A->B->A) or a superseded turn never applies it.
+                await Task.detached { try? await Task.sleep(for: delay) }.value
+            }
+            #endif
             guard status == 200 else { return .failure(.init(reason: "http \(status)")) }
             guard data.count <= 1_000_000 else { return .failure(.init(reason: "response_budget")) }
             return .success(data)
