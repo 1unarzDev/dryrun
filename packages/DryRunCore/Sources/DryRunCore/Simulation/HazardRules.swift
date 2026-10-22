@@ -405,6 +405,13 @@ extension RunState {
         guard let home, var scene = spatialState, !scene.affectedSpaceIDs.isEmpty,
               !input.effectiveSpatialOptions.floodIsHouseholdLeak else { return }
         let affected = Set(scene.affectedSpaceIDs)
+        // Adaptive timing evidence: who had a supported refuge approach or was already there
+        // before this stage, computed from committed positions (authored playback unaffected).
+        let refugeBefore = hazardProgress == nil ? [] : household.people.filter { person in
+            guard let route = currentRoutes[person.id], route.request.purpose == .higherRefuge,
+                  let destination = route.request.destinationSpaceID else { return false }
+            return route.primary != nil || startSpace(for: person) == destination
+        }
         var expanded = affected
         for portal in home.portals where portal.verification == .verified {
             guard case .space(let a) = portal.sideA, case .space(let b) = portal.sideB else { continue }
@@ -426,6 +433,17 @@ extension RunState {
                guard let room = home.space(id), let floor = home.floors.first(where: { $0.id == room.floorID }) else { return false }
                return floor.elevationMeters < targetFloor.elevationMeters
            }) { routeToInterior(destination, purpose: .higherRefuge, exclusions: exclusions) }
+        if var progress = hazardProgress {
+            for person in refugeBefore {
+                let destination = scene.destinationSpaceID
+                if startSpace(for: person) == destination, let destination, !expanded.contains(destination) {
+                    progress.refugeHeldAtAccessLoss.insert(person.id)
+                } else if currentRoutes[person.id]?.primary == nil {
+                    progress.refugeLostAtAccessLoss.insert(person.id)
+                }
+            }
+            hazardProgress = progress
+        }
         scene.stageID = cause; scene.affectedSpaceIDs = expanded.sorted()
         scene.routes = currentRoutes.keys.sorted().compactMap { currentRoutes[$0] }
         scene.assumption = "Exercise: a later authored stage excludes connected lower spaces. This topology illustration is not a flood depth or arrival-time prediction."
@@ -546,6 +564,10 @@ extension RunState {
             }
         case "goToShelter":
             if !feasible("goToShelter") { flags.insert("tornado.shelterNotAdequate") }
+        case "shelterInPlace":
+            // Adaptive sessions only (authored playback has no HazardProgress): record what the stay
+            // committed to. Choosing to stay never manufactures warmth, cooling or device power.
+            recordThermalStay(choiceID: c.id, eventID: id)
         case "prioritizeStored":
             waterDrawMultiplier = 1
         case "useStoredForAll":
