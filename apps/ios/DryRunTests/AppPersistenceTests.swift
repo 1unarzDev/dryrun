@@ -229,6 +229,41 @@ final class AppPersistenceTests: XCTestCase {
         XCTAssertEqual(relaunched.aiState.inventory.revision, first.aiState.inventory.revision)
     }
 
+    func testSavedHomeUndoRedoSurvivesRelaunchAndResetsWithTheHousehold() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let keys = InMemoryVaultKeyStore()
+        func store() -> VaultPrivateDataStore {
+            VaultPrivateDataStore(repository: HouseholdVaultRepository(locations: VaultLocations(root: root), keyStore: keys,
+                                                                       protection: VaultFileProtection()))
+        }
+        let first = makeModel(store: store())
+        await first.useSampleHousehold(SampleHouseholds.oak)
+        let original = try XCTUnwrap(first.home)
+        var edited = original; edited.spaces[0].label = "Front room"
+        let saved = await first.updateHome(edited, expectedRevision: original.revision)
+        XCTAssertTrue(saved)
+        XCTAssertTrue(first.canUndoHomeSave)
+        // A fresh model over the same encrypted files is a relaunch: Undo is still there and restores the label.
+        let relaunched = makeModel(store: store())
+        await relaunched.loadPrivateData()
+        XCTAssertTrue(relaunched.canUndoHomeSave)
+        let undone = await relaunched.undoHomeSave()
+        XCTAssertTrue(undone)
+        XCTAssertEqual(relaunched.home?.spaces[0].label, original.spaces[0].label)
+        XCTAssertGreaterThan(relaunched.home?.revision ?? 0, original.revision, "each step is a new revision-checked save")
+        let again = makeModel(store: store())
+        await again.loadPrivateData()
+        XCTAssertTrue(again.canRedoHomeSave)
+        let redone = await again.redoHomeSave()
+        XCTAssertTrue(redone)
+        XCTAssertEqual(again.home?.spaces[0].label, "Front room")
+        // Choosing a family again starts a fresh sidecar: no history from the previous home.
+        await again.useSampleHousehold(SampleHouseholds.lake)
+        XCTAssertFalse(again.canUndoHomeSave)
+        XCTAssertFalse(again.canRedoHomeSave)
+    }
+
     func testAdaptiveExerciseResumesAfterRelaunchAndFailedSaveDoesNotAdvanceIt() async throws {
         let store = ControlledStore()
         let first = makeModel(store: store)

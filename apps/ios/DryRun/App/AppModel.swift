@@ -27,7 +27,10 @@ final class AppModel {
     var home: HomeModel?
     /// Explicitly saved geographic planning places. Coordinates remain separate from indoor floor-plan geometry.
     var savedPlaces: [SavedPlace] = []
-    private(set) var integratedAIState: Data?
+    private(set) var integratedAIState: Data? {
+        // Saved-version Undo/Redo lives in the same sidecar, so it follows every load, save, reset and switch.
+        didSet { if integratedAIState != oldValue { homeHistories = Self.persistedHomeHistories(integratedAIState) } }
+    }
     /// Distinguishes resets even when example IDs, revisions and addresses repeat.
     private(set) var scopeSessionID = UUID().uuidString
     /// Typed view over the one durable opaque sidecar. Mutations use updateAIState.
@@ -379,12 +382,13 @@ final class AppModel {
         model.scenarios = scenarios
         model.engine = engine
         model.household = household
-        model.home = SampleHomes.ranch
+        let previewHome = SampleHomes.forExampleHousehold(SampleHomes.ranch, household)
+        model.home = previewHome
         model.locale = locale ?? household.preferredLocale
         model.phase = .ready
         func input(_ id: String) -> RehearsalInput? {
             guard let s = scenarios.scenarios.first(where: { $0.id == id }) else { return nil }
-            return RehearsalInput(household: household, home: SampleHomes.ranch, scenarioID: id, scenarioVersion: s.version,
+            return RehearsalInput(household: household, home: previewHome, scenarioID: id, scenarioVersion: s.version,
                                   contentVersion: content.contentVersion, seed: 1)
         }
         if let scenarioID, var i = input(scenarioID), var result = try? engine.run(i) {
@@ -403,7 +407,7 @@ final class AppModel {
         }
         if !planScenarios.isEmpty {
             let results = planScenarios.compactMap(input).compactMap { try? engine.run($0) }
-            model.savedPlan = PlanBuilder.build(household: household, home: SampleHomes.ranch, results: results,
+            model.savedPlan = PlanBuilder.build(household: household, home: previewHome, results: results,
                                                 localizer: content.localizer(for: model.locale),
                                                 resources: content.resources(forRegion: household.regionID),
                                                 contentVersion: content.contentVersion, generatedAt: Date())
@@ -465,7 +469,8 @@ final class AppModel {
             return
         }
         var sample = sample
-        let sampleHome = demoHome ?? SampleHomes.ranch
+        // Example homes are shared by all example families; drop markers depicting another family's equipment (F4).
+        let sampleHome = SampleHomes.forExampleHousehold(demoHome ?? SampleHomes.ranch, sample)
         sample.homeID = sampleHome.id
         if demoHome != nil {
             sample.housing.homeType = sampleHome.dwellingType ?? (sampleHome.id.contains("apartment") ? .apartment : .singleFamily)
@@ -792,6 +797,11 @@ final class AppModel {
 
     @discardableResult
     func updateHome(_ newHome: HomeModel, expectedRevision: Int?) async -> Bool {
+        await updateHome(newHome, expectedRevision: expectedRevision, historyStep: nil)
+    }
+
+    /// `historyStep` is the history after an Undo/Redo step; nil records this save as a new undoable version.
+    private func updateHome(_ newHome: HomeModel, expectedRevision: Int?, historyStep: HomeEditHistory?) async -> Bool {
         guard let household else { return false }
         guard var h = HomeEditTransaction.prepare(newHome, baseRevision: expectedRevision, current: home, homeID: household.stableHomeID) else {
             lastError = "This home changed while you were editing. Your draft was kept; reopen the latest home before saving."
@@ -819,12 +829,18 @@ final class AppModel {
                 candidateHousehold.people[index].sleepingSpaceID, from: home, to: h)
         }
         if candidateHousehold != household { candidateHousehold.bumpRevision() }
-        let snapshot = PrivateSnapshot(household: candidateHousehold, home: h, savedPlan: savedPlan,
-                                       savedPlaces: candidatePlaces)
-        guard await save(snapshot: snapshot) else { return false }
-        if recordsHomeHistory, let previous = home, previous.id == h.id {
-            homeHistories[h.id, default: HomeEditHistory(homeID: h.id)].recordSave(replacing: previous)
+        var nextHistory = historyStep ?? homeHistories[h.id]
+        if historyStep == nil, let previous = home, previous.id == h.id {
+            if nextHistory == nil { nextHistory = HomeEditHistory(homeID: h.id) }
+            nextHistory?.recordSave(replacing: previous)
         }
+        var snapshot = PrivateSnapshot(household: candidateHousehold, home: h, savedPlan: savedPlan,
+                                       savedPlaces: candidatePlaces)
+        // The history is written in the same atomic vault save as the home it describes.
+        if let sidecar = sidecarWithHomeHistory(nextHistory, homeID: h.id) { snapshot.integratedAIState = sidecar }
+        guard await save(snapshot: snapshot) else { return false }
+        // Same value the sidecar now holds; kept in memory too when an unreadable sidecar could not take it.
+        if let nextHistory { homeHistories[h.id] = nextHistory }
         self.household = candidateHousehold
         self.home = h
         self.savedPlaces = candidatePlaces
@@ -832,9 +848,9 @@ final class AppModel {
         return true
     }
 
-    /// Undo/redo that survive Save: the last 20 saved versions per home, for this app session.
+    /// Undo/redo that survive Save and relaunch: the last 20 saved versions of the household's home, kept in the
+    /// private sidecar (IntegratedAIState.homeEditHistories, local only, never sent to a provider).
     private(set) var homeHistories: [String: HomeEditHistory] = [:]
-    @ObservationIgnored private var recordsHomeHistory = true
     var canUndoHomeSave: Bool { home.flatMap { homeHistories[$0.id]?.canUndo } ?? false }
     var canRedoHomeSave: Bool { home.flatMap { homeHistories[$0.id]?.canRedo } ?? false }
 
@@ -846,11 +862,24 @@ final class AppModel {
 
     private func stepHomeHistory(_ step: (inout HomeEditHistory, HomeModel) -> HomeModel?) async -> Bool {
         guard let current = home, var history = homeHistories[current.id], let target = step(&history, current) else { return false }
-        recordsHomeHistory = false
-        defer { recordsHomeHistory = true }
-        guard await updateHome(target, expectedRevision: current.revision) else { return false }
-        homeHistories[current.id] = history
-        return true
+        return await updateHome(target, expectedRevision: current.revision, historyStep: history)
+    }
+
+    private struct PersistedHomeHistories: Decodable { var homeEditHistories: [HomeEditHistory]? }
+
+    private static func persistedHomeHistories(_ sidecar: Data?) -> [String: HomeEditHistory] {
+        guard let sidecar, let decoded = try? DryRunJSON.decoder().decode(PersistedHomeHistories.self, from: sidecar) else { return [:] }
+        return Dictionary((decoded.homeEditHistories ?? []).map { ($0.homeID, $0) }, uniquingKeysWith: { _, last in last })
+    }
+
+    /// The current sidecar with `history` as the home's saved-version history, or nil to leave the bytes untouched
+    /// (no change, or an unreadable sidecar that must be preserved for recovery).
+    private func sidecarWithHomeHistory(_ history: HomeEditHistory?, homeID: String) -> Data? {
+        guard var state = try? integratedStateForRehearsal() else { return nil }
+        let before = state.homeEditHistories
+        state.setHomeEditHistory(history?.homeID == homeID ? history : nil)
+        guard state.homeEditHistories != before else { return nil }
+        return PrivateSnapshot.encoded(state)
     }
 
     /// "Mark preparation completed": changes the REAL household state, only on explicit user action.
