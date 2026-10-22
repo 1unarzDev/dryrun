@@ -93,3 +93,15 @@ Each checkpoint records requirement, source/working-tree revision, exact command
 ## Publication checkpoint (2026-10-21)
 
 Owner requested commit and push of the work so far. Branch `codex/native-integration-20261021` preserves this checkout separately from newer remote main `07ebbd6` (17 commits ahead of original base). No merge into current main is claimed. Preparation15 provenance/repair code and scoped server HTTP/wire tests pass; live12-attempt retest remains pending. Full Core passed570 Swift Testing plus18 XCTest cases with three explicit skips across runners, report-night-final-mac-checks-20261021. Latest supporting-role context targeted pass3ed4c0911f09417b9bb57e99660a5768 and unsigned native compilation09b27db17de44128a901108648a73623 cover final source. Device execution remains deferred by owner. See continuation for exact blockers and reconnect queue.
+
+## Integration checkpoint wave 1 (2026-10-21)
+
+Six lead branches merged into `codex/native-integration-20261021` one at a time with `--no-ff`, in order: `lead/codex-context` (Codex primary for every gateway operation with Gemini then Groq fallback, honest failure attribution, prompt package preparation/16, debrief/2, resources/6), `lead/scenario-learning` (six-hazard decision branches, trace and no-action facts, regenerated host-built home-fire director request fixture), `lead/house-simulation` (opening card leads-to, committed-home routes, Not-usable doorway excluded from EgressPlanner/HomeValidator), `lead/preparedness-assessment` (fact-driven Prepare steps, prep.stairPlan, shopping ownership, recordPurchase), `lead/maps-resources` (ResourceRelevance, address origin, contextual meetups), `lead/native-ui` (visual rules, labelled forms, Prepare rings, UIInventoryUITests). No textual conflicts. Merged locale JSON and places JSON parse with no duplicate keys.
+
+Evidence (Mac only; label: deterministic-tested / Mac-build):
+- Core `swift test` after scenario merge: 624 Swift Testing tests passed; after house merge: 624 passed; after preparedness: 640 passed; final after all six: 649 tests in 119 suites passed, XCTest 0 failures with 3 explicit skips.
+- Gateway `pnpm test` (after codex, scenario and final merges): 316 total, 313 passed, 1 failed: `gateway.test.ts` "rejects startup without a secret and exhausts budgets before another provider call". The same test also fails at base `cdb4098` (checked in a detached temporary worktree), so this merge did not cause it. `pnpm typecheck` passed.
+- `xcodegen generate` + unsigned generic-iOS `xcodebuild build` passed after house merge; final `build-for-testing` passed (TEST BUILD SUCCEEDED) after all six merges.
+- `services/public-api` `test/locales.test.ts`: 2 of 11 fail (es/vi translation-drift baseline coverage). The native-UI lead reports this already fails at `cdb4098` (584 unbaselined keys); I did not reproduce it at the base myself.
+
+Not done: no native unit/UI tests executed, no simulator or phone launch, no live provider calls. Nothing in this wave is live-reviewed or device-verified.
