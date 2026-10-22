@@ -94,7 +94,8 @@ final class DemoJourneyUITests: XCTestCase {
     }
 
     /// "Describe your household" → review → add; then County → Tarrant shows county help. Works with or without
-    /// Apple Intelligence on the host (model or keyword reader).
+    /// Apple Intelligence on the host (model or keyword reader). The county is chosen in Help: on the short create
+    /// form it now sits below the contact section, past the intake card, where the first-screen tap no longer found it.
     func testDescribeHouseholdReviewThenTarrantCountyHelp() {
         let app = launch()
         XCTAssertTrue(app.buttons["onboarding.create"].waitForExistence(timeout: 20))
@@ -116,14 +117,14 @@ final class DemoJourneyUITests: XCTestCase {
         XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", "wheelchair")).firstMatch.exists)
         tap("intake.add", in: app)
         XCTAssertTrue(hasText("Mother", in: app), "Added person's relationship is shown under the name")
-        tap("county.picker", in: app)
-        let tarrant = app.buttons["Tarrant County"].firstMatch
-        XCTAssertTrue(tarrant.waitForExistence(timeout: 5))
-        tarrant.tap()
         tap("setup.finishLater", in: app)
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15))
         openPlan(app)
         tap("plan.help", in: app)
+        tap("county.picker", in: app)
+        let tarrant = app.buttons["Tarrant County"].firstMatch
+        XCTAssertTrue(tarrant.waitForExistence(timeout: 5))
+        tarrant.tap()
         XCTAssertTrue(scrollToText("Tarrant County Emergency Management", in: app))
         XCTAssertTrue(scrollToText("Tarrant Ready Alerts", in: app))
         XCTAssertTrue(scrollToText("888-313-4747", in: app))
@@ -286,20 +287,22 @@ final class DemoJourneyUITests: XCTestCase {
         XCTAssertTrue(recorded.exists, "The saved backup meetup should appear as a recorded preparation")
         app.tabBars.buttons.element(boundBy: 1).tap()
         tap("scenario.home-fire", in: app)
+        // Normal entry opens the setup questions first; nothing runs until Start (defaults kept).
+        XCTAssertTrue(element("rehearsal.setup", in: app).waitForExistence(timeout: 15), "Fire opens its setup")
+        tap("rehearsal.setup.start", in: app)
         XCTAssertTrue(element("rehearsal.scene", in: app).waitForExistence(timeout: 15))
         let debrief = element("rehearsal.debrief", in: app)
         XCTAssertTrue(debrief.waitForExistence(timeout: 10))
+        let next = element("rehearsal.next", in: app)
         for _ in 0..<50 {
             if debrief.isEnabled { break }
+            // Next is enabled exactly when no decision is pending, so it chooses the control (see SixHazardUITests).
+            if next.isEnabled { next.tap(); continue }
             let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'")).firstMatch
-            if option.exists {
-                tap(option.identifier, in: app)
-            } else {
-                let next = element("rehearsal.next", in: app)
-                XCTAssertTrue(next.isEnabled, "Exercise has no available next decision or advance")
-                if !next.isEnabled { break }
-                next.tap()
-            }
+            guard option.waitForExistence(timeout: 5) else { XCTFail("Exercise has no available next decision or advance"); break }
+            let id = option.identifier
+            tap(id, in: app)
+            _ = element(id, in: app).waitForNonExistence(timeout: 10)
         }
         XCTAssertTrue(debrief.isEnabled)
         openPlan(app)

@@ -42,7 +42,9 @@ final class UIInventoryUITests: XCTestCase {
             // Onboarding and setup
             Entry(id: "ONB-01", expect: ["onboarding.demo"], household: false),
             Entry(id: "ONB-02", steps: [.tap("onboarding.moreExamples")], expect: ["onboarding.sample."], household: false),
-            Entry(id: "ONB-03", steps: [.tap("onboarding.create")], expect: ["setup.next"], household: false),
+            // The create screen opens with the intake ("describe your household") card and one Save and continue; the
+            // stepped setup.next flow is edit-only now.
+            Entry(id: "ONB-03", steps: [.tap("onboarding.create")], expect: ["intake.text", "setup.finishLater"], household: false),
             // Prepare
             Entry(id: "PREP-01", args: prepare, expect: ["rings.card", "next.actions", "next.step."]),
             Entry(id: "PREP-02", args: prepare, steps: [.tap("next.info")], expect: ["next.about"]),
@@ -70,7 +72,8 @@ final class UIInventoryUITests: XCTestCase {
             Entry(id: "HOME-01", args: prepare + ["-demoHomeMode", "2d"], steps: [.tap("next.home")], expect: ["home.scene"]),
             Entry(id: "HOME-02", args: prepare + ["-demoHomeMode", "3d"], steps: [.tap("next.home")], expect: ["home.scene"]),
             Entry(id: "HOME-03", args: prepare + ["-demoHomeMode", "rooms"], steps: [.tap("next.home")]),
-            Entry(id: "HOME-04", args: prepare + ["-demoHomeMode", "rooms"], steps: [.tap("next.home"), .tapPrefix("home.editRoom.")], expect: ["home.save"]),
+            // Room rows live in the editor opened by home.edit, not in the Rooms list mode.
+            Entry(id: "HOME-04", args: prepare + ["-demoHomeMode", "rooms"], steps: [.tap("next.home"), .tap("home.edit"), .tapPrefix("home.editRoom.")], expect: ["home.save"]),
             Entry(id: "HOME-05", args: prepare + ["-demoHome", "twostory", "-demoHomeMode", "2d", "-demoHomeFloor", "1"], steps: [.tap("next.home")], expect: ["home.scene"]),
             // Plan
             Entry(id: "PLAN-01", args: plan, expect: ["plan.familyCard"]),

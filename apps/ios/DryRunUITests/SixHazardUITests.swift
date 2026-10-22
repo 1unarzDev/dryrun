@@ -71,15 +71,24 @@ final class SixHazardUITests: XCTestCase {
         var decisions = 0, steps = 0
         while !(debrief.exists && debrief.isEnabled), steps < 60 {
             steps += 1
-            let options = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'"))
-            if options.count > 0 {
-                let first = reveal(options.firstMatch, in: app, steps: 8)
-                if decisions == 0 { shot("\(scenario)-03-decision", app) }
-                first.tap(); decisions += 1
+            // Next is enabled exactly when no decision is pending (RehearseViews.controls), so it decides which control
+            // to use. Querying options first matched a card that was still leaving after its answer was being saved
+            // (choose() is async), and the tap on that unresolvable match failed while Next was already enabled.
+            if next.isEnabled {
+                next.tap()
+                if steps == 2 { shot("\(scenario)-04-scene", app) }
                 continue
             }
-            if next.isEnabled { next.tap() }
-            if steps == 2 { shot("\(scenario)-04-scene", app) }
+            let options = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'"))
+            // Neither control yet (an answer still saving): wait briefly for the next card rather than burning steps.
+            guard options.count > 0 else { _ = options.firstMatch.waitForExistence(timeout: 2); continue }
+            let first = reveal(options.firstMatch, in: app, steps: 8)
+            guard first.exists, first.isHittable else { continue }
+            let tappedID = first.identifier
+            if decisions == 0 { shot("\(scenario)-03-decision", app) }
+            first.tap(); decisions += 1
+            // Wait for the answer to be committed before looking again, so the same card is not answered twice.
+            _ = element(tappedID, in: app).waitForNonExistence(timeout: 10)
         }
         XCTAssertTrue(debrief.isEnabled, "\(scenario) reaches its end within 60 steps")
         shot("\(scenario)-05-end", app)
