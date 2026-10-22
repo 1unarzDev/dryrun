@@ -1,0 +1,143 @@
+{
+  "report_id": "report-wave3-debrief5-fallback-validators-six-run-review-20261022",
+  "review_kind": "Dedicated output review (reference 12.4), fresh reviewer, English-only scope; synthetic agent audit only, not real-family, clinical, emergency-responder or competition-judge validation",
+  "run_ids": [
+    "run-5f574deb3b7f49c693041a832c371982",
+    "run-f7dfe73be7e14b2faa8d7c4d31719084",
+    "run-ed5030c389114abf9d7bf71565a66d14",
+    "run-b9c35089dfd049e28ca89c1ce52af440",
+    "run-d24bb82f826f43ea84ac775b777fc3c4",
+    "run-ea3da1d69fe24a94a1d5d5a985282c2d"
+  ],
+  "feature": "Rehearsal debrief debrief/5 (oak freeze-power-loss, lake flash-flood, pine heat-grid-strain), local resource search planning for hh-oak en, rehearsal director freeze/fire/heat on host-initialized oak, and wave-3 host fallback validators after a forced Codex deadline",
+  "fixture_snapshot": "Request bytes (excluding requestID) are identical across all six runs and identical to the v7 review inputs for debrief (oak e98af280, lake 4dcc3374, pine 6e757b49) and resources en (bc689d06). Director inputs: freeze 71b2e424, fire ee5a21a1, heat a9b3da82 (heat only in the two production runs). Snapshots ctx-91da8fcdd5263216 (oak), ctx-ee008541b53a76c (lake), ctx-ed996cc7b6fa101b (pine), ctx-d0554a513720ffc8 (resources). Receipt cascade-engine/2; hazard mechanics dryrun.hazard-mechanics/6. All locales en.",
+  "versions": {
+    "contract": "dryrun.ai/1; director-proposal/1",
+    "debrief": "debrief/5 (host debriefMustAddress + addressedEventIDs coverage, cold-storage, identifier-name, machine-token and en/es locale checks)",
+    "source": "Validator code read from worktree wf_f8c191be-14c-2 at b741d39 (fallback-safety.ts, features.ts, provider-fallback.ts, claim-language.ts). Per the cleared engineering notes, 5f574deb and ed5030c3/d24bb82f/ea3da1d6 ran at 59274df; f7dfe73b and b9c35089 ran at e8aa7b1 (repair hint). The gateway build hash was not independently re-verified by the reviewer.",
+    "providers": "Codex gpt-6.1-sol CLI 0.163.0 per cleared notes; Gemini and Groq fallbacks"
+  },
+  "criteria": {
+    "C1_codex_debrief_oak_water_runout": "PASS 2/2 (5f574deb, f7dfe73b). Both state that stored water ran out (receipt critical depletion event at minute 1980, start amount 5 gal) and do not substitute an intermediate checkpoint amount. Both also name the concentrator power-loss gap and point to the equipment supplier/provider, with the cold-sensitive older adult's recorded helper and the car as the warm-place step.",
+    "C2_codex_debrief_lake_medication_by_kind": "PASS 2/2. Both refer to the medication only by its recorded kind (refrigerated medication; the recorded label is empty, legacy label generic); neither uses the word from the equipment identifier. Both point to the pharmacist (f7dfe73b also to the manufacturer). No power, cooler or ice workaround. Both use the recorded no-car and limited-budget constraints and the recorded adult helper, and frame the choice as leaving early for higher ground (no sheltering recast). Minor (low severity) in 5f574deb only: one clause places the medication-continuity unknown after the phone battery ran out, while the receipt records the medication unknown at minute 240 and the battery depletion at minute 1320. f7dfe73b orders these correctly.",
+    "C3_codex_debrief_pine_charger_gap": "PASS 2/2. Both name the power wheelchair charger losing power with no confirmed backup and point to the manufacturer. The car's not-wheelchair-accessible fact (context.constraints.transport, vehicle wheelchairAccessible=false, confirmed) is applied to the person whose recorded needs include usesWheelchair, which is permitted. f7dfe73b focuses the confirm-medical-backup task and 5f574deb the continuity-plan task; both are valid supplied task IDs.",
+    "C4_codex_debrief_general": "PASS 6/6: English, summaries 325-399 characters, two focusTaskIDs each and all present in tasks, no internal IDs or machine tokens, only recorded choices described, one hazard-specific clause each, no safety or survival promise.",
+    "C5_addressedEventIDs_consistency": "PARTIAL / NOT DIRECTLY EVIDENCED. addressedEventIDs are stripped before the HTTP response and the bundle contains no raw provider proposal, so the reviewer cannot see which IDs Codex listed. Indirect evidence: all six Codex debriefs completed, so the host coverage check passed, and each summary's prose names every required group (oak: water depletion and oxygen device; lake: refrigerated-medication device unknown; pine: charger device unavailable). No contradiction is observable, but extra or mismatched IDs cannot be excluded.",
+    "C6_codex_resources_en": "PASS 2/2. Device continuity plan first (oxygen supplier check against the already-owned battery station before buying), then a warming plan for the cold-sensitive older adult with his recorded helper, then drinking water referencing the recorded 5 gal and the electric well pump. No wheelchair or accessibility attribute appears in any plan (the household's vehicle accessibility fact was not applied to anyone). No grid-dependent heater, no internal IDs or camelCase tokens in purpose, mandatoryCapabilities, unknowns or requiredEvidence; constraints appear in dependencyIDs; cloudReturnPolicy local_only; officialRecommendations empty with no official records supplied. Completion was not empty.",
+    "C7_director_fire_origin": "PASS 2/2. Origin is the closet, which appears in no primary or alternative route for any of the four people (checked programmatically across the preview). Both proposals offer two accompanied-escape choices (both through the front, or child via back and older adult via front), both host-validated feasible, and state that outside accounting is a separate step and that modeled routes do not establish real clearance.",
+    "C8_director_freeze_physical_choice": "FAIL 2/2 (unchanged from v7, not a model defect). At the minute-180 boundary the host preview's feasible commands are only gap recognitions plus an essential-device disconnect; warmLayers and heatedAlternative are supported but not feasible because no warmth item or heated destination is recorded. Both proposals correctly decline the disconnect, offer the two gap recognitions, and explain why no physical warmth choice exists. Stage: Core mechanics/fixture.",
+    "C9_director_heat": "PASS 2/2 (not in the assigned criteria, reported for completeness). Shading choices for occupied rooms plus the oxygen backup-gap recognition, all host-feasible; cooling described as reduced, not lost, at minute 60; no cooled destination claimed.",
+    "C10_fallback_outcomes_truthful": "PASS 4/4 fallback runs, 0/24 operations completed, 0 unsafe deliveries. Every feature response is status unavailable with preservePriorResult true and a reason consistent with the attempt log (provider_validation_failure with the failing check, provider_rate_limit or provider_quota_exhausted with retryAfterMs, provider_invalid_output for Groq json_validate_failed). Every director fallback is unavailable with pause_or_local_director. No fallback generated content reached the response body.",
+    "C11_groq_debrief_rejections_judgment": "LIMITED: the rejected Groq/Gemini proposal text is not in any bundle, so content-level false-positive adjudication is not possible. Mechanism-level judgment: (a) ed5030c3 lake identifier_derived_name: for this household the only identifier-derived word the check can flag is the medication word from the equipment ID, because the purpose, needs, event titles and choice labels contain every other ID word; so the rejection means the post-repair summary used that unrecorded name. Judged a correct rejection (high confidence), the same failure seen in v7. (b) ed5030c3 oak and pine, d24bb82f pine unaddressed_critical_event: mechanically correct (required groups absent from addressedEventIDs after one repair), but likely caused by the host's own Groq compaction, not only model behaviour: compactForGroq keeps only the first 12 non-info receipt events; oak has 18 and its required water-depletion event is beyond position 12; pine has 15 and its required charger-unavailable event is beyond position 12; lake's required event is within the first 12 and lake did not fail coverage. Whether compaction actually triggered is not in the bundle (no provider request captured), but prior notes record that Groq debrief contexts are over budget. These are therefore probable systematic rejections of an under-informed model; content quality of the rejected prose is unknown. (c) d24bb82f lake unsupported_safety_assurance: content not visible. The debrief check flags any un-negated is/are/stay/keep ... safe/protected/fine/okay phrase; a pharmacist-pointer clause phrased as asking whether the medication is safe to use would trip it. False-positive risk is plausible but unconfirmed.",
+    "C12_resources_schema_mismatch_ed5030c3": "UNDETERMINED cause. Groq served two turns (initial plus repair) and the host then reported schema_mismatch; the receipt does not carry the zod issue paths and the proposal is not captured. Nothing was delivered.",
+    "C13_gemini_director_restart_b9c35089": "NOT EVALUABLE for content. In b9c35089 freeze, Gemini served one restart turn after the Codex deadline, the host recorded invalid_evidence, the next Gemini hop returned 503, and Groq was request_too_large. The Gemini proposal and its evidenceIDs are not captured. The rejection direction is safe (nothing delivered). The final body attributes outcome and provider to Groq while carrying Gemini's invalid_evidence as validation, which conflates two hops. Gemini resources in the same run also served one turn then 503; no output captured.",
+    "C14_previously_reported_unsafe_fallback_content": "Water run-out misstatement and dropped device gaps: prevented at the ID level only (coverage requires a cited event ID per group; a model could cite the ID while misstating the amount; prose is not checked). No such content was delivered in these runs. Medication name from ID: prevented and exercised live once (ed5030c3 lake). Wrong locale: en/es check present; not exercised (English only, all Codex outputs English). Heaters during power loss: rejectUtilityDependentPlans maps prep.heatCold to freeze-power-loss under electric heat; not exercised because no fallback resources plan passed schema or capacity. Empty completed resources: unsupported_empty_resources present; not exercised. Net: nothing unsafe delivered, but also nothing useful delivered on any fallback path in 4 runs."
+  },
+  "synopsis": "Codex-served output is stable and good across two repetitions: six debriefs name the household-specific critical consequence (oak water run-out and oxygen gap, lake refrigerated-medication continuity with a pharmacist pointer and no storage workaround or ID-derived name, pine charger gap with a manufacturer pointer), stay in English and under the length limit, and give a concrete first step through the recorded helper. Resource plans lead with device continuity and leak no accessibility attribute. Fire proposals keep the closet origin off every route and offer feasible accompanied exits. The freeze opening still cannot offer a physical warmth choice because the host marks none feasible for this fixture. All four forced-fallback runs ended truthfully unavailable with prior results preserved; the new host checks rejected every Groq debrief that was served, at least one correctly (ID-derived medication name), and two coverage rejections are probably caused by the Groq compaction cutting the very receipt events the host requires. Rejected fallback text, Gemini director output and addressedEventIDs are not captured, which limits false-positive adjudication.",
+  "fact_findings": [
+    "Used correctly by Codex: oak storedWaterGallons 5 gal confirmed plus receipt depletion event; eq-oxygen essential with unknown backup and bk-station 1000 Wh with setup unknown; p-oak-4 coldSensitive/limitedMobility with helper p-oak-2; transport car.",
+    "Used correctly by Codex: lake eq-insulin recorded as refrigerated medication with empty label and needsRefrigeration, powerRequired false; transport noCar; limitedBudget true; p-lake-1 limitedMobility with helper p-lake-2; preferredLocale vi and communication note correctly not used to change the English output.",
+    "Used correctly by Codex: pine eq-chair power wheelchair charger with no backup; p-pine-2 usesWheelchair/cannotUseStairs; vehicle wheelchairAccessible false confirmed.",
+    "Omitted, acceptable: pets water needs, pressure tank gallons; not required by the criteria.",
+    "Projection omission (fallback only, inferred from code and input): compact Groq receipt drops oak evt.freeze-power-loss.res.water-depleted and pine evt.heat-grid-strain.svc.device.eq-chair.unavailable while debriefMustAddress still requires them."
+  ],
+  "failures": [
+    {
+      "id": "F1",
+      "severity": "high (reliability; no unsafe delivery)",
+      "observed": "Groq debrief coverage rejections for oak and pine in 3/3 served attempts",
+      "expected": "A fallback model that sees the events it must address",
+      "impact": "During a Codex outage, oak and pine families get no debrief at all",
+      "stage": "projection (compactForGroq slice of first 12 non-info events)",
+      "confidence": "medium-high"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "observed": "Coverage check is ID-only",
+      "expected": "Consequence named accurately in prose as well",
+      "impact": "A fallback could cite the water event ID yet misstate the amount and pass",
+      "stage": "validation",
+      "confidence": "high (by code inspection)"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "observed": "Debrief safety-phrase check can match neutral question phrasing",
+      "expected": "Reject promises, not questions to a professional",
+      "impact": "Possible false rejection of a good lake debrief (d24bb82f lake undetermined)",
+      "stage": "validation",
+      "confidence": "low-medium"
+    },
+    {
+      "id": "F4",
+      "severity": "medium (unchanged)",
+      "observed": "Freeze opening offers only gap recognitions",
+      "expected": "At least one physical choice",
+      "impact": "Freeze practice opens without a warmth decision for oak",
+      "stage": "Core mechanics/fixture",
+      "confidence": "high"
+    },
+    {
+      "id": "F5",
+      "severity": "low",
+      "observed": "5f574deb lake debrief places the medication-continuity unknown after the battery depletion",
+      "expected": "Receipt order (minute 240 before 1320)",
+      "impact": "Minor timeline imprecision, no wrong action",
+      "stage": "model/prompt",
+      "confidence": "high"
+    },
+    {
+      "id": "F6",
+      "severity": "low (observability)",
+      "observed": "Rejected fallback proposals, Gemini director turns and addressedEventIDs are not retained in the protected bundle; schema_mismatch lacks issue paths; b9c35089 final body mixes Groq outcome with Gemini validation",
+      "expected": "Reviewer-only capture of rejected proposals and per-hop validation codes",
+      "impact": "False-positive rates of the new checks cannot be measured",
+      "stage": "capture harness / diagnostics",
+      "confidence": "high"
+    },
+    {
+      "id": "F7",
+      "severity": "high (availability)",
+      "observed": "0/24 fallback operations completed across 4 runs (Gemini 503/overloaded on every hop, Groq 429, model cooldown about 17-23 minutes, request_too_large for every director, one Groq json_validate_failed)",
+      "expected": "Some useful fallback answer",
+      "impact": "Outside Codex, families currently get only preserved prior results",
+      "stage": "provider capacity and Groq context size",
+      "confidence": "high"
+    }
+  ],
+  "likely_stage": "Codex path: model/prompt is good; remaining freeze-opening defect is Core mechanics/fixture. Fallback path: projection (Groq compaction drops required events), validation (ID-only coverage; broad safety-phrase regex), provider capacity, and capture-harness observability.",
+  "references": [
+    "Debrief responses: event lines 4, 9, 14 in both production bundles; resources line 19; director finals lines 27, 38, 46",
+    "Fire preview spatial origin and routes: host_tool_result line 34 in both production bundles",
+    "Freeze preview feasibleCommands: host_tool_result line 23 (production), line 28 (b9c35089), line 31 (ed5030c3)",
+    "Fallback feature responses: ed5030c3 lines 6, 13, 20, 27; b9c35089 lines 5, 11, 17, 24; d24bb82f lines 6, 13, 20, 27; ea3da1d6 lines 5, 11, 17, 23",
+    "Fallback director responses: ed5030c3 lines 35, 43; b9c35089 lines 33, 41; d24bb82f lines 35, 43; ea3da1d6 lines 31, 39",
+    "Code: provider-fallback.ts compactForGroq debrief branch; fallback-safety.ts requireDebriefCoverage and rejectIdentifierDerivedNames; features.ts debrief validation line with the safe/protected regex"
+  ],
+  "recommendations": [
+    "Projection fix (integration owner): in compactForGroq, always keep every event listed in debriefMustAddress (and the relocation-blocked event), then fill the remaining slots with other caution/critical events; or keep critical events before caution events. Add a deterministic test using the oak and pine v7 receipts asserting every mustAddress event survives compaction.",
+    "Validation: pair the ID coverage with a light prose check per group kind (depletion: summary contains a run-out phrase and no intermediate amount different from the final 0; device: summary mentions the recorded device kind). Keep it deterministic and allowlisted.",
+    "Validation: narrow the debrief safe/protected regex to assertions about the family or plan (subject is you/they/the household/the plan, or will/would forms), and exempt clauses that ask a pharmacist, manufacturer or clinician. Add synthetic cases: a pharmacist question about whether a medication is usable after warming must pass; a statement that the family will be safe must fail.",
+    "Capture harness: write rejected fallback proposals (with their addressedEventIDs) and every director hop's raw proposal into the protected bundle, and include zod issue paths in a machine-only schema_mismatch diagnostic, so a reviewer can measure false positives.",
+    "Director fallback body: report per-hop outcomes (e.g. gemini invalid_evidence, then gemini 503, then groq request_too_large) rather than one provider field.",
+    "Core (scenario/house owner): make a physical warmth choice feasible at the freeze boundary when the household has any recorded warmth-relevant item, or have the fixture record one; otherwise label the opening explicitly as a preparation-gap turn."
+  ],
+  "retests": [
+    "After the compaction fix: forced Codex deadline with Gemini disabled, oak and pine debrief x3 each, English; pass if Groq completes at least 2/3 per family with no coverage rejection and the reviewer confirms correct run-out and charger wording.",
+    "Lake debrief x3 forced to Groq after the regex narrowing; reviewer checks pharmacist pointer, no ID-derived name, no workaround, and that any unsupported_safety_assurance rejection is a real promise.",
+    "Repeat ed5030c3 resources with schema issue paths captured; classify the mismatch.",
+    "Repeat b9c35089 freeze director with raw Gemini turns captured; adjudicate invalid_evidence.",
+    "Codex debrief/5 x3 more per family with addressedEventIDs retained reviewer-side to verify ID/prose consistency."
+  ],
+  "limitations": [
+    "Synthetic agent audit on fictional households; not clinical or emergency-responder validation.",
+    "English only, by assignment. Spanish/Vietnamese not reviewed.",
+    "No native rendering or device capture was reviewed; gateway outputs only.",
+    "Rejected fallback proposals, Gemini restart turns, addressedEventIDs and Groq request payloads are absent from the bundles; judgments on them are mechanism-level inferences from code and inputs.",
+    "Two production repetitions only; fallback runs produced no served content to assess for quality.",
+    "This reviewer authored the recommendations above; a fresh reviewer must assess any candidate that incorporates them."
+  ],
+  "next_owner": "Integration (codex-context) for compaction, validators, diagnostics and capture; Core scenario/house for the freeze opening; orchestrator to schedule the retests with a fresh output reviewer.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

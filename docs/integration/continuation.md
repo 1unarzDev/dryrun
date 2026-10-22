@@ -82,3 +82,24 @@ Open gates:
 - Re-pull Beacon replays with `scripts/mac/pull-beacon-replays.sh` before filming; preparation requests changed again (F4 markers, demoAddress only under its flag).
 - Undo history size in the sidecar (20 full HomeModel versions) needs watching on device. The F4 projection is not yet applied in DryRunHost initialize.
 - Hurricane: only the 'needs review' state can be reached on device. The map segmented control does not scale at AX. VoiceOver has not been audited, and no cleared derivative captures exist.
+
+## Integration checkpoint wave 3 (2026-10-22)
+
+Merged into this branch, in order: `lead3/codex-context`, `lead3/scenario`, `lead3/heldout`, then `c5d75b7` (Core-regenerated host-built director wire fixture). Commands, conflict resolutions, results and the two recorded output-reviewer report IDs are in the ledger section of the same name. Mac results: Core 671 Swift Testing tests passed, XCTest 36 executed with 0 failures and 2 skipped; gateway 356/356; typecheck passes; unsigned generic iOS build-for-testing succeeds. Owner scope this wave: English only. Nothing is agent-device-verified.
+
+Owner-reported device evidence: 2026-10-22 owner edited an opening on their real RoomPlan-scanned home in the app; the edit saved and persisted (owner-reported, physical iPhone 16 Pro; not agent-observed).
+
+What changed for the wave-2 blockers (source or Mac-test level only):
+- Director: circuit breaker after one deadline or transport failure (re-armed by the Beacon switch); DEBUG `-localDirector` pins local-director UI tests off the gateway; DEBUG `-aiGatewayLateResultDelay` for injected late results.
+- Isolation: Core `stateFingerprint` is household-specific; gateway rejects cross-household bindings at identical revisions.
+- Fallback safety: debrief/5 must-address coverage and content checks; resources `utility_dependent_plan`; Groq director instruction Groq/7.
+- Scenario: mechanics v7 freeze gathering (gateway accepts `/7`); receipt device names never blank; UI test reveal waits for scrolling and checks setup identity.
+- Held-out family-heldout/1 executed: 29/30 completed; reviewer verdict do not promote preparation/16.
+
+Open gates:
+- Device (needs reservation): DirectorDeadlineTests (breaker, note key), late-result hook, `HazardChoiceUITests` incl. `testFreezeOpeningOffersGathering`, `SixHazard`, `DemoJourneyUITests` (last decision option clear of the bottom bar), DeviceAudit fire/water, plus the wave-2 device list. Scan-edit checks use `-demoHousehold hh-oak -demoHome scanned` only.
+- Fallback usefulness: Gemini mostly 503 and Groq rate-limited in live runs; Groq compaction drops `debriefMustAddress` events (reviewer fix: keep them); Groq director still `request_too_large` (compact projection or mark unsupported); repair hint untested live on Groq; capture rejected fallback proposals for false-positive review.
+- Freeze opening: v7 gathering choice not yet reviewed by an output reviewer; director/eval fixtures not re-checked against v7.
+- preparation/16 not promoted: f01 lighting and f05 shared-helper misses; Core shared-helper signal and question-slot guidance recommended; fresh sealed held-out set needed. Hold a sleep assertion (`caffeinate -i`) during long sealed captures.
+- Re-pull Beacon replays (`scripts/mac/pull-beacon-replays.sh`) before filming: fingerprint and mechanics v7 change every authorized-context binding.
+- Out of scope / still open: Gemini director internal-ID and `invalid_evidence` rejections; es/vi drift (owner deferred this wave).
