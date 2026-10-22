@@ -111,7 +111,7 @@ Each comparison holds the initial snapshot and the director schedule fixed: the 
 - Full Core suite with firewall capture: `run-65d93ab44760497082e4cdd5090875ac` failed before that fix, and `run-e313c88fa3d5405e96d7ddc1adab3b32` succeeded (exit 0) after it.
 - `DirectorGatewayBridgeTests` regenerates `fixtures/ai/native-bridge/director-request-home-fire.json`. This is a host-built director request, not provider output. The lead did not open it; it adds 11 lines because of the new facts and is committed separately. The gateway `vitest run test/native-bridge.test.ts` validates it against the strict schema: `run-3f0b4c94b2234ec889c8767b5e8fbcef` succeeded.
 - Full gateway `pnpm test` fails in this worktree both with the new fixture (`run-6fc400a99553423ea1480aa3a1665e82`) and with the original fixture restored (`run-0d6305c5279944d5b9414636cc433f3c`). The failure is present without this wave's fixture change and is unrelated to it. The cause has not been diagnosed and needs a reviewer.
-- No native build, simulator, phone or live provider run in this wave. The iOS app sees no public API change.
+- The unsigned generic-iOS `xcodebuild build` passed (`run-fe733a4870924d4d912bbd70fb7254e7`, exit 0), so Mac-build evidence exists. No simulator, phone or live provider run in this wave. The iOS app sees no public API change.
 
 ### Open items and next owners
 
