@@ -87,7 +87,7 @@ const prompts:Record<Role,string>={
 export class FeatureRunner {
  calls=0;usage:unknown[]=[];private quota:OwnerWindowQuota;
  constructor(private provider:AgentProvider,private maxCalls=40,private evidenceTools?:PublicEvidenceTools,private experiments:{preparationInvestigation?:boolean}={},quotaOptions:QuotaWindowOptions={}){this.quota=new OwnerWindowQuota(maxCalls,quotaOptions);}
- async run(role:Role,raw:unknown,signal:AbortSignal=AbortSignal.timeout(60000),rawImages:unknown[]=[],ownerOrConsent?:string|readonly string[],providerConsent?:readonly string[]){
+ async run(role:Role,raw:unknown,signal:AbortSignal=AbortSignal.timeout(60000),rawImages:unknown[]=[],ownerOrConsent?:string|readonly string[],providerConsent?:readonly string[],timeoutMs?:number){
   signal.throwIfAborted();
   const data=context.parse(raw);const authorizedOwner=typeof ownerOrConsent==='string'?ownerOrConsent:undefined;const consent=configuredProviderConsent(this.provider,Array.isArray(ownerOrConsent)?ownerOrConsent:providerConsent);
   if(data.privateContext&&(!data.contextBinding||data.contextBinding.revisions.household!==data.household.revision||data.scene&&data.contextBinding.revisions.home!==data.scene.homeRevision))throw new Error('stale_context');
@@ -101,7 +101,7 @@ export class FeatureRunner {
   const operationAbort=new AbortController();signal=AbortSignal.any([signal,operationAbort.signal]);
   let provider=this.provider;
   try {
-  provider=scopeProvider(this.provider,{signal,providers:consent,capability:rawImages.length||data.images?.length?'image':'privateText',maximumCalls:10});
+  provider=scopeProvider(this.provider,{signal,providers:consent,capability:rawImages.length||data.images?.length?'image':'privateText',maximumCalls:10,timeoutMs});
   if(role==='resources'&&!data.tasks.length)return {searchPlans:[],officialRecommendations:[],question:null};
   const usefulCatalog=(data.taskCatalog??data.tasks).filter(t=>data.allowedActionIDs.includes(t.actionID)&&data.allowedCriterionIDs.includes(t.criterionID)&&!data.completedTaskIDs?.includes(t.id));
   const intakeIDs=[...(data.intake??[]).map(e=>e.id),...(data.images??[]).map(e=>e.id)];

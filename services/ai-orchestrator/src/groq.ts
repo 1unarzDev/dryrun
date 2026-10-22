@@ -7,11 +7,13 @@ export type {FailureKind} from './provider-failure.js';
 /** One shared logical-operation allowance: provider switching/extraction never resets it. */
 export class ProviderOperation {
  readonly id=randomUUID();generation=0;calls=0;reservedUSD=0;transientRetries=0;outputRepairs=0;readonly deadline:number;
+ /** Forward-only provider switches per logical operation: Gemini→Groq is one; Codex→Gemini→Groq is two. */
+ maximumSwitches=1;
  constructor(readonly signal:AbortSignal,readonly maximumCalls=4,readonly maximumUSD=0.10,timeoutMs=90000,private onReserve?:()=>void){this.deadline=Date.now()+timeoutMs;}
  check(generation=this.generation){this.signal.throwIfAborted();if(Date.now()>=this.deadline)throw new ProviderFailure('timeout','operation');if(generation!==this.generation)throw new Error('stale_provider_attempt');}
  reserve(usd:number){this.check();if(this.calls>=this.maximumCalls||this.reservedUSD+usd>this.maximumUSD)throw new Error('operation_budget');this.onReserve?.();this.calls++;this.reservedUSD+=usd;}
  tryOutputRepair(){this.check();if(this.outputRepairs>=1||this.calls>=this.maximumCalls)return false;this.outputRepairs++;return true;}
- switch(){this.check();if(this.generation!==0)throw new Error('provider_switch_budget');return ++this.generation;}
+ switch(){this.check();if(this.generation>=this.maximumSwitches)throw new Error('provider_switch_budget');return ++this.generation;}
 }
 export type GroqSource={id:string;url:string;title:string;content:string;inspection:'search'|'opened'};
 export type GroqResearch={answer:string;sources:GroqSource[];searchSteps:number;inspectionSteps:number;usage:unknown};
@@ -78,7 +80,12 @@ export class GroqClient {
     // Classify the documented machine code, never infer capability from 400 alone.
     // The caller owns its one bounded repair; the adapter does not retry output.
     const invalidGeneratedOutput=status===400&&['json_validate_failed','output_parse_failed'].includes(diagnostic??'');
-    const failure=new ProviderFailure(invalidGeneratedOutput?'invalid_output':status===429?(exhausted?'quota_exhausted':'rate_limit'):status===401||status===403?'configuration':status===400||status===404||status===413?'unsupported':'unavailable','groq',status,retryDelay(response.headers),diagnostic);
+    // Groq reports a request over the per-minute token allowance as HTTP 413 (or 400) with the machine code
+    // rate_limit_exceeded. It is a rate limit, not an unsupported request: the native client must treat it as
+    // replayable and the router as a fallback trigger. Per-day wording remains quota exhaustion.
+    const rateLimited=status===429||diagnostic==='rate_limit_exceeded';
+    const dailyLimit=rateLimited&&/per day|quota.*exhaust|insufficient_quota/i.test(String(detail?.error?.message??''))||diagnostic==='insufficient_quota';
+    const failure=new ProviderFailure(invalidGeneratedOutput?'invalid_output':rateLimited||diagnostic==='insufficient_quota'?(dailyLimit?'quota_exhausted':'rate_limit'):status===401||status===403?'configuration':status===400||status===404||status===413?'unsupported':'unavailable','groq',status,retryDelay(response.headers),diagnostic);
     // This adapter has immutable credential/model configuration. Retrying an
     // authorization failure cannot repair it; construct a corrected adapter.
     if(status===401||status===403)this.configurationFailure=failure;

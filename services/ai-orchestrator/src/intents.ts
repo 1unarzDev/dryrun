@@ -30,7 +30,7 @@ export class IntentInterpreter {
  calls=0;usage:unknown[]=[];private quota:OwnerWindowQuota;
  constructor(private provider:AgentProvider,private maximumCalls=40,quotaOptions:QuotaWindowOptions={}){this.quota=new OwnerWindowQuota(maximumCalls,quotaOptions);}
  async interpret(raw:unknown,signal:AbortSignal=AbortSignal.timeout(30000),owner='internal-intent'){
-  const request=intentRequest.parse(raw);const provider=scopeProvider(this.provider,{signal,providers:configuredProviderConsent(this.provider,request.providerConsent),capability:'privateText',maximumCalls:3});
+  const request=intentRequest.parse(raw);const provider=scopeProvider(this.provider,{signal,providers:configuredProviderConsent(this.provider,request.providerConsent),capability:'privateText',maximumCalls:3,timeoutMs:30000});
   if(inputDigest(request.submission.text)!==request.submission.inputDigest)throw new Error('input_identity');
   const history:import('./provider.js').History=[{type:'user_input',content:[{type:'text',text:JSON.stringify(request)}]}];
   for(let attempt=0;attempt<2;attempt++){

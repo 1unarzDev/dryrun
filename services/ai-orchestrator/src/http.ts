@@ -10,6 +10,9 @@ import {ProviderFailure} from './groq.js';
 import {researchBrief,type ResourceDiscovery} from './resource-discovery.js';
 import {RequestWindow,RequestWindowFailure} from './request-window.js';
 
+/** Whole-operation bound per feature role, inside the native client's own request timeout (95 s for
+ * preparation/debrief/drillSetup/stress, 70 s for resources/home), so a Codex attempt plus a fallback can finish. */
+export function featureTimeoutMs(role:string){return role==='resources'||role==='home'?65000:88000;}
 /** Transport adapter only. Production verification remains an explicit startup dependency. */
 export function createAIRequestHandler({gateway,features,interpreter,authorize,attest,discovery}:{gateway:Gateway;features:FeatureRunner;interpreter:IntentInterpreter;authorize:(header:string|undefined)=>string;attest?:InstallationAuth;discovery?:ResourceDiscovery}):RequestListener {
  const requests=new RequestWindow();
@@ -50,7 +53,8 @@ return async(req,res)=>{
  if(req.url==='/v1/features'){
  const r=z.object({contractVersion:z.literal('dryrun.ai/1'),requestID:z.string().min(1).max(120),synthetic:z.literal(true),role:z.enum(['preparation','debrief','drillSetup','resources','home','stress','council']),providerConsent:z.array(z.enum(['gemini','groq','codex'])).min(1).max(3).optional(),context:featureContext,images:z.array(z.unknown()).max(4).default([])}).strict().parse(input);
  requests.claim(owner,r.requestID);
- const proposal=r.role==='council'?await features.council(r.context,controller.signal,owner,r.providerConsent):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(60000)]),r.images,owner,r.providerConsent);
+ const timeoutMs=featureTimeoutMs(r.role);
+ const proposal=r.role==='council'?await features.council(r.context,controller.signal,owner,r.providerConsent):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(timeoutMs)]),r.images,owner,r.providerConsent,timeoutMs);
  res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,contextBinding:r.context.contextBinding,proposal,...(r.role==='home'?{reviewProposals:normalizeHomeReview(proposal,r.context)}:{})}));return;
  }
  const result=req.url==='/v1/operations'?await gateway.start(owner,input,controller.signal):req.url==='/v1/continue'?await gateway.resume(owner,input,controller.signal):req.url==='/v1/cancel'&&typeof input==='object'&&input!==null&&'token'in input&&typeof input.token==='string'?gateway.cancel(owner,input.token):{status:'rejected',reason:'unknown_endpoint'};
