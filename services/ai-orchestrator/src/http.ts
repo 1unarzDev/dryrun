@@ -7,6 +7,7 @@ import {featureContext,type FeatureRunner} from './features.js';
 import {CodexFailure} from './codex-errors.js';
 import type {InstallationAuth} from './app-attest.js';
 import {ProviderFailure} from './groq.js';
+import {FeatureValidationFailure,providerOutcomeMessages} from './provider-failure.js';
 import {researchBrief,type ResourceDiscovery} from './resource-discovery.js';
 import {RequestWindow,RequestWindowFailure} from './request-window.js';
 
@@ -61,8 +62,11 @@ return async(req,res)=>{
  res.end(JSON.stringify(result));}catch(error){
  if(error instanceof RequestWindowFailure){res.statusCode=error.reason==='request_quota'?429:409;res.end(JSON.stringify({status:'rejected',reason:error.reason}));}
  else if(error instanceof CodexFailure){res.statusCode=error.kind==='throttled'?429:error.kind==='deadline'?504:503;res.end(JSON.stringify({status:'unavailable',reason:'codex_'+error.kind}));}
- else if(error instanceof ProviderFailure){res.end(JSON.stringify({status:'unavailable',reason:`provider_${error.kind}`,retryAfterMs:error.retryAfterMs,diagnostic:error.diagnostic,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
- else if(error instanceof Error&&['provider_rate_limited','provider_overloaded','provider_model_unavailable','provider_access_denied','provider_request_rejected','provider_timeout_or_cancelled','provider_unavailable','spend_budget','operation_budget','research_budget'].includes(error.message)){res.end(JSON.stringify({status:'unavailable',reason:error.message,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
+ // Host validation rejected the served provider's output after one repair: replayable like other provider_ reasons,
+ // but attributed to the provider that served it with an allowlisted validator code (never codex_* for Gemini/Groq).
+ else if(error instanceof FeatureValidationFailure){res.end(JSON.stringify({status:'unavailable',reason:'provider_validation_failure',provider:error.provider,diagnostic:error.code,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
+ else if(error instanceof ProviderFailure){res.end(JSON.stringify({status:'unavailable',reason:`provider_${error.kind}`,provider:error.provider,retryAfterMs:error.retryAfterMs,diagnostic:error.diagnostic,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
+ else if(error instanceof Error&&providerOutcomeMessages.includes(error.message)){res.end(JSON.stringify({status:'unavailable',reason:error.message,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
  else{res.statusCode=400;res.end(JSON.stringify({status:'rejected',reason:'invalid_or_unauthorized_request'}));}}
  finally {req.off('aborted',disconnected);res.off('close',disconnected);}
 };
