@@ -63,7 +63,7 @@ try{
   const host=new Host();
   try{
    for(const hazard of hazards){
-    const runID=randomUUID(),start=Date.now(),usageStart=gateway.metrics.usage.length;let toolRounds=0,status='not_started',reason:string|undefined,committed=false,offered=0,hostAccepted=0,generation:number|undefined;
+    const runID=randomUUID(),start=Date.now(),usageStart=gateway.metrics.usage.length,outcomeStart=gateway.metrics.outcomes.length,validationStart=gateway.metrics.validationFailures.length;let toolRounds=0,status='not_started',reason:string|undefined,committed=false,offered=0,hostAccepted=0,generation:number|undefined;
     try{
      const state=await host.request({op:'initialize',scenarioID:hazard});
      const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home?.revision??0};
@@ -84,7 +84,9 @@ try{
       }catch{committed=false;}
      }
     }catch{status=status==='not_started'?'harness_failure':status;}
-    record({runID,role:'director',hazard,status,reason,toolRounds,hostCommitAccepted:committed,suggestedActionsOffered:offered,suggestedActionsHostAccepted:hostAccepted,providerAttemptGeneration:generation,servedBy:servedBy(gateway.metrics.usage.slice(usageStart)),elapsedMS:Date.now()-start});
+    record({runID,role:'director',hazard,status,reason,toolRounds,hostCommitAccepted:committed,suggestedActionsOffered:offered,suggestedActionsHostAccepted:hostAccepted,providerAttemptGeneration:generation,servedBy:servedBy(gateway.metrics.usage.slice(usageStart)),
+     // Gateway machine codes only; a schema failure keeps just its category before ':'.
+     gatewayOutcomes:gateway.metrics.outcomes.slice(outcomeStart).map(code),validationFailures:gateway.metrics.validationFailures.slice(validationStart).map(v=>code(v.split(':')[0])),elapsedMS:Date.now()-start});
    }
   }finally{host.close();}
  }
