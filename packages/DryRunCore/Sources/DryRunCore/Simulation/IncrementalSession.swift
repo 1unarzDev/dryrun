@@ -199,7 +199,8 @@ public struct SimulationSession: Codable, Sendable {
                     default: throw SessionError.invalidCommand
                     }
                     try supplies?.synchronize(&run)
-                    run.emit("user.\(commit.id)", title: "simulation.user.\(command.kind)", severity: .info, rule: "session.user/1", causedBy: nil, sources: [])
+                    let actionEventID=run.emit("user.\(commit.id)", title: "simulation.user.\(command.kind)", severity: .info, rule: "session.user/1", causedBy: nil, sources: [])
+                    run.hazardProgress?.trace.append(.init(kind:command.kind,subjectIDs:[command.target,command.value].compactMap{$0},eventID:actionEventID))
                     try run.reevaluate(trigger: run.events.last?.id, emit: true)
                 } else {
                     guard directorState?.awaitingUserAction != true || command.kind=="requestDecision" else {throw SessionError.invalidCommand}
@@ -242,6 +243,15 @@ public struct SimulationSession: Codable, Sendable {
         if ["dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5"].contains(mechanicsVersion ?? ""),let ledger=supplies,scenario.hazard == .flashFlood,!run.relocated {
             // Export the actual item/person/location combinations, not a generic
             // retrieve-supplies label that teleports stock from another room.
+            // Timing consequence from the same ledger: stock left in an excluded space versus stock
+            // a household member committed to carry or move before that stage.
+            let affected=Set(run.spatialState?.affectedSpaceIDs ?? [])
+            let lost=ledger.state.items.filter{$0.accessible==false && $0.carrierPersonID==nil && $0.locationID.map(affected.contains)==true}.map(\.id).sorted()
+            let kept=ledger.state.items.filter{$0.accessible==true && ($0.carrierPersonID != nil || $0.locationID != ledger.sources[$0.id]?.locationID)}.map(\.id).sorted()
+            if mechanicsVersion == HazardExperience.version,let next=experience?.debrief.first?.nextActionID {
+                if !lost.isEmpty {experience?.debrief.append(.init(kind:"floodSupplyAccessLost",subjectIDs:Array(lost.prefix(20)),eventIDs:[],nextActionID:"prep.floodPlan"))}
+                if !kept.isEmpty {experience?.debrief.append(.init(kind:"floodSupplyKeptAccessible",subjectIDs:Array(kept.prefix(20)),eventIDs:[],nextActionID:next))}
+            }
             for item in ledger.state.items {
                 for person in run.household.people {
                     let take=SessionCommand(kind:"takeSupply",target:item.id,value:person.id)
@@ -265,8 +275,29 @@ public struct SimulationSession: Codable, Sendable {
                 }
             }
         }
+        if let current=experience {experience=Self.annotateSupportedActions(current,run:run)}
         return SessionReceipt(sessionID: id, revision: revision, eventSequence: run.events.count, contextDigest: digest,
                               snapshot: snapshot, routes: routes, events: run.events, pending: pending, finished: ended, inventory:supplies?.state,directorState:directorState,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance,experience:experience)
+    }
+    /// Explicit limitation when the current state supports no hazard action, distinct from a
+    /// completed educational objective. Never offers an unsupported action to fill the gap.
+    static func annotateSupportedActions(_ experience:HazardExperience,run:RunState)->HazardExperience {
+        // State-derived, so a director finish does not change the final debrief facts.
+        guard experience.mechanicsVersion == HazardExperience.version else {return experience}
+        var result=experience
+        let people=Set(run.household.people.map(\.id))
+        let complete:Bool
+        switch run.scenario.hazard {
+        case .homeFire:complete = !people.isEmpty && people.isSubset(of:Set(experience.outsidePersonIDs)) && people.isSubset(of:Set(experience.accountedPersonIDs))
+        case .tornado:complete = !people.isEmpty && people.isSubset(of:Set(experience.shelteredPersonIDs))
+        case .flashFlood,.freezePowerLoss,.heatGridStrain:complete=experience.relocated
+        case .waterOutage:complete=false
+        }
+        let next=experience.debrief.first?.nextActionID ?? "prep.plan"
+        let actionable=(experience.feasibleCommands ?? []).contains{$0.kind != "identifyGap"}
+        if complete {result.debrief.append(.init(kind:"objectiveReached",subjectIDs:Array(people.sorted().prefix(20)),eventIDs:[],nextActionID:next))}
+        else if !actionable {result.debrief.append(.init(kind:"noSupportedHazardAction",subjectIDs:Array(experience.openGapIDs.prefix(20)),eventIDs:[],nextActionID:next))}
+        return result
     }
     /// State-preserving offline continuation. No default user action, resource reset or authored restart.
     public func fallback(library:ScenarioLibrary)throws->SessionCommit {

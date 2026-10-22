@@ -64,6 +64,14 @@ struct HazardProgress {
     var supportsRefugeArrival:Bool {mechanicsVersion == "dryrun.hazard-mechanics/4" || supportsEscapeAccompaniment}
     var lowerC: Double
     var upperC: Double
+    /// Ordered committed user actions with their emitted session events, so the debrief can
+    /// attribute consequences to the actual trace instead of a hazard-level summary.
+    var trace:[HazardTraceEntry]=[]
+    /// Thermal shelter-in-place commitments evaluated against the state at the moment of choice.
+    var thermalStays:[ThermalStayRecord]=[]
+    /// Flood access-loss stage outcome per person, computed at the stage from committed positions.
+    var refugeLostAtAccessLoss=Set<String>()
+    var refugeHeldAtAccessLoss=Set<String>()
     init(_ hazard: HazardKind,version:String,roomIDs:[String],roomCoverageUnknown:Bool) {
         self.roomCoverageUnknown=roomCoverageUnknown
         mechanicsVersion=version
@@ -80,7 +88,50 @@ struct HazardProgress {
         return range
     }
 }
+struct HazardTraceEntry:Equatable {
+    var kind:String
+    var subjectIDs:[String]
+    var eventID:String
+}
+/// A stay decision records what was in place, never an adequacy or safe-temperature claim.
+struct ThermalStayRecord:Equatable {
+    var choiceID:String
+    var eventID:String
+    var conditioning:ServiceState
+    var protected:Bool
+    var unpoweredEssentialIDs:[String]
+    var exposedSensitivePersonIDs:[String]
+}
 extension RunState {
+    /// Recorded sensitivity relevant to the current thermal hazard only.
+    func thermallySensitive(_ person:Person)->Bool {
+        scenario.hazard == .heatGridStrain ? person.needs.contains(.heatSensitive) : scenario.hazard == .freezePowerLoss ? person.needs.contains(.coldSensitive) : false
+    }
+    var thermalConditioning:ServiceState {services[scenario.hazard == .freezePowerLoss ? Svc.heat:Svc.cooling] ?? .unknown}
+    /// Sensitive people at home whose current room has no recorded protection while conditioning
+    /// is not operational. Heat uses the chosen shaded room; freeze uses recorded warmth (whole home).
+    func thermallyExposedSensitivePeople()->[String] {
+        guard let progress=hazardProgress,[.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),!relocated,thermalConditioning != .operational else {return []}
+        return household.people.filter {person in
+            guard thermallySensitive(person) else {return false}
+            if scenario.hazard == .freezePowerLoss {return progress.protection != "recordedWarmth"}
+            return !progress.shadedRoomIDs.contains(startSpace(for:person))
+        }.map(\.id).sorted()
+    }
+    /// Same route authority and exclusions as the session's `moveTo` command.
+    func canMove(_ person:Person,to destination:String)->Bool {
+        guard let home,home.space(destination) != nil,!isOutside(person.id),startSpace(for:person) != destination else {return false}
+        return planner.plan(RouteRequest(personID:person.id,startSpaceID:startSpace(for:person),mobility:mobility(for:person),
+            exclusions:ScenarioExclusions(blockedSpaceIDs:spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:spatialState?.affectedPortalIDs ?? []),purpose:.helperReach,destinationSpaceID:destination),in:home).primary != nil
+    }
+    /// Adaptive sessions only: record what a thermal stay decision actually committed to.
+    mutating func recordThermalStay(choiceID:String,eventID:String) {
+        guard var progress=hazardProgress,[.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),!relocated else {return}
+        let unpowered=household.equipment.filter{$0.isEssential && services[Svc.device($0.id)] != .operational}.map(\.id).sorted()
+        progress.thermalStays.append(.init(choiceID:choiceID,eventID:eventID,conditioning:thermalConditioning,protected:progress.protection != nil,
+            unpoweredEssentialIDs:unpowered,exposedSensitivePersonIDs:thermallyExposedSensitivePeople()))
+        hazardProgress=progress
+    }
     mutating func advanceHazardTemperature(minutes: Double) {
         guard var progress=hazardProgress, !relocated else {return}
         let hours=minutes/60
@@ -294,6 +345,13 @@ extension RunState {
         for room in home?.spaces ?? [] {candidates.append(.init(kind:"reduceSolarGain",target:room.id))}
         for gap in openHazardGaps() {candidates.append(.init(kind:"identifyGap",target:gap))}
         var valid=candidates.filter { command in var copy=self;return (try? copy.applyHazardAction(command)) != nil }
+        // Heat: a person with recorded heat sensitivity can be moved into an already chosen shaded
+        // room by a supported path. This is the stay-in-place adaptation; it adds no cooling.
+        if scenario.hazard == .heatGridStrain,let progress=hazardProgress,progress.usesRoomHeat,!relocated {
+            for person in household.people where thermallySensitive(person) {
+                for room in progress.shadedRoomIDs.sorted() where canMove(person,to:room) {valid.append(.init(kind:"moveTo",target:person.id,value:room))}
+            }
+        }
         if scenario.hazard == .tornado,services[Svc.handset] == .operational,services[Svc.cellular] == .operational {
             for contact in household.contacts where contact.isComplete {valid.append(.init(kind:"contact",target:contact.id))}
         }
@@ -401,6 +459,29 @@ extension RunState {
             if storedWater == nil {fact("storedWaterQuantityUnknown")}
             else if storedWater == 0 {fact("storedWaterDepleted")}
             if flags.contains(where:{$0.hasPrefix("exercise.water.stored.")}) {fact("storedWaterActivityDebited")}
+        }
+        if [.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),!relocated {
+            // Person-specific stay-in-place consequence from committed positions and protection.
+            let exposed=Set(thermallyExposedSensitivePeople())
+            for person in household.people where thermallySensitive(person) {
+                let room=startSpace(for:person)
+                if exposed.contains(person.id) {fact(scenario.hazard == .heatGridStrain ? "sensitivePersonInUnshadedRoom":"sensitivePersonWithoutRecordedWarmth",[person.id,room],"prep.heatCold")}
+                else if thermalConditioning != .operational {fact(scenario.hazard == .heatGridStrain ? "sensitivePersonInShadedRoom":"sensitivePersonWithRecordedWarmth",[person.id,room])}
+            }
+            for stay in progress.thermalStays {
+                let kind=stay.conditioning == .operational ? "thermalStayWithConditioning":stay.protected ? "thermalStayWithRecordedProtection":"thermalStayWithoutRecordedProtection"
+                facts.append(.init(kind:kind,subjectIDs:[stay.choiceID],eventIDs:[stay.eventID],nextActionID:stay.protected || stay.conditioning == .operational ? next:"prep.heatCold"))
+                if !stay.exposedSensitivePersonIDs.isEmpty {facts.append(.init(kind:"thermalStaySensitivePersonExposed",subjectIDs:Array(([stay.choiceID]+stay.exposedSensitivePersonIDs).prefix(20)),eventIDs:[stay.eventID],nextActionID:next))}
+                if !stay.unpoweredEssentialIDs.isEmpty {facts.append(.init(kind:"thermalStayEssentialEquipmentUnpowered",subjectIDs:Array(([stay.choiceID]+stay.unpoweredEssentialIDs).prefix(20)),eventIDs:[stay.eventID],nextActionID:"prep.medicalBackup"))}
+            }
+        }
+        if scenario.hazard == .flashFlood {
+            if !progress.refugeHeldAtAccessLoss.isEmpty {fact("atHigherRefugeBeforeAccessLoss",progress.refugeHeldAtAccessLoss.sorted())}
+            if !progress.refugeLostAtAccessLoss.isEmpty {fact("refugeApproachLostAtAccessLoss",progress.refugeLostAtAccessLoss.sorted(),"prep.floodPlan")}
+        }
+        // The committed action trace (most recent 24) lets the debrief cite what was actually done.
+        for entry in progress.trace.suffix(24) {
+            facts.append(.init(kind:"action."+entry.kind,subjectIDs:Array(entry.subjectIDs.prefix(20)),eventIDs:[entry.eventID],nextActionID:next))
         }
         for requirement in currentUnmet.sorted() {facts.append(.init(kind:requirement,subjectIDs:[],eventIDs:causes[requirement] ?? [],nextActionID:next))}
         return HazardExperience(mechanicsVersion:progress.mechanicsVersion,hazard:scenario.hazard,scene:scene,objective:objective,supportedActions:actions+["identifyGap"],feasibleCommands:feasibleHazardCommands(),outsidePersonIDs:progress.outside.sorted(),accountedPersonIDs:progress.accounted.sorted(),shelteredPersonIDs:sheltered,destinationIDs:household.transport.destinations.map(\.id),occupantRoomIDs:Dictionary(uniqueKeysWithValues:household.people.map{($0.id,progress.outside.contains($0.id) ? "exterior":startSpace(for:$0))}),shelterRoomID:shelterSpace?.id,escapeHelperByPersonID:progress.supportsEscapeAccompaniment ? progress.escapeHelperByPersonID:nil,refugeRoomID:refuge,refugedPersonIDs:refuged,relocated:relocated,

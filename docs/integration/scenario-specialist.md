@@ -61,3 +61,61 @@ Historical contract reconciliation: released `report-core-full-legacy-digest-dri
 Final current-source full Core receipt `run-785367c583ef443badcdb35ed6407164`: succeeded, exit 0, 19666 ms. Dedicated reviewer requested final count/contract classification. Source edits are frozen at this checkpoint for root's native build. No live/provider/native evidence is inferred from the Core pass; thermal `shelterInPlace`, additional flood timing consequences and complete all-six causal gates remain open.
 
 Exact targeted invocation: `python3 scripts/review/firewall.py capture -- swift test --package-path packages/DryRunCore --filter 'SpatialChoiceCausalityTests|SimulationTests|ScenarioFamilyMatrixTests|SessionInteriorMovementTests|SessionPacingTests|PracticeNonDeviceTests'`. Full invocation omits `--filter`. Both use approved compiler-cache escalation. No generated runtime output or protected test logs inspected by the specialist. Native evidence, all-hazard physical consequences, score lifecycle and family-experience acceptance remain separate gates.
+
+## Lead wave: six-hazard decision branches (branch `lead/scenario-learning`, base `cdb4098`)
+
+Owner: scenario and learning lead. Scope: `packages/DryRunCore/Sources/DryRunCore/Simulation/**` and the new `Tests/DryRunCoreTests/HazardDecisionBranchTests.swift`. Requirements: HAZ-01..06, STRESS-01. No gateway, native, Ranking or Spatial edits. No mechanics version bump: the gateway's `hazardExperience` zod union is strict on fields and `feasibleCommands` must match `userCommand`, so every addition below is a new debrief fact kind (free `commandID` string, at most 100 facts, at most 20 subjects) or an existing command kind (`moveTo`). Replays of persisted v5 sessions stay valid because no previously valid command became invalid and no state or digest input changed. Authored playback has no `HazardProgress`, so the new records are adaptive-only and the versioned `AuthoredAdapterTests` hashes are unchanged.
+
+### Feature-purpose record 1: thermal stay-in-place record (freeze, heat)
+
+- Household and situation: a family that stays home during a freeze or heat outage, especially a member with recorded `coldSensitive` or `heatSensitive` needs (hh-oak's Grandpa, hh-lake's Bà).
+- Improves: the authored `shelterInPlace` options (`keep-warm/layer-up`, `day-two/stay`, `hottest-hours/stay-cool`, `during-outage/stay`, `powered-evening/stay`) used to do nothing. In adaptive sessions they now record what the stay actually committed to: whether conditioning was available, whether recorded warmth or chosen shading was in place, which essential devices were unpowered, and which sensitive people had no protection at that moment.
+- Known inputs and unknowns: services, `HazardProgress.protection`, shaded rooms, committed positions and device services. Thermal effectiveness is still unknown, so choosing to stay never adds warmth, cooling or device power.
+- Why it belongs here: it uses the existing choice and debrief path with no new screen.
+- Next step: one step. For heat the family shades a room (`reduceSolarGain`), and the host now offers `moveTo` for a heat-sensitive person into that shaded room through a supported path, using the same route authority and exclusions as `moveTo`. The stay record and the person's room range then differ.
+- Evidence: debrief facts `thermalStayWithConditioning|WithRecordedProtection|WithoutRecordedProtection`, `thermalStaySensitivePersonExposed`, `thermalStayEssentialEquipmentUnpowered`, `sensitivePersonInShadedRoom|InUnshadedRoom|WithRecordedWarmth|WithoutRecordedWarmth`. Unprotected cases point to `prep.heatCold`, unpowered devices point to `prep.medicalBackup`.
+- Simpler option considered: making `layer-up` apply recorded warmth automatically. It was rejected under v5 because a persisted `choose layer-up` followed by `warmLayers` would stop replaying. It needs a coordinated mechanics version bump with the gateway owner.
+
+### Feature-purpose record 2: flood access-loss timing (refuge and supplies)
+
+- Household and situation: a regional flood where lower spaces join the excluded set at the later `access-lost` stage.
+- Improves: reaching the confirmed refuge, or carrying a supply, before that stage is now recorded as a timing consequence. Waiting is recorded too: the person's approach is lost, and stock left in an excluded space becomes inaccessible.
+- Inputs: positions and refuge routes committed before the stage. These are recomputed from the existing `advanceFloodScene` and ledger, with no depth or arrival-time claim.
+- Evidence: `atHigherRefugeBeforeAccessLoss`, `refugeApproachLostAtAccessLoss` (pointing to `prep.floodPlan`), `floodSupplyAccessLost`, `floodSupplyKeptAccessible`.
+
+### Feature-purpose record 3: explicit no-supported-action versus objective reached
+
+- Situation: a state where the home, needs or resources support no hazard action, for example no exterior exit, a manufactured home with no shelter and no contact, or no stored water while the tap is unavailable.
+- Improves: the receipt now says so with `noSupportedHazardAction`, listing the open gap IDs as subjects. A completed objective (everyone out and accounted, everyone sheltered, or relocation) adds `objectiveReached` instead. No action is invented to fill the gap. The fact is state-derived, so a director `finish` does not change it.
+
+### Feature-purpose record 4: debrief evidence from the action trace
+
+- Improves: each committed user command adds an `action.<kind>` fact with its target and value as subjects and its own session event ID (the most recent 24 are kept). Director and debrief consumers can then explain a consequence from what was actually done, in order, instead of from a hazard-level summary.
+
+### Causal acceptance tests (`HazardDecisionBranchTests`, 13 tests)
+
+Each comparison holds the initial snapshot and the director schedule fixed: the authored event IDs fired are asserted equal across branches. Only household commits vary.
+
+- Fire: exit now versus stay, then account versus not, across ranch/hh-oak, apartment/hh-lake, twoStory/hh-oak, manufactured/hh-pine and scannedRanch/hh-oak. Homes without a supported route assert that no escape is offered. Also covered: an occupied-origin variation and a home with no exterior exit.
+- Tornado: shelter one person, versus also accompanying the child, versus none. The test checks the sheltered sets, `notYetSheltered` and the later accompaniment offer. hh-pine in a manufactured home gets no shelter arrival and an explicit no-action fact.
+- Flood: leave early before the warning, versus carry the supply and reach the refuge before access loss, versus wait. The test checks the refuge approach, supply access and the departed branch's fallback `finish`.
+- Freeze: allocate the station versus hold it, then warmth versus none before the stay choice. The test checks device service, backup Wh, temperature and the stay and sensitive-person records.
+- Heat: shade a room plus move the heat-sensitive person, versus shade only, across apartment, ranch and twoStory. The test checks the occupant room, room range, exposure facts and that the move is retired after use.
+- Water: essential versus all-use allocation, plus a stored-water drink. The test checks the later quantity and that tap use is unavailable. It also covers no stored water with no tap available.
+- Trace: bounded to 24 entries, at most 100 facts in total, and the receipt is identical after restore.
+
+### Evidence (deterministic-tested, Mac only)
+
+- `swift test --filter HazardDecisionBranchTests`: 13/13 passed.
+- Selected simulation regressions (18 suites, 120 tests) found two failures in `DepartureFallbackTests`: the finish-versus-before experience was no longer equal because the no-action annotation was skipped after `finish`. The fix makes the annotation independent of `finish`, and the 16 affected tests pass.
+- Full Core suite with firewall capture: `run-65d93ab44760497082e4cdd5090875ac` failed before that fix, and `run-e313c88fa3d5405e96d7ddc1adab3b32` succeeded (exit 0) after it.
+- `DirectorGatewayBridgeTests` regenerates `fixtures/ai/native-bridge/director-request-home-fire.json`. This is a host-built director request, not provider output. The lead did not open it; it adds 11 lines because of the new facts and is committed separately. The gateway `vitest run test/native-bridge.test.ts` validates it against the strict schema: `run-3f0b4c94b2234ec889c8767b5e8fbcef` succeeded.
+- Full gateway `pnpm test` fails in this worktree both with the new fixture (`run-6fc400a99553423ea1480aa3a1665e82`) and with the original fixture restored (`run-0d6305c5279944d5b9414636cc433f3c`). The failure is present without this wave's fixture change and is unrelated to it. The cause has not been diagnosed and needs a reviewer.
+- No native build, simulator, phone or live provider run in this wave. The iOS app sees no public API change.
+
+### Open items and next owners
+
+- Practice checks: retiring completed checks already exists in `Ranking/HazardPracticeChecks`. Creating new checks from demonstrated gaps should come from `openGapIDs`, `noSupportedHazardAction`, `refugeApproachLostAtAccessLoss` and `thermalStay*` facts. Next owner: the preparedness specialist (Ranking scope).
+- Gateway and director: the director prompt can cite `action.*` facts and the new outcome facts. The gateway owner should confirm that prompt and evaluation fixtures tolerate the extra facts and `moveTo` offers.
+- Thermal effectiveness, and automatic warmth from `layer-up`, need a coordinated v6 mechanics contract. Freeze temperature is still whole-home, not room-scoped.
+- Native: `moveTo` offers for heat should render as a "move <person> to <shaded room>" choice.
