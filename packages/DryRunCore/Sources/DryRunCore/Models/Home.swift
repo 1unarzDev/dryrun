@@ -357,7 +357,7 @@ public enum AlternativeStatus: String, Codable, Sendable, Hashable {
 }
 
 public struct RouteResult: Codable, Sendable, Hashable {
-    public static let algorithmVersion = "egress-portal-graph/2"
+    public static let algorithmVersion = "egress-portal-graph/3"
     public var request: RouteRequest
     public var primary: RoutePath?
     public var alternative: RoutePath?

@@ -50,16 +50,43 @@ public enum ScanCorrections {
         home.portals[index].verification = .verified
     }
 
-    /// "Leads to": the side away from `roomID` becomes `destination` (a room or outside). Confirms the connection.
-    public static func setLeadsTo(_ id: String, from roomID: String, to destination: PortalDestination, in home: inout HomeModel) throws {
+    /// "Leads to": the side away from `roomID` becomes `destination` (a room or outside). Confirms the connection,
+    /// except an "Outside" answer for an opening the captured geometry places between two rooms: that answer is kept
+    /// but stays a proposal (needs checking), so no route uses it as an exit. Returns whether it is confirmed.
+    @discardableResult
+    public static func setLeadsTo(_ id: String, from roomID: String, to destination: PortalDestination, in home: inout HomeModel) throws -> Bool {
         guard let index = home.portals.firstIndex(where: { $0.id == id }) else { throw CorrectionError.missingOpening }
         if case .space(let target) = destination, target == roomID || home.space(target) == nil { throw CorrectionError.invalidRoom }
         var portal = home.portals[index]
         if portal.sideA == .space(roomID) { portal.sideB = destination }
         else if portal.sideB == .space(roomID) { portal.sideA = destination }
         else { portal.sideA = .space(roomID); portal.sideB = destination }
-        portal.verification = .verified
+        let confirmed = !PortalAttachment.exteriorClaimContradictsGeometry(portal, in: home)
+        portal.verification = confirmed ? .verified : .proposed
         home.portals[index] = portal
+        return confirmed
+    }
+
+    /// Whether "Outside" is a supported "Leads to" answer: the opening is in an outside wall (the geometry shows at most
+    /// one room against it). An interior door between two rooms is never offered Outside.
+    public static func canLeadOutside(_ portalID: String, in home: HomeModel, tolerance: GeometryTolerance = .standard) -> Bool {
+        guard let portal = home.portal(portalID) else { return false }
+        return PortalAttachment.interiorRoomPair(portal, in: home, tolerance: tolerance) == nil
+    }
+
+    /// Whether the recorded "Outside" answer contradicts the geometry (rooms on both sides) and so needs checking.
+    public static func outsideNeedsCheck(_ portal: Portal, in home: HomeModel) -> Bool {
+        PortalAttachment.exteriorClaimContradictsGeometry(portal, in: home)
+    }
+
+    /// "That's right" in Check your scan: confirms the recorded answer, except an exterior answer the geometry
+    /// contradicts, which stays a proposal. Returns whether the opening is now confirmed.
+    @discardableResult
+    public static func confirm(_ id: String, in home: inout HomeModel) throws -> Bool {
+        guard let index = home.portals.firstIndex(where: { $0.id == id }) else { throw CorrectionError.missingOpening }
+        guard !PortalAttachment.exteriorClaimContradictsGeometry(home.portals[index], in: home) else { return false }
+        home.portals[index].verification = .verified
+        return true
     }
 
     /// Reversible "Not usable" (blocked, painted shut…): off restores what was known before, never invents "usable".

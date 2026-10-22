@@ -330,6 +330,11 @@ struct Graph {
             return "commonAreaOutsideModel: building corridor/stairs are not modelled or verified"
         }
         if sides.allSatisfy({ $0 == .exterior }) { return "invalidGeometry: both sides exterior" }
+        // egress-portal-graph/3: an "outside" answer on an opening the geometry places between two rooms is never an
+        // exit, even if it was confirmed before this rule existed (ScanCorrections now keeps such answers proposed).
+        if PortalAttachment.exteriorClaimContradictsGeometry(p, in: home, tolerance: tol) {
+            return "portalNotVerified: outside answer on an opening between two rooms"
+        }
         let isExit = p.leadsToExterior
         if p.kind == .window {
             guard isExit else { return "windowNotAWalkingConnection" }

@@ -14,7 +14,14 @@ import Testing
      // This choice was added after the historical capture and requires the new
      // cooling-followup variant. Preserve the exact old input, including old unused choices.
      if alternate {for point in scenario.choicePoints where point.id != "choice.heat-grid-strain.powered-evening" {input.choices[point.id]=point.options.last?.id}}
-     let actual=try SimFixtures.engine.run(input)
+     var actual=try SimFixtures.engine.run(input)
+     // egress-portal-graph/3 changed only exclusions no fixture home exercises (blocked doorway, outside answer on an
+     // interior opening); the historical capture recorded /2. Project the version label back, nothing else.
+     #expect(actual.routes.allSatisfy { $0.algorithmVersion == RouteResult.algorithmVersion })
+     for i in actual.routes.indices { actual.routes[i].algorithmVersion = "egress-portal-graph/2" }
+     for i in actual.snapshots.indices {
+      for j in (actual.snapshots[i].spatialState?.routes ?? []).indices { actual.snapshots[i].spatialState?.routes[j].algorithmVersion = "egress-portal-graph/2" }
+     }
      let key=name+"/"+scenarioID+(alternate ? "/alternate" : "/default")
      let spatial = [.homeFire, .tornado, .flashFlood].contains(scenario.hazard)
      if !spatial {

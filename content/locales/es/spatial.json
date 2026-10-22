@@ -488,5 +488,8 @@
   "spatial.card.revert": "Volver todo el hogar al escaneo",
   "spatial.card.revertConfirm": "¿Deshacer todos los cambios de habitaciones y aberturas desde el escaneo? Luego guarde para conservarlo.",
   "spatial.card.undoSave": "Deshacer el último cambio",
-  "spatial.card.redoSave": "Rehacer"
+  "spatial.card.redoSave": "Rehacer",
+  "spatial.card.outsideInteriorNote": "Afuera solo se ofrece para una abertura en una pared exterior. Esta tiene habitaciones a ambos lados.",
+  "spatial.card.outsideNeedsCheck": "Por revisar: el plano muestra habitaciones a ambos lados, así que las rutas no la usarán como salida. Elija la habitación a la que lleva.",
+  "spatial.show-exit-routes": "Mostrar la salida desde cada habitación de inicio"
 }

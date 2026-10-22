@@ -60,13 +60,15 @@ final class ScanCorrectionsTests: XCTestCase {
         XCTAssertEqual(home.portals, scanned.portals, "Not usable is fully reversible")
         XCTAssertEqual(route(home).primary, before.primary)
 
-        // Leads to: point an interior door outside, then back.
+        // Leads to: point an interior door outside, then back. Rooms on both sides mean the outside answer is kept
+        // only as a proposal (egress-portal-graph/3); answering the other room again confirms it.
         let interior = try XCTUnwrap(home.portals.first { !$0.leadsToExterior && $0.kind == .door })
         guard case .space(let room) = interior.sideA, case .space(let other) = interior.sideB else { return XCTFail() }
-        try ScanCorrections.setLeadsTo(interior.id, from: room, to: .exterior, in: &home)
+        XCTAssertFalse(try ScanCorrections.setLeadsTo(interior.id, from: room, to: .exterior, in: &home))
         XCTAssertTrue(home.portal(interior.id)!.leadsToExterior)
+        XCTAssertEqual(home.portal(interior.id)!.verification, .proposed)
+        XCTAssertTrue(try ScanCorrections.setLeadsTo(interior.id, from: room, to: .space(other), in: &home))
         XCTAssertEqual(home.portal(interior.id)!.verification, .verified)
-        try ScanCorrections.setLeadsTo(interior.id, from: room, to: .space(other), in: &home)
         XCTAssertEqual(home.portal(interior.id)!.sideB, .space(other))
         XCTAssertThrowsError(try ScanCorrections.setLeadsTo(interior.id, from: room, to: .space(room), in: &home))
     }

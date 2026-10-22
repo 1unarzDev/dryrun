@@ -11,7 +11,7 @@ final class NativeGatewayInputExportTests: XCTestCase {
         let date = try XCTUnwrap(ISO8601DateFormatter().date(from:"2026-10-20T12:00:00Z"))
         for (name,household) in [("oak",SampleHouseholds.oak),("lake",SampleHouseholds.lake),("pine",SampleHouseholds.pine)] {
             XCTAssertTrue(household.isFictional)
-            var home = SampleHomes.ranch;home.id = household.stableHomeID
+            var home = SampleHomes.forExampleHousehold(SampleHomes.ranch, household);home.id = household.stableHomeID
             let state = IntegratedAIState();let catalog = PreparationTaskCatalog.build(household:household,home:home,rubric:rubric,at:date)
             XCTAssertFalse(catalog.isEmpty)
             let request = try PreparationFeatureBridge.request(requestID: "native-baseline-\(name)",
@@ -32,7 +32,7 @@ final class NativeGatewayInputExportTests: XCTestCase {
         let date = try XCTUnwrap(ISO8601DateFormatter().date(from:"2026-10-20T12:00:00Z"))
         for (name,household,scenario) in [("oak",SampleHouseholds.oak,"freeze-power-loss"),("lake",SampleHouseholds.lake,"flash-flood"),("pine",SampleHouseholds.pine,"heat-grid-strain")] {
             XCTAssertTrue(household.isFictional)
-            var home = SampleHomes.ranch;home.id = household.stableHomeID
+            var home = SampleHomes.forExampleHousehold(SampleHomes.ranch, household);home.id = household.stableHomeID
             let result = try SimFixtures.run(household, scenario)
             XCTAssertFalse(result.recommendations.isEmpty)
             var request = try DebriefFeatureBridge.request(requestID: "native-debrief-\(name)", scenarioID: scenario, recommendations: result.recommendations,

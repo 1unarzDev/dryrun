@@ -18,6 +18,7 @@ public enum HomeScenePresentation {
               !roomIDs.isEmpty,
               roomIDs.allSatisfy({ home.space($0)?.geometryNeedsReview != true && home.space($0) != nil }),
               PortalAttachment.check(portal, in: home).attached,
+              !PortalAttachment.exteriorClaimContradictsGeometry(portal, in: home),
               portal.kind == .opening || portal.operable.confirmedValue == true else { return .unconfirmed }
         if let mobility = request?.mobility {
             if mobility.requiresStepFree && portal.stepFree.confirmedValue != true { return .unavailable }
