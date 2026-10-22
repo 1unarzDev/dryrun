@@ -73,3 +73,9 @@ New `ScoreRubricInvariantTests` (golden households through the app's own assess 
 - `prep.stairPlan` is not in `PreparationTaskCatalog` mapping (no rubric criterion), so Beacon cannot reorder it; native list shows it.
 - Rehearsal-side use of the stair fact is the scenario/house pair's scope.
 - Device checks requested in the lead return; nothing here is device-verified.
+
+### Evidence (this pass)
+
+- deterministic-tested: targeted suites run directly (no AI output involved): `swift test --filter 'MaterialFactPreparationTests|ScoreRubricInvariantTests|RankingTests|ShoppingListTests|HouseholdAssessmentTests|PreparationInventoryTests|PreparationEditTargetTests|OutageCardAndNextStepsTests|BaselineCoverageTests'` — 61 Swift Testing tests in 10 suites plus 5 XCTest cases passed.
+- deterministic-tested: full Core `python3 scripts/review/firewall.py capture --timeout 1800 -- swift test --package-path packages/DryRunCore`, receipt `run-679963cc1d234f068810d2a7ad1886ec`, succeeded, exit 0 (receipt only; counts not viewed).
+- Mac-build: `xcodegen generate && xcodebuild build -project DryRun.xcodeproj -scheme DryRun -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO` — BUILD SUCCEEDED. Not device-verified.
