@@ -30,7 +30,10 @@ final class AuthorizedAIContextTests: XCTestCase {
         let minimal=try XCTUnwrap(JSONSerialization.jsonObject(with:encoder.encode(HouseholdContextSnapshot(h))) as? [String:Any])
         XCTAssertNil(minimal["privateLocation"]);XCTAssertNil((minimal["people"] as? [[String:Any]])?.first?["alias"])
         // Cleared authored synthetic engineering input, never a live household or model response.
-        if let path=ProcessInfo.processInfo.environment["DRYRUN_CONTEXT_WIRE_PATH"] { try bytes.write(to:URL(fileURLWithPath:path),options:.atomic) }
+        // Written on every run so the gateway's strict-schema test (private-context.test.ts) reads current Core bytes.
+        let wire=ProcessInfo.processInfo.environment["DRYRUN_CONTEXT_WIRE_PATH"].map{URL(fileURLWithPath:$0)}
+            ?? SimFixtures.repoRoot.appendingPathComponent("fixtures/ai/native-bridge/authorized-context-wire.json")
+        try bytes.write(to:wire,options:.atomic)
     }
     func testSnapshotIdentityTracksMaterialChangesAndSessionIsolation() throws {
         var h=household();let state=IntegratedAIState()

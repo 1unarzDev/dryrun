@@ -9,6 +9,7 @@ import {AppAttestVerifier,InstallationAuth} from './app-attest.js';
 import {GroqResourceDiscovery} from './groq-discovery.js';
 import {ResourceDiscovery} from './resource-discovery.js';
 import {configuredProviders} from './provider-routing.js';
+import {quotaLimitsFromEnv} from './owner-window-quota.js';
 const production=process.env.NODE_ENV==='production';
 const attestAppID=process.env.DRYRUN_APPATTEST_APP_ID;
 const attest=attestAppID?new InstallationAuth(new AppAttestVerifier(attestAppID,
@@ -20,9 +21,11 @@ if(!production&&secret.length<24)throw new Error('local_fixture_token_required')
 const {gemini,groqClients,codex,provider}=await configuredProviders();
 console.log(`provider_chain ${codex?'codex,':''}gemini${groqClients?',groq':''}`);
 const interpreter=new IntentInterpreter(provider);
-const gateway=new Gateway(provider);const features=new FeatureRunner(provider,40,await PublicEvidenceTools.bundled('../..'));
+const limits=quotaLimitsFromEnv();
+console.log(`quota_window feature_turns=${limits.featureTurns} director_starts=${limits.directorStarts} director_turns=${limits.directorTurns} http_requests=${limits.httpRequests}`);
+const gateway=new Gateway(provider,undefined,limits.directorTurns,limits.directorStarts);const features=new FeatureRunner(provider,limits.featureTurns,await PublicEvidenceTools.bundled('../..'));
 const discovery=new ResourceDiscovery(gemini,12,()=>new Date(),groqClients?new GroqResourceDiscovery(groqClients.client,()=>new Date(),groqClients.extractor):undefined);
-createServer(createAIRequestHandler({gateway,features,interpreter,attest,discovery,authorize:header=>{
+createServer(createAIRequestHandler({gateway,features,interpreter,attest,discovery,maximumRequests:limits.httpRequests,authorize:header=>{
  if(attest&&header?.startsWith('Bearer v1.'))return attest.authorize(header);
  return fixtureAuthorize(header,secret,production);
 }})).listen(Number(process.env.PORT??8788),developmentListenHost());

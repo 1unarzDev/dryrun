@@ -2191,6 +2191,11 @@
     }
   },
   "contractVersion" : "dryrun.ai/1",
+  "providerConsent" : [
+    "codex",
+    "gemini",
+    "groq"
+  ],
   "requestID" : "native-home-fire-1",
   "role" : "director",
   "synthetic" : true

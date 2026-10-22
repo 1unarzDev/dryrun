@@ -8,7 +8,8 @@
 #   --codex        accepted for older notes; Codex-first is already the default
 #   --config-only  write the app config and exit without starting the gateway
 # Reads services/ai-orchestrator/.env (GOOGLE_AI_STUDIO_KEY, CODEX_LB_API_KEY, GROQ_API_KEY, DRYRUN_DEV_TOKEN, PORT,
-# DRYRUN_MAX_USD). Codex runs on this Mac under the synthetic-only capability profile
+# DRYRUN_MAX_USD, and optional DRYRUN_*_PER_WINDOW call windows; the gateway logs its quota_window at startup and
+# each request's status/reason/diagnostic/outcome/servedBy codes). Codex runs on this Mac under the synthetic-only capability profile
 # (services/ai-orchestrator/profiles/codex-local-synthetic.json); if it cannot start, the gateway says so and serves
 # Gemini/Groq. Provider keys stay on the Mac; the app gets only the gateway URL and the local fixture token, in a git-ignored bundle file.
 # Personal Hotspot fallback: turn on the iPhone's hotspot, join it from the Mac, then run this script with --install
@@ -72,6 +73,13 @@ start_gateway() {
   local extra=()
   # Demo spend cap: .env wins; otherwise a higher cap than the 0.25 USD per 10 minutes the server defaults to.
   [ -n "$(env_value DRYRUN_MAX_USD)" ] || extra+=("DRYRUN_MAX_USD=2")
+  # Synthetic reviewer profile: a device review matrix (Prepare x families, many director turns) must not be cut short
+  # by the production-shaped ten-minute call windows (40 feature turns, 12 director starts, 40 director turns,
+  # 100 HTTP requests). Fictional households only; spend and per-operation bounds are unchanged. .env values win.
+  [ -n "$(env_value DRYRUN_FEATURE_TURNS_PER_WINDOW)" ] || extra+=("DRYRUN_FEATURE_TURNS_PER_WINDOW=400")
+  [ -n "$(env_value DRYRUN_DIRECTOR_STARTS_PER_WINDOW)" ] || extra+=("DRYRUN_DIRECTOR_STARTS_PER_WINDOW=120")
+  [ -n "$(env_value DRYRUN_DIRECTOR_TURNS_PER_WINDOW)" ] || extra+=("DRYRUN_DIRECTOR_TURNS_PER_WINDOW=600")
+  [ -n "$(env_value DRYRUN_HTTP_REQUESTS_PER_WINDOW)" ] || extra+=("DRYRUN_HTTP_REQUESTS_PER_WINDOW=1000")
   # Codex first (synthetic-only capability profile), then Gemini, then Groq; --gemini drops Codex.
   if [ "$CODEX" = 1 ]; then
     have codex || warn "codex CLI not found: Beacon falls back to Gemini/Groq for every request"

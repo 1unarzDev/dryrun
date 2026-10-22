@@ -3,8 +3,8 @@ import XCTest
 
 final class DirectorPrivateContextTests: XCTestCase {
     func testFullCanonicalDirectorRequestIsBoundToExactReceiptAndDerivedScore() throws {
-        guard let root = ProcessInfo.processInfo.environment["DRYRUN_AUTHORED_CONTENT_ROOT"] else { throw XCTSkip("Explicit authored content root required") }
-        let url = URL(fileURLWithPath: root)
+        // The checked-out authored content is the default root, so this wire test runs in the standard check.
+        let url = ProcessInfo.processInfo.environment["DRYRUN_AUTHORED_CONTENT_ROOT"].map { URL(fileURLWithPath: $0) } ?? SimFixtures.repoRoot
         let library = try ScenarioLibrary.load(from: url.appendingPathComponent("content/scenarios"))
         let scenario = try XCTUnwrap(library.scenario("water-outage"))
         let household = SampleHouseholds.oak
@@ -31,8 +31,11 @@ final class DirectorPrivateContextTests: XCTestCase {
             state: state, scopeSessionID: "family-scope-a"))
         XCTAssertThrowsError(try DirectorGatewayBridge.operationRequest(requestID: "no-state", session: session, receipt: receipt, library: library,
             scopeSessionID: "family-scope-a"))
-        if let output = ProcessInfo.processInfo.environment["DRYRUN_DIRECTOR_WIRE_PATH"] {
-            try DryRunJSON.encoder().encode(request).write(to: URL(fileURLWithPath: output), options: .atomic)
-        }
+        XCTAssertEqual(request.providerConsent, ["codex", "gemini", "groq"], "fictional households consent to the whole chain")
+        // Exact native bytes for the gateway's strict schema test (services/ai-orchestrator/test/director-private-context.test.ts).
+        // Authored synthetic household only; never a model response.
+        let output = ProcessInfo.processInfo.environment["DRYRUN_DIRECTOR_WIRE_PATH"].map { URL(fileURLWithPath: $0) }
+            ?? SimFixtures.repoRoot.appendingPathComponent("fixtures/ai/native-bridge/director-private-context-wire.json")
+        try DryRunJSON.encoder().encode(request).write(to: output, options: .atomic)
     }
 }

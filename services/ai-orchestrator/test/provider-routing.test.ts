@@ -89,7 +89,7 @@ describe('Codex-primary capability-aware routing',()=>{
   expect(log).toEqual(['codex']);
   expect(codexFallbackEligible(new CodexFailure('cancelled'))).toBe(false);expect(codexFallbackEligible(new Error('request_budget'))).toBe(true);
  });
- it('continues a mid-operation Codex failure on Groq, whose projection accepts another model\'s tool calls',async()=>{
+ it('restarts a mid-operation Codex failure on the next consented provider (Gemini) without Codex tool history',async()=>{
   const log:string[]=[];let codexTurns=0;
   const call={type:'function_call' as const,id:'codex-call-1',name:'read_household_context',arguments:{sections:['family']}};
   const codex=scripted('codex',[async()=>{codexTurns++;return {steps:[call],text:'',calls:[call],usage:{}};},async()=>{throw new CodexFailure('throttled');}],log);
@@ -97,7 +97,7 @@ describe('Codex-primary capability-aware routing',()=>{
   const scoped=router.scope({signal:AbortSignal.timeout(20000),providers:all,capability:'privateText'});
   const h=history();const first=await scoped.turn(turn(h));h.push(...first.steps,{type:'function_result',name:call.name,call_id:call.id,result:[{type:'text',text:'{"records":[]}'}]});
   await scoped.turn(turn(h));
-  expect(codexTurns).toBe(1);expect(log).toEqual(['codex','codex','groq']);expect(scoped.attemptGeneration).toBe(1);
+  expect(codexTurns).toBe(1);expect(log).toEqual(['codex','codex','gemini']);expect(scoped.attemptGeneration).toBe(1);
  });
  it('bounds a stalled Codex turn, closes its session and leaves the reserve for Gemini',async()=>{
   const log:string[]=[];let aborted=false;

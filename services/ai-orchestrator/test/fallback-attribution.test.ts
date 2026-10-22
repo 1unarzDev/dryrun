@@ -136,11 +136,17 @@ describe('versioned prompt package and resource text',()=>{
   expect(instructions[0]).toContain('DryRun preparation prompt/16.');expect(instructions[0]).toContain(preparationV16.instruction);
   expect(instructions[1]).toContain('DryRun preparation prompt/15.');expect(instructions[1]).not.toContain('preparation/16 priorities');
  });
- it('sends debrief/2 with the no-receipt framing and resources/6 with the internal-ID rule',async()=>{
+ it('sends debrief/3 with the host rehearsal receipt and resources/6 with the internal-ID rule',async()=>{
   const instructions:string[]=[];
   const provider:AgentProvider={async turn(input){instructions.push(input.instruction);return reply(JSON.stringify({summary:'Plan to leave early before water rises with the recorded helper.',focusTaskIDs:['task-a']}));}};
   await new FeatureRunner(provider).run('debrief',debrief);
-  expect(instructions[0]).toContain('DryRun debrief prompt/2.');expect(instructions[0]).toContain('never as something the rehearsal showed');
+  expect(instructions[0]).toContain('DryRun debrief prompt/3.');expect(instructions[0]).toContain('never as something the rehearsal showed');expect(instructions[0]).toContain('debrief.rehearsal');
+  // D1: the host rehearsal receipt passes the strict context schema and reaches the provider unchanged.
+  const receipt={version:'dryrun.rehearsal-receipt/1',engineVersion:'engine-1',variants:[],choices:[{decisionID:'decision-leave',simMinute:30,optionID:'leave-early',recommended:true,label:'Leave early'}],unansweredDecisionIDs:[],events:[{id:'event-warning',simMinute:0,phaseID:'warning',severity:'caution',title:'Flood warning'}],finalServices:{'svc.power':'operational'},unmetRequirements:[],unknowns:[],routes:[],interventions:[]};
+  const seen:string[]=[];const withReceipt:AgentProvider={async turn(input){seen.push(JSON.stringify(input.history[0]));return reply(JSON.stringify({summary:'You left early before water rose; keep that plan.',focusTaskIDs:['task-a']}));}};
+  await new FeatureRunner(withReceipt).run('debrief',{...debrief,debrief:{scenarioID:'flash-flood',rehearsal:receipt}});
+  expect(seen[0]).toContain('leave-early');
+  await expect(new FeatureRunner(withReceipt).run('debrief',{...debrief,debrief:{scenarioID:'flash-flood',rehearsal:{...receipt,modelNote:'x'}}})).rejects.toThrow();
  });
  it('rejects internal IDs in user-visible resource plan text, then fails with the validator code',async()=>{
   const plan={id:'plan-a',taskID:'task-a',dependencyIDs:['p-a'],hazardIDs:['flash-flood'],category:'pharmacy',purpose:'Find a pharmacy for context.family.person.p-a',mandatoryCapabilities:['Pharmacy'],unknowns:['Hours'],travelMode:'walking',maximumDistanceKm:5,expansionLimit:1,requiredEvidence:['Pharmacy identity'],cloudReturnPolicy:'local_only'};

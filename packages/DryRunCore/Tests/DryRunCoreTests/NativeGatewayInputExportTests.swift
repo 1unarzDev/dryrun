@@ -33,9 +33,23 @@ final class NativeGatewayInputExportTests: XCTestCase {
         for (name,household,scenario) in [("oak",SampleHouseholds.oak,"freeze-power-loss"),("lake",SampleHouseholds.lake,"flash-flood"),("pine",SampleHouseholds.pine,"heat-grid-strain")] {
             XCTAssertTrue(household.isFictional)
             var home = SampleHomes.ranch;home.id = household.stableHomeID
-            let result = try SimFixtures.run(household, scenario)
+            // A finished rehearsal with committed answers, as the app has it: the first decision takes a
+            // non-recommended option and the rest the recommended one, so the receipt records a real lesson.
+            let plain = try SimFixtures.run(household, scenario, home: home)
+            var choices: [String: String] = [:]
+            for (index, decision) in plain.decisions.enumerated() {
+                let pick = index == 0 ? (decision.options.first { !$0.isRecommended } ?? decision.options.first) : (decision.options.first { $0.isRecommended } ?? decision.options.first)
+                if let pick { choices[decision.id] = pick.id }
+            }
+            let result = try SimFixtures.run(household, scenario, choices: choices, home: home)
             XCTAssertFalse(result.recommendations.isEmpty)
+            // The app's own English text for authored keys (event titles with their values, option labels).
+            let localizer = try ContentLibrary.load(from: URL(fileURLWithPath: repo).appendingPathComponent("content")).localizer(for: "en")
+            var labels: [String: String] = [:]
+            for event in result.events { labels[event.id] = localizer.text(event.titleKey, event.templateValues).text }
+            for decision in result.decisions { for option in decision.options { labels[option.labelKey] = localizer.text(option.labelKey).text } }
             var request = try DebriefFeatureBridge.request(requestID: "native-debrief-\(name)", scenarioID: scenario, recommendations: result.recommendations,
+                rehearsal: result, labels: labels,
                 household: household, home: home, inventory: IntegratedAIState().inventory, rubric: rubric, at: date,
                 state: IntegratedAIState(), scopeSessionID: "native-debrief-\(name)", locale: "en")
             request.providerConsent = ["codex", "gemini", "groq"]

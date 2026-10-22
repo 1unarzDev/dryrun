@@ -84,7 +84,7 @@ struct AdaptiveRehearsalView: View {
                 VStack(alignment: .leading, spacing: Theme.Space.xs) { clockLabel(minute); directorLabel(exercise) }
             }
             .font(.footnote.weight(.semibold)).foregroundStyle(.secondary)
-            if let narration = exercise.narration, exercise.lastDirector == .gemini {
+            if let narration = exercise.narration, exercise.lastDirector?.isRemote == true {
                 // Model prose is a suggestion; the scene above and the events below are the committed facts.
                 Text(narration).font(.callout).foregroundStyle(.secondary)
                 Text(l("adaptive.narrationNote")).font(.caption).foregroundStyle(.secondary)
@@ -115,7 +115,7 @@ struct AdaptiveRehearsalView: View {
 
     @ViewBuilder private func directorLabel(_ exercise: AppModel.AdaptiveExercise) -> some View {
         if let director = exercise.lastDirector {
-            Label(model.localizer("adaptive.director.\(director.rawValue)"), systemImage: director == .gemini ? "sparkles" : "iphone")
+            Label(model.localizer("adaptive.director.\(director.rawValue)"), systemImage: director.isRemote ? "sparkles" : "iphone")
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -328,7 +328,7 @@ struct AdaptiveRehearsalView: View {
                 Label(awaiting ? l("ui.rehearse.chooseAbove") : l("adaptive.next"), systemImage: awaiting ? "hand.point.up" : "forward.frame")
             }
             .buttonStyle(PrimaryButtonStyle(tint: finished ? Color.secondary : Theme.accent))
-            .disabled(awaiting || finished || model.isWorking)
+            .disabled(awaiting || finished || model.isWorking || model.directorTurnInFlight)
             .accessibilityIdentifier("adaptive.next")
             Button { Task { await model.submitAdaptive([SessionCommand(kind: "finish")]) } } label: {
                 Label(l("adaptive.end"), systemImage: "stop.circle")

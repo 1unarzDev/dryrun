@@ -1080,14 +1080,29 @@ final class AppModel {
 
     // MARK: - Adaptive exercise
 
-    enum DirectorSource: String, Sendable { case local, gemini }
+    /// Who proposed a director turn. A gateway turn is labelled by the provider the gateway reports as having served
+    /// it (`servedBy`); `beacon` is a gateway turn whose serving provider was not reported. Locale keys:
+    /// adaptive.director.<rawValue>.
+    enum DirectorSource: String, Sendable {
+        case local, codex, gemini, groq, beacon
+        init(servedBy: String?) {
+            switch servedBy {
+            case "codex": self = .codex
+            case "gemini": self = .gemini
+            case "groq": self = .groq
+            default: self = .beacon
+            }
+        }
+        /// A gateway (model) turn rather than this phone's local director.
+        var isRemote: Bool { self != .local }
+    }
 
     struct AdaptiveExercise: Sendable {
         var session: SimulationSession
         var receipt: SessionReceipt
         /// The receipt before the newest commit, so the scene can say what this turn changed.
         var previous: SessionReceipt?
-        /// Who proposed the newest director turn, and its unverified narration (Gemini only).
+        /// Who proposed the newest director turn, and its unverified narration (gateway turns only).
         var lastDirector: DirectorSource?
         var narration: String?
         /// Household/home/content revision the session's frozen snapshot was taken from.
@@ -1103,6 +1118,7 @@ final class AppModel {
               let scenario = scenarios.scenario(scenarioID) else { return }
         let scope = scopeSessionID, originalData = integratedAIState
         if !restart, adaptive?.session.initial.scenarioID == scenarioID, adaptive?.sourceKey == key { return }
+        cancelDirectorTurn()
         let home = self.home
         if !restart, let resumable = aiState.sessions.last(where: { s in
             s.mechanicsVersion != nil && s.initial.scenarioID == scenarioID && s.initial.household == household && s.initial.home == home
@@ -1120,22 +1136,27 @@ final class AppModel {
                                    contentVersion: content.contentVersion, seed: 1)
         let library = scenarios
         workInFlight += 1
-        defer { workInFlight -= 1 }
+        var opened = false
         do {
             let (session, receipt) = try await Task.detached(priority: .userInitiated) {
                 let session = try SimulationSession.initialize(id: "exercise-\(UUID().uuidString)", initial: input, library: library)
                 return (session, try session.query(library: library))
             }.value
-            guard currentKey == key, scopeSessionID == scope, integratedAIState == originalData else { return }
-            var state = try integratedStateForRehearsal()
-            state.sessions.append(session)
-            guard await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: savedPlan,
-                savedPlaces: savedPlaces, aiState: state)), currentKey == key, scopeSessionID == scope else { return }
-            adaptive = AdaptiveExercise(session: session, receipt: receipt, previous: nil, lastDirector: nil, narration: nil, sourceKey: key)
-            await advanceAdaptive()
+            if currentKey == key, scopeSessionID == scope, integratedAIState == originalData {
+                var state = try integratedStateForRehearsal()
+                state.sessions.append(session)
+                if await save(snapshot: PrivateSnapshot(household: household, home: home, savedPlan: savedPlan,
+                    savedPlaces: savedPlaces, aiState: state)), currentKey == key, scopeSessionID == scope {
+                    adaptive = AdaptiveExercise(session: session, receipt: receipt, previous: nil, lastDirector: nil, narration: nil, sourceKey: key)
+                    opened = true
+                }
+            }
         } catch {
             lastError = String(describing: error)
         }
+        // The first director turn runs outside the opening work, so End stays available while Beacon answers.
+        workInFlight -= 1
+        if opened { await advanceAdaptive() }
     }
 
     /// The family's action. Validated by the Core reducer; an infeasible action is reported, never mapped to a default.
@@ -1144,6 +1165,8 @@ final class AppModel {
         guard let exercise = adaptive, !exercise.receipt.finished else { return false }
         let commit = SessionCommit(id: "user-\(UUID().uuidString)", actor: "user", baseRevision: exercise.session.revision, commands: commands)
         guard let scenarios else { return false }
+        // The family's action (End included) always wins over a director turn still in flight.
+        cancelDirectorTurn()
         return await commitAdaptive(director: nil, narration: nil) { session in try session.commit(commit, library: scenarios) }
     }
 
@@ -1343,8 +1366,13 @@ final class AppModel {
             let values = rec.localizedTemplateValues(household: household, localizer: localizer)
             return (rec.id, localizer(rec.titleKey, values) + ". " + localizer(rec.whyKey, values))
         }, uniquingKeysWith: { a, _ in a })
+        // Host receipt labels: the app's own text for the rehearsal's events and the family's chosen options.
+        var labels: [String: String] = [:]
+        for event in result.events { labels[event.id] = localizer(event.titleKey, event.templateValues) }
+        for decision in result.decisions { for option in decision.options { labels[option.labelKey] = localizer(option.labelKey) } }
         guard var request = try? DebriefFeatureBridge.request(requestID: "debrief-\(UUID().uuidString)", scenarioID: result.input.scenarioID,
-                                                              recommendations: result.recommendations, readable: readable, household: household,
+                                                              recommendations: result.recommendations, readable: readable,
+                                                              rehearsal: result, labels: labels, household: household,
                                                               home: home, inventory: aiState.inventory, rubric: rubric, state: aiState,
                                                               places: savedPlaces, scopeSessionID: scopeSessionID, locale: locale, currentScorecard: currentHostScorecard) else {
             beaconDebrief = (input, expectedKey, .unavailable("context")); return
@@ -1362,40 +1390,63 @@ final class AppModel {
         }
     }
 
-    /// Opt-in for this app session only: Gemini directs the next moments of a fictional household's exercise.
+    /// Opt-in for this app session only: Beacon (the gateway: Codex first, then Gemini, then Groq) directs the next
+    /// moments of a fictional household's exercise.
     /// Requires a development gateway (launch arguments); real households never use it until production authorization.
     /// On by default wherever Beacon is configured (fictional households only); the switch turns it off for the session.
     var cloudDirectorEnabled = DirectorGatewayClient.current != nil
     /// Why the last cloud turn fell back to this phone, shown beside the scene; nil when it did not.
     private(set) var directorFallbackNote: String?
+    /// The director transport; the gateway client in the app, a fake in unit tests.
+    var directorTransport: (any DirectorTransport)? = DirectorGatewayClient.current
+    /// Whole-turn bound for a gateway director turn (all tool rounds). Past it, the turn is cancelled and this phone's
+    /// local director takes the step, so a stalled provider never leaves the exercise stuck.
+    var directorDeadline: Duration = .seconds(18)
+    /// A gateway director turn is running. It does not count as `isWorking`, so End stays available; a second Next
+    /// while it runs is ignored. The UI shows brief progress from this (adaptive.director.inFlight).
+    var directorTurnInFlight: Bool { directorTurnID != nil }
+    private var directorTurnID: UUID?
+    private var directorRace: DirectorRace<GatewayDirectorOutcome>?
 
-    var cloudDirectorAvailable: Bool { DirectorGatewayClient.current != nil && household?.isFictional == true }
+    var cloudDirectorAvailable: Bool { directorTransport != nil && household?.isFictional == true }
 
-    /// One director turn. With the cloud director enabled, Gemini proposes through the gateway (tool calls run
-    /// read-only on this phone at the same revision); otherwise, or whenever that fails, the local director proposes.
-    /// Either way Core validates the proposal before anything is saved or shown.
+    /// Cancels a gateway director turn in flight (family action, End, restart or close). Its result is never applied.
+    private func cancelDirectorTurn() {
+        guard directorTurnInFlight else { return }
+        directorGate.invalidate()
+        directorTurnID = nil
+        directorRace?.finish(.failure("cancelled"))
+        directorRace = nil
+    }
+
+    /// One director turn. With the cloud director enabled, the gateway proposes (tool calls run read-only on this
+    /// phone at the same revision) within `directorDeadline`; otherwise, or whenever that fails or runs out of time,
+    /// the local director proposes. Either way Core validates the proposal before anything is saved or shown.
     func advanceAdaptive() async {
-        guard !privateWriteInFlight, let exercise = adaptive, let scenarios, let key = currentKey, !exercise.receipt.finished,
+        guard !directorTurnInFlight, !privateWriteInFlight, let exercise = adaptive, let scenarios, let key = currentKey, !exercise.receipt.finished,
               exercise.receipt.directorState?.awaitingUserAction != true else { return }
         let scope = scopeSessionID
         let ticket = directorGate.begin(for: key)
         directorFallbackNote = nil
-        if cloudDirectorEnabled, cloudDirectorAvailable, let client = DirectorGatewayClient.current,
+        if cloudDirectorEnabled, cloudDirectorAvailable, let transport = directorTransport,
            exercise.session.initial.household.isFictional {
-            workInFlight += 1
-            let outcome = await geminiProposal(client: client, exercise: exercise, library: scenarios)
-            workInFlight -= 1
+            let turn = UUID()
+            directorTurnID = turn
+            let outcome = await boundedGatewayTurn(transport: transport, exercise: exercise, library: scenarios)
+            if directorTurnID == turn { directorTurnID = nil }
             guard scopeSessionID == scope, directorGate.shouldApply(ticket, current: currentKey),
                   adaptive?.session.id == exercise.session.id, adaptive?.session.revision == exercise.session.revision else { return }
             switch outcome {
-            case .success(let proposal, let binding):
-                let applied = await commitAdaptive(director: .gemini, narration: proposal.purpose) { session in
+            case .success(let proposal, let binding, let source):
+                let applied = await commitAdaptive(director: source, narration: proposal.purpose) { session in
                     try proposal.commit(to: &session, binding: binding, library: scenarios, persist: { _ in })
                 }
                 if applied { return }
                 directorFallbackNote = localizer("adaptive.fallback.rejected")
             case .waitingForFamily:
                 return
+            case .deadline:
+                directorFallbackNote = localizer("adaptive.fallback.deadline")
             case .failure:
                 directorFallbackNote = localizer("adaptive.fallback.unavailable")
             }
@@ -1406,11 +1457,38 @@ final class AppModel {
         await commitAdaptive(director: .local, narration: nil) { session in try session.commit(commit, library: scenarios) }
     }
 
-    private enum GeminiOutcome: Sendable { case success(DirectorProposal, AgentContextBinding), waitingForFamily, failure(String) }
+    enum GatewayDirectorOutcome: Sendable {
+        case success(DirectorProposal, AgentContextBinding, DirectorSource)
+        case waitingForFamily
+        case deadline
+        case failure(String)
+    }
+
+    /// Runs one gateway operation under `directorDeadline`. On the deadline the operation is cancelled (the request
+    /// task, then a best-effort cancel of the latest gateway token) and `.deadline` returns at once, even if the
+    /// transport ignores cancellation; its late result is discarded.
+    private func boundedGatewayTurn(transport: any DirectorTransport, exercise: AdaptiveExercise, library: ScenarioLibrary) async -> GatewayDirectorOutcome {
+        let tokens = DirectorTokenBox()
+        let work = Task { @MainActor [weak self] () -> GatewayDirectorOutcome in
+            guard let self else { return .failure("released") }
+            return await self.gatewayProposal(transport: transport, exercise: exercise, library: library, tokens: tokens)
+        }
+        let race = DirectorRace(work, deadline: directorDeadline, timeout: GatewayDirectorOutcome.deadline)
+        directorRace = race
+        let outcome = await race.value
+        if directorRace === race { directorRace = nil }
+        if case .success = outcome {} else {
+            // Deadline, family action or failure: stop the request and release the gateway job.
+            work.cancel()
+            if let token = tokens.current { Task { await transport.cancel(token: token) } }
+        }
+        return outcome
+    }
 
     /// Runs one gateway operation to completion. Each tool call executes through Core on the unchanged session; if the
     /// family acts or the exercise changes meanwhile, the operation is cancelled and nothing from it is applied.
-    private func geminiProposal(client: DirectorGatewayClient, exercise: AdaptiveExercise, library: ScenarioLibrary) async -> GeminiOutcome {
+    private func gatewayProposal(transport: any DirectorTransport, exercise: AdaptiveExercise, library: ScenarioLibrary,
+                                 tokens: DirectorTokenBox) async -> GatewayDirectorOutcome {
         let session = exercise.session, receipt = exercise.receipt
         guard let expectedKey = preparationAIKey, let rubric else { return .failure("context") }
         await refreshScorecard(force: true)
@@ -1422,13 +1500,14 @@ final class AppModel {
                                                                          receipt: receipt, library: library, state: aiState, places: savedPlaces, tasks: tasks,
                                                                          scopeSessionID: scopeSessionID, locale: locale, currentScorecard: currentHostScorecard) else { return .failure("context") }
         let binding = request.context.binding
-        var outcome = await client.start(request)
+        var outcome = await transport.start(request)
         // The gateway allows at most 6 provider calls per operation (up to 5 model tool calls), then asks this phone
         // to validate the final proposal's suggested actions once (validateSuggestedActions) before completing.
         for _ in 0..<6 {
             guard case .needsTools(let token, let toolBinding, let call) = outcome else { break }
-            guard toolBinding == binding, preparationAIKey == expectedKey, adaptive?.session.id == session.id, adaptive?.session.revision == session.revision else {
-                await client.cancel(token: token)
+            tokens.current = token
+            guard !Task.isCancelled, toolBinding == binding, preparationAIKey == expectedKey, adaptive?.session.id == session.id, adaptive?.session.revision == session.revision else {
+                await transport.cancel(token: token)
                 return .failure("stale")
             }
             let execution = Task.detached(priority: .userInitiated) {
@@ -1436,19 +1515,19 @@ final class AppModel {
             }
             let result: DirectorGatewayBridge.ToolResult
             do { result = try await execution.value } catch {
-                await client.cancel(token: token)
+                await transport.cancel(token: token)
                 return .failure("tool_rejected")
             }
-            outcome = await client.resume(token: token, binding: binding, callID: call.id, result: result, expectedContextBinding: request.context.contextBinding)
+            outcome = await transport.resume(token: token, binding: binding, callID: call.id, result: result, expectedContextBinding: request.context.contextBinding)
         }
         switch outcome {
-        case .completed(let proposal):
-            guard preparationAIKey == expectedKey, adaptive?.session.id == session.id, adaptive?.session.revision == session.revision else { return .failure("stale") }
-            return .success(proposal, binding)
+        case .completed(let proposal, let servedBy):
+            guard !Task.isCancelled, preparationAIKey == expectedKey, adaptive?.session.id == session.id, adaptive?.session.revision == session.revision else { return .failure("stale") }
+            return .success(proposal, binding, DirectorSource(servedBy: servedBy))
         case .needsUserAction: return .waitingForFamily
-        case .unavailable: return .failure("unavailable")
+        case .unavailable(let reason): return .failure(reason)
         case .needsTools(let token, _, _):
-            await client.cancel(token: token)
+            await transport.cancel(token: token)
             return .failure("tool_budget")
         }
     }
@@ -1598,7 +1677,7 @@ final class AppModel {
         }
     }
 
-    func closeAdaptive() { adaptive = nil; directorFallbackNote = nil }
+    func closeAdaptive() { cancelDirectorTurn(); adaptive = nil; directorFallbackNote = nil }
 
     // MARK: - Plans
 

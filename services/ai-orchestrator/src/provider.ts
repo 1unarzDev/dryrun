@@ -7,7 +7,11 @@ export type ProviderID='gemini'|'groq'|'codex';
 export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number;timeoutMs?:number};
 /** defaultConsent: providers an omitted consent list may use (the deployment's configured chain, never Groq).
  * attemptProvider: which provider served the latest turn of a scoped operation (machine metadata only). */
-export interface AgentProvider { readonly providerID?:ProviderID;readonly defaultConsent?:readonly ProviderID[];readonly attemptProvider?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
+export interface AgentProvider { readonly providerID?:ProviderID;failover?(history:History):Promise<boolean>;readonly defaultConsent?:readonly ProviderID[];readonly attemptProvider?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
+/** Allowlisted serving-provider ID for wire responses (servedBy): the provider that served the final turn, or 'host'
+ * when the host answered without a model call. Anything else is not reported. */
+export type ServedBy='codex'|'gemini'|'groq'|'host';
+export function servedProviderID(provider:AgentProvider):Exclude<ServedBy,'host'>|undefined{const id=provider.attemptProvider??provider.providerID;return id==='codex'||id==='gemini'||id==='groq'?id:undefined;}
 /** Omitted consent uses the explicitly configured deployment provider; explicit lists never expand. */
 export function configuredProviderConsent(provider:AgentProvider,requested?:readonly string[]){return requested??provider.defaultConsent??[provider.providerID??'gemini'];}
 export function scopeProvider(provider:AgentProvider,options:ProviderScope):AgentProvider {
