@@ -213,8 +213,11 @@ final class AppModel {
 
     /// Records the purchase as confirmed inventory through the same path as supply intake.
     func markBought(_ item: ShoppingList.Item) async -> Bool {
-        guard let household else { return false }
-        return await confirmInventory([ShoppingList.purchase(item, household: household, at: Date())])
+        guard household != nil else { return false }
+        let date = Date()
+        return await updateAIState { state, household in
+            try state.recordPurchase(item, household: &household, baseHouseholdRevision: household.revision, at: date) { _, _ in }
+        }
     }
 
     // MARK: - Weather alerts (NWS, Tarrant County)
