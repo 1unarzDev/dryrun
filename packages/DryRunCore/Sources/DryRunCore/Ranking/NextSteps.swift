@@ -94,13 +94,15 @@ public enum NextSteps {
             best[canonical] = baseline
             best.removeValue(forKey: key)
         }
+        let budget = household.supplies.limitedBudget
         let steps = best.map { id, value in
             NextStep(recommendation: value.rec, sourceScenarioID: value.scenario,
                      scenarioIDs: (scenarios[id] ?? []).sorted { PlanBuilder.order($0) < PlanBuilder.order($1) },
                      completedAt: household.completedPreparations.first { PreparationCompletion.isValid($0, for: value.rec, household: household, home: home) }?.completedAt)
         }
         .sorted {
-            RecommendationRanker.prepareOrderKey($0.recommendation, breadth: $0.scenarioIDs.count) < RecommendationRanker.prepareOrderKey($1.recommendation, breadth: $1.scenarioIDs.count)
+            RecommendationRanker.prepareOrderKey($0.recommendation, breadth: $0.scenarioIDs.count, limitedBudget: budget)
+                < RecommendationRanker.prepareOrderKey($1.recommendation, breadth: $1.scenarioIDs.count, limitedBudget: budget)
         }
         return NextStepsSummary(
             toDo: steps.filter { $0.completedAt == nil },

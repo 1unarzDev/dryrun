@@ -332,7 +332,7 @@ struct FocusedHouseholdEditor: View {
     }
     @ViewBuilder private func checklistFields(_ id: String, titleKey: String) -> some View {
         let l = model.localizer
-        if let person = draft?.people.first(where: { id == "medication.person.\($0.id)" }) {
+        if let person = draft?.people.first(where: { id == "medication.person.\($0.id)" || id == "stairPlan.person.\($0.id)" }) {
             Section { Text(person.localizedLabel(l)).font(.headline) }
         }
         if let equipment = draft?.equipment.first(where: { id == "medication.equipment.\($0.id)" || id == "equipmentSupplies.\($0.id)" }) {
@@ -358,6 +358,7 @@ struct FocusedHouseholdEditor: View {
         if ["fireDrill", "wellFloodPlan", "floodPlan"].contains(id) {
             Text(l("prep.\(id).why")).font(.footnote)
         }
+        if id.hasPrefix("stairPlan.") { Text(l("family.stairPlanNote")).font(.footnote) }
         if id.hasPrefix("medication.") || id.hasPrefix("equipmentSupplies.") {
             Text(l(id.hasPrefix("medication.") ? "family.medicationAvailability" : "family.equipmentSupplies")).font(.footnote)
         }
@@ -438,8 +439,9 @@ struct FocusedHouseholdEditor: View {
         let l = model.localizer
         let record = fact(id)
         return Section {
-            TriStateRow(title: l(id == "fireDrill" ? "family.fireDrillRecord" : (["floodPlan", "wellFloodPlan", "reconnect", "heatCold"].contains(id) ? "family.planRecorded" : "family.haveItem")), value: record.available)
-            TextField(l(id == "fireDrill" ? "family.drillInstructions" : (id == "floodPlan" ? "family.floodInstructions" : (id == "wellFloodPlan" ? "family.wellInstructions" : "family.locationOfItem"))), text: record.location, axis: .vertical)
+            let stairs = id.hasPrefix("stairPlan.")
+            TriStateRow(title: l(id == "fireDrill" ? "family.fireDrillRecord" : (["floodPlan", "wellFloodPlan", "reconnect", "heatCold"].contains(id) || stairs ? "family.planRecorded" : "family.haveItem")), value: record.available)
+            TextField(l(id == "fireDrill" ? "family.drillInstructions" : (id == "floodPlan" ? "family.floodInstructions" : (id == "wellFloodPlan" ? "family.wellInstructions" : (stairs ? "family.stairInstructions" : "family.locationOfItem")))), text: record.location, axis: .vertical)
             TextField(l("family.notes"), text: record.notes, axis: .vertical)
             if BaselinePreparedness.definitions.contains(where: { $0.id == id }) || id == "pets" {
                 Toggle(l("family.recordedCheck"), isOn: Binding(get: { record.wrappedValue.checkedAt != nil }, set: { record.wrappedValue.checkedAt = $0 ? Date() : nil }))
