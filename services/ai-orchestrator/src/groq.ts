@@ -7,11 +7,13 @@ export type {FailureKind} from './provider-failure.js';
 /** One shared logical-operation allowance: provider switching/extraction never resets it. */
 export class ProviderOperation {
  readonly id=randomUUID();generation=0;calls=0;reservedUSD=0;transientRetries=0;outputRepairs=0;readonly deadline:number;
+ /** Forward-only provider switches per logical operation: Gemini→Groq is one; Codex→Gemini→Groq is two. */
+ maximumSwitches=1;
  constructor(readonly signal:AbortSignal,readonly maximumCalls=4,readonly maximumUSD=0.10,timeoutMs=90000,private onReserve?:()=>void){this.deadline=Date.now()+timeoutMs;}
  check(generation=this.generation){this.signal.throwIfAborted();if(Date.now()>=this.deadline)throw new ProviderFailure('timeout','operation');if(generation!==this.generation)throw new Error('stale_provider_attempt');}
  reserve(usd:number){this.check();if(this.calls>=this.maximumCalls||this.reservedUSD+usd>this.maximumUSD)throw new Error('operation_budget');this.onReserve?.();this.calls++;this.reservedUSD+=usd;}
  tryOutputRepair(){this.check();if(this.outputRepairs>=1||this.calls>=this.maximumCalls)return false;this.outputRepairs++;return true;}
- switch(){this.check();if(this.generation!==0)throw new Error('provider_switch_budget');return ++this.generation;}
+ switch(){this.check();if(this.generation>=this.maximumSwitches)throw new Error('provider_switch_budget');return ++this.generation;}
 }
 export type GroqSource={id:string;url:string;title:string;content:string;inspection:'search'|'opened'};
 export type GroqResearch={answer:string;sources:GroqSource[];searchSteps:number;inspectionSteps:number;usage:unknown};
@@ -46,7 +48,7 @@ export function parseGroqResearch(raw:unknown):GroqResearch {
 export type GroqMessage={role:'system'|'user'|'assistant'|'tool';content:string|null;tool_calls?:{id:string;type:'function';function:{name:string;arguments:string}}[];tool_call_id?:string};
 export type GroqRequestKind='search'|'functions'|'structured'|'text';
 export class GroqClient {
- readonly model:string;private circuit=new QuotaCircuit();private tokenWindow?:{remaining:number;resetAt:number};private configurationFailure?:ProviderFailure;
+ readonly model:string;private circuit=new QuotaCircuit();private tokenWindow?:{remaining:number;resetAt:number};private tokenCeiling?:number;private configurationFailure?:ProviderFailure;
  constructor(private key:string,model=process.env.DRYRUN_GROQ_MODEL??'openai/gpt-oss-120b',private transport:typeof fetch=fetch,private observeSyntheticResponse?:(raw:unknown,kind:GroqRequestKind)=>void){if(!key)throw new ProviderFailure('configuration','groq');if(!['openai/gpt-oss-120b','openai/gpt-oss-20b'].includes(model))throw new ProviderFailure('unsupported','groq');this.model=model;}
  async request(messages:GroqMessage[],operation:ProviderOperation,options:{search?:boolean;schema?:Record<string,unknown>;functions?:{type:'function';function:{name:string;description?:string;parameters?:Record<string,unknown>}}[];toolMode?:'required'|'auto'|'none';signal?:AbortSignal;reasoningEffort?:'low'|'medium'|'high';maximumOutputTokens?:number}={}):Promise<unknown>{
   if((options.search||options.functions?.length)&&options.schema)throw new ProviderFailure('unsupported','groq');
@@ -55,6 +57,8 @@ export class GroqClient {
   if(this.configurationFailure)throw this.configurationFailure;
   const bytes=Buffer.byteLength(JSON.stringify(messages));if(bytes>220000)throw new Error('request_budget');
   const known=this.tokenWindow,estimatedTokens=Math.ceil((bytes+JSON.stringify(options.schema??{}).length+JSON.stringify(options.functions??[]).length)/4)+(options.maximumOutputTokens??(options.search?3500:options.functions?.length?1200:2200));
+  // A request larger than the tier's whole per-minute token ceiling can never be admitted; do not spend a call on it.
+  if(this.tokenCeiling!==undefined&&estimatedTokens>this.tokenCeiling)throw new ProviderFailure('request_too_large','groq',undefined,undefined,'request_exceeds_token_limit');
   if(known&&known.remaining<estimatedTokens&&known.resetAt>Date.now()){
    const delay=known.resetAt-Date.now();
    if(delay<=60000&&operation.deadline-Date.now()>delay+8000){await boundedDelay(delay+100,AbortSignal.any([operation.signal,...(options.signal?[options.signal]:[])]));operation.check(generation);}
@@ -66,7 +70,7 @@ export class GroqClient {
   try {
    // Native fetch has no automatic retries. Abort fences result acceptance even if transport ignores it.
    const pending=this.transport('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{Authorization:`Bearer ${this.key}`,'Content-Type':'application/json'},body:JSON.stringify(body),signal});
-   const response=await abortable(pending,signal);const remaining=response.headers.get('x-ratelimit-remaining-tokens'),reset=resetDuration(response.headers.get('x-ratelimit-reset-tokens'));if(remaining!==null&&Number.isFinite(Number(remaining))&&reset!==undefined)this.tokenWindow={remaining:Number(remaining),resetAt:Date.now()+reset};operation.check(generation);signal.throwIfAborted();
+   const response=await abortable(pending,signal);const ceiling=Number(response.headers.get('x-ratelimit-limit-tokens')??NaN);if(Number.isFinite(ceiling)&&ceiling>0)this.tokenCeiling=ceiling;const remaining=response.headers.get('x-ratelimit-remaining-tokens'),reset=resetDuration(response.headers.get('x-ratelimit-reset-tokens'));if(remaining!==null&&Number.isFinite(Number(remaining))&&reset!==undefined)this.tokenWindow={remaining:Number(remaining),resetAt:Date.now()+reset};operation.check(generation);signal.throwIfAborted();
    if(!response.ok){const status=response.status;const detail=await response.json().catch(()=>({})) as any;const knownCodes=['json_validate_failed','output_parse_failed','tool_use_failed','rate_limit_exceeded','insufficient_quota','model_not_found','invalid_api_key','model_decommissioned'];const diagnostic=knownCodes.includes(detail?.error?.code)?String(detail.error.code):undefined;this.observeSyntheticResponse?.({error:{status,code:diagnostic,type:typeof detail?.error?.type==='string'?detail.error.type:undefined,message:typeof detail?.error?.message==='string'?detail.error.message.replace(/org_[a-zA-Z0-9]+/g,'[redacted-org]').slice(0,400):undefined,failedToolNames:typeof detail?.error?.failed_generation==='string'?[...detail.error.failed_generation.matchAll(/<function=([a-zA-Z0-9_]+)/g)].map(m=>m[1]):[]}},kind);const exhausted=status===429&&/per day|quota.*exhaust|insufficient_quota/i.test(String(detail?.error?.message??''));const delay=retryDelay(response.headers);
     // Synthetic development only: status, code and a redacted message, never the request.
     if(status===429)this.circuit.failure(delay);else this.circuit.release(quotaGeneration);
@@ -78,7 +82,15 @@ export class GroqClient {
     // Classify the documented machine code, never infer capability from 400 alone.
     // The caller owns its one bounded repair; the adapter does not retry output.
     const invalidGeneratedOutput=status===400&&['json_validate_failed','output_parse_failed'].includes(diagnostic??'');
-    const failure=new ProviderFailure(invalidGeneratedOutput?'invalid_output':status===429?(exhausted?'quota_exhausted':'rate_limit'):status===401||status===403?'configuration':status===400||status===404||status===413?'unsupported':'unavailable','groq',status,retryDelay(response.headers),diagnostic);
+    // Groq reports a request over the per-minute token allowance as HTTP 413 (or 400) with the machine code
+    // rate_limit_exceeded. It is a rate limit, not an unsupported request: the native client must treat it as
+    // replayable and the router as a fallback trigger. Per-day wording remains quota exhaustion.
+    // A 413/400 rate_limit_exceeded for a request whose estimate exceeds the advertised per-minute ceiling is not
+    // transient: it is request_too_large (no retry hint), so neither the router nor a client waits into it again.
+    const tooLarge=status!==429&&diagnostic==='rate_limit_exceeded'&&this.tokenCeiling!==undefined&&estimatedTokens>this.tokenCeiling;
+    const rateLimited=!tooLarge&&(status===429||diagnostic==='rate_limit_exceeded');
+    const dailyLimit=rateLimited&&/per day|quota.*exhaust|insufficient_quota/i.test(String(detail?.error?.message??''))||diagnostic==='insufficient_quota';
+    const failure=tooLarge?new ProviderFailure('request_too_large','groq',status,undefined,'request_exceeds_token_limit'):new ProviderFailure(invalidGeneratedOutput?'invalid_output':rateLimited||diagnostic==='insufficient_quota'?(dailyLimit?'quota_exhausted':'rate_limit'):status===401||status===403?'configuration':status===400||status===404||status===413?'unsupported':'unavailable','groq',status,retryDelay(response.headers),diagnostic);
     // This adapter has immutable credential/model configuration. Retrying an
     // authorization failure cannot repair it; construct a corrected adapter.
     if(status===401||status===403)this.configurationFailure=failure;

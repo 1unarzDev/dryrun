@@ -29,7 +29,7 @@ it('rejects a driving search strategy for a household with no car after bounded 
  const plan={...fixture.resources.searchPlans[0],travelMode:'driving'};
  let calls=0;
  const runner=new FeatureRunner({async turn(){calls++;return {steps:[],calls:[],usage:{},text:JSON.stringify({searchPlans:[plan],question:null})}}});
- await expect(runner.run('resources',context)).rejects.toThrow('unsupported_travel');expect(calls).toBe(2);
+ await expect(runner.run('resources',context)).rejects.toMatchObject({message:'provider_validation_failure',code:'unsupported_travel'});expect(calls).toBe(2);
 });
 
 it('rejects noncanonical inventory categories before they bypass host arithmetic',async()=>{

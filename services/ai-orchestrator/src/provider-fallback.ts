@@ -1,6 +1,7 @@
 import {groqDirectorInstruction,groqDirectorSchema} from './groq-director.js';
 import {GroqClient,ProviderFailure,ProviderOperation,QuotaCircuit,hostStructuredValue,type GroqMessage} from './groq.js';
 import type {AgentProvider,History,ProviderReply,ProviderScope} from './provider.js';
+import {CodexFailure} from './codex-errors.js';
 import {primaryAttempt} from './provider-failure.js';
 type Turn=Parameters<AgentProvider['turn']>[0];
 /** Explicit projection discards provider thought signatures, hidden reasoning and raw continuation blobs. */
@@ -30,40 +31,111 @@ export class GroqPrivateProvider implements AgentProvider {
   return {steps:calls,text,calls,usage:{provider:'groq',model:this.client.model,operationID:this.operation.id,generation:this.operation.generation,reported:raw.usage}};
  }
 }
-/** Use scope once per logical operation, including continuations and bounded output repair. */
+/** Codex as the capability-aware primary of the one orchestration layer. `images`/`research` are the attested
+ * runtime capabilities; a scope needing one Codex lacks starts at Gemini instead. */
+export type CodexRoute={provider:AgentProvider;images:boolean;research:boolean;turnMs?:number;fallbackReserveMs?:number};
+type RouteID='codex'|'gemini'|'groq';
+/** Allowlisted per-hop machine metadata for harness capture: provider, outcome, failure kind/status/code. Never text. */
+export type ProviderAttemptEvent={operationID:string;generation:number;provider:RouteID;result:'served'|'failed';kind?:string;status?:number;diagnostic?:string};
+function attemptFailure(error:unknown):Pick<ProviderAttemptEvent,'kind'|'status'|'diagnostic'>{
+ const machine=(v:unknown)=>typeof v==='string'&&/^[a-zA-Z][a-zA-Z0-9_]{0,47}$/.test(v)?v:undefined;
+ if(error instanceof CodexFailure)return {kind:error.kind};
+ if(error instanceof ProviderFailure)return {kind:error.kind,status:error.status,diagnostic:machine(error.diagnostic)};
+ return {kind:error instanceof Error?machine(error.message)??'error':'error'};
+}
+/** Codex failure kinds that mean "this provider cannot serve now", not "the operation itself is invalid". A model
+ * that exhausts its own tool budget (execution_budget) or a cancelled caller never moves to another provider. */
+const codexFallbackKinds=new Set(['throttled','unavailable','deadline','unsupported_capability','invalid_schema','invalid_request']);
+export function codexFallbackEligible(error:unknown){return error instanceof CodexFailure?codexFallbackKinds.has(error.kind):error instanceof Error&&error.message==='request_budget';}
+/** Use scope once per logical operation, including continuations and bounded output repair.
+ * The single provider-routing layer: Codex (when configured and consented) -> Gemini -> Groq, each step only on a
+ * provider-availability failure, forward-only, sharing one call/spend/deadline allowance. The host's deterministic
+ * or offline path stays with the caller once every consented provider has failed. No layer below retries. */
 export class GeminiPrimaryFallback implements AgentProvider {
- readonly providerID='gemini' as const;
+ readonly providerID:'codex'|'gemini';
+ readonly defaultConsent:readonly ('codex'|'gemini')[];
  private circuits=new Map<string,QuotaCircuit>();
- constructor(private primary:AgentProvider,private groq:GroqClient,private primaryAttemptMs=45000){}
+ private codexCircuit=new QuotaCircuit();
+ /** Optional harness observer (reviewer capture); production leaves it unset. */
+ observe?:(event:ProviderAttemptEvent)=>void;
+ constructor(private primary:AgentProvider,private groq?:GroqClient,private primaryAttemptMs=45000,private codex?:CodexRoute){
+  this.providerID=codex?'codex':'gemini';
+  // An omitted consent list keeps the deployment's configured chain; Groq always needs explicit consent.
+  this.defaultConsent=codex?['codex','gemini']:['gemini'];
+ }
  turn(input:Turn){return this.primary.turn(input);} // Unscoped callers are Gemini-only by default.
  scope(options:ProviderScope):AgentProvider {
-  const operation=new ProviderOperation(options.signal,options.maximumCalls??6,0.20,90000);
-  const fallback=new GroqPrivateProvider(this.groq,operation);
-  const scope=options.capability;let selected:'gemini'|'groq'='gemini';
-  if(!options.providers.includes('gemini')){if(!options.providers.includes('groq')||scope==='image')throw new ProviderFailure('unsupported','operation');operation.switch();selected='groq';}
-  const circuits=this.circuits,thisPrimary=this.primary,attemptMs=this.primaryAttemptMs;
+  const operation=new ProviderOperation(options.signal,options.maximumCalls??6,0.20,options.timeoutMs??90000);
+  operation.maximumSwitches=2;
+  const scope=options.capability;
+  const groqClient=this.groq,groqAllowed=!!groqClient&&options.providers.includes('groq')&&scope!=='image';
+  const codexRoute=this.codex,codexAllowed=!!codexRoute&&options.providers.includes('codex')&&(scope!=='image'||codexRoute.images);
+  const chain:RouteID[]=[...(codexAllowed?['codex' as const]:[]),...(options.providers.includes('gemini')?['gemini' as const]:[]),...(groqAllowed?['groq' as const]:[])];
+  if(!chain.length)throw new ProviderFailure('unsupported','operation',undefined,undefined,'provider_consent_required');
+  const fallback=groqClient?new GroqPrivateProvider(groqClient,operation):undefined;
+  let selected:RouteID=chain[0]!;
+  // Existing contract: a Groq-only consent is the fallback generation of a Gemini-primary operation.
+  if(selected==='groq')operation.switch();
+  const codexAbort=new AbortController();
+  const codexScoped=codexAllowed&&codexRoute?(codexRoute.provider.scope?codexRoute.provider.scope({...options,signal:AbortSignal.any([options.signal,codexAbort.signal])}):codexRoute.provider):undefined;
+  const circuits=this.circuits,codexCircuit=this.codexCircuit,thisPrimary=this.primary,attemptMs=this.primaryAttemptMs;
+  const report=(provider:RouteID,result:'served'|'failed',error?:unknown)=>{try{this.observe?.({operationID:operation.id,generation:operation.generation,provider,result,...(error===undefined?{}:attemptFailure(error))});}catch{/* observer never affects routing */}};
+  const turnMs=codexRoute?.turnMs??45000,reserveMs=codexRoute?.fallbackReserveMs??25000;
+  const after=(current:RouteID,history:History):RouteID|undefined=>{
+   const rest=chain.slice(chain.indexOf(current)+1);
+   // Gemini rejects another model's function calls without its own thought signatures; Groq's projection does not.
+   if(current==='codex'&&history.some(step=>step.type==='function_call')&&rest.includes('groq'))return 'groq';
+   return rest[0];
+  };
   return {
-   async disposeOperation(history){await thisPrimary.disposeOperation?.(history);},
-   get attemptGeneration(){return operation.generation;},get attemptID(){return `${operation.id}:${operation.generation}`;},
+   async disposeOperation(history){codexAbort.abort();await codexScoped?.disposeOperation?.(history);await thisPrimary.disposeOperation?.(history);},
+   get attemptGeneration(){return operation.generation;},get attemptID(){return `${operation.id}:${operation.generation}`;},get attemptProvider(){return selected;},
    async turn(input){
     operation.check();input.signal.throwIfAborted();
-    const circuitKey=scope+':'+(input.modelRole??'default');let circuit=circuits.get(circuitKey);if(!circuit){circuit=new QuotaCircuit();circuits.set(circuitKey,circuit);}
+    if(selected==='codex'&&codexScoped){
+     const next=after('codex',input.history);
+     const eligible=codexCircuit.enter(),quotaGeneration=codexCircuit.generation;
+     try{
+      if(!eligible)throw new CodexFailure('throttled');
+      // With a fallback, Codex may use the operation's time only up to a reserve the fallback needs.
+      const bound=next?Math.min(turnMs,operation.deadline-Date.now()-reserveMs):operation.deadline-Date.now();
+      if(bound<1000)throw new CodexFailure('deadline');
+      const generation=operation.generation;operation.reserve(0);
+      let timedOut=false;const timer=setTimeout(()=>{timedOut=true;codexAbort.abort();},bound);
+      try{
+       const result=await codexScoped.turn(input);operation.check(generation);codexCircuit.success(quotaGeneration);report('codex','served');return result;
+      }catch(error){if(timedOut&&!input.signal.aborted)throw new CodexFailure('deadline');throw error;}
+      finally{clearTimeout(timer);}
+     }catch(error){
+      report('codex','failed',error);
+      if(eligible){if(error instanceof CodexFailure&&error.kind==='throttled')codexCircuit.failure();else codexCircuit.release(quotaGeneration);}
+      operation.check();
+      if(input.signal.aborted)throw new CodexFailure('cancelled');
+      if(!next||!codexFallbackEligible(error))throw error;
+      // The abandoned Codex session is closed before any other provider sees the operation.
+      codexAbort.abort();await codexScoped.disposeOperation?.(input.history);
+      operation.switch();selected=next;
+     }
+    }
     if(selected==='gemini'){
+     const circuitKey=scope+':'+(input.modelRole??'default');let circuit=circuits.get(circuitKey);if(!circuit){circuit=new QuotaCircuit();circuits.set(circuitKey,circuit);}
      const eligible=circuit.enter(),quotaGeneration=circuit.generation;
      try{
       if(!eligible)throw new Error('provider_rate_limited');
       const generation=operation.generation;operation.reserve(0.012);
-      const result=await primaryAttempt(AbortSignal.any([input.signal,operation.signal]),options.providers.includes('groq')&&scope!=='image'?Math.min(attemptMs,Math.max(1,(operation.deadline-Date.now())/2)):operation.deadline-Date.now(),signal=>thisPrimary.turn({...input,signal}));operation.check(generation);circuit.success(quotaGeneration);return result;
+      const result=await primaryAttempt(AbortSignal.any([input.signal,operation.signal]),groqAllowed?Math.min(attemptMs,Math.max(1,(operation.deadline-Date.now())/2)):operation.deadline-Date.now(),signal=>thisPrimary.turn({...input,signal}));operation.check(generation);circuit.success(quotaGeneration);report('gemini','served');return result;
      }catch(error){
+      report('gemini','failed',error);
       const reason=error instanceof Error?error.message:'';
       if(eligible){if(reason==='provider_rate_limited')circuit.failure(error instanceof ProviderFailure?error.retryAfterMs:undefined);else circuit.release(quotaGeneration);}
       operation.check();
       if(input.signal.aborted)throw new ProviderFailure('cancelled','gemini');
-      if(!options.providers.includes('groq')||scope==='image'||!['provider_rate_limited','provider_overloaded','provider_model_unavailable','provider_unavailable','provider_timeout_or_cancelled'].includes(reason))throw error;
+      if(!groqAllowed||!['provider_rate_limited','provider_overloaded','provider_model_unavailable','provider_unavailable','provider_timeout_or_cancelled'].includes(reason))throw error;
       operation.switch();selected='groq';
      }
     }
-    return fallback.turn(input);
+    if(selected!=='groq'||!fallback)throw new ProviderFailure('unsupported','operation',undefined,undefined,'provider_consent_required');
+    try{const result=await fallback.turn(input);report('groq','served');return result;}catch(error){report('groq','failed',error);throw error;}
    }
   };
  }

@@ -3,10 +3,13 @@ import {ProviderFailure,QuotaCircuit,geminiFailure} from './provider-failure.js'
 export type History = Interactions.Step[];
 export type ProviderReply = { steps: History; text: string; calls: Interactions.FunctionCallStep[]; usage: unknown };
 export type ProviderID='gemini'|'groq'|'codex';
-export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number};
-export interface AgentProvider { readonly providerID?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
+/** timeoutMs is the caller's whole-operation bound, so one router can leave time for a fallback inside it. */
+export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number;timeoutMs?:number};
+/** defaultConsent: providers an omitted consent list may use (the deployment's configured chain, never Groq).
+ * attemptProvider: which provider served the latest turn of a scoped operation (machine metadata only). */
+export interface AgentProvider { readonly providerID?:ProviderID;readonly defaultConsent?:readonly ProviderID[];readonly attemptProvider?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }
 /** Omitted consent uses the explicitly configured deployment provider; explicit lists never expand. */
-export function configuredProviderConsent(provider:AgentProvider,requested?:readonly string[]){return requested??[provider.providerID??'gemini'];}
+export function configuredProviderConsent(provider:AgentProvider,requested?:readonly string[]){return requested??provider.defaultConsent??[provider.providerID??'gemini'];}
 export function scopeProvider(provider:AgentProvider,options:ProviderScope):AgentProvider {
  if(provider.scope)return provider.scope(options);
  if(provider.providerID&&!options.providers.includes(provider.providerID))throw new ProviderFailure('unsupported',provider.providerID,undefined,undefined,'provider_consent_required');
