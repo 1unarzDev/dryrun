@@ -26,7 +26,10 @@ export class GroqPrivateProvider implements AgentProvider {
   const functions=input.toolMode==='none'?[]:input.tools.map(t=>{if(t.type!=='function'||!t.name)throw new ProviderFailure('unsupported','groq');return {type:'function' as const,function:{name:t.name,description:t.description,parameters:t.parameters}};});
   const maximumOutputTokens=input.instruction.startsWith('DryRun RehearsalDirector')?(functions.length?2200:3000):3000;
   const budget=groqContextBudget(this.client.knownTokenCeiling,maximumOutputTokens,JSON.stringify(functions).length+JSON.stringify(input.outputSchema??{}).length);
-  const raw:any=await this.client.request(fitGroqContext([{role:'system',content:groqDirectorInstruction(input.instruction)},...privateMessages(input.history)],budget),this.operation,{reasoningEffort:'medium',maximumOutputTokens,signal:input.signal,functions,schema:functions.length?undefined:input.outputSchema?groqDirectorSchema(input.outputSchema,input.history):undefined,toolMode:input.toolMode==='any'?'required':input.toolMode});
+  // The response schema already goes to Groq as structured output; do not pay for it twice inside the instruction.
+  const schemaText=input.outputSchema?JSON.stringify(input.outputSchema):undefined;
+  const instruction=schemaText&&!functions.length?input.instruction.split('Output only JSON matching this schema: '+schemaText).join('Output only JSON matching the supplied response schema'):input.instruction;
+  const raw:any=await this.client.request(fitGroqContext([{role:'system',content:groqDirectorInstruction(instruction)},...privateMessages(input.history)],budget),this.operation,{reasoningEffort:'medium',maximumOutputTokens,signal:input.signal,functions,schema:functions.length?undefined:input.outputSchema?groqDirectorSchema(input.outputSchema,input.history):undefined,toolMode:input.toolMode==='any'?'required':input.toolMode});
   const message=raw?.choices?.[0]?.message;if(!message)throw new ProviderFailure('invalid_output','groq');
   const calls=(message.tool_calls??[]).map((call:any)=>({type:'function_call' as const,id:call.id,name:call.function.name,arguments:JSON.parse(call.function.arguments)}));
   let text=typeof message.content==='string'?message.content:'';if(!functions.length&&input.outputSchema&&text)text=JSON.stringify(hostStructuredValue(JSON.parse(text),input.outputSchema));
@@ -191,8 +194,12 @@ export function fitGroqContext(messages:GroqMessage[],budgetBytes:number):GroqMe
   let changed=false;
   out=out.map(m=>{
    if(changed||m.role==='system'||typeof m.content!=='string')return m;
-   try{const value=JSON.parse(m.content);const list=Array.isArray(value?.hostRetrievedRecords)?value.hostRetrievedRecords:Array.isArray(value?.records)?value.records:undefined;
-    if(!list||list.length<=1)return m;list.pop();value.truncatedForProvider=true;changed=true;return {...m,content:JSON.stringify(value)} as GroqMessage;}catch{return m;}
+   try{const value=JSON.parse(m.content);
+    // Whole host reads first, then the records inside the last remaining read, then the reads themselves.
+    const hosts=Array.isArray(value?.hostRetrievedRecords)?value.hostRetrievedRecords:undefined;
+    const nested=hosts?.length===1&&Array.isArray(hosts[0]?.result?.records)?hosts[0].result.records:undefined;
+    const list=hosts&&hosts.length>1?hosts:nested&&nested.length>0?nested:hosts?.length===1?hosts:Array.isArray(value?.records)&&value.records.length>1?value.records:undefined;
+    if(!list||!list.length)return m;list.pop();value.truncatedForProvider=true;changed=true;return {...m,content:JSON.stringify(value)} as GroqMessage;}catch{return m;}
   });
   if(!changed)break;
  }

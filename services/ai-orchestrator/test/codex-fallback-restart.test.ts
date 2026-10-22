@@ -178,6 +178,17 @@ describe('compact Groq context',()=>{
  });
 });
 
+describe('Groq schema is sent once',()=>{
+ it('replaces the schema copy inside the instruction when the schema goes as structured output',async()=>{
+  let body='';
+  const groq=new GroqClient('synthetic',undefined,async(_url,init)=>{body=String(init?.body);return Response.json({choices:[{message:{content:'{"summary":"ok"}'}}]});});
+  const router=new GeminiPrimaryFallback({providerID:'gemini',async turn(){throw new Error('provider_overloaded');}},groq,45000);
+  const schema={type:'object',properties:{summary:{type:'string',description:'distinctive-schema-marker'}},required:['summary']};
+  await router.scope({signal:AbortSignal.timeout(20000),providers:['gemini','groq'],capability:'privateText'}).turn({history:[{type:'user_input',content:[{type:'text',text:'{}'}]}],instruction:'Authored. Output only JSON matching this schema: '+JSON.stringify(schema)+'. More.',tools:[],outputSchema:schema,signal:AbortSignal.timeout(20000)});
+  expect(body.split('distinctive-schema-marker').length-1).toBe(1);expect(body).toContain('supplied response schema');
+ });
+});
+
 describe('configurable owner-window quotas',()=>{
  it('reads positive integer limits from the environment and ignores invalid values',()=>{
   expect(quotaLimitsFromEnv({})).toEqual(defaultQuotaLimits);
