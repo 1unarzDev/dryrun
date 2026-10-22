@@ -1,5 +1,5 @@
 /** REVIEWER-ONLY. Exact native synthetic inputs and actual responses go to protected capture. */
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 import {randomBytes,randomUUID} from 'node:crypto';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
@@ -17,6 +17,9 @@ const provider=await configuredCodexProvider();const secret=randomBytes(32).toSt
 const server=createServer(createAIRequestHandler({gateway:new Gateway(provider),features:new FeatureRunner(provider,100,undefined,{preparationInvestigation:condition==='investigation'}),interpreter:new IntentInterpreter(provider),authorize:header=>fixtureAuthorize(header,secret,false)}));
 server.listen(0,'127.0.0.1');await once(server,'listening');const address=server.address();if(!address||typeof address==='string')throw new Error('listen_failed');
 let failed=0;
+// Optional engineering-visible receipt: allowlisted machine fields only, never request/response content.
+const code=(value:unknown)=>typeof value==='string'&&/^[a-z_0-9]{1,48}$/.test(value)?value:value===undefined?undefined:'other';
+const attempts:Record<string,unknown>[]=[];
 try{
  for(const family of ['oak','lake','pine'])for(let repetition=1;repetition<=repeats;repetition++){
   const request=JSON.parse(await readFile(directory+'/'+family+'.json','utf8'));request.requestID=randomUUID();request.context.locale??='en';featureContext.parse(request.context);
@@ -26,8 +29,11 @@ try{
    const response=await fetch(`http://127.0.0.1:${address.port}/v1/features`,{method:'POST',headers:{Authorization:'Bearer '+secret,'Content-Type':'application/json'},body:JSON.stringify(request),signal:AbortSignal.timeout(95_000)});
    const body=await response.json();console.log(JSON.stringify({event:'protected_feature_response',runID,status:response.status,body,elapsedMS:Date.now()-start}));
    if(!response.ok||body.status!=='completed')failed++;
-  }catch{failed++;console.log(JSON.stringify({event:'feature_attempt_failure',runID,reason:'transport_or_deadline',elapsedMS:Date.now()-start}));}
+   attempts.push({runID,family,repetition,condition,httpStatus:response.status,status:code(body?.status),reason:code(body?.reason),elapsedMS:Date.now()-start});
+  }catch{failed++;attempts.push({runID,family,repetition,condition,status:'transport_or_deadline',elapsedMS:Date.now()-start});console.log(JSON.stringify({event:'feature_attempt_failure',runID,reason:'transport_or_deadline',elapsedMS:Date.now()-start}));}
  }
  console.log(JSON.stringify({event:'complete_attempt_receipt',attempts:3*repeats,failed,promptVersion:condition==='investigation'?'preparation/15+preparation-investigation/1':'preparation/15'}));
  if(failed)process.exitCode=1;
-}finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+}finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));
+ if(process.env.DRYRUN_SAFE_RECEIPT)await writeFile(process.env.DRYRUN_SAFE_RECEIPT,JSON.stringify({receipt:'dryrun.codex-feature-eval/1',inputDirectory:directory,condition,promptVersion:condition==='investigation'?'preparation/15+preparation-investigation/1':'preparation/15',model:provider.capabilities.model,runtime:provider.capabilities.runtimeVersion,attempts},null,1),{mode:0o600});
+}
