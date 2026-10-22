@@ -344,10 +344,10 @@ struct Graph {
                 return "windowEscapeSuitabilityUnconfirmed"
             }
         }
-        if p.kind != .opening {
-            if p.operable.value == false { return "inoperable" }            // even an unconfirmed "no" rules it out
-            if p.operable.confirmedValue == nil { return "operabilityUnconfirmed" } // scan-observed never satisfies it
-        }
+        // Even an unconfirmed "no" rules it out. For an open doorway this is the household's reversible
+        // "Not usable" answer (blocked by furniture, sealed); it matches HomeScenePresentation's unavailable status.
+        if p.operable.value == false { return "inoperable" }
+        if p.kind != .opening, p.operable.confirmedValue == nil { return "operabilityUnconfirmed" } // scan-observed never satisfies it
         if request.mobility.requiresStepFree {
             if p.stepFree.value == false { return "incompatibleMobility: threshold step" }
             if p.stepFree.confirmedValue == nil { return "incompatibleMobility: step-free threshold unconfirmed" }

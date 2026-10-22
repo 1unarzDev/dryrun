@@ -104,6 +104,25 @@ public enum ScanCorrections {
         }
     }
 
+    /// The rooms on each side of an opening, for highlighting both sides of a "Leads to" answer on the plan.
+    public static func sideRoomIDs(_ portal: Portal) -> [String] {
+        [portal.sideA, portal.sideB].compactMap { if case .space(let id) = $0 { return id }; return nil }
+    }
+
+    /// Rooms "Leads to" may offer from `roomID`: same floor, with the opening's centre within scan attach distance of
+    /// the room's outline (the same rule ScanImport used to propose sides), never `roomID` itself. The opening's
+    /// current other side is always kept so the picker never hides the recorded answer. Captured geometry is not
+    /// moved, so a room that does not touch the opening is never offered.
+    public static func leadsToRooms(_ portalID: String, from roomID: String, in home: HomeModel,
+                                    tolerance: GeometryTolerance = .standard) -> [String] {
+        guard let portal = home.portal(portalID) else { return [] }
+        let current = Set(sideRoomIDs(portal)).subtracting([roomID])
+        return home.spaces.filter { space in
+            space.id != roomID && space.floorID == portal.floorID
+                && (current.contains(space.id) || Geometry.distanceToBoundary(space.polygon, portal.center) <= tolerance.scanPortalAttachMeters)
+        }.map(\.id)
+    }
+
     /// Openings the guided "Check your scan" pass asks about, floor by floor.
     public static func uncertainOpenings(_ home: HomeModel) -> [Portal] {
         let floorOrder = Dictionary(uniqueKeysWithValues: home.floors.map { ($0.id, $0.level) })
