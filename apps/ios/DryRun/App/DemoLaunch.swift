@@ -1,4 +1,5 @@
 import Foundation
+import DryRunCore
 
 /// Deterministic launch configuration for screenshots, UI review, and device previews.
 /// Demo mode uses memory and fictional samples. DEBUG persistence tests may explicitly
@@ -11,6 +12,7 @@ import Foundation
 ///   -demoAdaptive                           open the scenario as an adaptive (incremental session) exercise
 ///   -demoStep start|decision|end            how far to advance it (end answers each decision with the recommended option)
 ///   -demoHome ranch|apartment|apartment-complex|manufactured|twostory  fictional layout (requires -demoHousehold)
+///   -demoAddress resolvable|ambiguous       typed public address with no pin, for map-origin lookup checks (requires -demoHousehold)
 ///   -demoHomeMode 2d|3d|rooms               Home sheet view
 ///   -demoHomeFloor <index>                  Home sheet floor (0-based, sample homes only)
 ///   -demoPlan all|<id,id,...>               generate a plan for these scenarios at launch
@@ -34,6 +36,7 @@ struct DemoLaunch: Sendable, Equatable {
     var adaptive = false
     var homeFloor: Int?
     var alert: String?
+    var address: DemoAddressCheck?
 
     static let allScenarios = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
     static let current = DemoLaunch(arguments: ProcessInfo.processInfo.arguments)
@@ -59,6 +62,7 @@ struct DemoLaunch: Sendable, Equatable {
         disableAnimations = arguments.contains("-disableAnimations")
         adaptive = arguments.contains("-demoAdaptive")
         homeFloor = value("-demoHomeFloor").flatMap(Int.init).flatMap { (0..<8).contains($0) ? $0 : nil }
+        address = value("-demoAddress").flatMap(DemoAddressCheck.init(rawValue:))
         alert = value("-demoAlert").flatMap { ["tornado", "flash-flood", "heat", "winter"].contains($0) ? $0 : nil }
     }
 

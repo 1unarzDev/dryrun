@@ -296,7 +296,7 @@ final class AppModel {
         if let l = d.locale { locale = l }
         guard d.isActive, let sample = SampleHouseholds.all.first(where: { $0.id == d.householdID }) else { return }
         let demoHome = d.homeID.flatMap { id in (SampleHomes.all + [SampleHomes.scannedRanch]).first { $0.id == id } }
-        await useSampleHousehold(sample, demoHome: demoHome)
+        await useSampleHousehold(sample, demoHome: demoHome, demoAddress: d.address?.location)
         if let l = d.locale { locale = l }
         if !d.planScenarios.isEmpty { await generatePlan(scenarioIDs: d.planScenarios, includePrivateNotes: false, selection: cardSelection) }
         #if DEBUG
@@ -459,7 +459,7 @@ final class AppModel {
 
     // MARK: - Household
 
-    func useSampleHousehold(_ sample: HouseholdProfile, demoHome: HomeModel? = nil) async {
+    func useSampleHousehold(_ sample: HouseholdProfile, demoHome: HomeModel? = nil, demoAddress: PrivateLocation? = nil) async {
         guard sample.isFictional, demoHome?.isFictional != false else {
             lastError = "Choose an example home for an example household. Your saved home was kept."
             return
@@ -492,6 +492,10 @@ final class AppModel {
             // labelled fictional. No real household address is implied.
             sample.privateLocation = PrivateLocation(addressLine: "Downtown Fort Worth, TX (fictional)", latitude: 32.7555, longitude: -97.3308,
                                                      city: "Fort Worth", administrativeArea: "TX", countryCode: "US")
+        }
+        if let demoAddress {
+            // Device check of the automatic map origin: a typed public address with no pin (see DemoAddressCheck).
+            sample.privateLocation = demoAddress
         }
         let places = HomeMeetingPlaces.placesIncludingLocalMeetup(home: sampleHome, places: extraPlaces, recordedAt: sample.updatedAt)
         let candidateHome = HomeMeetingPlaces.synchronize(sampleHome, places: places)

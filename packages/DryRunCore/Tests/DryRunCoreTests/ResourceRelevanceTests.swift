@@ -51,6 +51,12 @@ struct ResourceRelevanceTests {
         """
         let parsed = try PublicPlaces.curated(Data(stated.utf8))
         #expect(parsed.first?.stated == [.init(fact: "wheelchairAccessible", value: true)])
+        #expect(parsed.first?.retrievedAt == "2026-10-20")
+        // Sourced Arlington warming-center libraries carry their own check date and the official source.
+        let warming = places.filter { $0.kind == .warmingCenter }
+        #expect(warming.count == 7)
+        #expect(warming.allSatisfy { $0.retrievedAt == "2026-10-22" && $0.sourceURL == "https://arlingtonlibrary.org/locations" && $0.role?.contains("Event-specific") == true })
+        #expect(places.filter { $0.kind == .coolingCenter }.allSatisfy { $0.retrievedAt == "2026-10-22" && $0.role?.contains("not open now") == true })
     }
 
     // MARK: Five answers
@@ -143,7 +149,7 @@ struct ResourceRelevanceTests {
         let gather = SavedPlace(id: "g", homeID: home, purpose: .outsideMeetingPoint, label: "Mailbox")
         let other = SavedPlace(id: "o", homeID: "another-home", purpose: .backupMeetingPlace, label: "Elsewhere")
         let fire = MeetingPlanPolicy.needs(context: .init(intent: .structureFire, phase: .simulation), household: oak, places: [gather, other])
-        #expect(fire.map(\.purpose) == [.immediateOutdoor, .neighborhood, .outOfArea])
+        #expect(fire.map(\.purpose) == [.immediateOutdoor, .outOfAreaPlace, .outOfAreaContact])
         #expect(fire[0].status == .place(id: "g") && fire[0].isPrimary)
         #expect(fire[1].status == .missing)
         #expect(fire[2].status == .contact(id: "ct-oak-1"))
@@ -153,8 +159,53 @@ struct ResourceRelevanceTests {
         #expect(tornado.allSatisfy { !$0.isPrimary })
 
         let hurricane = MeetingPlanPolicy.needs(context: .init(intent: .hurricaneAdvance), household: SampleHouseholds.lake, places: [])
-        #expect(hurricane.first?.purpose == .outOfArea && hurricane.first?.isPrimary == true)
+        #expect(hurricane.first?.purpose == .outOfAreaPlace && hurricane.first?.isPrimary == true)
         #expect(hurricane.first?.status == .missing)
         #expect(MeetingPlanPolicy.needs(context: .init(), household: oak, places: []).allSatisfy { !$0.isPrimary })
+    }
+
+    /// Reviewer finding GEO-02: Oak's distant backup meetup (Abilene) appeared in the "Nearby" slot. A backup
+    /// meeting place is outside the neighborhood by definition, so it fills only the out-of-area place role.
+    @Test func backupMeetingPlaceNeverFillsANearbyOrGatheringRole() throws {
+        let oak = SampleHouseholds.oak
+        let home = oak.stableHomeID
+        let abilene = SavedPlace(id: "demo-backup-meetup", homeID: home, purpose: .backupMeetingPlace,
+                                 label: "Aunt's house in Abilene (fictional)", coordinate: GeographicCoordinate(latitude: 32.4487, longitude: -99.7331))
+        let gather = SavedPlace(id: "g", homeID: home, purpose: .outsideMeetingPoint, label: "Mailbox")
+        #expect(MeetingPlanPolicy.role(of: .backupMeetingPlace) == .outOfAreaPlace)
+        #expect(MeetingPlanPolicy.role(of: .outsideMeetingPoint) == .immediateOutdoor)
+        for purpose in [SavedPlacePurpose.fallbackDestination, .exteriorHydrant, .homeReference] {
+            #expect(MeetingPlanPolicy.role(of: purpose) == nil)
+        }
+        #expect(!MeetingPlanPolicy.Purpose.allCases.map(\.rawValue).contains { $0.localizedCaseInsensitiveContains("neighborhood") })
+        let places = [abilene, gather]
+        for intent in [MapPlanningContext.Intent.ordinary, .structureFire, .tornadoShelter, .flashFlood, .freezeContinuity,
+                       .heatContinuity, .waterContinuity, .hurricaneAdvance] {
+            let needs = MeetingPlanPolicy.needs(context: .init(intent: intent), household: oak, places: places)
+            #expect(Set(needs.map(\.purpose)).count == needs.count)
+            for need in needs {
+                guard case .place(let id) = need.status else { continue }
+                let place = try #require(places.first { $0.id == id })
+                // Every filled slot shows exactly the role its record type defines.
+                #expect(MeetingPlanPolicy.role(of: place.purpose) == need.purpose)
+            }
+            #expect(needs.first { $0.purpose == .outOfAreaPlace }?.status == .place(id: "demo-backup-meetup"))
+            if let immediate = needs.first(where: { $0.purpose == .immediateOutdoor }) { #expect(immediate.status == .place(id: "g")) }
+        }
+        // With only the backup saved, the gathering slot stays honestly missing instead of borrowing it.
+        let fireOnlyBackup = MeetingPlanPolicy.needs(context: .init(intent: .structureFire), household: oak, places: [abilene])
+        #expect(fireOnlyBackup.first { $0.purpose == .immediateOutdoor }?.status == .missing)
+    }
+
+    @Test func demoAddressChecksAreTypedAddressesWithoutAPin() {
+        for check in DemoAddressCheck.allCases {
+            #expect(HomeOriginPolicy.savedCoordinate(check.location) == nil)
+            #expect(HomeOriginPolicy.decide(location: check.location, candidates: nil) == .unresolved)
+        }
+        #expect(HomeOriginPolicy.geocodingQuery(DemoAddressCheck.resolvable.location) == "500 W 3rd St, Fort Worth, TX, 76102")
+        #expect(HomeOriginPolicy.geocodingQuery(DemoAddressCheck.ambiguous.location) == "100 Main St")
+        let a = GeographicCoordinate(latitude: 32.75, longitude: -97.33)!, b = GeographicCoordinate(latitude: 40.0, longitude: -75.0)!
+        #expect(HomeOriginPolicy.decide(location: DemoAddressCheck.ambiguous.location,
+                                        candidates: [.init(coordinate: a, countryCode: "US"), .init(coordinate: b, countryCode: "US")]) == .ambiguous(count: 2))
     }
 }

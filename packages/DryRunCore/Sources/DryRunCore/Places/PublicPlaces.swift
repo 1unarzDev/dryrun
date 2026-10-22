@@ -28,6 +28,8 @@ public enum PublicPlaces {
         struct Place: Decodable {
             let id: String; let name: String; let kind: PublicPlace.Kind; let address: String; let phone: String?
             let source: String; let sourceURL: String?; let role: String?
+            /// When this place's own source was last checked; the file date applies when absent.
+            let retrievedAt: String?
             /// Source-stated accessibility facts only (e.g. {"wheelchairAccessible": true}); null when the page says nothing.
             let accessibility: [String: Bool]?
         }
@@ -39,7 +41,7 @@ public enum PublicPlaces {
         let file = try JSONDecoder().decode(Curated.self, from: data)
         return file.places.map {
             PublicPlace(id: $0.id, name: $0.name, kind: $0.kind, address: $0.address, latitude: nil, longitude: nil, phone: $0.phone,
-                        source: $0.source, sourceURL: $0.sourceURL, retrievedAt: file.retrievedAt,
+                        source: $0.source, sourceURL: $0.sourceURL, retrievedAt: $0.retrievedAt ?? file.retrievedAt,
                         stated: ($0.accessibility ?? [:]).sorted { $0.key < $1.key }.map { PublicPlace.Stated(fact: $0.key, value: $0.value) },
                         petsAsPublished: nil, role: $0.role)
         }

@@ -173,16 +173,21 @@ public enum HomeOriginPolicy {
     }
 }
 
-/// A small set of meeting purposes made contextual to the situation, reusing saved meetups and the
+/// A small set of meeting roles made contextual to the situation, reusing saved meetups and the
 /// household's out-of-area contact. There is no separate reconnection workflow or record type.
+///
+/// Roles are explicit and fixed per record type: an `outsideMeetingPoint` is the immediate gathering point right
+/// outside this home; a `backupMeetingPlace` is, by its definition across the app ("backup meeting place outside
+/// the neighborhood"), an out-of-area place. No saved record type describes a nearby neighborhood meeting place,
+/// so no "nearby" row is shown and a backup place can never be presented as nearby.
 public enum MeetingPlanPolicy {
     public enum Purpose: String, Sendable, Hashable, CaseIterable {
         /// Right outside this home after leaving the building (fire).
         case immediateOutdoor
-        /// Nearby, when home cannot be reached or family members are apart.
-        case neighborhood
+        /// The saved backup meeting place outside the neighborhood.
+        case outOfAreaPlace
         /// Someone outside the area everyone checks in with when local options fail.
-        case outOfArea
+        case outOfAreaContact
     }
     public enum Status: Sendable, Hashable {
         case place(id: String)
@@ -198,19 +203,25 @@ public enum MeetingPlanPolicy {
 
     public static func purposes(for intent: MapPlanningContext.Intent) -> [Purpose] {
         switch intent {
-        case .ordinary, .structureFire: [.immediateOutdoor, .neighborhood, .outOfArea]
-        // Sheltering at home comes first; meetups matter only after the warning if people are apart.
-        case .tornadoShelter, .flashFlood, .freezeContinuity, .heatContinuity, .waterContinuity: [.neighborhood, .outOfArea]
-        case .hurricaneAdvance: [.outOfArea, .neighborhood]
+        case .ordinary, .structureFire: [.immediateOutdoor, .outOfAreaPlace, .outOfAreaContact]
+        // Sheltering at home comes first; if people are apart after the warning, checking in comes before travelling.
+        case .tornadoShelter, .flashFlood, .freezeContinuity, .heatContinuity, .waterContinuity: [.outOfAreaContact, .outOfAreaPlace]
+        case .hurricaneAdvance: [.outOfAreaPlace, .outOfAreaContact]
         }
     }
 
+    /// The only saved-place purpose that may fill a role; nil for the contact role.
     public static func savedPurpose(_ purpose: Purpose) -> SavedPlacePurpose? {
         switch purpose {
         case .immediateOutdoor: .outsideMeetingPoint
-        case .neighborhood: .backupMeetingPlace
-        case .outOfArea: nil
+        case .outOfAreaPlace: .backupMeetingPlace
+        case .outOfAreaContact: nil
         }
+    }
+
+    /// The meeting role a saved place plays, or nil when it is not a meetup.
+    public static func role(of purpose: SavedPlacePurpose) -> Purpose? {
+        Purpose.allCases.first { savedPurpose($0) == purpose }
     }
 
     public static func needs(context: MapPlanningContext, household: HouseholdProfile, places: [SavedPlace]) -> [Need] {

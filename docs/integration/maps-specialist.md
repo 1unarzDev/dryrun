@@ -84,3 +84,30 @@ Core: new `Plan/ResourceRelevance.swift` (ResourceRelevancePolicy, OrdinaryAcces
 
 ### Phone checks requested (reviewer holding reservation)
 See LEAD return `device_checks_requested`.
+
+## Wave 2 lead slice on `lead2/maps` (base bd6974a), 2026-10-22
+
+Mac only; no phone or simulator launched. Requirements GEO-01, GEO-02 (audit finding "GEO-02 meetup roles").
+
+### Explicit meetup roles (fixes Abilene in the Nearby slot)
+- Cause: `MeetingPlanPolicy` mapped its "neighborhood" purpose to `SavedPlacePurpose.backupMeetingPlace`, but that record type is defined everywhere else in the app as "Backup meeting place outside the neighborhood" (locale `family.backupMeetup`, `map.backupMeetingPlace`, `PlanPlacePresentation`). Oak's demo backup (Abilene) therefore rendered as "Nearby".
+- Change: roles are now `immediateOutdoor` (only `outsideMeetingPoint`), `outOfAreaPlace` (only `backupMeetingPlace`) and `outOfAreaContact` (complete out-of-area contact). New `MeetingPlanPolicy.role(of:)` gives each saved purpose exactly one role. No saved record type describes a nearby neighborhood meeting place, so the "Nearby" row is removed rather than filled by a borrowed record. Ordering: fire/ordinary gathering, backup place, contact; tornado/flood/continuity contact then backup place (shelter-at-home footers kept); hurricane backup place then contact. Copy keys `meet.outOfAreaPlace`/`meet.outOfAreaContact` in EN/ES/VI (ES/VI reuse existing app terms; not native-reviewed). Accessibility IDs follow: `map.meetup.immediateOutdoor|outOfAreaPlace|outOfAreaContact` (no UI test referenced the old IDs).
+- Simpler option: distance threshold deciding nearby vs distant. Rejected: it would still let a record labelled "outside the neighborhood" appear as nearby, and a threshold is a guess. A real neighborhood meeting place would need a new `SavedPlacePurpose`, which changes the gateway/feature-context contracts (preparation-v1, featureContext-v1, features.ts enum); left to the contract owner if wanted.
+
+### Synthetic address path for geocode/ambiguity checks
+- New Core `DemoAddressCheck` (`resolvable`: Fort Worth Central Library public address "500 W 3rd St, Fort Worth, TX 76102"; `ambiguous`: "100 Main St", US, no city). Both have no pin. Applied only with launch flag `-demoAddress resolvable|ambiguous` together with `-demoHousehold` (AppModel.useSampleHousehold gained an optional `demoAddress`; DemoLaunch parses the flag). Fixtures note: default example facts are unchanged; under the flag the example household's `privateLocation` differs, so any Prepare/AI request made in that launch is not comparable with recorded replays. No recorded test uses the flag.
+
+### Curated places (content/places/tarrant-v1.json), sources checked 2026-10-22
+- Fort Worth Beat the Heat page (https://fortworthtexas.gov/departments/neighborhoods/cap/BeattheHeat) was readable this time via fetch (curl still 403): lists the same four cooling centers, for low-income or fixed-income residents, and says the 2026 program has concluded; no warming centers, no accessibility or pet statements. Roles updated to say so; per-place `retrievedAt` 2026-10-22.
+- Worth Heights phone conflict: facility page lists 817-392-8723 (read twice), Beat the Heat page lists 817-392-8724, previous file had 8722. Set to the facility page's 8723 with a `phoneNote`.
+- Added seven Arlington Public Library locations as `warmingCenter` (addresses/phone from https://arlingtonlibrary.org/locations). Role source: City of Arlington, "Arlington Warming Centers, Overnight Shelters from Jan. 23-27, 2026" (published Jan. 23, 2026) and "City Facility and Service Updates for Wednesday, Jan. 28, 2026" (published Jan. 27, 2026): all library locations and recreation centers open to the public for warming in designated areas during standard operating hours. Role text marks it event-specific with "confirm with the city"; no accessibility facts stated (none on the pages).
+- Skipped (unsourceable from official pages): Fort Worth libraries/community centers as 2026 warming centers (only 2021 news and nonprofit shelters found); Arlington recreation centers (no official address list fetched); church/nonprofit shelters (event-only).
+- Core: curated places may carry their own `retrievedAt` (file date otherwise).
+
+### Device check script
+`scripts/mac/map-device-checks.sh <case>` (meetups-oak, address-resolvable, address-ambiguous, hurricane-zone, warming-centers) prints the steps/expectations and launches via `scripts/mac/device.sh` with demo arguments. Reservation holder only. Hurricane limits: the bundled region packs have no reviewed hurricane source for any covered county, so on device only the "needs review" state is reachable (after recording a zone in Home > Location records); the "available" state is Core-tested only, and the `hurricaneAdvance` intent has no native entry point.
+
+### Evidence
+- deterministic-tested: `swift test --filter ResourceRelevanceTests` 11/11 passed (direct; authored fixtures). Full Core `firewall.py capture -- swift test --package-path packages/DryRunCore` receipt run-119cf0d9ff434bd38fb0ff0f3291af09 succeeded, exit 0 (output not opened).
+- Mac-build: `xcodegen generate` + `xcodebuild build-for-testing -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO` TEST BUILD SUCCEEDED, including new native `DryRunTests/MeetupRoleTests.swift` (compiled, not executed).
+- Not done: device-verified, native unit test execution, live-reviewed. No AI output inspected.
