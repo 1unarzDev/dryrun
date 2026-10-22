@@ -45,7 +45,10 @@ enum SessionTransitionReducer {
                 if scenario.hazard == .flashFlood,let room=event.value {options.floodAffectedSpaceIDs=[room]}
                 run.input.spatialOptions=options
             }
+            let powerBefore=run.services[Svc.homePower]
             try run.apply(authored)
+            // Version 6 thermal hazards: record what was in place at the committed power-loss boundary.
+            if powerBefore == .operational,run.services[Svc.homePower] != .operational {run.recordOutageReadiness(eventID:run.events.last?.id ?? authored.id)}
             appliedIncident=true
             if policyEnabled,DirectorPolicy.isSpatial(authored,in:scenario) {
                 directorState?.activeIncidentCount=1;directorState?.stageID=authored.id

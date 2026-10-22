@@ -21,6 +21,7 @@ public enum LocalDirector {
     public static func nextCommit(session: SimulationSession, receipt: SessionReceipt, library: ScenarioLibrary) -> SessionCommit? {
         guard !receipt.finished, receipt.directorState?.awaitingUserAction != true,
               let scenario = library.scenario(session.initial.scenarioID) else { return nil }
+        if let opening = openingPreparationDecision(session: session, receipt: receipt, scenario: scenario, library: library) { return opening }
         let now = receipt.snapshot.simMinute
         let horizon = min(scenario.durationMinutes, session.directorPolicy?.schedulingHorizonMinutes ?? scenario.durationMinutes)
         let scheduled = scheduledProfileIDs(session)
@@ -79,6 +80,32 @@ public enum LocalDirector {
             return candidate
         }
         return nil
+    }
+
+    /// Commands that prepare a household before a scheduled power loss (not recognition-only gaps,
+    /// and never disconnecting a device as "preparation").
+    public static func isOutagePreparation(_ command: SessionCommand) -> Bool {
+        switch command.kind {
+        case "warmLayers", "heatedAlternative", "cooledAlternative", "reduceSolarGain": return true
+        case "allocatePower": return command.value != "none"
+        default: return false
+        }
+    }
+
+    /// Version 6 freeze: after the opening key moment, while home power still works and before any household
+    /// action, ask the family once what they do before the outage. The decision is asked only when the home and
+    /// records actually support a preparation; the family can also explicitly keep watching (`wait`).
+    static func openingPreparationDecision(session: SimulationSession, receipt: SessionReceipt, scenario: ScenarioDefinition,
+                                           library: ScenarioLibrary) -> SessionCommit? {
+        guard HazardExperience.level(session.mechanicsVersion) >= 6, scenario.hazard == .freezePowerLoss,
+              session.commits.contains(where: { $0.actor == "director" }),
+              !session.commits.contains(where: { $0.actor == "user" }),
+              !session.commits.contains(where: { $0.actor == "director" && $0.commands.contains { $0.kind == "requestDecision" } }),
+              receipt.snapshot.services[Svc.homePower] == .operational,
+              receipt.experience?.feasibleCommands?.contains(where: isOutagePreparation) == true else { return nil }
+        let commit = SessionCommit(id: "local-\(session.revision)", actor: "director", baseRevision: session.revision,
+                                   commands: [SessionCommand(kind: "requestDecision")])
+        return (try? session.preview(commit, library: library)) != nil ? commit : nil
     }
 
     static func applies(_ when: [String], _ session: SimulationSession) -> Bool {

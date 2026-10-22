@@ -34,6 +34,14 @@ import Testing
         } else { previousStage = stage }
        }
       }
+      // egress-portal-graph/3 only adds the operable=false opening exclusion (no sample opening records it);
+      // the historical capture carries the /2 label, so the label alone is projected back.
+      for index in historicalProjection.routes.indices { historicalProjection.routes[index].algorithmVersion = "egress-portal-graph/2" }
+      for index in historicalProjection.snapshots.indices {
+       for route in (historicalProjection.snapshots[index].spatialState?.routes ?? []).indices {
+        historicalProjection.snapshots[index].spatialState?.routes[route].algorithmVersion = "egress-portal-graph/2"
+       }
+      }
       for index in historicalProjection.decisions.indices where historicalProjection.decisions[index].id == "choice.home-fire.outside" {
        for optionIndex in historicalProjection.decisions[index].options.indices where historicalProjection.decisions[index].options[optionIndex].id == "call-from-outside" {
         // Legacy advice did not require an exterior occupant; new advice does.

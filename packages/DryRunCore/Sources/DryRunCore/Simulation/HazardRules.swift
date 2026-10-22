@@ -185,9 +185,12 @@ extension RunState {
             if !household.pets.isEmpty { flags.insert("fire.pets") }
             return
         }
-        // Usual (practised) routes with no exercise exclusions.
+        // Usual (practised) routes with no exercise exclusions. Version 6 adaptive sessions: an explicit
+        // incident origin is already known at the alarm, so no route may pass through that room.
+        let explicitOrigin = hazardProgress?.supportsOriginExclusion == true ? input.effectiveSpatialOptions.originSpaceID.flatMap { home.space($0)?.id } : nil
+        let alarmExclusions = explicitOrigin.map { ScenarioExclusions(blockedSpaceIDs: [$0]) } ?? .none
         for p in household.people.sorted(by: { $0.id < $1.id }) {
-            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p)), in: home)
+            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: alarmExclusions), in: home)
             currentRoutes[p.id] = r
             routes.append(r)
             if r.primary == nil {
@@ -208,6 +211,11 @@ extension RunState {
             requireSticky("req.meetingPoint", cause: cause)
         }
         if !household.pets.isEmpty { flags.insert("fire.pets") }
+        if let explicitOrigin {
+            updateSpatialScene(stage: cause, affected: [explicitOrigin], assumption: "Exercise: the selected fire origin room is excluded from every route from the alarm onward. An occupied origin room remains exposed; no supported departure is assumed.")
+            spatialState?.originSpaceID = explicitOrigin
+            return
+        }
         updateSpatialScene(stage: cause, affected: [], assumption: "Exercise: routes before the authored smoke blockage. Starting rooms are recorded household assignments.")
     }
 
@@ -232,7 +240,10 @@ extension RunState {
                 }
             }
             let candidates = home.spaces.filter { $0.kind == kind && (blockedSpaces.isEmpty || neighbors.contains($0.id)) }.sorted { $0.id < $1.id }
-            let selected = blockedSpaces.isEmpty ? input.effectiveSpatialOptions.originSpaceID.flatMap(home.space) : nil
+            let explicit = input.effectiveSpatialOptions.originSpaceID.flatMap(home.space)
+            // Version 6 already excluded that explicit origin at the alarm; it is still the origin here.
+            let alreadyExcluded = hazardProgress?.supportsOriginExclusion == true && explicit.map { blockedSpaces == [$0.id] } == true
+            let selected = blockedSpaces.isEmpty || alreadyExcluded ? explicit : nil
             let origin = selected ?? (candidates.isEmpty ? nil : candidates[Int(input.seed % UInt64(candidates.count))])
             if let origin {
                 blockedSpaces.insert(origin.id)
