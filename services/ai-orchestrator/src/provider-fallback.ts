@@ -23,7 +23,10 @@ export class GroqPrivateProvider implements AgentProvider {
  constructor(private client:GroqClient,private operation:ProviderOperation){}
  async turn(input:Turn):Promise<ProviderReply>{
   input.signal.throwIfAborted();
-  const functions=input.toolMode==='none'?[]:input.tools.map(t=>{if(t.type!=='function'||!t.name)throw new ProviderFailure('unsupported','groq');return {type:'function' as const,function:{name:t.name,description:t.description,parameters:t.parameters}};});
+  // A feature turn restarted on Groq already carries the host-retrieved records; Groq's tool calls are its most
+  // frequent failure (live run-11b93a4d: 3/3 tool_use_failed), so it answers from those records without tools.
+  const restarted=!input.instruction.startsWith('DryRun RehearsalDirector')&&input.toolMode!=='any'&&input.history.some(step=>step.type==='user_input'&&JSON.stringify(step.content??'').includes('hostRetrievedRecords'));
+  const functions=input.toolMode==='none'||restarted?[]:input.tools.map(t=>{if(t.type!=='function'||!t.name)throw new ProviderFailure('unsupported','groq');return {type:'function' as const,function:{name:t.name,description:t.description,parameters:t.parameters}};});
   // Feature answers are short (a debrief summary, up to three plans); 2000 tokens leaves room for reasoning and keeps
   // more of the free tier's per-minute ceiling for context.
   const maximumOutputTokens=input.instruction.startsWith('DryRun RehearsalDirector')?(functions.length?2200:3000):2000;

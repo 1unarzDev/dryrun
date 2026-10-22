@@ -186,6 +186,18 @@ describe('compact Groq context',()=>{
  });
 });
 
+describe('Groq after a canonical restart',()=>{
+ it('answers a feature turn from the host records without offering tools',async()=>{
+  let body:any;
+  const groq=new GroqClient('synthetic',undefined,async(_url,init)=>{body=JSON.parse(String(init?.body));return Response.json({choices:[{message:{content:'{"summary":"ok"}'}}]});});
+  const router=new GeminiPrimaryFallback({providerID:'gemini',async turn(){throw new Error('provider_overloaded');}},groq,45000);
+  const restart:History=[{type:'user_input',content:[{type:'text',text:'{}'}]},{type:'user_input',content:[{type:'text',text:JSON.stringify({hostRetrievedRecords:[{tool:'read_household_context',result:{records:[]}}]})}]}];
+  const tool={type:'function' as const,name:'read_household_context',description:'read',parameters:{type:'object',properties:{}}};
+  await router.scope({signal:AbortSignal.timeout(20000),providers:['gemini','groq'],capability:'privateText'}).turn({history:restart,instruction:'DryRun debrief prompt/3.',tools:[tool],outputSchema:{type:'object'},signal:AbortSignal.timeout(20000)});
+  expect(body.tools).toBeUndefined();
+ });
+});
+
 describe('Groq schema is sent once',()=>{
  it('replaces the schema copy inside the instruction when the schema goes as structured output',async()=>{
   let body='';
