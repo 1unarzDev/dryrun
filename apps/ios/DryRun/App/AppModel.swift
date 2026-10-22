@@ -1671,6 +1671,10 @@ final class AppModel {
         nextStepResults = nil
         runGate.invalidate()
         nextGate.invalidate()
+        // Re-key Prepare's recompute even when currentKey is unchanged (same example reloaded).
+        nextStepsGeneration += 1
+        nextStepsStalled = false
+        nextStepsInFlight = nil
         planGate.invalidate()
         scorecard = nil
         scoreGate.invalidate()
@@ -1696,10 +1700,38 @@ final class AppModel {
         return summary
     }
 
+    /// What Prepare's recompute task is keyed on. `currentKey` alone is not enough: reloading the example that is
+    /// already active saves the same household revision, so the key is unchanged while `invalidateDerived` drops the
+    /// results and the in-flight ticket. The view's task then never re-ran and Prepare stayed on "Running all six
+    /// practice scenarios" (phone report, Oak reloaded over Oak). The generation moves on every invalidation.
+    struct NextStepsRefreshID: Hashable { let key: RevisionKey?; let generation: Int }
+    private(set) var nextStepsGeneration = 0
+    var nextStepsRefreshID: NextStepsRefreshID { NextStepsRefreshID(key: currentKey, generation: nextStepsGeneration) }
+    /// True when the six runs failed or outlived `nextStepsDeadline`; Prepare then offers Try again instead of an
+    /// endless spinner.
+    private(set) var nextStepsStalled = false
+    /// The recompute already running for this refresh ID; a second caller for the same inputs waits on that one.
+    @ObservationIgnored private var nextStepsInFlight: NextStepsRefreshID?
+    static let nextStepsDeadline: Duration = .seconds(45)
+
+    /// Prepare's Try again: a new generation re-runs the six scenarios even when nothing else changed.
+    func retryNextSteps() {
+        guard nextStepResults == nil else { return }
+        nextStepsStalled = false
+        nextStepsInFlight = nil
+        nextGate.invalidate()
+        nextStepsGeneration += 1
+    }
+
     /// Runs every scenario with default choices (off the main actor) unless results for this revision exist.
     func refreshNextSteps() async {
         guard nextStepResults == nil, let household, let content, let scenarios, let engine,
               let key = currentKey else { return }
+        let request = nextStepsRefreshID
+        // Dedupe: the view task restarts with the same ID when Prepare reappears; the first run still applies.
+        guard nextStepsInFlight != request else { return }
+        nextStepsInFlight = request
+        nextStepsStalled = false
         let home = self.home
         let ticket = nextGate.begin(for: key)
         let inputs = RehearseTabView.scenarioIDs.compactMap { id -> RehearsalInput? in
@@ -1708,10 +1740,14 @@ final class AppModel {
                                   contentVersion: content.contentVersion, seed: 1)
         }
         workInFlight += 1
-        defer { workInFlight -= 1 }
-        do {
-            // The six runs are independent: run them concurrently and keep the planner's scenario order.
-            let results = try await withThrowingTaskGroup(of: (Int, RehearsalResult).self) { group in
+        defer {
+            workInFlight -= 1
+            if nextStepsInFlight == request { nextStepsInFlight = nil }
+        }
+        // The six runs are independent: run them concurrently and keep the planner's scenario order. Unstructured, so
+        // the deadline below can stop waiting for them (a task group would wait for every child before returning).
+        let work = Task.detached(priority: .userInitiated) { () throws -> [RehearsalResult] in
+            try await withThrowingTaskGroup(of: (Int, RehearsalResult).self) { group in
                 for (index, input) in inputs.enumerated() {
                     group.addTask(priority: .userInitiated) { (index, try engine.run(input)) }
                 }
@@ -1719,11 +1755,27 @@ final class AppModel {
                 for try await (index, result) in group { ordered[index] = result }
                 return ordered.compactMap { $0 }
             }
-            guard nextGate.shouldApply(ticket, current: currentKey) else { return }
+        }
+        let outcome = await Self.firstOutcome(of: work, within: Self.nextStepsDeadline)
+        guard nextGate.shouldApply(ticket, current: currentKey), nextStepsRefreshID == request else { return }
+        switch outcome {
+        case .some(.success(let results)):
             nextStepResults = results
-        } catch {
-            guard nextGate.shouldApply(ticket, current: currentKey) else { return }
+        case .some(.failure(let error)):
             lastError = String(describing: error)
+            nextStepsStalled = true
+        case .none:
+            work.cancel()
+            nextStepsStalled = true
+        }
+    }
+
+    /// The work's result, or nil once `limit` passes first. Never waits past the deadline for the work itself.
+    private nonisolated static func firstOutcome<T: Sendable>(of work: Task<T, Error>, within limit: Duration) async -> Result<T, Error>? {
+        await withCheckedContinuation { continuation in
+            let once = ResumeOnce<Result<T, Error>?>(continuation)
+            Task { once.resume(await work.result) }
+            Task { try? await Task.sleep(for: limit); once.resume(nil) }
         }
     }
 
@@ -1903,5 +1955,16 @@ final class AppModel {
             lastError = String(describing: error)
             return false
         }
+    }
+}
+
+/// Resumes a continuation exactly once, from whichever racer (work or deadline) finishes first.
+private final class ResumeOnce<Value: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Value, Never>?
+    init(_ continuation: CheckedContinuation<Value, Never>) { self.continuation = continuation }
+    func resume(_ value: Value) {
+        lock.lock(); let pending = continuation; continuation = nil; lock.unlock()
+        pending?.resume(returning: value)
     }
 }

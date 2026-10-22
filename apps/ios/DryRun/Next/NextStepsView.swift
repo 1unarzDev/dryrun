@@ -44,11 +44,24 @@ struct NextStepsView: View {
                     if model.preparationAIAvailable { PreparationAICard() }
                 } else {
                     SectionCard {
-                        HStack(spacing: Theme.Space.m) {
-                            ProgressView()
-                            Text(l("ui.next.loading")).foregroundStyle(.secondary)
+                        if model.nextStepsStalled {
+                            // Never an endless spinner: say so and offer one clear retry.
+                            VStack(alignment: .leading, spacing: Theme.Space.s) {
+                                Label(l("ui.next.timeout"), systemImage: "exclamationmark.circle")
+                                    .foregroundStyle(Theme.caution)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Button(l("ui.next.retry")) { model.retryNextSteps() }
+                                    .buttonStyle(.inline)
+                                    .accessibilityIdentifier("next.retry")
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            HStack(spacing: Theme.Space.m) {
+                                ProgressView()
+                                Text(l("ui.next.loading")).foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
                 quickActions
@@ -81,7 +94,8 @@ struct NextStepsView: View {
             case .meetup(let purpose): MeetingPlaceChooser(purpose: purpose)
             }
         }
-        .task(id: model.currentKey) { await model.refreshNextSteps() }
+        // Keyed on the refresh ID, not currentKey alone: reloading the active example keeps the key but drops results.
+        .task(id: model.nextStepsRefreshID) { await model.refreshNextSteps() }
         .task(id: model.scoreKey) { await model.refreshScorecard() }
         .task {
             // Live NWS alerts every five minutes while Prepare is open; a chosen demo sample replaces them, and
