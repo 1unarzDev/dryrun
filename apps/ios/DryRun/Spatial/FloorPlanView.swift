@@ -106,6 +106,17 @@ struct FloorPlanView: View {
             let selected = home.space(id)?.label ?? home.portal(id).map { DisplayNames.name($0.kind.rawValue, localizer: model.localizer) }
                 ?? home.annotations.first(where: { $0.id == id })?.localizedLabel(model.localizer)
             if let selected { summary += " " + model.localizer("spatial.selected-home-item") + ": " + selected }
+            if let opening = home.portal(id) {
+                let sides = [opening.sideA, opening.sideB].map { side -> String in
+                    switch side {
+                    case .space(let room): HomeScenePresentation.roomLabel(room, in: home)
+                    case .exterior: model.localizer("spatial.card.outside")
+                    case .commonArea: s("building corridor")
+                    case .unknown: model.localizer("spatial.card.notSure")
+                    }
+                }
+                summary += " (" + sides.joined(separator: " ↔ ") + ")"
+            }
         }
         if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid {
             return summary + " " + model.localizer("spatial.recorded-start-room", ["room": room.label])
@@ -247,6 +258,13 @@ struct FloorPlanView: View {
         if let id = highlightedElementID {
             if let room = home.space(id), room.floorID == fid { ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }
             if let opening = home.portal(id), opening.floorID == fid {
+                // Both sides of the selected opening are tinted, so a "Leads to" answer is visible on the plan at once.
+                for roomID in ScanCorrections.sideRoomIDs(opening) {
+                    guard let side = home.space(roomID), side.floorID == fid else { continue }
+                    let outline = path(side.polygon, f, closed: true)
+                    ctx.fill(outline, with: .color(.purple.opacity(0.14)))
+                    ctx.stroke(outline, with: .color(.purple.opacity(0.7)), style: StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
                 ctx.stroke(path([opening.a, opening.b], f, closed: false), with: .color(.purple), lineWidth: 9)
             }
             if let connector = home.connectors.first(where: { $0.id == id }) {

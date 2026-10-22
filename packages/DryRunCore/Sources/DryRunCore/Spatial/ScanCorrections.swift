@@ -66,11 +66,16 @@ public enum ScanCorrections {
     public static func setNotUsable(_ id: String, _ notUsable: Bool, in home: inout HomeModel) throws {
         guard let index = home.portals.firstIndex(where: { $0.id == id }) else { throw CorrectionError.missingOpening }
         if notUsable { home.portals[index].operable = .confirmed(false); return }
+        // The earlier editor's one-way "Mark as not usable" stored a rejected connection. Turning Not usable off
+        // reopens it for review; it never becomes a verified connection without the household saying so.
+        if home.portals[index].verification == .rejected { home.portals[index].verification = .proposed }
         let scanned = home.scanSnapshot?.portals.first { $0.id == id }?.operable
         home.portals[index].operable = scanned.flatMap { $0.confirmedValue == false ? nil : $0 } ?? (home.portals[index].kind == .opening ? .confirmed(true) : .unknown)
     }
 
-    public static func isNotUsable(_ portal: Portal) -> Bool { portal.operable.confirmedValue == false }
+    public static func isNotUsable(_ portal: Portal) -> Bool {
+        portal.operable.confirmedValue == false || portal.verification == .rejected
+    }
 
     /// "Restore what the scan saw" for one opening (also brings back one marked "Not an opening").
     public static func restore(_ id: String, in home: inout HomeModel) throws {
@@ -102,6 +107,25 @@ public enum ScanCorrections {
         home.annotations = home.annotations.filter { a in
             (a.spaceID.map(rooms.contains) ?? true) && (a.floorID.map(floors.contains) ?? true)
         }
+    }
+
+    /// The rooms on each side of an opening, for highlighting both sides of a "Leads to" answer on the plan.
+    public static func sideRoomIDs(_ portal: Portal) -> [String] {
+        [portal.sideA, portal.sideB].compactMap { if case .space(let id) = $0 { return id }; return nil }
+    }
+
+    /// Rooms "Leads to" may offer from `roomID`: same floor, with the opening's centre within scan attach distance of
+    /// the room's outline (the same rule ScanImport used to propose sides), never `roomID` itself. The opening's
+    /// current other side is always kept so the picker never hides the recorded answer. Captured geometry is not
+    /// moved, so a room that does not touch the opening is never offered.
+    public static func leadsToRooms(_ portalID: String, from roomID: String, in home: HomeModel,
+                                    tolerance: GeometryTolerance = .standard) -> [String] {
+        guard let portal = home.portal(portalID) else { return [] }
+        let current = Set(sideRoomIDs(portal)).subtracting([roomID])
+        return home.spaces.filter { space in
+            space.id != roomID && space.floorID == portal.floorID
+                && (current.contains(space.id) || Geometry.distanceToBoundary(space.polygon, portal.center) <= tolerance.scanPortalAttachMeters)
+        }.map(\.id)
     }
 
     /// Openings the guided "Check your scan" pass asks about, floor by floor.

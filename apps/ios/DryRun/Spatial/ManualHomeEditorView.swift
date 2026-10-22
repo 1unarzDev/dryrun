@@ -278,30 +278,17 @@ struct ManualHomeEditorView: View {
                     Text(model.localizer("plan.shelter.manufactured")).font(.footnote)
                 }
             } else if let index = draft.portals.firstIndex(where: { $0.id == selectedID }) {
-                VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    Text(s("Type")).font(.headline)
-                    ForEach([[PortalKind.door, .window], [.slidingDoor, .opening]], id: \.self) { row in
-                        HStack(spacing: Theme.Space.s) {
-                            ForEach(row, id: \.self) { kind in
-                                let selected = draft.portals[index].kind == kind
-                                Button {
-                                    try? HomeGeometryEditor.reclassifyOpening(in: &draft, portalID: draft.portals[index].id, kind: kind)
-                                } label: {
-                                    HStack {
-                                        Text(s(kind == .door ? "Door" : kind == .window ? "Window" : kind == .slidingDoor ? "Sliding door" : "Open doorway"))
-                                            .fixedSize(horizontal: false, vertical: true)
-                                        if selected { Image(systemName: "checkmark").accessibilityHidden(true) }
-                                    }
-                                }
-                                .buttonStyle(ChoiceButtonStyle(selected: selected))
-                                .accessibilityAddTraits(selected ? .isSelected : [])
-                                .accessibilityIdentifier("home.opening.type.\(kind.rawValue)")
-                            }
-                        }
-                    }
-                }.accessibilityElement(children: .contain).accessibilityIdentifier("home.opening.type")
-                portalEditor($draft.portals[index])
-                openingPlacementEditor(index)
+                // The compact card answers the common corrections in place (type, Leads to, Not usable, Restore);
+                // every answer applies to the draft at once and the plan above highlights both sides.
+                OpeningCorrectionCard(draft: $draft, portalID: draft.portals[index].id,
+                                      fromRoomID: correctionFromRoom.isEmpty ? ScanCheckView.room(of: draft.portals[index], in: draft) : correctionFromRoom,
+                                      onRemoved: { selectedID = nil })
+                DisclosureGroup(model.localizer("spatial.card.more")) {
+                    portalEditor($draft.portals[index])
+                    // Captured openings keep their measured position; only hand-built homes move one to another wall.
+                    if draft.scanSnapshot == nil { openingPlacementEditor(index) }
+                }
+                .accessibilityIdentifier("opening.more")
                 if draft.portals[index].kind == .window {
                     Text(model.localizer("spatial.window-person-question")).font(.subheadline)
                     Text(model.localizer("spatial.window-person-note")).font(.footnote)
@@ -561,9 +548,6 @@ struct ManualHomeEditorView: View {
             if p.leadsToExterior && p.kind == .window {
                 Text(s("Windows are exits only if everyone who would use it can open it and climb out, on the ground floor."))
                     .font(.caption).foregroundStyle(.secondary)
-            }
-            Button(s("Mark as not usable"), role: .destructive) {
-                portal.wrappedValue.verification = .rejected; draft.bumpRevision()
             }
         }
     }

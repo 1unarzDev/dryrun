@@ -9,6 +9,12 @@ public enum HomeEditTransaction {
         var candidate=draft
         candidate.id=current?.id ?? homeID
         candidate.revision=(current?.revision ?? 0)+1
+        // The original scan is immutable: saving an edit of the same capture keeps the stored snapshot whatever the
+        // draft carries. A rescan (new capture frame) or a replacement hand-built home brings its own.
+        if let current, let frozen=current.scanSnapshot, let frame=current.sourceCaptureFrameID,
+           candidate.source==current.source, candidate.sourceCaptureFrameID==frame {
+            candidate.scanSnapshot=frozen
+        }
         return candidate
     }
     public static func commit(_ draft:HomeModel,baseRevision:Int?,current:inout HomeModel?,homeID:String,

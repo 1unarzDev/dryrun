@@ -30,14 +30,16 @@ struct OpeningCorrectionCard: View {
                             }
                             .buttonStyle(ChoiceButtonStyle(selected: selected))
                             .accessibilityAddTraits(selected ? .isSelected : [])
-                            .accessibilityIdentifier("opening.type.\(type.rawValue)")
+                            // Same identifiers as the earlier editor grid (HomePersistenceUITests): door, window, opening.
+                            .accessibilityIdentifier("home.opening.type.\(type == .openDoorway ? PortalKind.opening.rawValue : type.rawValue)")
                         }
                     }
                 }
 
                 Picker(t("leadsTo"), selection: Binding(get: { leadsTo(portal) }, set: { setLeadsTo($0) })) {
-                    ForEach(draft.spaces.filter { $0.floorID == portal.floorID && $0.id != fromRoomID }) { room in
-                        Text(HomeScenePresentation.roomLabel(room.id, in: draft)).tag(room.id)
+                    // Only rooms the captured opening actually touches; the geometry itself never moves.
+                    ForEach(ScanCorrections.leadsToRooms(portalID, from: fromRoomID, in: draft), id: \.self) { roomID in
+                        Text(HomeScenePresentation.roomLabel(roomID, in: draft)).tag(roomID)
                     }
                     Text(t("outside")).tag("outside")
                     if leadsTo(portal) == "unknown" { Text(t("notSure")).tag("unknown") }
@@ -61,7 +63,7 @@ struct OpeningCorrectionCard: View {
                 }
             }
             .accessibilityElement(children: .contain)
-            .accessibilityIdentifier("opening.card")
+            .accessibilityIdentifier("home.opening.type")
         }
     }
 

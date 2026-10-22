@@ -114,7 +114,7 @@ public enum HomeValidator {
                     out.append(HomeIssue(kind: .windowNotAnExit, severity: .info, elementID: p.id,
                                          message: "Windows are not exits unless you confirm everyone who would use it can open it and climb out."))
                 } else if p.verification == .verified && PortalAttachment.check(p, in: home, tolerance: tolerance).attached
-                            && (p.kind == .opening || p.operable.confirmedValue == true)
+                            && ((p.kind == .opening && p.operable.value != false) || p.operable.confirmedValue == true)
                             && ![p.sideA, p.sideB].contains(.unknown)
                             && !home.spaces.contains(where: { ($0.id == spaceID(p.sideA) || $0.id == spaceID(p.sideB)) && $0.geometryNeedsReview == true }) {
                     verifiedGroundExit = true
