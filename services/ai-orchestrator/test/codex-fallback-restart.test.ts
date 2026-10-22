@@ -167,6 +167,14 @@ describe('compact Groq context',()=>{
   const shortened=JSON.parse(fitted[2]!.content as string);expect(shortened.truncatedForProvider).toBe(true);expect(shortened.hostRetrievedRecords.length).toBeGreaterThan(0);
   expect(fitGroqContext(fitted,1e9)).toBe(fitted);
  });
+ it('withholds a single oversized host result rather than sending an over-ceiling request',()=>{
+  const messages:GroqMessage[]=[{role:'system',content:'Authored'},{role:'user',content:JSON.stringify({tasks:[{id:'task-a'}]})},
+   {role:'assistant',content:null,tool_calls:[{id:'c1',type:'function',function:{name:'read_household_context',arguments:'{}'}}]},
+   {role:'tool',tool_call_id:'c1',content:JSON.stringify({records:[{id:'context.big',value:'v'.repeat(30000)}]})}];
+  const fitted=fitGroqContext(messages,8000);
+  expect(Buffer.byteLength(JSON.stringify(fitted))).toBeLessThanOrEqual(8000);
+  expect(fitted[1]).toEqual(messages[1]);expect(fitted[2]).toEqual(messages[2]);expect((fitted[3] as any).tool_call_id).toBe('c1');expect(fitted[3]!.content).toContain('truncatedForProvider');
+ });
  it('sends the compact request through the Groq fallback rather than the full one',async()=>{
   let sentBytes=0;
   const groq=new GroqClient('synthetic',undefined,async(_url,init)=>{sentBytes=Buffer.byteLength(String(init?.body));return Response.json({choices:[{message:{content:'{"summary":"ok"}'}}]});});

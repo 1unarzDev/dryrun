@@ -203,6 +203,12 @@ export function fitGroqContext(messages:GroqMessage[],budgetBytes:number):GroqMe
   });
   if(!changed)break;
  }
+ // Still over (for example one oversized record): withhold whole later host results, newest first, keeping the
+ // system instruction, the canonical request and tool-call pairing. The model is told content was withheld.
+ for(let index=out.length-1;index>1&&size(out)>budgetBytes;index--){
+  const m=out[index]!;if(m.role==='system'||m.role==='assistant'||typeof m.content!=='string'||m.content.length<200)continue;
+  out=out.map((x,i)=>i===index?{...x,content:JSON.stringify({truncatedForProvider:true,note:'Host result withheld to fit this provider; do not assume its contents.'})} as GroqMessage:x);
+ }
  return out;
 }
 export function compactForGroq(value:any):any{
