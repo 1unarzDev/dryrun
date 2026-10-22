@@ -1,0 +1,127 @@
+{
+  "report_id": "report-codex-deadline-restart-gemini-debrief-director-review-20261022",
+  "run_ids": [
+    "run-c7dafd86246f45489924bde08fafbd64"
+  ],
+  "review_kind": "Synthetic agent audit; dedicated output reviewer; forced-fallback development run (simulated Codex deadline after a tool call)",
+  "feature": "Provider fallback restart (canonical input plus hostRetrievedRecords) for debrief, resources and director",
+  "fixture_snapshot": {
+    "inputs": "v7 debrief inputs (oak, lake, pine; context.locale en), resources.json (en), director freeze and fire contexts (hh-oak)",
+    "attempts": "debrief oak eae8387d, lake d7637496, pine 03204fb3; resources 71478a68; director freeze 3c88b0f7, fire 0079866f"
+  },
+  "versions": {
+    "runtime": "Codex 0.163.0 primary; Gemini fallback (gemini-3.x flash family per provider.ts); Groq fallback",
+    "restart_code": "services/ai-orchestrator/src/provider-fallback.ts restartHistory (worktree wf_bce6b49a-568-1 at ac55f81; capture predates commit e08d119 by timing)"
+  },
+  "criteria": [
+    {
+      "id": "RS-1",
+      "criterion": "Truthful status per attempt",
+      "result": "6/6 truthful: oak debrief Groq tool_use_failed (unavailable); lake debrief Gemini-served completed; pine debrief Groq request_too_large (unavailable); resources Groq rate_limit after two served turns (unavailable); both director turns Gemini invalid_output with schema_mismatch (unavailable)."
+    },
+    {
+      "id": "RS-2",
+      "criterion": "Gemini-served debrief d7637496 grounded in the receipt",
+      "result": "fail. Correctly identified that relocation was blocked and that the recommended higher-ground choice was the alternative, and focused on the insulin continuity and flood higher-ground tasks. But it characterized the family's early departure (minute 30, labelled early) as a last-minute attempt, contradicting the receipt; framed the flood plan as enabling the family to shelter safely at home, an unsupported safety framing for a one-floor apartment; and named the medication as insulin, which is only present in the internal equipment ID, not in any family-facing record (purpose refrigeratedMedication)."
+    },
+    {
+      "id": "RS-3",
+      "criterion": "Selected locale",
+      "result": "fail. Output written in Vietnamese while context.locale is en (Codex lake debriefs on the same input were English). The household preferredLocale vi in context.family.householdPreferences appears to have overridden the selected locale."
+    },
+    {
+      "id": "RS-4",
+      "criterion": "Uses the restart's hostRetrievedRecords correctly",
+      "result": "Unverifiable from capture. Gemini took two served turns (one further tool turn, then the answer); the content does not contradict any record, and the receipt it relied on is in the canonical input. The provider-bound message list is not captured, so it cannot be confirmed which retrieved records were present or whether Gemini repeated reads."
+    },
+    {
+      "id": "RS-5",
+      "criterion": "Provider sees no Codex tool-call history",
+      "result": "Supported by source and behavior, not by captured bytes. restartHistory keeps leading user inputs, converts the abandoned provider's function results into one host-labelled user input, and drops its function calls and narration; Gemini (which rejects foreign tool calls lacking its own thought signatures) accepted the restarted history in all 6 Gemini-served turns here (2 debrief, 2 freeze director, 2 fire director); the director failures were output-schema failures, not request rejections. No capture of the provider request exists to confirm directly."
+    },
+    {
+      "id": "RS-6",
+      "criterion": "Diagnose Gemini director schema_mismatch (3c88b0f7 freeze, 0079866f fire)",
+      "result": "Likely cause identified (medium confidence): see likely_stage."
+    }
+  ],
+  "synopsis": "The forced deadline produced honest unavailable outcomes everywhere except the lake debrief, which Gemini served. That debrief got the core lesson (relocation blocked, medication continuity next) but misdescribed the timing of the family's choice, added an unsupported shelter-in-place safety framing, inferred a specific medication from an internal ID, and answered in Vietnamese although English was selected. Both Gemini director restarts failed schema validation twice (initial plus repair). The restart mechanism itself appears to work as designed by source inspection, but the capture cannot prove what the provider saw.",
+  "fact_findings": [
+    {
+      "fact_ids": [
+        "debrief.rehearsal.choices[0] (leave-early, simMinute 30, recommended=false)"
+      ],
+      "finding": "Timing misdescribed by the Gemini summary."
+    },
+    {
+      "fact_ids": [
+        "context.medical.equipment.eq-insulin.purpose=refrigeratedMedication",
+        "legacyOriginalLabel Refrigerated medication"
+      ],
+      "finding": "Medication identity inferred from the ID token; Codex and the prompt's no-internal-ID rule avoid this."
+    },
+    {
+      "fact_ids": [
+        "context.locale=en",
+        "context.family.householdPreferences.preferredLocale=vi"
+      ],
+      "finding": "Gemini followed the household preference instead of the selected locale."
+    },
+    {
+      "fact_ids": [
+        "provider.ts Gemini response_format gate",
+        "restartHistory output contains no function_result steps"
+      ],
+      "finding": "Gemini receives structured-output enforcement only when no tools are offered or history contains a function_result. After a restart the abandoned results become a user input, and the director always offers tools, so the Gemini director finalization runs without the response schema and with tool_choice defaulting to any."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "material",
+      "attempt": "d7637496",
+      "expected": "English, receipt-accurate timing, no shelter safety framing, medication by recorded kind",
+      "observed": "Vietnamese; early choice described as last-minute; shelter-at-home safety framing; specific medication named from an ID",
+      "impact": "Wrong-language card with a misleading lesson for a flood",
+      "stage": "model/prompt plus missing host locale check"
+    },
+    {
+      "severity": "material (reliability)",
+      "attempts": "3c88b0f7, 0079866f",
+      "expected": "Valid director proposal from fallback",
+      "observed": "schema_mismatch twice each",
+      "impact": "Director pauses or falls back to local whenever Codex times out after its preview",
+      "stage": "provider adapter/validation (see likely_stage)"
+    },
+    {
+      "severity": "observability",
+      "attempts": "all",
+      "expected": "Protected capture of the provider-bound message shapes and Zod issue paths",
+      "observed": "Only allowlisted attempt events and final bodies are captured",
+      "impact": "Restart correctness and schema failures cannot be diagnosed from evidence"
+    }
+  ],
+  "likely_stage": "Gemini director schema_mismatch: provider adapter. In provider.ts the Gemini request sets response_format only when tools are empty or the history contains a function_result; restartHistory removes function_result steps (turning them into a hostRetrievedRecords user input) and the gateway still offers director tools, so the restarted Gemini finalization is unconstrained JSON and fails directorOutput twice. A second contributor is that job state keeps toolUsed and previewCommands from the Codex preview, so the FINALIZATION instruction requires Gemini to echo commands from a preview it did not make, while it sees that preview only as a host note. Lake debrief defects: model/prompt (Gemini) plus no host check that output language matches context.locale and no check against medication names absent from family-facing records.",
+  "references": [
+    "Fields inspected: provider_attempt events, protected_feature_response body.proposal.summary and focusTaskIDs, protected_director_response status/validation, host_tool_result preview",
+    "services/ai-orchestrator/src/provider-fallback.ts restartHistory; services/ai-orchestrator/src/provider.ts Gemini response_format and tool_choice; services/ai-orchestrator/src/gateway.ts FINALIZATION instruction (worktree wf_bce6b49a-568-1 ac55f81)"
+  ],
+  "recommendations": [
+    "Gemini adapter: decide response_format from an explicit finalization flag (no tools offered, or job toolUsed) rather than from history step types; or have restartHistory emit a host-labelled synthetic function_call/function_result pair for director previews so existing gates apply.",
+    "Director restart: either reset toolUsed/previewCommands so the fallback runs its own preview, or present the Codex preview to the fallback as the authoritative preview with its exact commands and let the gateway attach them, instead of asking the model to echo them.",
+    "Prompt (all feature roles): write in context.locale; household preferredLocale and communication notes never change the output language. Gateway: add a cheap script/language check against context.locale with one repair.",
+    "Debrief validator: reject medication or device names that appear only in internal IDs; refer to recorded purpose or label.",
+    "Harness: capture, in the protected bundle only, the provider-bound message role/step-type sequence and byte sizes per attempt plus Zod issue paths, so restart isolation and schema failures are verifiable."
+  ],
+  "retests": [
+    "Repeat the forced deadline 3x for freeze and fire after the adapter change: pass if Gemini returns valid proposals 3/3 or truthful unavailable with a non-schema cause.",
+    "Repeat lake debrief forced to Gemini 3x: pass if English 3/3 and timing matches the receipt 3/3.",
+    "Protected capture assertion: restarted provider input contains no function_call steps and exactly one hostRetrievedRecords input."
+  ],
+  "limitations": [
+    "Only one Gemini-served feature output exists; quality conclusions about Gemini are from n=1.",
+    "Source inspection used the wf_bce6b49a-568-1 worktree at ac55f81; the capture ran shortly before that commit and may have used slightly earlier code.",
+    "Synthetic agent audit."
+  ],
+  "next_owner": "Integration owner (provider adapter, restart, harness capture); debrief prompt owner (locale rule)",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

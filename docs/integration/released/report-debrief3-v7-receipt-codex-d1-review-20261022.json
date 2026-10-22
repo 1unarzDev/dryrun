@@ -1,0 +1,132 @@
+{
+  "report_id": "report-debrief3-v7-receipt-codex-d1-review-20261022",
+  "run_ids": [
+    "run-f49557ac511f4ff4a14927da59837702",
+    "run-00329ecbf4054159a399c97e7d046637"
+  ],
+  "review_kind": "Synthetic agent audit; dedicated output reviewer; development-set repeated review (2 repetitions x 3 families)",
+  "feature": "Rehearsal debrief card (role debrief, prompt debrief/3) after a finished rehearsal, Codex-served",
+  "fixture_snapshot": {
+    "inputs": "/private/tmp/dryrun-native-gateway-inputs-v7-debrief-receipt/debrief-{oak,lake,pine}.json; context.locale en; receipt engine cascade-engine/2",
+    "receipts": "oak freeze-power-loss: first choice relocate (non-recommended, blocked, req.relocation unmet), second stay (recommended); water depleted at minute 1980; heat, well, oxygen device lost at 180. lake flash-flood: leave-early (non-recommended, blocked) then higher-ground (recommended); no planned route (incompleteConnectivity); insulin continuity unknown during power cut. pine heat-grid-strain: relocate to cooled place (non-recommended, blocked), then wait at home (recommended); cooling and wheelchair charger lost during rotating outage.",
+    "attempts": "6 (oak 6a7de6e8, 5c5c8103; lake 98c4b8cd, 776f132a; pine 9eb2f5d1, 39e5434a)"
+  },
+  "versions": {
+    "prompt": "debrief/3",
+    "runtime": "Codex 0.163.0 gpt-6.1-sol",
+    "contract": "dryrun.ai/1"
+  },
+  "criteria": [
+    {
+      "id": "D1-a",
+      "criterion": "Grounds what happened in the receipt's committed choices, including that the first decision was the non-recommended relocation and was blocked",
+      "result": "pass 6/6"
+    },
+    {
+      "id": "D1-b",
+      "criterion": "Invents no choices",
+      "result": "pass 6/6 (later recommended choice mentioned in 3/6, omitted in 3/6; omission is acceptable)"
+    },
+    {
+      "id": "D1-c",
+      "criterion": "One hazard-specific decision clause",
+      "result": "pass 6/6 (warmth when electric heat fails; leaving before water rises, one attempt also excluding floodwater crossings; cooled destination before hottest hours)"
+    },
+    {
+      "id": "D1-d",
+      "criterion": "No accessibility attribute without the matching recorded need",
+      "result": "pass 6/6 (wheelchair-accessible transport only for pine p-pine-2 who usesWheelchair; oak and lake framed as limited mobility)"
+    },
+    {
+      "id": "D1-e",
+      "criterion": "No internal IDs in summary",
+      "result": "pass 6/6; focusTaskIDs are valid supplied task IDs 6/6"
+    },
+    {
+      "id": "D1-f",
+      "criterion": "Adds no topic without recorded basis",
+      "result": "5/6; lake 98c4b8cd adds an apartment common-area access concern with no recorded basis (minor)"
+    },
+    {
+      "id": "D1-g",
+      "criterion": "Prioritizes the most consequential receipt outcomes",
+      "result": "partial: oak 0/2 mention the critical stored-water depletion despite act.water.store-3day being available; lake 98c4b8cd omits the insulin continuity gap (1/2)"
+    }
+  ],
+  "synopsis": "All six Codex debriefs completed and were well grounded: each correctly said the family's first committed choice was the non-recommended relocation and that it was blocked for lack of a confirmed destination, then pointed to arranging that destination with the recorded helper and, in five of six, to the essential device or medication continuity gap. No choice was invented, wording stayed in English, accessibility attributes followed recorded needs, and no internal IDs leaked. The main weakness is prioritization: both oak debriefs skipped the receipt's critical stored-water depletion (5 gallons against a 12-gallon target, empty by day two) even though a matching water task was supplied, and one lake debrief dropped the insulin continuity gap. One lake debrief added an unrecorded building-access topic.",
+  "fact_findings": [
+    {
+      "fact_ids": [
+        "debrief.rehearsal.choices[0].recommended=false",
+        "evt.*.relocation.blocked",
+        "unmetRequirements req.relocation"
+      ],
+      "finding": "Used correctly 6/6."
+    },
+    {
+      "fact_ids": [
+        "evt.freeze-power-loss.res.water-depleted (critical)",
+        "act.water.store-3day"
+      ],
+      "finding": "Omitted in oak 2/2; the two focus slots went to relocation and oxygen continuity. Defensible ordering, but the summary text never mentions water, which the receipt marks critical."
+    },
+    {
+      "fact_ids": [
+        "evt.flash-flood.svc.device.eq-insulin.unknown",
+        "act.medical.continuity-plan|equipment.eq-insulin"
+      ],
+      "finding": "Lake 776f132a uses it (pharmacist instructions before buying cooling supplies); lake 98c4b8cd omits it."
+    },
+    {
+      "fact_ids": [
+        "equipment eq-oxygen label empty (legacyOriginalLabel only)"
+      ],
+      "finding": "Deterministic input defect: several receipt event titles for eq-oxygen and eq-insulin begin with an empty device name because the projection uses label rather than legacyOriginalLabel/purpose. Models compensated, but the native receipt rendering will show a blank subject."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "moderate",
+      "attempts": "oak 6a7de6e8, 5c5c8103",
+      "expected": "Mention the critical water run-out from an electric well during the outage",
+      "observed": "Not mentioned",
+      "impact": "Family may not learn the second consequence of the coupled outage"
+    },
+    {
+      "severity": "minor",
+      "attempts": "lake 98c4b8cd",
+      "expected": "Include medication continuity gap; no unrecorded building topics",
+      "observed": "Medication gap omitted; unrecorded common-area access concern added",
+      "impact": "Weaker priority; small unsupported topic"
+    },
+    {
+      "severity": "deterministic",
+      "attempts": "all oak and lake inputs",
+      "expected": "Device name in receipt event titles",
+      "observed": "Blank device name in titles for unlabeled equipment",
+      "impact": "Rendered receipt reads as broken"
+    }
+  ],
+  "likely_stage": "model/prompt for prioritization (both facts were present in the receipt); canonical projection for blank device names in receipt event titles (Core receipt title builder uses a custom label that is empty for eq-oxygen and eq-insulin).",
+  "references": [
+    "Output fields: proposal.summary (semantic only), proposal.focusTaskIDs",
+    "services/ai-orchestrator/src/features.ts debrief/3 instruction and debriefOutput schema (worktree wf_bce6b49a-568-1 at ac55f81)"
+  ],
+  "recommendations": [
+    "Prompt: when the receipt contains a critical resource depletion (water, device power) that has a matching supplied task, the summary must name that consequence even if the focus slots go elsewhere.",
+    "Prompt: name the essential device or medication gap whenever the receipt shows it lost or unknown and a continuity task is supplied.",
+    "Core: build receipt event titles from the display name fallback chain (custom label, then legacyOriginalLabel, then localized purpose) so titles never start with an empty subject.",
+    "Keep the existing accessibility-matching sentence; it held 6/6."
+  ],
+  "retests": [
+    "Rerun 2x3 after the prompt change; pass if oak mentions water 2/2, lake mentions medication continuity 2/2, and D1-a..e stay 6/6.",
+    "Native check of the receipt event list for oak and lake after the title fix."
+  ],
+  "limitations": [
+    "Development fixtures only; two repetitions per family.",
+    "No native rendering or text-fit inspection.",
+    "Synthetic agent audit; not clinical or real-family validation."
+  ],
+  "next_owner": "Rehearsal/debrief domain specialist (prompt); Core receipt owner (event title projection)",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

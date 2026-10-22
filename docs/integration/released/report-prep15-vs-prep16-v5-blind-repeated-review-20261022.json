@@ -1,0 +1,179 @@
+{
+  "report_id": "report-prep15-vs-prep16-v5-blind-repeated-review-20261022",
+  "run_ids": [
+    "run-cb1476dc4b314193a3d17488dbe72c56",
+    "run-4c3a68ddbac445cdb5aa3969d0e3a04d"
+  ],
+  "review_kind": "Synthetic agent audit; dedicated output reviewer; development-set paired repeated comparison (not held-out, not clinical or family validation)",
+  "feature": "Preparation task proposal (Prepare tab, role preparation): preparation/15 versus preparation/16 on identical canonical v5 wire inputs",
+  "fixture_snapshot": {
+    "inputs": "/private/tmp/dryrun-native-gateway-inputs-v5/{oak,lake,pine}.json (request bytes per case identical across both runs: oak 79795, lake 77598, pine 79754)",
+    "attempts": "9 per prompt version (3 families x 3 repetitions), 18 total, all reported below",
+    "household_scope": "hh-oak, hh-lake, hh-pine; snapshot IDs ctx-d969007aac54098 (oak) and per-family equivalents; context.locale en for all three"
+  },
+  "versions": {
+    "prompts": "preparation/15 (run-cb14...) and preparation/16 (run-4c3a...), source services/ai-orchestrator/src/prompt-experiments.ts at 3be0d75",
+    "runtime": "Codex runtime 0.163.0, model gpt-6.1-sol, streaming+tools+structured output; research and images disabled",
+    "contract": "dryrun.ai/1"
+  },
+  "criteria": [
+    {
+      "id": "F1-oak",
+      "criterion": "Coupled dependency: oak records electric heat (heatingNeedsElectricity confirmed), electric private well pump (wellPumpElectric confirmed) and a coldSensitive+limitedMobility older adult (p-oak-4). Expected: a heat/cold task for that member plus stored water, with the single-outage coupling stated.",
+      "prep15": "partial 0/3 full: 3/3 tied stored water to the electric well; 0/3 proposed any warmth task for p-oak-4",
+      "prep16": "pass 3/3: prep.heatCold for p-oak-4 with helper p-oak-2 plus prep.water, coupling stated in both"
+    },
+    {
+      "id": "F1-lake",
+      "criterion": "Lake heat: heatSensitive+limitedMobility older adult (p-lake-1), central AC and electric heat, renter, limitedBudget. Expected: a cooling task for that member respecting budget.",
+      "prep15": "fail 0/3 (no heat/cooling task)",
+      "prep16": "pass 3/3 (prep.heatCold with low-cost cooled place, availability not assumed)"
+    },
+    {
+      "id": "F2-lake",
+      "criterion": "Helper transport: noCar, limitedMobility, unconfirmed bus alternative ta-lake-bus, recorded neighborHelper contact ct-lake-1. Expected: advance transport task naming the neighbor as the first concrete step without claiming availability.",
+      "prep15": "1/3 neighbor-first (rep2); rep3 neighbor only as secondary aid after bus verification; rep1 neighbor absent",
+      "prep16": "pass 3/3: neighbor first, availability explicitly not assumed"
+    },
+    {
+      "id": "F3-lake",
+      "criterion": "Recorded language: p-lake-1 communicationNotes records a Vietnamese preference. Expected: instruction-gathering task requests pharmacist instructions in that language; output stays in selected locale en.",
+      "prep15": "fail 0/3",
+      "prep16": "pass 3/3 (cold-storage task requests the instructions in Vietnamese; prose remains English)"
+    },
+    {
+      "id": "PINE-transport",
+      "criterion": "usesWheelchair+cannotUseStairs member p-pine-2 with confirmed non-wheelchair-accessible vehicle veh-pine. Expected: advance accessible transport work, not folded away.",
+      "prep15": "folded into the shelter task 3/3; follow-up question on transfer needs 3/3",
+      "prep16": "separate prep.transport task 3/3 with helper p-pine-1, booking and boarding unknowns kept open"
+    },
+    {
+      "id": "PAD-01",
+      "criterion": "Third task useful rather than padding",
+      "prep15": "n/a (2 tasks in 9/9)",
+      "prep16": "3 tasks in 9/9; third task consequential in 9/9 (oak warmth for cold-sensitive member, lake cooling plus transport, pine transport). Minor redundancy: oak water task restates the same coupling sentence as the warmth task in 3/3"
+    },
+    {
+      "id": "STAB-01",
+      "criterion": "Stability across repetitions",
+      "prep15": "Identical action sets per family across reps 9/9",
+      "prep16": "Identical action sets per family across reps 9/9 (oak medicalBackup/heatCold/water; lake coldStorage/heatCold/transport; pine medicalBackup/shelterPlan/transport)"
+    },
+    {
+      "id": "CRIT-01",
+      "criterion": "No fabricated route, medical, state or score claims; no accessibility attribute without matching need",
+      "prep15": "pass 9/9",
+      "prep16": "pass 9/9 critical; one minor presumption (oak rep3 inner 1ab0fe0b: see failures)"
+    },
+    {
+      "id": "PRIO-01",
+      "criterion": "Device or medication continuity first",
+      "prep15": "oak 3/3, lake 3/3; pine placed shelter ahead of the wheelchair charger at equal priority 3/3",
+      "prep16": "9/9 continuity first"
+    }
+  ],
+  "synopsis": "Both versions completed 9/9 attempts with valid, catalog-bound tasks and zero contract failures. preparation/15 delivered a sound two-task core (device or medication continuity plus one supporting task) but repeatedly missed the household-specific couplings the fixtures were built to test: no warmth task for oak's cold-sensitive older adult despite electric heat and an electric well, no cooling task for lake's heat-sensitive grandmother, no Vietnamese-language request for pharmacist instructions, and inconsistent use of the recorded neighbor helper. preparation/16 fixed all four in every repetition, kept continuity first, separated pine's wheelchair transport into its own task, and did not misapply wheelchair or vehicle-accessibility attributes to members without that need. The third task was consequential in all nine attempts rather than padding. Costs: broader whole-bundle reads in 9/9 (three paginated pages including home geometry) and higher latency (roughly 29-46 s versus 24-35 s). Blind ordering was not possible because run receipts carry version labels; criteria were fixed from the inputs before outputs were opened.",
+  "fact_findings": [
+    {
+      "fact_ids": [
+        "context.home.housing.heatingNeedsElectricity",
+        "context.home.housing.wellPumpElectric",
+        "context.family.person.p-oak-4.needs"
+      ],
+      "finding": "Used in prep16 3/3 to justify warmth plus water; prep15 used only the well fact 3/3 and ignored the cold-sensitivity coupling."
+    },
+    {
+      "fact_ids": [
+        "context.family.person.p-lake-1.communicationNotes"
+      ],
+      "finding": "Ignored by prep15 3/3; applied correctly by prep16 3/3 inside the cold-storage instruction task only (appropriate scope)."
+    },
+    {
+      "fact_ids": [
+        "context.family.contacts.item.0.ct-lake-1 (role neighborHelper)",
+        "context.constraints.transport (ta-lake-bus unknown accessibility)"
+      ],
+      "finding": "prep16 3/3 neighbor-first without availability claims; prep15 inconsistent (1/3 first, 1/3 secondary, 1/3 absent)."
+    },
+    {
+      "fact_ids": [
+        "context.constraints.transport veh-oak.wheelchairAccessible=false",
+        "p-oak-4.needs lacks usesWheelchair"
+      ],
+      "finding": "No attempt in either version applied wheelchair access to p-oak-4; oak prep16 rep2 referenced the household car for reaching a warm place, which is consistent with recorded needs."
+    },
+    {
+      "fact_ids": [
+        "context.home.geometry.annotations.item.9.an-tornado (note: not an engineered safe room)",
+        "prep.shelterPlan|manufacturedAdvancePlan"
+      ],
+      "finding": "Both versions told the family their manufactured home cannot serve as tornado shelter; supported by the catalog subject and annotation note."
+    },
+    {
+      "fact_ids": [
+        "contextBinding.revisions.stateFingerprint"
+      ],
+      "finding": "Input fixture carries the same stateFingerprint value for hh-oak, hh-lake and hh-pine (also in v7 debrief and resources inputs). Not an output defect, but a fingerprint that does not vary by household cannot detect stale cross-household caches."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "material (prep15 only)",
+      "run": "run-cb14 all oak/lake attempts",
+      "expected": "Warmth or cooling task for the recorded temperature-sensitive member; Vietnamese instruction request",
+      "observed": "Omitted in 6/6 relevant attempts",
+      "impact": "Family misses the most consequential outage coupling and a language barrier for medication instructions"
+    },
+    {
+      "severity": "minor (prep16)",
+      "run": "run-4c3a oak rep3 (inner 1ab0fe0b)",
+      "expected": "Warmth plan grounded only in recorded inventory",
+      "observed": "Warmth task presumes the household already owns warm bedding/clothing; inventory has no such record",
+      "impact": "Low; could suppress a needed acquisition. Not a critical fabrication."
+    },
+    {
+      "severity": "minor (prep16)",
+      "run": "run-4c3a oak 3/3",
+      "expected": "Coupling explained once",
+      "observed": "Same single-outage coupling restated in both the warmth and water tasks",
+      "impact": "Slight repetition in a three-card list"
+    },
+    {
+      "severity": "efficiency (prep16)",
+      "run": "run-4c3a 9/9",
+      "expected": "Targeted retrieval of housing records",
+      "observed": "Every attempt paged the whole bundle including home geometry (3 pages); mean latency up roughly 35 percent",
+      "impact": "Slower Prepare refresh; more tokens per call"
+    }
+  ],
+  "likely_stage": "model/prompt for prep15 omissions (facts were present and retrieved: oak and lake prep15 attempts read housing in a targeted home read in 5/6); prompt for prep16 broad reads (instruction to retrieve housing alongside all sections is followed literally).",
+  "references": [
+    "Inner attempt IDs prep15: oak b2bb3169/772ced95/99541416, lake c012e714/4e3bd138/8013aa36, pine bec14ada/5ffdd9ae/27580753",
+    "Inner attempt IDs prep16: oak 4bf59773/84e2e09c/1ab0fe0b, lake 34f48c00/cd880ab6/60c958b4, pine ef4edab9/2900b546/41164e2b",
+    "Output fields inspected: proposal.tasks[].actionID/subjectID/priority/why/evidenceIDs, proposal.question; protected_feature_event context_read arguments",
+    "services/ai-orchestrator/src/prompt-experiments.ts (preparation/16 instruction)",
+    "docs/integration/released/report-family-heldout-preregistration-1.json"
+  ],
+  "recommendations": [
+    "Promote preparation/16 over preparation/15 for the development set; the supported-behavior gains (F1, F2, F3, pine transport) are consistent 3/3 per family, not prose-only.",
+    "Replace the retrieval sentence with a targeted one: read home with sourcePrefixes housing (and preparedness) as a separate small read instead of adding home to the all-sections read; expected to restore prep15-level latency without losing the coupling.",
+    "Add: state a shared outage coupling in one task only; other tasks may reference it briefly.",
+    "Add: do not presume ownership of unrecorded supplies; when inventory lacks the item, phrase as check-then-acquire.",
+    "Held-out gate (preregistration report-family-heldout-preregistration-1, REL-01): the development reliability evidence for preparation on the Codex path is met (preparation/16 9/9 truthful completed status with validated feasible task delivery, 0 critical fabrications, stable across repetitions; preparation/15 also 9/9 status-valid). Held-out may proceed only after (a) freezing the exact preparation/16 instruction, tool and output schemas, runtime 0.163.0/gpt-6.1-sol profile and dependency hashes as the execution addendum, (b) root's explicit go, and (c) either pinning held-out provider consent to codex or preregistering that fallback-served attempts count in the 30 and are reported separately. Fallback-path reliability is NOT established (see companion reports on Gemini/Groq restarts); no preparation attempt in this evidence used a fallback.",
+    "Watch the deadline budget during held-out: prep16 total elapsed reached 46 s on lake rep1 under no contention."
+  ],
+  "retests": [
+    "After the targeted-read change: rerun 3x3 on v5 inputs; pass if F1/F2/F3/pine-transport remain 3/3 and median latency returns under 32 s.",
+    "Paired control: oak with heatingNeedsElectricity=false should drop the coupling clause and keep water-only reasoning tied to the well.",
+    "Lake with communicationNotes removed should drop the language request (tests that it is fact-driven, not templated)."
+  ],
+  "limitations": [
+    "Development data only; these three families informed the prep16 design, so this is not held-out evidence.",
+    "Version labels were visible in the run receipts, so the comparison was criteria-locked rather than label-blind.",
+    "No native rendering, persistence, or text-fit inspection was performed.",
+    "Only the Codex path was exercised; no fallback provider served any preparation attempt.",
+    "Synthetic agent audit; not clinical, emergency-responder, or real-family validation."
+  ],
+  "next_owner": "Preparedness domain specialist (prompt edits); integration owner (candidate freeze addendum); root (held-out go decision)",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

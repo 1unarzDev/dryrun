@@ -1,0 +1,153 @@
+{
+  "report_id": "report-codex-served-debrief-resources-director-review",
+  "review_kind": "Synthetic agent audit (dedicated output reviewer, reference 12.4). Not real-family, clinical, emergency-responder or competition-judge validation.",
+  "run_ids": [
+    "run-b9760f96197d4f8eb36d97f62ea838f0",
+    "5b39357d-82a7-4075-8d77-4d4fa9f70022",
+    "ba4f1f31-325d-4eae-8e21-b5e8106bd21b",
+    "f902cfe9-649c-46f6-b22c-a137e46cbaac",
+    "0b1d4c8c-7f52-47c4-a0d6-e7d150a3a3d9",
+    "4f4ece14-9d29-4845-a0ba-2d074820ba0a",
+    "bf0e839f-463c-4a7f-8260-7fb5a6f0ecee"
+  ],
+  "feature": "Codex served through the production chain: post-rehearsal debrief card (3 families), resource search planning (Oak, bundled official-resource tool, no live search), and the rehearsal director opening turn (Oak freeze-power-loss and home-fire).",
+  "fixture_snapshot": "Debrief: /private/tmp/dryrun-native-gateway-inputs-v6-debrief/debrief-{oak,lake,pine}.json, sha256 prefixes and suffixes verified (794adba2...0f73, 39225dd0...e8fb7, 690bec23...5abd). Captured contexts are identical to the files; the scenarios are freeze-power-loss, flash-flood and heat-grid-strain. Resources: /private/tmp/dryrun-authored-support-wire-v1/resources.json (83a928ed...27ae4) with locale es; the captured request differs only in requestID. Director: host-initialized Oak scenes at sim minute 0 (freeze-power-loss, home-fire), mechanics dryrun.hazard-mechanics/5, policy dryrun.director-policy/1.",
+  "versions": "Debrief feature prompt/1, resources prompt/5, director RehearsalDirector prompt/31 (gateway.ts). Codex served all calls (providerAttemptGeneration 0). Model and CLI per configured Codex provider (gpt-6.1-sol / 0.163.0 in the sibling capture). Host: /private/tmp/dryrun-codex-lead/core-build/debug/dryrun-host.",
+  "criteria": {
+    "debrief_length_le_600": "PASS 3/3 (about 450-480 characters, three sentences each).",
+    "debrief_focus_tasks_supplied_only": "PASS 3/3. Both focus IDs come from context.tasks in every family.",
+    "debrief_specific_and_correct_fact_use": "Oak: PARTIAL. It uses the electric heat dependency and the oxygen backup unknowns correctly, but misapplies the vehicle's wheelchair-accessible=false field to Oak, where no member uses a wheelchair. Lake: PARTIAL. It uses budget, storage space, no car and the helper well, but is weakly flash-flood-specific and adds a refill topic not present in the inputs. Pine: PASS. It uses the cooling and charging dependencies, the absence of a recorded cooled destination, the non-accessible car and the shared helper load.",
+    "debrief_no_invented_safety_medical": "PASS 3/3. No assurances. Oak's wheelchair inference is an unsupported functional-limitation inference (see failures).",
+    "debrief_grounding_of_what_rehearsal_showed": "FAIL (projection, 3/3). The v6 debrief context carries no rehearsal outcome: learning.sessions and practiceAttempts count 0 and scores.currentHostScorecard is not_recorded. Each summary still frames its content as what the rehearsal revealed, which is inferred from the task list, not from events.",
+    "resources_tied_to_tasks_and_constraints": "PARTIAL. Two plans, both linked to supplied tasks. The medical-backup supplier plan respects car travel and the device unknowns. The second plan is CO-alarm shopping, while the more consequential warming plan for the cold-sensitive older adult with electric heat (prep.heatCold, category warmingCooling) was omitted.",
+    "resources_no_invention": "PASS. No invented places, stock, activation or route safety. officialRecommendations is empty.",
+    "resources_user_text_quality": "FAIL. User-facing purpose and requiredEvidence fields contain internal person and record IDs, and one evidence line labels the patient's record as the helper. The host-rewritten CO plan is English inside an es-locale response.",
+    "resources_question": "PASS (null; nothing material is missing).",
+    "director_tool_use_purposeful": "PASS 2/2. Each turn ran exactly two rounds (preview, then suggestion validation), and every suggested action was host-feasible.",
+    "director_freeze_teaches_hazard": "FAIL/WEAK. No outage or cold event was introduced. Both choices are near-equivalent gap-recognition actions, and the household's cold sensitivity, electric heat and electric well are not engaged.",
+    "director_fire_behavior": "PARTIAL. It starts the alarm, uses accompanied escape by assigned helpers, states outside accounting and no re-entry, and is honest about shared chokepoints and the unverified doorway width (single storey, so elevators do not apply). However, it chose the kitchen as origin while every host route for the child traverses the kitchen, offered one option that sends the child out through the origin room, and neither option nor the narration flags this.",
+    "director_text_amount": "PASS (purpose roughly 50-65 words; labels short)."
+  },
+  "synopsis": "Debrief: all three cards are short, cite only supplied tasks and prioritize the device-continuity work the host ranked first. Pine is the strongest, linking heat, a power wheelchair, no accessible vehicle and one helper for two people to relocation and charging tasks. Oak correctly ties electric heat and the unverified oxygen backup to relocation and continuity, but brings in wheelchair accessibility for a household with no wheelchair user. Lake focuses on medication and cooler planning with budget and storage limits but says little about the flash flood. All three present conclusions as rehearsal findings although the input contains no rehearsal results. Resources: the Spanish-locale Oak plan proposes a driving-radius equipment-supplier search for the oxygen backup and a CO-alarm hardware search, with honest unknowns. Its user-visible fields expose internal IDs and mislabel the helper evidence, and the host's fixed English CO text produces a mixed-language card. The warming-center need for Grandpa was missed. Director: both opening turns use tools efficiently and stay within host-accepted actions. The freeze turn stays before the outage, offering two administrative gap recognitions, so it teaches little about freeze and power loss. The fire turn is mostly sound fire pedagogy, but its kitchen-origin choice puts the child's every modeled route through the fire room without saying so.",
+  "fact_findings": {
+    "used_correctly": [
+      "Oak housing.heatingNeedsElectricity, equipment eq-oxygen unknowns, backupPower bk-station (debrief 5b39357d, director 4f4ece14)",
+      "Lake constraints.limitedBudget, limitedStorageSpace, transport noCar, helper p-lake-2 (debrief ba4f1f31)",
+      "Pine housing.cooling windowOrPortableAC, eq-chair unknowns, transport.destinations empty, vehicles[veh-pine].wheelchairAccessible=false, p-pine-1 helper of p-pine-2 and p-pine-3 (debrief f902cfe9)",
+      "Fire: assistance reachStatus, pt-front.stepFree=true, routes alternativeStatus sharesChokepoint, pt-bed1-hall.clearWidth verificationNeeded (director bf0e839f)"
+    ],
+    "misinterpreted": [
+      "Oak debrief 5b39357d: context.constraints.transport vehicles[veh-oak].wheelchairAccessible=false applied as a barrier for p-oak-4, whose needs are limitedMobility and coldSensitive only (no usesWheelchair). This is an inferred functional limitation.",
+      "Resources 0b1d4c8c: searchPlans[0].requiredEvidence entry for the recorded helper cites context.family.person.p-oak-4 (the equipment user); the actual helper is p-oak-2."
+    ],
+    "omitted": [
+      "Lake debrief: act.flood.higher-ground-plan and the no-car departure constraint as the flash-flood decision. The medical tasks were host priority 0, so the choice is defensible, but the hazard lesson is thin.",
+      "Resources: p-oak-4 coldSensitive + electric heat leading to a warmingCooling plan for prep.heatCold.",
+      "Freeze director: p-oak-4 coldSensitive, housing.wellPumpElectric, the evt.freeze-power-loss.grid-loss profile (minute 180) and the warmLayers/heatedAlternative actions."
+    ],
+    "unsupported_additions": [
+      "Lake debrief adds a medication refill topic with no recorded basis (low severity).",
+      "All debriefs: rehearsal-outcome framing with no outcome data in context."
+    ]
+  },
+  "failures": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "runs": "5b39357d, ba4f1f31, f902cfe9",
+      "expected": "A debrief grounded in what actually happened in the session (choices, consequences, identified gaps, score change).",
+      "observed": "No session outcome is in the context, so the summaries infer findings from the task list.",
+      "impact": "The card cannot reflect the family's actual choices. Two families who rehearsed very differently would get the same debrief.",
+      "stage": "projection (the debrief context lacks a rehearsal receipt)"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "runs": "5b39357d",
+      "expected": "Use only recorded needs. Oak has no wheelchair user.",
+      "observed": "A wheelchair-accessibility barrier is asserted for Oak's transport.",
+      "stage": "model/prompt"
+    },
+    {
+      "id": "D3",
+      "severity": "low-medium",
+      "runs": "ba4f1f31",
+      "expected": "Flash-flood debrief names the flood-specific decision (early departure without a car for a mobility-limited member) or explicitly links the medication tasks to flood displacement.",
+      "observed": "The summary is generic medication and cooler planning.",
+      "stage": "model/prompt"
+    },
+    {
+      "id": "R1",
+      "severity": "medium",
+      "runs": "0b1d4c8c",
+      "expected": "No internal IDs in user-visible purpose/requiredEvidence, and correct helper attribution.",
+      "observed": "Person and record IDs appear in prose, and the helper evidence points at the patient's record.",
+      "stage": "prompt plus validation (resources lacks the internal_id check that debrief has)"
+    },
+    {
+      "id": "R2",
+      "severity": "medium",
+      "runs": "0b1d4c8c",
+      "expected": "Whole card in locale es.",
+      "observed": "The host CO-alarm rewrite (features.ts resources validation branch) injects fixed English purpose, unknowns and requiredEvidence.",
+      "stage": "validation/host rewrite (not localized)"
+    },
+    {
+      "id": "R3",
+      "severity": "low-medium",
+      "runs": "0b1d4c8c",
+      "expected": "Spend the three slots on the most consequential searches: oxygen backup supplier, a warming option for the cold-sensitive member, and possibly water for the electric well.",
+      "observed": "The second slot went to CO-alarm shopping in a home with a verified CO alarm annotation and no recorded combustion appliance.",
+      "stage": "model/prompt plus fixture (shared annotations)"
+    },
+    {
+      "id": "G1",
+      "severity": "medium",
+      "runs": "4f4ece14",
+      "expected": "The opening freeze turn introduces the cold or outage boundary (or schedules grid loss and advances), then offers household choices such as warmth for the cold-sensitive member, a heated alternative or power allocation.",
+      "observed": "The turn stays at a pre-outage requestDecision with two identifyGap recognitions of nearly the same effect.",
+      "impact": "The rehearsal's first screen is administrative, and the family makes no hazard decision.",
+      "stage": "prompt plus host mechanics (at minute 0 only identifyGap and allocatePower none are feasible)"
+    },
+    {
+      "id": "G2",
+      "severity": "high (hazard pedagogy)",
+      "runs": "bf0e839f",
+      "expected": "With a kitchen origin, avoid or flag routes through sp-kitchen, and prefer an option that keeps the child away from the origin room.",
+      "observed": "Kitchen origin was chosen. The child's primary back-door route and the front alternative both traverse sp-kitchen. One offered option sends the child out the back door, the narration does not flag the origin-room crossing, and the host accepted it because the alarm stage has no affected spaces yet.",
+      "impact": "This could teach a family that leaving through the fire room is a reasonable choice.",
+      "stage": "host route projection and feasibility (origin room not treated as hazardous at alarm stage) plus prompt. Also check why the child's front route goes via the kitchen when pt-living-hall exists (low confidence)."
+    }
+  ],
+  "likely_stage": "D1 is projection. D2, D3 and R3 are model/prompt. R1 is prompt plus a missing validation. R2 is the host validation rewrite. G1 is director prompt plus host minute-0 mechanics. G2 is host feasibility/route projection plus prompt. Confidence: high for D1, R1, R2 and G2 (directly evidenced by input fields); medium for the others.",
+  "references": [
+    "run-b9760f96 stdout lines 1,3,5: response.body.proposal.summary / focusTaskIDs",
+    "line 7: proposal.searchPlans[0].purpose, searchPlans[0].requiredEvidence[2], searchPlans[1].* (host rewrite)",
+    "lines 9-13 (freeze) and 15-19 (fire): calls[].arguments.commands, suggestedActions[*].commands, final proposal.purpose and evidenceIDs; host_tool_result.preview.routes[p-oak-3], preview.directorState.originSpaceID",
+    "Inputs: debrief privateContext records context.learning.sessions / practiceAttempts / context.scores.currentHostScorecard; homeScene.portals pt-front, pt-back, pt-living-hall",
+    "Source: services/ai-orchestrator/src/features.ts prompts.debrief, prompts.resources and the resources validation branch; src/gateway.ts director validation"
+  ],
+  "recommendations": [
+    "Debrief projection: add a compact host rehearsal receipt to the debrief context (committed choices, identified/open gap IDs, key computed consequences, before/after score evidence) and require the summary to cite one actual consequence. When no receipt is present, the prompt must say the card is based on recommended tasks, not observed results.",
+    "Debrief prompt: forbid applying vehicle or route accessibility attributes to a person without the matching recorded need (usesWheelchair/cannotUseStairs). Require one sentence on the hazard-specific lesson for debrief.scenarioID.",
+    "Resources: apply the debrief internal-ID check (p-/eq-/bk-/ct-/context.*) to purpose, mandatoryCapabilities, unknowns and requiredEvidence, with one repair. Keep record IDs only in dependencyIDs.",
+    "Resources host rewrite: localize the fixed CO-alarm, shelter and fire texts via locale keys, or move them to host-rendered strings keyed by locale.",
+    "Resources: when an alarm annotation is verified and no combustion source is recorded, map prep.coAlarms to a test/check plan rather than a retailer search. Prompt: rank prep.heatCold warmingCooling above alarm shopping for cold- or heat-sensitive members with electric conditioning.",
+    "Director freeze: in mechanics /5, either expose a pre-outage household choice (for example early heated alternative or warm layers staged for the sensitive member), or instruct the opening turn to schedule grid loss and advance to it before offering choices. Avoid an opening composed solely of identifyGap recognitions.",
+    "Director fire: the host should mark routes whose spaceSequence contains originSpaceID as infeasible or discouraged, even at the alarm stage. The prompt should pick an origin and options that let the family practice choosing the route away from the origin. Verify the host route generator considers pt-living-hall for the child."
+  ],
+  "retests": [
+    "Debrief x3 families x2 reps after adding the rehearsal receipt, with paired receipts (same family, different choices; the debriefs must differ substantively).",
+    "Resources Oak es and en x2. Check for no internal IDs in prose, a fully localized card, and a warming plan present.",
+    "Freeze director opening x3 reps: an outage or cold event must be introduced, or the choices must engage the sensitive member.",
+    "Fire director with origin kitchen and origin bed1: no offered route through the origin; accounting still requested."
+  ],
+  "limitations": [
+    "Synthetic agent audit. No native screenshot was inspected, so debrief card fit is judged by length only.",
+    "One repetition per item, so instability is not measured.",
+    "Tool-call transcripts for the resources run are not in the capture, so whether find_official_resources was called is unknown.",
+    "Director review covers the opening turn only; continuation and endings are not covered."
+  ],
+  "next_owner": "Debrief/rehearsal specialist (D1-D3) with the integration specialist for the receipt projection. Resources specialist (R1-R3). Scenario/house pair specialists plus Core host for G1-G2.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

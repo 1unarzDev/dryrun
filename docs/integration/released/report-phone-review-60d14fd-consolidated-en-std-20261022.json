@@ -1,0 +1,125 @@
+{
+  "report_id": "report-phone-review-60d14fd-consolidated-en-std-20261022",
+  "run_ids": [
+    "run-160f3913958544a7b1c99eff5542e117",
+    "run-ae8626dab27347f3b8d961cec0fdae30",
+    "run-bc5367b6d2704a06a0a48d173cc6eb8d",
+    "run-6e282d360c6b482a9631de553f8c1acb",
+    "run-e10c150971024840b639ceb5ffb9c24c",
+    "run-225512b575364ad2989c5a30aaebb337",
+    "run-a34075c7c115420d85d314099a13ab00",
+    "run-5fcdbe33599642fc8c0b50601cb9a0cd",
+    "run-d62ec92060a54695942bf8b65fe1518f",
+    "run-1171e75e7d8242809a576e7ea0c8f94b",
+    "run-8246e202ddfc4822845cc90782dbf24c",
+    "run-df8c7679d1584f99ab1171fe86393430",
+    "run-6e382f3deaa94da38a7268f39a8fb21b",
+    "run-0e834136b06745e0a1edc111ec72a9e9",
+    "run-c7924d04a6724c2eb8c7c555b8c657a9",
+    "run-632351dda5b44528943bb083a4a022da"
+  ],
+  "feature": "Physical-iPhone review of codex/native-integration-20261021 at 60d14fd (reference 12.4, 12.5): suites, hazard choices, Codex-served Beacon, director stall fallback. Finish-fast pass reusing the stopped reviewer's receipts.",
+  "review_kind": "synthetic agent audit (dedicated output reviewer + family experience reviewer); not real-family, clinical or responder validation",
+  "fixture_snapshot": {
+    "build": "codex/native-integration-20261021 at 60d14fd, Debug, bundle com.dryrun.dev.mdd7d3htmp",
+    "device": "iPhone 16 Pro 00008140-0002703A2242801C; exclusive reservation held and released; device became unavailable to devicectl at about 10:51 and stayed unavailable for this pass",
+    "data": "Only -uiTestingInMemory / -demoHousehold fictional households (hh-oak, hh-lake). Owner household and real scanned home never opened, edited or captured; no uninstall/reset.",
+    "gateway": "Codex-primary scripts/mac/beacon-gateway.sh (pids 17695/17732), reached by the phone through the owner-approved IPv6-to-IPv4 forwarder from about 09:36; gateway log shows 3 POST turns served by codex",
+    "locale_and_size": "English, standard text size only"
+  },
+  "criteria": [
+    "Each failure classified as product regression, test drift or environment, with the assertion and screen",
+    "Hazard-specific choices reachable and committed",
+    "Beacon on Prepare served by Codex",
+    "Director stall falls back to a local step with End enabled",
+    "No AI output quoted"
+  ],
+  "synopsis": "Suites with receipts: Unit 57 executed / 1 failed (both runs, same test); HazardChoiceUITests 4/3 failed; BeaconUnpluggedUITests 1/1 failed then passed on gateway-reachable rerun; HomePersistence 1/0; FamilyHazardMatrix 1/0; SixHazard 6/1 failed; DemoJourney 11/1 failed; DeviceAudit 10 run, 2 skipped (live Gemini), 2 failed; ScreenshotTour 1/0; reviewer probes: maps 4/0, hurricane 1/0, home 3/0, prep 4/2 failed. No failure is attributed to a confirmed product regression. Main cause class: UI tests documented as on-phone-director scripts run with 'Let Beacon choose the next moments' on by default, so while the gateway was unreachable over the cable (before the forwarder) each turn waited for the deadline fallback and choices did not commit/appear in the test waits. Secondary: test drift after mechanics v6 and the deadline-copy key rename. Manual hazard re-checks, in-flight family switch and Settings > About were not completed because the phone dropped off devicectl (CoreDevice 'connection invalidated') during the stopped reviewer's last two batches and remained unavailable.",
+  "fact_findings": [
+    "Unit DirectorDeadlineTests.testStalledGatewayTurnFallsBackToTheLocalDirectorWithinTheDeadline (DirectorDeadlineTests.swift:68): the fallback itself works (local director took the step in about 0.5 s, revision advanced, turn not in flight); only the note-key assertion fails. AppModel now sets the note from key adaptive.director.fallbackNote (d6b43a5) while the test compares against adaptive.fallback.deadline, which no longer exists. TEST DRIFT.",
+    "HazardChoice testHeatShadeThenMove (line 78): shade committed; screen after the move tap still shows the shade receipt with the director turn in progress ('Beacon is choosing the next moment'), so the move did not commit and stayed offered. ENVIRONMENT (cloud director on, gateway stalled) plus TEST GAP (test does not pin the local director).",
+    "HazardChoice testTornadoShelterAndAccompany (lines 115,123,124): hierarchy shows adaptive.director.inFlight and the deadline fallback note; accompany and all four reachShelter choices remain offered, none committed. Same ENVIRONMENT + TEST GAP class.",
+    "HazardChoice testWaterAllocationUnderAdvisory (lines 135,136,42): useWater choices present (stored and tap); boil-water advisory not reached within the test's steps while turns were in flight, so tap.boiledDrink absent and tap.drink still offered. ENVIRONMENT/timing; not evidence that the advisory gating is wrong.",
+    "HazardChoice testFireEscapeAccountOrderedDebrief PASSED: exit for Parent A offered, no exit back inside, accounted outside, finished card lists actions in order.",
+    "BeaconUnpluggedUITests testBeaconTailorsPrepareFromBundledConfig: first run (07:4x, gateway not reachable over the cable) failed 'Beacon did not tailor Prepare'; rerun at about 09:40 via the forwarder PASSED in 40 s and the gateway log records the serving provider as codex. ENVIRONMENT; Codex-served Beacon on Prepare from the bundled (no-argument-style) config is confirmed once.",
+    "SixHazard testWaterOutageSetupToDebrief (lines 61-62): the setup screenshot captured after tapping the water-outage card shows the Home fire setup, so the with-power-loss option was not on screen. Most likely the tap landed on a neighbouring card after scroll (TEST DRIFT/flake); a card-routing product bug is not excluded and needs one rerun. Other five hazards passed setup-to-debrief.",
+    "DemoJourney testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected (lines 46-47): decision.option.get-out exists but is not hittable (under the bottom Next/End bar region). Likely TEST DRIFT in the reveal helper versus the newer bottom action bar; possible LAYOUT issue if the list cannot scroll the last option clear of the bar. 10 other DemoJourney tests passed.",
+    "DeviceAudit testAdaptiveApartmentFireCommitsActionsFromReceipts (lines 48-49): hierarchy shows adaptive.director.inFlight and no decision.option; ENVIRONMENT (stalled cloud director) + TEST GAP.",
+    "DeviceAudit testAdaptiveWaterOutageWaterPolicyChangesTheCommittedSituation (lines 83-85): the actions list now offers specific rehearsal.cmd.useWater.<source>.<use> choices; there is no 'only for essentials' policy button. TEST DRIFT after mechanics v6 (600fafa).",
+    "Reviewer probe prep: testPlan06AndAbout failed on hittability of settings.aboutBeacon StaticText (probe query drift, not product); testPrep08FamilyRelationship failed in its accessibility-size/es/vi iterations looking for a Button-typed family.relationship picker (probe drift; now out of scope). testPrep17AlertAndReload and testCopySurfacesWithBeacon passed.",
+    "Reviewer probe reh: testFireOrdered and testFloodNoRefuge passed; run interrupted before tornado. testFreezePoweredVsUnpowered reported passed but its observations show it never left the setup screen, so it is INCONCLUSIVE; SixHazard freeze setup-to-debrief passed.",
+    "Batches w4a (in-flight family switch, live director, tornado accompany) and w4b (HazardChoice and DeviceAudit no-gateway reruns) aborted on CoreDevice 'connection invalidated'; ENVIRONMENT, no product signal.",
+    "Director stall fallback on device: tornado screenshot shows the deadline fallback note, 'Next moments chosen on this phone', and End visibly enabled; unit test shows the local step well under 18 s."
+  ],
+  "failures": [
+    {
+      "test": "DirectorDeadlineTests.testStalledGatewayTurnFallsBackToTheLocalDirectorWithinTheDeadline",
+      "class": "test drift",
+      "owner": "lead2 codex-context"
+    },
+    {
+      "test": "HazardChoiceUITests heat, tornado, water",
+      "class": "environment + test gap (cloud director default on)",
+      "owner": "lead2 scenario-native"
+    },
+    {
+      "test": "BeaconUnpluggedUITests",
+      "class": "environment (gateway unreachable); passed on rerun",
+      "owner": "none"
+    },
+    {
+      "test": "SixHazardUITests.testWaterOutageSetupToDebrief",
+      "class": "probable test flake/drift, unconfirmed",
+      "owner": "lead2 scenario-native"
+    },
+    {
+      "test": "DemoJourneyUITests.testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected",
+      "class": "probable test drift, possible layout",
+      "owner": "lead2 house/maps UI"
+    },
+    {
+      "test": "DeviceAuditUITests apartment fire",
+      "class": "environment + test gap",
+      "owner": "lead2 scenario-native"
+    },
+    {
+      "test": "DeviceAuditUITests water policy",
+      "class": "test drift (mechanics v6)",
+      "owner": "lead2 scenario-native"
+    },
+    {
+      "test": "Reviewer probes prep08/plan06",
+      "class": "reviewer probe drift",
+      "owner": "reviewer"
+    }
+  ],
+  "likely_stage": "UI test harness configuration and post-merge test maintenance; no confirmed product-stage regression",
+  "references": [
+    "DryRun_Codex_Integration_Reference.txt 12.4, 12.5",
+    "apps/ios/DryRunTests/DirectorDeadlineTests.swift:68",
+    "apps/ios/DryRun/App/AppModel.swift:1482",
+    "apps/ios/DryRunUITests/HazardChoiceUITests.swift",
+    "apps/ios/DryRunUITests/SixHazardUITests.swift:61",
+    "apps/ios/DryRunUITests/DemoJourneyUITests.swift:46",
+    "apps/ios/DryRunUITests/DeviceAuditUITests.swift:48,83"
+  ],
+  "recommendations": [
+    "Update DirectorDeadlineTests to the adaptive.director.fallbackNote key",
+    "Have hazard-choice and adaptive UI tests launch with the cloud director off (or wait for adaptive.director.inFlight to clear) so they test what they document",
+    "Replace the 'only for essentials' lookup with a useWater choice",
+    "Make the DemoJourney/SixHazard reveal helpers account for the bottom action bar and verify the opened setup title"
+  ],
+  "retests": [
+    "One rerun each of HazardChoiceUITests and DeviceAudit adaptive tests with gateway reachable or cloud director off",
+    "SixHazard water-outage once to exclude card routing",
+    "Not done here: tornado accompany manual, heat manual, freeze powered vs unpowered manual, in-flight family switch, Settings > About provider label and AI copy, live director turn"
+  ],
+  "limitations": [
+    "Spanish, Vietnamese and accessibility text sizes were skipped by owner instruction (English standard size only)",
+    "Phone unavailable to devicectl for this pass, so the requested one-pass manual checks for heat, tornado, freeze, in-flight family switch and Settings > About could not be run; findings for those rest on prior receipts only",
+    "No fixes, retuning or repeated retries attempted by owner instruction",
+    "No AI output is quoted; provider attribution comes from gateway servedBy counts only"
+  ],
+  "next_owner": "lead2 scenario-native (hazard/adaptive UI tests), lead2 codex-context (deadline unit test); integration lead for retests",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

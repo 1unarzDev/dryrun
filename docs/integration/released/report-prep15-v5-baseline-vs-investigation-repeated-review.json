@@ -1,0 +1,119 @@
+{
+  "report_id": "report-prep15-v5-baseline-vs-investigation-repeated-review",
+  "review_kind": "Synthetic agent audit (dedicated output reviewer, reference 12.4). Not real-family, clinical, emergency-responder or competition-judge validation.",
+  "run_ids": [
+    "run-30ada6a2c73e423892d0b859df2fa33d",
+    "run-1ac4cb451e454e19a630faee58abe46e",
+    "da695611-d307-4e3e-9798-dd76c3beaeb2",
+    "6c110555-d48b-46e3-bbcf-0f5ff81ba2c5",
+    "d3be4a44-a5d5-46f0-9331-defdfa794cf4",
+    "90aca069-b517-47b9-bfd8-a24e90e781d2",
+    "cfdb5df8-edb4-4c96-a898-ece9d811c4fb",
+    "c42d5507-a21c-484d-b95b-97f75a6c69e5",
+    "03eb9bcc-796c-406a-a1c3-397c9695df1e",
+    "c8c88bee-4ff4-4057-9aac-1c2f3606cd62",
+    "660c9500-529f-4d2e-b0cc-eb8ff5d05da1",
+    "f28d9212-3fd2-4387-b08a-1a86d0cf7db0",
+    "c1a7291e-1a2b-4972-ac2a-fa1b263a5b4d",
+    "84d735f3-8e28-4664-aeab-d8fc5192faca"
+  ],
+  "feature": "Prepare: Codex preparation proposal (up to three host-catalog or bespoke tasks plus optional question) through the authenticated HTTP feature handler with read_household_context retrieval.",
+  "fixture_snapshot": "Frozen native v5 inputs /private/tmp/dryrun-native-gateway-inputs-v5/{oak,lake,pine}.json. Verified sha256: oak 67c684d5...6142, lake f8e063d7...87bc, pine 793dcd11...6207. Every exact_execution_input context in both captures is byte-identical to the corresponding file. Provenance note: the work order lists the oak hash as 67c684d5...6207; the prefix matches oak but the suffix 6207 belongs to pine. The input bytes are correct; only the work-order abbreviation is wrong.",
+  "versions": "Baseline promptVersion preparation/15. Candidate preparation/15+preparation-investigation/1. Codex model gpt-6.1-sol, CLI/runtime 0.163.0, capabilities research=false, images=false, locale en. Two repetitions per family per condition, 12 attempts total.",
+  "criteria": {
+    "C1_consequential_fact_use": "Baseline: PASS 6/6 for the critical device dependency (oxygen concentrator + battery station unknowns for Oak, refrigerated medication + budget + unknown cooler for Lake, power wheelchair + manufactured home + non-accessible car for Pine). PARTIAL on secondary facts: no run in either condition used Oak's confirmed electric heat, electric well pump or cold-sensitive older adult, or Lake's heat-sensitive older adult with central AC and no backup. Investigation: PASS 6/6 for the critical device dependency, but weaker on Lake transport/helper facts (see failures).",
+    "C2_feasible_useful_catalog_task": "PASS 12/12. Every delivered task maps to a host catalog row (prep.medicalBackup, prep.water, prep.coldStorage, prep.transport, prep.shelterPlan). No bespoke tasks. Host identity, destination and predicates are preserved.",
+    "C3_no_redundant_saved_fact_question": "PASS 12/12. Questions asked for facts that are absent from the snapshot: concentrator make/model or supplier instructions, medication storage limits, and car-transfer ability. Two runs returned a null question (baseline oak rep2, investigation pine rep2).",
+    "C4_source_unknown_honesty": "PASS 12/12. Unknown cooler, backup runtime, wattage and bus accessibility stay unknown. Battery station ownership is never presented as compatibility. Manufactured-home shelter status is handled correctly.",
+    "C5_no_invented_route_stock_medication_state_score": "PASS 12/12. No invented temperature limits, places, stock, completion or score claims.",
+    "C6_stability_across_repetitions": "Baseline: high. The same task pair appeared in both reps for every family. Investigation: lower. Lake rep1 returned one task and rep2 returned two, and transport framing changed between reps.",
+    "comparison_verdict": "No supported improvement from preparation-investigation/1. It mostly selects fewer tasks with the same critical first task. For Lake it loses consequential use of the recorded neighbor-helper contact and, in rep1, the no-car/limited-mobility transport dependency. Recommendation: keep baseline preparation/15 and do not promote the candidate."
+  },
+  "synopsis": "All 12 attempts completed (HTTP 200, completed) with no critical fabrication, cross-family leak or unsupported state/score claim. In the baseline, each family got the critical device-continuity task first, plus one second consequential task. Oak's second task was a check-before-buy review of its recorded stored water. Lake got pharmacist-based storage instructions under a limited budget, then transport help via the recorded neighbor contact because no car is recorded and bus accessibility is unknown. Pine got an advance accessible-shelter plan because a manufactured home is not a shelter and the recorded car is not wheelchair accessible. Pine's second task was charger backup documentation. Helper assignments were used correctly (Parent B for Grandpa, Adult son for Ba, Mama for Tio and Nina). The investigation candidate kept the same critical first tasks. It dropped Oak's second task in both reps and Lake's transport task in rep1. Its Lake rep2 transport task routed the household to the transit provider instead of the recorded neighbor helper. Questions were slightly more targeted in one Oak rep. Overall the candidate shows shorter output, not better supported behavior.",
+  "fact_findings": {
+    "used_correctly": [
+      "household.equipment[eq-oxygen].documentation=unknown and powerWatts unknown with backupPower[bk-station] setupConfirmed unknown (all Oak runs)",
+      "people[p-oak-4].helperPersonID=p-oak-2 (3 of 4 Oak runs reference the helper role; investigation oak rep2 omits it)",
+      "equipment[eq-insulin].requiresColdStorage with supplies.coolerAndIcePacks unknown and constraints.limitedBudget=true (all Lake runs)",
+      "context.family.contacts.item.0.ct-lake-1 neighborHelper + constraints.transport alternatives[ta-lake-bus].wheelchairAccessible unknown (baseline lake reps 1-2)",
+      "housing.homeType=manufacturedHome + planningNeeds manufacturedTornadoAdvancePlan + transport vehicles[veh-pine].wheelchairAccessible=false (all Pine runs)",
+      "people[p-pine-1] helper for both p-pine-2 and p-pine-3 (baseline pine rep2, investigation pine rep1)"
+    ],
+    "omitted_or_unused": [
+      "Oak housing.heatingNeedsElectricity=true, wellPumpElectric=true and p-oak-4 needs coldSensitive. None of 4 Oak runs linked water or warmth to the electric well/heat dependency. prep.heatCold and prep.wellFloodPlan were never selected, and the Oak water task did not mention the well.",
+      "Lake p-lake-1 heatSensitive with no backupPower. prep.heatCold was never selected in 4 Lake runs.",
+      "Lake p-lake-1 communicationNotes 'Prefers Vietnamese'. No Lake run reflected the preference, for example by asking for pharmacist instructions in a format or language Ba can use, although the preparation prompt asks to preserve recorded communication preferences.",
+      "Oak pets[pet-oak-dog].carrierAvailable=false was unused (low severity).",
+      "Investigation lake rep1 omitted the no-car plus limited-mobility transport dependency entirely. Investigation lake rep2 omitted ct-lake-1."
+    ],
+    "misinterpreted": [
+      "None critical. The Oak baseline water task treats the legacy storedWaterGallons=5 as a quantity to verify against the host gap, which is correct handling of gap.unknown=true."
+    ],
+    "retrieval": "The evidenceIDs cite family/medical/constraints/inventory records and, in the investigation, currentTasks records, so retrieval of those sections occurred. No run cited context.home.housing for Oak or Lake. Learning/score sections are empty (count 0) in v5, so their absence is not a defect. Tool-call transcripts are not in the capture, so retrieval rounds and paging cannot be audited."
+  },
+  "failures": [
+    {
+      "id": "F1",
+      "severity": "medium",
+      "runs": "all 12",
+      "expected": "Oak: a cold-sensitive older adult in an electric-heat home on an electric private well should get at least the warmth/water dependency reflected in a task or rationale when slots remain. Lake: a heat-sensitive older adult with no backup power should likewise get heat continuity reflected.",
+      "observed": "Each run used at most two slots and never selected heatCold or the well-water linkage. Oak's water rationale ignores that the well stops without power.",
+      "impact": "The family misses that a winter outage removes both heat and running water at once, which is the most hazard-specific dependency in Oak.",
+      "stage": "model/prompt (prioritization). Housing facts are projected and retrievable."
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "runs": "investigation 660c9500, f28d9212",
+      "expected": "Keep the no-car plus limited-mobility transport dependency and use the recorded neighbor helper contact, as both baseline reps did.",
+      "observed": "Rep1 dropped transport. Rep2 kept transport but pointed to the transit provider only and omitted the neighbor contact.",
+      "impact": "The candidate prompt's single-decisive-fact framing suppresses the second most consequential Lake preparation.",
+      "stage": "prompt (preparation-investigation/1 'strongest two... one decisive fact' framing)"
+    },
+    {
+      "id": "F3",
+      "severity": "low",
+      "runs": "all 4 Lake runs",
+      "expected": "Recorded communication preference reflected where it affects a task (instructions Ba can read or understand).",
+      "observed": "Not reflected.",
+      "stage": "model/prompt"
+    },
+    {
+      "id": "F4",
+      "severity": "low (latent)",
+      "runs": "fixture",
+      "expected": "Per-family home geometry.",
+      "observed": "All three v5 fixtures share identical home geometry and annotations, including a verified oxygen-concentrator medical annotation and a verified CO alarm. Lake and Pine have no oxygen concentrator. No reviewed preparation output used the stray annotation.",
+      "impact": "Latent cross-family leak: a model reading home annotations could attribute oxygen equipment to Lake or Pine.",
+      "stage": "canonical data / fixture projection"
+    }
+  ],
+  "likely_stage": "Delivered behavior is limited by model/prompt prioritization (F1, F2, F3), not by projection, schema or validation. Housing and communication facts are present both in the summary and in the private records. F4 is a canonical fixture-data defect. Confidence: medium-high for F2 (paired, identical inputs) and medium for F1.",
+  "references": [
+    "protected_feature_response.body.proposal.tasks[*].actionID/evidenceIDs/why and proposal.question for each runID above (stdout lines 1,3,5,7,9,11 of each capture)",
+    "Input fields: context.household.housing.{heatingNeedsElectricity,wellPumpElectric}, people[*].needs, privateContext.records[context.family.person.p-lake-1].value.communicationNotes, context.family.contacts.item.0.ct-lake-1, context.constraints.transport, context.home.geometry.annotations.item.8.an-medical",
+    "Prompt: services/ai-orchestrator/src/features.ts prompts.preparation; src/prompt-experiments.ts preparationInvestigationV1"
+  ],
+  "recommendations": [
+    "Do not promote preparation-investigation/1. If a decision-first variant is retried, require it to keep a second task when a distinct critical dependency exists (transport for no-car plus mobility-limited members, or a utility dependency for a sensitive member) rather than optimizing for one decisive fact.",
+    "Add authored guidance (fresh wording, not output-derived) to preparation/15: when housing confirms heating or a well pump requires electricity and a member is cold- or heat-sensitive, treat outage warmth/cooling and water as a coupled dependency and consider prep.heatCold or prep.wellFloodPlan before generic supply checks.",
+    "Add: when a person has recorded communicationNotes, a task that obtains instructions for that person should state the format or language to request.",
+    "Add: when a recorded helper contact exists (contacts role neighborHelper), prefer it as the first concrete transport or assistance step over a generic provider inquiry.",
+    "Fixture: give Lake and Pine their own annotations (no oxygen-concentrator marker), or strip medicalEquipment annotations whose label does not match a recorded equipment item, before the next v6 corpus.",
+    "Harness: log model-issued read_household_context arguments and counts into the protected bundle so reviewers can audit retrieval and paging."
+  ],
+  "retests": [
+    "Re-run baseline preparation/15 and any revised candidate on oak/lake/pine with 2 repetitions each, unchanged v5 bytes, and score F1/F2/F3 with fixed criteria.",
+    "Paired synthetic held-out case: Oak variant with heatingFuel=naturalGas and municipal water (prediction: well/heat coupling disappears and the task mix should change).",
+    "Paired held-out case: Lake variant with a vehicle recorded (prediction: the transport task should drop in priority).",
+    "After the fixture fix, confirm no Lake or Pine output references oxygen equipment."
+  ],
+  "limitations": [
+    "Synthetic agent audit only. No native rendering or screenshot was inspected for these runs, so native text fit is unverified.",
+    "The captures contain final HTTP bodies only, without model tool calls or repair turns. Retrieval depth and any repair behavior cannot be assessed.",
+    "Two repetitions per family is a small sample. The comparison verdict is directional, not statistical.",
+    "These three examples are development data, not held-out."
+  ],
+  "next_owner": "Domain (Prepare) specialist for the prompt changes. Integration specialist for the harness tool-call logging. Fixture/house specialist for F4.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

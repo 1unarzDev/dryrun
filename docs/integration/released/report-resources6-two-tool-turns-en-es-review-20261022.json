@@ -1,0 +1,133 @@
+{
+  "report_id": "report-resources6-two-tool-turns-en-es-review-20261022",
+  "run_ids": [
+    "run-398f0be0e7e1481dabafcf0ae05ed045",
+    "run-1c8a45f953ee4714b16bdfebdb7c7ff5",
+    "run-00329ecbf4054159a399c97e7d046637",
+    "run-f49557ac511f4ff4a14927da59837702"
+  ],
+  "review_kind": "Synthetic agent audit; dedicated output reviewer; development-set repeated review of every resources attempt in the assigned runs",
+  "feature": "Resources search-plan proposal (role resources, prompt resources/6), oak household, en and es",
+  "fixture_snapshot": {
+    "inputs": "/private/tmp/dryrun-authored-support-wire-v1/resources.json (55558-byte request; hh-oak; per-attempt locale en or es as captured)",
+    "expected": "Plan 1 oxygen continuity (owned bk-station: verify compatibility/runtime, not re-buy); plan 2 warming option for cold-sensitive limited-mobility p-oak-4 with recorded helper p-oak-2 because electric heat; any third plan secondary. Family-facing fields in selected locale, no internal IDs, helper attributed only to p-oak-2, no wheelchair attribute for p-oak-4 (needs limitedMobility, coldSensitive only).",
+    "attempts": "8: pre-cut d4a4dfce(en), 9616aff5(es) [run-f495]; e7d9a7a2(en), e283036a(es) [run-0032]; post-cut cb8c2dc9(en), 7f85feb2(es) [run-398f]; a3d9dba9(en), 9c371bfa(es) [run-1c8a]"
+  },
+  "versions": {
+    "prompt": "resources/6",
+    "investigation": "pre-cut (runs f495, 0032) versus 2 tool turns (runs 398f, 1c8a)",
+    "runtime": "Codex 0.163.0 gpt-6.1-sol; fallbacks Gemini, Groq"
+  },
+  "criteria": [
+    {
+      "id": "REL",
+      "criterion": "Truthful contracted status",
+      "result": "8/8 truthful. Pre-cut: Codex hit deadline after three served turns 4/4; three ended unavailable (Gemini 503 or timeout, Groq request_too_large) and one was Groq-served (e7d9a7a2). Post-cut: Codex completed 3/4; a3d9dba9 Codex unavailable after two turns, Gemini served one turn then 503, Groq 413, ended unavailable."
+    },
+    {
+      "id": "R1",
+      "criterion": "Continuity first",
+      "result": "pass 4/4 completed plans (oxygen plan first)"
+    },
+    {
+      "id": "R2",
+      "criterion": "Selected locale and no internal IDs in family-facing fields",
+      "result": "Codex 3/3 pass (en cb8c2dc9, es 7f85feb2 and 9c371bfa). Groq e7d9a7a2 fails readability: capabilities, unknowns and evidence are camelCase machine tokens (for example backup setup and islanding flags) rather than family text."
+    },
+    {
+      "id": "R3",
+      "criterion": "Helper attribution only to the recorded helper",
+      "result": "Codex 3/3 pass (Parent B or the recorded adult helper for the older adult). Groq 0/1 (no helper)."
+    },
+    {
+      "id": "ACC",
+      "criterion": "No accessibility attribute without matching need",
+      "result": "fail 2/3 Codex: cb8c2dc9 and 9c371bfa list the car's lack of wheelchair access as an unknown for the older adult's warming trip although he has no wheelchair need. 7f85feb2 clean."
+    },
+    {
+      "id": "Q-CUT",
+      "criterion": "Did the shorter investigation lower plan quality",
+      "result": "Mostly no, with one completeness cost. Post-cut Codex plans kept the right two priorities with concrete verification requirements in 3/3. 7f85feb2 explicitly disclosed that budget, storage/care instruction and transport constraint records were not retrieved and produced only two plans; honest, but transport constraints were missing from its warming plan. Reliability improved from 0/4 to 3/4 Codex completions."
+    }
+  ],
+  "synopsis": "After the investigation was cut to two tool turns, Codex completed three of four resources attempts (none completed before the cut, all four hit the deadline). The completed Codex plans were good: oxygen continuity first, framed as checking compatibility of the battery station the family already owns rather than buying another; a warming-place plan for the cold-sensitive grandfather that requires confirmation of opening, oxygen use, power and caregiver admission; correct locale and helper attribution. The recurring defect is the wheelchair attribute leaking onto the grandfather in two of three plans. One es plan was thinner because it skipped constraint records and said so. The Groq-served en plan e7d9a7a2 was poor: it frames the oxygen plan as buying a battery station the family already owns, proposes electric space heaters for a power-loss scenario with internally contradictory fuel and emissions criteria, gives no helper, and fills family-facing fields with machine tokens; host validation accepted it. The third CO-alarm plan in two attempts is host-authored text, not model output.",
+  "fact_findings": [
+    {
+      "fact_ids": [
+        "context.medical.backupPower.item.0.bk-station (owned; setup/islanding unknown)"
+      ],
+      "finding": "Codex 3/3 verify-before-buy; Groq e7d9a7a2 treats it as something to acquire (duplicate acquisition)."
+    },
+    {
+      "fact_ids": [
+        "context.constraints.transport veh-oak.wheelchairAccessible=false",
+        "context.family.person.p-oak-4.needs"
+      ],
+      "finding": "Misapplied to p-oak-4 in cb8c2dc9 and 9c371bfa."
+    },
+    {
+      "fact_ids": [
+        "context.home.housing.heatingNeedsElectricity=true",
+        "freeze-power-loss"
+      ],
+      "finding": "Groq e7d9a7a2 proposes electric heaters that cannot run in the hazard that motivates the plan."
+    },
+    {
+      "fact_ids": [
+        "context.constraints.*",
+        "context.inventory.ledger"
+      ],
+      "finding": "Not retrieved in 7f85feb2 under the two-turn budget; the plan disclosed the gap."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "critical-adjacent (unsafe/infeasible advice, fallback)",
+      "attempt": "e7d9a7a2 (Groq)",
+      "expected": "Warming place or verified safe warmth; no device that needs the lost utility",
+      "observed": "Electric heater shopping during a power loss, plus duplicate battery acquisition and machine-token fields",
+      "impact": "Misleading plan reaches the family when Codex times out",
+      "stage": "model (fallback) plus validation gap"
+    },
+    {
+      "severity": "moderate",
+      "attempts": "cb8c2dc9, 9c371bfa",
+      "expected": "No wheelchair attribute for p-oak-4",
+      "observed": "Wheelchair access of the car listed as an unknown for his trip",
+      "impact": "Implies a need the person does not have",
+      "stage": "prompt (resources/6 lacks the accessibility-matching sentence used in preparation/16 and debrief/3)"
+    },
+    {
+      "severity": "minor",
+      "attempt": "7f85feb2",
+      "expected": "Constraints read before planning travel",
+      "observed": "Constraint records skipped under the two-turn budget (disclosed)",
+      "impact": "Travel and budget fit not checked",
+      "stage": "retrieval/tool budget"
+    }
+  ],
+  "likely_stage": "Prompt for the accessibility leak; retrieval budget for the thinner es plan; fallback model plus missing semantic validators for e7d9a7a2; provider capacity (Gemini 503/timeout every time, Groq 413) for the unavailable outcomes.",
+  "references": [
+    "Fields inspected: proposal.searchPlans[].taskID/category/purpose/mandatoryCapabilities/unknowns/requiredEvidence/dependencyIDs/hazardIDs, provider_attempt events",
+    "services/ai-orchestrator/src/features.ts resources instruction and resourceHostText (host-authored CO-alarm text) at worktree wf_bce6b49a-568-1 ac55f81"
+  ],
+  "recommendations": [
+    "Add to resources/6: apply vehicle, route or doorway accessibility attributes only to a person whose recorded needs include the matching need (same sentence as preparation/16).",
+    "Make the first of the two tool turns a single combined read of family, medical, constraints and inventory, and the second housing; this keeps the two-turn budget while guaranteeing constraint records.",
+    "Host validators for resources: reject family-facing strings that are bare identifier tokens (camelCase or snake_case with no spaces); reject warmingCooling plans whose required capability depends on a utility the plan's hazard removes; reject equipmentSupplier purposes that acquire a category already recorded as owned unless they cite an unmet compatibility.",
+    "Host-authored CO-alarm text: the clause explaining that electric equipment does not emit CO reads as an argument against the purchase; reword to explain why the alarm review is still unresolved.",
+    "Consider not presenting a Groq-served resources plan as completed until the validators above exist."
+  ],
+  "retests": [
+    "Rerun en/es x3 each on the two-turn budget after the prompt change: pass if accessibility leak 0/6, constraints retrieved 6/6, Codex completion at least 5/6.",
+    "Force a Groq-served resources attempt after the validators: pass if the infeasible heater plan class is rejected and the outcome is truthful."
+  ],
+  "limitations": [
+    "Single household (oak); development data.",
+    "Gemini never served a complete resources plan, so its quality is unassessed.",
+    "Pre-cut and post-cut runs were not interleaved; provider load may differ between them. The pre-cut label for runs f495 and 0032 is inferred from capture timing (02:12-02:20 versus 02:25-02:28) and their pattern of three served turns followed by a deadline; the receipts do not state the investigation budget.",
+    "Synthetic agent audit."
+  ],
+  "next_owner": "Maps/resources specialist (prompt, validators); integration owner (fallback acceptance policy)",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

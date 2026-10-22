@@ -1,0 +1,137 @@
+{
+  "report_id": "report-ui-inventory-physical-en-es-vi-std-ax-20261022",
+  "run_ids": [
+    "run-07cbd6147bea4cd589e71f296032330f",
+    "run-57b7af3c2a51455a9e4e55c51d9aee2b",
+    "run-022e2ad422874ee680670b59260bf789"
+  ],
+  "feature": "UI inventory (docs/integration/ui-inventory.md) native captures with layout verdicts, ordinary and accessibility text, en/es/vi",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": {
+    "build": "bd6974a",
+    "device": "iPhone 16 Pro (physical, Wi-Fi)",
+    "households": {
+      "en": "hh-oak",
+      "es": "hh-pine",
+      "vi": "hh-lake"
+    },
+    "sizes": [
+      "std",
+      "AccessibilityXXL via -UIPreferredContentSizeCategoryName"
+    ],
+    "beacon": "disabled by the test (-noBeaconConfig, -noSavedBeacon); captures carry deterministic app text",
+    "device_settings": "unchanged; nothing to restore"
+  },
+  "versions": {
+    "test": "UIInventoryUITests at bd6974a"
+  },
+  "criteria": [
+    {
+      "id": "COVERAGE",
+      "verdict": "partial",
+      "evidence": "en: all 74 entries in both sizes (148 captures). es and vi: the ONB, PREP, CARD, PLAN, REH-01/02 and SET entries in both sizes. The HOME and per-hazard REH entries were skipped in es/vi to save device time."
+    },
+    {
+      "id": "IDENTIFIER-ASSERTIONS",
+      "verdict": "fail on 3 entries",
+      "evidence": "Every entry passed its identifier assertions except: ONB-03 (setup.next is absent on the first create screen, which now opens the intake/describe step; fails in en, es and vi at both sizes); PREP-17 (alert.banner never renders because AlertBannerCard has no call site; fails in all locales and sizes); HOME-04 (no home.editRoom.* in Room list mode because the room editor is reached through home.edit; en std/AX)."
+    },
+    {
+      "id": "PREP-01",
+      "verdict": "pass",
+      "evidence": "Ordinary text: the rings card is followed by the first urgent row, visible without scrolling. AX: rings stack vertically with labels and numbers unclipped (en, es, vi)."
+    },
+    {
+      "id": "PREP-02/03",
+      "verdict": "pass",
+      "evidence": "Notes open inline. Hit targets are 44 pt at std and about 64 pt at AX."
+    },
+    {
+      "id": "PREP-05",
+      "verdict": "pass",
+      "evidence": "Family panel: icon title, aligned row, trailing chevron. At AX the name and needs wrap without overlap."
+    },
+    {
+      "id": "PREP-08",
+      "verdict": "fail at AX",
+      "evidence": "Name and Relationship labels are visible. The Relationship picker value truncates mid-string in en, es and vi at AX. Pass at std."
+    },
+    {
+      "id": "PREP-13",
+      "verdict": "pass",
+      "evidence": "The score disclosure shows the provisional explanation with no rubric version."
+    },
+    {
+      "id": "PREP-16",
+      "verdict": "pass",
+      "evidence": "The Where to go header and body wrap at AX in es and vi."
+    },
+    {
+      "id": "PLAN-03",
+      "verdict": "pass",
+      "evidence": "Pushed card with back button and add control, no Done button."
+    },
+    {
+      "id": "PLAN-04",
+      "verdict": "pass with minor issue",
+      "evidence": "Fields are labelled and stack at AX. The navigation title truncates at AX."
+    },
+    {
+      "id": "PLAN-06/07",
+      "verdict": "fail at AX (es)",
+      "evidence": "The map sheet's safety disclaimer under the title truncates with an ellipsis at AX in es. The segmented Map/List control does not scale."
+    },
+    {
+      "id": "REH-01",
+      "verdict": "pass",
+      "evidence": "The practice card tile and chevron do not clip at AX."
+    },
+    {
+      "id": "REH hazard START/DECISION/END/DEBRIEF (en)",
+      "verdict": "pass (sampled)",
+      "evidence": "Sampled tornado DECISION and fire START at AX, and heat DEBRIEF at std: no clipping. Options stack full width."
+    }
+  ],
+  "synopsis": "The inventory test reaches nearly every listed state on the physical phone in three languages. Layout is generally sound at accessibility sizes: rings stack, warning icons stay in a trailing column, and cards wrap. The repeatable defects are the Relationship picker truncating at AX in every language, the map sheet's safety disclaimer truncating at AX in Spanish, and three inventory entries whose asserted identifiers no longer exist (setup.next on the first create screen, the missing alert banner call site, and the room editor entry point).",
+  "failures": [
+    {
+      "severity": "medium",
+      "stage": "rendering",
+      "diagnosis": "The Relationship picker value truncates at AX (PREP-08, family editor).",
+      "fix": "Stack the label and value, or use a navigation-style picker at accessibility sizes."
+    },
+    {
+      "severity": "medium",
+      "stage": "rendering",
+      "diagnosis": "The map sheet disclaimer is a single truncating line at AX in es.",
+      "fix": "Allow multi-line wrapping; this text is a safety qualifier."
+    },
+    {
+      "severity": "medium",
+      "stage": "integration",
+      "diagnosis": "PREP-17 is unreachable: AlertBannerCard is never instantiated at bd6974a.",
+      "fix": "Restore the Prepare call site from 2a9d974."
+    },
+    {
+      "severity": "low",
+      "stage": "tests",
+      "diagnosis": "The ONB-03 and HOME-04 inventory steps are stale.",
+      "fix": "Assert the intake step identifiers for ONB-03. Insert a home.edit tap before home.editRoom.* for HOME-04."
+    }
+  ],
+  "likely_stage": "rendering (Dynamic Type) and inventory test drift",
+  "references": [
+    "Originals: inventory attachments named <ID>-<size>-<locale> inside the protected xcresults (handles above). They contain deterministic app text only (Beacon disabled), but stay reviewer-held per 12.1. No cleared derivatives were released."
+  ],
+  "recommendations": [
+    "Mark the inventory rows above with these verdicts in docs/integration/ui-inventory.md and keep the unrun es/vi HOME and REH hazard rows as unverified."
+  ],
+  "retests": [
+    "PREP-08 and PLAN-06 at AX in all three languages after the fixes; ONB-03, HOME-04 and PREP-17 after the test and call-site updates; the es/vi HOME and REH hazard entries."
+  ],
+  "limitations": [
+    "Visual verdicts are based on a sample of entries per locale, not a frame-by-frame review of all captures. VoiceOver order and labels were not audited. Synthetic agent audit."
+  ],
+  "next_owner": "native UI lead",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

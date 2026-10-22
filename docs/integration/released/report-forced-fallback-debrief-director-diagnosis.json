@@ -1,0 +1,85 @@
+{
+  "report_id": "report-forced-fallback-debrief-director-diagnosis",
+  "review_kind": "Synthetic agent audit (dedicated output reviewer, reference 12.4). Failure diagnosis, not quality validation.",
+  "run_ids": [
+    "run-5196b4bcb84c4a238f283296e420249e",
+    "run-0f0de272e294489a9355b12fc899faf5",
+    "4593a4aa-116a-483b-8408-bc0fecc61db6",
+    "8a6b7e0f-8629-43cc-91a2-964836fa0389",
+    "97434e3d-ed71-4b61-b5d7-4f1f9e60302e",
+    "fa67ddf4-e86a-4872-9ce2-111c8c920e07",
+    "4499ec96-350d-4c89-a07e-155d28e8ec25"
+  ],
+  "feature": "Provider fallback (Codex binary absent, then Gemini, then Groq) for the debrief feature and the rehearsal director.",
+  "fixture_snapshot": "The debrief inputs are the v6-debrief oak/lake/pine files. The captured requests are larger than the Codex-served capture (about 80-82 KB versus 74-76 KB serialized), consistent with fallback-path wrapping. The director inputs are the Oak freeze-power-loss scene at minute 0 (the same contextDigest as the Codex-served turn).",
+  "versions": "Same orchestrator chain. The Groq 413-as-rate-limit classification observed here matches worktree wf_53495713-367-2 src/groq.ts (rateLimited when diagnostic is rate_limit_exceeded). The main checkout's src/groq.ts still maps 413 to unsupported, so the run used the worktree build, not main.",
+  "criteria": {
+    "no_output_delivered_on_failure": "PASS 5/5. No proposal, summary or suggestion was delivered by any failed attempt.",
+    "failure_attribution_visible": "PARTIAL. The two Oak/Pine debriefs expose provider_rate_limit with diagnostic rate_limit_exceeded (a Groq error code) and retryAfterMs. Lake shows codex_unavailable, which is misattributed. Both directors show only provider_or_validation_failure, with no provider or reason detail in the protected bundle.",
+    "groq_director_usable": "NOT DEMONSTRATED. 0 of 1 completed."
+  },
+  "synopsis": "4593a4aa (Oak debrief) and 97434e3d (Pine debrief) both ended as HTTP 200 unavailable/provider_rate_limit with the Groq-vocabulary diagnostic rate_limit_exceeded and a 21 s retry hint. This is consistent with the expected sequence (Gemini limited, then Groq per-minute token rejection reclassified as a rate limit). The bundle contains no per-provider attempt record, so the Gemini step is inferred, not observed. 8a6b7e0f (Lake debrief) ended HTTP 503 codex_unavailable. In features.ts, any output that still fails host validation after the single repair throws CodexFailure('unavailable') regardless of which provider generated it, and http.ts renders that as codex_<kind>. A Gemini- or Groq-served debrief that failed validation twice is therefore reported as Codex unavailable. The suspected misattribution is confirmed at source level, with the failing stage at feature validation and repair. The specific validator cannot be identified because the provider's output and the validation reason are not in the bundle. fa67ddf4 (director): the second provider generation issued two host tool calls (inspectScene, evaluateResources), both returning the unchanged minute-0 state, then the gateway returned provider_or_validation_failure. 4499ec96 (Groq director, generation 2) issued one preview of requestDecision, then the same generic failure. The bundles do not show the misdescribed_gap_check rejection or the groq_rate_limit outcome reported by the work order; those reside only in gateway metrics, outside this capture.",
+  "fact_findings": {
+    "input_facts_relevant": [
+      "Freeze minute-0 experience.feasibleCommands = identifyGap(backup.bk-station.setupConfirmed), identifyGap(equipment.eq-oxygen.backup), allocatePower(eq-oxygen, none). With only gap recognitions available, any suggestion set is almost forced to be identifyGap-only, so a label using confirm/verify/establish triggers misdescribed_gap_check (gateway.ts suggestion validation). The Codex-served turn 4f4ece14 avoided this by using recognize wording; a smaller fallback model is likely to use verify/confirm.",
+      "The debrief request is about 80 KB serialized (full privateContext, scene and catalog). A single Groq request of this size can exceed a per-minute token allowance by itself, so a 413 TPM rejection is structural for this input and not transient."
+    ]
+  },
+  "failures": [
+    {
+      "id": "FB1",
+      "severity": "high (diagnosability)",
+      "runs": "8a6b7e0f",
+      "observed": "codex_unavailable (503) is reported for a non-Codex-served validation failure.",
+      "stage": "validation/error mapping: features.ts final-repair branch throws CodexFailure('unavailable'), and http.ts maps CodexFailure to codex_*",
+      "impact": "Operators chase a Codex outage that does not exist. The native client may show the wrong unavailability reason and retry policy."
+    },
+    {
+      "id": "FB2",
+      "severity": "medium",
+      "runs": "4593a4aa, 97434e3d",
+      "observed": "Groq 413 TPM is reclassified as a replayable rate_limit with retryAfterMs 21000.",
+      "stage": "provider adapter classification",
+      "impact": "If the single request exceeds the TPM ceiling, waiting does not help. Clients retry into the same rejection. Retryable rate limits (429, or 413 where the request is under the TPM ceiling) need to be distinguished from request-too-large-for-tier."
+    },
+    {
+      "id": "FB3",
+      "severity": "medium",
+      "runs": "fa67ddf4, 4499ec96",
+      "observed": "The director collapses every terminal cause into provider_or_validation_failure. The protected capture lacks the metrics outcome or validation reason, so provider limit versus validation cannot be determined from the evidence. fa67ddf4 shows low-value tool use (two non-preview inspections returning unchanged state) before failing.",
+      "stage": "gateway error surface plus capture harness"
+    },
+    {
+      "id": "FB4",
+      "severity": "medium",
+      "runs": "4499ec96 (per work order)",
+      "observed": "The misdescribed_gap_check rejection is a lexical trap at the freeze minute-0 state, where the only meaningful options are gap recognitions.",
+      "stage": "host mechanics plus validator plus fallback prompt (groq-director.ts should carry the same recognize/review wording rule as prompt/31)"
+    }
+  ],
+  "likely_stage": "FB1: validation/error mapping (confirmed in source; high confidence). FB2: provider adapter classification (high confidence about semantics; whether this request exceeded the TPM ceiling is unverified because the status and message are not captured). FB3: gateway error surface and harness capture (high confidence). FB4: host mechanics, validator and fallback prompt (medium confidence; the rejection itself was not visible in the bundle).",
+  "references": [
+    "run-5196b4bc stdout lines 1,3,5 response.status/body.reason/diagnostic/retryAfterMs; lines 7-11 calls[].name and terminal body.reason; providerAttemptGeneration 1",
+    "run-0f0de272 stdout lines 1-3; providerAttemptGeneration 2",
+    "services/ai-orchestrator/src/features.ts final repair catch (CodexFailure('unavailable')); src/http.ts CodexFailure mapping; src/gateway.ts misdescribed_gap_check and outcome metrics; worktree wf_53495713-367-2 src/groq.ts rateLimited classification"
+  ],
+  "recommendations": [
+    "Throw a provider-neutral typed failure (for example a feature validation failure carrying the serving provider and an allowlisted validator code) from the feature final-repair branch, and map it to reason provider_validation_failure plus a provider field. Reserve codex_* for actual Codex runtime failures.",
+    "Groq: when diagnostic is rate_limit_exceeded with 413 and the request's estimated tokens exceed the advertised per-minute limit (x-ratelimit-limit-tokens), classify it as request_too_large_for_provider (non-replayable) and fall through or compact. Keep rate_limit only for 429 or under-ceiling 413.",
+    "Fallback context budget: build a compact debrief/director context for Groq (people needs, equipment unknowns, tasks, receipt) instead of the full privateContext and scene.",
+    "Director: in synthetic and development mode, include the allowlisted metrics outcome code (for example provider kind or validator code) in the unavailable response or the protected capture so reviewers can separate provider limits from validation.",
+    "Gap-check labels: render identifyGap action labels host-side from the gap ID (Review the unknown X), or have the validator offer one repair with that rewrite instead of terminal rejection. Ensure the Groq/Gemini director prompts carry the same recognize/review rule as prompt/31.",
+    "Harness: capture per-attempt provider identity, HTTP status and diagnostic code (no generated text) for each fallback hop."
+  ],
+  "retests": [
+    "Forced fallback with a Gemini stub that returns schema-valid but host-invalid debrief output. The expected reason is provider_validation_failure with provider=gemini, never codex_unavailable.",
+    "Groq-only debrief with the full v6 context versus a compact context. Classify 413 correctly and confirm the compact context completes.",
+    "Groq director freeze minute 0 x3 reps after the label rule and host-rendered gap labels. Count completions and record outcome codes."
+  ],
+  "limitations": [
+    "The protected captures contain only HTTP bodies and host tool results. No provider-level attempt log, Gemini output, Groq error message or validator reason is present. The Gemini step and the misdescribed_gap_check and groq_rate_limit outcomes named in the work order could not be independently observed and are treated as unverified.",
+    "Synthetic agent audit; single attempt per item."
+  ],
+  "next_owner": "Integration specialist (provider fallback, error mapping, harness capture). Director specialist for FB4.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}
