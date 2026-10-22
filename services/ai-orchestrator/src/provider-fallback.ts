@@ -24,7 +24,9 @@ export class GroqPrivateProvider implements AgentProvider {
  async turn(input:Turn):Promise<ProviderReply>{
   input.signal.throwIfAborted();
   const functions=input.toolMode==='none'?[]:input.tools.map(t=>{if(t.type!=='function'||!t.name)throw new ProviderFailure('unsupported','groq');return {type:'function' as const,function:{name:t.name,description:t.description,parameters:t.parameters}};});
-  const maximumOutputTokens=input.instruction.startsWith('DryRun RehearsalDirector')?(functions.length?2200:3000):3000;
+  // Feature answers are short (a debrief summary, up to three plans); 2000 tokens leaves room for reasoning and keeps
+  // more of the free tier's per-minute ceiling for context.
+  const maximumOutputTokens=input.instruction.startsWith('DryRun RehearsalDirector')?(functions.length?2200:3000):2000;
   const budget=groqContextBudget(this.client.knownTokenCeiling,maximumOutputTokens,JSON.stringify(functions).length+JSON.stringify(input.outputSchema??{}).length);
   // The response schema already goes to Groq as structured output; do not pay for it twice inside the instruction.
   const schemaText=input.outputSchema?JSON.stringify(input.outputSchema):undefined;
@@ -219,6 +221,9 @@ export function compactForGroq(value:any):any{
  if(out.scene&&typeof out.scene==='object'){const s=out.scene;out.scene={schemaVersion:s.schemaVersion,dwellingType:s.dwellingType,homeRevision:s.homeRevision,rooms:Array.isArray(s.rooms)?s.rooms.map((r:any)=>({id:r?.id,floorID:r?.floorID,use:r?.use})):[],planningNeeds:s.planningNeeds,unknowns:s.unknowns};}
  if(out.homeScene&&typeof out.homeScene==='object'){const s=out.homeScene;out.homeScene={rooms:Array.isArray(s.rooms)?s.rooms.map((r:any)=>({id:r?.id,use:r?.use})):s.rooms,unknowns:s.unknowns};}
  if(Array.isArray(out.tasks))out.tasks=out.tasks.map((t:any)=>{if(!t||typeof t!=='object')return t;const {completionPredicates:_c,dependencyIDs:_d,editor:_e,...rest}=t;return rest;});
+ // A debrief chooses among its own tasks, so the catalog is not needed; its receipt keeps the family's choices, the
+ // final state and only the caution/critical events.
+ if(out.debrief&&typeof out.debrief==='object'){delete out.taskCatalog;const r=out.debrief.rehearsal;if(r&&typeof r==='object'&&Array.isArray(r.events))out.debrief={...out.debrief,rehearsal:{...r,events:r.events.filter((e:any)=>e?.severity!=='info').slice(0,12),routes:undefined}};}
  return out;
 }
 
