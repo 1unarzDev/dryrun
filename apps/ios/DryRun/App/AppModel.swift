@@ -1427,7 +1427,14 @@ final class AppModel {
     /// moments of a fictional household's exercise.
     /// Requires a development gateway (launch arguments); real households never use it until production authorization.
     /// On by default wherever Beacon is configured (fictional households only); the switch turns it off for the session.
-    var cloudDirectorEnabled = DirectorGatewayClient.current != nil
+    /// Switching it on again also re-arms the circuit breaker below.
+    var cloudDirectorEnabled = DirectorGatewayClient.current != nil {
+        didSet { if cloudDirectorEnabled != oldValue { cloudDirectorSuspended = false } }
+    }
+    /// Circuit breaker: after one director deadline or gateway transport failure, the rest of this app session uses
+    /// this phone's director without calling the gateway, so later turns never wait for the deadline again. The
+    /// fallback note is shown on the turn that opened it only. Re-armed by switching Beacon off and on, or relaunching.
+    private(set) var cloudDirectorSuspended = false
     /// Why the last cloud turn fell back to this phone, shown beside the scene; nil when it did not.
     private(set) var directorFallbackNote: String?
     /// The director transport; the gateway client in the app, a fake in unit tests.
@@ -1461,12 +1468,17 @@ final class AppModel {
         let scope = scopeSessionID
         let ticket = directorGate.begin(for: key)
         directorFallbackNote = nil
-        if cloudDirectorEnabled, cloudDirectorAvailable, let transport = directorTransport,
+        if cloudDirectorEnabled, !cloudDirectorSuspended, cloudDirectorAvailable, let transport = directorTransport,
            exercise.session.initial.household.isFictional {
             let turn = UUID()
             directorTurnID = turn
             let outcome = await boundedGatewayTurn(transport: transport, exercise: exercise, library: scenarios)
             if directorTurnID == turn { directorTurnID = nil }
+            switch outcome {
+            case .deadline: cloudDirectorSuspended = true
+            case .failure(let reason) where Self.directorTransportFailure(reason): cloudDirectorSuspended = true
+            default: break
+            }
             guard scopeSessionID == scope, directorGate.shouldApply(ticket, current: currentKey),
                   adaptive?.session.id == exercise.session.id, adaptive?.session.revision == exercise.session.revision else { return }
             switch outcome {
@@ -1488,6 +1500,13 @@ final class AppModel {
               let current = adaptive, current.session.id == exercise.session.id, current.session.revision == exercise.session.revision,
               let commit = LocalDirector.nextCommit(session: current.session, receipt: current.receipt, library: scenarios) else { return }
         await commitAdaptive(director: .local, narration: nil) { session in try session.commit(commit, library: scenarios) }
+    }
+
+    /// Failures meaning the gateway could not be reached or answered unusably (not a host rejection, a stale turn,
+    /// a provider-side unavailable status or a family action). One of these opens the director circuit breaker.
+    nonisolated static func directorTransportFailure(_ reason: String) -> Bool {
+        reason.hasPrefix("transport") || reason.hasPrefix("http ") || reason.hasPrefix("sign-in")
+            || reason == "decode" || reason == "response_budget"
     }
 
     enum GatewayDirectorOutcome: Sendable {

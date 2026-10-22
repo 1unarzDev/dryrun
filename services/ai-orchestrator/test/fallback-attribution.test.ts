@@ -111,7 +111,7 @@ describe('director unavailable outcome codes (FB3) and Groq label rule (FB4)',()
  });
  it('carries the recognize/review identifyGap label rule into the Groq director prompt',()=>{
   const text=groqDirectorInstruction('DryRun RehearsalDirector prompt/32. FINALIZATION: Keep exact commands. dryrun.output-style/1: details');
-  expect(text).toContain('Groq/6');expect(text).toMatch(/never use the words Confirm, Verify or Establish/);
+  expect(text).toContain('Groq/7');expect(text).toMatch(/never use the words Confirm, Verify or Establish/);
  });
 });
 
@@ -136,11 +136,11 @@ describe('versioned prompt package and resource text',()=>{
   expect(instructions[0]).toContain('DryRun preparation prompt/16.');expect(instructions[0]).toContain(preparationV16.instruction);
   expect(instructions[1]).toContain('DryRun preparation prompt/15.');expect(instructions[1]).not.toContain('preparation/16 priorities');
  });
- it('sends debrief/4 with the host rehearsal receipt and resources/7 with the internal-ID rule',async()=>{
+ it('sends debrief/5 with the host rehearsal receipt and resources/7 with the internal-ID rule',async()=>{
   const instructions:string[]=[];
   const provider:AgentProvider={async turn(input){instructions.push(input.instruction);return reply(JSON.stringify({summary:'Plan to leave early before water rises with the recorded helper.',focusTaskIDs:['task-a']}));}};
   await new FeatureRunner(provider).run('debrief',debrief);
-  expect(instructions[0]).toContain('DryRun debrief prompt/4.');expect(instructions[0]).toContain('never as something the rehearsal showed');expect(instructions[0]).toContain('debrief.rehearsal');
+  expect(instructions[0]).toContain('DryRun debrief prompt/5.');expect(instructions[0]).toContain('never as something the rehearsal showed');expect(instructions[0]).toContain('debrief.rehearsal');
   // D1: the host rehearsal receipt passes the strict context schema and reaches the provider unchanged.
   const receipt={version:'dryrun.rehearsal-receipt/1',engineVersion:'engine-1',variants:[],choices:[{decisionID:'decision-leave',simMinute:30,optionID:'leave-early',recommended:true,label:'Leave early'}],unansweredDecisionIDs:[],events:[{id:'event-warning',simMinute:0,phaseID:'warning',severity:'caution',title:'Flood warning'}],finalServices:{'svc.power':'operational'},unmetRequirements:[],unknowns:[],routes:[],interventions:[]};
   const seen:string[]=[];const withReceipt:AgentProvider={async turn(input){seen.push(JSON.stringify(input.history[0]));return reply(JSON.stringify({summary:'You left early before water rose; keep that plan.',focusTaskIDs:['task-a']}));}};

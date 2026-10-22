@@ -27,11 +27,11 @@ describe('selected locale and machine-token host checks',()=>{
   expect(()=>requireSelectedLocale(['Ask Nguyễn Thị Ngọc to confirm the stored water and the pharmacist instructions before the outage.'],'en')).not.toThrow();
   expect(()=>requireSelectedLocale([vietnamese],'vi')).not.toThrow();expect(()=>requireSelectedLocale([vietnamese],'es')).toThrow('wrong_locale');
  });
- it('sends debrief/4 and resources/7 instructions',async()=>{
-  expect(featurePromptVersions.debrief).toBe(4);expect(featurePromptVersions.resources).toBe(7);
+ it('sends debrief/5 and resources/7 instructions',async()=>{
+  expect(featurePromptVersions.debrief).toBe(5);expect(featurePromptVersions.resources).toBe(7);
   const seen:string[]=[];const provider:AgentProvider={async turn(input){seen.push(input.instruction);return reply(JSON.stringify({summary:'Plan to leave early before water rises.',focusTaskIDs:['task-a']}));}};
   await new FeatureRunner(provider).run('debrief',{...base,debrief:{scenarioID:'flash-flood'}});
-  expect(seen[0]).toContain('DryRun debrief prompt/4.');expect(seen[0]).toContain('critical resource running out');expect(seen[0]).toContain('pharmacist or manufacturer');
+  expect(seen[0]).toContain('DryRun debrief prompt/5.');expect(seen[0]).toContain('critical resource running out');expect(seen[0]).toContain('pharmacist or manufacturer');
  });
  it('rejects bare camelCase/snake_case family-facing resource fields, then fails with machine_token',async()=>{
   expect(()=>rejectMachineTokens(['oxygenBackupCompatible'])).toThrow('machine_token');expect(()=>rejectMachineTokens(['battery_station_owned'])).toThrow('machine_token');

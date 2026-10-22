@@ -45,6 +45,21 @@ final class AuthorizedAIContextTests: XCTestCase {
         let changed=try AuthorizedAIContext(household:h,home:nil,state:state,sessionID:"a",cloudPlanningConsent:true)
         XCTAssertNotEqual(a.snapshotID,changed.snapshotID)
     }
+    /// Wave-2 audit P2 isolation: two example households with an empty state at identical revisions get different
+    /// state fingerprints and bindings, so a late result bound to one never matches a request for the other.
+    func testStateFingerprintIsHouseholdSpecificAtIdenticalRevisions() throws {
+        let a=household();var b=household();b.id="synthetic-private-context-b"
+        XCTAssertEqual(a.revision,b.revision)
+        let state=IntegratedAIState()
+        let ca=try AuthorizedAIContext(household:a,home:nil,state:state,sessionID:"same-session",cloudPlanningConsent:true)
+        let cb=try AuthorizedAIContext(household:b,home:nil,state:state,sessionID:"same-session",cloudPlanningConsent:true)
+        XCTAssertEqual(ca.revisions.household,cb.revisions.household);XCTAssertEqual(ca.revisions.inventory,cb.revisions.inventory)
+        XCTAssertNotEqual(ca.revisions.stateFingerprint,cb.revisions.stateFingerprint)
+        XCTAssertNotEqual(ca.binding,cb.binding)
+        // A result bound to B is rejected for A even with A's scope and every revision counter copied in.
+        var forged=cb.binding;forged.scope=ca.scope
+        XCTAssertNotEqual(forged,ca.binding)
+    }
     func testGranularHomeInventoryAndPracticeEntitiesRetainRecordedValues() throws {
         let h=household();var home=SampleHomes.ranch;home.id=h.stableHomeID
         let note=String(repeating:"Authored oversized home note. ",count:6000);home.completenessNote=note

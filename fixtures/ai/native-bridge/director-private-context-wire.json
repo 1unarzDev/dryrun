@@ -14,14 +14,14 @@
         "home" : 1,
         "household" : 1,
         "inventory" : 0,
-        "stateFingerprint" : "478bef5c20b92382"
+        "stateFingerprint" : "148a80fdf27a8d94"
       },
       "scope" : {
         "householdID" : "hh-oak",
         "origin" : "example",
         "sessionID" : "family-scope-a"
       },
-      "snapshotID" : "ctx-f40410b30f157c48"
+      "snapshotID" : "ctx-cfafa651593ea9c5"
     },
     "directorPolicy" : {
       "allowedStageTransitions" : [
@@ -5913,14 +5913,14 @@
         "home" : 1,
         "household" : 1,
         "inventory" : 0,
-        "stateFingerprint" : "478bef5c20b92382"
+        "stateFingerprint" : "148a80fdf27a8d94"
       },
       "scope" : {
         "householdID" : "hh-oak",
         "origin" : "example",
         "sessionID" : "family-scope-a"
       },
-      "snapshotID" : "ctx-f40410b30f157c48",
+      "snapshotID" : "ctx-cfafa651593ea9c5",
       "version" : "dryrun.private-context/1"
     },
     "profiles" : [

@@ -65,10 +65,53 @@ final class DirectorDeadlineTests: XCTestCase {
         XCTAssertEqual(transport.startCount, 1)
         XCTAssertEqual(exercise.lastDirector, .local, "the local director took the step")
         XCTAssertGreaterThan(exercise.session.revision, 0)
-        XCTAssertEqual(model.directorFallbackNote, model.localizer("adaptive.fallback.deadline"))
+        XCTAssertEqual(model.directorFallbackNote, model.localizer("adaptive.director.fallbackNote"))
         XCTAssertFalse(model.directorTurnInFlight)
         XCTAssertLessThan(elapsed, .seconds(10))
         transport.release()
+    }
+
+    /// Wave-2 audit P2 circuit breaker: after one deadline the session stops calling the gateway director, so the
+    /// next turn is a local step in well under a second, with no second gateway start and no repeated note.
+    func testSecondTurnAfterADeadlineIsLocalWithinOneSecond() async throws {
+        let transport = StalledTransport()
+        let model = await model(transport, deadline: .milliseconds(400))
+        await model.openAdaptive(scenarioID: "home-fire")
+        XCTAssertEqual(transport.startCount, 1)
+        XCTAssertTrue(model.cloudDirectorSuspended)
+        XCTAssertEqual(model.directorFallbackNote, model.localizer("adaptive.director.fallbackNote"))
+        var exercise = try XCTUnwrap(model.adaptive)
+        if exercise.receipt.directorState?.awaitingUserAction == true {
+            let scenarios = try XCTUnwrap(model.scenarios)
+            let choice = try XCTUnwrap(LocalDirector.dueChoice(session: exercise.session, receipt: exercise.receipt, library: scenarios))
+            let answered = await model.submitAdaptive([SessionCommand(kind: "choose", target: choice.id, value: choice.options[0].id)])
+            XCTAssertTrue(answered)
+            exercise = try XCTUnwrap(model.adaptive)
+        }
+        XCTAssertNotEqual(exercise.receipt.directorState?.awaitingUserAction, true)
+        let started = ContinuousClock.now
+        await model.advanceAdaptive()
+        let elapsed = ContinuousClock.now - started
+        XCTAssertLessThan(elapsed, .seconds(1), "the second turn did not wait for the gateway")
+        XCTAssertEqual(transport.startCount, 1, "no second gateway start after the breaker opened")
+        let after = try XCTUnwrap(model.adaptive)
+        XCTAssertGreaterThan(after.session.revision, exercise.session.revision)
+        XCTAssertEqual(after.lastDirector, .local)
+        XCTAssertNil(model.directorFallbackNote, "the fallback note is shown once")
+        // Switching Beacon off and on re-arms the breaker.
+        model.cloudDirectorEnabled = false
+        model.cloudDirectorEnabled = true
+        XCTAssertFalse(model.cloudDirectorSuspended)
+        transport.release()
+    }
+
+    func testTransportFailuresOpenTheBreakerButHostOutcomesDoNot() {
+        XCTAssertTrue(AppModel.directorTransportFailure("transport -1004"))
+        XCTAssertTrue(AppModel.directorTransportFailure("http 502"))
+        XCTAssertTrue(AppModel.directorTransportFailure("decode"))
+        XCTAssertFalse(AppModel.directorTransportFailure("cancelled"))
+        XCTAssertFalse(AppModel.directorTransportFailure("stale"))
+        XCTAssertFalse(AppModel.directorTransportFailure("provider_or_validation_failure"))
     }
 
     func testDeadlineAfterAToolRoundCancelsTheGatewayToken() async throws {
