@@ -3,7 +3,23 @@ import UIKit
 import DryRunCore
 
 /// Design tokens and shared components. Calm, high-contrast, light and dark. Status always pairs an icon and text
-/// with color (never color alone), and nothing here expresses a score or a countdown (docs/FRONTEND_HANDOFF.md §3).
+/// with color (never color alone). The provisional score appears only as Core computes it; nothing here invents one.
+///
+/// Visual rules (docs/integration/native-ui-specialist.md "Visual rules" holds the list with its rationale):
+/// 1. Type: screen headline `.title2.bold`; card title `.headline`; row title `.body.semibold` (the first row of a
+///    ranked list may use `.title3.bold`); supporting text `.footnote` secondary; caveats `.caption`/`.footnote`.
+/// 2. Spacing: only `Theme.Space` values. Screen gutter `l` (16); card padding `l`; between cards `l`; inside a card
+///    `m`; label/value pairs `xs`/`s`. No one-off offsets to fix a single screenshot.
+/// 3. Cards: `SectionCard` for every grouped block outside a `List`; radius `Radius.card`; controls `Radius.control`.
+/// 4. Buttons: one `.primary` per screen; `.secondary` beside it; `.inline` text actions (`ShowAllButton`) inside a
+///    card. Every tappable thing is at least `Theme.minTap` tall; primary/secondary use `Theme.comfortableTap`.
+/// 5. Color: `accent` for identity and navigation, `critical` only for an unmet essential requirement, `caution` for
+///    unknown/unconfirmed, `success` only for "recorded/done" (never "safe"). Ring colors are not status colors.
+/// 6. Icons: one leading symbol per card title or row, never decorative repeats; urgency/status icons sit in a fixed
+///    trailing column; icon-only controls carry an accessibility label. Family = `person.2.fill`, home =
+///    `house.fill`, card = `person.text.rectangle.fill`.
+/// 7. Lists: at most `Theme.previewCount` items before "Show all"; caveats and method notes sit behind `InfoButton`.
+/// 8. Forms: a field whose meaning could be confused once filled keeps a visible label (`LabeledTextField`).
 enum Theme {
     // MARK: Color
 
@@ -40,10 +56,23 @@ enum Theme {
         static let xs: CGFloat = 4, s: CGFloat = 8, m: CGFloat = 12, l: CGFloat = 16, xl: CGFloat = 24, xxl: CGFloat = 32
     }
     enum Radius {
-        static let card: CGFloat = 16, control: CGFloat = 12, pill: CGFloat = 999
+        static let card: CGFloat = 16, control: CGFloat = 12, badge: CGFloat = 8, pill: CGFloat = 999
     }
     /// Minimum tap target (Apple HIG).
     static let minTap: CGFloat = 44
+    /// Full-width buttons and choices: larger than the minimum so an unsteady hand still lands on them.
+    static let comfortableTap: CGFloat = 52
+    /// Ranked lists show this many items before "Show all".
+    static let previewCount = 3
+
+    // MARK: Progress rings (identity colors, not status: a full ring never means "safe")
+
+    static let ringPractice = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
+        ? UIColor(red: 0.62, green: 0.66, blue: 1.0, alpha: 1)
+        : UIColor(red: 0.27, green: 0.30, blue: 0.75, alpha: 1) })
+    static let ringOverall = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
+        ? UIColor(red: 0.80, green: 0.62, blue: 0.95, alpha: 1)
+        : UIColor(red: 0.45, green: 0.22, blue: 0.62, alpha: 1) })
 
     // MARK: Status
 
@@ -120,7 +149,7 @@ struct PrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.body.weight(.semibold))
             .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity, minHeight: 52)
+            .frame(maxWidth: .infinity, minHeight: Theme.comfortableTap)
             .padding(.horizontal, Theme.Space.l)
             .foregroundStyle(Theme.onAccent)
             .background(tint.opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : 0.35),
@@ -138,7 +167,7 @@ struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.body.weight(.semibold))
             .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity, minHeight: 48)
+            .frame(maxWidth: .infinity, minHeight: Theme.comfortableTap)
             .padding(.horizontal, Theme.Space.m)
             .foregroundStyle(tint.opacity(isEnabled ? 1 : 0.4))
             .background(tint.opacity(configuration.isPressed ? 0.16 : 0.08),
@@ -156,7 +185,7 @@ struct ChoiceButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.body.weight(.medium))
-            .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: Theme.comfortableTap, alignment: .leading)
             .padding(.horizontal, Theme.Space.l)
             .padding(.vertical, Theme.Space.s)
             .foregroundStyle(Theme.ink)
@@ -189,7 +218,7 @@ struct StatusPill: View {
             .font(.caption.weight(.semibold))
             .labelStyle(.titleAndIcon)
             .foregroundStyle(tint)
-            .padding(.horizontal, 10).padding(.vertical, 5)
+            .padding(.horizontal, Theme.Space.s + 2).padding(.vertical, Theme.Space.xs + 1)
             .background(tint.opacity(0.12), in: Capsule())
             .accessibilityElement(children: .combine)
     }
@@ -231,7 +260,7 @@ struct IconRow<Trailing: View>: View {
                 .font(.body.weight(.semibold))
                 .foregroundStyle(tint)
                 .frame(width: 28, height: 28)
-                .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: Theme.Radius.badge, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.body)
@@ -298,6 +327,81 @@ struct AdaptiveStack<Content: View>: View {
             VStack(spacing: spacing) { content }
         } else {
             HStack(spacing: spacing) { content }
+        }
+    }
+}
+
+/// An in-card text action ("Show all", "Undo / reopen", "Correct"): semibold callout in the accent color, at least
+/// `Theme.minTap` tall and leading-aligned so it lines up with the card's text edge.
+struct InlineActionButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    var tint: Color = Theme.accent
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.callout.weight(.semibold))
+            .foregroundStyle(tint.opacity(isEnabled ? (configuration.isPressed ? 0.6 : 1) : 0.4))
+            .multilineTextAlignment(.leading)
+            .frame(minHeight: Theme.minTap, alignment: .leading)
+            .contentShape(Rectangle())
+    }
+}
+
+extension ButtonStyle where Self == InlineActionButtonStyle {
+    static var inline: InlineActionButtonStyle { InlineActionButtonStyle() }
+}
+
+/// "Show all 7" / "Show fewer" under a list that previews `Theme.previewCount` items. Absent when nothing is hidden.
+struct ShowAllButton: View {
+    @Environment(AppModel.self) private var model
+    let total: Int
+    @Binding var showAll: Bool
+    var limit = Theme.previewCount
+
+    var body: some View {
+        if total > limit {
+            Button(showAll ? model.localizer("ui.showFewer") : model.localizer("common.showAll", ["count": "\(total)"])) {
+                showAll.toggle()
+            }
+            .buttonStyle(.inline)
+        }
+    }
+}
+
+/// An ⓘ button that reveals a caveat or method note in place, so the list itself leads. VoiceOver reads its label
+/// and a selected trait while the note is open.
+struct InfoButton: View {
+    let label: String
+    @Binding var isExpanded: Bool
+
+    var body: some View {
+        Button { isExpanded.toggle() } label: {
+            Image(systemName: isExpanded ? "info.circle.fill" : "info.circle")
+                .font(.title3)
+                .foregroundStyle(Theme.accent)
+                .frame(minWidth: Theme.minTap, minHeight: Theme.minTap)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(isExpanded ? .isSelected : [])
+    }
+}
+
+/// A form text field whose purpose stays visible after something is typed: label leading, value trailing. Use it
+/// wherever two fields could be confused once filled (a person's name vs their relationship).
+struct LabeledTextField: View {
+    let label: String
+    @Binding var text: String
+    var prompt: String?
+    /// Accessibility identifier for the text field itself (UI tests type into it), not the row.
+    var fieldID: String?
+
+    var body: some View {
+        LabeledContent(label) {
+            TextField(label, text: $text, prompt: prompt.map { Text($0) })
+                .multilineTextAlignment(.trailing)
+                .accessibilityIdentifier(fieldID ?? "")
         }
     }
 }
