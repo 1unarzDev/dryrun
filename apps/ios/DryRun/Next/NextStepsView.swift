@@ -33,6 +33,9 @@ struct NextStepsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 header
+                // An active NWS alert (or a labelled demo sample) leads Prepare: Core's three household steps and the
+                // matching rehearsal (call site ported from 2a9d974; PREP-17).
+                if let alert = model.weatherAlert { AlertBannerCard(alert: alert) }
                 // Wait for the six scenario runs rather than showing a baseline list that reorders a second later.
                 if let summary = model.nextSteps, model.nextStepResults != nil {
                     // Progress first, then the next three actions (Beacon demo goal milestone 6).
@@ -41,11 +44,24 @@ struct NextStepsView: View {
                     if model.preparationAIAvailable { PreparationAICard() }
                 } else {
                     SectionCard {
-                        HStack(spacing: Theme.Space.m) {
-                            ProgressView()
-                            Text(l("ui.next.loading")).foregroundStyle(.secondary)
+                        if model.nextStepsStalled {
+                            // Never an endless spinner: say so and offer one clear retry.
+                            VStack(alignment: .leading, spacing: Theme.Space.s) {
+                                Label(l("ui.next.timeout"), systemImage: "exclamationmark.circle")
+                                    .foregroundStyle(Theme.caution)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Button(l("ui.next.retry")) { model.retryNextSteps() }
+                                    .buttonStyle(.inline)
+                                    .accessibilityIdentifier("next.retry")
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            HStack(spacing: Theme.Space.m) {
+                                ProgressView()
+                                Text(l("ui.next.loading")).foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
                 quickActions
@@ -78,8 +94,17 @@ struct NextStepsView: View {
             case .meetup(let purpose): MeetingPlaceChooser(purpose: purpose)
             }
         }
-        .task(id: model.currentKey) { await model.refreshNextSteps() }
+        // Keyed on the refresh ID, not currentKey alone: reloading the active example keeps the key but drops results.
+        .task(id: model.nextStepsRefreshID) { await model.refreshNextSteps() }
         .task(id: model.scoreKey) { await model.refreshScorecard() }
+        .task {
+            // Live NWS alerts every five minutes while Prepare is open; a chosen demo sample replaces them, and
+            // in-memory UI test runs stay weather-independent (AppModel.refreshWeatherAlert).
+            while !Task.isCancelled {
+                await model.refreshWeatherAlert()
+                try? await Task.sleep(for: .seconds(300))
+            }
+        }
         .task(id: BriefingRequest(source: briefingKey, expanded: showBriefing)) { await writeBriefing() }
     }
 

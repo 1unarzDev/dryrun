@@ -122,10 +122,12 @@ struct FocusedHouseholdEditor: View {
                     Text(l("family.unknown")).tag(String?.none)
                     ForEach(draft!.people.filter { $0.id != personID }) { Text($0.localizedLabel(l)).tag(Optional($0.id)) }
                 }
+                .readablePickerStyle()
                 Picker(l("family.startRoom"), selection: binding(\.people[i].sleepingSpaceID)) {
                     Text(l("family.unknown")).tag(String?.none)
                     ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
                 }
+                .readablePickerStyle()
                 TextField(DisplayNames.need(.communicationSupport, localizer: l), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
                 Text(l("prep.helper.why")).font(.footnote)
             }
@@ -189,6 +191,7 @@ struct FocusedHouseholdEditor: View {
                 Text(l("relationship.\(relationship.rawValue)")).tag(Optional(relationship))
             }
         }
+        .readablePickerStyle()
         .accessibilityIdentifier("family.relationship.\(draft!.people[i].id)")
         if draft!.people[i].relationship == .custom {
             LabeledTextField(label: l("family.customRole"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }),
@@ -200,6 +203,7 @@ struct FocusedHouseholdEditor: View {
                         Picker(l("family.age"), selection: binding(\.people[i].ageBand)) {
                             ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
                         }
+                        .readablePickerStyle()
                         TextField(l("family.conditions"), text: info(i, \.criticalConditions), axis: .vertical)
                         TextField(l("family.allergies"), text: info(i, \.severeAllergies), axis: .vertical)
                         TextField(l("family.medication"), text: info(i, \.essentialMedication), axis: .vertical)
@@ -215,10 +219,12 @@ struct FocusedHouseholdEditor: View {
                             Text(l("family.unknown")).tag(String?.none)
                             ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
                         }
+                        .readablePickerStyle()
                         Picker(l("family.helper"), selection: binding(\.people[i].helperPersonID)) {
                             Text(l("family.unknown")).tag(String?.none)
                             ForEach(draft!.people.filter { $0.id != draft!.people[i].id }) { Text($0.localizedLabel(l)).tag(Optional($0.id)) }
                         }
+                        .readablePickerStyle()
                         if HouseholdEditing.canRemovePerson(draft!.people[i].id, from: draft!) {
                             Button(l("native.removePerson"), role: .destructive) {
                                 removingPersonID = draft!.people[i].id
@@ -246,6 +252,7 @@ struct FocusedHouseholdEditor: View {
                     Picker(l("ui.contact.role"), selection: binding(\.contacts[i].role)) {
                         ForEach(ContactRole.allCases, id: \.self) { Text(l("ui.contact.role.\($0.rawValue)")).tag($0) }
                     }
+                    .readablePickerStyle()
                     LabeledTextField(label: l("ui.contact.phone"), text: Binding(get: { draft!.contacts[i].phone ?? "" }, set: { draft!.contacts[i].phone = $0 }),
                                      fieldID: "contacts.phone.\(draft!.contacts[i].id)")
                         .keyboardType(.phonePad).textContentType(.telephoneNumber)

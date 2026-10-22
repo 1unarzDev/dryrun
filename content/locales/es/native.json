@@ -199,7 +199,7 @@
   "experience.route.shared": "Punto de paso compartido: {connections}",
   "experience.setup.startingRooms": "¿Dónde empieza cada persona?",
   "experience.setup.startingRooms.why": "Usa las habitaciones registradas o elige habitaciones iniciales para el ejercicio. Esto no cambia la ubicación de las personas en el registro del hogar.",
-  "native.aboutBeacon": "Beacon es el asistente de Dry Run. Funciona con modelos de IA de Google (Gemini), Anthropic (Claude), OpenAI o Groq, según cómo esté configurada esta versión; nunca se envían nombres, números de teléfono ni direcciones.",
+  "native.aboutBeacon": "Beacon es el asistente de Dry Run para los hogares de ejemplo. Usa primero OpenAI Codex y, si Codex no está disponible, Google Gemini o Groq; las fotos de la casa van solo a Google Gemini. Beacon recibe el registro completo de la familia de ejemplo, incluidos nombres, necesidades, medicamentos, contactos y teléfonos, la casa y su dirección. Sin conexión, Dry Run planifica, ensaya y puntúa en este teléfono. Los datos de su propio hogar no se envían.",
   "native.sampleFamily": "Probar una familia de ejemplo",
   "native.sampleFamilyDetail": "Familias y hogares ficticios para explorar la app. Reemplazan el ejemplo en este teléfono; su propio hogar nunca se reemplaza desde aquí.",
   "native.sampleFamilyPick": "Familia",
