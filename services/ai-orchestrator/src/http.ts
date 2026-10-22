@@ -18,6 +18,10 @@ return async(req,res)=>{
  const disconnected=()=>{if(!res.writableEnded)controller.abort()};
  req.once('aborted',disconnected);res.once('close',disconnected);
  res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
+ // Opt-in operator log for the Mac demo gateway: method, path, HTTP status, outcome status/reason and time only.
+ if(process.env.DRYRUN_ACCESS_LOG==='1'){const started=Date.now();const end=res.end.bind(res);let outcome='';
+  res.end=((chunk?:unknown,...rest:unknown[])=>{try{const o=typeof chunk==='string'?JSON.parse(chunk):undefined;outcome=[o?.status,o?.reason,o?.diagnostic].filter(v=>typeof v==='string').join(' ');}catch{}return(end as (...a:unknown[])=>typeof res)(chunk,...rest);}) as typeof res.end;
+  res.once('finish',()=>console.log(`${new Date().toISOString()} ${req.method} ${req.url} ${res.statusCode} ${outcome} ${Date.now()-started}ms`));}
  try{
  if(req.url==='/health'&&req.method==='GET'){res.end(JSON.stringify({status:'ok'}));return;}
  if(attest&&req.url?.startsWith('/v1/attest/')){

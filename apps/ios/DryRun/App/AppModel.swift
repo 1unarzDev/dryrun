@@ -1238,6 +1238,9 @@ final class AppModel {
         await personalizePreparation()
     }
 
+    /// Changes whenever Beacon's inputs change, so Prepare can ask again for the new state.
+    var preparationAITrigger: String { preparationAIKey.map { String(describing: $0) } ?? "" }
+
     /// The shown answer came from an earlier live Beacon call for identical inputs (labelled in development builds).
     private(set) var preparationAIIsSaved = false
 

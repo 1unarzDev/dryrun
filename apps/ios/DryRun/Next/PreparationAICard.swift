@@ -59,8 +59,12 @@ struct PreparationAICard: View {
                 Button(l("prep.ai.reset")) { model.clearPreparationPersonalization() }
                     .frame(minHeight: Theme.minTap)
                     .accessibilityIdentifier("next.ai.reset")
-            case .unavailable:
+            case .unavailable(let reason):
                 Text(l("prep.ai.unavailable")).font(.footnote).foregroundStyle(Theme.caution)
+                #if DEBUG
+                Text("Gateway: \(reason)").font(.caption.monospaced()).foregroundStyle(.secondary)
+                    .accessibilityIdentifier("next.ai.reason")
+                #endif
                 askButton
             case nil:
                 askButton
@@ -69,6 +73,8 @@ struct PreparationAICard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("next.ai")
         .onChange(of: model.scopeSessionID) { _, _ in showIdeas = false }
+        // Beacon tailors the list on open, without a tap, once per input state.
+        .task(id: model.preparationAITrigger) { await model.autoPersonalizePreparation() }
     }
 
     private var askButton: some View {
