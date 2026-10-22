@@ -14,7 +14,14 @@ import Testing
      // This choice was added after the historical capture and requires the new
      // cooling-followup variant. Preserve the exact old input, including old unused choices.
      if alternate {for point in scenario.choicePoints where point.id != "choice.heat-grid-strain.powered-evening" {input.choices[point.id]=point.options.last?.id}}
-     let actual=try SimFixtures.engine.run(input)
+     var actual=try SimFixtures.engine.run(input)
+     // egress-portal-graph/3 changed only exclusions no fixture home exercises (blocked doorway, outside answer on an
+     // interior opening); the historical capture recorded /2. Project the version label back, nothing else.
+     #expect(actual.routes.allSatisfy { $0.algorithmVersion == RouteResult.algorithmVersion })
+     for i in actual.routes.indices { actual.routes[i].algorithmVersion = "egress-portal-graph/2" }
+     for i in actual.snapshots.indices {
+      for j in (actual.snapshots[i].spatialState?.routes ?? []).indices { actual.snapshots[i].spatialState?.routes[j].algorithmVersion = "egress-portal-graph/2" }
+     }
      let key=name+"/"+scenarioID+(alternate ? "/alternate" : "/default")
      let spatial = [.homeFire, .tornado, .flashFlood].contains(scenario.hazard)
      if !spatial {
@@ -34,14 +41,7 @@ import Testing
         } else { previousStage = stage }
        }
       }
-      // egress-portal-graph/3 only adds the operable=false opening exclusion (no sample opening records it);
-      // the historical capture carries the /2 label, so the label alone is projected back.
-      for index in historicalProjection.routes.indices { historicalProjection.routes[index].algorithmVersion = "egress-portal-graph/2" }
-      for index in historicalProjection.snapshots.indices {
-       for route in (historicalProjection.snapshots[index].spatialState?.routes ?? []).indices {
-        historicalProjection.snapshots[index].spatialState?.routes[route].algorithmVersion = "egress-portal-graph/2"
-       }
-      }
+      // Route version labels were already projected to /2 above.
       for index in historicalProjection.decisions.indices where historicalProjection.decisions[index].id == "choice.home-fire.outside" {
        for optionIndex in historicalProjection.decisions[index].options.indices where historicalProjection.decisions[index].options[optionIndex].id == "call-from-outside" {
         // Legacy advice did not require an exterior occupant; new advice does.

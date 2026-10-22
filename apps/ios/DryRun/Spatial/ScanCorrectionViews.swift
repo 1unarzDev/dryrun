@@ -41,10 +41,23 @@ struct OpeningCorrectionCard: View {
                     ForEach(ScanCorrections.leadsToRooms(portalID, from: fromRoomID, in: draft), id: \.self) { roomID in
                         Text(HomeScenePresentation.roomLabel(roomID, in: draft)).tag(roomID)
                     }
-                    Text(t("outside")).tag("outside")
+                    // Outside only for an opening in an outside wall; a recorded outside answer stays visible.
+                    if ScanCorrections.canLeadOutside(portalID, in: draft) || leadsTo(portal) == "outside" {
+                        Text(t("outside")).tag("outside")
+                    }
                     if leadsTo(portal) == "unknown" { Text(t("notSure")).tag("unknown") }
                 }
                 .accessibilityIdentifier("opening.leadsTo")
+                if ScanCorrections.outsideNeedsCheck(portal, in: draft) {
+                    Label(t("outsideNeedsCheck"), systemImage: "exclamationmark.triangle")
+                        .font(.footnote).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("opening.outsideNeedsCheck")
+                } else if !ScanCorrections.canLeadOutside(portalID, in: draft) {
+                    Text(t("outsideInteriorNote")).font(.footnote).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("opening.outsideInteriorNote")
+                }
 
                 Toggle(t("notUsable"), isOn: Binding(get: { ScanCorrections.isNotUsable(portal) }, set: { value in
                     draft.edit { try? ScanCorrections.setNotUsable(portalID, value, in: &$0) }
@@ -117,9 +130,8 @@ struct ScanCheckView: View {
                                 Button(t("skip")) { advance() }.accessibilityIdentifier("scanCheck.skip")
                                 Spacer()
                                 Button(t("confirm")) {
-                                    draft.edit { home in
-                                        if let i = home.portals.firstIndex(where: { $0.id == portal.id }) { home.portals[i].verification = .verified }
-                                    }
+                                    // An outside answer on an opening between two rooms stays a proposal.
+                                    draft.edit { _ = try? ScanCorrections.confirm(portal.id, in: &$0) }
                                     advance()
                                 }
                                 .buttonStyle(.borderedProminent)

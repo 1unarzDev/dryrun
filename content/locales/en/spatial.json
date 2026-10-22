@@ -488,5 +488,8 @@
   "spatial.card.revert": "Revert whole home to scan",
   "spatial.card.revertConfirm": "Undo every change to rooms and openings since the scan? Save afterwards to keep it.",
   "spatial.card.undoSave": "Undo last change",
-  "spatial.card.redoSave": "Redo"
+  "spatial.card.redoSave": "Redo",
+  "spatial.card.outsideInteriorNote": "Outside is offered only for an opening in an outside wall. This one has rooms on both sides.",
+  "spatial.card.outsideNeedsCheck": "Needs checking: the plan shows rooms on both sides, so routes will not use this as a way out. Choose the room it leads to.",
+  "spatial.show-exit-routes": "Show the way out from each starting room"
 }

@@ -488,5 +488,8 @@
   "spatial.card.revert": "Đưa cả nhà về bản quét",
   "spatial.card.revertConfirm": "Hoàn tác mọi thay đổi về phòng và lối mở kể từ khi quét? Sau đó hãy lưu để giữ lại.",
   "spatial.card.undoSave": "Hoàn tác thay đổi gần nhất",
-  "spatial.card.redoSave": "Làm lại"
+  "spatial.card.redoSave": "Làm lại",
+  "spatial.card.outsideInteriorNote": "Chỉ có lựa chọn Bên ngoài cho lối mở trên tường ngoài. Lối này có phòng ở cả hai bên.",
+  "spatial.card.outsideNeedsCheck": "Cần kiểm tra: sơ đồ cho thấy có phòng ở cả hai bên, nên lộ trình sẽ không dùng đây làm lối ra. Hãy chọn phòng mà lối này dẫn đến.",
+  "spatial.show-exit-routes": "Hiện lối ra từ mỗi phòng xuất phát"
 }

@@ -177,7 +177,8 @@ descriptors. Preview and PDF draw the same primary/alternative legs and hazard s
 including no-route/start/destination/exposure floors. Selected export reuses a matching real rehearsal's recorded
 seed, origin, starts, choices and leak variant; hypothetical comparison inputs cannot become actual plan facts.
 Old schema-one documents remain readable but stale. Engine/route versions are cascade-engine/2 and
-egress-portal-graph/2. Local leaks have separate content/events from regional flood exercises.
+egress-portal-graph/3 (/3: blocked open doorways and "outside" answers on openings between two rooms are
+excluded). Local leaks have separate content/events from regional flood exercises.
 
 PlanMapSelection prioritizes near/backup meetup coordinates ahead of optional resources while retaining text
 ordinals. Official and Apple records share destination actions; optional source/contact/check metadata is

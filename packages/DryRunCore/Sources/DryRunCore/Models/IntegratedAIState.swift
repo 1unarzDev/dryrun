@@ -9,8 +9,19 @@ public struct IntegratedAIState: Codable, Sendable {
     public var scorecards:[PreparednessScorecard]
     /// Optional local-only metadata for selected frames; absent in historical state. No image/depth bytes.
     public var imageGeometryRecords:[RoomImageCaptureGeometry]?
-    public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[],imageGeometryRecords:[RoomImageCaptureGeometry]?=nil){
+    /// Saved-version Undo/Redo for the household's home, so it survives relaunch. Local only: absent in historical
+    /// state, omitted when nil (existing bytes unchanged), and never projected into any provider context.
+    public var homeEditHistories:[HomeEditHistory]?
+    public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[],imageGeometryRecords:[RoomImageCaptureGeometry]?=nil,homeEditHistories:[HomeEditHistory]?=nil){
         self.inventory=inventory;self.concerns=concerns;self.sessions=sessions;self.practiceAttempts=practiceAttempts;self.scorecards=scorecards;self.imageGeometryRecords=imageGeometryRecords
+        self.homeEditHistories=homeEditHistories
+    }
+    /// The saved-version history of `homeID`, if one was kept.
+    public func homeEditHistory(for homeID:String)->HomeEditHistory? { homeEditHistories?.first { $0.homeID==homeID } }
+    /// Keeps only the current home's history (a household has one home); an empty history is not stored.
+    public mutating func setHomeEditHistory(_ history:HomeEditHistory?) {
+        guard let history,history.canUndo || history.canRedo else { homeEditHistories=nil; return }
+        homeEditHistories=[history]
     }
     /// Legacy intake can resume/import an attempt, but cannot establish pre-feedback eligibility.
     /// Use beginPractice(...sessionID:library:persist:) for new scored checks.

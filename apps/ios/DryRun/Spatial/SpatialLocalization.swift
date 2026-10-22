@@ -18,6 +18,7 @@ enum SpatialStrings {
         "Verified exit": "spatial.verified-exit",
         "Unconfirmed": "spatial.unconfirmed",
         "Practice route": "spatial.practice-route",
+        "Show the way out from each starting room": "spatial.show-exit-routes",
         "EXIT": "spatial.exit",
         "?": "spatial.",
         "Scanning isn't available on this device": "spatial.scanning-isn-t-available-on-this-device",

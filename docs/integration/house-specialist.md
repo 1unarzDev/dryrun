@@ -76,3 +76,47 @@ Found by the new card test: marking an open doorway Not usable (operable=false) 
 6. HomePersistenceUITests.testRoomAndOpeningEditsSurvivePhysicalAppRelaunch (uses home.edit, home.opening.type.window).
 7. Inject failed write/stale revision: draft kept, message shown, no partial commit.
 8. Owner-assisted gate: real RoomPlan scan of a room (person moving the phone) → Check your scan, Restore what the scan saw, Revert whole home to scan, Save, relaunch.
+
+## Lead2 house pass — branch lead2/house (base bd6974a), 2026-10-22
+
+Owner-authored by the house lead. No phone or simulator launched; no AI output, recorded response or fixtures/ai content read (regenerated fixtures/ai/native-bridge files were committed unread; they are Swift host-built wire written by DirectorGatewayBridgeTests). Answers wave-1 audit findings HOME-01 opening validation, the house items of the integration unresolved list, and F4 from report-prep15-v5-baseline-vs-investigation-repeated-review.
+
+### Outside only for outside-wall openings (HOME-01, device finding LEAD-LEADSTO)
+
+- Household/situation: a family correcting a scanned or sample home taps an interior door and could answer "Leads to: Outside"; the door then became a verified EXIT used by routes.
+- Rule (Core, one place): `PortalAttachment.interiorRoomPair` finds two same-floor rooms the opening would join under the existing two-room attachment rule. If such a pair exists the opening is interior. `ScanCorrections.canLeadOutside` is the card's offer rule; the card shows Outside only for outside-wall openings (a recorded Outside answer stays visible so the picker never hides it) with a one-line explanation otherwise.
+- Contradicted answers stay unverified: `setLeadsTo(... .exterior)` on an interior opening keeps the answer but leaves it `proposed` and returns false; Check your scan "That's right" (`ScanCorrections.confirm`) and `HomeConfirmation` exterior marking cannot verify it. Already-saved verified answers from the old editor are excluded by `EgressPlanner` (`portalNotVerified: outside answer on an opening between two rooms`), drawn unconfirmed by `HomeScenePresentation`, flagged needs-confirmation by `HomeValidator`, and not counted as a ground exit. No unverified exit is labelled usable.
+- Simpler option considered: hide Outside only in the UI. Rejected: legacy saved data and the scan check would still verify it.
+
+### egress-portal-graph/3
+
+Bumped for the wave-1 operable=false doorway exclusion and the new contradicted-exterior exclusion; noted in scenario-house-contract.md with scenario-lead acknowledgement PENDING. AuthoredAdapterTests now projects only the route version label back to /2 before comparing the unchanged historical digests (and asserts the live version is current); every other byte must still match. Swift host-built native-bridge fixtures regenerate with /3; gateway native-bridge.test.ts passes on them.
+
+### Saved-version Undo/Redo survives relaunch (separate AppModel commit)
+
+`IntegratedAIState.homeEditHistories` (optional, omitted when nil so existing sidecar bytes and digests are unchanged, never projected into AuthorizedAIContext). AppModel writes the home and its history in the same atomic vault save, reloads it whenever the sidecar changes (load, save, reset, family switch), and keeps an in-memory copy only if an unreadable sidecar must be preserved. Limit stays 20 versions; each entry is a full HomeModel (scan snapshot included), so a heavily edited scanned home enlarges the sidecar — watch on device.
+
+### Home tab route toggle localized
+
+`spatial.show-exit-routes` (en/es/vi) via SpatialStrings; plus `spatial.card.outsideInteriorNote` and `spatial.card.outsideNeedsCheck`. es/vi are author translations, not native-speaker reviewed.
+
+### F4 shared example-home annotations
+
+All example families get the sample ranch, whose medical marker depicts Oak's oxygen concentrator. `SampleHomes.forExampleHousehold` keeps a medical-equipment marker only when the family records equipment of that purpose (fictional homes only; personal homes untouched). Applied in AppModel.useSampleHousehold/preview and in NativeGatewayInputExportTests (the v5/v6 corpus exporter); frozen v5 bytes are untouched. Not applied to DryRunHost `initialize` (gateway synthetic host) to avoid drifting gateway host traces this wave — follow-up for the integration owner. Devices that already loaded Lake/Pine keep the stray marker until the family is chosen again.
+
+### Evidence (this pass)
+
+- deterministic-tested: OutsideAnswerAndHistoryTests (8 XCTest: offer rule across every sample home, interior Outside stays proposed and off every route for every start room, legacy verified answer excluded with /3, outside-wall answer confirmed, one-room scan opening still offers Outside, history sidecar round trip and historical decode, history absent from provider context, F4 marker projection); ScanCorrectionsTests updated to the new contract; OpeningCardCorrectionsTests unchanged and passing.
+- Full Core `swift test` via firewall: run-0467538abf1f49b0a218ee9013169912 exit 1 before the AuthoredAdapterTests projection (per-suite bisection: only AuthoredAdapterTests, run-480dac069a114a6386426796995b22cb); after the fix run-57a6e050a2cd48e98231a20537195011 exit 0.
+- Gateway: `vitest run test/native-bridge.test.ts` run-dc96a1c2369a439893cb324158f22264 exit 0. Full gateway suite not rerun.
+- Mac-build: xcodegen generate + `xcodebuild build-for-testing -destination generic/platform=iOS CODE_SIGNING_ALLOWED=NO` TEST BUILD SUCCEEDED (includes new AppPersistenceTests.testSavedHomeUndoRedoSurvivesRelaunchAndResetsWithTheHousehold, compiled not executed).
+- Not claimed: device-verified, native unit tests executed, scenario-lead acknowledgement.
+
+### Phone checks requested (exclusive reservation; clean install or Settings reset, synthetic hh-oak, en then es/vi, standard and AX size)
+
+1. Clean-state doorway Not usable: Home → edit → tap pt-living-kitchen (open doorway) → Not usable on → Save; Home tab 2D plan with routes on: no route uses it, opening drawn unavailable; Not usable off → Save → route through it may return.
+2. Interior door Outside blocked: tap pt-living-hall → Leads to lists the room on the other side only (Hallway or Living room) — no Outside; explanatory footnote shown. Tap pt-front → Outside offered and selected.
+3. Legacy data (only if a pre-fix vault exists on device): an interior door saved as Outside shows "Needs checking", is drawn unconfirmed, no route exits through it; choosing the room restores the connection.
+4. History after relaunch: rename a room → Save → Undo appears → force-quit and relaunch → Undo last change still present and restores the name → relaunch → Redo present and reapplies; choose Lake → no Undo/Redo.
+5. Route toggle label reads "Show the way out from each starting room" / es / vi, wraps at AX size.
+6. F4: choose Lake, then Pine → Home tab Safety markers have no "Oxygen concentrator"; Oak still has it.
