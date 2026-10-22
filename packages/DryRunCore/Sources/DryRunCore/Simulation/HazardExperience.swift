@@ -2,8 +2,17 @@ import Foundation
 
 /// Versioned educational mechanics, never a forecast of injury, spread or safe exposure.
 public struct HazardExperience: Codable, Sendable, Equatable {
-    public static let version = "dryrun.hazard-mechanics/5"
-    public static let supportedVersions = ["dryrun.hazard-mechanics/1","dryrun.hazard-mechanics/2","dryrun.hazard-mechanics/3","dryrun.hazard-mechanics/4",version]
+    /// Version 6 (additive over 5): an explicit fire incident origin is excluded from routes from the
+    /// alarm onward, thermal outages record what was in place when power failed, and the family can
+    /// explicitly keep watching (`wait`) when a decision is requested without an authored question.
+    /// Earlier versions replay exactly as before; every capability below is gated by `level`.
+    public static let version = "dryrun.hazard-mechanics/6"
+    public static let supportedVersions = ["dryrun.hazard-mechanics/1","dryrun.hazard-mechanics/2","dryrun.hazard-mechanics/3","dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5",version]
+    /// Numeric mechanics level of a persisted version string; 0 for authored/legacy sessions without one.
+    public static func level(_ version:String?)->Int {
+        guard let version,version.hasPrefix("dryrun.hazard-mechanics/"),let n=Int(version.dropFirst("dryrun.hazard-mechanics/".count)) else {return 0}
+        return n
+    }
     public var mechanicsVersion = version
     public var hazard: HazardKind
     public var scene: String
@@ -52,16 +61,20 @@ struct HazardProgress {
     var accounted = Set<String>()
     var identifiedGaps=Set<String>()
     var escapeHelperByPersonID:[String:String]=[:]
-    var supportsActionProgress:Bool {mechanicsVersion == "dryrun.hazard-mechanics/5"}
+    var level:Int {HazardExperience.level(mechanicsVersion)}
+    var supportsActionProgress:Bool {level>=5}
     var supportsEscapeAccompaniment:Bool {supportsActionProgress}
+    /// Version 6: explicit incident origin excluded at the alarm; outage readiness; explicit wait.
+    var supportsOriginExclusion:Bool {level>=6}
+    var supportsOutageReadiness:Bool {level>=6}
     var protection: String?
     var mechanicsVersion:String
     var roomTemperatures:[String:EducationalTemperature]=[:]
     var shadedRoomIDs=Set<String>()
     var roomCoverageUnknown:Bool
     var usesRoomHeat:Bool {mechanicsVersion != "dryrun.hazard-mechanics/1"}
-    var supportsRecordedGapChecks:Bool {mechanicsVersion == "dryrun.hazard-mechanics/3" || supportsRefugeArrival}
-    var supportsRefugeArrival:Bool {mechanicsVersion == "dryrun.hazard-mechanics/4" || supportsEscapeAccompaniment}
+    var supportsRecordedGapChecks:Bool {level>=3}
+    var supportsRefugeArrival:Bool {level>=4}
     var lowerC: Double
     var upperC: Double
     /// Ordered committed user actions with their emitted session events, so the debrief can
@@ -72,6 +85,8 @@ struct HazardProgress {
     /// Flood access-loss stage outcome per person, computed at the stage from committed positions.
     var refugeLostAtAccessLoss=Set<String>()
     var refugeHeldAtAccessLoss=Set<String>()
+    /// Version 6 thermal hazards: what the household had in place at the moment home power failed.
+    var outageReadiness:[OutageReadinessRecord]=[]
     init(_ hazard: HazardKind,version:String,roomIDs:[String],roomCoverageUnknown:Bool) {
         self.roomCoverageUnknown=roomCoverageUnknown
         mechanicsVersion=version
@@ -92,6 +107,17 @@ struct HazardTraceEntry:Equatable {
     var kind:String
     var subjectIDs:[String]
     var eventID:String
+}
+/// Recorded at the committed power-loss boundary from household commits made before it. It states
+/// what was in place, never that it was adequate, warm/cool enough or medically sufficient.
+struct OutageReadinessRecord:Equatable {
+    var eventID:String
+    var minute:Int
+    var protected:Bool
+    var relocated:Bool
+    var essentialWithBackup:[String]
+    var essentialWithoutBackup:[String]
+    var exposedSensitivePersonIDs:[String]
 }
 /// A stay decision records what was in place, never an adequacy or safe-temperature claim.
 struct ThermalStayRecord:Equatable {
@@ -130,6 +156,23 @@ extension RunState {
         let unpowered=household.equipment.filter{$0.isEssential && services[Svc.device($0.id)] != .operational}.map(\.id).sorted()
         progress.thermalStays.append(.init(choiceID:choiceID,eventID:eventID,conditioning:thermalConditioning,protected:progress.protection != nil,
             unpoweredEssentialIDs:unpowered,exposedSensitivePersonIDs:thermallyExposedSensitivePeople()))
+        hazardProgress=progress
+    }
+    /// Version 6: at the committed power-loss boundary of a thermal hazard, record which recorded
+    /// protection, departure and essential-equipment power the household had already committed to.
+    /// Only the first loss is recorded; later outages keep the original preparation comparison.
+    mutating func recordOutageReadiness(eventID:String) {
+        guard var progress=hazardProgress,progress.supportsOutageReadiness,[.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),
+              progress.outageReadiness.isEmpty else {return}
+        let essential=household.equipment.filter{$0.isEssential && $0.requiresElectricalPower}
+        let backed=essential.filter{equipment in !equipment.compatibleBackupIDs.isEmpty && household.backupPower.contains(where:{equipment.compatibleBackupIDs.contains($0.id)})}.map(\.id).sorted()
+        progress.outageReadiness.append(.init(eventID:eventID,minute:minute,protected:progress.protection != nil,relocated:relocated,
+            essentialWithBackup:backed,essentialWithoutBackup:essential.map(\.id).filter{!backed.contains($0)}.sorted(),
+            exposedSensitivePersonIDs:household.people.filter{thermallySensitive($0)}.filter{person in
+                guard !relocated else {return false}
+                if scenario.hazard == .freezePowerLoss {return progress.protection != "recordedWarmth"}
+                return !progress.shadedRoomIDs.contains(startSpace(for:person))
+            }.map(\.id).sorted()))
         hazardProgress=progress
     }
     mutating func advanceHazardTemperature(minutes: Double) {
@@ -474,6 +517,16 @@ extension RunState {
                 if !stay.exposedSensitivePersonIDs.isEmpty {facts.append(.init(kind:"thermalStaySensitivePersonExposed",subjectIDs:Array(([stay.choiceID]+stay.exposedSensitivePersonIDs).prefix(20)),eventIDs:[stay.eventID],nextActionID:next))}
                 if !stay.unpoweredEssentialIDs.isEmpty {facts.append(.init(kind:"thermalStayEssentialEquipmentUnpowered",subjectIDs:Array(([stay.choiceID]+stay.unpoweredEssentialIDs).prefix(20)),eventIDs:[stay.eventID],nextActionID:"prep.medicalBackup"))}
             }
+        }
+        // Version 6: the preparation comparison at the moment power actually failed.
+        for record in progress.outageReadiness {
+            let protectedKind=record.relocated ? "outageBeganAfterDeparture":record.protected ? "outageBeganWithRecordedProtection":"outageBeganWithoutRecordedProtection"
+            facts.append(.init(kind:protectedKind,subjectIDs:Array(record.exposedSensitivePersonIDs.prefix(20)),eventIDs:[record.eventID],nextActionID:record.protected || record.relocated ? next:"prep.heatCold"))
+            if !record.essentialWithBackup.isEmpty {facts.append(.init(kind:"outageBeganWithBackupAssigned",subjectIDs:Array(record.essentialWithBackup.prefix(20)),eventIDs:[record.eventID],nextActionID:next))}
+            if !record.essentialWithoutBackup.isEmpty {facts.append(.init(kind:"outageBeganWithoutBackupAssigned",subjectIDs:Array(record.essentialWithoutBackup.prefix(20)),eventIDs:[record.eventID],nextActionID:"prep.medicalBackup"))}
+        }
+        if scenario.hazard == .homeFire,progress.supportsOriginExclusion,let origin=spatialState?.originSpaceID,spatialState?.affectedSpaceIDs.contains(origin)==true {
+            fact("fireOriginExcludedFromRoutes",[origin])
         }
         if scenario.hazard == .flashFlood {
             if !progress.refugeHeldAtAccessLoss.isEmpty {fact("atHigherRefugeBeforeAccessLoss",progress.refugeHeldAtAccessLoss.sorted())}

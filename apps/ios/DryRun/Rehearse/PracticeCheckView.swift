@@ -119,6 +119,7 @@ struct PracticeCheckView: View {
                 }
                 .buttonStyle(.choice)
                 .disabled(submitting)
+                .accessibilityIdentifier(action.identifier)
             }
             if let home = step.session.initial.home {
                 Text(l("adaptive.move")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
@@ -198,12 +199,15 @@ struct PracticeCheckView: View {
         let query = Task.detached(priority: .userInitiated) { try session.query(library: scenarios) }
         guard let loaded = try? await query.value, !Task.isCancelled,
               model.practiceStepIdentity == identity else { return }
+        // Show the situation and an authored question at once. Previewing every possible action (each a full
+        // session replay) used to hold the whole step, including its decision options, until all previews finished.
+        receipt = loaded
+        loadedIdentity = identity
+        guard PracticeCheckSources.authoredChoice(session, competency: step.competency, library: scenarios) == nil else { return }
         let accepted = await ExerciseActions.accepted(ExerciseActions.candidates(session: session, receipt: loaded, localizer: localizer),
                                                       session: session, library: scenarios)
         guard !Task.isCancelled, model.practiceStepIdentity == identity else { return }
-        receipt = loaded
         actions = accepted
-        loadedIdentity = identity
     }
 
     /// Records the answer, then marks feedback revealed, and only then shows what happened.
@@ -237,17 +241,23 @@ struct PracticeCheckView: View {
               model.pendingPracticeFeedback?.observation.actionID == pending.observation.actionID,
               let command = session.commits.first(where: { $0.id == pending.observation.actionID })?.commands.first else { return }
         let l = model.localizer
-        var title = ExerciseActions.candidates(session: session, receipt: after, localizer: l)
-            .first { $0.commands == [command] }?.title ?? l("adaptive.action")
+        let before = session.commits.firstIndex(where: { $0.id == pending.observation.actionID }).flatMap { index -> SessionReceipt? in
+            var prefix = SimulationSession(id: session.id, initial: session.initial, inventory: session.inventory, directorPolicy: session.directorPolicy,
+                                           concernSeed: session.concernSeed, dependencyPolicy: session.dependencyPolicy, mechanicsVersion: session.mechanicsVersion)
+            for commit in session.commits.prefix(index) { guard (try? prefix.commit(commit, library: scenarios)) != nil else { return nil } }
+            return try? prefix.query(library: scenarios)
+        }
+        var title = ExerciseActions.describe(command, session: session, receipt: before ?? after, localizer: l) ?? l("adaptive.action")
         var detail: String?
         if command.kind == "choose", let option = scenarios.scenario(session.initial.scenarioID)?.choicePoints
             .first(where: { $0.id == command.target })?.options.first(where: { $0.id == command.value }) {
             title = l(option.labelKey); detail = l(option.feedbackKey)
-        } else if command.kind == "moveTo", let home = session.initial.home {
+        } else if command.kind == "moveTo", session.initial.scenarioID != "heat-grid-strain", let home = session.initial.home {
             let person = session.initial.household.people.first { $0.id == command.target }?.localizedLabel(l) ?? ""
             title = l("adaptive.moved", ["person": person, "room": command.value.map { HomeScenePresentation.roomLabel($0, in: home) } ?? ""])
         }
         let events = after.events.filter { !$0.id.hasPrefix("user.") && $0.id != "evt.\(command.target ?? "")" }
+        if detail == nil, command.kind != "choose", command.kind != "moveTo" { detail = ExerciseActions.doneNote(command, localizer: l) }
         feedback = Feedback(actionID: pending.observation.actionID, attemptID: pending.attempt.id,
             scope: scope, locale: locale, competency: pending.observation.competencyID,
             title: title, detail: detail, events: events)

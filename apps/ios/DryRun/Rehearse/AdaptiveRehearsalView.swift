@@ -36,13 +36,17 @@ struct AdaptiveRehearsalView: View {
                                 .accessibilityIdentifier("adaptive.scene")
                         }
                         youDid(exercise)
+                        recordedChanges(exercise)
                         happened(exercise)
                         if exercise.receipt.finished {
                             finished(exercise)
                         } else if exercise.receipt.directorState?.awaitingUserAction == true {
                             decision(exercise).id("decision")
                         }
-                        if !exercise.receipt.finished { otherActions(exercise) }
+                        if !exercise.receipt.finished {
+                            hazardChoices(exercise)
+                            otherActions(exercise)
+                        }
                         DisclosureGroup(isExpanded: $showServices) {
                             ServiceStateGrid(snapshot: exercise.receipt.snapshot).padding(.top, Theme.Space.s)
                         } label: {
@@ -145,7 +149,8 @@ struct AdaptiveRehearsalView: View {
                         Text(l(option.feedbackKey)).font(.callout).fixedSize(horizontal: false, vertical: true)
                     } else {
                         Text(actionTitle(command, in: exercise)).font(.body.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
-                        Text(l("simulation.user.\(command.kind)")).font(.callout).foregroundStyle(.secondary)
+                        Text(ExerciseActions.doneNote(command, localizer: l)).font(.callout).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
@@ -183,9 +188,19 @@ struct AdaptiveRehearsalView: View {
                 Task { await model.submitAdaptive([SessionCommand(kind: "choose", target: choice.id, value: option)]) }
             }
         } else {
-            // A director asked for a decision without an authored question: any action below continues the exercise.
+            // A director asked for a decision without an authored question: any action below continues the exercise,
+            // or the family can explicitly keep watching (a recorded decision, not a default).
             SectionCard(title: l("adaptive.whatNow"), systemImage: "arrow.triangle.branch") {
                 Text(l("adaptive.whatNowDetail")).font(.callout)
+                if let scenarios = model.scenarios,
+                   HazardChoices.waitAvailable(session: exercise.session, receipt: exercise.receipt, library: scenarios) {
+                    Button { Task { await model.submitAdaptive([SessionCommand(kind: "wait")]) } } label: {
+                        Label(l("rehearsal.cmd.wait"), systemImage: "hourglass").multilineTextAlignment(.leading)
+                    }
+                    .buttonStyle(.choice)
+                    .disabled(model.isWorking)
+                    .accessibilityIdentifier("rehearsal.cmd.wait")
+                }
             }
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("adaptive.whatNow")
@@ -197,6 +212,25 @@ struct AdaptiveRehearsalView: View {
         let household = exercise.session.initial.household
         SectionCard(title: l("adaptive.finished"), systemImage: "flag.checkered") {
             Text(l("adaptive.finishedBody")).font(.callout)
+            // The family's own committed actions, in order, described from the commands themselves.
+            let trace = exercise.session.commits.filter { $0.actor == "user" }.flatMap(\.commands).filter { $0.kind != "finish" }
+            if !trace.isEmpty {
+                VStack(alignment: .leading, spacing: Theme.Space.xs) {
+                    Text(l("rehearsal.cmd.trace")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
+                    ForEach(Array(trace.enumerated()), id: \.offset) { index, command in
+                        IconRow(systemImage: "\(min(index + 1, 50)).circle", tint: Theme.accent, title: actionTitle(command, in: exercise))
+                    }
+                }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("rehearsal.cmd.trace")
+            }
+            let facts = ExerciseActions.facts(exercise.receipt, session: exercise.session, localizer: l)
+            if !facts.isEmpty {
+                Text(l("rehearsal.cmd.recorded")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
+                ForEach(facts, id: \.id) { fact in
+                    IconRow(systemImage: "checkmark.circle", tint: Theme.accent, title: fact.text)
+                }
+            }
             let unmet = exercise.receipt.snapshot.unmetRequirements
             if !unmet.isEmpty {
                 Text(l("adaptive.unmet")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
@@ -217,14 +251,65 @@ struct AdaptiveRehearsalView: View {
 
     // MARK: Actions
 
+    /// Facts this turn added to the exercise record (arrivals, accounting, what was in place at an outage),
+    /// read from the committed receipt, not from narration.
+    @ViewBuilder private func recordedChanges(_ exercise: AppModel.AdaptiveExercise) -> some View {
+        let l = model.localizer
+        let before = exercise.previous.map { Set(ExerciseActions.facts($0, session: exercise.session, localizer: l).map(\.text)) } ?? []
+        let fresh = exercise.previous == nil ? [] : ExerciseActions.facts(exercise.receipt, session: exercise.session, localizer: l).filter { !before.contains($0.text) }
+        if !fresh.isEmpty, !exercise.receipt.finished {
+            SectionCard(title: l("rehearsal.cmd.changed"), systemImage: "list.bullet.clipboard") {
+                ForEach(fresh, id: \.id) { fact in
+                    Text(fact.text).font(.callout).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("rehearsal.cmd.changed")
+        }
+    }
+
+    /// The hazard's own choices now: who does what, where. Each was validated by the host for this receipt and is
+    /// previewed again at this revision; choosing one commits it through the engine.
+    @ViewBuilder private func hazardChoices(_ exercise: AppModel.AdaptiveExercise) -> some View {
+        let l = model.localizer
+        let actions = (acceptedRevision == exercise.session.revision ? accepted : []).filter(Self.isHazard)
+        if !actions.isEmpty {
+            SectionCard(title: l("rehearsal.cmd.title"), systemImage: "person.line.dotted.person") {
+                Text(l("rehearsal.cmd.detail")).font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                ForEach(actions, id: \.identifier) { action in
+                    Button { Task { await model.submitAdaptive(action.commands) } } label: {
+                        Label(action.title, systemImage: action.symbol).multilineTextAlignment(.leading)
+                    }
+                    .buttonStyle(.choice)
+                    .disabled(model.isWorking)
+                    .accessibilityIdentifier(action.identifier)
+                }
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("rehearsal.cmd.list")
+        }
+    }
+
+    /// Hazard choices described from the receipt (not recognition notes, water-use policies or door closing).
+    private static func isHazard(_ option: ActionOption) -> Bool {
+        // Disconnecting a device is a counterfactual the family may explore, never offered beside the hazard choices.
+        option.isHazardChoice && option.commands.count == 1
+            && !(option.commands[0].kind == "allocatePower" && option.commands[0].value == "none")
+    }
+
     /// Typed actions the host can model, shown only when the host would accept them at this moment.
     @ViewBuilder private func otherActions(_ exercise: AppModel.AdaptiveExercise) -> some View {
         let l = model.localizer
-        let actions = acceptedRevision == exercise.session.revision ? accepted : []
+        let all = acceptedRevision == exercise.session.revision ? accepted : []
+        let actions = all.filter { !Self.isHazard($0) && !$0.isNote }
+        let notes = all.filter(\.isNote)
         let household = exercise.session.initial.household
-        let home = exercise.session.initial.home
+        // A free person+room move only where the hazard has no person/destination choices of its own (flood keeps it
+        // for supply logistics); fire, tornado and heat offer specific exits, shelters and shaded rooms instead.
+        let home = Self.spatial.contains(scenarioID) && (!ExerciseActions.hasHazardChoices(exercise.receipt) || scenarioID == "flash-flood")
+            ? exercise.session.initial.home : nil
         let move = moveCommand(exercise)
-        if !actions.isEmpty || (home != nil && Self.spatial.contains(scenarioID)) {
+        if !actions.isEmpty || !notes.isEmpty || home != nil {
             SectionCard {
                 DisclosureGroup {
                     VStack(alignment: .leading, spacing: Theme.Space.s) {
@@ -233,8 +318,19 @@ struct AdaptiveRehearsalView: View {
                                 Label(action.title, systemImage: action.symbol).multilineTextAlignment(.leading)
                             }
                             .buttonStyle(.choice)
+                            .accessibilityIdentifier(action.identifier)
                         }
-                        if let home, Self.spatial.contains(scenarioID) {
+                        if !notes.isEmpty {
+                            Text(l("rehearsal.cmd.notes")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
+                            ForEach(notes, id: \.identifier) { note in
+                                Button { Task { await model.submitAdaptive(note.commands) } } label: {
+                                    Label(note.title, systemImage: note.symbol).multilineTextAlignment(.leading)
+                                }
+                                .buttonStyle(.choice)
+                                .accessibilityIdentifier(note.identifier)
+                            }
+                        }
+                        if let home {
                             Text(l("adaptive.move")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
                             Picker(l("adaptive.movePerson"), selection: $movePersonID) {
                                 Text(l("adaptive.choose")).tag("")
@@ -285,7 +381,9 @@ struct AdaptiveRehearsalView: View {
     }
 
     private func actionTitle(_ command: SessionCommand, in exercise: AppModel.AdaptiveExercise) -> String {
-        availableActions(exercise).first { $0.commands == [command] }?.title
+        // Described from the command itself: an escape that is no longer offered still says who left by which exit.
+        let receipt = exercise.previous ?? exercise.receipt
+        return ExerciseActions.describe(command, session: exercise.session, receipt: receipt, localizer: model.localizer)
             ?? (command.kind == "moveTo" ? movedTitle(command, in: exercise) : model.localizer("adaptive.action"))
     }
 

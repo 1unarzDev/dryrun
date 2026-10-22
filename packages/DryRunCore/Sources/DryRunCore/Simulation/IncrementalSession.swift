@@ -171,6 +171,10 @@ public struct SimulationSession: Codable, Sendable {
                         run.flags.insert("simulatedContact.\(contactID)")
                     case "unsupported":
                         run.flags.insert("unsupportedAction.\(commit.id)")
+                    case "wait":
+                        // Version 6: an explicit, recorded "keep watching for now" decision. It changes
+                        // no state, so its consequence is whatever the later schedule does without action.
+                        guard HazardExperience.level(mechanicsVersion)>=6,command.target==nil,command.value==nil else {throw SessionError.invalidCommand}
                     case "moveTo":
                         guard !((run.hazardProgress?.outside.contains(command.target ?? "")) ?? false) else {throw SessionError.invalidCommand}
                         guard let personID = command.target, let p = run.household.people.firstIndex(where: { $0.id == personID }),
@@ -240,7 +244,7 @@ public struct SimulationSession: Codable, Sendable {
         let routes = run.currentRoutes.keys.sorted().compactMap { run.currentRoutes[$0] }
         let digest = StableDigest.of(try DryRunJSON.encoder().encode(DigestState(initial: initial, commits: commits, snapshot: snapshot, routes: routes, inventory:supplies?.state, inventorySeed:inventory,directorPolicy:directorPolicy,closedPortalIDs:closedPortals.isEmpty ? nil : closedPortals.sorted(),assistance:assistance,concernSeed:concernSeed,mechanicsVersion:mechanicsVersion)))
         var experience=run.experience()
-        if ["dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5"].contains(mechanicsVersion ?? ""),let ledger=supplies,scenario.hazard == .flashFlood,!run.relocated {
+        if HazardExperience.level(mechanicsVersion)>=4,let ledger=supplies,scenario.hazard == .flashFlood,!run.relocated {
             // Export the actual item/person/location combinations, not a generic
             // retrieve-supplies label that teleports stock from another room.
             // Timing consequence from the same ledger: stock left in an excluded space versus stock
@@ -248,7 +252,7 @@ public struct SimulationSession: Codable, Sendable {
             let affected=Set(run.spatialState?.affectedSpaceIDs ?? [])
             let lost=ledger.state.items.filter{$0.accessible==false && $0.carrierPersonID==nil && $0.locationID.map(affected.contains)==true}.map(\.id).sorted()
             let kept=ledger.state.items.filter{$0.accessible==true && ($0.carrierPersonID != nil || $0.locationID != ledger.sources[$0.id]?.locationID)}.map(\.id).sorted()
-            if mechanicsVersion == HazardExperience.version,let next=experience?.debrief.first?.nextActionID {
+            if HazardExperience.level(mechanicsVersion)>=5,let next=experience?.debrief.first?.nextActionID {
                 if !lost.isEmpty {experience?.debrief.append(.init(kind:"floodSupplyAccessLost",subjectIDs:Array(lost.prefix(20)),eventIDs:[],nextActionID:"prep.floodPlan"))}
                 if !kept.isEmpty {experience?.debrief.append(.init(kind:"floodSupplyKeptAccessible",subjectIDs:Array(kept.prefix(20)),eventIDs:[],nextActionID:next))}
             }
@@ -283,7 +287,7 @@ public struct SimulationSession: Codable, Sendable {
     /// completed educational objective. Never offers an unsupported action to fill the gap.
     static func annotateSupportedActions(_ experience:HazardExperience,run:RunState)->HazardExperience {
         // State-derived, so a director finish does not change the final debrief facts.
-        guard experience.mechanicsVersion == HazardExperience.version else {return experience}
+        guard HazardExperience.level(experience.mechanicsVersion)>=5 else {return experience}
         var result=experience
         let people=Set(run.household.people.map(\.id))
         let complete:Bool
@@ -307,12 +311,12 @@ public struct SimulationSession: Codable, Sendable {
         // provider must not manufacture a trapped-home sequel or advance queued
         // home events at an unmodeled destination. Historical commits still replay
         // unchanged; this selects only the next explicit fallback proposal.
-        if ["dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5"].contains(mechanicsVersion ?? ""),
+        if HazardExperience.level(mechanicsVersion)>=4,
            receipt.experience?.relocated == true,
            [.flashFlood,.freezePowerLoss,.heatGridStrain].contains(scenario.hazard) {
             return SessionCommit(id:"fallback-\(revision)",actor:"director",baseRevision:revision,commands:[.init(kind:"finish")])
         }
-        if mechanicsVersion == "dryrun.hazard-mechanics/5",let experience=receipt.experience,!initial.household.people.isEmpty {
+        if HazardExperience.level(mechanicsVersion)>=5,let experience=receipt.experience,!initial.household.people.isEmpty {
             let people=Set(initial.household.people.map(\.id))
             let escapedAndAccounted=scenario.hazard == .homeFire && people.isSubset(of:Set(experience.outsidePersonIDs)) && people.isSubset(of:Set(experience.accountedPersonIDs))
             let arrivedAtShelter=scenario.hazard == .tornado && people.isSubset(of:Set(experience.shelteredPersonIDs))
