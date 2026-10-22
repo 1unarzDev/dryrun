@@ -58,8 +58,12 @@ export class GeminiProvider implements AgentProvider {
  const rates=tokenRates(model);
  const upperBoundUSD=(tokenBound*rates.input+6000*rates.output)/1000000;
  const reservationEpoch=this.budget.reserve(upperBoundUSD);this.lastCall=Date.now();
+ // Finalization is explicit (toolMode none) or follows tool results, including host records carried over from another
+ // provider on a restart (report-codex-deadline-restart-gemini-debrief-director-review: a restarted Gemini director
+ // finalized without response_format and failed directorOutput twice).
+ const retrieved=input.history.some(s=>s.type==='function_result'||s.type==='user_input'&&JSON.stringify(s.content??'').includes('hostRetrievedRecords'));
  const request=this.ai.interactions.create({model,store:false,input:input.history,system_instruction:input.instruction,tools:input.tools,
- response_format:input.outputSchema&&(!input.tools.length||input.history.some(s=>s.type==='function_result'))?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:6000,thinking_level:model==='gemini-2.5-flash'?undefined:'high',tool_choice:input.tools.length?(input.toolMode??(!input.history.some(s=>s.type==='function_result')?'any':'none')):undefined}},{signal:input.signal,retries:{strategy:'none'}});
+ response_format:input.outputSchema&&(!input.tools.length||input.toolMode==='none'||retrieved)?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:6000,thinking_level:model==='gemini-2.5-flash'?undefined:'high',tool_choice:input.tools.length?(input.toolMode??(!retrieved?'any':'none')):undefined}},{signal:input.signal,retries:{strategy:'none'}});
  // Enforce our deadline even if an SDK/network path does not promptly honor abort.
  // Keep the reservation for an unknown outcome; reconcile exactly once if usage arrives later.
  const accounted=request.then(response=>{this.budget.charge(response.usage,model,upperBoundUSD,reservationEpoch);return response;});

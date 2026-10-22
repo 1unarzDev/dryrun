@@ -226,7 +226,9 @@ export function compactForGroq(value:any):any{
  if(Array.isArray(out.tasks))out.tasks=out.tasks.map((t:any)=>{if(!t||typeof t!=='object')return t;const {completionPredicates:_c,dependencyIDs:_d,editor:_e,...rest}=t;return rest;});
  // A debrief chooses among its own tasks, so the catalog is not needed; its receipt keeps the family's choices, the
  // final state and only the caution/critical events.
- if(out.debrief&&typeof out.debrief==='object'){delete out.taskCatalog;const r=out.debrief.rehearsal;if(r&&typeof r==='object'&&Array.isArray(r.events))out.debrief={...out.debrief,rehearsal:{...r,events:r.events.filter((e:any)=>e?.severity!=='info').slice(0,12),routes:undefined}};}
+ if(out.debrief&&typeof out.debrief==='object'){delete out.taskCatalog;const r=out.debrief.rehearsal;if(r&&typeof r==='object'&&Array.isArray(r.events))out.debrief={...out.debrief,rehearsal:{...r,events:r.events.filter((e:any)=>e?.severity!=='info').slice(0,12),routes:Array.isArray(r.routes)?r.routes.map((x:any)=>({personID:x?.personID,alternativeStatus:x?.alternativeStatus})):undefined}};}
+ // report-groq-compact-debrief-restart-review: without the per-person route status a compact debrief invented route and
+ // end-position framing; the status enum is a few bytes per person. Choices (with simMinute and recommended) stay whole.
  return out;
 }
 
