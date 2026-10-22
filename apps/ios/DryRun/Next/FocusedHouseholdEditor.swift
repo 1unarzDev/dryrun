@@ -21,6 +21,12 @@ struct FocusedHouseholdEditor: View {
     /// "Add family member" stays reachable; a newly added person opens.
     @State private var expandedPeople: Set<String> = []
 
+    /// `expanding` opens one person's details on arrival, so a correction from the family panel is one tap away.
+    init(focus: Focus, expanding personID: String? = nil) {
+        self.focus = focus
+        _expandedPeople = State(initialValue: personID.map { [$0] } ?? [])
+    }
+
     var body: some View {
         let l = model.localizer
         Form {
@@ -120,7 +126,7 @@ struct FocusedHouseholdEditor: View {
                     Text(l("family.unknown")).tag(String?.none)
                     ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
                 }
-                TextField(l("common.need.communicationSupport"), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
+                TextField(DisplayNames.need(.communicationSupport, localizer: l), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
                 Text(l("prep.helper.why")).font(.footnote)
             }
         }
@@ -142,12 +148,11 @@ struct FocusedHouseholdEditor: View {
             ForEach((draft?.people ?? []).filter { personID == nil || $0.id == personID }) { person in
                 if let i = draft?.people.firstIndex(where: { $0.id == person.id }) {
                     Section(draft!.people[i].isSelf == true ? l("family.you") : l("family.member")) {
-                        LabeledContent(l("family.name")) {
-                            TextField(l("family.name"), text: binding(\.people[i].alias))
-                                .textContentType(.name)
-                                .multilineTextAlignment(.trailing)
-                                .accessibilityIdentifier("family.personName.\(draft!.people[i].id)")
-                        }
+                        // Name and family role sit together and stay labelled: the name is typed, the role is chosen.
+                        LabeledTextField(label: l("family.name"), text: binding(\.people[i].alias),
+                                         fieldID: "family.personName.\(draft!.people[i].id)")
+                            .textContentType(.name)
+                        relationshipFields(i)
                         if personID != nil { personDetails(i) }
                         else {
                             DisclosureGroup(isExpanded: Binding(get: { expandedPeople.contains(person.id) }, set: { open in
@@ -176,17 +181,22 @@ struct FocusedHouseholdEditor: View {
             }
         }
     }
+    @ViewBuilder private func relationshipFields(_ i: Int) -> some View {
+        let l = model.localizer
+        Picker(l("family.relationship"), selection: binding(\.people[i].relationship)) {
+            Text(l("family.unknown")).tag(FamilyRelationship?.none)
+            ForEach(FamilyRelationship.allCases, id: \.self) { relationship in
+                Text(l("relationship.\(relationship.rawValue)")).tag(Optional(relationship))
+            }
+        }
+        .accessibilityIdentifier("family.relationship.\(draft!.people[i].id)")
+        if draft!.people[i].relationship == .custom {
+            LabeledTextField(label: l("family.customRole"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }),
+                             fieldID: "family.customRole.\(draft!.people[i].id)")
+        }
+    }
     @ViewBuilder private func personDetails(_ i: Int) -> some View {
         let l = model.localizer
-                        Picker(l("family.relationship"), selection: binding(\.people[i].relationship)) {
-                            Text(l("family.unknown")).tag(FamilyRelationship?.none)
-                            ForEach(FamilyRelationship.allCases, id: \.self) { relationship in
-                                Text(l("relationship.\(relationship.rawValue)")).tag(Optional(relationship))
-                            }
-                        }
-                        if draft!.people[i].relationship == .custom {
-                            TextField(l("family.customRole"), text: Binding(get: { draft!.people[i].customRelationship ?? "" }, set: { draft!.people[i].customRelationship = $0 }))
-                        }
                         Picker(l("family.age"), selection: binding(\.people[i].ageBand)) {
                             ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
                         }
@@ -195,12 +205,12 @@ struct FocusedHouseholdEditor: View {
                         TextField(l("family.medication"), text: info(i, \.essentialMedication), axis: .vertical)
                         TextField(l("family.instructions"), text: info(i, \.responderInstructions), axis: .vertical)
                         ForEach(AssistanceNeed.allCases, id: \.self) { need in
-                            Toggle(DisplayNames.name(need.rawValue, localizer: l), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
+                            Toggle(DisplayNames.need(need, localizer: l), isOn: Binding(get: { draft!.people[i].needs.contains(need) }, set: { on in
                                 draft!.people[i].needs.removeAll { $0 == need }
                                 if on { draft!.people[i].needs.append(need) }
                             }))
                         }
-                        TextField(l("common.need.communicationSupport"), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
+                        TextField(DisplayNames.need(.communicationSupport, localizer: l), text: Binding(get: { draft!.people[i].communicationNotes ?? "" }, set: { draft!.people[i].communicationNotes = $0 }), axis: .vertical)
                         Picker(l("family.startRoom"), selection: binding(\.people[i].sleepingSpaceID)) {
                             Text(l("family.unknown")).tag(String?.none)
                             ForEach(model.home?.spaces ?? []) { Text($0.label).tag(Optional($0.id)) }
@@ -227,13 +237,18 @@ struct FocusedHouseholdEditor: View {
         return Group {
             ForEach(Array((draft?.contacts ?? []).indices).filter { newContactID == nil || draft!.contacts[$0].id == newContactID }, id: \.self) { i in
                 Section {
-                    TextField(l("ui.contact.name"), text: binding(\.contacts[i].alias)).accessibilityIdentifier("contacts.name.\(draft!.contacts[i].id)")
-                    TextField(l("family.relationship"), text: Binding(get: { draft!.contacts[i].relationship ?? "" }, set: { draft!.contacts[i].relationship = $0 }))
+                    // Labels stay visible once typed, so "Maria" and "Neighbor" are never confused for each other.
+                    LabeledTextField(label: l("ui.contact.name"), text: binding(\.contacts[i].alias),
+                                     fieldID: "contacts.name.\(draft!.contacts[i].id)")
+                        .textContentType(.name)
+                    LabeledTextField(label: l("family.relationship"), text: Binding(get: { draft!.contacts[i].relationship ?? "" }, set: { draft!.contacts[i].relationship = $0 }),
+                                     fieldID: "contacts.relationship.\(draft!.contacts[i].id)")
                     Picker(l("ui.contact.role"), selection: binding(\.contacts[i].role)) {
                         ForEach(ContactRole.allCases, id: \.self) { Text(l("ui.contact.role.\($0.rawValue)")).tag($0) }
                     }
-                    TextField(l("ui.contact.phone"), text: Binding(get: { draft!.contacts[i].phone ?? "" }, set: { draft!.contacts[i].phone = $0 }))
-                        .keyboardType(.phonePad).textContentType(.telephoneNumber).accessibilityIdentifier("contacts.phone.\(draft!.contacts[i].id)")
+                    LabeledTextField(label: l("ui.contact.phone"), text: Binding(get: { draft!.contacts[i].phone ?? "" }, set: { draft!.contacts[i].phone = $0 }),
+                                     fieldID: "contacts.phone.\(draft!.contacts[i].id)")
+                        .keyboardType(.phonePad).textContentType(.telephoneNumber)
                     if !draft!.contacts[i].hasUsablePhone { Text(l("family.phoneMissing")).font(.caption).foregroundStyle(Theme.caution) }
                 }
             }
@@ -395,7 +410,7 @@ struct FocusedHouseholdEditor: View {
                 }))
                 ForEach(binding(\.transport.vehicles)) { $vehicle in
                     Stepper(l("family.seats", ["count": String(vehicle.seats)]), value: $vehicle.seats, in: 1...12)
-                    TriStateRow(title: l("common.need.usesWheelchair"), value: $vehicle.wheelchairAccessible)
+                    TriStateRow(title: l("family.stepFreeTransport"), value: $vehicle.wheelchairAccessible)
                 }
                 ForEach(binding(\.transport.alternatives)) { $alternative in
                     Picker(l("ui.setup.otherWay"), selection: $alternative.kind) {
