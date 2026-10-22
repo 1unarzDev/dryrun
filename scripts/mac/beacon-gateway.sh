@@ -1,28 +1,32 @@
 #!/usr/bin/env bash
 # Run Beacon's gateway on this Mac so the phone app works when opened from the home screen, with no cable.
-# Usage: scripts/mac/beacon-gateway.sh [--install] [--ip] [--tunnel] [--codex] [--config-only]
+# Usage: scripts/mac/beacon-gateway.sh [--install] [--ip] [--tunnel] [--gemini] [--config-only]
 #   --install      also build and install the app on the iPhone (needed once, and after the address changes)
 #   --ip           put the Mac's current Wi-Fi IP in the app instead of its stable <name>.local address
 #   --tunnel       Cloudflare quick tunnel (no account) for Wi-Fi that blocks devices from reaching each other
-#   --codex        serve with the experimental synthetic-only Codex provider instead of Gemini/Groq
+#   --gemini       serve with Gemini then Groq only, without Codex (default: Codex first, then Gemini, then Groq)
+#   --codex        accepted for older notes; Codex-first is already the default
 #   --config-only  write the app config and exit without starting the gateway
-# Reads services/ai-orchestrator/.env (GOOGLE_AI_STUDIO_KEY, DRYRUN_DEV_TOKEN, PORT, DRYRUN_MAX_USD). The provider key
-# stays on the Mac; the app gets only the gateway URL and the local fixture token, in a git-ignored bundle file.
+# Reads services/ai-orchestrator/.env (GOOGLE_AI_STUDIO_KEY, CODEX_LB_API_KEY, GROQ_API_KEY, DRYRUN_DEV_TOKEN, PORT,
+# DRYRUN_MAX_USD). Codex runs on this Mac under the synthetic-only capability profile
+# (services/ai-orchestrator/profiles/codex-local-synthetic.json); if it cannot start, the gateway says so and serves
+# Gemini/Groq. Provider keys stay on the Mac; the app gets only the gateway URL and the local fixture token, in a git-ignored bundle file.
 # Personal Hotspot fallback: turn on the iPhone's hotspot, join it from the Mac, then run this script with --install
 # (or keep the default .local address, which follows the Mac onto the new network).
 set -u
 # shellcheck source=scripts/mac/lib.sh
 . "$(dirname "$0")/lib.sh"
 
-INSTALL=0; USE_IP=0; TUNNEL=0; CODEX=0; CONFIG_ONLY=0
+INSTALL=0; USE_IP=0; TUNNEL=0; CODEX=1; CONFIG_ONLY=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --install) INSTALL=1 ;;
     --ip) USE_IP=1 ;;
     --tunnel) TUNNEL=1 ;;
     --codex) CODEX=1 ;;
+    --gemini) CODEX=0 ;;
     --config-only) CONFIG_ONLY=1 ;;
-    -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
     *) warn "unknown option $1"; exit 2 ;;
   esac
   shift
@@ -68,8 +72,12 @@ start_gateway() {
   local extra=()
   # Demo spend cap: .env wins; otherwise a higher cap than the 0.25 USD per 10 minutes the server defaults to.
   [ -n "$(env_value DRYRUN_MAX_USD)" ] || extra+=("DRYRUN_MAX_USD=2")
+  # Codex first (synthetic-only capability profile), then Gemini, then Groq; --gemini drops Codex.
   if [ "$CODEX" = 1 ]; then
+    have codex || warn "codex CLI not found: Beacon falls back to Gemini/Groq for every request"
     extra+=("DRYRUN_PROVIDER=codex" "DRYRUN_CODEX_CAPABILITIES_FILE=$GATEWAY_DIR/profiles/codex-local-synthetic.json")
+  else
+    extra+=("DRYRUN_PROVIDER=gemini")
   fi
   local bind=0.0.0.0; [ "$TUNNEL" = 1 ] && bind=127.0.0.1
   log "Starting gateway on $bind:$PORT"
