@@ -38,10 +38,10 @@ describe('debrief mustAddress coverage',()=>{
   expect(debriefMustAddress(undefined)).toEqual([]);
  });
  it('sends the host list, repairs once, then reports unaddressed_critical_event',async()=>{
-  const seen:string[]=[];let calls=0;
-  const provider:AgentProvider={providerID:'groq',async turn(input){calls++;seen.push(JSON.stringify(input.history[0]));return reply(JSON.stringify({summary:goodSummary,focusTaskIDs:[task.id]}));}};
+  const seen:string[]=[];let calls=0,repair='';
+  const provider:AgentProvider={providerID:'groq',async turn(input){calls++;seen.push(JSON.stringify(input.history[0]));repair=JSON.stringify(input.history.at(-1));return reply(JSON.stringify({summary:goodSummary,focusTaskIDs:[task.id]}));}};
   await expect(new FeatureRunner(provider).run('debrief',debriefInput())).rejects.toMatchObject({code:'unaddressed_critical_event'});
-  expect(calls).toBe(2);expect(seen[0]).toContain('debriefMustAddress');expect(seen[0]).toContain('device:eq-insulin');
+  expect(calls).toBe(2);expect(repair).toContain('evt.flash-flood.res.water-depleted');expect(seen[0]).toContain('debriefMustAddress');expect(seen[0]).toContain('device:eq-insulin');
  });
  it('accepts a covering answer and returns only summary and focusTaskIDs to the phone',async()=>{
   const provider:AgentProvider={providerID:'gemini',async turn(){return reply(JSON.stringify({summary:goodSummary,focusTaskIDs:[task.id],addressedEventIDs:['evt.flash-flood.svc.device.eq-insulin.unavailable','evt.flash-flood.res.water-depleted']}));}};
