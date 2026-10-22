@@ -43,3 +43,44 @@ Verification actually run: `python3 scripts/review/firewall.py capture --timeout
 Source check: current [NWS tornado guidance](https://www.weather.gov/safety/tornado-during) supports appropriate shelter and advance access distinctions; [NWS flood guidance](https://www.weather.gov/safety/flood-during) supports avoiding floodwater on foot/in vehicles and following official instructions; [NWS MHX hurricane planning](https://www.weather.gov/mhx/hurricaneprep) supports zone/local-plan preparation but its North Carolina-specific zone information is not applied elsewhere. Ready.gov/floods returned HTTP 403 during this specialist's verification; no claim of direct successful inspection of that page is made.
 
 Next gates: generic native compilation and iPhone reviewer layout/interaction remain unperformed for this slice. Root should wire `MapPlanningContext(hazard:phase:)` and a current `PlannedExteriorHandoff` from the rehearsal entry after its source freeze; actual outside-arrival evidence must come from canonical occupant exterior portal and current committed snapshot, not this planned object. Verify no extra advance-shelter friction, actual EN/ES/VI text fit, stale-catalog review state, no-car transport preparation, correct destination opening and session switching on the plugged-in iPhone when available. No live official-local hurricane lookup, disaster-safe-route validation, actual road-closure geometry, fresh-provider review or physical-device result is claimed. Phone was disconnected; no device, simulator or app command was run by this specialist.
+
+## Lead slice on `lead/maps-resources` (base cdb4098), 2026-10-21
+
+Owner-steered Claude-led workflow; Mac only, no phone or simulator launched. Requirements GEO-01, GEO-02; goal milestone 4 (accessible shelter/cooling map).
+
+### Feature purpose: needs-linked shelters and cooling/warming centers (Where to go)
+- Household/situation: a family with a powered medical device, a heat- or cold-sensitive person, a wheelchair user, pets or no car, deciding before a heat wave, freeze or storm where it could go.
+- Decision improved: which listed place is worth calling, and what to arrange now, instead of a list of names near the address.
+- Known inputs: saved equipment (power/cold storage), person needs (heat/cold sensitive, step-free), pets, vehicle record, FEMA ESF6-SS OPEN status, curated city page and seasonal role, source-stated accessibility. Consequential unknowns: open now, hours, medical power, step-free entrance (unless stated), pet policy, road conditions.
+- Why here: Where to go already lists these places from Prepare; each row now carries Core's five answers (why for this family, what the source verifies, not confirmed, straight-line distance and ordinary access, do now). No new screen or tap.
+- Next action: call the place (existing Call link) or route with MapKit (existing walk/drive picker; no drive without a car). Zero added steps.
+- Acceptance: Core `ResourceRelevanceTests` (oxygen household gets power reason + call-to-confirm and no claimed power; curated centers never confirmed open; step-free unknown unless stated; heat-sensitive person + no car; hazard ordering keeps every place). Curated rows show the seasonal role and attribute any accessibility statement to the curated source, not FEMA.
+- Simpler option: keep the single global "For your household" notes section. Rejected: it does not say which place answers which need, how far it is for a no-car family, or what is unconfirmed per place. The global notes remain.
+
+### Feature purpose: automatic origin from the saved address
+- Situation: a family typed an address during setup without picking a completion, so no pin exists and every map said "add an address".
+- Change: `HomeOriginPolicy` + native `HomeOriginResolver`. A saved pin wins. Otherwise the saved address (no unit number) is looked up with Apple MapKit address search; agreeing candidates (within 250 m, matching recorded country) become this session's origin, so discovery, task suggestions and shelter routes start automatically. Disagreeing or missing candidates show one "Review address" action that opens the existing address editor. The coordinate is never saved silently (SavedPlace/home policy: coordinates only after explicit save). Origin is keyed by household, home, session and saved location, so another family's lookup cannot leak.
+- Privacy: consistent with existing copy ("Searches go to Apple"); WhereToGo still never sends the household address to FEMA.
+- Simpler option: keep the "add an address" message. Rejected: it is the manual location chore the reference forbids.
+
+### Feature purpose: contextual meetups (no separate reconnection workflow)
+- `MeetingPlanPolicy` orders three purposes by situation: fire/ordinary = gathering point, neighborhood place, out-of-area contact; tornado and continuity hazards = neighborhood then out-of-area, with "shelter at home first"/"staying home is usually the plan" footers; hurricane = out-of-area first. It reuses `outsideMeetingPoint`, `backupMeetingPlace` and the existing complete `outOfAreaContact`; no schema or record type added. Missing places get a direct Choose (existing place editor, purpose prefilled); a missing contact points to Family.
+- Shown in the existing map list (not when choosing a meetup from a task, where the task itself is the selection).
+- Reconnect audit: the vague standalone "reconnect" preparation was already removed from `BaselinePreparedness` and the family editor form in f627aa3; stored records are preserved (HouseholdAssessmentTests). Residual dead identifiers remain in Ranking/PreparationTaskCatalog mapping, Ranking/PreparationPresentation icon switch and Next/FocusedHouseholdEditor title list; they have no producer or entry point. Left to the preparedness/UI owners to avoid a conflicting edit outside maps scope.
+
+### FEMA feature service verification (2026-10-21)
+Layer metadata fetched from `https://gis.fema.gov/arcgis/rest/services/NSS/OpenShelters/FeatureServer/0?f=json`: fields shelter_id (integer), shelter_name, address, city, state, zip, shelter_status, wheelchair_accessible, ada_compliant, pet_accommodations_code, latitude, longitude (plus capacities and hours not used) exactly match `PublicPlaces.femaShelters`. Observed values include "UNK" and blank for accessibility/pets and "NONE" for pets; blank/UNK stay unstated. Service capability is Query only, max 2000 records; description states daily sync with the American Red Cross database and 20-minute updates; copyright text "FEMA ESF6-SS"; no restrictive use terms published in the service metadata. Attribution "FEMA Open Shelters (ESF6-SS, American Red Cross data)" and retrieval date are retained. At check time the nationwide open count was 4. Fort Worth's Beat the Heat page returned HTTP 403 (Access Denied), so no new curated places (e.g. libraries) were added; the existing four curated entries keep their source URLs and 2026-10-20 retrieval date. Curated JSON may now carry source-stated `accessibility` facts; all current entries are null.
+
+### Data contract (verified, unchanged)
+Indoor route = `RouteResult`/`PlannedExteriorHandoff` (no door coordinate); ordinary directions = MapKit `MKRoute`/`MapTravelPreview` with the ordinary-route note; official evacuation info = `OfficialHurricanePlanning` (reviewed exact-URL catalog); simulated conditions = `MapPlanningContext.Phase.simulation`, never drawn as real closures. Flood closures stay in the scenario engine. No wheelchair-optimized or disaster-safe routing claim anywhere.
+
+### Files
+Core: new `Plan/ResourceRelevance.swift` (ResourceRelevancePolicy, OrdinaryAccess, HomeOriginPolicy, MeetingPlanPolicy); `Places/PublicPlaces.swift` (curated source-stated accessibility); new test `ResourceRelevanceTests.swift`. Native: new `Maps/HomeOriginResolver.swift`, `Maps/ResourceRelevanceView.swift`; modified `Maps/WhereToGoView.swift`, `Maps/MapPlanningView.swift`, `Maps/MapPlanningCopy.swift` (EN/ES/VI; ES/VI not native-reviewed).
+
+### Evidence
+- deterministic-tested: `swift test --filter ResourceRelevanceTests` 9/9 passed (direct; authored fixtures only). Full Core via `scripts/review/firewall.py capture -- swift test --package-path packages/DryRunCore` receipt run-953567bf7a1c4e40ac100f7d9b972ddc succeeded, exit 0 (output protected, not opened).
+- Mac-build: `xcodegen generate` + unsigned generic-iOS `xcodebuild build` BUILD SUCCEEDED (errors/warnings in Maps files: none).
+- Not done: live-reviewed, device-verified. No AI output inspected.
+
+### Phone checks requested (reviewer holding reservation)
+See LEAD return `device_checks_requested`.
