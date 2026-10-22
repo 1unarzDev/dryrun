@@ -61,3 +61,24 @@ Open gates, carried from the lead reports:
 - Maps: no device check of MapKit origin lookup or row layout; ES/VI copy unreviewed; dead `reconnect` identifiers remain in Ranking/Next.
 - Native UI: UIInventoryUITests and changed UI tests never executed; selectors need a first phone run. Prepare lead should review NextStepsView rings/preview changes.
 - Next device step (needs the device reservation): run native unit tests, DemoJourneyUITests and UIInventoryUITests on the phone; re-record Beacon replays.
+
+## Integration checkpoint wave 2 (2026-10-22)
+
+Merged into this branch, in order: `lead2/codex-context-heldout` (includes `lead2/codex-context`), `lead2/scenario-native`, `lead2/native-ui`, `lead2/house`, `lead2/maps`. Two integration commits follow: director copy wiring, and the regenerated host-built director wire fixture. Commands, results and the eight recorded output-reviewer report IDs are in the ledger section of the same name. Mac results: Core 665 tests passed; gateway 341/341 with the wire tests running and the old `gateway.test.ts` failure gone; typecheck passes; unsigned build-for-testing succeeds. Nothing is device-verified; the wave-1 audit hold is not lifted by Mac evidence alone.
+
+What changed for the audit blockers (all at source or Mac-test level only):
+- HAZ-01..06 / STRESS-01: hazard choices render natively (`rehearsal.cmd.*`). Mechanics v6 adds fire-origin exclusion, the freeze opening, outage readiness and `wait`.
+- CODEX-01 labelling: copy now names Codex first, then Gemini/Groq, then local, and lists the full context. `servedBy` is carried on the wire. `DirectorSource` covers codex/gemini/groq/beacon. A debug served-by label is shown in the adaptive header.
+- REL-01: fallback restarts from canonical input. The director has an 18 s overall deadline; End stays enabled during a director turn and a progress row is shown. Director requests now carry providerConsent.
+- Quota: call windows are configurable by environment variable.
+
+Open gates:
+- Device (needs reservation): run native unit tests (PrepareReloadTests, MapRequestTests, MeetupRoleTests, AppPersistenceTests relaunch history, director stall), `HazardChoiceUITests`, `DemoJourneyUITests`, `SixHazard`, `UIInventoryUITests`, and `DeviceAuditUITests` practice check. Then the paired retests: heat shade->move, fire escape->account->debrief, tornado, water. Retest the director stall/End/fallback note, doorway Not-usable and interior-door Outside, Oak meetups (`scripts/mac/map-device-checks.sh`), same-family reload and A->B->A isolation with an injected late result.
+- Flood refuge before vs after access loss can't be reached natively: `openAdaptive` drops the setup's spatial options, and sample homes record no confirmed higher refuge. Owners: orchestrator and house. Freeze powered vs unpowered needs a household edit first.
+- Codex held-out family-heldout/1: 0 of 30 attempts executed. The frozen export at `/private/tmp/l7-heldout-frozen-e5a1634` needs an owner-approved way to supply provider credentials, then a fresh designated reviewer. No prompt promoted. The debrief/4, resources/7 and director/32 Codex outputs are reviewed only in development (`report-v7-...`).
+- Fallback quality: Groq director still fails with request_too_large. Gemini director restarts produced 0 completions. Groq resources hits a per-minute 429. One Codex resources en attempt hit the 53 s deadline. Groq debriefs misread the receipt.
+- Gateway director prompts still say mechanics/5 where they should say /5 and later. Director and eval fixtures are not yet checked against v6 `wait` or the new facts. Ranking/HazardPracticeChecks level gating needs a preparedness ack. Scenario ack is pending for house item 2 (interior-opening Outside) in `scenario-house-contract.md`.
+- Translation drift: es/vi are 2/11 failing, with 358+3 unbaselined keys per locale. The owner decides. None of the es/vi copy from this wave (`rehearsal.cmd.*`, Beacon copy, spatial notes, meetup roles, director keys) has been reviewed by a native speaker.
+- Re-pull Beacon replays with `scripts/mac/pull-beacon-replays.sh` before filming; preparation requests changed again (F4 markers, demoAddress only under its flag).
+- Undo history size in the sidecar (20 full HomeModel versions) needs watching on device. The F4 projection is not yet applied in DryRunHost initialize.
+- Hurricane: only the 'needs review' state can be reached on device. The map segmented control does not scale at AX. VoiceOver has not been audited, and no cleared derivative captures exist.

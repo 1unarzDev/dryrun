@@ -105,3 +105,33 @@ Evidence (Mac only; label: deterministic-tested / Mac-build):
 - `services/public-api` `test/locales.test.ts`: 2 of 11 fail (es/vi translation-drift baseline coverage). The native-UI lead reports this already fails at `cdb4098` (584 unbaselined keys); I did not reproduce it at the base myself.
 
 Not done: no native unit/UI tests executed, no simulator or phone launch, no live provider calls. Nothing in this wave is live-reviewed or device-verified.
+
+## Integration checkpoint wave 2 (2026-10-22)
+
+Base `bd6974a` (wave 1 checkpoint; independent audit gate NOT ACCEPTED, hold). Five lead branches merged one at a time with `--no-ff`, in order:
+1. `lead2/codex-context-heldout` (45a0055; contains `lead2/codex-context` ac55f81 plus e5a1634 freeze and d1724e6 cleared fixes): canonical fallback restart from initial input plus host-retrieved records, allowlisted `servedBy` on completed feature and director responses, `DirectorSource` codex/gemini/groq/beacon, 18 s overall director deadline with local director step and End available in flight, director `providerConsent` codex/gemini/groq for fictional households, env-configurable call windows, debrief host rehearsal receipt, Groq compaction, preparation/16 frozen for family-heldout/1 (addendum 2, frozen-source guard), director prompt/32, debrief/4, resources/7, new host output checks. No conflicts.
+2. `lead2/scenario-native` (5c4349c): native hazard choices from `receipt.experience.feasibleCommands` (`rehearsal.cmd.*`) in AdaptiveRehearsalView and PracticeCheckView, mechanics v6 (fire origin excluded from routes, freeze opening decision, outage readiness facts, `wait`), practice-check load fix, `egress-portal-graph/3`. No conflicts.
+3. `lead2/native-ui` (97c2237): provider-honest Beacon copy en/es/vi, AX pickers, map disclaimer wrap, AlertBannerCard call site (PREP-17), same-family reload dedupe and 45 s deadline, test drift fixes, `BeaconServedByLabel`. No conflicts.
+4. `lead2/house` (c5f8f8c): Outside only for outside-wall openings, persisted Undo/Redo, F4 example markers. Conflicts resolved: `Home.swift` (kept scenario's /3 comment; both branches bumped to `/3`), `NativeGatewayInputExportTests.swift` (kept codex's finished-rehearsal debrief export and applied house's `SampleHomes.forExampleHousehold`), eight host-built `fixtures/ai/native-bridge` files (took the integration side, then confirmed by the Core run, which rewrote none of them). Duplicate /2 route-label projection in `AuthoredAdapterTests` folded into one. `scenario-house-contract.md`: integration note records the scenario lead's independent /3 bump as acknowledgement of item 1 only; item 2 (interior-opening Outside) still needs an explicit scenario ack.
+5. `lead2/maps` (6629fa7): explicit meetup roles, synthetic address checks, sourced warming centers. No conflicts.
+
+Integration commits after merging: `d6b43a5` wires the UI lead's keys for the codex lead's director wiring (deadline fallback now uses `adaptive.director.fallbackNote`; new `adaptive.director.groq`, `adaptive.director.beacon`, `adaptive.director.inFlight` in en/es/vi, es/vi drafts; in-flight progress row `adaptive.director.inFlight`; debug-only `BeaconServedByLabel` beside the director label). `272fc3d` commits the Core-regenerated host-built `director-private-context-wire.json` (mechanics /5 to /6 and digests only; authored synthetic household, never a model response).
+
+Evidence (Mac only; label: deterministic-tested / Mac-build):
+- Locale JSON: every en/es/vi file parses with no duplicate keys; key sets identical across locales (common 1289 after wiring, spatial 493, native 211, plan 190, scenarios 348).
+- Core `swift test` (after all five merges plus d6b43a5): 665 Swift Testing tests in 121 suites passed; XCTest 35 executed, 0 failures, 2 skipped. Exit 0.
+- Gateway `pnpm test`: 40 files, 341/341 passed, 0 skipped. The Swift wire tests (`private-context.test.ts`, `director-private-context.test.ts`) now run against committed fixtures. The pre-existing `gateway.test.ts` startup/budget failure no longer fails. After the fixture regeneration, `director-private-context`, `private-context` and `native-bridge` reran: 31/31 passed. `pnpm typecheck` passed.
+- `xcodegen generate` + `xcodebuild build-for-testing -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO`: TEST BUILD SUCCEEDED (includes d6b43a5).
+- `services/public-api` `test/locales.test.ts`: 9/11 pass, 2 fail (es/vi translation-drift baseline). This failure was already there; the owner still has to decide on baselining. d6b43a5 adds 3 more unbaselined keys per locale.
+
+Codex output-reviewer reports recorded at this checkpoint (cleared, in `docs/integration/released/`):
+- `report-prep15-vs-prep16-v5-blind-repeated-review-20261022`: preparation/16 fixed four household-specific coupling misses of /15 in every repetition (9/9 each, zero contract failures). Candidate for held-out; not promoted.
+- `report-debrief3-v7-receipt-codex-d1-review-20261022`: debrief/3 Codex 6/6 grounded in the committed receipt; prioritization misses critical stored-water depletion (fixed in debrief/4, see below).
+- `report-director-codex-freeze-fire-heat-g1-g2-review-20261022`: heat useful; freeze opening administrative (G1); fire origin on the child's only exits accepted by the host (G2); internal IDs exposed 4/6. Addressed by mechanics v6 and prompt/32; native recheck pending.
+- `report-resources6-two-tool-turns-en-es-review-20261022`: two tool turns, Codex 3/4 completed; wheelchair attribute leak 2/3.
+- `report-codex-deadline-restart-gemini-debrief-director-review-20261022`: forced-deadline restart gives honest unavailable outcomes; the one Gemini debrief had locale and grounding defects; Gemini director restarts schema-failed (targeted by d1724e6).
+- `report-groq-compact-debrief-restart-review-20261022`: Groq debrief 2/9 accepted before restart tool removal; payload size still blocks lake/pine.
+- `report-v7-debrief-resources-director-six-run-review-20261022`: debrief/4, resources/7, director/32 Codex-served consistently good across three repetitions; fire openings placed the origin away from every exit route; fallback paths (Groq debrief) much weaker.
+- `report-family-heldout-1-execution-not-run-20261022`: preflight hashes matched addendum 2. The run stopped before any model call because the frozen export has no provider environment, and pointing it at the service secret file was denied as credential exposure. Zero attempts executed.
+
+Not done: no native unit/UI tests executed, no simulator or phone launch, no live provider calls by the integrator. Nothing in this wave is device-verified. No prompt promoted.
