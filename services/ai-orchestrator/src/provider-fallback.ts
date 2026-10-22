@@ -41,7 +41,7 @@ export class GroqPrivateProvider implements AgentProvider {
 export type CodexRoute={provider:AgentProvider;images:boolean;research:boolean;turnMs?:number;fallbackReserveMs?:number};
 type RouteID='codex'|'gemini'|'groq';
 /** Allowlisted per-hop machine metadata for harness capture: provider, outcome, failure kind/status/code. Never text. */
-export type ProviderAttemptEvent={operationID:string;generation:number;provider:RouteID;result:'served'|'failed';kind?:string;status?:number;diagnostic?:string};
+export type ProviderAttemptEvent={operationID:string;generation:number;provider:RouteID;result:'served'|'failed';kind?:string;status?:number;diagnostic?:string;elapsedMS?:number};
 function attemptFailure(error:unknown):Pick<ProviderAttemptEvent,'kind'|'status'|'diagnostic'>{
  const machine=(v:unknown)=>typeof v==='string'&&/^[a-zA-Z][a-zA-Z0-9_]{0,47}$/.test(v)?v:undefined;
  if(error instanceof CodexFailure)return {kind:error.kind};
@@ -103,8 +103,8 @@ export class GeminiPrimaryFallback implements AgentProvider {
   const codexAbort=new AbortController();
   const codexScoped=codexAllowed&&codexRoute?(codexRoute.provider.scope?codexRoute.provider.scope({...options,signal:AbortSignal.any([options.signal,codexAbort.signal])}):codexRoute.provider):undefined;
   const circuits=this.circuits,codexCircuit=this.codexCircuit,thisPrimary=this.primary,attemptMs=this.primaryAttemptMs;
-  const report=(provider:RouteID,result:'served'|'failed',error?:unknown)=>{try{this.observe?.({operationID:operation.id,generation:operation.generation,provider,result,...(error===undefined?{}:attemptFailure(error))});}catch{/* observer never affects routing */}};
-  const turnMs=codexRoute?.turnMs??45000,reserveMs=codexRoute?.fallbackReserveMs??25000;
+  const report=(provider:RouteID,result:'served'|'failed',error?:unknown)=>{try{this.observe?.({operationID:operation.id,generation:operation.generation,provider,result,elapsedMS:Date.now()-opened,...(error===undefined?{}:attemptFailure(error))});}catch{/* observer never affects routing */}};
+  const turnMs=codexRoute?.turnMs??45000,reserveMs=options.fallbackReserveMs??codexRoute?.fallbackReserveMs??25000;const opened=Date.now();
   // A fallback never inherits Codex's tool-call history: it restarts from the canonical user input plus the
   // host-retrieved records, so Gemini (which demands its own thought signatures) and Groq both accept it.
   const after=(current:RouteID):RouteID|undefined=>chain.slice(chain.indexOf(current)+1)[0];
@@ -172,13 +172,13 @@ export class GeminiPrimaryFallback implements AgentProvider {
  }
 }
 
-/** Byte budget for Groq messages. A learned per-minute token ceiling wins; otherwise DRYRUN_GROQ_CONTEXT_BYTES
- * (default 22000, about the free tier's 8000-token minute minus output). Estimates match GroqClient (4 bytes/token). */
+/** Byte budget for Groq messages from the per-minute token ceiling: the learned header value, else
+ * DRYRUN_GROQ_ASSUMED_TOKEN_CEILING (default 8000, the free tier). Live run-d5ceec62: a first request sized before the
+ * ceiling was learned went over it. Estimates match GroqClient (4 bytes/token; schema and functions counted apart). */
 export function groqContextBudget(ceiling:number|undefined,maximumOutputTokens:number,toolBytes:number){
- const configured=Number(process.env.DRYRUN_GROQ_CONTEXT_BYTES??22000);
- const fallback=Number.isFinite(configured)&&configured>2000?configured:22000;
- if(ceiling===undefined)return fallback;
- return Math.max(4000,Math.floor(((ceiling-maximumOutputTokens)*4-toolBytes)*0.9));
+ const assumed=Number(process.env.DRYRUN_GROQ_ASSUMED_TOKEN_CEILING??8000);
+ const tokens=ceiling??(Number.isFinite(assumed)&&assumed>=4000?assumed:8000);
+ return Math.max(4000,Math.floor(((tokens-maximumOutputTokens)*4-toolBytes)*0.9));
 }
 /** Compact projection for a token-limited fallback (report-forced-fallback-debrief-director-diagnosis): people needs,
  * equipment and unknowns, tasks, receipt/experience and gaps stay; the score rubric, task-catalog detail and room

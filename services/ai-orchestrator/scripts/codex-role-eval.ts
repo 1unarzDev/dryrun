@@ -44,7 +44,7 @@ const forcedGemini:AgentProvider={providerID:'gemini',async turn(){throw new Err
 const provider=force&&codex?new GeminiPrimaryFallback(force.includes('gemini_unavailable')?forcedGemini:configured.gemini,groqClients?.client,45000,{provider:forcedCodex(codex),images:false,research:false,turnMs:45000,fallbackReserveMs:25000}):configured.provider;
 // Per-hop provider metadata (allowlisted machine fields) for the protected bundle and the receipt.
 const hops:ProviderAttemptEvent[]=[];if(provider instanceof GeminiPrimaryFallback)provider.observe=event=>{hops.push(event);console.log(JSON.stringify({event:'provider_attempt',...event}));};
-const hopSummary=(from:number)=>hops.slice(from).map(h=>[h.provider,h.result,h.kind,h.status,h.diagnostic].filter(v=>v!==undefined).map(v=>typeof v==='number'?String(v):code(v)).join(':'));
+const hopSummary=(from:number)=>hops.slice(from).map(h=>[h.provider,h.result,h.kind,h.status,h.diagnostic,h.elapsedMS===undefined?undefined:h.elapsedMS+'ms'].filter(v=>v!==undefined).map(v=>typeof v==='number'?String(v):code(v)).join(':'));
 // Optional resources locale override for paired en/es checks (DRYRUN_RESOURCES_LOCALES=en,es).
 const resourceLocales=(process.env.DRYRUN_RESOURCES_LOCALES??'').split(',').filter(l=>['en','es','vi'].includes(l));
 const limits=quotaLimitsFromEnv();

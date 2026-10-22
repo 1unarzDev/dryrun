@@ -4,7 +4,7 @@ export type History = Interactions.Step[];
 export type ProviderReply = { steps: History; text: string; calls: Interactions.FunctionCallStep[]; usage: unknown };
 export type ProviderID='gemini'|'groq'|'codex';
 /** timeoutMs is the caller's whole-operation bound, so one router can leave time for a fallback inside it. */
-export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number;timeoutMs?:number};
+export type ProviderScope={signal:AbortSignal;providers:readonly string[];capability:'privateText'|'applicationTools'|'image';maximumCalls?:number;timeoutMs?:number;fallbackReserveMs?:number};
 /** defaultConsent: providers an omitted consent list may use (the deployment's configured chain, never Groq).
  * attemptProvider: which provider served the latest turn of a scoped operation (machine metadata only). */
 export interface AgentProvider { readonly providerID?:ProviderID;failover?(history:History):Promise<boolean>;readonly defaultConsent?:readonly ProviderID[];readonly attemptProvider?:ProviderID;disposeOperation?(history:History):void|Promise<void>;scope?(options:ProviderScope):AgentProvider;readonly attemptGeneration?:number;readonly attemptID?:string;turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication'|'research';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply> }

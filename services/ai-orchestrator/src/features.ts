@@ -120,7 +120,7 @@ export class FeatureRunner {
   const operationAbort=new AbortController();signal=AbortSignal.any([signal,operationAbort.signal]);
   let provider=this.provider;
   try {
-  provider=scopeProvider(this.provider,{signal,providers:consent,capability:rawImages.length||data.images?.length?'image':'privateText',maximumCalls:10,timeoutMs});
+  provider=scopeProvider(this.provider,{signal,providers:consent,capability:rawImages.length||data.images?.length?'image':'privateText',maximumCalls:10,timeoutMs,...(role==='resources'?{fallbackReserveMs:12000}:{})});
   if(role==='resources'&&!data.tasks.length)return {searchPlans:[],officialRecommendations:[],question:null};
   const usefulCatalog=(data.taskCatalog??data.tasks).filter(t=>data.allowedActionIDs.includes(t.actionID)&&data.allowedCriterionIDs.includes(t.criterionID)&&!data.completedTaskIDs?.includes(t.id));
   const intakeIDs=[...(data.intake??[]).map(e=>e.id),...(data.images??[]).map(e=>e.id)];
