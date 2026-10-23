@@ -25,7 +25,7 @@ if(codex){void codex.prewarm();console.log(`codex_speed effort=${codex.speed.eff
 const interpreter=new IntentInterpreter(provider);
 const limits=quotaLimitsFromEnv();
 console.log(`quota_window feature_turns=${limits.featureTurns} director_starts=${limits.directorStarts} director_turns=${limits.directorTurns} http_requests=${limits.httpRequests}`);
-const gateway=new Gateway(provider,undefined,limits.directorTurns,limits.directorStarts);const features=new FeatureRunner(provider,limits.featureTurns,await PublicEvidenceTools.bundled('../..'));
+const gateway=new Gateway(provider,undefined,limits.directorTurns,limits.directorStarts);const features=new FeatureRunner(provider,limits.featureTurns,await PublicEvidenceTools.bundled('../..'),{prepackContext:process.env.DRYRUN_PREPACK_CONTEXT!=='0'});
 const discovery=new ResourceDiscovery(gemini,12,()=>new Date(),groqClients?new GroqResourceDiscovery(groqClients.client,()=>new Date(),groqClients.extractor):undefined);
 createServer(createAIRequestHandler({gateway,features,interpreter,attest,discovery,maximumRequests:limits.httpRequests,authorize:header=>{
  if(attest&&header?.startsWith('Bearer v1.'))return attest.authorize(header);
