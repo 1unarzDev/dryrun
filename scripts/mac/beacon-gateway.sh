@@ -87,7 +87,8 @@ start_gateway() {
   else
     extra+=("DRYRUN_PROVIDER=gemini")
   fi
-  local bind=0.0.0.0; [ "$TUNNEL" = 1 ] && bind=127.0.0.1
+  # "::" is dual-stack: Wi-Fi reaches it over IPv4, a cabled iPhone over the USB link's IPv6.
+  local bind=::; [ "$TUNNEL" = 1 ] && bind=127.0.0.1
   log "Starting gateway on $bind:$PORT"
   # Loads .env the same way `node --env-file` does; values in the shell environment are not overridden.
   (cd "$GATEWAY_DIR" && env DRYRUN_LISTEN_HOST="$bind" DRYRUN_ACCESS_LOG=1 ${extra[@]+"${extra[@]}"} \
@@ -105,6 +106,12 @@ start_gateway() {
 # Mac-side proof the gateway is reachable on the network address the app uses, plus the phone's own network path.
 check_reach() {
   local url="$1"
+  # A cabled iPhone reaches <mac>.local over the USB link's IPv6, Wi-Fi usually over IPv4: both must answer.
+  case "$url" in
+    http://*.local:*)
+      curl -fsS -6 --max-time 5 "$url/health" >/dev/null 2>&1 \
+        || warn "the gateway does not answer over IPv6 at $url; a phone on the cable will get error -1004" ;;
+  esac
   if curl -fsS --max-time 5 "$url/health" >/dev/null 2>&1; then
     log "Gateway answers at $url"
   else
