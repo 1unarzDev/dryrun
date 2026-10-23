@@ -654,6 +654,8 @@ final class AppModel {
     /// Whether the plans in use came from Gemini (accepted by Core for the current inputs).
     private(set) var resourcePlansFromGemini = false
     private(set) var resourcePlanNote: String?
+    /// A Beacon resource-planning request is in flight (drives the map's working indicator only).
+    private(set) var resourcePlanningInFlight = false
 
     /// Plans the map uses: Gemini's, only when accepted by Core for exactly the current inputs; otherwise offline plans.
     var activeResourcePlans: [ResourceSearchPlan] {
@@ -698,7 +700,9 @@ final class AppModel {
         } catch { resourceRefresh.failed(ticket: ticket); return }
         workInFlight += 1
         defer { workInFlight -= 1 }
+        resourcePlanningInFlight = true
         let response = await client.planResources(request)
+        resourcePlanningInFlight = false
         guard !Task.isCancelled, scopeSessionID == scope, currentResourceKey == key else {
             resourceRefresh.failed(ticket: ticket); return
         }

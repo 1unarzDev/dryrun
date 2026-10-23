@@ -47,9 +47,13 @@ struct RehearseTabView: View {
                 .accessibilityIdentifier("practice.open")
                 Text(l("common.chooseScenario")).font(.headline).padding(.top, Theme.Space.s)
                 ForEach(Self.scenarioIDs, id: \.self) { id in
-                    NavigationLink(value: id) { ScenarioCard(id: id) }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("scenario.\(id)")
+                    VStack(alignment: .leading, spacing: Theme.Space.xs) {
+                        NavigationLink(value: id) { ScenarioCard(id: id) }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("scenario.\(id)")
+                        // Every hazard offers Beacon when a gateway is configured; the on-device director stays the fallback.
+                        BeaconEntryLink(scenarioID: id, compact: true)
+                    }
                 }
             }
             .padding()
@@ -171,6 +175,8 @@ struct RehearsalView: View {
                         .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
                         .accessibilityIdentifier("rehearsal.allServices")
                     }
+                    // The intro carries the adaptive link before the first step; afterwards Beacon stays one tap away.
+                    if !events.isEmpty { BeaconEntryLink(scenarioID: scenarioID) }
                     if events.count > 1 {
                         SectionCard {
                             DisclosureGroup(isExpanded: $showEarlier) {
@@ -184,6 +190,7 @@ struct RehearsalView: View {
                 } else if model.isWorking {
                     ProgressView().frame(maxWidth: .infinity).padding(.top, Theme.Space.xxl)
                 } else if let design = RehearsalExperienceDesign.design(scenarioID: scenarioID, household: model.household) {
+                    BeaconEntryLink(scenarioID: scenarioID)
                     RehearsalSetupView(design: design, answers: $setupAnswers, originID: $originID, waterEntryID: $waterEntryID, refugeID: $refugeID, startingSpaceIDs: $daytimeStarts) {
                         guard let scenario = model.scenarios?.scenario(scenarioID) else { return }
                         do {
@@ -847,6 +854,11 @@ struct DebriefView: View {
                         // A container keeps the outcome section's own identifier (debrief.outcomes.<scenario>).
                         .accessibilityElement(children: .contain)
                         .accessibilityIdentifier("debrief.hazard.\(design.scenarioID)")
+                    }
+                    // Beacon's short summary for fictional households when a gateway is configured; the app's own
+                    // debrief below is complete without it, and a slow or failed answer never blocks it.
+                    if model.preparationAIAvailable, model.rehearsal?.isFinished == true {
+                        BeaconDebriefCard(result: result)
                     }
                     Text(l("ui.debrief.intro")).font(.callout).foregroundStyle(.secondary)
                     SectionCard(title: l("common.topPreparations"), systemImage: "star") {

@@ -34,6 +34,16 @@ struct AdaptiveRehearsalView: View {
                                                   isFireExercise: scenarioID == "home-fire")
                                 .accessibilityElement(children: .contain)
                                 .accessibilityIdentifier("adaptive.scene")
+                        } else if !Self.spatial.contains(scenarioID),
+                                  let design = RehearsalExperienceDesign.design(scenarioID: scenarioID, household: exercise.session.initial.household),
+                                  let presentation = try? RehearsalScenePresentation(hazard: design.hazard, snapshot: exercise.receipt.snapshot,
+                                      baseline: nil, experience: exercise.receipt.experience, visibleEvents: exercise.receipt.events) {
+                            // Non-spatial hazards (freeze, heat, water) get the same committed status scene as the
+                            // scripted rehearsal, so a Beacon-directed exercise has a visual anchor for every hazard.
+                            HazardStatusScene(presentation: presentation, household: exercise.session.initial.household,
+                                              home: exercise.session.initial.home)
+                                .accessibilityElement(children: .contain)
+                                .accessibilityIdentifier("adaptive.hazardScene")
                         }
                         youDid(exercise)
                         recordedChanges(exercise)
@@ -95,7 +105,7 @@ struct AdaptiveRehearsalView: View {
             }
             if model.directorTurnInFlight {
                 // Brief progress while a gateway turn runs; End stays available, and past the deadline this phone takes the step.
-                Label(l("adaptive.director.inFlight"), systemImage: "hourglass").font(.footnote).foregroundStyle(.secondary)
+                BeaconThinkingView(activity: .directing, title: l("adaptive.director.inFlight"))
                     .accessibilityIdentifier("adaptive.director.inFlight")
             }
             if let note = model.directorFallbackNote {

@@ -298,6 +298,9 @@ struct MapPlanningView: View {
                                 .accessibilityIdentifier("map.geminiPlans")
                             Text(t("geminiPlansDetail")).font(.caption2)
                         }
+                        if model.resourcePlanningInFlight {
+                            BeaconThinkingView(activity: .resources, compact: true)
+                        }
                         Label(t(listFromGemini ? "plannedByGemini" : "plannedOnPhone"),
                               systemImage: listFromGemini ? "sparkles" : "iphone")
                             .accessibilityIdentifier("map.planSource")
