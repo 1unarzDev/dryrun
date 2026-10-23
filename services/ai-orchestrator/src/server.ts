@@ -20,6 +20,8 @@ if(!production&&secret.length<24)throw new Error('local_fixture_token_required')
 // One routing layer for every operation: Codex primary when DRYRUN_PROVIDER=codex, then Gemini, then Groq.
 const {gemini,groqClients,codex,provider}=await configuredProviders();
 console.log(`provider_chain ${codex?'codex,':''}gemini${groqClients?',groq':''}`);
+// Warm Codex runtimes at gateway start, so the first Beacon request skips process spawn and handshake.
+if(codex){void codex.prewarm();console.log(`codex_speed effort=${codex.speed.effort} director_effort=${codex.speed.directorEffort} service_tier=${codex.speed.serviceTier??'default'} warm=${codex.speed.warm}`);}
 const interpreter=new IntentInterpreter(provider);
 const limits=quotaLimitsFromEnv();
 console.log(`quota_window feature_turns=${limits.featureTurns} director_starts=${limits.directorStarts} director_turns=${limits.directorTurns} http_requests=${limits.httpRequests}`);

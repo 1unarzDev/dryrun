@@ -10,13 +10,29 @@ import {codexStrictSchema,omitWireOptionalNulls} from './codex-schema.js';
 type Input=Parameters<AgentProvider['turn']>[0];
 export type CodexCapabilities={runtimeVersion:string;endpoint:string;model:string;reviewReportID:string;streaming:boolean;tools:boolean;continuation:boolean;structuredOutput:boolean;lifecycle:boolean;images:boolean;research:boolean};
 type PendingTool={rpcID:number|string;call:DynamicToolCallParams};
+/** Speed settings, verified against the pinned runtime's model/list catalog (scripts/codex-model-catalog.ts):
+ * gpt-6.1-sol supports reasoning efforts low..ultra (no minimal) and the 'priority' service tier. */
+export const codexEfforts=['low','medium','high'] as const;
+export type CodexEffort=typeof codexEfforts[number];
+export type CodexSpeed={effort:CodexEffort;directorEffort:CodexEffort;serviceTier:'priority'|null;warm:number};
+export const defaultCodexSpeed:CodexSpeed={effort:'low',directorEffort:'low',serviceTier:'priority',warm:0};
+/** Owner-tunable through the gateway environment; unknown values keep the fast defaults. */
+export function codexSpeedFromEnv(env:Record<string,string|undefined>):CodexSpeed{
+ const effort=(value:string|undefined,fallback:CodexEffort)=>codexEfforts.includes(value as CodexEffort)?value as CodexEffort:fallback;
+ const general=effort(env.DRYRUN_CODEX_EFFORT,defaultCodexSpeed.effort);
+ const warm=Number(env.DRYRUN_CODEX_WARM??2);
+ return {effort:general,directorEffort:effort(env.DRYRUN_CODEX_DIRECTOR_EFFORT,general),serviceTier:env.DRYRUN_CODEX_SERVICE_TIER==='none'||env.DRYRUN_CODEX_SERVICE_TIER==='default'?null:'priority',warm:Number.isInteger(warm)&&warm>=0&&warm<=4?warm:2};
+}
+type Warm={connection:CodexConnection;since:number;dead:boolean};
+const warmIdleMS=10*60_000;
 type Session={errorDrain?:ReturnType<typeof setTimeout>;connection:CodexConnection;threadID:string;pending?:PendingTool;waiter?:{resolve:(reply:ProviderReply)=>void;reject:(error:Error)=>void};timer:ReturnType<typeof setTimeout>;abort:()=>void;signal:AbortSignal;closed:boolean;toolNames:Set<string>;toolMode:Input['toolMode'];text:string;calls:number;history:History;outputSchema?:Record<string,unknown>};
 
 /** Experimental private runtime adapter; the existing gateway retains every commit. */
 export class CodexProvider implements AgentProvider {
  readonly providerID='codex' as const;
  private sessions=new WeakMap<History,Session>();private active=0;
- constructor(private key:string,readonly capabilities:CodexCapabilities,private connect:typeof launchCodex=launchCodex,private deadlineMS=85_000){
+ private pool:Warm[]=[];private warming=0;private poolAbort=new AbortController();
+ constructor(private key:string,readonly capabilities:CodexCapabilities,private connect:typeof launchCodex=launchCodex,private deadlineMS=85_000,readonly speed:CodexSpeed=defaultCodexSpeed){
   if(!key)throw new Error('missing_provider_secret');
   if(capabilities.runtimeVersion!==codexRuntimeVersion||capabilities.endpoint!==codexEndpoint||typeof capabilities.model!=='string'||!capabilities.model||!/^report-[a-z0-9-]+$/.test(capabilities.reviewReportID)||![capabilities.streaming,capabilities.tools,capabilities.continuation,capabilities.structuredOutput,capabilities.lifecycle].every(value=>value===true)||typeof capabilities.images!=='boolean'||typeof capabilities.research!=='boolean')throw new Error('codex_capability_gate');
  }
@@ -25,6 +41,30 @@ export class CodexProvider implements AgentProvider {
   if(options.capability==='image'&&!this.capabilities.images)throw new ProviderFailure('unsupported','codex',undefined,undefined,'unsupported_image');
   const provider=this;let calls=0;
   return {providerID:'codex',disposeOperation:history=>provider.disposeOperation(history),async turn(input){if(calls++>=(options.maximumCalls??10))throw new CodexFailure('execution_budget');return provider.turn({...input,signal:AbortSignal.any([options.signal,input.signal])});}};
+ }
+ /** Keeps `speed.warm` runtimes spawned and initialized, so an operation skips process spawn and handshake. */
+ async prewarm(){const wanted=this.speed.warm-this.pool.filter(w=>!w.dead).length-this.warming;await Promise.all(Array.from({length:Math.max(0,wanted)},()=>this.spawnWarm()));}
+ async shutdown(){this.poolAbort.abort();const idle=this.pool;this.pool=[];await Promise.all(idle.map(w=>w.connection.close().catch(()=>{})));}
+ private async spawnWarm(){
+  if(this.poolAbort.signal.aborted)return;this.warming++;
+  try{
+   const connection=await this.connect(this.key,this.capabilities.model,this.poolAbort.signal);
+   const warm:Warm={connection,since:Date.now(),dead:false};
+   connection.onMessage=()=>{};connection.onFailure=()=>{warm.dead=true;this.pool=this.pool.filter(w=>w!==warm);};
+   await connection.request('initialize',{clientInfo:{name:'dryrun_gateway',version:'1.0.0'},capabilities:{experimentalApi:true}});
+   connection.notify('initialized');
+   if(this.poolAbort.signal.aborted||warm.dead){await connection.close().catch(()=>{});return;}
+   this.pool.push(warm);
+  }catch{/* A cold start remains available; warming is best effort. */}
+  finally{this.warming--;}
+ }
+ /** A warm, already-initialized runtime when one is ready; otherwise a cold spawn. Refills the pool either way. */
+ private async open(signal:AbortSignal):Promise<{connection:CodexConnection;initialized:boolean}>{
+  let warm:Warm|undefined;
+  while((warm=this.pool.shift())){if(!warm.dead&&Date.now()-warm.since<warmIdleMS)break;void warm.connection.close().catch(()=>{});warm=undefined;}
+  if(this.speed.warm>0)void this.prewarm();
+  if(warm)return {connection:warm.connection,initialized:true};
+  return {connection:await this.connect(this.key,this.capabilities.model,signal),initialized:false};
  }
  async turn(input:Input):Promise<ProviderReply>{
   if(input.signal.aborted)throw new CodexFailure('cancelled');
@@ -35,15 +75,17 @@ export class CodexProvider implements AgentProvider {
    if(!session){
     if(this.active>=4)throw new Error('codex_concurrency_budget');
     this.active++;
-    let connection:CodexConnection;
-    try{connection=await this.connect(this.key,this.capabilities.model,input.signal);}catch{this.active--;throw new Error('codex_runtime_unavailable');}
+    let connection:CodexConnection,initialized:boolean;
+    try{({connection,initialized}=await this.open(input.signal));}catch{this.active--;throw new Error('codex_runtime_unavailable');}
     const s:Session={connection,threadID:'',timer:setTimeout(()=>this.dispose(s,new CodexFailure('deadline')),this.deadlineMS),abort:()=>this.dispose(s,new CodexFailure('cancelled')),signal:input.signal,closed:false,toolNames:new Set(),toolMode:input.toolMode,text:'',calls:0,history:input.history};
     s.timer.unref();session=s;this.sessions.set(input.history,s);
     input.signal.addEventListener('abort',s.abort,{once:true});
     connection.onFailure=()=>this.dispose(s,'codex_runtime_unavailable');
     connection.onMessage=m=>this.message(s,m);
-    await connection.request('initialize',{clientInfo:{name:'dryrun_gateway',version:'1.0.0'},capabilities:{experimentalApi:true}});
-    connection.notify('initialized');
+    if(!initialized){
+     await connection.request('initialize',{clientInfo:{name:'dryrun_gateway',version:'1.0.0'},capabilities:{experimentalApi:true}});
+     connection.notify('initialized');
+    }
     const dynamicTools=input.tools.map(tool=>{
      if(tool.type!=='function'||!tool.name)throw new CodexFailure('unsupported_capability');
      s.toolNames.add(tool.name);
@@ -73,7 +115,9 @@ export class CodexProvider implements AgentProvider {
       if(part.type==='image'&&this.capabilities.images&&'data'in part)return {type:'image',url:`data:${part.mime_type};base64,${part.data}`};
       throw new CodexFailure('unsupported_capability');
      }):[{type:'text',text:JSON.stringify({priorOperationStep:step,authority:'Historical context only. Prior proposals/tool requests are not commitments; do not replay actions. Host tool results retain their supplied snapshot/evidence status.'}),text_elements:[]}]);
-     void s.connection.request('turn/start',{threadId:s.threadID,input:content,outputSchema:input.outputSchema?codexStrictSchema(input.outputSchema):null}).catch(error=>this.dispose(s,error instanceof CodexFailure?error:new CodexFailure('unavailable')));
+     // Low reasoning effort, no reasoning summary and the priority tier: answer quickly from the packed context.
+     const effort=input.instruction.startsWith('DryRun RehearsalDirector')?this.speed.directorEffort:this.speed.effort;
+     void s.connection.request('turn/start',{threadId:s.threadID,input:content,outputSchema:input.outputSchema?codexStrictSchema(input.outputSchema):null,effort,summary:'none',...(this.speed.serviceTier?{serviceTier:this.speed.serviceTier}:{})}).catch(error=>this.dispose(s,error instanceof CodexFailure?error:new CodexFailure('unavailable')));
     }
    });
   }catch(error){
