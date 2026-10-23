@@ -4,6 +4,7 @@ import {normalizeHomeReview} from './home-review.js';
 import {intentRequest,type IntentInterpreter} from './intents.js';
 import type {Gateway} from './gateway.js';
 import {featureContext,type FeatureRunner} from './features.js';
+import {practicePlanRequest} from './practice-plan.js';
 import {CodexFailure} from './codex-errors.js';
 import type {InstallationAuth} from './app-attest.js';
 import {ProviderFailure} from './groq.js';
@@ -51,6 +52,11 @@ return async(req,res)=>{
  const proposal=await interpreter.interpret(r,AbortSignal.any([controller.signal,AbortSignal.timeout(30000)]),owner);
  res.end(JSON.stringify({status:'completed',requestID:r.requestID,proposal}));return;
  }
+ if(req.url==='/v1/practice-plan'){
+  const r=practicePlanRequest.parse(input);requests.claim(owner,r.requestID);
+  const {plan,servedBy}=await features.practicePlan(r,AbortSignal.any([controller.signal,AbortSignal.timeout(40000)]),owner,35000);
+  res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,servedBy,proposal:plan}));return;
+ }
  if(req.url==='/v1/features'){
  const r=z.object({contractVersion:z.literal('dryrun.ai/1'),requestID:z.string().min(1).max(120),synthetic:z.literal(true),role:z.enum(['preparation','debrief','drillSetup','resources','home','stress','council']),providerConsent:z.array(z.enum(['gemini','groq','codex'])).min(1).max(3).optional(),context:featureContext,images:z.array(z.unknown()).max(4).default([])}).strict().parse(input);
  requests.claim(owner,r.requestID);
@@ -67,6 +73,7 @@ return async(req,res)=>{
  // but attributed to the provider that served it with an allowlisted validator code (never codex_* for Gemini/Groq).
  else if(error instanceof FeatureValidationFailure){res.end(JSON.stringify({status:'unavailable',reason:'provider_validation_failure',provider:error.provider,diagnostic:error.code,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
  else if(error instanceof ProviderFailure){res.end(JSON.stringify({status:'unavailable',reason:`provider_${error.kind}`,provider:error.provider,retryAfterMs:error.retryAfterMs,diagnostic:error.diagnostic,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
+ else if(req.url==='/v1/practice-plan'&&error instanceof Error&&/^(?:practice_[a-z_]+|internal_id|unsupported_assurance)$/.test(error.message)){res.end(JSON.stringify({status:'unavailable',reason:'provider_validation_failure',diagnostic:error.message,fallback:'deterministic_core_plan'}));}
  else if(error instanceof Error&&providerOutcomeMessages.includes(error.message)){res.end(JSON.stringify({status:'unavailable',reason:error.message,preservePriorResult:true,fallback:'existing_local_or_pending'}));}
  else{res.statusCode=400;res.end(JSON.stringify({status:'rejected',reason:'invalid_or_unauthorized_request'}));}}
  finally {req.off('aborted',disconnected);res.off('close',disconnected);}

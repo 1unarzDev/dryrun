@@ -1,3 +1,4 @@
+import {runPracticePlan,type PracticePlanRequest} from './practice-plan.js';
 import {rejectUnsupportedAssurances} from './claim-language.js';
 import {z} from 'zod';
 import {privateContext,contextBinding,authorizedContextReader,contextRead} from './private-context.js';
@@ -105,6 +106,11 @@ export class FeatureRunner {
  /** Which provider served the final turn of a completed proposal: codex, gemini, groq, or host (no model call). */
  servedBy(proposal:unknown):ServedBy|undefined{return proposal&&typeof proposal==='object'?this.served.get(proposal):undefined;}
  constructor(private provider:AgentProvider,private maxCalls=40,private evidenceTools?:PublicEvidenceTools,private experiments:{preparationInvestigation?:boolean;preparationPrompt?:15|16}={},quotaOptions:QuotaWindowOptions={},private observe?:(event:FeatureEvent)=>void){this.quota=new OwnerWindowQuota(maxCalls,quotaOptions);}
+ /** practicePlan: one compact provider call for a whole practice set (see practice-plan.ts); host-validated. */
+ async practicePlan(request:PracticePlanRequest,signal:AbortSignal,owner?:string,timeoutMs?:number){
+  this.quota.consume(owner??'internal-feature');this.calls++;
+  return runPracticePlan(this.provider,request,signal,timeoutMs);
+ }
  async run(role:Role,raw:unknown,signal:AbortSignal=AbortSignal.timeout(60000),rawImages:unknown[]=[],ownerOrConsent?:string|readonly string[],providerConsent?:readonly string[],timeoutMs?:number){
   // Concurrent operations share this runner, so the serving provider is captured per call, not read back later.
   const box:{servedBy?:ServedBy}={};const proposal=await this.execute(role,raw,signal,rawImages,ownerOrConsent,providerConsent,timeoutMs,box);
