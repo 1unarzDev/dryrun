@@ -7,6 +7,7 @@ import {promisify} from 'node:util';
 import {protocolFailure} from './codex-errors.js';
 
 export const codexRuntimeVersion='0.163.0';
+const verifiedBinaries=new Set<string>();
 export const codexEndpoint='https://codex.lunarz.dev/backend-api/codex';
 export type RpcMessage={id?:number|string;method?:string;params?:any;result?:any;error?:unknown};
 export interface CodexConnection {
@@ -21,7 +22,8 @@ export interface CodexConnection {
 export async function launchCodex(key:string,model:string,signal:AbortSignal,options:{webSearch?:'live'|'disabled'}={}):Promise<CodexConnection>{
  signal.throwIfAborted();
  const binary=process.env.DRYRUN_CODEX_BIN??'codex';
- try{const version=await promisify(execFile)(binary,['--version'],{timeout:5000,maxBuffer:4096,signal});if(version.stdout.trim()!==`codex-cli ${codexRuntimeVersion}`)throw new Error('version');}catch{throw new Error('codex_runtime_version_mismatch');}
+ // The pinned version is verified once per binary path, not on every operation.
+ if(!verifiedBinaries.has(binary)){try{const version=await promisify(execFile)(binary,['--version'],{timeout:5000,maxBuffer:4096,signal});if(version.stdout.trim()!==`codex-cli ${codexRuntimeVersion}`)throw new Error('version');verifiedBinaries.add(binary);}catch{throw new Error('codex_runtime_version_mismatch');}}
  const root=await mkdtemp(join(tmpdir(),'dryrun-codex-'));
  const evidence=await mkdtemp(join(tmpdir(),'dryrun-protected-codex-'));
  const transcript=createWriteStream(join(evidence,'runtime.jsonl'),{mode:0o600});

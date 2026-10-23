@@ -1,6 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {parseEnv} from 'node:util';
-import {CodexProvider,type CodexCapabilities} from './codex-provider.js';
+import {CodexProvider,codexSpeedFromEnv,type CodexCapabilities} from './codex-provider.js';
+import {launchCodex} from './codex-runtime.js';
 
 /** The service-owned .env. DRYRUN_SERVICE_ENV_FILE names it by absolute path when this checkout is a worktree;
  * the file itself is never copied into the repository. */
@@ -15,5 +16,5 @@ export async function configuredCodexProvider(env:Record<string,string|undefined
  // Only the named service secret is loaded, never owner Codex auth/config.
  let key=env.CODEX_LB_API_KEY;
  if(!key){try{const service=parseEnv(await readFile(serviceEnvFile(env),'utf8'));key=service.CODEX_LB_API_KEY;}catch{throw new Error('missing_provider_secret');}}
- return new CodexProvider(key??'',capability);
+ return new CodexProvider(key??'',capability,launchCodex,undefined,codexSpeedFromEnv(env));
 }

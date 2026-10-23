@@ -37,3 +37,14 @@ it('validates exact native director bytes and retrieves canonical score/history'
  expect(result.records.some(record=>record.sourcePath==='currentHostScorecard'&&record.status==='recorded')).toBe(true);
  expect(request.context.experience).toBeDefined();expect(request.context.contextBinding?.revisions.household).toBe(request.context.binding.householdRevision);
 });
+it('pre-packs authorized records so the director previews on its first turn, with one further read at most',async()=>{
+ let turns=0;const offered:string[][]=[];const provider:AgentProvider={providerID:'codex',async turn(input){
+  turns++;offered.push(input.tools.flatMap(t=>t.type==='function'&&t.name?[t.name]:[]));
+  const first=JSON.stringify(input.history[0]);expect(first).toContain('hostRetrievedRecords');expect(first).toContain('neighbor-a');expect(input.instruction).toContain('already retrieved');
+  const call=turns===1?{type:'function_call' as const,id:'read-1',name:'read_household_context',arguments:{snapshotID:'snapshot-a',sections:['constraints']}}:{type:'function_call' as const,id:'call-'+turns,name:'evaluateCandidateAction',arguments:{command:{kind:'requestDecision'}}};
+  return {steps:[call],text:'',calls:[call],usage:null};
+ }};
+ const result=await new Gateway(provider,undefined,40,12,{prepackContext:true}).start('owner-a',request()) as {status:string};
+ expect(result.status).toBe('needs_client_tools');expect(turns).toBe(2);
+ expect(offered[0]).toContain('read_household_context');expect(offered[1]).not.toContain('read_household_context');
+});
