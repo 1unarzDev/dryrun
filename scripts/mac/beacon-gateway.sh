@@ -84,6 +84,11 @@ start_gateway() {
   if [ "$CODEX" = 1 ]; then
     have codex || warn "codex CLI not found: Beacon falls back to Gemini/Groq for every request"
     extra+=("DRYRUN_PROVIDER=codex" "DRYRUN_CODEX_CAPABILITIES_FILE=$GATEWAY_DIR/profiles/codex-local-synthetic.json")
+    # Speed: low reasoning effort, the priority service tier, two warm runtimes and host-packed context. .env values win.
+    [ -n "$(env_value DRYRUN_CODEX_EFFORT)" ] || extra+=("DRYRUN_CODEX_EFFORT=low")
+    [ -n "$(env_value DRYRUN_CODEX_DIRECTOR_EFFORT)" ] || extra+=("DRYRUN_CODEX_DIRECTOR_EFFORT=low")
+    [ -n "$(env_value DRYRUN_CODEX_SERVICE_TIER)" ] || extra+=("DRYRUN_CODEX_SERVICE_TIER=priority")
+    [ -n "$(env_value DRYRUN_CODEX_WARM)" ] || extra+=("DRYRUN_CODEX_WARM=2")
   else
     extra+=("DRYRUN_PROVIDER=gemini")
   fi

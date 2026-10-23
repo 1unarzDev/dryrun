@@ -28,7 +28,10 @@ console.log(`quota_window feature_turns=${limits.featureTurns} director_starts=$
 const prepackContext=process.env.DRYRUN_PREPACK_CONTEXT!=='0';
 const gateway=new Gateway(provider,undefined,limits.directorTurns,limits.directorStarts,{prepackContext});const features=new FeatureRunner(provider,limits.featureTurns,await PublicEvidenceTools.bundled('../..'),{prepackContext});
 const discovery=new ResourceDiscovery(gemini,12,()=>new Date(),groqClients?new GroqResourceDiscovery(groqClients.client,()=>new Date(),groqClients.extractor):undefined);
-createServer(createAIRequestHandler({gateway,features,interpreter,attest,discovery,maximumRequests:limits.httpRequests,authorize:header=>{
+const server=createServer(createAIRequestHandler({gateway,features,interpreter,attest,discovery,maximumRequests:limits.httpRequests,authorize:header=>{
  if(attest&&header?.startsWith('Bearer v1.'))return attest.authorize(header);
  return fixtureAuthorize(header,secret,production);
-}})).listen(Number(process.env.PORT??8788),developmentListenHost());
+}}));
+// Keep the phone's connection open between Beacon requests (Node's default is 5 s), so each question skips a reconnect.
+server.keepAliveTimeout=120_000;server.headersTimeout=125_000;
+server.listen(Number(process.env.PORT??8788),developmentListenHost());
