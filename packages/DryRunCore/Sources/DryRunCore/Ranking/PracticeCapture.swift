@@ -166,8 +166,9 @@ public extension IntegratedAIState {
     }
     static func practiceOrder(_ variantID:String)->[String] {
         switch variantID {
-        case "practice-check-a/0","practice-check-a/1","practice-check-a/2","practice-check-a/3":return ["initialResponse","adaptation","communication","continuity"]
-        case "practice-check-b/0","practice-check-b/1","practice-check-b/2","practice-check-b/3":return ["continuity","communication","adaptation","initialResponse"]
+        // practice-check-a/3 is the legacy name of practice-plan-a/1 (planned sets saved before the rename).
+        case "practice-check-a/0","practice-check-a/1","practice-check-a/2","practice-check-a/3","practice-plan-a/1":return ["initialResponse","adaptation","communication","continuity"]
+        case "practice-check-b/0","practice-check-b/1","practice-check-b/2","practice-check-b/3","practice-plan-b/1":return ["continuity","communication","adaptation","initialResponse"]
         default:return []
         }
     }

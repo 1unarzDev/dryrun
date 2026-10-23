@@ -59,7 +59,7 @@ public struct PreparednessScorecard: Codable, Sendable {
 }
 public enum ScoreCompiler {
     public static let competencies=["initialResponse","adaptation","communication","continuity"]
-    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","practice-check-a/3","practice-check-b/3","hazard-check/1"]
+    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","practice-check-a/3","practice-check-b/3","practice-plan-a/1","practice-plan-b/1","hazard-check/1"]
     public static func compile(rubric:RubricDefinition,assessments:[CriterionAssessment],attempts:[PracticeAttempt]=[]) throws -> PreparednessScorecard {
         guard rubric.preparationWeight==0.9,rubric.practiceWeight==0.1,
               rubric.domainWeights.values.allSatisfy({$0.isFinite && $0>0}),

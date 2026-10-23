@@ -2,8 +2,16 @@ import Foundation
 
 public extension IntegratedAIState {
     static let phasedPracticeEvaluatorVersion="dryrun.practice-anchors/2"
-    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","practice-check-a/3","practice-check-b/3"]
-    private static func phasedEvaluator(_ variant:String)->String {variant.hasSuffix("/2") || variant.hasSuffix("/3") ? "dryrun.practice-anchors/3":phasedPracticeEvaluatorVersion}
+    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2",PracticeCheckSources.secondSetVariant]
+        + PracticeSetPlanner.variants + ["practice-check-a/3"]
+    private static func phasedEvaluator(_ variant:String)->String {
+        isPlannedVariant(variant) || !variant.hasSuffix("/1") ? "dryrun.practice-anchors/3":phasedPracticeEvaluatorVersion
+    }
+    /// Planned sets (situations chosen up front from Core candidates). practice-check-b/3 is the fixed second set
+    /// unless the attempt carries a plan: planned sets were briefly saved under the a/3 and b/3 names.
+    static func isPlannedVariant(_ variant:String,plan:PracticeSetPlan?=nil)->Bool {
+        PracticeSetPlanner.variants.contains(variant) || variant=="practice-check-a/3" || (variant=="practice-check-b/3" && plan != nil)
+    }
 
     /// Freeze all situations before presenting any question. No reroll, source switching or
     /// director difficulty changes are allowed during the scored check. Training stays separate.
@@ -12,7 +20,7 @@ public extension IntegratedAIState {
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),latest.checkID==nil,latest.archivedUnverified != true,
            (latest.observations?.count ?? latest.answers.count)<4 {return latest}
         // practice-phases/3 is planned up front; the plan must match the variant and name each frozen hazard.
-        guard variantID.hasSuffix("/3")==(plan != nil),plan.map({$0.variantID==variantID}) ?? true else {throw SessionError.invalidCommand}
+        guard Self.isPlannedVariant(variantID,plan:plan)==(plan != nil),plan.map({$0.variantID==variantID}) ?? true else {throw SessionError.invalidCommand}
         guard Self.phasedPracticeVariants.contains(variantID),sessionIDs.count==4,Set(sessionIDs).count==4,
               !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
         let used=practiceAttempts.flatMap{($0.phaseSources ?? [])+($0.source.map{[$0]} ?? [])}.map(\.sessionID)
@@ -21,7 +29,7 @@ public extension IntegratedAIState {
         var sources:[PracticeAttemptSource]=[]
         for (index,id) in sessionIDs.enumerated() {
             guard let session=sessions.first(where:{$0.id==id}),session.concernSeed==nil,
-                  Self.practiceScenarioAllowed(session.initial.scenarioID,competency:order[index],variant:variantID),
+                  Self.practiceScenarioAllowed(session.initial.scenarioID,competency:order[index],variant:variantID,plan:plan,household:session.initial.household),
                   plan.map({$0.situations[index].scenarioID==session.initial.scenarioID}) ?? true,
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
@@ -87,8 +95,9 @@ public extension IntegratedAIState {
         for (index,source) in sources.enumerated() {
             guard source.contractVersion=="dryrun.practice-capture/1",source.evaluatorVersion==Self.phasedEvaluator(attempt.variantID),
                   let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
-                  Self.practiceScenarioAllowed(session.initial.scenarioID,competency:Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID),
-                  attempt.plan.map({$0.situations.count==4 && $0.situations[index].scenarioID==session.initial.scenarioID}) ?? !attempt.variantID.hasSuffix("/3"),
+                  Self.practiceScenarioAllowed(session.initial.scenarioID,competency:Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID,
+                                               plan:attempt.plan,household:session.initial.household),
+                  attempt.plan.map({$0.situations.count==4 && $0.situations[index].scenarioID==session.initial.scenarioID}) ?? !Self.isPlannedVariant(attempt.variantID),
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   source.startingRevision>=0,source.startingRevision<=session.revision,
@@ -119,14 +128,12 @@ public extension IntegratedAIState {
         return accepted
     }
 
-    private static func practiceScenarioAllowed(_ scenarioID:String,competency:String,variant:String)->Bool {
-        if variant.hasSuffix("/3") {return PracticeSetPlanner.allows(competency:competency,scenarioID:scenarioID)}
-        return scenarioID==practiceScenario(competency,variant:variant)
+    private static func practiceScenarioAllowed(_ scenarioID:String,competency:String,variant:String,plan:PracticeSetPlan?,household:HouseholdProfile)->Bool {
+        if isPlannedVariant(variant,plan:plan) {return PracticeSetPlanner.allows(competency:competency,scenarioID:scenarioID)}
+        return scenarioID==practiceScenario(competency,variant:variant,household:household)
     }
-    private static func practiceScenario(_ competency:String,variant:String)->String {
-        if variant.hasSuffix("/2") {
-            return ["initialResponse","adaptation"].contains(competency) ? "home-fire":"water-outage"
-        }
+    private static func practiceScenario(_ competency:String,variant:String,household:HouseholdProfile)->String {
+        if !variant.hasSuffix("/1") {return PracticeCheckSources.scenario(competency,variantID:variant,household:household)}
         switch competency {
         case "initialResponse","communication":return "water-outage"
         case "adaptation":return "home-fire"

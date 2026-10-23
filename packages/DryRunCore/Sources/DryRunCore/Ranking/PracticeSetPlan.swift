@@ -63,7 +63,8 @@ public struct PracticePlanProposal: Codable, Sendable, Hashable {
 }
 
 public enum PracticeSetPlanner {
-    public static let variants = ["practice-check-a/3", "practice-check-b/3"]
+    // Not practice-check-a/3 / b/3: practice-check-b/3 is the fixed second set (PracticeCheckSources.secondSetVariant).
+    public static let variants = ["practice-plan-a/1", "practice-plan-b/1"]
     static let maxOptions = 6, minOptions = 2
     static let probeID = "practice-plan-probe"
 

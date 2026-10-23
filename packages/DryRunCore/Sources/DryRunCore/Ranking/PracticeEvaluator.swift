@@ -23,7 +23,7 @@ public enum PracticeEvaluator {
         case ("initialResponse","useStoredWater"):
             guard session.initial.scenarioID=="water-outage",before.snapshot.services[Svc.waterSupply] == .unavailable else {throw SessionError.invalidCommand}
             credit=command.value=="essential" ? 1 : 0
-        case ("initialResponse","choose"):
+        case ("initialResponse","choose") where session.initial.scenarioID != "tornado":
             guard evaluatorVersion==version,session.initial.scenarioID=="home-fire",
                   command.target=="choice.home-fire.first-move",let scenario=library.scenario(session.initial.scenarioID),
                   before.snapshot.firedEventIDs.contains(where:{id in scenario.events.contains{$0.id==id && [RuleID.fireIgnition,RuleID.fireBlockPrimary].contains($0.rule)}}),
@@ -32,11 +32,27 @@ public enum PracticeEvaluator {
             // This is an authored decision/intent anchor, not proof of physical egress or mobility.
             if option.unsafe {credit=0}
             else {guard option.id=="get-out",option.effect=="takeExit" else {throw SessionError.invalidCommand};credit=1}
+        case ("initialResponse","choose") where session.initial.scenarioID=="tornado":
+            guard evaluatorVersion==version,command.target=="choice.tornado.warning",let scenario=library.scenario(session.initial.scenarioID),
+                  before.snapshot.firedEventIDs.contains(where:{id in scenario.events.contains{$0.id==id && $0.rule==RuleID.tornadoWarning}}),
+                  let choice=scenario.choicePoints.first(where:{$0.id==command.target}),
+                  let option=choice.options.first(where:{$0.id==command.value}) else {throw SessionError.invalidCommand}
+            // Same authored decision/intent anchor as the fire first move; it does not prove the shelter is reachable.
+            if option.unsafe {credit=0}
+            else {guard option.id=="go-to-shelter",option.effect=="goToShelter" else {throw SessionError.invalidCommand};credit=1}
         case ("continuity","useStoredWater"):
             guard evaluatorVersion==version,session.initial.scenarioID=="water-outage",
                   before.snapshot.services[Svc.waterSupply] == .unavailable else {throw SessionError.invalidCommand}
             try verifyWaterConservation(before:beforeSession,actionID:actionID,library:library)
             credit=command.value=="essential" ? 1:0
+        case ("adaptation","choose") where session.initial.scenarioID=="freeze-power-loss":
+            guard evaluatorVersion==version,command.target=="choice.freeze-power-loss.keep-warm",let scenario=library.scenario(session.initial.scenarioID),
+                  before.snapshot.services[Svc.homePower] == .unavailable,
+                  let choice=scenario.choicePoints.first(where:{$0.id==command.target}),
+                  let option=choice.options.first(where:{$0.id==command.value}) else {throw SessionError.invalidCommand}
+            // Authored intent anchor: a safe way to stay warm once power is lost; indoor combustion earns nothing.
+            if option.unsafe {credit=0}
+            else {guard ["relocate","layer-up"].contains(option.id) else {throw SessionError.invalidCommand};credit=1}
         case ("communication","contact"):
             guard let id=command.target,session.initial.household.contacts.contains(where:{$0.id==id && $0.isComplete}) else {throw SessionError.invalidCommand}
             // A recorded contact alone cannot establish a working communications channel.

@@ -7,8 +7,9 @@ export const practiceObservation=z.object({competencyID:z.enum(['initialResponse
 export const practicePhasePlan=z.union([
  z.object({variantID:z.enum(['practice-check-a/1','practice-check-b/1']),phaseSources:z.array(practiceSource.extend({evaluatorVersion:z.literal('dryrun.practice-anchors/2')})).length(4)}).strict(),
  z.object({variantID:z.enum(['practice-check-a/2','practice-check-b/2']),phaseSources:z.array(practiceSource.extend({evaluatorVersion:z.literal('dryrun.practice-anchors/3')})).length(4)}).strict(),
- // practice-phases/3: same anchors, situations chosen up front from Core candidates (plan stays local to the phone).
- z.object({variantID:z.enum(['practice-check-a/3','practice-check-b/3']),phaseSources:z.array(practiceSource.extend({evaluatorVersion:z.literal('dryrun.practice-anchors/3')})).length(4)}).strict(),
+ // Same anchors: practice-check-b/3 is the fixed second set; practice-plan-* are sets chosen up front from Core
+ // candidates (plan stays local to the phone); practice-check-a/3 is the planned sets' legacy name.
+ z.object({variantID:z.enum(['practice-check-a/3','practice-check-b/3','practice-plan-a/1','practice-plan-b/1']),phaseSources:z.array(practiceSource.extend({evaluatorVersion:z.literal('dryrun.practice-anchors/3')})).length(4)}).strict(),
 ]).superRefine((value,ctx)=>{
  if(new Set(value.phaseSources.map(source=>source.sessionID)).size!==4)ctx.addIssue({code:'custom',path:['phaseSources'],message:'distinct_frozen_sessions_required'});
 });

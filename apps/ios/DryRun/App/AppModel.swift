@@ -1713,6 +1713,10 @@ final class AppModel {
         let home = self.home, library = scenarios, contentVersion = content.contentVersion
         let index = aiState.practiceAttempts.count
         let cached = practicePlanCache.flatMap { $0.attemptIndex == index ? $0 : nil }
+        // Fallback when Core cannot plan all four: only full checks alternate the fixed set, and a scanned home starts
+        // on the other set than the fictional sample home.
+        let fallbackVariant = PracticeCheckSources.variant(previousChecks: aiState.practiceAttempts.filter { $0.phaseSources != nil }.count,
+                                                           scannedHome: home?.isFictional == false)
         let id = "check-\(UUID().uuidString)"
         workInFlight += 1
         defer { workInFlight -= 1 }
@@ -1728,8 +1732,7 @@ final class AppModel {
                 return (plan, plan.variantID, try PracticeSetPlanner.prepare(plan, attemptID: id, household: household, home: home,
                                                                              contentVersion: contentVersion, library: library))
             }
-            let variant = PracticeCheckSources.variant(previousAttempts: index)
-            return (nil, variant, try PracticeCheckSources.prepare(attemptID: id, variantID: variant, household: household, home: home,
+            return (nil, fallbackVariant, try PracticeCheckSources.prepare(attemptID: id, variantID: fallbackVariant, household: household, home: home,
                                                                    contentVersion: contentVersion, library: library))
         }
         guard let (plan, variant, sources) = try? await build.value else { lastError = localizer("practice.unavailable"); return false }
