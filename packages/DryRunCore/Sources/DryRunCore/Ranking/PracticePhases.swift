@@ -2,15 +2,17 @@ import Foundation
 
 public extension IntegratedAIState {
     static let phasedPracticeEvaluatorVersion="dryrun.practice-anchors/2"
-    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2"]
-    private static func phasedEvaluator(_ variant:String)->String {variant.hasSuffix("/2") ? "dryrun.practice-anchors/3":phasedPracticeEvaluatorVersion}
+    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","practice-check-a/3","practice-check-b/3"]
+    private static func phasedEvaluator(_ variant:String)->String {variant.hasSuffix("/2") || variant.hasSuffix("/3") ? "dryrun.practice-anchors/3":phasedPracticeEvaluatorVersion}
 
     /// Freeze all situations before presenting any question. No reroll, source switching or
     /// director difficulty changes are allowed during the scored check. Training stays separate.
     @discardableResult mutating func beginPracticeCheck(id:String,variantID:String,sessionIDs:[String],
-        library:ScenarioLibrary,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeAttempt {
+        library:ScenarioLibrary,plan:PracticeSetPlan?=nil,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeAttempt {
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),latest.checkID==nil,latest.archivedUnverified != true,
            (latest.observations?.count ?? latest.answers.count)<4 {return latest}
+        // practice-phases/3 is planned up front; the plan must match the variant and name each frozen hazard.
+        guard variantID.hasSuffix("/3")==(plan != nil),plan.map({$0.variantID==variantID}) ?? true else {throw SessionError.invalidCommand}
         guard Self.phasedPracticeVariants.contains(variantID),sessionIDs.count==4,Set(sessionIDs).count==4,
               !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
         let used=practiceAttempts.flatMap{($0.phaseSources ?? [])+($0.source.map{[$0]} ?? [])}.map(\.sessionID)
@@ -19,7 +21,8 @@ public extension IntegratedAIState {
         var sources:[PracticeAttemptSource]=[]
         for (index,id) in sessionIDs.enumerated() {
             guard let session=sessions.first(where:{$0.id==id}),session.concernSeed==nil,
-                  session.initial.scenarioID==Self.practiceScenario(order[index],variant:variantID),
+                  Self.practiceScenarioAllowed(session.initial.scenarioID,competency:order[index],variant:variantID),
+                  plan.map({$0.situations[index].scenarioID==session.initial.scenarioID}) ?? true,
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
             let receipt=try session.query(library:library)
@@ -30,7 +33,7 @@ public extension IntegratedAIState {
         }
         var candidate=self
         var attempt=try candidate.beginPractice(id:id,variantID:variantID)
-        attempt.source=sources[0];attempt.phaseSources=sources;attempt.observations=[]
+        attempt.source=sources[0];attempt.phaseSources=sources;attempt.observations=[];attempt.plan=plan
         candidate.practiceAttempts[candidate.practiceAttempts.count-1]=attempt
         _=try candidate.validatePhasedPractice(attempt,library:library)
         try persist(candidate);self=candidate;return attempt
@@ -84,7 +87,8 @@ public extension IntegratedAIState {
         for (index,source) in sources.enumerated() {
             guard source.contractVersion=="dryrun.practice-capture/1",source.evaluatorVersion==Self.phasedEvaluator(attempt.variantID),
                   let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
-                  session.initial.scenarioID==Self.practiceScenario(Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID),
+                  Self.practiceScenarioAllowed(session.initial.scenarioID,competency:Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID),
+                  attempt.plan.map({$0.situations.count==4 && $0.situations[index].scenarioID==session.initial.scenarioID}) ?? !attempt.variantID.hasSuffix("/3"),
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   source.startingRevision>=0,source.startingRevision<=session.revision,
@@ -115,6 +119,10 @@ public extension IntegratedAIState {
         return accepted
     }
 
+    private static func practiceScenarioAllowed(_ scenarioID:String,competency:String,variant:String)->Bool {
+        if variant.hasSuffix("/3") {return PracticeSetPlanner.allows(competency:competency,scenarioID:scenarioID)}
+        return scenarioID==practiceScenario(competency,variant:variant)
+    }
     private static func practiceScenario(_ competency:String,variant:String)->String {
         if variant.hasSuffix("/2") {
             return ["initialResponse","adaptation"].contains(competency) ? "home-fire":"water-outage"
