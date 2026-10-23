@@ -55,11 +55,15 @@ async function director(run:number){
   let r=await post('v1/operations',request,110_000);samples.push({role:'director_start',label:hazard,run,...machine(r)});
   // Continue with recorded host tool results so each continue is a real model turn; bounded rounds.
   while(r.body?.status==='needs_client_tools'&&rounds<4){
-   const call=r.body.calls?.[0];const name=code(call?.name)??'other';names.push(name);
+   const call=r.body.calls?.[0];const name=typeof call?.name==='string'&&/^[A-Za-z]{1,48}$/.test(call.name)?call.name:'other';names.push(name);
    let result:unknown;try{result=await fixture(`tool-result-${call?.name}.json`);}catch{break;}
    rounds++;
    r=await post('v1/continue',{token:r.body.token,binding,callID:call.id,result},110_000);
-   samples.push({role:'director_turn',label:hazard+'#'+rounds,run,...machine(r)});
+   // A recorded fixture tool result that does not match this call's arguments is rejected by the gateway in
+   // milliseconds: a harness limit (no live Swift host here), reported separately so it never skews turn timing.
+   const harnessRejected=r.httpStatus===400;
+   samples.push({role:harnessRejected?'director_turn_fixture_mismatch':'director_turn',label:hazard+'#'+rounds,run,...machine(r)});
+   if(harnessRejected)break;
   }
   samples.push({role:'director_operation',label:hazard,run,status:code(r.body?.status),reason:code(r.body?.reason),servedBy:code(r.body?.servedBy),totalMS:Math.round(performance.now()-opStart),toolRounds:rounds,toolNames:names});
  }catch{samples.push({role:'director_operation',label:hazard,run,status:'transport_or_deadline',totalMS:Math.round(performance.now()-opStart),toolRounds:rounds,toolNames:names});}

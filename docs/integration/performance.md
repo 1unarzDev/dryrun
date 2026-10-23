@@ -24,13 +24,33 @@ full round trip phone to Mac to Codex.
 ## Baseline
 
 <!-- latency:begin -->
-(pending)
+Run 2026-10-23T19:42:32.145Z to 2026-10-23T19:44:39.242Z; chain starts at `codex`; 3 run(s) per role; one sequential stream per role, role streams concurrent against a private gateway on 127.0.0.1:8792.
+
+| Role | n | ok | p50 total | p90 total | max total | p50 TTFB | servedBy | status:reason | tool rounds |
+|---|---|---|---|---|---|---|---|---|---|
+| preparation | 3 | 3 | 18.5s | 30.4s | 33.3s | 18.5s | codex x3 | completed x3 | - |
+| debrief | 3 | 3 | 8.3s | 9.3s | 9.6s | 8.3s | codex x3 | completed x3 | - |
+| resources | 3 | 3 | 0.0s | 0.1s | 0.1s | 0.0s | host x3 | completed x3 | - |
+| director_start | 3 | 3 | 3.9s | 4.6s | 4.7s | 3.9s | none x3 | needs_client_tools x3 | - |
+| director_turn | 2 | 2 | 14.8s | 15.7s | 15.9s | 14.8s | none x2 | needs_client_tools x2 | - |
+| director_operation | 3 | 0 | 18.5s | 18.6s | 18.6s | - | none x3 | rejected:invalid_or_unauthorized_request x3 | 2, 1, 2 |
+| director_turn_fixture_mismatch | 3 | 0 | 0.0s | 0.0s | 0.0s | 0.0s | none x3 | rejected:invalid_or_unauthorized_request x3 | - |
 <!-- latency:end -->
 
-Reading the table: every Beacon role is one blocking request whose latency is model thinking plus tool round
-trips. The table above is the floor the user sees today when nothing is prefetched. `resources` returning in
-milliseconds with no `servedBy` means the host answered it deterministically for these fixtures (no
-provider call), which is the shape every other role should reach on the visible path.
+Reading the table (baseline 2026-10-23, Codex `gpt-6.1-sol`, default effort; the director rows come from a
+second director-only run on port 8793 after a harness fix, same gateway code):
+
+- **preparation p50 18.5 s, max 33.3 s** and **debrief p50 8.3 s** are single blocking calls served by Codex.
+  TTFB equals total: nothing reaches the app until the model is done.
+- **resources** answered in milliseconds with `servedBy=host` for these fixtures (deterministic host path, no
+  provider call), which is the shape every visible path should have.
+- **director**: the start returns a tool request in about 4 s; each following model turn took about 15 s
+  (p50 14.8 s). Every observed operation asked for `evaluateCandidateAction` and then `validateSuggestedActions`
+  before proposing, so one Beacon moment is roughly start + 2-3 turns, about 35-50 s end to end (estimate: the
+  harness has no live Swift host, so the second recorded fixture tool result did not match the model's call and
+  the gateway rejected it; those rejections are listed as `director_turn_fixture_mismatch` and excluded from
+  `director_turn`). `director_operation` is therefore the time until the harness stopped, not a full moment.
+- Role streams ran concurrently (as the app's background work would), so the numbers include some contention.
 
 ## Where the time goes (code facts, not measurements)
 
