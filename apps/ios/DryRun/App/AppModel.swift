@@ -1679,7 +1679,9 @@ final class AppModel {
         let scope = scopeSessionID, key = currentKey, originalData = integratedAIState
         if let latest = latestPracticeCheck, (latest.observations?.count ?? 0) < 4 { return true }
         let home = self.home, library = scenarios, contentVersion = content.contentVersion
-        let variant = PracticeCheckSources.variant(previousAttempts: aiState.practiceAttempts.count)
+        // Only full checks alternate the set; a scanned home starts on the other set than the fictional sample home.
+        let variant = PracticeCheckSources.variant(previousChecks: aiState.practiceAttempts.filter { $0.phaseSources != nil }.count,
+                                                   scannedHome: home?.isFictional == false)
         let id = "check-\(UUID().uuidString)"
         workInFlight += 1
         defer { workInFlight -= 1 }
