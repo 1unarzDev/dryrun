@@ -1671,28 +1671,77 @@ final class AppModel {
         }
     }
 
-    /// Builds the four situations from the current household and home and freezes them with the attempt in one save.
-    /// An unfinished check is resumed instead; nothing is re-rolled.
+    /// The next practice set (practice-phases/3), planned in the background before the family opens practice. Bound to
+    /// the household/home/content it was built for and to the next attempt index; any other value is stale.
+    private(set) var practicePlanCache: PracticeSetPlan?
+    @ObservationIgnored private var practicePlanTask: Task<Void, Never>?
+
+    /// Generates the NEXT practice set in the background (never blocks the family). Core plans every branch; a set
+    /// that no longer matches the household, home or attempt count is replaced.
+    func prefetchPracticePlan() {
+        guard let household, let content, let scenarios, home != nil else { return }
+        let home = self.home, library = scenarios, contentVersion = content.contentVersion
+        let index = aiState.practiceAttempts.count
+        let binding = PracticeSetPlanner.bindingDigest(household: household, home: home, contentVersion: contentVersion)
+        if let cached = practicePlanCache, cached.attemptIndex == index, cached.bindingDigest == binding { return }
+        practicePlanCache = nil
+        practicePlanTask?.cancel()
+        let scope = scopeSessionID
+        practicePlanTask = Task { [weak self] in
+            let plan = await Task.detached(priority: .utility) {
+                PracticeSetPlanner.deterministicPlan(attemptIndex: index, household: household, home: home,
+                                                     contentVersion: contentVersion, library: library)
+            }.value
+            guard let self, !Task.isCancelled, self.scopeSessionID == scope, let plan,
+                  self.aiState.practiceAttempts.count == index else { return }
+            self.practicePlanCache = plan
+        }
+    }
+
+    /// Builds the four situations from the prefetched plan (or, if it is not ready, a deterministic plan built now;
+    /// the legacy practice-phases/2 sources when Core cannot plan all four) and freezes them with the attempt in one
+    /// save. An unfinished check is resumed instead; nothing is re-rolled.
     @discardableResult
     func beginPracticeCheck() async -> Bool {
         guard !privateWriteInFlight, let household, let content, let scenarios else { return false }
         let scope = scopeSessionID, key = currentKey, originalData = integratedAIState
         if let latest = latestPracticeCheck, (latest.observations?.count ?? 0) < 4 { return true }
         let home = self.home, library = scenarios, contentVersion = content.contentVersion
-        let variant = PracticeCheckSources.variant(previousAttempts: aiState.practiceAttempts.count)
+        let index = aiState.practiceAttempts.count
+        let cached = practicePlanCache.flatMap { $0.attemptIndex == index ? $0 : nil }
         let id = "check-\(UUID().uuidString)"
         workInFlight += 1
         defer { workInFlight -= 1 }
-        let build = Task.detached(priority: .userInitiated) {
-            try PracticeCheckSources.prepare(attemptID: id, variantID: variant, household: household, home: home,
-                                             contentVersion: contentVersion, library: library)
+        let build = Task.detached(priority: .userInitiated) { () throws -> (PracticeSetPlan?, String, [SimulationSession]) in
+            var plan = cached
+            if let candidate = plan, (try? PracticeSetPlanner.verify(candidate, household: household, home: home,
+                                                                     contentVersion: contentVersion, library: library)) == nil { plan = nil }
+            if plan == nil {
+                plan = PracticeSetPlanner.deterministicPlan(attemptIndex: index, household: household, home: home,
+                                                            contentVersion: contentVersion, library: library)
+            }
+            if let plan {
+                return (plan, plan.variantID, try PracticeSetPlanner.prepare(plan, attemptID: id, household: household, home: home,
+                                                                             contentVersion: contentVersion, library: library))
+            }
+            let variant = PracticeCheckSources.variant(previousAttempts: index)
+            return (nil, variant, try PracticeCheckSources.prepare(attemptID: id, variantID: variant, household: household, home: home,
+                                                                   contentVersion: contentVersion, library: library))
         }
-        guard let sources = try? await build.value else { lastError = localizer("practice.unavailable"); return false }
+        guard let (plan, variant, sources) = try? await build.value else { lastError = localizer("practice.unavailable"); return false }
         guard scopeSessionID == scope, currentKey == key, integratedAIState == originalData else { return false }
-        return await updateAIState { state, _ in
+        let saved = await updateAIState { state, _ in
             state.sessions.append(contentsOf: sources)
-            try state.beginPracticeCheck(id: id, variantID: variant, sessionIDs: sources.map(\.id), library: library)
+            try state.beginPracticeCheck(id: id, variantID: variant, sessionIDs: sources.map(\.id), library: library, plan: plan)
         }
+        if saved { practicePlanCache = nil; prefetchPracticePlan() }
+        return saved
+    }
+
+    /// The planned option for a situation of the current check, when the check was planned up front.
+    func practicePlanSituation(attempt: PracticeAttempt, index: Int) -> PracticePlanSituation? {
+        guard let plan = attempt.plan, plan.situations.indices.contains(index) else { return nil }
+        return plan.situations[index]
     }
 
     /// Records the family's first answer for the current situation before any feedback. Returns the stored observation.

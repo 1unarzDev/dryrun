@@ -54,6 +54,7 @@ struct PracticeCheckView: View {
         .navigationTitle(l("practice.title"))
         .navigationBarTitleDisplayMode(.inline)
         .task(id: model.practiceStepIdentity) { await loadStep() }
+        .task { model.prefetchPracticePlan() }
         .task(id: model.scoreKey) { await model.refreshScorecard() }
         .onChange(of: model.scopeSessionID) { _, _ in feedback = nil }
         .onChange(of: model.locale) { _, _ in feedback = nil }
@@ -94,7 +95,9 @@ struct PracticeCheckView: View {
             if let situation = receipt.events.last(where: { !$0.id.hasPrefix("user.") }) {
                 EventCard(event: situation, isCurrent: true)
             }
-            if let scenarios = model.scenarios,
+            if let planned = model.practicePlanSituation(attempt: step.attempt, index: number - 1) {
+                plannedList(planned, step: step, receipt: receipt)
+            } else if let scenarios = model.scenarios,
                let choice = PracticeCheckSources.authoredChoice(step.session, competency: step.competency, library: scenarios) {
                 let point = DecisionPoint(id: choice.id, simMinute: choice.minute, promptKey: choice.promptKey,
                                           options: choice.options.map { .init(id: $0.id, labelKey: $0.labelKey, feedbackKey: $0.feedbackKey, isRecommended: !$0.unsafe) })
@@ -107,6 +110,26 @@ struct PracticeCheckView: View {
         } else {
             ProgressView().frame(maxWidth: .infinity)
         }
+    }
+
+    /// practice-phases/3: the options were planned (with every consequence) before the check began, so they show at once.
+    @ViewBuilder private func plannedList(_ planned: PracticePlanSituation, step: (attempt: PracticeAttempt, session: SimulationSession, competency: String),
+                                          receipt: SessionReceipt) -> some View {
+        let l = model.localizer
+        SectionCard(title: planned.prompt ?? l("adaptive.whatNow"), systemImage: "arrow.triangle.branch") {
+            Text(l("practice.chooseOne")).font(.footnote).foregroundStyle(.secondary)
+            ForEach(planned.options, id: \.id) { option in
+                Button { answer(option.command, step: step) } label: {
+                    Text(option.label ?? ExerciseActions.describe(option.command, session: step.session, receipt: receipt, localizer: l) ?? l("adaptive.action"))
+                        .multilineTextAlignment(.leading)
+                }
+                .buttonStyle(.choice)
+                .disabled(submitting)
+                .accessibilityIdentifier("practice.option.\(option.id)")
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("practice.actions")
     }
 
     @ViewBuilder private func actionList(_ step: (attempt: PracticeAttempt, session: SimulationSession, competency: String)) -> some View {
@@ -203,7 +226,8 @@ struct PracticeCheckView: View {
         // session replay) used to hold the whole step, including its decision options, until all previews finished.
         receipt = loaded
         loadedIdentity = identity
-        guard PracticeCheckSources.authoredChoice(session, competency: step.competency, library: scenarios) == nil else { return }
+        guard PracticeCheckSources.authoredChoice(session, competency: step.competency, library: scenarios) == nil,
+              step.attempt.plan == nil else { return }
         let accepted = await ExerciseActions.accepted(ExerciseActions.candidates(session: session, receipt: loaded, localizer: localizer),
                                                       session: session, library: scenarios)
         guard !Task.isCancelled, model.practiceStepIdentity == identity else { return }
@@ -255,6 +279,12 @@ struct PracticeCheckView: View {
         } else if command.kind == "moveTo", session.initial.scenarioID != "heat-grid-strain", let home = session.initial.home {
             let person = session.initial.household.people.first { $0.id == command.target }?.localizedLabel(l) ?? ""
             title = l("adaptive.moved", ["person": person, "room": command.value.map { HomeScenePresentation.roomLabel($0, in: home) } ?? ""])
+        }
+        if let index = pending.attempt.observations?.firstIndex(where: { $0.actionID == pending.observation.actionID }),
+           let planned = model.practicePlanSituation(attempt: pending.attempt, index: index),
+           let option = planned.options.first(where: { $0.command == command }) {
+            if let label = option.label { title = label }
+            if let text = option.feedback { detail = text }
         }
         let events = after.events.filter { !$0.id.hasPrefix("user.") && $0.id != "evt.\(command.target ?? "")" }
         if detail == nil, command.kind != "choose", command.kind != "moveTo" { detail = ExerciseActions.doneNote(command, localizer: l) }
