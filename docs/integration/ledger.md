@@ -169,3 +169,22 @@ Not done: no native unit/UI tests executed, no simulator or phone launch by agen
 - Independent audit gate: HOLD for the English demo, lifted by: (a) DemoJourney saveError alert over the first fire decision; (b) HazardChoice reveal bottom-bar guard + heat/water commit rerun, fire authored-question intent; (c) BeaconDebriefCard unwired since f627aa3 — wire it or keep debrief out of the demo; (d) Codex director latency (~17 s vs 18 s deadline) or film with the local director and say so; (e) re-pull Beacon replays; (f) this report recorded here.
 - Held-out family-heldout/1 executed (29/30 at receipt level; attempt 30 lost to host sleep): `released/report-family-heldout-1-acceptance-review-20261022.json` — DO NOT PROMOTE preparation/16; no held-out-validated claim in the demo.
 - Fallback validators: `released/report-wave3-debrief5-fallback-validators-six-run-review-20261022.json` — safe (no unsafe deliveries) but 0/24 useful fallback answers; make no claim of working fallback content.
+
+## Speed and practice hour (2026-10-23)
+
+Base `2ed78fa`. Five hour branches merged with `--no-ff`, in order:
+1. `hour/practice` (725e4b1) as `b242078`: Core `PracticeSetPlan` (dryrun.practice-plan/1, practice-check-a/3 and b/3; every branch's score and consequence precomputed by Core; per-attempt deterministic variety), gateway `FeatureRunner.practicePlan` + `POST /v1/practice-plan`, native background prefetch of the next set. No conflicts.
+2. `hour/speed` (5603a05) as `546273e`: Codex effort=low, summary=none, service tier priority, warm runtime pool (2), host pre-packed context (one feature turn), 120 s HTTP keep-alive, gateway script speed defaults. One conflict in `services/ai-orchestrator/src/features.ts`: kept speed's constructor (`prepackContext` experiment) and practice's `practicePlan` method plus both imports.
+3. `hour/options` (44e25e6) as `6821b80`: shared `ChoicePicker` (what/who/choose narrowing above 5 options), `PersonRoomPicker`. No conflicts.
+4. `hour/beacon-ux` (029d4eb) as `66c82a8`: `BeaconThinkingView` indicator, scripted-debrief `BeaconDebriefCard` wiring, `BeaconEntryLink` on all six hazards, freeze/heat/water status scene in the adaptive exercise. No conflicts.
+5. `hour/measure` (2f2e47c) as `1bc741f`: `scripts/perf/beacon-latency.sh` receipt-only probe and `docs/integration/performance.md`. No conflicts.
+
+Evidence (Mac only; label: deterministic-tested / Mac-build; latency is receipt-only):
+- Core `swift test` (full): 674 Swift Testing tests in 123 suites passed (241.0 s); XCTest 36 executed, 2 skipped, 0 failures. Exit 0. No wire fixture was rewritten.
+- Gateway `pnpm test`: 44 files, 374/374 passed. `pnpm typecheck` (`tsc --noEmit`) clean.
+- `xcodegen generate` + `xcodebuild build-for-testing -scheme DryRun -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO`: TEST BUILD SUCCEEDED.
+- No integration source fixes were needed beyond the one conflict resolution.
+- Owner gateway restarted on the merged code (`caffeinate -i scripts/mac/beacon-gateway.sh`, log /tmp/beacon-gw.log): "Beacon is serving", log reports `codex_speed effort=low director_effort=low service_tier=priority warm=2`; `/health` answered 200 over both `curl -6` and `curl -4` on `<LocalHostName>.local:8788`.
+- Latency probe (`scripts/perf/beacon-latency.sh 3`, private gateway 127.0.0.1:8792, firewall capture, receipts only, role streams concurrent), p50 before -> after: preparation 18.5 s -> 10.7 s (max 33.3 -> 12.9 s); debrief 8.3 -> 6.0 s; resources host, milliseconds both; director start 3.9 -> 3.2 s; director model turn 14.8 -> 9.2 s; director_operation (stops at the known fixture mismatch) 18.5 -> 12.0 s. All preparation/debrief served by codex. Details in `performance.md`.
+
+Open: the phone does not yet call `/v1/practice-plan` (practice sets are Core-deterministic, varied per attempt, prefetched; no visible wait); prefetch is not hooked to household load; no full director moment measured end to end; `BeaconDebriefCard` not on the adaptive finished card; native unit/UI tests (HazardChoice, DeviceAudit, SixHazard, DemoJourney) not run after the ChoicePicker and Beacon entry changes; no es/vi keys for new `choice.*`/`beacon.thinking.*`/`beacon.entry.*` text. Nothing here is agent-device-verified.

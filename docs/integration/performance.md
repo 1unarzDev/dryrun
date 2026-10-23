@@ -23,7 +23,6 @@ full round trip phone to Mac to Codex.
 
 ## Baseline
 
-<!-- latency:begin -->
 Run 2026-10-23T19:42:32.145Z to 2026-10-23T19:44:39.242Z; chain starts at `codex`; 3 run(s) per role; one sequential stream per role, role streams concurrent against a private gateway on 127.0.0.1:8792.
 
 | Role | n | ok | p50 total | p90 total | max total | p50 TTFB | servedBy | status:reason | tool rounds |
@@ -35,7 +34,6 @@ Run 2026-10-23T19:42:32.145Z to 2026-10-23T19:44:39.242Z; chain starts at `codex
 | director_turn | 2 | 2 | 14.8s | 15.7s | 15.9s | 14.8s | none x2 | needs_client_tools x2 | - |
 | director_operation | 3 | 0 | 18.5s | 18.6s | 18.6s | - | none x3 | rejected:invalid_or_unauthorized_request x3 | 2, 1, 2 |
 | director_turn_fixture_mismatch | 3 | 0 | 0.0s | 0.0s | 0.0s | 0.0s | none x3 | rejected:invalid_or_unauthorized_request x3 | - |
-<!-- latency:end -->
 
 Reading the table (baseline 2026-10-23, Codex `gpt-6.1-sol`, default effort; the director rows come from a
 second director-only run on port 8793 after a harness fix, same gateway code):
@@ -51,6 +49,32 @@ second director-only run on port 8793 after a harness fix, same gateway code):
   the gateway rejected it; those rejections are listed as `director_turn_fixture_mismatch` and excluded from
   `director_turn`). `director_operation` is therefore the time until the harness stopped, not a full moment.
 - Role streams ran concurrently (as the app's background work would), so the numbers include some contention.
+
+## After: speed and practice hour (2026-10-23)
+
+Same probe, same fixtures, run against the merged integration build (`codex/native-integration-20261021` after the
+hour/* merges: effort=low, service tier priority, no reasoning summary, warm runtime pool of 2, host pre-packed
+context). Receipts only.
+
+<!-- latency:begin -->
+Run 2026-10-23T20:01:53.309Z to 2026-10-23T20:02:25.283Z; chain starts at `codex`; 3 run(s) per role; one sequential stream per role, role streams concurrent against a private gateway on 127.0.0.1:8792.
+
+| Role | n | ok | p50 total | p90 total | max total | p50 TTFB | servedBy | status:reason | tool rounds |
+|---|---|---|---|---|---|---|---|---|---|
+| preparation | 3 | 3 | 10.7s | 12.4s | 12.9s | 10.7s | codex x3 | completed x3 | - |
+| debrief | 3 | 3 | 6.0s | 6.9s | 7.2s | 6.0s | codex x3 | completed x3 | - |
+| resources | 3 | 3 | 0.0s | 0.2s | 0.2s | 0.0s | host x3 | completed x3 | - |
+| director_start | 3 | 3 | 3.2s | 4.2s | 4.4s | 3.2s | none x3 | needs_client_tools x3 | - |
+| director_turn | 2 | 2 | 9.2s | 9.5s | 9.6s | 9.2s | none x2 | needs_client_tools x2 | - |
+| director_operation | 3 | 0 | 12.0s | 13.6s | 14.0s | - | none x3 | rejected:invalid_or_unauthorized_request x3 | 2, 1, 2 |
+| director_turn_fixture_mismatch | 3 | 0 | 0.0s | 0.0s | 0.0s | 0.0s | none x3 | rejected:invalid_or_unauthorized_request x3 | - |
+<!-- latency:end -->
+
+Before -> after (p50, same probe; baseline director rows came from a director-only rerun, these from the concurrent run):
+preparation 18.5 s -> 10.7 s (max 33.3 s -> 12.9 s); debrief 8.3 s -> 6.0 s; director start 3.9 s -> 3.2 s;
+director model turn 14.8 s -> 9.2 s; director_operation (until the fixture-mismatch stop) 18.5 s -> 12.0 s;
+resources unchanged (host, milliseconds). Practice sets are not in this probe: the phone still plans practice
+deterministically in Core (no visible wait) and does not yet call `/v1/practice-plan`.
 
 ## Where the time goes (code facts, not measurements)
 
