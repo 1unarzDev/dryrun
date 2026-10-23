@@ -19,6 +19,13 @@ enum ExerciseActions {
         var isNote = false
         /// Built from the receipt's hazard commands (not a generic power/contact/water-policy/door extra).
         var isHazardChoice = false
+        /// What kind of action this is (a `HazardChoice.Purpose` raw value or a command kind): the first level of
+        /// `ChoicePicker` when there are too many options to show flat.
+        var group: String = "other"
+        /// Who acts or is helped, for the picker's second level (avatar chips).
+        var personID: String?
+        /// A short destination (room, exit room, place, device), shown on the final chip.
+        var place: String?
     }
 
     /// Whether the exercise describes its own hazard choices (adaptive mechanics with an experience).
@@ -30,7 +37,9 @@ enum ExerciseActions {
         return HazardChoices.options(receipt, household: h, home: session.initial.home).compactMap { choice in
             guard let title = title(choice, session: session, receipt: receipt, localizer: l) else { return nil }
             return Option(title: title, symbol: symbol(choice.purpose), commands: [choice.command],
-                          identifier: "rehearsal.cmd.\(choice.id)", isNote: !choice.isAction, isHazardChoice: choice.isAction)
+                          identifier: "rehearsal.cmd.\(choice.id)", isNote: !choice.isAction, isHazardChoice: choice.isAction,
+                          group: choice.purpose.rawValue, personID: choice.personID,
+                          place: place(choice, session: session, localizer: l))
         }
     }
 
@@ -41,9 +50,9 @@ enum ExerciseActions {
         var out = hazard
         if receipt.snapshot.resources["res.water.stored"] != nil {
             out.append(.init(title: l("adaptive.water.essential"), symbol: "drop", commands: [.init(kind: "useStoredWater", value: "essential")],
-                             identifier: "rehearsal.cmd.useStoredWater.essential"))
+                             identifier: "rehearsal.cmd.useStoredWater.essential", group: "water"))
             out.append(.init(title: l("adaptive.water.all"), symbol: "drop.fill", commands: [.init(kind: "useStoredWater", value: "all")],
-                             identifier: "rehearsal.cmd.useStoredWater.all"))
+                             identifier: "rehearsal.cmd.useStoredWater.all", group: "water"))
         }
         if !covered.contains("allocatePower") {
             for equipment in h.equipment where !equipment.compatibleBackupIDs.isEmpty {
@@ -51,17 +60,19 @@ enum ExerciseActions {
                 for backup in equipment.compatibleBackupIDs {
                     out.append(.init(title: l("adaptive.power", ["device": device, "backup": HouseholdLabels.backup(backup, in: h, localizer: l)]),
                                      symbol: "bolt", commands: [.init(kind: "allocatePower", target: equipment.id, value: backup)],
-                                     identifier: "rehearsal.cmd.allocatePower.\(equipment.id).\(backup)"))
+                                     identifier: "rehearsal.cmd.allocatePower.\(equipment.id).\(backup)", group: "power",
+                                     place: device))
                 }
                 out.append(.init(title: l("adaptive.powerNone", ["device": device]), symbol: "bolt.slash",
                                  commands: [.init(kind: "allocatePower", target: equipment.id, value: "none")],
-                                 identifier: "rehearsal.cmd.allocatePower.\(equipment.id).none"))
+                                 identifier: "rehearsal.cmd.allocatePower.\(equipment.id).none", group: "power", place: device))
             }
         }
         if !covered.contains("contact") {
             for contact in h.contacts where contact.isComplete {
                 out.append(.init(title: l("adaptive.contact", ["contact": contact.alias]), symbol: "phone",
-                                 commands: [.init(kind: "contact", target: contact.id)], identifier: "rehearsal.cmd.contact.\(contact.id)"))
+                                 commands: [.init(kind: "contact", target: contact.id)], identifier: "rehearsal.cmd.contact.\(contact.id)",
+                                 group: "contact", place: contact.alias))
             }
         }
         // A generic "X helps Y" flag is replaced by the hazard's own accompaniment choices when it has them.
@@ -69,7 +80,8 @@ enum ExerciseActions {
             for person in h.people where !person.needs.isEmpty {
                 for helper in h.people where helper.id != person.id && helper.needs.isEmpty {
                     out.append(.init(title: l("adaptive.helper", ["helper": helper.localizedLabel(l), "person": person.localizedLabel(l)]),
-                                     symbol: "figure.2", commands: [.init(kind: "assignHelper", target: person.id, value: helper.id)]))
+                                     symbol: "figure.2", commands: [.init(kind: "assignHelper", target: person.id, value: helper.id)],
+                                     group: "assignHelper", personID: person.id, place: helper.localizedLabel(l)))
                 }
             }
         }
@@ -86,7 +98,8 @@ enum ExerciseActions {
                     if let room = rooms?[person.id], !sides.contains(room) { continue }
                     out.append(.init(title: l("adaptive.closeDoor", ["person": person.localizedLabel(l), "rooms": label]),
                                      symbol: "door.left.hand.closed", commands: [.init(kind: "closeDoor", target: portal.id, value: person.id)],
-                                     identifier: "rehearsal.cmd.closeDoor.\(portal.id).\(person.id)"))
+                                     identifier: "rehearsal.cmd.closeDoor.\(portal.id).\(person.id)",
+                                     group: "closeDoor", personID: person.id, place: label))
                 }
             }
         }
@@ -140,6 +153,16 @@ enum ExerciseActions {
         case .placeSupply: return "tray.and.arrow.down"
         case .recognizeGap: return "questionmark.circle"
         }
+    }
+
+    /// The destination a choice names, for a compact chip (the full title stays its accessibility label).
+    static func place(_ c: HazardChoice, session: SimulationSession, localizer l: Localizer) -> String? {
+        let h = session.initial.household
+        if let id = c.roomID, let home = session.initial.home, home.space(id) != nil { return HomeScenePresentation.roomLabel(id, in: home) }
+        if let id = c.destinationID { return h.transport.destinations.first { $0.id == id }?.label }
+        if let id = c.equipmentID { return HouseholdLabels.equipment(id, in: h, localizer: l) }
+        if let id = c.contactID { return h.contacts.first { $0.id == id }?.alias }
+        return nil
     }
 
     static func title(_ c: HazardChoice, session: SimulationSession, receipt: SessionReceipt, localizer l: Localizer) -> String? {

@@ -48,13 +48,34 @@ final class HazardChoiceUITests: XCTestCase {
         control.tap()
     }
 
+    /// Many choices are narrowed in place by `ChoicePicker` (what -> who -> where); the final chip keeps its
+    /// `rehearsal.cmd.*` identifier. Taps each action-kind chip, then each person chip, until `target` is shown.
+    private func narrow(to target: XCUIElement, in app: XCUIApplication) -> Bool {
+        let groups = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'choice.group.'"))
+        let groupIDs = groups.allElementsBoundByIndex.map(\.identifier)
+        for id in groupIDs.isEmpty ? [""] : groupIDs {
+            if !id.isEmpty { tap(element(id, in: app), in: app) }
+            if target.exists { return true }
+            let people = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'choice.person.'"))
+            for person in people.allElementsBoundByIndex.map(\.identifier) {
+                tap(element(person, in: app), in: app)
+                if target.exists { return true }
+            }
+        }
+        return false
+    }
+
+    private func offered(_ target: XCUIElement, in app: XCUIApplication, timeout: TimeInterval) -> Bool {
+        target.waitForExistence(timeout: timeout) || narrow(to: target, in: app)
+    }
+
     /// Lets the on-phone director continue until a choice with `prefix` is offered. A due authored question is answered
     /// with its first option only when `answer` is true; an open "what do you do" moment is passed with Keep watching.
     @discardableResult
     private func advance(until prefix: String, in app: XCUIApplication, steps: Int = 16, answer: Bool = true) -> XCUIElement {
         let target = prefixed(prefix, in: app)
         for _ in 0..<steps {
-            if target.waitForExistence(timeout: 4) { return target }
+            if target.waitForExistence(timeout: 4) || narrow(to: target, in: app) { return target }
             let option = prefixed("decision.option.", in: app)
             let wait = element("rehearsal.cmd.wait", in: app)
             let next = element("adaptive.next", in: app)
@@ -75,7 +96,7 @@ final class HazardChoiceUITests: XCTestCase {
         tap(shade, in: app)
         XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15))
         let move = prefixed("rehearsal.cmd.moveTo.p-lake-1.sp-living", in: app)
-        XCTAssertTrue(move.waitForExistence(timeout: 15), "moving Bà into the shaded room is offered after shading")
+        XCTAssertTrue(offered(move, in: app, timeout: 15), "moving Bà into the shaded room is offered after shading")
         shot("heat-02-move-offered", app)
         tap(move, in: app)
         XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15))
@@ -97,7 +118,7 @@ final class HazardChoiceUITests: XCTestCase {
         XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15))
         XCTAssertFalse(prefixed("rehearsal.cmd.escape.p-oak-1.", in: app).waitForExistence(timeout: 5), "no exit is offered back inside")
         let account = prefixed("rehearsal.cmd.accountOutside.p-oak-1", in: app)
-        let accounted = account.waitForExistence(timeout: 10)
+        let accounted = offered(account, in: app, timeout: 10)
         if accounted { tap(account, in: app) }
         shot("fire-02-after", app)
         tap(element("adaptive.end", in: app), in: app)
@@ -120,7 +141,7 @@ final class HazardChoiceUITests: XCTestCase {
         XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 15))
         for _ in 0..<4 {
             let shelter = prefixed("rehearsal.cmd.reachShelter.", in: app)
-            guard shelter.waitForExistence(timeout: 6) else { break }
+            guard offered(shelter, in: app, timeout: 6) else { break }
             tap(shelter, in: app)
             _ = element("adaptive.youDid", in: app).waitForExistence(timeout: 15)
         }

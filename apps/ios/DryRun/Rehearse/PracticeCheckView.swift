@@ -113,30 +113,18 @@ struct PracticeCheckView: View {
         let l = model.localizer
         SectionCard(title: l("adaptive.whatNow"), systemImage: "arrow.triangle.branch") {
             Text(l("practice.chooseOne")).font(.footnote).foregroundStyle(.secondary)
-            ForEach(actions, id: \.self) { action in
-                Button { answer(action.commands[0], step: step) } label: {
-                    Label(action.title, systemImage: action.symbol).multilineTextAlignment(.leading)
-                }
-                .buttonStyle(.choice)
-                .disabled(submitting)
-                .accessibilityIdentifier(action.identifier)
+            let household = step.session.initial.household
+            let byKey = Dictionary(actions.map { ($0.choiceItem(household, localizer: l).key, $0.commands[0]) }, uniquingKeysWith: { a, _ in a })
+            ChoicePicker(items: actions.map { $0.choiceItem(household, localizer: l) }, disabled: submitting) { item in
+                if let command = byKey[item.key] { answer(command, step: step) }
             }
             if let home = step.session.initial.home {
                 Text(l("adaptive.move")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
-                Picker(l("adaptive.movePerson"), selection: $movePersonID) {
-                    Text(l("adaptive.choose")).tag("")
-                    ForEach(step.session.initial.household.people) { Text($0.localizedLabel(l)).tag($0.id) }
-                }
-                Picker(l("adaptive.moveRoom"), selection: $moveRoomID) {
-                    Text(l("adaptive.choose")).tag("")
-                    ForEach(home.spaces) { Text(HomeScenePresentation.roomLabel($0.id, in: home)).tag($0.id) }
-                }
-                Button(l("adaptive.moveGo")) {
+                PersonRoomPicker(people: household.people, home: home, personID: $movePersonID, roomID: $moveRoomID,
+                                 confirmIdentifier: "practice.moveGo",
+                                 canConfirm: !(movePersonID.isEmpty || moveRoomID.isEmpty || submitting)) {
                     answer(SessionCommand(kind: "moveTo", target: movePersonID, value: moveRoomID), step: step)
                 }
-                .buttonStyle(.secondary)
-                .disabled(movePersonID.isEmpty || moveRoomID.isEmpty || submitting)
-                .accessibilityIdentifier("practice.moveGo")
             }
         }
         .accessibilityElement(children: .contain)
