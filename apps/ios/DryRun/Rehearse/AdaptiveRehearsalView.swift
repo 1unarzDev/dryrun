@@ -283,14 +283,7 @@ struct AdaptiveRehearsalView: View {
         if !actions.isEmpty {
             SectionCard(title: l("rehearsal.cmd.title"), systemImage: "person.line.dotted.person") {
                 Text(l("rehearsal.cmd.detail")).font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                ForEach(actions, id: \.identifier) { action in
-                    Button { Task { await model.submitAdaptive(action.commands) } } label: {
-                        Label(action.title, systemImage: action.symbol).multilineTextAlignment(.leading)
-                    }
-                    .buttonStyle(.choice)
-                    .disabled(model.isWorking)
-                    .accessibilityIdentifier(action.identifier)
-                }
+                choicePicker(actions, household: exercise.session.initial.household, disabled: model.isWorking)
             }
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("rehearsal.cmd.list")
@@ -320,37 +313,18 @@ struct AdaptiveRehearsalView: View {
             SectionCard {
                 DisclosureGroup {
                     VStack(alignment: .leading, spacing: Theme.Space.s) {
-                        ForEach(actions, id: \.title) { action in
-                            Button { Task { await model.submitAdaptive(action.commands) } } label: {
-                                Label(action.title, systemImage: action.symbol).multilineTextAlignment(.leading)
-                            }
-                            .buttonStyle(.choice)
-                            .accessibilityIdentifier(action.identifier)
-                        }
+                        choicePicker(actions, household: household, disabled: model.isWorking)
                         if !notes.isEmpty {
                             Text(l("rehearsal.cmd.notes")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
-                            ForEach(notes, id: \.identifier) { note in
-                                Button { Task { await model.submitAdaptive(note.commands) } } label: {
-                                    Label(note.title, systemImage: note.symbol).multilineTextAlignment(.leading)
-                                }
-                                .buttonStyle(.choice)
-                                .accessibilityIdentifier(note.identifier)
-                            }
+                            choicePicker(notes, household: household, disabled: model.isWorking)
                         }
                         if let home {
                             Text(l("adaptive.move")).font(.footnote.weight(.bold)).padding(.top, Theme.Space.xs)
-                            Picker(l("adaptive.movePerson"), selection: $movePersonID) {
-                                Text(l("adaptive.choose")).tag("")
-                                ForEach(household.people) { Text($0.localizedLabel(l)).tag($0.id) }
+                            PersonRoomPicker(people: household.people, home: home, personID: $movePersonID, roomID: $moveRoomID,
+                                             confirmIdentifier: "adaptive.moveGo",
+                                             canConfirm: move.map { model.adaptiveAccepts([$0]) } ?? false) {
+                                if let move { Task { await model.submitAdaptive([move]) } }
                             }
-                            Picker(l("adaptive.moveRoom"), selection: $moveRoomID) {
-                                Text(l("adaptive.choose")).tag("")
-                                ForEach(home.spaces) { Text(HomeScenePresentation.roomLabel($0.id, in: home)).tag($0.id) }
-                            }
-                            Button(l("adaptive.moveGo")) { if let move { Task { await model.submitAdaptive([move]) } } }
-                                .buttonStyle(.secondary)
-                                .disabled(move.map { !model.adaptiveAccepts([$0]) } ?? true)
-                                .accessibilityIdentifier("adaptive.moveGo")
                         }
                         Text(l("adaptive.onlyModeled")).font(.caption).foregroundStyle(.secondary)
                     }
@@ -365,6 +339,15 @@ struct AdaptiveRehearsalView: View {
     }
 
     private typealias ActionOption = ExerciseActions.Option
+
+    /// Validated options through the shared picker (flat up to five; otherwise what -> who -> where).
+    private func choicePicker(_ options: [ActionOption], household: HouseholdProfile, disabled: Bool) -> some View {
+        let byID = Dictionary(options.map { ($0.choiceItem(household, localizer: model.localizer).key, $0.commands) }, uniquingKeysWith: { a, _ in a })
+        return ChoicePicker(items: options.map { $0.choiceItem(household, localizer: model.localizer) }, disabled: disabled) { item in
+            guard let commands = byID[item.key] else { return }
+            Task { await model.submitAdaptive(commands) }
+        }
+    }
 
     private func refreshAccepted() async {
         guard let exercise = model.adaptive, exercise.session.initial.scenarioID == scenarioID, let library = model.scenarios else { return }

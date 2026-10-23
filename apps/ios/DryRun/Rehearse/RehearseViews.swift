@@ -768,12 +768,12 @@ struct DecisionCard: View {
                 .font(.caption.weight(.bold)).foregroundStyle(Theme.accent)
             Text(l(decision.promptKey)).font(.title3.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
             // Options look the same: the app never styles a choice as "right" before the household makes it.
-            ForEach(decision.options) { option in
-                Button { onChoose(option.id) } label: {
-                    Text(l(option.labelKey)).multilineTextAlignment(.leading)
-                }
-                .buttonStyle(.choice)
-                .accessibilityIdentifier("decision.option.\(option.id)")
+            ChoicePicker(items: decision.options.enumerated().map { index, option in
+                // Letters, not colors or ticks: the household can say "B" aloud, and nothing marks a right answer.
+                ChoiceItem(id: "decision.option.\(option.id)", title: l(option.labelKey),
+                           symbol: index < 26 ? "\(Character(UnicodeScalar(97 + index)!)).circle" : "circle")
+            }) { item in
+                onChoose(String(item.id.dropFirst("decision.option.".count)))
             }
         }
         .padding(Theme.Space.l)
