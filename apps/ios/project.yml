@@ -47,6 +47,9 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSCameraUsageDescription: "Dry Run uses the camera only while you scan rooms with RoomPlan. The scan stays on this device."
         NSLocationWhenInUseUsageDescription: "Optional: use your position for a map planning origin after you ask. Dry Run does not send it to its service; Apple Maps may receive the location for map, search, or travel services."
+        NSLocalNetworkUsageDescription: "Connect to your local Dry Run development gateway for optional fictional-family planning tests."
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         CFBundleLocalizations: [en, es, vi]
         CFBundleDevelopmentRegion: en
         ITSAppUsesNonExemptEncryption: false

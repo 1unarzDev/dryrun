@@ -1,0 +1,171 @@
+# Mac integration requirement and evidence ledger
+
+Base: `26332ded170f2fea414d581fb50d5de6f4093ab9`. Initial local changes: untracked `.claude/` and supplied reference; preserve both. Reference read completely, including §§2A and 12–14. No repository AGENTS.md discovered outside excluded duplicate worktrees.
+
+Verification dimensions remain independent: implemented, deterministic-tested, live-reviewed, Mac-build, simulator, device. Unverified is the initial state, never implied by source or a successful build. All reviews are synthetic agent audits.
+
+| ID | Acceptance outcome | Owner | Status / next evidence |
+|---|---|---|---|
+| SRC-01 | Current source/commit reconciliation | orchestrator | root + diverged wired/six-hazard donor source reconciled with exact source clearances; donor branches and working changes preserved |
+| ORCH-01 | Six specialists and serial native queue | orchestrator | all six roles delegated; disjoint scopes and reviewer queue recorded; no device use while unplugged |
+| CODEX-01 | Verified real server-side Codex LB runtime | codex_integration | real LB core protocol/tool/continuation reviewed; synthetic-only authorization; deployment and real-family scope open |
+| CODEX-02 | Tools, lifecycle, structured results, research | codex_integration | core tools/lifecycle/schema implemented and partly live-reviewed; public search/images unqualified |
+| CTX-01 | Complete retrievable authorized context | codex_integration; orchestrator | full native snapshot and paged/fragment retrieval implemented; preparation live retrieval reviewed; other role projections still need reconciliation |
+| CTX-02 | Family/revision/late-result isolation | orchestrator; integration_audit | owner/snapshot/revision/locale/scope checks implemented with deterministic coverage; latest native in-flight behavior pending phone |
+| PREP-01 | Useful feasible priorities and inventory actions | codex_integration | native inventory/task paths restored; preparation14 latest twelve runs deliver zero useful tasks; provenance/repair contract fix in progress |
+| GEO-01 | Automatic sourced resource discovery | maps_resources | needs-aware MapKit discovery/source presentation implemented; public research provider qualification and native current-source checks open |
+| GEO-02 | Ordinary/official/simulated routes and meetups | maps_resources; orchestrator | phase-aware policy, reviewed official hurricane records, planned current-exit handoff implemented; Core policies tested, native compiled only |
+| HOME-01 | Faithful home graph and observations | house_simulation; orchestrator | scan-confidence/geometry safeguards and donor scanner/corrections reconciled; actual RoomPlan acquisition on supported phone pending |
+| HOME-02 | Direct room/opening edits and atomic durable Save | orchestrator | earlier encrypted phone room/opening edits survived relaunch; later editor/sidecar/scope changes compile, current physical retest pending |
+| STRESS-01 | Concrete dependency failures and improvements | scenario_learning | causal Core mechanics and deterministic previews restored; complete native decision-to-outcome/score acceptance pending |
+| SCORE-01 | Fixed evidence rubric and competency preservation | preparedness_assessment; orchestrator | fixed competency budgets/independent evidence preserved; derived fresh score export compiled; new physical scoring journeys pending |
+| DEMO-01 | Every selectable family × six hazards and isolation | orchestrator; reviewers | earlier18 family×hazard first-choice phone smoke pass; full causal native matrix and current switching/reset/in-flight suite pending |
+| UI-01 | Native layout/accessibility verified | native_ui; reviewers | earlier ordinary/AX reviewer captures identify material friction; current layout changes compiled or in progress, physical review pending |
+| UI-02 | Cohesive identity and direct navigation | native_ui | three-tab structure retained with direct inventory/score/learning/maps links; source simplification in progress; native navigation review pending |
+| REVIEW-01 | Protected outputs remain reviewer-only | output_review; orchestrator | receipt-only protected captures/released diagnostics used; exact donor source clearance and masked geometry captures established; maintain for every run |
+| PROMPT-01 | Repeated hypotheses and fresh held-out improvement | output_review; codex_integration | repeated development comparisons and all failures retained; no prompt promotion or fresh heldout acceptance |
+| REL-01 | Provider failure/offline/cancel preserves state | codex_integration; orchestrator | bounded runtime/quota/disposal/offline and state guards implemented; provider capability router and current native cancellation checks open |
+| AUDIT-01 | Independent family and integration audits | integration_audit; family_experience_review | independent source and earlier bounded physical audits completed; consequential fixes need current native acceptance |
+| MAC-01 | Integrated Xcode and required physical iPhone verification | orchestrator | latest unsigned generic iOS build09b27db17de44128a901108648a73623 passes; all current physical execution deferred until owner reconnects |
+| HAZ-01 | fire causal branches, visuals, debrief | scenario_learning; house_simulation | distinct donor mechanics and causal Core tests restored; earlier first-choice phone smoke only; complete current native causal/learning/score matrix pending |
+| HAZ-02 | tornado causal branches, visuals, debrief | scenario_learning; house_simulation | distinct donor mechanics and causal Core tests restored; earlier first-choice phone smoke only; complete current native causal/learning/score matrix pending |
+| HAZ-03 | flash flood causal branches, visuals, debrief | scenario_learning; house_simulation | distinct donor mechanics and causal Core tests restored; earlier first-choice phone smoke only; complete current native causal/learning/score matrix pending |
+| HAZ-04 | freeze/power loss causal branches, visuals, debrief | scenario_learning; house_simulation | distinct donor mechanics and causal Core tests restored; earlier first-choice phone smoke only; complete current native causal/learning/score matrix pending |
+| HAZ-05 | heat/grid strain causal branches, visuals, debrief | scenario_learning; house_simulation | distinct donor mechanics and causal Core tests restored; earlier first-choice phone smoke only; complete current native causal/learning/score matrix pending |
+| HAZ-06 | water outage causal branches, visuals, debrief | scenario_learning; house_simulation | distinct donor mechanics and causal Core tests restored; earlier first-choice phone smoke only; complete current native causal/learning/score matrix pending |
+
+Current table refreshed 2026-10-21. Evidence below is chronological: early baseline notes are historical, superseded by later checkpoints and released reports. No simulator verification substitutes for the requested iPhone.
+
+## Baseline evidence
+
+- Xcode 27.0 / 27A266a discovered. Simulator enumeration required sandbox escalation and succeeded. iOS 27 simulators available; connected physical iPhone 16 Pro discovered using devicectl. Discovery is not app verification.
+- Baseline simulator build started through receipt-only capture; pending. No phone/simulator launch reservation granted yet.
+- Firewall classification and synthetic delivery preflight released: `released/report-firewall-baseline.json`. Real native capture/export and automatic delegation semantic release still require verification.
+- Exclude `artifacts/`, `output/`, `fixtures/ai/`, `.claude/worktrees/`, build products and uncleared `docs/ai/` from engineering reads. `docs/ai/architecture.md` specifically cleared.
+- Credential environment absence reported by Codex specialist; live compatibility not established.
+
+## Evidence record format
+
+Each checkpoint records requirement, source/working-tree revision, exact command/actions, fixture and expected outcome, receipt/released report, observed deterministic result, independent verification dimensions, limitations and next owner. Protected bodies and captures never belong here.
+
+## Integration checkpoint 1
+
+- MAC-01: signed physical iPhone 16 Pro `build-for-testing` succeeded, receipt `run-ac17fc7252364320984469c336ee00d0` (28.7s). Before house/score follow-up patches; not current fully integrated native acceptance. Initial stale project membership fixed by `xcodegen generate`; existing HousingDemoTests fixture type shorthand qualified. Reviewer reports `report-baseline-build-review`, `report-physical-test-build-1`.
+- HAZ-01..06 / DEMO-01: new Mac deterministic suite passed `run-4f93e78e40a74f34b509b10600623687`, affected regressions passed `run-44b20a56ba0c4847840c9dd68f96b41f`. 3 actual families × 6 hazards × 5 layouts = 90 adaptive cells. Applicability and reachable-shelter recommendation fixed; no claim of two physical consequences per cell or native smoke completion.
+- Vault package regression: Mac native capture exit0 `run-e80c0be304184fa2b75b784b15a87b33`. Native sidecar preservation test authored; physical run pending.
+- CODEX-01/02: bounded experimental app-server adapter implemented, explicit capability gate disabled without real attestation. Typecheck exit0 `run-3e8796a11096499495928e6381ddf188`; synthetic protocol tests exit0 `run-7ed679efbb1442989544033a96ffc82f`. Live probe delegated; actual research/images not verified.
+- CTX-01 remains incomplete: existing projection drops useful names, medication/equipment details, private location and history. Runtime adapter alone cannot repair it. Next coordinated native/server retrieval slice required.
+- HOME-02: async saved-base revision contract, draft preservation, direct opening reclassification and removal of measurement controls implemented; compile/regressions and physical Save/relaunch pending. Optional base revision means expected absence, never bypasses stale checks.
+- SCORE-01: compiler now replaces independent evidence per competency, retaining untouched competency evidence. Tests awaiting reviewed failure diagnostics; not yet verified.
+- All six specialist charters now active or completed first scoped wave: scenario_learning, preparedness_assessment, maps_resources, house_simulation, native_ui, codex_integration. Dedicated reviewer remains separate. Independent final audits pending.
+- Device reservation handed exclusively to output_review for compiled baseline tests and captures on owner's plugged iPhone 16 Pro. No parallel device mutation allowed. Parent source work continues without device access.
+
+## Integration checkpoint 2
+
+- Physical baseline: 46 native XCTest methods executed on plugged iPhone 16 Pro; 45 passed, 1 failed (two assertions). `report-native-unit-and-core-blockers` records the observed timestamp erasure on label-only home edits. Root normalized authoritative dwelling metadata before material-geometry comparison; test assertions retained. Fresh integrated recheck queued.
+- Native baseline visual: five physical screens captured/reviewed, actual bounds 402×874 pt, dark/en/ordinary text. `report-native-baseline-captures-1` and flattened opaque derivatives exercised capture clearance without changing app text. These captures precede source UI fixes; not matched-after acceptance.
+- Signed integrated build-for-testing passed `run-d596f5dafad14c8da77784369c376dd1` (32.8s), before subsequent scope-token/editor extension and private-context slice. Exclusive device returned to output_review for isolated unit+18-cell authored native matrix and matched UI captures.
+- Selected Core regression suite passed `run-3e45803eefa44bfe9845e4bb996c4870` after independent review reconciled obsolete destructive-practice assertions. Earlier run `run-54888b6b6c0f426082ce897923eb0bf4` ran47 tests/14 suites, one historical test failed; all outcomes retained. House, per-competency score and adaptive matrix checks are deterministic evidence, not native scoring integration.
+- Maps isolation added origin/household/home/address scope; focused tests passed `run-dc608ae3da2e48fbbd60062fceb7aaa4`. Root added successful reset/load/delete session nonce and corresponding map key/testing for same-ID resets. Ordinary route caveat remains visible.
+- Independent integration source reviewer identified stale home drafts could cross equal-revision family/reset boundaries. Root added immutable editor scope session, guard before persistence and regression. Not yet included in physical build above.
+- Live Codex compatibility attempted: `report-codex-live-probe-1`, actual LB Responses path reached; HTTP503 unavailable upstream capacity for unverified alias gpt-5.4, zero deltas/tools. Probe exit0 was misleading (terminal failed); fix and supported-alias discovery required. No capability attestation enabled. This is an external live-model availability gate, not answer-quality failure.
+- Full authorized private context/retrieval slice now owned by codex_integration; original minimal snapshot retained. App-native gateway consumer and production household authorization are still unmet, not claimed implemented by adapter.
+
+## Integration checkpoint 3
+
+- CODEX runtime extended live protocol: `report-codex-extended-protocol-1` confirms actual same-thread fact-retaining second turn, paused/active cancellation rejection and upstream malformed-schema failure. 429 remains synthetic injection; full shipping deadline/upstream billing cancellation unverified. Current adapter typed error loss assigned for fix. Real research remains an explicit gap, not satisfied by bundled records.
+- CTX-01 additive authorized private-context exporter and manifest-driven read tool implemented. Actual synthetic Swift-wire/server validation and paired hidden-fact retrieval tests pass (receipts in codex-specialist.md; `report-context-contract-pass-2`). State records retain canonical facts/unknowns; no invented numerical budget. Production household membership remains unverified; gateway is synthetic-only.
+- Native existing family-briefing flow now has a DEBUG synthetic private-gateway consumer, environment URL and temporary gateway session credential only; no provider key or real-household transfer. It submits full authorized context, validates selected tasks against host IDs/editors/predicates and exposes direct existing task actions. Real native Codex execution is pending configured test-host/server and reviewer acceptance; merely compiling this client is not live usefulness.
+- HOME-02 source corrected remaining legacy scan-to-confirmation entry: scans now open the same direct editor; Cancel discards draft, guarded awaited Save persists. Valid medium/high opening dimensions retain scanObserved provenance and no manual measurement demand. Operability, exterior destination and step-free access remain unknown. Low-confidence/invalid widths do not become accepted dimensions. New SDK-seam native regression pending physical execution; actual LiDAR scan pending owner movement assistance.
+- Full Core causal run `run-785367c583ef443badcdb35ed6407164` exit0 after versioned compatibility correction; original historical fixture unchanged. Fire exit/outside accounting and per-person tornado shelter now update canonical snapshots, helpers checked for same supported destination. Thermal shelterInPlace and deeper flood timing remain open. Latest scan import changes trigger fresh full suite.
+- MAC-01 latest signed physical build-for-testing `run-4f94651a675b4fe485895c7e733a02d6` exit0 (14.8s). Includes immutable editor scope, isolated encrypted-vault test path, real Save/relaunch UI test, current fire/tornado occupancy, full context client and AX source fixes. Native/Core source frozen for independent family_experience_review reservation; server-only specialist work continues.
+- Earlier current-slice compilation failure `run-79296ea384ba42859dc3665067b98a56` resolved from released `report-family-experience-build-blocker-1` by explicit existential store assignments; subsequent builds passed. No gate disabled.
+
+## Integration checkpoint 4 and overnight handoff
+
+- Physical evidence before donor reconciliation: 50 native unit methods, five UI journey/persistence methods and one six-screen AX tour passed on the plugged iPhone16Pro. Actual encrypted synthetic room/opening edits survived process relaunch. `report-family-experience-independent-native-1` withholds overall acceptance: no live native Codex, full causal family matrix, scored journey or physical scan certification. Large-text priority height and scene-to-choice distance remain findings.
+- Root full Core checkpoint `report-core-scan-bridge-final-pass`: 500 Swift Testing tests plus four XCTest methods, one explicit export skip, zero failures. This predates donor mechanics/practice restoration and cannot certify current merged source.
+- Reconciliation correction: main26332de omitted substantial completed branch work. Exact production-source clearance obtained for a9efc8f and5f95135. Current changes checkpointed separately, donor branches untouched. Restoring existing adaptive phases/inventory/score/hazard mechanics/Gemini-Groq/public resources/AppAttest rather than reconstructing them. Authored locales imported additively; recorded responses remain protected.
+- Codex preparation11 repeated comparison retained all12 attempts:2/6 success each condition. Pagination/final-generation budget and paused-worker cleanup defects found and fixed in code; no prompt winner promoted. Reconciled preparation14 requires new exact Swift input exports, baseline/repeated comparison and fresh held-out review.
+- Independent source audit IA06–11 identifies renewable quota, provider consent, real-vs-synthetic authorization, context binding/director retrieval and stale replay provenance gaps. HTTP per-owner request windows now tested (`run-594aedb25c864564af370af2bd13286c`). Native replay requires complete request digest; unmatched ID-only recordings remain preserved but cannot impersonate a current answer. Further provider/context fixes assigned, not yet acceptance.
+- Owner unplugged phone for sleep and authorized continued work without it. Continue Mac source work, Core/server tests and generic-iOS compile-only checks; no simulator substitution or physical launch until reconnect tomorrow. Physical acquisition, fresh matched captures, scoring journey, full family×hazard consequences and final independent acceptance remain queued.
+
+## Publication checkpoint (2026-10-21)
+
+Owner requested commit and push of the work so far. Branch `codex/native-integration-20261021` preserves this checkout separately from newer remote main `07ebbd6` (17 commits ahead of original base). No merge into current main is claimed. Preparation15 provenance/repair code and scoped server HTTP/wire tests pass; live12-attempt retest remains pending. Full Core passed570 Swift Testing plus18 XCTest cases with three explicit skips across runners, report-night-final-mac-checks-20261021. Latest supporting-role context targeted pass3ed4c0911f09417b9bb57e99660a5768 and unsigned native compilation09b27db17de44128a901108648a73623 cover final source. Device execution remains deferred by owner. See continuation for exact blockers and reconnect queue.
+
+## Integration checkpoint wave 1 (2026-10-21)
+
+Six lead branches merged into `codex/native-integration-20261021` one at a time with `--no-ff`, in order: `lead/codex-context` (Codex primary for every gateway operation with Gemini then Groq fallback, honest failure attribution, prompt package preparation/16, debrief/2, resources/6), `lead/scenario-learning` (six-hazard decision branches, trace and no-action facts, regenerated host-built home-fire director request fixture), `lead/house-simulation` (opening card leads-to, committed-home routes, Not-usable doorway excluded from EgressPlanner/HomeValidator), `lead/preparedness-assessment` (fact-driven Prepare steps, prep.stairPlan, shopping ownership, recordPurchase), `lead/maps-resources` (ResourceRelevance, address origin, contextual meetups), `lead/native-ui` (visual rules, labelled forms, Prepare rings, UIInventoryUITests). No textual conflicts. Merged locale JSON and places JSON parse with no duplicate keys.
+
+Evidence (Mac only; label: deterministic-tested / Mac-build):
+- Core `swift test` after scenario merge: 624 Swift Testing tests passed; after house merge: 624 passed; after preparedness: 640 passed; final after all six: 649 tests in 119 suites passed, XCTest 0 failures with 3 explicit skips.
+- Gateway `pnpm test` (after codex, scenario and final merges): 316 total, 313 passed, 1 failed: `gateway.test.ts` "rejects startup without a secret and exhausts budgets before another provider call". The same test also fails at base `cdb4098` (checked in a detached temporary worktree), so this merge did not cause it. `pnpm typecheck` passed.
+- `xcodegen generate` + unsigned generic-iOS `xcodebuild build` passed after house merge; final `build-for-testing` passed (TEST BUILD SUCCEEDED) after all six merges.
+- `services/public-api` `test/locales.test.ts`: 2 of 11 fail (es/vi translation-drift baseline coverage). The native-UI lead reports this already fails at `cdb4098` (584 unbaselined keys); I did not reproduce it at the base myself.
+
+Not done: no native unit/UI tests executed, no simulator or phone launch, no live provider calls. Nothing in this wave is live-reviewed or device-verified.
+
+## Integration checkpoint wave 2 (2026-10-22)
+
+Base `bd6974a` (wave 1 checkpoint; independent audit gate NOT ACCEPTED, hold). Five lead branches merged one at a time with `--no-ff`, in order:
+1. `lead2/codex-context-heldout` (45a0055; contains `lead2/codex-context` ac55f81 plus e5a1634 freeze and d1724e6 cleared fixes): canonical fallback restart from initial input plus host-retrieved records, allowlisted `servedBy` on completed feature and director responses, `DirectorSource` codex/gemini/groq/beacon, 18 s overall director deadline with local director step and End available in flight, director `providerConsent` codex/gemini/groq for fictional households, env-configurable call windows, debrief host rehearsal receipt, Groq compaction, preparation/16 frozen for family-heldout/1 (addendum 2, frozen-source guard), director prompt/32, debrief/4, resources/7, new host output checks. No conflicts.
+2. `lead2/scenario-native` (5c4349c): native hazard choices from `receipt.experience.feasibleCommands` (`rehearsal.cmd.*`) in AdaptiveRehearsalView and PracticeCheckView, mechanics v6 (fire origin excluded from routes, freeze opening decision, outage readiness facts, `wait`), practice-check load fix, `egress-portal-graph/3`. No conflicts.
+3. `lead2/native-ui` (97c2237): provider-honest Beacon copy en/es/vi, AX pickers, map disclaimer wrap, AlertBannerCard call site (PREP-17), same-family reload dedupe and 45 s deadline, test drift fixes, `BeaconServedByLabel`. No conflicts.
+4. `lead2/house` (c5f8f8c): Outside only for outside-wall openings, persisted Undo/Redo, F4 example markers. Conflicts resolved: `Home.swift` (kept scenario's /3 comment; both branches bumped to `/3`), `NativeGatewayInputExportTests.swift` (kept codex's finished-rehearsal debrief export and applied house's `SampleHomes.forExampleHousehold`), eight host-built `fixtures/ai/native-bridge` files (took the integration side, then confirmed by the Core run, which rewrote none of them). Duplicate /2 route-label projection in `AuthoredAdapterTests` folded into one. `scenario-house-contract.md`: integration note records the scenario lead's independent /3 bump as acknowledgement of item 1 only; item 2 (interior-opening Outside) still needs an explicit scenario ack.
+5. `lead2/maps` (6629fa7): explicit meetup roles, synthetic address checks, sourced warming centers. No conflicts.
+
+Integration commits after merging: `d6b43a5` wires the UI lead's keys for the codex lead's director wiring (deadline fallback now uses `adaptive.director.fallbackNote`; new `adaptive.director.groq`, `adaptive.director.beacon`, `adaptive.director.inFlight` in en/es/vi, es/vi drafts; in-flight progress row `adaptive.director.inFlight`; debug-only `BeaconServedByLabel` beside the director label). `272fc3d` commits the Core-regenerated host-built `director-private-context-wire.json` (mechanics /5 to /6 and digests only; authored synthetic household, never a model response).
+
+Evidence (Mac only; label: deterministic-tested / Mac-build):
+- Locale JSON: every en/es/vi file parses with no duplicate keys; key sets identical across locales (common 1289 after wiring, spatial 493, native 211, plan 190, scenarios 348).
+- Core `swift test` (after all five merges plus d6b43a5): 665 Swift Testing tests in 121 suites passed; XCTest 35 executed, 0 failures, 2 skipped. Exit 0.
+- Gateway `pnpm test`: 40 files, 341/341 passed, 0 skipped. The Swift wire tests (`private-context.test.ts`, `director-private-context.test.ts`) now run against committed fixtures. The pre-existing `gateway.test.ts` startup/budget failure no longer fails. After the fixture regeneration, `director-private-context`, `private-context` and `native-bridge` reran: 31/31 passed. `pnpm typecheck` passed.
+- `xcodegen generate` + `xcodebuild build-for-testing -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO`: TEST BUILD SUCCEEDED (includes d6b43a5).
+- `services/public-api` `test/locales.test.ts`: 9/11 pass, 2 fail (es/vi translation-drift baseline). This failure was already there; the owner still has to decide on baselining. d6b43a5 adds 3 more unbaselined keys per locale.
+
+Codex output-reviewer reports recorded at this checkpoint (cleared, in `docs/integration/released/`):
+- `report-prep15-vs-prep16-v5-blind-repeated-review-20261022`: preparation/16 fixed four household-specific coupling misses of /15 in every repetition (9/9 each, zero contract failures). Candidate for held-out; not promoted.
+- `report-debrief3-v7-receipt-codex-d1-review-20261022`: debrief/3 Codex 6/6 grounded in the committed receipt; prioritization misses critical stored-water depletion (fixed in debrief/4, see below).
+- `report-director-codex-freeze-fire-heat-g1-g2-review-20261022`: heat useful; freeze opening administrative (G1); fire origin on the child's only exits accepted by the host (G2); internal IDs exposed 4/6. Addressed by mechanics v6 and prompt/32; native recheck pending.
+- `report-resources6-two-tool-turns-en-es-review-20261022`: two tool turns, Codex 3/4 completed; wheelchair attribute leak 2/3.
+- `report-codex-deadline-restart-gemini-debrief-director-review-20261022`: forced-deadline restart gives honest unavailable outcomes; the one Gemini debrief had locale and grounding defects; Gemini director restarts schema-failed (targeted by d1724e6).
+- `report-groq-compact-debrief-restart-review-20261022`: Groq debrief 2/9 accepted before restart tool removal; payload size still blocks lake/pine.
+- `report-v7-debrief-resources-director-six-run-review-20261022`: debrief/4, resources/7, director/32 Codex-served consistently good across three repetitions; fire openings placed the origin away from every exit route; fallback paths (Groq debrief) much weaker.
+- `report-family-heldout-1-execution-not-run-20261022`: preflight hashes matched addendum 2. The run stopped before any model call because the frozen export has no provider environment, and pointing it at the service secret file was denied as credential exposure. Zero attempts executed.
+
+Not done: no native unit/UI tests executed, no simulator or phone launch, no live provider calls by the integrator. Nothing in this wave is device-verified. No prompt promoted.
+
+## Wave 3 lead3/codex-context (2026-10-22)
+
+Branch `lead3/codex-context` from `175d5c2`, commits `59274df`, `e8aa7b1`. Mac: gateway vitest 356/356; `tsc --noEmit` passes; Core `swift test` 665 Swift Testing tests passed with 0 XCTest failures (fixtures `authorized-context-wire.json` and `director-private-context-wire.json` regenerated by Core); `xcodegen generate` plus unsigned `build-for-testing` for generic iOS: TEST BUILD SUCCEEDED. Native tests have not run on a device. Live receipts and their interpretation are in the codex-specialist.md wave 3 section.
+
+## Integration checkpoint wave 3 (2026-10-22)
+
+Base `175d5c2` (wave 2 checkpoint, pushed). Owner instructions this wave: English only (no es/vi work or checks, no accessibility text-size checks); fix the blockers; no gold-plating. Three lead branches merged one at a time with `--no-ff`, in order:
+1. `lead3/codex-context` (b741d39; 59274df, e8aa7b1, 758de43, b741d39) as `0d94032`: director circuit breaker `cloudDirectorSuspended`, debrief/5 host fallback checks (`debriefMustAddress` coverage, `cold_storage_workaround`, `identifier_derived_name`, `machine_token`, `wrong_locale`), resources `utility_dependent_plan`, household-specific Core `stateFingerprint`, DEBUG `-aiGatewayLateResultDelay`, Groq director instruction Groq/7, Gemini director restart conformance test. No conflicts.
+2. `lead3/scenario` (7c047ec) as `e10a033`: DEBUG `-localDirector` pin for local-director UI tests, mechanics v7 freeze gathering (gateway `/7` version literals in `contracts.ts` and `director-boundaries.ts`), `receiptName`/`SimulationEvent.receiptTitle` device names, UI test reveal/scroll and setup-identity checks, DeviceAudit water choice. Conflicts resolved: `AppModel.swift` (kept both: `cloudDirectorEnabled` starts as `DirectorGatewayClient.current != nil && !DemoLaunch.current.localDirector` and keeps the codex lead's `didSet` that re-arms the breaker); `fixtures/ai/native-bridge/director-private-context-wire.json` (took scenario side, then regenerated by Core, see below).
+3. `lead3/heldout` (30df4c1) as `ae53f8c`: family-heldout/1 executed record. Conflict in `codex-specialist.md` resolved by keeping both wave-3 sections (codex-context, then held-out execution).
+
+Integration commit after merging: `c5d75b7` commits the Core-regenerated host-built `director-private-context-wire.json` (stateFingerprint and snapshotID only, from the household-specific fingerprint combined with v7 state; authored synthetic household, never a model response).
+
+Evidence (Mac only; label: deterministic-tested / Mac-build):
+- Core `swift test` (after all three merges): 671 Swift Testing tests in 122 suites passed (149.5 s); XCTest 36 executed, 0 failures, 2 skipped. Exit 0. The run rewrote only `director-private-context-wire.json` (committed in c5d75b7).
+- Gateway `pnpm test`: 41 files, 356/356 passed, before and after the fixture regeneration; wire subset (`director-private-context`, `private-context`, `native-bridge`) 31/31 against the regenerated fixture. `pnpm typecheck` (`tsc --noEmit`) passed.
+- `xcodegen generate` + `xcodebuild build-for-testing -scheme DryRun -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO`: TEST BUILD SUCCEEDED.
+- No integration source fixes were needed beyond the conflict resolutions above.
+
+Owner-reported device evidence (not agent-observed): 2026-10-22 owner edited an opening on their real RoomPlan-scanned home in the app; the edit saved and persisted (owner-reported, physical iPhone 16 Pro; not agent-observed).
+
+Codex output-reviewer reports recorded at this checkpoint (cleared, in `docs/integration/released/`):
+- `report-wave3-debrief5-fallback-validators-six-run-review-20261022`: Codex debrief/5 6/6 good (oak water run-out and oxygen gap, lake medication by kind with pharmacist pointer, pine charger gap), resources en 2/2 with no accessibility leak, fire origin off every route 2/2, heat 2/2. Freeze opening still FAIL 2/2 at mechanics v6 (no physical warmth choice feasible for the fixture; v7 freeze gathering from `lead3/scenario` is not yet reviewed). All four forced-fallback runs truthful `unavailable`, 0/24 completed, 0 unsafe deliveries. Two Groq coverage rejections are probably caused by `compactForGroq` cutting the required receipt events; rejected fallback text and `addressedEventIDs` are not captured, so false positives cannot be adjudicated. Recommendations: keep every `debriefMustAddress` event in Groq compaction, narrow the safe/protected regex, capture rejected proposals and zod issue paths, per-hop director fallback outcomes.
+- `report-family-heldout-1-acceptance-review-20261022`: 30 sealed attempts, REL-01 NOT MET 29/30 (attempt 30 `transport_or_deadline`, consistent with host sleep but not independently proven). Critical checks PASS on all 29 delivered results. PROMPT-01 pairs: f02 3/3 PASS, f04 3/3 PASS, f03 marginal 2/2 evaluable, f01 FAIL 0/3 (lighting omitted both sides), f05 FAIL 1/3 (shared helper). preparation/16: DO NOT PROMOTE. f01-f05 are retired from held-out status; a later acceptance claim needs a fresh sealed set.
+
+Not done: no native unit/UI tests executed, no simulator or phone launch by agents, no live provider calls by the integrator. Nothing in this wave is agent-device-verified. No prompt promoted.
+
+## Wave 3 phone review and audit (2026-10-22)
+
+- Consolidated English/standard-size phone review of 0112025: `released/report-phone-review-0112025-wave3-consolidated-en-std-20261022.json` (device, agent-observed). Spanish/Vietnamese and accessibility sizes were out of scope by owner instruction.
+- Independent audit gate: HOLD for the English demo, lifted by: (a) DemoJourney saveError alert over the first fire decision; (b) HazardChoice reveal bottom-bar guard + heat/water commit rerun, fire authored-question intent; (c) BeaconDebriefCard unwired since f627aa3 — wire it or keep debrief out of the demo; (d) Codex director latency (~17 s vs 18 s deadline) or film with the local director and say so; (e) re-pull Beacon replays; (f) this report recorded here.
+- Held-out family-heldout/1 executed (29/30 at receipt level; attempt 30 lost to host sleep): `released/report-family-heldout-1-acceptance-review-20261022.json` — DO NOT PROMOTE preparation/16; no held-out-validated claim in the demo.
+- Fallback validators: `released/report-wave3-debrief5-fallback-validators-six-run-review-20261022.json` — safe (no unsafe deliveries) but 0/24 useful fallback answers; make no claim of working fallback content.

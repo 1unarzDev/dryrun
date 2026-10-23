@@ -34,7 +34,7 @@ public extension IntegratedAIState {
     func availableHazardChecks(in session:SimulationSession,library:ScenarioLibrary)throws->[HazardPracticeCheck] {
         let receipt=try session.query(library:library)
         return try pendingHazardChecks(household:session.initial.household,home:session.initial.home).filter {check in
-            check.scenarioID==session.initial.scenarioID && receipt.experience?.feasibleCommands?.contains(where:{check.accepts($0.kind,composed:session.mechanicsVersion=="dryrun.hazard-mechanics/5")})==true
+            check.scenarioID==session.initial.scenarioID && receipt.experience?.feasibleCommands?.contains(where:{check.accepts($0.kind,composed:HazardExperience.level(session.mechanicsVersion)>=5)})==true
                 && (check.actionKind != "warmLayers" || receipt.snapshot.services[Svc.heat] != .operational)
                 && (check.actionKind != "allocatePower" || receipt.snapshot.services[Svc.homePower] == .unavailable)
         }
@@ -47,18 +47,18 @@ public extension IntegratedAIState {
               let check=HazardPracticeCheck.bank.first(where:{$0.id==checkID}),
               let session=sessions.first(where:{$0.id==sessionID}),session.initial.scenarioID==check.scenarioID,
               session.mechanicsVersion.map({HazardExperience.supportedVersions.contains($0)})==true,session.concernSeed==nil,
-              !session.commits.contains(where:{$0.actor=="user" && $0.commands.contains(where:{check.accepts($0.kind,composed:session.mechanicsVersion=="dryrun.hazard-mechanics/5")})}),
+              !session.commits.contains(where:{$0.actor=="user" && $0.commands.contains(where:{check.accepts($0.kind,composed:HazardExperience.level(session.mechanicsVersion)>=5)})}),
               !practiceAttempts.contains(where:{$0.source?.sessionID==sessionID}) else {throw SessionError.invalidCommand}
         let receipt=try session.query(library:library)
         guard !receipt.finished else {throw SessionError.finished}
         // An explicit retest bypasses retirement only, never the actual state/affordance prerequisites.
-        guard receipt.experience?.feasibleCommands?.contains(where:{check.accepts($0.kind,composed:session.mechanicsVersion=="dryrun.hazard-mechanics/5")})==true,
+        guard receipt.experience?.feasibleCommands?.contains(where:{check.accepts($0.kind,composed:HazardExperience.level(session.mechanicsVersion)>=5)})==true,
               check.actionKind != "warmLayers" || receipt.snapshot.services[Svc.heat] != .operational,
               check.actionKind != "allocatePower" || receipt.snapshot.services[Svc.homePower] == .unavailable else {throw SessionError.invalidCommand}
         guard try retest || availableHazardChecks(in:session,library:library).contains(where:{$0.id==checkID}) else {throw SessionError.invalidCommand}
         var attempt=PracticeAttempt(id:id,sequence:(practiceAttempts.map(\.sequence).max() ?? 0)+1,variantID:"hazard-check/1",answers:[])
         attempt.checkID=checkID;attempt.checkVariant=practiceAttempts.filter{$0.checkID==checkID}.count.isMultiple(of:2) ? "a":"b";attempt.observations=[]
-        attempt.source = .init(contractVersion:"dryrun.practice-capture/1",sessionID:sessionID,initialDigest:try Self.practiceSourceDigest(session),startingRevision:session.revision,startingEventSequence:receipt.eventSequence,evaluatorVersion:session.mechanicsVersion=="dryrun.hazard-mechanics/5" ? "dryrun.hazard-checks/2":"dryrun.hazard-checks/1",startingReceiptDigest:receipt.contextDigest)
+        attempt.source = .init(contractVersion:"dryrun.practice-capture/1",sessionID:sessionID,initialDigest:try Self.practiceSourceDigest(session),startingRevision:session.revision,startingEventSequence:receipt.eventSequence,evaluatorVersion:HazardExperience.level(session.mechanicsVersion)>=5 ? "dryrun.hazard-checks/2":"dryrun.hazard-checks/1",startingReceiptDigest:receipt.contextDigest)
         var candidate=self;candidate.practiceAttempts.append(attempt)
         try persist(candidate);self=candidate;return attempt
     }
@@ -89,7 +89,7 @@ public extension IntegratedAIState {
         guard attempt.variantID=="hazard-check/1",let check=HazardPracticeCheck.bank.first(where:{$0.id==attempt.checkID}),
               let source=attempt.source,
               let session=sessions.first(where:{$0.id==source.sessionID}),session.initial.scenarioID==check.scenarioID,
-              source.evaluatorVersion==(session.mechanicsVersion=="dryrun.hazard-mechanics/5" ? "dryrun.hazard-checks/2":"dryrun.hazard-checks/1"),
+              source.evaluatorVersion==(HazardExperience.level(session.mechanicsVersion)>=5 ? "dryrun.hazard-checks/2":"dryrun.hazard-checks/1"),
               session.mechanicsVersion.map({HazardExperience.supportedVersions.contains($0)})==true,session.concernSeed==nil,
               source.initialDigest==(try Self.practiceSourceDigest(session)),source.startingRevision>=0,source.startingRevision<=session.revision,
               let observations=attempt.observations,observations.count<=1,
@@ -99,7 +99,7 @@ public extension IntegratedAIState {
         for commit in session.commits.prefix(source.startingRevision) {try prefix.commit(commit,library:library)}
         let baseline=try prefix.query(library:library)
         guard baseline.contextDigest==source.startingReceiptDigest,baseline.eventSequence==source.startingEventSequence,
-              !prefix.commits.contains(where:{$0.actor=="user" && $0.commands.contains(where:{check.accepts($0.kind,composed:session.mechanicsVersion=="dryrun.hazard-mechanics/5")})}) else {throw SessionError.stale}
+              !prefix.commits.contains(where:{$0.actor=="user" && $0.commands.contains(where:{check.accepts($0.kind,composed:HazardExperience.level(session.mechanicsVersion)>=5)})}) else {throw SessionError.stale}
         var accepted=attempt;accepted.answers=[]
         if let observation=observations.first {
             let command=session.commits[source.startingRevision]

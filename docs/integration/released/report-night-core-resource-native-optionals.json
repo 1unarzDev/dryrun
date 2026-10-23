@@ -1,0 +1,55 @@
+{
+  "report_id": "report-night-core-resource-native-optionals",
+  "run_ids": [
+    "run-712201eb470a4e07b651341f5154de92",
+    "run-2c4558d323bb4a379c64d84863fa50ed"
+  ],
+  "feature": "Nighttime donor integration compile/resource diagnosis",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Core run crashes before a full result because restored shopping tests require a missing draft price asset and a flood test force-unwraps an event absent from current content. Native compile has one observed optional-home mismatch in ScannerHomeView.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/ShoppingListTests.swift",
+      "lines": [
+        8
+      ],
+      "diagnosis": "try! loads absent content/prices/tarrant-v1.json, aborting the test runner.",
+      "fix": "Restore the matching authored draft price asset from5f95135 or explicitly configure a bounded authored price fixture for this test. Replace force-try with throwing setup so missing resources yield an actionable test failure instead of process crash."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SixHazardExperienceTests.swift",
+      "lines": [
+        133
+      ],
+      "diagnosis": "Force-unwrapped flood road-unavailable event is absent from current scenario content. Restored test/engine assumes donor content not yet reconciled.",
+      "fix": "Reconcile exact authored scenario pack with restored mechanics and preserve distinct regional flood versus household leak. Select a real event by the intended closure semantics and use require/assertion rather than force unwrap; do not invent a connector or weaken closed-road behavior to make test pass."
+    },
+    {
+      "path": "apps/ios/DryRun/Spatial/ScannerHomeView.swift",
+      "lines": [
+        206
+      ],
+      "diagnosis": "RoomScanFlowView completion returns HomeModel? for cancel/failure paths; ScanDraft.home requires concrete HomeModel.",
+      "fix": "Guard-let the proposed home before constructing ScanDraft. A nil completion must preserve prior saved home/draft and dismiss/cancel according to existing flow. Keep ticket/scope/baseRevision guards so late scan callback cannot overwrite another household."
+    }
+  ],
+  "references": [
+    {
+      "ref": "5f95135",
+      "path": "content/prices/tarrant-v1.json",
+      "classification": "authored-static-draft-price-input-cleared",
+      "finding": "Structured public planning estimates with14 items, USD ranges and explicit draft/unverified-listing limitations. No appAI response/transcript content found. Safe for engineering source read/import at exact donor blob."
+    }
+  ],
+  "recommendations": [
+    "Preserve draft price status and estimate labeling. Importing resource restores code availability, not evidence these are researched current prices; do not claim live quotes or verified affordability.",
+    "Core crash prevents a complete pass/fail count. Rerun after resource/test setup reconciliation; inspect additional failures through capture.",
+    "No physical or simulator app execution needed for these compile fixes; phone unplugged remains respected."
+  ],
+  "limitations": [
+    "Only the observed native optional diagnostic is reported; additional errors may emerge after fix.",
+    "No live generation started; awaiting final context/quota source freeze and superseding native export."
+  ],
+  "next_owner": "scenario_learning for Core resources/tests; root for native optional callback",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -251,6 +251,9 @@ public struct HomeModel: Codable, Sendable, Hashable, Identifiable {
     public var completeness: HomeCompleteness
     public var completenessNote: String?
     public var isFictional: Bool
+    /// What RoomPlan captured, frozen at import. Corrections never change it; "Restore what the scan saw" and
+    /// "Revert whole home to scan" read from it. Nil for sample and hand-built homes.
+    public var scanSnapshot: ScanSnapshot?
     public init(id: String, revision: Int = 1, label: String, source: HomeSource, frame: CoordinateFrame = CoordinateFrame(),
                 floors: [Floor], spaces: [Space], walls: [WallSegment] = [], portals: [Portal], obstacles: [Obstacle] = [],
                 connectors: [FloorConnector] = [], annotations: [Annotation] = [], completeness: HomeCompleteness = .complete,
@@ -354,7 +357,9 @@ public enum AlternativeStatus: String, Codable, Sendable, Hashable {
 }
 
 public struct RouteResult: Codable, Sendable, Hashable {
-    public static let algorithmVersion = "egress-portal-graph/2"
+    /// 3: openings recorded operable=false (e.g. a doorway marked Not usable) are excluded from every route
+    /// (house change abaf408, acknowledged and versioned jointly by the scenario lead). Cached routes from /2 recompute.
+    public static let algorithmVersion = "egress-portal-graph/3"
     public var request: RouteRequest
     public var primary: RoutePath?
     public var alternative: RoutePath?

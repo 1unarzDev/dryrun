@@ -88,6 +88,13 @@ public struct ResourceSearchPlan: Codable, Sendable {
     public var id:String;public var taskID:String;public var dependencyIDs:[String];public var hazardIDs:[String];public var category:String
     public var purpose:String;public var mandatoryCapabilities:[String];public var unknowns:[String];public var travelMode:String
     public var maximumDistanceKm:Double;public var expansionLimit:Int;public var requiredEvidence:[String];public var cloudReturnPolicy:String
+    public init(id:String,taskID:String,dependencyIDs:[String],hazardIDs:[String]=[],category:String,purpose:String,
+                mandatoryCapabilities:[String]=[],unknowns:[String],travelMode:String,maximumDistanceKm:Double,
+                expansionLimit:Int,requiredEvidence:[String],cloudReturnPolicy:String="local_only") {
+        self.id=id;self.taskID=taskID;self.dependencyIDs=dependencyIDs;self.hazardIDs=hazardIDs;self.category=category
+        self.purpose=purpose;self.mandatoryCapabilities=mandatoryCapabilities;self.unknowns=unknowns;self.travelMode=travelMode
+        self.maximumDistanceKm=maximumDistanceKm;self.expansionLimit=expansionLimit;self.requiredEvidence=requiredEvidence;self.cloudReturnPolicy=cloudReturnPolicy
+    }
 }
 public struct InventoryObservationProposal: Codable, Sendable {
     public var id:String;public var physicalID:String;public var category:String;public var quantity:Double?;public var unit:InventoryUnit

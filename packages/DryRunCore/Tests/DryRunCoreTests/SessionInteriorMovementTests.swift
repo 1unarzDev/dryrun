@@ -16,9 +16,13 @@ import Testing
         #expect(route.request.purpose == .interiorShelter)
         #expect(route.request.destinationSpaceID==target)
         #expect(after.snapshot.spatialState?.routes==after.routes)
-        #expect(throws:SessionError.invalidCommand){try session.commit(.init(id:"failed-move",actor:"user",baseRevision:2,commands:[.init(kind:"moveTo",target:person.id,value:"missing-room")]),library:SimFixtures.library)}
+        #expect(throws: SessionError.invalidCommand) {
+            try session.commit(.init(id:"failed-move",actor:"user",baseRevision:2,commands:[.init(kind:"moveTo",target:person.id,value:"missing-room")]),library:SimFixtures.library)
+        }
         let failed=try session.query(library:SimFixtures.library)
         #expect(failed==after)
+        #expect(failed.routes.first{$0.request.personID==person.id}?.request==route.request)
+        #expect(failed.routes.first{$0.request.personID==person.id}?.request.purpose == .interiorShelter)
         #expect(session.initial==input)
         #expect(try session.query(library:SimFixtures.library)==failed)
     }

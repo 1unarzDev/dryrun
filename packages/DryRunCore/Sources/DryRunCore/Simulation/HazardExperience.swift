@@ -2,8 +2,21 @@ import Foundation
 
 /// Versioned educational mechanics, never a forecast of injury, spread or safe exposure.
 public struct HazardExperience: Codable, Sendable, Equatable {
-    public static let version = "dryrun.hazard-mechanics/5"
-    public static let supportedVersions = ["dryrun.hazard-mechanics/1","dryrun.hazard-mechanics/2","dryrun.hazard-mechanics/3","dryrun.hazard-mechanics/4",version]
+    /// Version 6 (additive over 5): an explicit fire incident origin is excluded from routes from the
+    /// alarm onward, thermal outages record what was in place when power failed, and the family can
+    /// explicitly keep watching (`wait`) when a decision is requested without an authored question.
+    /// Version 7 (additive over 6): in a freeze, before relocation, the rest of the household can gather in the
+    /// room of the person hardest to move (recorded cold sensitivity first, then a recorded mobility need) by a
+    /// supported path, so the freeze opening offers a physical choice even without recorded warmth or a
+    /// compatible backup. Gathering credits no warmth and changes no temperature; the route owner moves people.
+    /// Earlier versions replay exactly as before; every capability below is gated by `level`.
+    public static let version = "dryrun.hazard-mechanics/7"
+    public static let supportedVersions = ["dryrun.hazard-mechanics/1","dryrun.hazard-mechanics/2","dryrun.hazard-mechanics/3","dryrun.hazard-mechanics/4","dryrun.hazard-mechanics/5","dryrun.hazard-mechanics/6",version]
+    /// Numeric mechanics level of a persisted version string; 0 for authored/legacy sessions without one.
+    public static func level(_ version:String?)->Int {
+        guard let version,version.hasPrefix("dryrun.hazard-mechanics/"),let n=Int(version.dropFirst("dryrun.hazard-mechanics/".count)) else {return 0}
+        return n
+    }
     public var mechanicsVersion = version
     public var hazard: HazardKind
     public var scene: String
@@ -52,18 +65,34 @@ struct HazardProgress {
     var accounted = Set<String>()
     var identifiedGaps=Set<String>()
     var escapeHelperByPersonID:[String:String]=[:]
-    var supportsActionProgress:Bool {mechanicsVersion == "dryrun.hazard-mechanics/5"}
+    var level:Int {HazardExperience.level(mechanicsVersion)}
+    var supportsActionProgress:Bool {level>=5}
     var supportsEscapeAccompaniment:Bool {supportsActionProgress}
+    /// Version 6: explicit incident origin excluded at the alarm; outage readiness; explicit wait.
+    var supportsOriginExclusion:Bool {level>=6}
+    var supportsOutageReadiness:Bool {level>=6}
+    /// Version 7: freeze gathering moves (`moveTo` into the anchor person's room) are offered.
+    var supportsFreezeGathering:Bool {level>=7}
     var protection: String?
     var mechanicsVersion:String
     var roomTemperatures:[String:EducationalTemperature]=[:]
     var shadedRoomIDs=Set<String>()
     var roomCoverageUnknown:Bool
     var usesRoomHeat:Bool {mechanicsVersion != "dryrun.hazard-mechanics/1"}
-    var supportsRecordedGapChecks:Bool {mechanicsVersion == "dryrun.hazard-mechanics/3" || supportsRefugeArrival}
-    var supportsRefugeArrival:Bool {mechanicsVersion == "dryrun.hazard-mechanics/4" || supportsEscapeAccompaniment}
+    var supportsRecordedGapChecks:Bool {level>=3}
+    var supportsRefugeArrival:Bool {level>=4}
     var lowerC: Double
     var upperC: Double
+    /// Ordered committed user actions with their emitted session events, so the debrief can
+    /// attribute consequences to the actual trace instead of a hazard-level summary.
+    var trace:[HazardTraceEntry]=[]
+    /// Thermal shelter-in-place commitments evaluated against the state at the moment of choice.
+    var thermalStays:[ThermalStayRecord]=[]
+    /// Flood access-loss stage outcome per person, computed at the stage from committed positions.
+    var refugeLostAtAccessLoss=Set<String>()
+    var refugeHeldAtAccessLoss=Set<String>()
+    /// Version 6 thermal hazards: what the household had in place at the moment home power failed.
+    var outageReadiness:[OutageReadinessRecord]=[]
     init(_ hazard: HazardKind,version:String,roomIDs:[String],roomCoverageUnknown:Bool) {
         self.roomCoverageUnknown=roomCoverageUnknown
         mechanicsVersion=version
@@ -80,7 +109,88 @@ struct HazardProgress {
         return range
     }
 }
+struct HazardTraceEntry:Equatable {
+    var kind:String
+    var subjectIDs:[String]
+    var eventID:String
+}
+/// Recorded at the committed power-loss boundary from household commits made before it. It states
+/// what was in place, never that it was adequate, warm/cool enough or medically sufficient.
+struct OutageReadinessRecord:Equatable {
+    var eventID:String
+    var minute:Int
+    var protected:Bool
+    var relocated:Bool
+    var essentialWithBackup:[String]
+    var essentialWithoutBackup:[String]
+    var exposedSensitivePersonIDs:[String]
+}
+/// A stay decision records what was in place, never an adequacy or safe-temperature claim.
+struct ThermalStayRecord:Equatable {
+    var choiceID:String
+    var eventID:String
+    var conditioning:ServiceState
+    var protected:Bool
+    var unpoweredEssentialIDs:[String]
+    var exposedSensitivePersonIDs:[String]
+}
 extension RunState {
+    /// Recorded sensitivity relevant to the current thermal hazard only.
+    func thermallySensitive(_ person:Person)->Bool {
+        scenario.hazard == .heatGridStrain ? person.needs.contains(.heatSensitive) : scenario.hazard == .freezePowerLoss ? person.needs.contains(.coldSensitive) : false
+    }
+    var thermalConditioning:ServiceState {services[scenario.hazard == .freezePowerLoss ? Svc.heat:Svc.cooling] ?? .unknown}
+    /// Sensitive people at home whose current room has no recorded protection while conditioning
+    /// is not operational. Heat uses the chosen shaded room; freeze uses recorded warmth (whole home).
+    func thermallyExposedSensitivePeople()->[String] {
+        guard let progress=hazardProgress,[.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),!relocated,thermalConditioning != .operational else {return []}
+        return household.people.filter {person in
+            guard thermallySensitive(person) else {return false}
+            if scenario.hazard == .freezePowerLoss {return progress.protection != "recordedWarmth"}
+            return !progress.shadedRoomIDs.contains(startSpace(for:person))
+        }.map(\.id).sorted()
+    }
+    /// Same route authority and exclusions as the session's `moveTo` command.
+    /// Version 7 freeze: the room of the first person at home (household order) with a recorded cold sensitivity,
+    /// else with a recorded mobility need. Nil without such a person, a home, or a recorded room for them.
+    func freezeGatheringRoom()->String? {
+        guard let home else {return nil}
+        let atHome=household.people.filter{!isOutside($0.id)}
+        let mobility:Set<AssistanceNeed>=[.limitedMobility,.usesWheelchair,.cannotUseStairs,.needsHelperToEvacuate]
+        guard let anchor=atHome.first(where:{$0.needs.contains(.coldSensitive)}) ?? atHome.first(where:{!mobility.isDisjoint(with:$0.needs)}) else {return nil}
+        let room=startSpace(for:anchor)
+        return home.space(room) != nil ? room : nil
+    }
+    func canMove(_ person:Person,to destination:String)->Bool {
+        guard let home,home.space(destination) != nil,!isOutside(person.id),startSpace(for:person) != destination else {return false}
+        return planner.plan(RouteRequest(personID:person.id,startSpaceID:startSpace(for:person),mobility:mobility(for:person),
+            exclusions:ScenarioExclusions(blockedSpaceIDs:spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:spatialState?.affectedPortalIDs ?? []),purpose:.helperReach,destinationSpaceID:destination),in:home).primary != nil
+    }
+    /// Adaptive sessions only: record what a thermal stay decision actually committed to.
+    mutating func recordThermalStay(choiceID:String,eventID:String) {
+        guard var progress=hazardProgress,[.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),!relocated else {return}
+        let unpowered=household.equipment.filter{$0.isEssential && services[Svc.device($0.id)] != .operational}.map(\.id).sorted()
+        progress.thermalStays.append(.init(choiceID:choiceID,eventID:eventID,conditioning:thermalConditioning,protected:progress.protection != nil,
+            unpoweredEssentialIDs:unpowered,exposedSensitivePersonIDs:thermallyExposedSensitivePeople()))
+        hazardProgress=progress
+    }
+    /// Version 6: at the committed power-loss boundary of a thermal hazard, record which recorded
+    /// protection, departure and essential-equipment power the household had already committed to.
+    /// Only the first loss is recorded; later outages keep the original preparation comparison.
+    mutating func recordOutageReadiness(eventID:String) {
+        guard var progress=hazardProgress,progress.supportsOutageReadiness,[.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),
+              progress.outageReadiness.isEmpty else {return}
+        let essential=household.equipment.filter{$0.isEssential && $0.requiresElectricalPower}
+        let backed=essential.filter{equipment in !equipment.compatibleBackupIDs.isEmpty && household.backupPower.contains(where:{equipment.compatibleBackupIDs.contains($0.id)})}.map(\.id).sorted()
+        progress.outageReadiness.append(.init(eventID:eventID,minute:minute,protected:progress.protection != nil,relocated:relocated,
+            essentialWithBackup:backed,essentialWithoutBackup:essential.map(\.id).filter{!backed.contains($0)}.sorted(),
+            exposedSensitivePersonIDs:household.people.filter{thermallySensitive($0)}.filter{person in
+                guard !relocated else {return false}
+                if scenario.hazard == .freezePowerLoss {return progress.protection != "recordedWarmth"}
+                return !progress.shadedRoomIDs.contains(startSpace(for:person))
+            }.map(\.id).sorted()))
+        hazardProgress=progress
+    }
     mutating func advanceHazardTemperature(minutes: Double) {
         guard var progress=hazardProgress, !relocated else {return}
         let hours=minutes/60
@@ -225,6 +335,7 @@ extension RunState {
         default:throw SessionError.invalidCommand
         }
         hazardProgress=progress
+        synchronizeAdaptiveOccupants()
     }
     func recordedPowerGaps()->[String] {
         guard hazardProgress?.supportsRecordedGapChecks==true else {return []}
@@ -293,6 +404,18 @@ extension RunState {
         for room in home?.spaces ?? [] {candidates.append(.init(kind:"reduceSolarGain",target:room.id))}
         for gap in openHazardGaps() {candidates.append(.init(kind:"identifyGap",target:gap))}
         var valid=candidates.filter { command in var copy=self;return (try? copy.applyHazardAction(command)) != nil }
+        // Heat: a person with recorded heat sensitivity can be moved into an already chosen shaded
+        // room by a supported path. This is the stay-in-place adaptation; it adds no cooling.
+        if scenario.hazard == .heatGridStrain,let progress=hazardProgress,progress.usesRoomHeat,!relocated {
+            for person in household.people where thermallySensitive(person) {
+                for room in progress.shadedRoomIDs.sorted() where canMove(person,to:room) {valid.append(.init(kind:"moveTo",target:person.id,value:room))}
+            }
+        }
+        // Freeze (v7): the rest of the household gathers in the room of the person hardest to move, by a
+        // supported path. Requires a recorded layout and a recorded room for that person; no warmth is credited.
+        if scenario.hazard == .freezePowerLoss,hazardProgress?.supportsFreezeGathering==true,!relocated,let room=freezeGatheringRoom() {
+            for person in household.people where canMove(person,to:room) {valid.append(.init(kind:"moveTo",target:person.id,value:room))}
+        }
         if scenario.hazard == .tornado,services[Svc.handset] == .operational,services[Svc.cellular] == .operational {
             for contact in household.contacts where contact.isComplete {valid.append(.init(kind:"contact",target:contact.id))}
         }
@@ -331,7 +454,7 @@ extension RunState {
             actions=["leaveEarly","moveTo","takeSupply"]+(progress.supportsRefugeArrival ? ["reachHigherRefuge","transferSupply"]:[]);next=progress.supportsRefugeArrival ? "prep.floodPlan":"prep.relocation"
         case .freezePowerLoss:
             scene="cold-continuity-energy";objective="Maintain documented essential loads and compare warmth or a recorded alternative."
-            actions=["allocatePower","warmLayers","heatedAlternative"];next="prep.medicalBackup"
+            actions=["allocatePower","warmLayers","heatedAlternative"]+(progress.supportsFreezeGathering ? ["moveTo"]:[]);next="prep.medicalBackup"
         case .heatGridStrain:
             scene="heat-cooling-access";objective="Maintain workable cooling and adapt when it becomes unavailable."
             actions=["reduceSolarGain","cooledAlternative","allocatePower"];next=progress.supportsRefugeArrival ? "prep.heatCold":"prep.coolingPlan"
@@ -400,6 +523,39 @@ extension RunState {
             if storedWater == nil {fact("storedWaterQuantityUnknown")}
             else if storedWater == 0 {fact("storedWaterDepleted")}
             if flags.contains(where:{$0.hasPrefix("exercise.water.stored.")}) {fact("storedWaterActivityDebited")}
+        }
+        if [.freezePowerLoss,.heatGridStrain].contains(scenario.hazard),!relocated {
+            // Person-specific stay-in-place consequence from committed positions and protection.
+            let exposed=Set(thermallyExposedSensitivePeople())
+            for person in household.people where thermallySensitive(person) {
+                let room=startSpace(for:person)
+                if exposed.contains(person.id) {fact(scenario.hazard == .heatGridStrain ? "sensitivePersonInUnshadedRoom":"sensitivePersonWithoutRecordedWarmth",[person.id,room],"prep.heatCold")}
+                else if thermalConditioning != .operational {fact(scenario.hazard == .heatGridStrain ? "sensitivePersonInShadedRoom":"sensitivePersonWithRecordedWarmth",[person.id,room])}
+            }
+            for stay in progress.thermalStays {
+                let kind=stay.conditioning == .operational ? "thermalStayWithConditioning":stay.protected ? "thermalStayWithRecordedProtection":"thermalStayWithoutRecordedProtection"
+                facts.append(.init(kind:kind,subjectIDs:[stay.choiceID],eventIDs:[stay.eventID],nextActionID:stay.protected || stay.conditioning == .operational ? next:"prep.heatCold"))
+                if !stay.exposedSensitivePersonIDs.isEmpty {facts.append(.init(kind:"thermalStaySensitivePersonExposed",subjectIDs:Array(([stay.choiceID]+stay.exposedSensitivePersonIDs).prefix(20)),eventIDs:[stay.eventID],nextActionID:next))}
+                if !stay.unpoweredEssentialIDs.isEmpty {facts.append(.init(kind:"thermalStayEssentialEquipmentUnpowered",subjectIDs:Array(([stay.choiceID]+stay.unpoweredEssentialIDs).prefix(20)),eventIDs:[stay.eventID],nextActionID:"prep.medicalBackup"))}
+            }
+        }
+        // Version 6: the preparation comparison at the moment power actually failed.
+        for record in progress.outageReadiness {
+            let protectedKind=record.relocated ? "outageBeganAfterDeparture":record.protected ? "outageBeganWithRecordedProtection":"outageBeganWithoutRecordedProtection"
+            facts.append(.init(kind:protectedKind,subjectIDs:Array(record.exposedSensitivePersonIDs.prefix(20)),eventIDs:[record.eventID],nextActionID:record.protected || record.relocated ? next:"prep.heatCold"))
+            if !record.essentialWithBackup.isEmpty {facts.append(.init(kind:"outageBeganWithBackupAssigned",subjectIDs:Array(record.essentialWithBackup.prefix(20)),eventIDs:[record.eventID],nextActionID:next))}
+            if !record.essentialWithoutBackup.isEmpty {facts.append(.init(kind:"outageBeganWithoutBackupAssigned",subjectIDs:Array(record.essentialWithoutBackup.prefix(20)),eventIDs:[record.eventID],nextActionID:"prep.medicalBackup"))}
+        }
+        if scenario.hazard == .homeFire,progress.supportsOriginExclusion,let origin=spatialState?.originSpaceID,spatialState?.affectedSpaceIDs.contains(origin)==true {
+            fact("fireOriginExcludedFromRoutes",[origin])
+        }
+        if scenario.hazard == .flashFlood {
+            if !progress.refugeHeldAtAccessLoss.isEmpty {fact("atHigherRefugeBeforeAccessLoss",progress.refugeHeldAtAccessLoss.sorted())}
+            if !progress.refugeLostAtAccessLoss.isEmpty {fact("refugeApproachLostAtAccessLoss",progress.refugeLostAtAccessLoss.sorted(),"prep.floodPlan")}
+        }
+        // The committed action trace (most recent 24) lets the debrief cite what was actually done.
+        for entry in progress.trace.suffix(24) {
+            facts.append(.init(kind:"action."+entry.kind,subjectIDs:Array(entry.subjectIDs.prefix(20)),eventIDs:[entry.eventID],nextActionID:next))
         }
         for requirement in currentUnmet.sorted() {facts.append(.init(kind:requirement,subjectIDs:[],eventIDs:causes[requirement] ?? [],nextActionID:next))}
         return HazardExperience(mechanicsVersion:progress.mechanicsVersion,hazard:scenario.hazard,scene:scene,objective:objective,supportedActions:actions+["identifyGap"],feasibleCommands:feasibleHazardCommands(),outsidePersonIDs:progress.outside.sorted(),accountedPersonIDs:progress.accounted.sorted(),shelteredPersonIDs:sheltered,destinationIDs:household.transport.destinations.map(\.id),occupantRoomIDs:Dictionary(uniqueKeysWithValues:household.people.map{($0.id,progress.outside.contains($0.id) ? "exterior":startSpace(for:$0))}),shelterRoomID:shelterSpace?.id,escapeHelperByPersonID:progress.supportsEscapeAccompaniment ? progress.escapeHelperByPersonID:nil,refugeRoomID:refuge,refugedPersonIDs:refuged,relocated:relocated,

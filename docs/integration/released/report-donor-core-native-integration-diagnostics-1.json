@@ -1,0 +1,90 @@
+{
+  "report_id": "report-donor-core-native-integration-diagnostics-1",
+  "run_ids": [
+    "run-1e96fca5cad043b2b5e0f181644c52c0",
+    "run-58410ed136144e05ae7f38159b13280c"
+  ],
+  "feature": "Reconciled donor mechanics and native API compile",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Core executes500 tests but fails4 methods at7 issues after mechanics/5 restoration. Native generic build fails on missing restored source/API members and one changed request initializer. No device or simulator app ran.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SpatialChoiceCausalityTests.swift",
+      "symbols": [
+        "incrementalChoicePersistsArrivalRejectsReentryAndCannotAccountIndoorPeople",
+        "incrementalShelterArrivalUsesSameRoomAndRouteAsAuthoredPlayback"
+      ],
+      "lines": [
+        63,
+        64,
+        117,
+        119
+      ],
+      "diagnosis": "Tests use SimulationSession.initialize, now mechanics/5 adaptive mode. Authored group-choice semantics and adaptive per-person progress are different contracts; synchronization overwrites authored arrival from adaptive progress that never received escape/shelter commands. Re-entry then succeeds because adaptive occupant never left; subsequent commit becomes stale.",
+      "fix": "Freeze explicit authored-session mode for tests asserting authored choose parity, and separately test current adaptive feasible per-person escape/shelter commands with no re-entry/accounting indoors. If native exposes choose in adaptive mode, reconcile its committed effect rather than silently accepting a no-effect choice. Preserve one authoritative state per mode."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SessionInteriorMovementTests.swift",
+      "symbol": "tornadoMovementNeverReplacesShelterWithExteriorRoute",
+      "diagnosis": "The current adaptive command validator rejects the deliberately missing-room move; historical test expects a returned unchanged receipt instead of rejection.",
+      "fix": "Assert typed invalidCommand and unchanged last committed snapshot/revision/routes after invalid move. Retain successful shelter destination/purpose invariants. If initial valid shelter move itself fails, inspect its feasible command against current mechanics before changing expectations."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/HousingSupportTests.swift",
+      "symbol": "manufacturedHousingOverridesLegacyShelterMarkersInScoreAndContext",
+      "lines": [
+        40
+      ],
+      "diagnosis": "Hard-coded assessment/6 expectation conflicts with restored HouseholdAssessment.version assessment/7.",
+      "fix": "Review defined/7 predicate change, then assert the intended current version constant while retaining manufactured-home no-shelter-credit predicates and frozen historical handling."
+    },
+    {
+      "path": "apps/ios/DryRun/App/AppModel.swift",
+      "lines": [
+        205,
+        207
+      ],
+      "diagnosis": "Caller references DemoLaunch.alert but corresponding donor launch option/API was not included.",
+      "fix": "Restore approved alert launch argument/property and synthetic sample behavior from same donor contract, preserving current privacy/demo guards."
+    },
+    {
+      "path": "apps/ios/DryRun/App/AppModel.swift",
+      "lines": [
+        1191,
+        213,
+        216
+      ],
+      "diagnosis": "DirectorGatewayClient and WeatherAlertService definitions absent from compilation snapshot.",
+      "fix": "Verify restored files exist and current generated target membership includes them. Regenerate only after source integration then rebuild fresh; this build began before latest regeneration."
+    },
+    {
+      "path": "apps/ios/DryRun/Maps/MapPlanningView.swift",
+      "lines": [
+        28,
+        360,
+        376
+      ],
+      "diagnosis": "TaskResourceSearch and ResourceSuggestion definitions unavailable; MapPlanningDestination Hashable/Equatable errors cascade from missing associated type.",
+      "fix": "Restore donor map service/model contract and target membership together; resolve missing type before manually implementing conformances."
+    },
+    {
+      "path": "apps/ios/DryRun/App/AppModel.swift",
+      "lines": [
+        650
+      ],
+      "diagnosis": "ResourceStrategyBridge.request now requires baseRevision; restored caller supplies older signature.",
+      "fix": "Pass the actual host inventory/source revision required by current bridge, tied to same request snapshot and currentResourceKey. Do not insert arbitrary0 merely to compile."
+    }
+  ],
+  "recommendations": [
+    "Do not discard restored explicit per-person hazard mechanics or root authored bridge. Deliberately separate current adaptive inputs from historical authored test setup while preserving exact causal outcomes.",
+    "Native scope/source guards and atomic persistence must survive API reconciliation. Missing symbols are compile evidence only; no claim restored features run until fresh build/tests."
+  ],
+  "limitations": [
+    "Core full log contains deterministic receipt dump from failed assertion; only semantic diagnosis released.",
+    "Some source changed during native build. This report identifies compiled-snapshot errors, not a claim every symbol remains absent now.",
+    "No live provider execution until consent/contextBinding/quota contracts and fresh canonical exports are explicitly frozen."
+  ],
+  "next_owner": "scenario_learning for Core; root for native source/API reconciliation",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

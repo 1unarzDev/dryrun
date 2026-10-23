@@ -1,0 +1,143 @@
+{
+  "report_id": "report-groq-compact-debrief-restart-review-20261022",
+  "run_ids": [
+    "run-342c6a03c6e14a6d86e6f518224ed61f",
+    "run-11b93a4d0bd146a68965cfc956ca0df8",
+    "run-2a7e5f8677cd475ba0c0c55946e8ad7a"
+  ],
+  "review_kind": "Synthetic agent audit; dedicated output reviewer; forced-fallback development runs on the Groq path (every attempt reported)",
+  "feature": "Groq-served debrief (debrief/3) on the compact restart context; also resources and director attempts present in run-2a7e",
+  "fixture_snapshot": {
+    "inputs": "v7 debrief inputs (oak, lake, pine; context.locale en); resources.json; director freeze context",
+    "attempts": "run-2a7e (02:31): debrief oak 58be502f, lake 1303a0fb, pine b06734e4, resources ba8af0f3, director freeze 1c2cc897. run-11b9 (02:33): debrief oak 413f1a7f, lake 88f8ca4a, pine 264588b6. run-342c (02:36): debrief oak e1d95189, lake 8a81ca5e, pine 0a0a22f7.",
+    "path": "Each attempt: Codex served one turn then deadline; Gemini failed immediately with provider_overloaded (within about 1 ms, consistent with an injected or open-circuit failure); Groq generation 2."
+  },
+  "versions": {
+    "prompt": "debrief/3; Groq compaction compactForGroq (no task catalog, caution/critical receipt events only, routes removed)",
+    "code_reference": "provider-fallback.ts at ac55f81; run-342c follows commit e08d119 (restarted Groq feature turns without tools) by timing; runs 2a7e and 11b9 precede it"
+  },
+  "criteria": [
+    {
+      "id": "GQ-REL",
+      "criterion": "Outcome distribution across 9 Groq debrief attempts",
+      "result": "2 served and accepted (e1d95189, 8a81ca5e); 1 schema_mismatch after repair (0a0a22f7); 3 tool_use_failed (all run-11b9); 1 context_record_not_in_query (58be502f); 2 request_too_large (1303a0fb, b06734e4). All statuses truthful. Also in run-2a7e: director freeze 1c2cc897 (Codex preview then deadline) ended groq_request_too_large; resources ba8af0f3 see failures."
+    },
+    {
+      "id": "GQ-GROUND",
+      "criterion": "Accepted debriefs grounded in the receipt",
+      "result": "e1d95189 pass: blocked relocation, recommended stay, oxygen loss without confirmed backup, and stored water below the three-day target, all receipt-accurate (better water coverage than the Codex oak debriefs). 8a81ca5e partial: correct that the early move was blocked, but describes it as a blocked route (the receipt records a blocked relocation with no destination), asserts the family ended up on higher ground (not a receipt state), and proposes improvised cold-storage alternatives (a powered cooler, another household's refrigerator despite the area power cut) without pharmacist guidance, while naming the medication from the internal equipment ID."
+    },
+    {
+      "id": "GQ-DEGRADE",
+      "criterion": "Not degraded by compaction or withheld records",
+      "result": "Mixed. Oak quality held. Lake lost precision consistent with routes and info-level events being removed by compaction (the summary invented a route framing and a final position). Resources ba8af0f3 was degraded to a completed response with zero plans and a statement that required records could not be retrieved."
+    },
+    {
+      "id": "GQ-HAZ",
+      "criterion": "Hazard-specific clause",
+      "result": "e1d95189 implicit (heating stopped) but no explicit warmth decision; 8a81ca5e flood-specific (move early) but no floodwater-crossing caution."
+    },
+    {
+      "id": "GQ-ACC-ID",
+      "criterion": "No accessibility attribute without need; no internal IDs",
+      "result": "Pass 2/2 for accessibility; internal-ID pattern pass 2/2, though 8a81ca5e derives the medication name from an ID token."
+    }
+  ],
+  "synopsis": "On the Groq path, two of nine debrief attempts produced an accepted summary. The oak summary was accurate and usefully named the water shortfall; the lake summary had the right priorities but drifted from the receipt (route framing, an asserted end position) and offered unsupported medication storage workarounds. Failures were all reported honestly. tool_use_failed was the dominant failure before restarted Groq feature turns stopped offering tools (3/3 in run-11b9, 0/3 after in run-342c). Payload size still blocks lake and pine in some runs, one pine attempt failed schema validation twice, and one oak attempt was rejected for citing a record outside its queries. A Groq resources attempt returned completed with no plans, which mislabels a pending-information outcome as delivery.",
+  "fact_findings": [
+    {
+      "fact_ids": [
+        "evt.freeze-power-loss.checkpoint.water-target",
+        "act.water.store-3day"
+      ],
+      "finding": "Used by e1d95189."
+    },
+    {
+      "fact_ids": [
+        "debrief.rehearsal.routes (removed by compaction)",
+        "evt.choice.* (info severity, removed by compaction)"
+      ],
+      "finding": "Removal of routes and info events coincides with the lake summary inventing route and position details; choices array itself is retained."
+    },
+    {
+      "fact_ids": [
+        "evt.flash-flood.power-cut",
+        "context.family.contacts ct-lake-1"
+      ],
+      "finding": "Another household's refrigerator is suggested although the receipt cuts power to the flooded area; no basis that the neighbor has power."
+    },
+    {
+      "fact_ids": [
+        "equipment.eq-insulin purpose refrigeratedMedication"
+      ],
+      "finding": "Medication named from the ID token in 8a81ca5e."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "material",
+      "attempt": "8a81ca5e",
+      "expected": "Receipt-accurate outcome; storage guidance deferred to pharmacist",
+      "observed": "Invented route/position framing; unsupported cold-storage workarounds",
+      "impact": "Misleading flood lesson and medication handling",
+      "stage": "projection (compaction drops routes and info events) plus model"
+    },
+    {
+      "severity": "material (contract)",
+      "attempt": "ba8af0f3 (resources)",
+      "expected": "Truthful pending or unavailable when records are withheld",
+      "observed": "completed with zero searchPlans",
+      "impact": "Violates REL-01-style truthful status; UI would show an empty completed plan",
+      "stage": "projection (fitGroqContext withheld host records) plus contract validation"
+    },
+    {
+      "severity": "reliability",
+      "attempt": "0a0a22f7 (pine)",
+      "expected": "Valid debriefOutput",
+      "observed": "schema_mismatch after one repair",
+      "impact": "No card",
+      "stage": "validation; most likely summary over the 600-character limit or more than two focusTaskIDs, which Groq structured output does not enforce (issue path not captured)"
+    },
+    {
+      "severity": "reliability",
+      "attempts": "413f1a7f, 88f8ca4a, 264588b6, eae8387d (run-c7da)",
+      "expected": "Answer from host records",
+      "observed": "Groq API 400 tool_use_failed",
+      "impact": "No card",
+      "stage": "provider/tool: Groq emitted malformed tool calls when restarted feature turns still offered read tools; the later no-tools restart removed this (0/3 in run-342c). Residual risk remains when Codex fails before any tool result, because then no hostRetrievedRecords exist and tools are still offered."
+    },
+    {
+      "severity": "reliability",
+      "attempt": "58be502f",
+      "expected": "Evidence IDs accepted when they come from host-retrieved records",
+      "observed": "context_record_not_in_query",
+      "impact": "No card",
+      "stage": "validation: the retrieved-evidence set for the fallback likely is not seeded with record IDs from hostRetrievedRecords (medium-low confidence)"
+    }
+  ],
+  "likely_stage": "Combination: Groq compaction removes receipt detail the debrief relies on (routes, info-level choice events); fitGroqContext can withhold whole host results, after which the model reports missing records; Groq structured output does not enforce maxLength/maxItems; feature evidence validation may not treat restart records as retrieved.",
+  "references": [
+    "Fields inspected: provider_attempt events, protected_feature_response body (status, reason, diagnostic, proposal.summary, proposal.focusTaskIDs, proposal.searchPlans length, proposal.question)",
+    "services/ai-orchestrator/src/provider-fallback.ts compactForGroq, fitGroqContext, GroqPrivateProvider restarted flag; services/ai-orchestrator/src/features.ts debriefOutput and evidence validation (worktree wf_bce6b49a-568-1 ac55f81)"
+  ],
+  "recommendations": [
+    "Compaction for debrief: keep the choices with their simMinute and recommended flags plus a one-line host-computed outcome per choice (for example relocation blocked: no destination) instead of dropping all info-level events; keep route status as a single enum per person rather than the full route object.",
+    "When fitGroqContext withholds any host result, the feature must not return completed with empty output; map an empty plan list or a missing-records question to status pending or unavailable.",
+    "State output limits in the Groq instruction (summary at most about 450 characters, at most two focusTaskIDs) and capture Zod issue paths in the protected bundle.",
+    "Seed the feature's retrieved-evidence set with record IDs present in hostRetrievedRecords on restart.",
+    "When a restart has no host records, either have the host perform the standard initial read before calling Groq or skip Groq for that operation, rather than offering tools Groq misformats.",
+    "Debrief prompt: never propose specific storage workarounds for medication; direct the family to pharmacist or manufacturer guidance (already the Codex behavior)."
+  ],
+  "retests": [
+    "Repeat run-342c pattern 3x per family after the compaction and limit changes: pass if accepted at least 7/9, zero invented route or position claims, zero completed-empty outcomes.",
+    "Synthetic: restart with a withheld host result must yield pending/unavailable, never completed with empty plans."
+  ],
+  "limitations": [
+    "Gemini failures in these runs look injected or circuit-open (about 1 ms), so these runs test Groq only.",
+    "Only two accepted Groq debriefs exist; quality conclusions are low-n.",
+    "Code inspection used a worktree commit close to but not necessarily identical to each run.",
+    "Synthetic agent audit."
+  ],
+  "next_owner": "Integration owner (Groq compaction, status mapping, evidence seeding); debrief prompt owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

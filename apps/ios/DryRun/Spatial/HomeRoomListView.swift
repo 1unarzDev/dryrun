@@ -68,7 +68,7 @@ struct HomeRoomListView: View {
     private func spaceRow(_ space: Space) -> some View {
         let doors = home.portals.filter { p in p.sideA == .space(space.id) || p.sideB == .space(space.id) }
         return VStack(alignment: .leading, spacing: 2) {
-            Text(space.label + (space.labelConfirmed ? "" : " " + s("(name not confirmed)")))
+            Text(space.label)
             if space.geometryNeedsReview == true { Text(model.localizer("spatial.issue.correctedGeometryNeedsReview")).font(.caption) }
             ForEach(doors) { p in
                 Text(model.localizer("spatial.opening-summary", ["kind": DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "destination": destination(p, from: space.id), "status": openingText(p)]))

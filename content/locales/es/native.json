@@ -44,6 +44,10 @@
   "native.removeEquipment": "Eliminar este equipo o medicamento",
   "native.removeEquipmentConfirm": "¿Eliminar {device}?",
   "native.removeEquipmentNote": "Solo se eliminan este artículo y sus registros de preparación. Se conservan los miembros del hogar, las fuentes de energía de respaldo, los contactos y los lugares. El cambio se guarda al confirmar.",
+  "ui.scene.accountedOutside": "{person}: se confirmó que está afuera en este ejercicio.",
+  "ui.scene.exitedNeedsAccounting": "{person}: llegó afuera. Confirma su presencia en el punto de encuentro.",
+  "ui.scene.reachedShelter": "{person}: llegó a {room} en este ejercicio.",
+  "ui.brief.cloudNote": "Las sugerencias usan los datos registrados de esta familia ficticia. Revísalas antes de actuar.",
   "experience.setup.title": "Prepara esta práctica",
   "experience.setup.caption": "Elige las condiciones del ejercicio. Los datos del hogar y la puntuación no cambian.",
   "experience.setup.start": "Iniciar esta práctica",
@@ -194,5 +198,16 @@
   "experience.route.alternative": "Segunda salida evaluada: {steps}",
   "experience.route.shared": "Punto de paso compartido: {connections}",
   "experience.setup.startingRooms": "¿Dónde empieza cada persona?",
-  "experience.setup.startingRooms.why": "Usa las habitaciones registradas o elige habitaciones iniciales para el ejercicio. Esto no cambia la ubicación de las personas en el registro del hogar."
+  "experience.setup.startingRooms.why": "Usa las habitaciones registradas o elige habitaciones iniciales para el ejercicio. Esto no cambia la ubicación de las personas en el registro del hogar.",
+  "native.aboutBeacon": "Beacon es el asistente de Dry Run para los hogares de ejemplo. Usa primero OpenAI Codex y, si Codex no está disponible, Google Gemini o Groq; las fotos de la casa van solo a Google Gemini. Beacon recibe el registro completo de la familia de ejemplo, incluidos nombres, necesidades, medicamentos, contactos y teléfonos, la casa y su dirección. Sin conexión, Dry Run planifica, ensaya y puntúa en este teléfono. Los datos de su propio hogar no se envían.",
+  "native.sampleFamily": "Probar una familia de ejemplo",
+  "native.sampleFamilyDetail": "Familias y hogares ficticios para explorar la app. Reemplazan el ejemplo en este teléfono; su propio hogar nunca se reemplaza desde aquí.",
+  "native.sampleFamilyPick": "Familia",
+  "native.sampleHomePick": "Hogar",
+  "native.sampleFamilyLoad": "Cargar esta familia",
+  "native.sampleFamilyBlocked": "Su propio hogar está guardado en este teléfono. Bórrelo abajo primero si quiere probar una familia de ejemplo.",
+  "native.sampleKeepHome": "Conservar mi hogar escaneado",
+  "native.sampleReplaceHome": "¿Reemplazar su propio hogar por un hogar de ejemplo? Después no se podrá recuperar su escaneo o dibujo.",
+  "native.sampleReplaceHomeConfirm": "Reemplazar mi hogar",
+  "native.restoreHousehold": "Restaurar mi hogar"
 }

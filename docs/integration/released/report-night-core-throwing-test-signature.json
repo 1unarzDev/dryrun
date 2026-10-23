@@ -1,0 +1,22 @@
+{
+  "report_id": "report-night-core-throwing-test-signature",
+  "run_ids": [
+    "run-6b270611736e4fe68ffe78dbb55d65fd",
+    "run-bb0b9d48442c477d9cda574ce685e651"
+  ],
+  "synopsis": "Core stops at a throwing fixture-loader call in a test lacking throws in the compiled snapshot. Current source already adds throws. Native generic compile capture exits successfully.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/ShoppingListTests.swift",
+      "line": 73,
+      "symbol": "testPriceTableIsLabelledAsADraftWithSourcesAndDate",
+      "cause": "try prices() requires a throwing test signature.",
+      "fix": "Keep current throws signature; rerun after the source edit. No further change indicated by this snapshot."
+    }
+  ],
+  "limitations": [
+    "Native exit0 is compile-only; no device or simulator execution occurred.",
+    "No Core test assertions ran to completion in the failed compile snapshot."
+  ],
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

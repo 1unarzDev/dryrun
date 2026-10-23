@@ -1,0 +1,51 @@
+{
+  "report_id": "report-codex-research-source-gap-1",
+  "run_ids": [
+    "research-source-audit-1"
+  ],
+  "feature": "Research/page-open capability source reconciliation",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Existing public-api contains a real bounded official-page fetcher. It is restricted to curated source IDs and a fixed code-selected source list. The private feature runtime currently exposes bundled resource lookup and private-context read, while Codex configuration disables hosted web search. No current agent-directed live search/open path was found in the inspected provider/feature bridge.",
+  "criteria": [
+    {
+      "id": "CODEX-02.research",
+      "verdict": "not implemented in inspected bridge",
+      "evidence": "Runtime web_search disabled; FeatureRunner resource tools offer bundled lookup only."
+    }
+  ],
+  "references": [
+    {
+      "path": "services/public-api/src/agent/fetchSource.ts",
+      "finding": "fetchOfficialSource resolves curated source IDs, public HTTPS constraints, same-origin manual redirects, whole-request deadline, byte/text caps and text-only extraction. This is reusable real page-fetch infrastructure, not search discovery."
+    },
+    {
+      "path": "services/public-api/src/agent/run.ts",
+      "finding": "runRegionalAgent fetches code-selected cited source IDs from regional pack. Model receives fetched content afterward and cannot choose new URLs."
+    },
+    {
+      "path": "services/ai-orchestrator/src/evidence.ts",
+      "finding": "PublicEvidenceTools resource and guidance reads are bundled records; explicit needsReview and unknown activation preserved."
+    },
+    {
+      "path": "services/ai-orchestrator/src/features.ts",
+      "finding": "Resource feature offers find_official_resources and authorized context read; no agent-directed search/open dynamic tools in inspected code."
+    },
+    {
+      "path": "services/ai-orchestrator/src/codex-runtime.ts",
+      "finding": "Hosted web_search explicitly disabled."
+    }
+  ],
+  "recommendations": [
+    "Do not attest research true or call bundled lookup live grounding. Keep existing honest source/activation semantics.",
+    "Integration specialist should expose a justified real search capability and page-inspection bridge. Reuse bounded fetch policy where suitable, while permitting verified discovered public URLs rather than only a fixed source directory.",
+    "Preserve public/private query separation: send locality and actual service need to search, not medication/helper dossier. Bind results to URL, publisher, fetch date and source evidence IDs.",
+    "Before release require a live query with more than one candidate, actual selected page fetch, identity matching, comparison tied to family constraints, explicit unknown stock/activation/accessibility, and native follow-through. Route output to a fresh reviewer with exact inputs and criteria.",
+    "Public URL checks must consider DNS/internal-address resolution and redirect targets when extending beyond fixed allowlists; existing source-ID fetch policy is not by itself proof arbitrary discovered URLs are safe."
+  ],
+  "limitations": [
+    "Source inspection only; no live web search or page retrieval performed, no source accuracy or research quality acceptance.",
+    "No production edits made by reviewer. Recommendations require specialist implementation and independent acceptance."
+  ],
+  "next_owner": "codex_integration and maps_resources specialists",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

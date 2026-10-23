@@ -1,0 +1,24 @@
+{
+  "report_id": "report-research-typecheck-request-option",
+  "run_ids": [
+    "run-458a925058ca45d48bc1f02f44bf0916"
+  ],
+  "feature": "New public research compile contract",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "One TypeScript compile error remains in public-research.ts: the selected DNS/lookup RequestOptions type does not declare autoSelectFamily.",
+  "failures": [
+    {
+      "path": "services/ai-orchestrator/src/public-research.ts",
+      "lines": [
+        24
+      ],
+      "diagnosis": "Object literal includes an option from a different networking API contract.",
+      "fix": "Use only the actual DNS RequestOptions supported by the installed Node/type definitions. Remove autoSelectFamily from this request if it is not part of that API; preserve explicit all-address collection and public-address validation. If intended for later socket connection, set it on the correct connection options rather than casting away excess-property checks."
+    }
+  ],
+  "limitations": [
+    "Compiler only; no live research, SSRF acceptance or response quality verified."
+  ],
+  "next_owner": "codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

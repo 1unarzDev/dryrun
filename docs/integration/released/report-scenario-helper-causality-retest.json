@@ -1,0 +1,30 @@
+{
+  "report_id": "report-scenario-helper-causality-retest",
+  "run_ids": [
+    "run-74eb9049867c4e31a60f5b3c7c4a32a2"
+  ],
+  "feature": "Scenario causal effect regression reconciliation",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "42 tests executed across five suites. One helper-reach test failed because the expected blocked-helper event was absent; all other selected tests passed. The failed case uses the default fire decision before later hallway smoke, which can now evacuate occupants before the blocked-helper condition arises.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SimulationTests.swift",
+      "symbol": "helperReach",
+      "lines": [
+        294
+      ],
+      "diagnosis": "The test requires an assistance-blocked event for the child after the hallway-smoke variant, but no matching event exists. Source currently selects the default early-escape behavior rather than explicitly leaving people inside until smoke blocks reachability.",
+      "fix": "Freeze initial snapshot and external schedule; provide an explicit supported delay/remaining-inside intervention for the blocked-helper branch so the late condition is actually exercised. Keep the expected critical helper-reach evidence, exact cause link, no unsafe route and no re-entry recommendation assertions. Add a complementary timely-exit branch asserting no later blocked-helper penalty after successful evacuation."
+    }
+  ],
+  "recommendations": [
+    "Check actual committed occupant state at the hallway event before deciding whether event absence is a product bug. Do not reintroduce a blocked-helper warning for already evacuated people merely to satisfy the older test.",
+    "Rerun the same selected set after making the causal setup explicit. Preserve no-route and smoke exclusion coverage."
+  ],
+  "limitations": [
+    "Diagnosis is source-supported likely test-setup drift; no inspected state trace explicitly prints occupant location at the late event. Verify the controlled branch with deterministic receipt.",
+    "No provider or native behavior verified by this run."
+  ],
+  "next_owner": "scenario specialist and orchestrator",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

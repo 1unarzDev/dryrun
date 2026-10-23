@@ -1,0 +1,29 @@
+{
+  "report_id": "report-scenario-causality-six-tests-2",
+  "run_ids": [
+    "run-f92cc3bf5ddb43b59f4b9246a7450059"
+  ],
+  "feature": "Six new spatial causality regressions",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "48 tests across six suites executed. All six newly added SpatialChoiceCausalityTests passed. The only failing test remains the historical helperReach requirement for a late blocked-helper event; no additional compile or causal-test failures occurred.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SimulationTests.swift",
+      "symbol": "helperReach",
+      "lines": [
+        294
+      ],
+      "diagnosis": "Captured execution still lacks the expected blocked-helper event in its late-smoke branch. This is the same failure as report-scenario-helper-causality-retest.",
+      "fix": "Verify compiled test snapshot includes the explicit delay intervention. If source was edited during the build, rerun fresh. If it persists, inspect action trace and resident location at the smoke event; retain safety assertions rather than removing the requirement."
+    }
+  ],
+  "recommendations": [
+    "New six-test pass is valid scoped deterministic evidence. It does not supersede the remaining historical regression or prove physical UI rendering.",
+    "Timely-exit complementary assertion should remain separate from delayed blocked-helper branch."
+  ],
+  "limitations": [
+    "Captured output does not show exact invocation snapshot/intervention bytes. No claim that the newly edited delay variant itself failed is supportable without a fresh build."
+  ],
+  "next_owner": "scenario_learning",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

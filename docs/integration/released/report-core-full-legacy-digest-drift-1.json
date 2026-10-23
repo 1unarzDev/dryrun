@@ -1,0 +1,32 @@
+{
+  "report_id": "report-core-full-legacy-digest-drift-1",
+  "run_ids": [
+    "run-c6b1159125484e3e99d216da320c3c36"
+  ],
+  "feature": "Full deterministic Core regression after causal occupant effects",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "494 tests across 91 suites executed. Only AuthoredAdapterTests.preservesTwentyFourLegacyRuns failed, with 12 of its 24 whole-result digest comparisons mismatching. All other test methods passed; no compile failure or additional assertion class appeared.",
+  "failures": [
+    {
+      "severity": "review-required",
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/AuthoredAdapterTests.swift",
+      "symbol": "preservesTwentyFourLegacyRuns",
+      "lines": [
+        17
+      ],
+      "diagnosis": "The test hashes every encoded result field against a pre-adapter historical baseline. New authoritative occupant/choice effects can intentionally change result encoding and subsequent events. Captured assertions do not identify the 12 fixture keys or differing fields, so exact intentional-versus-regression classification is not yet proven.",
+      "fix": "Produce a reviewer-only per-key semantic diff against the historical engine outputs, or reconstruct those outputs at the documented baseline commit in isolated checkout. Review changed resident state, route evidence, assistance events, outcome and recommendation fields. Version and update only reviewed expected changes; retain old historical fixtures as historical evidence. Add changed-key context to deterministic assertions without dumping full results."
+    }
+  ],
+  "recommendations": [
+    "Do not restore obsolete no-effect behavior just to preserve whole-result digests. Also do not blindly regenerate every digest: first classify exact changed keys/fields against intended causal contract.",
+    "Add explicit invariants for unchanged hazards and alternate unsafe/no-route branches so a legitimate baseline version change cannot hide unrelated regressions.",
+    "Source baseline provenance is documented as pre-adapter execute loop commit69c15e5; hash input file fixtures/ai/authored-adapter-reference.json remains protected conservatively."
+  ],
+  "limitations": [
+    "Twelve mismatches are assertion count within one method, not twelve failing test methods. No per-key data is emitted by current test.",
+    "Passing remaining493 test methods does not certify every changed legacy output semantic or native rendering."
+  ],
+  "next_owner": "scenario_learning and orchestrator for versioned expected-output reconciliation; reviewer for actual per-key diff",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,13 +1,13 @@
 {
   "binding" : {
-    "contextDigest" : "7eb026c1fb706e58",
+    "contextDigest" : "1194f55eb2288640",
     "eventSequence" : 5,
     "homeRevision" : 1,
     "householdRevision" : 1,
     "revision" : 2,
     "sessionID" : "native-home-fire"
   },
-  "contextDigest" : "7eb026c1fb706e58",
+  "contextDigest" : "1194f55eb2288640",
   "observation" : {
     "baseline" : {
       "firedEventIDs" : [

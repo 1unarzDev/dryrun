@@ -4,7 +4,7 @@ import {resolve} from 'node:path';
 export class Host {
  // macOS runs the native `swift build --package-path packages/DryRunCore` product; Linux keeps the container build.
  private child=process.platform==='darwin'
-  ?spawn(resolve('../../packages/DryRunCore/.build/debug/dryrun-host'),[],{cwd:resolve('../..'),stdio:['pipe','pipe','inherit']})
+  ?spawn(process.env.DRYRUN_HOST_BIN??resolve('../../packages/DryRunCore/.build/debug/dryrun-host'),[],{cwd:resolve('../..'),stdio:['pipe','pipe','inherit']})
   :spawn('docker',['run','--rm','-i','-v',`${resolve('../..')}:/repo`,'-w','/repo','swift:6.2','/repo/.build-linux/default/packages_DryRunCore/x86_64-unknown-linux-gnu/debug/dryrun-host'],{stdio:['pipe','pipe','inherit']});
  private waiting:{resolve:(value:any)=>void;reject:(error:Error)=>void;timer:NodeJS.Timeout}[]=[];
  private closed=false;

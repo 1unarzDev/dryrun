@@ -33,7 +33,7 @@ final class DeviceAuditUITests: XCTestCase {
     }
 
     func testAdaptiveApartmentFireCommitsActionsFromReceipts() {
-        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "apartment-complex", "-demoScenario", "home-fire", "-demoAdaptive"])
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "apartment-complex", "-demoScenario", "home-fire", "-demoAdaptive", "-localDirector"])
         XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30))
         shot("adaptive-fire-01-open", app)
         var moment = 2
@@ -72,17 +72,25 @@ final class DeviceAuditUITests: XCTestCase {
         shot("adaptive-fire-finished", app)
     }
 
+    /// Mechanics v6 replaced the whole-exercise water policy with specific uses (`rehearsal.cmd.useWater.<source>.<use>`)
+    /// in the hazard choices. Oak (private well, ranch) is offered stored-water uses only; one is committed.
     func testAdaptiveWaterOutageWaterPolicyChangesTheCommittedSituation() {
-        let app = launch(["-demoHousehold", "hh-oak", "-demoScenario", "water-outage", "-demoAdaptive"])
+        let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "ranch", "-demoScenario", "water-outage", "-demoAdaptive", "-localDirector"])
         XCTAssertTrue(element("adaptive.header", in: app).waitForExistence(timeout: 30))
         shot("adaptive-water-01-open", app)
-        let more = reveal("adaptive.otherActions", in: app)
-        XCTAssertTrue(more.exists)
-        more.tap()
-        let essential = app.buttons.matching(NSPredicate(format: "label CONTAINS 'only for essentials'")).firstMatch
-        XCTAssertTrue(essential.waitForExistence(timeout: 10))
+        let use = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'rehearsal.cmd.useWater.'")).firstMatch
+        for _ in 0..<12 where !use.waitForExistence(timeout: 4) {
+            let wait = element("rehearsal.cmd.wait", in: app), next = element("adaptive.next", in: app)
+            if wait.exists { if !wait.isHittable { reveal("rehearsal.cmd.wait", in: app) }; wait.tap(); continue }
+            guard next.exists, next.isEnabled else { break }
+            next.tap()
+        }
+        XCTAssertTrue(use.exists, "a specific water use is offered")
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'rehearsal.cmd.useWater.tap.'")).firstMatch.exists,
+                       "no tap-water use for Oak's well (NativeHazardChoiceScriptTests.waterAllocationOffersStoredUsesOnly)")
         shot("adaptive-water-02-actions", app)
-        essential.tap()
+        if !use.isHittable { reveal(use.identifier, in: app) }
+        use.tap()
         XCTAssertTrue(element("adaptive.youDid", in: app).waitForExistence(timeout: 10))
         shot("adaptive-water-03-you-did", app)
         for index in 0..<4 {

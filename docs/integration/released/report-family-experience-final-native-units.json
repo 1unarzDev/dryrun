@@ -1,0 +1,26 @@
+{
+  "report_id": "report-family-experience-final-native-units",
+  "run_ids": [
+    "run-11486a3fc8e142c686824a522df60935",
+    "run-4f94651a675b4fe485895c7e733a02d6"
+  ],
+  "feature": "Fresh integrated physical native unit verification",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Fresh isolated native unit suite executed 50 XCTest methods on the plugged physical iPhone with zero failures. Bounded family journey and isolated encrypted home persistence review are in progress under the same exclusive reservation.",
+  "versions": {
+    "build": "run-4f94651a675b4fe485895c7e733a02d6",
+    "configuration": "Copied xctestrun with DryRunTests host explicitly -uiTestingInMemory; exact copy retained with protected results"
+  },
+  "criteria": [
+    {
+      "id": "MAC-01",
+      "verdict": "50 native unit tests passed; no UI inference"
+    }
+  ],
+  "limitations": [
+    "No current native gateway environment configured; this is not live Codex acceptance.",
+    "Unit tests cannot establish physical RoomPlan capture, UI persistence or app-wide layout acceptance."
+  ],
+  "next_owner": "family_experience_review retains exclusive device reservation for bounded UI audit",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

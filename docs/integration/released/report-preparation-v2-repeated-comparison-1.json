@@ -1,0 +1,190 @@
+{
+  "report_id": "report-preparation-v2-repeated-comparison-1",
+  "run_ids": [
+    "run-53cf81ae7b95496c8d1c8afeb73818c5",
+    "run-0afa3e2f3cef41d883e12baf2e67965b"
+  ],
+  "feature": "Real native preparation baseline versus investigation package",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "Frozen native-gateway-inputs-v2: oak/lake/pine;2 repetitions per condition; same schema, locale en, canonical facts, typed gaps and local synthetic profile; empty prior AI state",
+  "versions": {
+    "baseline": "preparation/11",
+    "candidate": "preparation/11 + preparation-investigation/1",
+    "runtime": "0.163.0",
+    "alias": "gpt-6.1-sol"
+  },
+  "criteria": [
+    {
+      "id": "Q1.consequential-facts",
+      "verdict": "observed only for successful lake runs",
+      "evidence": "All4 completed proposals use recorded refrigeration continuity plus transport/access/budget constraints to select feasible existing preparations. Oak/Pine have no final proposal."
+    },
+    {
+      "id": "Q2.feasible-action",
+      "verdict": "four completed runs supported",
+      "evidence": "Actions remain in canonical native catalog with relevant editor destination; proposals seek missing agreement/evidence rather than claiming transport or medical arrangements confirmed."
+    },
+    {
+      "id": "Q3.saved-facts-and-unknowns",
+      "verdict": "no critical fabrication observed in4 completed runs",
+      "evidence": "Unknown medication storage detail, cooler availability and transport agreements remain unknown. One candidate repetition asks for actually absent medicine-label information, not a known saved fact."
+    },
+    {
+      "id": "Q4.reliable-coverage",
+      "verdict": "failed both conditions",
+      "evidence": "Each condition completed only2/6 attempts. All4 Oak and all4 Pine attempts fail after retrieval before final selection."
+    },
+    {
+      "id": "Q5.native-fit",
+      "verdict": "unverified",
+      "evidence": "Text length is compact from source/output inspection, but no generated response rendered on native phone in this experiment."
+    }
+  ],
+  "synopsis": "Both packages fail the same decisive reliability gate: a four-provider-call operation budget cannot accommodate four required context pages plus a final answer. The investigation package changes retrieval organization but does not reduce the total below that limit for Oak/Pine. Its successful Lake outputs focus more narrowly on two dependency-relevant actions than baseline, but2/6 success is insufficient to promote either package or claim general quality improvement.",
+  "fact_findings": [
+    {
+      "facts": [
+        "context.medical.equipment.eq-insulin",
+        "context.constraints.transport",
+        "context.constraints.limitedBudget",
+        "context.constraints.limitedStorageSpace",
+        "context.family.person.p-lake-1",
+        "context.family.person.p-lake-2",
+        "context.family.contacts"
+      ],
+      "finding": "Consequentially used across the4 Lake successes; access/transport remained proposals needing confirmation."
+    },
+    {
+      "facts": [
+        "context.medical.equipment.eq-oxygen",
+        "context.medical.equipment.eq-chair"
+      ],
+      "finding": "Retrieval began in respective examples but no final answer reached; no fact-use quality claim."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "blocking",
+      "path": "services/ai-orchestrator/src/features.ts",
+      "stage": "operation_budget versus pagination",
+      "diagnosis": "opCalls rejects fifth provider invocation. Eight-record pages need4 calls for the requested full relevant set in these cases, leaving no permitted final-answer invocation. Baseline Oak requests four pages; baseline Pine reads broader nine-section set requiring four pages; candidate Oak/Pine use two targeted groups each spanning two pages.",
+      "fix": "Separate bounded context-read budget from final-generation/repair budget, or compute an operation budget from manifest/page counts with one guaranteed finalization call. Increase relevant page size only within existing byte bound, or offer subject-specific reads that actually fit useful decisions. Keep finite cost/cancellation limits; do not remove authorized records merely to hide the budget failure."
+    },
+    {
+      "severity": "high",
+      "stage": "job disposal after host validation/budget failure",
+      "diagnosis": "HTTP rejects with generic400 request/auth wording although request passed schema/auth and failed during model investigation. Paused runtime survives until its own deadline after host exception, extending harness lifetime beyond completed HTTP attempts.",
+      "fix": "Add explicit provider operation disposal on any host-side reader/validation/budget exception, and safe finite execution-budget/unavailable HTTP classification. Do not expose raw generated arguments or error strings."
+    },
+    {
+      "severity": "medium",
+      "stage": "host explanation overrides and precise evidence",
+      "diagnosis": "Host rewrites some selected explanations into generic authored guidance and retains only household-needs evidence ID. This can hide actual retrieved-fact rationale and makes meaningful fact-to-action trace harder to validate.",
+      "fix": "Preserve safe supported tailored rationale or compose concise deterministic fact-based guidance from recorded facts. Add accepted retrieved fact IDs/revisions as evidence references while retaining domain authority and unsupported-claim rejection."
+    }
+  ],
+  "references": [
+    {
+      "condition": "baseline",
+      "family": "oak",
+      "repetition": 1,
+      "attempt": "b466c95d-6570-4694-8561-cb281dcf9673",
+      "status": 400
+    },
+    {
+      "condition": "baseline",
+      "family": "oak",
+      "repetition": 2,
+      "attempt": "9a95ec96-56f7-4b56-b5a6-c0759fa8d784",
+      "status": 400
+    },
+    {
+      "condition": "baseline",
+      "family": "lake",
+      "repetition": 1,
+      "attempt": "ec107194-4f79-4381-99d2-a4bce1adcfc8",
+      "status": 200
+    },
+    {
+      "condition": "baseline",
+      "family": "lake",
+      "repetition": 2,
+      "attempt": "fae040ee-ca4e-4109-bca2-495aefc525a0",
+      "status": 200
+    },
+    {
+      "condition": "baseline",
+      "family": "pine",
+      "repetition": 1,
+      "attempt": "379f8e4a-316a-4f6b-97e2-2bf558d896cb",
+      "status": 400
+    },
+    {
+      "condition": "baseline",
+      "family": "pine",
+      "repetition": 2,
+      "attempt": "013c7474-86d8-43ab-a8f8-a98c575914fd",
+      "status": 400
+    },
+    {
+      "condition": "investigation",
+      "family": "oak",
+      "repetition": 1,
+      "attempt": "3ea8080f-6027-498f-9aea-0cd0bc0df45e",
+      "status": 400
+    },
+    {
+      "condition": "investigation",
+      "family": "oak",
+      "repetition": 2,
+      "attempt": "6db1110e-a491-4558-84f2-9e8a558ff773",
+      "status": 400
+    },
+    {
+      "condition": "investigation",
+      "family": "lake",
+      "repetition": 1,
+      "attempt": "2cd74636-6a0d-48f7-9322-03fc5c205c0c",
+      "status": 200
+    },
+    {
+      "condition": "investigation",
+      "family": "lake",
+      "repetition": 2,
+      "attempt": "f213cc0f-6eec-49f9-9de2-19e624b74ef6",
+      "status": 200
+    },
+    {
+      "condition": "investigation",
+      "family": "pine",
+      "repetition": 1,
+      "attempt": "8f48b8f4-23d4-4d36-be18-5d57794361d5",
+      "status": 400
+    },
+    {
+      "condition": "investigation",
+      "family": "pine",
+      "repetition": 2,
+      "attempt": "d9a4667f-de0a-4548-82aa-41054d413849",
+      "status": 400
+    }
+  ],
+  "recommendations": [
+    "Fix context/tool budget and disposal code before optional further prompt changes. Preserve all12 outcomes plus original6 strict-schema failures; do not select only4 successful examples.",
+    "After fix rerun exactly same development12 for regression, then predetermine controlled material-fact pairs and create fresh heldout synthetic homes/families for independent acceptance. These examples are development data, never heldout.",
+    "Do not attribute reduced task count alone to improvement; candidate narrower relevant choices are a hypothesis benefit observed only in Lake, while success rate is unchanged.",
+    "Shipping/local profile remains researchfalse/imagesfalse. Real-family cloud authorization still blocked. No native-fit or actual score improvement claim from this experiment."
+  ],
+  "retests": [
+    "All3 families x2 both packages after bounded read/final budget fix; explicit stop/cleanup on overflow and stale cancellation.",
+    "Predicted paired owned/missing supply, medication instructions, assistance/floor constraints, budget/transport and prior competency cases using updated canonical native input export.",
+    "Fresh independent reviewer receives full execution bundles and predetermined criteria without this verdict before first pass; native rendering and persistence separately."
+  ],
+  "limitations": [
+    "Review used package labels and exact source instructions; not a blinded comparison and not independent final acceptance. No implementer preference was used as criterion.",
+    "No controlled counterfactual pairs or fresh heldout cases ran in this12-attempt round. No further generations added silently.",
+    "All12 HTTP outcomes completed and retained; candidate harness process may remain alive briefly waiting for leaked paused worker deadline, itself a reported lifecycle defect."
+  ],
+  "next_owner": "codex_integration for context budget/disposal and evidence; orchestrator for retest/independent reviewer",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

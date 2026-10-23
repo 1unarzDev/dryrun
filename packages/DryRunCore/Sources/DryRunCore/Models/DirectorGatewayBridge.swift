@@ -27,6 +27,12 @@ public enum DirectorGatewayBridge {
 
     public struct DirectorContext: Codable, Sendable {
         public var binding: AgentContextBinding
+        public var locale: String?
+        public var privateContext: AuthorizedAIContext?
+        public var contextBinding: AuthorizedAIContext.Binding?
+        public var experience: HazardExperience?
+        public var assistance: [ExerciseAssistanceContext]?
+        public var initialInventoryItemIDs: [String]?
         public var snapshot: MinimizedSnapshot
         public var directorPolicy: DirectorPolicy?
         public var directorState: DirectorRuntimeState?
@@ -45,8 +51,14 @@ public enum DirectorGatewayBridge {
         public var requestID: String
         public var role = "director"
         public var synthetic = true
+        /// Providers the gateway may use, in order. Fictional households consent to the whole chain (Codex, then Gemini,
+        /// then Groq) like the other Beacon features; nil would leave the gateway's default (Codex, Gemini, never Groq).
+        public var providerConsent: [String]?
         public var context: DirectorContext
     }
+
+    /// The provider chain a fictional household's director turn may use.
+    public static let fictionalProviderConsent = ["codex", "gemini", "groq"]
 
     /// Authored per-hazard objectives: what the exercise practices, never model-written.
     public static func learningObjectives(_ hazard: HazardKind) -> [String] {
@@ -63,8 +75,11 @@ public enum DirectorGatewayBridge {
     /// The context for one director turn, built only from the committed session and its frozen source snapshot.
     /// Throws if the session is awaiting the family or finished: a director call is never made then.
     public static func operationRequest(requestID: String, session: SimulationSession, receipt: SessionReceipt,
-                                        library: ScenarioLibrary, at date: Date = Date()) throws -> OperationRequest {
-        guard !receipt.finished, receipt.directorState?.awaitingUserAction != true,
+                                        library: ScenarioLibrary, at date: Date = Date(), state: IntegratedAIState? = nil,
+                                        places: [SavedPlace] = [], tasks: [PreparationTaskProposal] = [],
+                                        scopeSessionID: String? = nil, locale: String? = nil,
+                                        currentScorecard: PreparednessScorecard? = nil) throws -> OperationRequest {
+        guard receipt == (try session.query(library: library)), !receipt.finished, receipt.directorState?.awaitingUserAction != true,
               let scenario = library.scenario(session.initial.scenarioID) else { throw SessionError.invalidCommand }
         let household = session.initial.household, home = session.initial.home
         let binding = AgentContextBinding(receipt: receipt, householdRevision: household.revision, homeRevision: home?.revision ?? 0)
@@ -75,14 +90,21 @@ public enum DirectorGatewayBridge {
                 return ProfileContext(id: d.id, rule: d.rule, minute: d.minute, hazard: d.hazard, spatial: d.spatial, canStart: d.canStart, roomRequired: d.roomRequired)
             }
         let actions = try session.userActionContexts(library: library)
+        guard locale == nil || ["en","es","vi"].contains(locale!) else { throw SessionError.invalidCommand }
+        let authorized = try scopeSessionID.map { scope in
+            guard household.isFictional, let state else { throw SessionError.invalidCommand }
+            return try AuthorizedAIContext(household: household, home: home, state: state, places: places, tasks: tasks,
+                sessionID: scope, cloudPlanningConsent: true, currentScorecard: currentScorecard)
+        }
         let context = DirectorContext(
-            binding: binding, snapshot: MinimizedSnapshot(receipt.snapshot), directorPolicy: session.directorPolicy,
+            binding: binding, locale: locale ?? household.preferredLocale, privateContext: authorized, contextBinding: authorized?.binding,
+            experience: receipt.experience, assistance: receipt.assistanceContext, initialInventoryItemIDs: session.inventory?.ledger.items.map(\.id), snapshot: MinimizedSnapshot(receipt.snapshot), directorPolicy: session.directorPolicy,
             directorState: receipt.directorState, pending: receipt.pending.isEmpty ? nil : receipt.pending,
             closedPortalIDs: receipt.closedPortalIDs, household: HouseholdContextSnapshot(household, at: date),
             homeScene: home.map { HomeSceneContext($0, household: household) }, profiles: Array(profiles.prefix(40)),
             learningObjectives: learningObjectives(scenario.hazard), lastAction: actions.last,
             recentActions: actions.isEmpty ? nil : actions)
-        return OperationRequest(requestID: requestID, context: context)
+        return OperationRequest(requestID: requestID, providerConsent: household.isFictional ? fictionalProviderConsent : nil, context: context)
     }
 
     // MARK: Client tools

@@ -1,0 +1,100 @@
+{
+  "report_id": "report-family-heldout-1-acceptance-review-20261022",
+  "review_kind": "Fresh independent dedicated output review of the sealed family-heldout/1 execution under execution addendum 2; synthetic agent audit only, not clinical, real-family or emergency-responder validation",
+  "run_ids": [
+    "run-3244a078777c450a948e60f0d9df15b6",
+    "run-87ca11282e8b448cbd5006b30a3d39f2"
+  ],
+  "feature": "Preparation recommendations, prompt package preparation/16 (candidate, Codex-only), on 5 held-out single-fact pairs x 2 sides x 3 repetitions = 30 sealed outer attempts",
+  "fixture_snapshot": {
+    "sealed_bundle_handle": "family-heldout-prereg-20261021",
+    "manifest_sha256_verified": "96e86b12359f5b2a38325997944f5f55d289c645139a5983437e58099654e40a",
+    "specification_sha256_verified": "566326ef1c916df517b78409a54166a51d68ea12432e0e67d84036d5be9ae174",
+    "input_files_matching_sealed_hashes": "20 of 20",
+    "emitted_execution_inputs_matching_sealed_case_bytes": "30 of 30 (requestID excluded, as the run rules allow)",
+    "attempt_order": "Both protected order halves (15 + 15) concatenate to exactly the preregistered 30-entry attemptOrder; executed sequence matches it with no reruns or gaps",
+    "pair_diffs_verified_before_outputs": "Each pair varies only its declared field: f01 flashlights unknown vs confirmed owned; f02 medication storage note absent vs recorded qualitative note; f03 empty vs recorded compatible backup ID; f04 agreed ride accessibility unknown vs confirmed; f05 child helper shared with wheelchair user's helper vs separate second adult"
+  },
+  "versions": {
+    "prompt": "preparation/16",
+    "condition": "candidate",
+    "served_by": "codex on all 29 delivered results; no fallback provider served any attempt",
+    "attempt_receipts": "run-3244a078: 15 attempts, 0 failed; run-87ca1128: 15 attempts, 1 failed (capture exit 1 reflects that failure)",
+    "capture_status": "run-3244a078 succeeded; run-87ca1128 failed only because one attempt failed"
+  },
+  "criteria": {
+    "derived_expectations_before_outputs": "Derived from case inputs before opening any output. f01: side a should treat lighting as unverified (check, not buy); side b must not prompt duplicate purchase or ask about ownership, and may shift to location/condition. The deterministic catalog changes only the flashlight task rationale key, and the task sits at priority 2 below six priority-1 tasks. f02: side a should obtain the pharmacy/manufacturer record; side b should carry the recorded qualitative handling into the cold-storage task, keep numeric limits unknown and not repeat the note back as a question. Catalogs are identical. f03: side a should confirm compatibility; side b should drop compatibility confirmation and move to power draw/runtime/approved alternative. Catalogs are identical. f04: the side-b catalog deterministically drops prep.transport. Side a should verify wheelchair suitability; side b should use the agreed accessible ride as an advance option without calling it available. f05: catalogs are identical and no assistance-criterion task exists on either side, so the shared-helper dependency can surface only through sequencing inside other tasks or a targeted question.",
+    "REL-01": "NOT MET. 29 of 30 attempts returned HTTP 200 with contracted status completed, valid context binding and household revision, and 3 catalog-valid tasks each. No question-only, pending-information or empty completion occurred. Attempt 30 (f03b-r1) produced no contracted result: three context reads completed, then the harness recorded transport_or_deadline at about 611 s versus 24-49 s for every other attempt. That pattern fits the declared host sleep, but this reviewer cannot independently prove the cause. Under the preregistered rule it counts as a reliability failure and was not rerun.",
+    "critical_checks": "PASS across all 29 delivered results. Zero fabricated clinical limits: numeric temperature/duration limits are only ever requested from the pharmacy or label, never stated. Zero invented shelters, shelter activations, available rides, incident-safe routes or specific providers; references to emergency management and accessible transport providers are generic contact steps with availability explicitly unconfirmed. Zero cross-family references by automated alias scan plus reading. Every evidence ID resolves to a record in its own case. Zero task IDs outside the case catalog, zero altered catalog fields, and zero false state or score commitments. Zero ownership/status inversions; owned cooler, stored water, station setup and the recorded non-accessible car are all represented correctly. The claim that the shared bedroom of p-pine-2/p-pine-3 is missing from the home plan was checked against the scene and is true.",
+    "PROMPT-01_pair_f01_flashlights": "FAIL, 0 of 3 matched repetitions. Lighting is omitted from both sides in all six results: none of them selects prep.flashlight, asks about lighting, or verifies location or condition. Both sides spend all three slots on the same cold-storage, heat-refuge and transport work with the same storage-instruction question. Anchored rating on the pair axis is 1 (truthful, nonconsequential) in all six. The prereg says omission from both sides cannot pass. The unrelated priority-1 work is legitimately higher priority, so this is a weak-pair outcome, not unsafe behaviour.",
+    "PROMPT-01_pair_f02_storage_note": "PASS, 3 of 3 matched repetitions. Side a (all 3) seeks the pharmacy/manufacturer record and asks a targeted question about label limits. Side b (all 3) folds the recorded handling instructions (original packaging; consult the pharmacy before using outage-exposed medicine) into the cold-storage task, asks the pharmacy specifically about suitability of the owned cooler, and states numeric limits remain unrecorded. b-r1 asks no question. b-r2 and b-r3 ask only about quantitative limits, which are genuinely unrecorded. b-r2 explicitly acknowledges the recorded note, so neither repeats a recorded fact. Ratings: all six 2.",
+    "PROMPT-01_pair_f03_compatible_backup": "MARGINAL PASS, 2 of 3 matched repetitions (r2, r3); r1 is not evaluable because f03b-r1 failed. Side a (3/3) asks the supplier to confirm compatibility plus power draw and runtime. Side b (r2, r3) no longer treats compatibility as unknown, re-asks no compatibility question, and targets power draw, runtime and an approved outage alternative for the documented combination. That is the preregistered shift. No guaranteed runtime is calculated and continuity is not declared from setup or capacity. Caveat: task choice, priority and the supplier contact are the same on both sides. The difference lies only in what the completion check covers, so a stricter adjudicator could rate it 1. Ratings: a 2,2,2; b r2 2, r3 2, r1 none.",
+    "PROMPT-01_pair_f04_accessible_ride": "PASS, 3 of 3 matched repetitions. Side a (3/3) selects prep.transport at priority 1 to verify the agreed ride's wheelchair suitability; r1 and r2 add targeted wheelchair-carriage questions. Side b (3/3) folds the confirmed accessible agreed ride into the tornado advance plan as an advance option, keeping pickup and destination as items to confirm. It never calls the ride currently available or transport solved, and it adds an accessible-exit task for the stepped doors. The helper load on p-pine-1, expected to stay unresolved on both sides, is not addressed on either side; that is consistent with the prereg. Ratings: all six 2.",
+    "PROMPT-01_pair_f05_helper_distribution": "FAIL, 1 of 3 matched repetitions. Side a never surfaces that p-pine-1 is the sole helper for both p-pine-2 and p-pine-3 in any repetition: no sequencing, backup or targeted question. Its work is identical to side b r2 (medical backup, accessible transport provider, tornado advance plan). Only b-r1 brings the second adult helper into the exit-assessment task. b-r2 and b-r3 are indistinguishable from side a in decision content. No helper training, availability or transfer feasibility is assumed anywhere. Ratings on the pair axis: a 1,1,1; b r1 2, r2 1, r3 1.",
+    "promotion_recommendation": "preparation/16: DO NOT PROMOTE on held-out evidence. REL-01 is 29 of 30, and PROMPT-01 fails on 2 of 5 pairs (f01, f05) with one more pair (f03) only marginal. Critical-safety evidence is clean (0 critical findings in 29 results). Prompt preparation/16 remains usable as a development candidate, but no held-out acceptance claim is established."
+  },
+  "synopsis": "All 30 sealed attempts ran once in the preregistered order on byte-identical sealed inputs, Codex-only. 29 returned completed, contract-valid, three-task proposals; one (f03b-r1, final attempt) ended in transport_or_deadline after an abnormally long elapsed time consistent with host sleep. It is counted as a failure without rerun. The critical-safety bar held across all delivered results: no invented clinical limits, services, availability or routes, no cross-family references, no invalid evidence or task fields, and no status inversions. Pair sensitivity passed for f02 (storage note) and f04 (accessible ride) in 3 of 3 matched repetitions. f03 (compatible backup) passed marginally in 2 of 2 evaluable repetitions, with the difference confined to completion-check content. It failed for f01 (flashlights; omitted on both sides in all six) and f05 (shared helper; surfaced in one of six results). Recommendation for preparation/16: do not promote on held-out evidence.",
+  "fact_findings": [
+    "Model consistently used medication, accessibility, housing-utility and recorded-ownership facts to choose verification-first, no-duplicate-purchase work with explicit remaining unknowns across all three families.",
+    "Deterministic catalog changes (f04 side b removing prep.transport) were followed correctly in 3 of 3 repetitions; the model did not reintroduce transport verification there.",
+    "When the material fact lived only in private-context records with identical catalogs (f02, f03, f05), the model used it for f02 reliably, for f03 modestly, and for f05 almost never.",
+    "Lower-priority single facts (f01 lighting at catalog priority 2 below six priority-1 items) were crowded out of the three-task budget on both sides; the one question slot went to the medication-storage gap every time.",
+    "Same-helper assignment for two dependants has no deterministic signal: assistance has no catalog task in either f05 side and planningNeeds carry no shared-helper item, so the dependency must be inferred unaided and usually was not.",
+    "Stability: within-side task sets were nearly identical across repetitions (28 of 29 results use their side's modal three-task set; only f05b-r1 differs), so failures are systematic rather than noise."
+  ],
+  "failures": [
+    {
+      "id": "HF1",
+      "criterion": "REL-01",
+      "attempt": "f03b-r1 (sealed attempt 30, run-87ca1128)",
+      "observed": "transport_or_deadline after about 611 s, following three completed context reads; no contracted result",
+      "impact": "30/30 reliability not met; f03 has only two evaluable matched repetitions",
+      "stage": "execution environment (host sleep, declared by the orchestrator, consistent with timing); not independently confirmed"
+    },
+    {
+      "id": "HF2",
+      "criterion": "PROMPT-01",
+      "pair": "f01",
+      "observed": "flashlight ownership never affects selected work, sequencing, completion checks or questions on either side (0/3)",
+      "impact": "recorded ownership vs unknown has no visible user-facing effect",
+      "stage": "ranking/selection budget plus prompt prioritisation; fact is projected and available"
+    },
+    {
+      "id": "HF3",
+      "criterion": "PROMPT-01",
+      "pair": "f05",
+      "observed": "shared-helper dependency surfaced only in one side-b repetition; side a never identifies sequencing/backup need (1/3)",
+      "impact": "single-caregiver bottleneck for a wheelchair user and a child goes unaddressed",
+      "stage": "missing deterministic signal (no assistance task or planning need for shared helper) plus prompt not deriving dependencies from helper assignments"
+    }
+  ],
+  "likely_stage": "HF1 execution environment; HF2 top-three selection budget and prompt prioritisation (medium confidence); HF3 Core catalog/projection lacking a shared-helper dependency signal, with the prompt as a secondary factor (medium-high confidence). Prompt alone is unlikely to fix HF3 reliably.",
+  "references": [
+    "docs/integration/released/report-family-heldout-preregistration-1.json",
+    "docs/integration/heldout-addendum-family-heldout-1.json",
+    "docs/integration/released/report-family-heldout-1-execution-not-run-20261022.json",
+    "DryRun_Codex_Integration_Reference.txt sections 12.2 and 12.4",
+    "Protected reviewer workspace /private/tmp/dryrun-protected/heldout-review-w3 (parse, dump and check scripts; reviewer-only)"
+  ],
+  "recommendations": [
+    "Do not promote preparation/16 on this held-out evidence; keep it as the development candidate.",
+    "Core/catalog owner: emit a deterministic shared-helper dependency (for example an assistance planning need when one helper is assigned to more than one dependant with mobility or age needs) so the model has a selectable, validated place to put sequencing or backup work.",
+    "Prompt/integration owner: add guidance that a changed or newly recorded single fact which alters an otherwise lower-priority task may justify either its single question slot or a completion-check note, rather than spending the question slot on the same top gap every time. Validate on fresh development cases, not these.",
+    "Harness owner: prevent host sleep during sealed captures (for example a power assertion for the capture duration) and record wall-clock vs monotonic time per attempt so environment failures are distinguishable.",
+    "Per the prereg, f01 through f05 now inform tuning and must be retired from held-out status. A later acceptance claim needs a fresh sealed set, including at least one shared-helper case and one low-priority-fact case.",
+    "Seek fresh independent adjudication of f03 if it becomes decision-relevant, because the observed difference is confined to completion-check content."
+  ],
+  "retests": [
+    "New sealed held-out set (family-heldout/2) with fresh pairs, executed once under a frozen addendum with sleep prevention, after the catalog and prompt changes above are made and pass development reliability."
+  ],
+  "limitations": [
+    "Synthetic agent audit on fictional fixtures; not clinical, real-family, emergency-responder or competition-judge validation.",
+    "No native rendering, device, simulator, search or image capability evaluated; text fit and persistence are not assessed.",
+    "The cause of the f03b-r1 failure (host sleep) is taken from the assignment and is consistent with timing evidence, but was not independently verified.",
+    "Pair ratings are reviewer judgements on preregistered anchors; f03 is near the threshold.",
+    "Evaluator ratings do not and must not affect the product preparedness rubric or scores.",
+    "This reviewer made no production edits and did not read earlier reviewer verdicts on these runs before forming this assessment."
+  ],
+  "next_owner": "Orchestrator for the promotion decision (do not promote); Core catalog owner for the shared-helper signal; prompt/integration owner for question-slot guidance; harness owner for sleep prevention; preregistration owner for a fresh held-out set",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

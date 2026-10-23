@@ -1,0 +1,111 @@
+{
+  "report_id": "report-donor-authored-content-clearance-2",
+  "run_ids": [
+    "run-a0856beef9804f82a4dee72d546a86e2"
+  ],
+  "fixture_snapshot": "Exact donor commit 5f95135 Git blobs only; no replay assets included.",
+  "synopsis": "Cleared six authored fictional scenario packs, four explicit sample alerts, draft scoring rubric, two inventory dictionaries, action catalog and draft price asset for engineering inspection and reconciliation. No recorded/generated app answer found in these scoped resources.",
+  "references": [
+    {
+      "path": "content/actions/actions.json",
+      "blob": "26eee5ad2621d7584e2f9d9577bef3c2014a1d05",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/ai/inventory-categories-v1.json",
+      "blob": "f2f22780d8ba07a807152c7695ba11167e861aa7",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/ai/inventory-preparation-kinds-v1.json",
+      "blob": "d67f8caff2365e7bf370a72a9a0af385a60f9577",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/ai/rubric-v0.json",
+      "blob": "4667bceceaf864426eb4bf00d2690eb749ef4058",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/alerts/sample-flash-flood.json",
+      "blob": "14a0fca338a6ff60467845f9322165d00c222370",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/alerts/sample-heat.json",
+      "blob": "a5d9866a3dbd9525d0fd3ac90c15f74759e60724",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/alerts/sample-tornado.json",
+      "blob": "bfcbc72fc1af2a1671b6661212d7d3eb2eab97e2",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/alerts/sample-winter.json",
+      "blob": "f491a88b41bcdb0bbbcf19042f907de0fef2318b",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/prices/tarrant-v1.json",
+      "blob": "c86b581547db1f155da356befafe43d4245c8231",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/scenarios/flash-flood.json",
+      "blob": "6b83f91f9576c9756017aaa389a466bbc2ed893e",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/scenarios/freeze-power-loss.json",
+      "blob": "ed2362f2f9d1c72a6acc30cf7761112f1e45ff99",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/scenarios/heat-grid-strain.json",
+      "blob": "63a61b45918094504cdb966a82df8ce71c4051dc",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/scenarios/home-fire.json",
+      "blob": "9333069e93451cee3175260a9b27fa1b01701a2c",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/scenarios/tornado.json",
+      "blob": "bd1c181b298713be0b8adef6be1f7b9b51c39b60",
+      "classification": "cleared-authored-static-domain-resource"
+    },
+    {
+      "path": "content/scenarios/water-outage.json",
+      "blob": "a9d4c6945a33441ecd7d67ff91026a4d4ccaa45a",
+      "classification": "cleared-authored-static-domain-resource"
+    }
+  ],
+  "fact_findings": [
+    "Flash-flood donor adds access-lost at minute120, svc.roads unavailable, guarded by both not-householdLeak and adaptive-mechanics. Existing ordinary schedule need not change: preserve variant gating.",
+    "All six scenario packs explicitly identify fictional draft simulation content; source references are not independent current safety verification.",
+    "Four alert payloads are authored sample Exercise messages with explicit non-real labels. Never clear them as live NWS alerts.",
+    "Rubric is draft deterministic criteria/weights/caps, not model-produced assessment results. Inventory dictionaries classify observations without establishing ownership or adequacy.",
+    "Draft price ranges remain unresearched estimates; preserving caveats is required."
+  ],
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/ShoppingListTests.swift",
+      "lines": [
+        74,
+        75,
+        76
+      ],
+      "cause": "Getter refactor changed table into a throwing function; three call sites still use it as a property.",
+      "fix": "Call try table() at all remaining uses or bind one local throwing-loaded table per test. Keep explicit loader failure reporting."
+    }
+  ],
+  "limitations": [
+    "Clearance permits exact listed static blobs only; no blanket content directory clearance.",
+    "content/ai/replay remains protected reviewer-only. No generated evidence, caches or logs cleared.",
+    "No production resources imported by this review. Scenario owner should merge additive authored events while preserving current intentional behavior and validate legacy contracts.",
+    "No app, simulator, or physical device execution."
+  ],
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

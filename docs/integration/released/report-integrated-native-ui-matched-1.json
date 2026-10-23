@@ -1,0 +1,59 @@
+{
+  "report_id": "report-integrated-native-ui-matched-1",
+  "run_ids": [
+    "run-f565f3d59ef4447a821c39da87225c7c",
+    "run-6fe1919df67343f3b6b3bc438a8871fd",
+    "run-86a21abf012949f1a3d212c2a76bd70a",
+    "run-5bb61347feaf4b22b2dce87d9be3c934"
+  ],
+  "feature": "Matched integrated physical Prepare/family/Home ordinary and accessibility capture",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "hh-oak; EN; dark appearance; ordinary and AccessibilityXXL launch argument; same physical phone",
+  "versions": {
+    "physical_build": "run-d596f5dafad14c8da77784369c376dd1",
+    "geometry": "402x874 points; 1206x2622 screenshots"
+  },
+  "criteria": [
+    {
+      "id": "UI-01",
+      "verdict": "ordinary task row fixes visibly improved; accessibility defects remain",
+      "evidence": "Both 3-screen screenshot tours passed; six originals inspected."
+    }
+  ],
+  "synopsis": "Prepare now moves urgency markers into a stable trailing column and aligns each task title with its associated detail. Urgent effort badges follow the urgency palette. Persistent name labels are visible in the family editor. Accessibility text exposes a Home floor-label collision and an overly long introductory area that pushes preparations below the first screen.",
+  "failures": [
+    {
+      "severity": "high",
+      "region": "Home 2D AccessibilityXXL diagram",
+      "diagnosis": "Two large lower-room labels occupy most of their room widths and collide across the shared dividing wall. Other upper-room labels remain small, producing inconsistent scaling inside the same diagram.",
+      "fix": "Use one geometry-aware label layout policy for all room labels, with bounded scale inside plan shapes and a complete accessible room-list alternative. Do not simply enlarge only some diagram labels with Dynamic Type. Retest compact rooms, all labels and long localized names."
+    },
+    {
+      "severity": "medium",
+      "region": "Prepare AccessibilityXXL initial viewport",
+      "diagnosis": "Title, fictional household/home notice and instructional paragraph consume the entire first viewport. No useful task is visible until scrolling.",
+      "fix": "Shorten the introductory paragraph and collapse repeated fictional notices while retaining one clear example-mode indicator. Prioritize next useful action above decorative explanation; keep full text scaling."
+    },
+    {
+      "severity": "medium",
+      "region": "Family editor AccessibilityXXL household name field",
+      "diagnosis": "Household display value truncates in the initial single-line field. Resident name rows adapt vertically and retain their persistent labels.",
+      "fix": "Verify editing/focus exposes full household value and consider a full-width editor or multiline presentation for long names at accessibility sizes."
+    }
+  ],
+  "fact_findings": [],
+  "recommendations": [
+    "Ordinary Prepare task title/detail starts now share each rows text column; first long title shrinks from four lines to three by recovering width from the leading warning. Leading icon widths still vary slightly between rows, so verify a fixed column if app-wide alignment requires exact consistency.",
+    "Urgency and effort tint fix is physically observed on the compiled integrated build. Native family name label change is physically observed; actual edits/Save and relationship picker interaction not exercised in this tour.",
+    "Family briefing icon is below the captured viewport. Direct room/opening editor was not entered. These remain explicit missing visual checks.",
+    "Cleared flattened actual captures are under docs/integration/released/captures-integrated/: en-next-steps.png, en-family-editor.png, en-home-2d.png and matching -xxl variants. Known controlled fixture input field values and deterministic room labels remain readable; generated/uncertain static content is masked. No displayed app text was changed for capture.",
+    "Release physical reservation to root now for fresh build of newly authored persistence/scope/context work. Tour terminated its demo app; AccessibilityXXL was a per-launch argument and no system settings were changed."
+  ],
+  "limitations": [
+    "Six captures establish these viewports only. No VoiceOver operation, first task at accessibility size, Save/relaunch, live AI text fit or complete screen inventory coverage claimed.",
+    "Current new HomePersistenceUITests and later context/scope guard edits were authored after this build and need fresh build/run.",
+    "I diagnosed prior design changes, so this is not independent final design acceptance."
+  ],
+  "next_owner": "native_ui and house specialist for remaining defects; root fresh build; fresh independent family reviewer next reservation",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

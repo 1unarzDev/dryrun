@@ -135,9 +135,10 @@ it('charges fallback search and extraction to the same service allowance as prim
  const client=new GroqClient('synthetic',undefined,async()=>{secondary++;return Response.json(fixture.response);});
  const discovery=new ResourceDiscovery({async turn(){primary++;throw new Error('provider_rate_limited');}},2,()=>new Date(),new GroqResourceDiscovery(client));
  const result=await discovery.discover(brief);
- expect(result.status).toBe('partial_sourced');expect(result.execution).toMatchObject({extractionFailure:'research_budget',totalOperationCalls:2});
+ expect(result.status).toBe('partial_sourced');// Renewable owner-window quota (shared by primary and fallback) reports a typed operation rate limit.
+ expect(result.execution).toMatchObject({extractionFailure:{kind:'rate_limit'},totalOperationCalls:2});
  expect(discovery.calls).toBe(2);expect(primary).toBe(1);expect(secondary).toBe(1);
- await expect(discovery.discover(brief)).rejects.toThrow('research_budget');expect(secondary).toBe(1);
+ await expect(discovery.discover(brief)).rejects.toThrow('operation_rate_limit');expect(secondary).toBe(1);
 });
 it('preserves a supported option when its sibling is invented and the repair hits quota',async()=>{
  let calls=0;const client=new GroqClient('synthetic',undefined,async(_url,request)=>{

@@ -330,6 +330,11 @@ struct Graph {
             return "commonAreaOutsideModel: building corridor/stairs are not modelled or verified"
         }
         if sides.allSatisfy({ $0 == .exterior }) { return "invalidGeometry: both sides exterior" }
+        // egress-portal-graph/3: an "outside" answer on an opening the geometry places between two rooms is never an
+        // exit, even if it was confirmed before this rule existed (ScanCorrections now keeps such answers proposed).
+        if PortalAttachment.exteriorClaimContradictsGeometry(p, in: home, tolerance: tol) {
+            return "portalNotVerified: outside answer on an opening between two rooms"
+        }
         let isExit = p.leadsToExterior
         if p.kind == .window {
             guard isExit else { return "windowNotAWalkingConnection" }
@@ -344,10 +349,10 @@ struct Graph {
                 return "windowEscapeSuitabilityUnconfirmed"
             }
         }
-        if p.kind != .opening {
-            if p.operable.value == false { return "inoperable" }            // even an unconfirmed "no" rules it out
-            if p.operable.confirmedValue == nil { return "operabilityUnconfirmed" } // scan-observed never satisfies it
-        }
+        // Even an unconfirmed "no" rules it out. For an open doorway this is the household's reversible
+        // "Not usable" answer (blocked by furniture, sealed); it matches HomeScenePresentation's unavailable status.
+        if p.operable.value == false { return "inoperable" }
+        if p.kind != .opening, p.operable.confirmedValue == nil { return "operabilityUnconfirmed" } // scan-observed never satisfies it
         if request.mobility.requiresStepFree {
             if p.stepFree.value == false { return "incompatibleMobility: threshold step" }
             if p.stepFree.confirmedValue == nil { return "incompatibleMobility: step-free threshold unconfirmed" }

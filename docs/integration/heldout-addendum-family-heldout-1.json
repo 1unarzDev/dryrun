@@ -1,0 +1,45 @@
+{
+ "addendum": "family-heldout/1 execution addendum 2",
+ "preregistration": "report-family-heldout-preregistration-1",
+ "sealedHandle": "family-heldout-prereg-20261021",
+ "sealedManifestSha256": "96e86b12359f5b2a38325997944f5f55d289c645139a5983437e58099654e40a",
+ "specificationSha256": "566326ef1c916df517b78409a54166a51d68ea12432e0e67d84036d5be9ae174",
+ "promptVersion": "preparation/16",
+ "condition": "candidate",
+ "model": "gpt-6.1-sol",
+ "runtime": "0.163.0",
+ "capabilityProfile": "services/ai-orchestrator/profiles/codex-local-synthetic.json",
+ "capabilityProfileSha256": "dbbac9f70e2823debfa20d917153c87a7809e62f2d0b310df54032659274c53b",
+ "sourceSha256": {
+  "features.ts": "a3d1001a0ea87f5945a9031d5d2082ca2864919465d085552dd7539ce758e7ee",
+  "prompt-experiments.ts": "145fc0bfe72f98902558e2476de6fe386962c10e148c7ee157304f67ff5a0bef",
+  "output-quality.ts": "70792b6a2c6b551e977399a3b34698ad913448873b477357f8eb77abaaf5f9f2",
+  "private-context.ts": "8565e6dc7b9af8cb18ecf08f85f39a820fc8073f9a7ff6af44422499e21095f6",
+  "claim-language.ts": "f53cb6ef115ceaa2301ec7110c3a7cbcc24d0c80f9f44996a882954339042721",
+  "codex-provider.ts": "40855e94d6060e1f3116bcd9253fd8a412e61fbfaee03defd1fc5460389a48aa",
+  "codex-schema.ts": "d6e71aff83e29491bc66120b33338871bc32ad19b704cd2b20ba911452b5c781",
+  "codex-runtime.ts": "3a6249ea913c774a3e3febf045278254ab8276732fef9804891e8e4aaf5b8bc6",
+  "provider-failure.ts": "1d7f458f30cf7f77ba56ad497f17afa43229f8019d46d33d9bb39d4f4d916fa9",
+  "http.ts": "62e8d7574e4a9c74b12052a1dc9cbce625610d308b5b117b516449c5ba263ed9"
+ },
+ "harnessSha256": "f2a9d5d981edd19bc782d5274d9414aaac66d2339651108b834ab3010f4d1047",
+ "pnpmLockSha256": "6f3f5744f5d54efcdc38d37b44d340ea98a4b774d0a58925caa179c17eeb2d4f",
+ "packageJsonSha256": "64cde480461df2210da55569cfb93458606097f5bf45e10c164d3ddb55726ba5",
+ "providerConsent": "codex only: the harness builds configuredCodexProvider with no Gemini/Groq, so no fallback-served attempt can enter the 30",
+ "callAllowancePerOwnerWindow": 400,
+ "readerPaging": 2,
+ "provenance": 1,
+ "repetitionsPerSide": 3,
+ "plannedOuterAttempts": 30,
+ "reruns": "none; every attempt in the sealed order is counted, failures included",
+ "reviewedDevelopmentEvidence": [
+  "run-4c3a68ddbac445cdb5aa3969d0e3a04d",
+  "report-prep15-vs-prep16-v5-blind-repeated-review-20261022"
+ ],
+ "developmentSourceDelta": {
+  "files": [
+   "features.ts"
+  ],
+  "scope": "features.ts changed after the reviewed runs (4bba249 -> 65d12be/180f8fb) only inside role===resources branches: two tool turns, 25% retrieval window, 12 s fallback reserve; provider.ts changed a type only. The preparation Codex path is unchanged."
+ }
+}

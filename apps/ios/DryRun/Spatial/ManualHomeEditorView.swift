@@ -3,13 +3,14 @@ import DryRunCore
 
 // Manual mode: rectangular rooms, doors on real shared walls, verified exits, markers, meeting point.
 // Geometry rules live in DryRunCore.ManualLayout (tested). Every change bumps the draft revision.
-// Presented inside the caller's NavigationStack. AUTHORED, NOT COMPILED in this environment.
+// Presented inside the caller's NavigationStack; persistence remains with AppModel.
 
 struct ManualHomeEditorView: View {
     private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
-    let onSave: (HomeModel, Int?) async -> Bool
+    let onSave: @MainActor (HomeModel, Int?, String) async -> Bool
     @State private var baseRevision: Int?
+    @State private var savedScopeSessionID: String
     @State private var saving = false
     @State private var draft: HomeModel
     @State private var message: String?
@@ -47,6 +48,7 @@ struct ManualHomeEditorView: View {
     @State private var doorTo = "outside"
     @State private var doorSide: ManualLayout.Side = .south
     @State private var doorKind: PortalKind = .door
+    @State private var doorWidthText = ""
 
     // Add-marker form
     @State private var markerKind: AnnotationKind = .smokeAlarm
@@ -57,9 +59,10 @@ struct ManualHomeEditorView: View {
     @State private var markerLocationChecked = false
     @State private var meetingLabel = ""
 
-    init(home: HomeModel, baseRevision: Int?, selectedElementID: String? = nil, onSave: @escaping (HomeModel, Int?) async -> Bool) {
+    init(home: HomeModel, selectedElementID: String? = nil, savedBaseRevision: Int?, scopeSessionID: String, onSave: @escaping @MainActor (HomeModel, Int?, String) async -> Bool) {
         self.onSave = onSave
-        _baseRevision = State(initialValue: baseRevision)
+        _baseRevision = State(initialValue: savedBaseRevision)
+        _savedScopeSessionID = State(initialValue: scopeSessionID)
         _selectedID = State(initialValue: selectedElementID)
         _draft = State(initialValue: home)
         _anchorID = State(initialValue: home.spaces.first?.id ?? "")
@@ -79,6 +82,7 @@ struct ManualHomeEditorView: View {
             if undoing { undoing = false; resetContext() } else { history.append(old) }
         }
         .disabled(saving)
+        .interactiveDismissDisabled(saving)
         .onAppear { resetContext() }
         .onChange(of: selectedID) { _, _ in resetContext() }
         .onChange(of: roomFloorID) { _, id in anchorID = draft.spaces.first(where: { $0.floorID == id })?.id ?? "" }
@@ -96,6 +100,7 @@ struct ManualHomeEditorView: View {
                     Text(s("Tap a room, opening or marker to edit it. The lists below provide the same controls.")).font(.footnote).foregroundStyle(.secondary)
                 }
             }
+            ScanCorrectionSection(draft: $draft)
             if draft.isFictional || draft.source == .sample {
                 Section {
                     Text(s("You're editing the fictional sample home. Start your own to describe your real layout."))
@@ -139,6 +144,7 @@ struct ManualHomeEditorView: View {
             Section(s("Rooms")) {
                 ForEach(draft.spaces) { space in
                     Button(roomFloorLabel(space)) { selectElement(space.id) }
+                        .accessibilityIdentifier("home.editRoom.\(space.id)")
                 }
                 DisclosureGroup(s("Add a room"), isExpanded: $addingRoom) {
                 if draft.floors.count > 1 {
@@ -166,6 +172,7 @@ struct ManualHomeEditorView: View {
             Section(s("Doors and openings")) {
                 ForEach(draft.portals) { portal in
                     Button(openingLabel(portal)) { selectElement(portal.id) }
+                        .accessibilityIdentifier("home.editOpening.\(portal.id)")
                 }
                 DisclosureGroup(s("Add an opening")) {
                 Picker(s("From room"), selection: $doorFrom) { roomOptions }
@@ -232,15 +239,17 @@ struct ManualHomeEditorView: View {
             ToolbarItem(placement: .topBarTrailing) { Button(s("Undo"), systemImage: "arrow.uturn.backward") {
                 if let previous = history.popLast() { undoing = true; draft = previous }
             }.disabled(history.isEmpty) }
-            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { saveDraft() }.disabled(saving) }
+            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { save() }.accessibilityIdentifier("home.save") }
         }
     }
 
     @ViewBuilder private var contextualEditor: some View {
         Form {
-            FloorPlanView(home: draft, routes: [], highlightedFloorID: selectedFloorID, highlightedElementID: selectedID, onSelect: { selectElement($0) }).frame(height: 220)
+            FloorPlanView(home: draft, routes: [], highlightedFloorID: selectedFloorID, highlightedElementID: selectedID,
+                          onSelect: { selectElement($0) }).frame(height: 220)
             if let index = draft.spaces.firstIndex(where: { $0.id == selectedID }) {
                 TextField(s("Room name"), text: $draft.spaces[index].label)
+                    .accessibilityIdentifier("home.roomName")
                 Picker(s("Room type"), selection: $draft.spaces[index].kind) {
                     ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) }
                 }
@@ -269,15 +278,17 @@ struct ManualHomeEditorView: View {
                     Text(model.localizer("plan.shelter.manufactured")).font(.footnote)
                 }
             } else if let index = draft.portals.firstIndex(where: { $0.id == selectedID }) {
-                Picker(s("Type"), selection: Binding<PortalKind>(get: { draft.portals[index].kind }, set: { kind in
-                    do { try HomeEditTransaction.reclassify(draft.portals[index].id, as: kind, in: &draft) }
-                    catch { message = model.localizer("spatial.answer-refused") }
-                })) {
-                    Text(s("Door")).tag(PortalKind.door)
-                    Text(s("Window")).tag(PortalKind.window)
-                }.pickerStyle(.segmented)
-                portalEditor($draft.portals[index])
-                openingPlacementEditor(index)
+                // The compact card answers the common corrections in place (type, Leads to, Not usable, Restore);
+                // every answer applies to the draft at once and the plan above highlights both sides.
+                OpeningCorrectionCard(draft: $draft, portalID: draft.portals[index].id,
+                                      fromRoomID: correctionFromRoom.isEmpty ? ScanCheckView.room(of: draft.portals[index], in: draft) : correctionFromRoom,
+                                      onRemoved: { selectedID = nil })
+                DisclosureGroup(model.localizer("spatial.card.more")) {
+                    portalEditor($draft.portals[index])
+                    // Captured openings keep their measured position; only hand-built homes move one to another wall.
+                    if draft.scanSnapshot == nil { openingPlacementEditor(index) }
+                }
+                .accessibilityIdentifier("opening.more")
                 if draft.portals[index].kind == .window {
                     Text(model.localizer("spatial.window-person-question")).font(.subheadline)
                     Text(model.localizer("spatial.window-person-note")).font(.footnote)
@@ -309,28 +320,32 @@ struct ManualHomeEditorView: View {
         .confirmationDialog(model.localizer("spatial.remove-item-confirm"), isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button(s("Remove"), role: .destructive) { removeSelected() }
         }
-        .navigationTitle(s("Selected home item"))
+        .navigationTitle(s("Edit home"))
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button(s("All items")) { if applyPendingMarkerPlacement() { selectedID = nil } } }
+            ToolbarItem(placement: .cancellationAction) { Button(s("All items")) { if applyPendingMarkerPlacement() { selectedID = nil } }.accessibilityIdentifier("home.allItems") }
             ToolbarItem(placement: .topBarTrailing) { Button(s("Undo")) {
                 if let previous = history.popLast() { undoing = true; draft = previous }
             }.disabled(history.isEmpty) }
-            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { saveDraft() }.disabled(saving) }
+            ToolbarItem(placement: .confirmationAction) { Button(s("Save")) { save() }.accessibilityIdentifier("home.save") }
         }
     }
 
+    /// Selecting another element first applies a pending marker placement; reselecting the current one is a no-op.
     private func selectElement(_ id: String) {
         guard id != selectedID, applyPendingMarkerPlacement() else { return }
         selectedID = id
     }
 
-    private func saveDraft() {
+    private func save() {
         guard !saving, applyPendingMarkerPlacement() else { return }
         saving = true
+        var candidate = draft
+        candidate.bumpRevision()
         Task { @MainActor in
-            let success = await onSave(draft, baseRevision)
+            let saved = await onSave(candidate, baseRevision, savedScopeSessionID)
             saving = false
-            if !success { message = model.lastError ?? s("Your draft was kept. Try Save again.") }
+            if saved { dismiss() }
+            else { message = s("Could not save this home. Your edits are still here. Retry, or cancel and reopen the latest home.") }
         }
     }
 
@@ -533,9 +548,6 @@ struct ManualHomeEditorView: View {
             if p.leadsToExterior && p.kind == .window {
                 Text(s("Windows are exits only if everyone who would use it can open it and climb out, on the ground floor."))
                     .font(.caption).foregroundStyle(.secondary)
-            }
-            Button(s("Mark as not usable"), role: .destructive) {
-                portal.wrappedValue.verification = .rejected; draft.bumpRevision()
             }
         }
     }

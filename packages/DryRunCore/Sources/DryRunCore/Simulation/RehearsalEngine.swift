@@ -116,6 +116,7 @@ struct RunState {
     var idCounts: [String: Int] = [:]
     var currentRoutes: [String: RouteResult] = [:]
     var spatialState: SpatialExerciseState?
+    var occupants: [String: ExerciseOccupantState] = [:]
     var onBackup: Set<String> = []
     var phaseID: String
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
@@ -423,6 +424,7 @@ struct RunState {
     }
 
     mutating func snapshot() {
+        synchronizeOccupants()
         var res: [String: ResourceQuantity] = [
             "res.water.stored": ResourceQuantity(amount: storedWater.map(Fmt.round2), unit: "gal"),
             "res.handset.hours": ResourceQuantity(amount: handsetHours.map(Fmt.round2), unit: "h"),

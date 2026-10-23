@@ -1,0 +1,20 @@
+{
+  "runtimeVersion": "0.163.0",
+  "endpoint": "https://codex.lunarz.dev/backend-api/codex",
+  "model": "gpt-6.1-sol",
+  "reviewReportID": "report-codex-extended-protocol-1",
+  "streaming": true,
+  "tools": true,
+  "continuation": true,
+  "structuredOutput": true,
+  "lifecycle": true,
+  "images": false,
+  "research": false,
+  "evidenceLimitations": [
+    "Private synthetic local demonstration only, never production authorization.",
+    "Core streaming/tool/schema: report-codex-live-listed-alias-pass-1.",
+    "Follow-up and local cancellation: report-codex-extended-protocol-1.",
+    "429 and shipping deadline categories tested by synthetic faults only; no live 429 observed.",
+    "Research and images unverified and disabled; no domain quality or native-fit acceptance."
+  ]
+}

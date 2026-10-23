@@ -44,6 +44,10 @@
   "native.removeEquipment": "Xóa thiết bị hoặc thuốc này",
   "native.removeEquipmentConfirm": "Xóa {device}?",
   "native.removeEquipmentNote": "Chỉ xóa mục này và các thông tin chuẩn bị liên quan. Các thành viên, nguồn điện dự phòng, liên hệ và địa điểm vẫn được giữ. Thay đổi được lưu khi bạn xác nhận.",
+  "ui.scene.accountedOutside": "{person}: đã được kiểm đếm ở bên ngoài trong bài thực hành này.",
+  "ui.scene.exitedNeedsAccounting": "{person}: đã ra ngoài. Kiểm đếm họ tại điểm hẹn.",
+  "ui.scene.reachedShelter": "{person}: đã đến {room} trong bài thực hành này.",
+  "ui.brief.cloudNote": "Đề xuất dựa trên thông tin đã ghi của gia đình hư cấu này. Hãy xem lại trước khi thực hiện.",
   "experience.setup.title": "Thiết lập bài tập",
   "experience.setup.caption": "Chọn điều kiện diễn tập. Thông tin gia đình và điểm sẵn sàng không thay đổi.",
   "experience.setup.start": "Bắt đầu bài tập",
@@ -194,5 +198,16 @@
   "experience.route.alternative": "Lối thoát thứ hai đã đánh giá: {steps}",
   "experience.route.shared": "Điểm thắt chung: {connections}",
   "experience.setup.startingRooms": "Mỗi người bắt đầu ở đâu?",
-  "experience.setup.startingRooms.why": "Dùng phòng đã ghi nhận hoặc chọn phòng bắt đầu cho bài tập. Việc này không thay đổi vị trí của mọi người trong hồ sơ gia đình."
+  "experience.setup.startingRooms.why": "Dùng phòng đã ghi nhận hoặc chọn phòng bắt đầu cho bài tập. Việc này không thay đổi vị trí của mọi người trong hồ sơ gia đình.",
+  "native.aboutBeacon": "Beacon là trợ lý của Dry Run dành cho các gia đình mẫu. Beacon dùng OpenAI Codex trước; nếu Codex không khả dụng thì dùng Google Gemini hoặc Groq; ảnh ngôi nhà chỉ gửi đến Google Gemini. Beacon nhận toàn bộ hồ sơ của gia đình mẫu, gồm tên, nhu cầu, thuốc, người liên lạc và số điện thoại, ngôi nhà và địa chỉ. Khi không có mạng, Dry Run lập kế hoạch, diễn tập và chấm điểm trên điện thoại này. Thông tin của chính gia đình bạn không được gửi đi.",
+  "native.sampleFamily": "Thử một gia đình mẫu",
+  "native.sampleFamilyDetail": "Các gia đình và ngôi nhà hư cấu để khám phá ứng dụng. Chúng thay thế ví dụ trên điện thoại này; hộ gia đình thật của bạn không bao giờ bị thay thế từ đây.",
+  "native.sampleFamilyPick": "Gia đình",
+  "native.sampleHomePick": "Nhà",
+  "native.sampleFamilyLoad": "Tải gia đình này",
+  "native.sampleFamilyBlocked": "Hộ gia đình của bạn đang được lưu trên điện thoại này. Hãy xóa nó ở bên dưới trước nếu muốn thử gia đình mẫu.",
+  "native.sampleKeepHome": "Giữ ngôi nhà tôi đã quét",
+  "native.sampleReplaceHome": "Thay ngôi nhà của bạn bằng nhà mẫu? Sau đó không thể khôi phục bản quét hoặc bản vẽ của bạn.",
+  "native.sampleReplaceHomeConfirm": "Thay nhà của tôi",
+  "native.restoreHousehold": "Khôi phục hộ gia đình của tôi"
 }

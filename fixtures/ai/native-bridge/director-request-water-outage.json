@@ -1,7 +1,7 @@
 {
   "context" : {
     "binding" : {
-      "contextDigest" : "6f5137b2100d04e8",
+      "contextDigest" : "ed7c3efc41447332",
       "eventSequence" : 3,
       "homeRevision" : 1,
       "householdRevision" : 1,
@@ -25,6 +25,100 @@
       "activeIncidentCount" : 0,
       "awaitingUserAction" : false,
       "scheduledEventCount" : 1
+    },
+    "experience" : {
+      "accountedPersonIDs" : [
+
+      ],
+      "availableWaterGallons" : 5,
+      "debrief" : [
+        {
+          "eventIDs" : [
+
+          ],
+          "kind" : "service-advisory-water-use",
+          "nextActionID" : "prep.water",
+          "subjectIDs" : [
+            "p-oak-1",
+            "p-oak-2",
+            "p-oak-3",
+            "p-oak-4"
+          ]
+        },
+        {
+          "eventIDs" : [
+
+          ],
+          "kind" : "tapServiceUnavailable",
+          "nextActionID" : "prep.water",
+          "subjectIDs" : [
+
+          ]
+        }
+      ],
+      "destinationIDs" : [
+
+      ],
+      "escapeHelperByPersonID" : {
+
+      },
+      "feasibleCommands" : [
+        {
+          "kind" : "useWater",
+          "quantityLiters" : 0.25,
+          "target" : "recordedStored",
+          "value" : "drink"
+        },
+        {
+          "kind" : "useWater",
+          "quantityLiters" : 0.25,
+          "target" : "recordedStored",
+          "value" : "prepareFood"
+        },
+        {
+          "kind" : "useWater",
+          "quantityLiters" : 0.25,
+          "target" : "recordedStored",
+          "value" : "hygiene"
+        },
+        {
+          "kind" : "useWater",
+          "quantityLiters" : 0.25,
+          "target" : "recordedStored",
+          "value" : "boiledDrink"
+        }
+      ],
+      "hazard" : "waterOutage",
+      "identifiedGapIDs" : [
+
+      ],
+      "mechanicsVersion" : "dryrun.hazard-mechanics/7",
+      "objective" : "Match each activity to an allowed accessible supply and conserve recorded stock.",
+      "occupantRoomIDs" : {
+        "p-oak-1" : "sp-bed1",
+        "p-oak-2" : "sp-bed1",
+        "p-oak-3" : "sp-bed2",
+        "p-oak-4" : "sp-living"
+      },
+      "openGapIDs" : [
+
+      ],
+      "outsidePersonIDs" : [
+
+      ],
+      "relocated" : false,
+      "scene" : "service-advisory-water-use",
+      "shelterRoomID" : "sp-closet",
+      "shelteredPersonIDs" : [
+
+      ],
+      "supportedActions" : [
+        "useWater",
+        "choose",
+        "takeSupply",
+        "identifyGap"
+      ],
+      "waterService" : "unavailable"
     },
     "homeScene" : {
       "connectors" : [
@@ -1753,6 +1847,7 @@
     "learningObjectives" : [
       "Compare stored-water use and protect continuity without inventing supplies"
     ],
+    "locale" : "en",
     "profiles" : [
       {
         "canStart" : false,
@@ -1858,6 +1953,11 @@
     }
   },
   "contractVersion" : "dryrun.ai/1",
+  "providerConsent" : [
+    "codex",
+    "gemini",
+    "groq"
+  ],
   "requestID" : "native-water-outage-1",
   "role" : "director",
   "synthetic" : true

@@ -23,7 +23,8 @@ it('retains useful empty results and enforces a finite call budget',async()=>{
  const provider:AgentProvider={async turn(){return {text:JSON.stringify({options:[],comparison:'No supported named option found',limitations:['Use independent native search']}),steps:[],calls:[],usage:{}};}};
  const discovery=new ResourceDiscovery(provider,2);
  expect((await discovery.discover(brief)).comparison.options).toEqual([]);
- await expect(discovery.discover(brief)).rejects.toThrow('research_budget');
+ // The finite budget is a renewable per-owner window; exhausting it is a typed operation rate limit.
+ await expect(discovery.discover(brief)).rejects.toThrow('operation_rate_limit');
 });
 it('derives public needs without leaking private planner narrative',async()=>{
  const {researchBriefFromPlan}=await import('../src/resource-discovery.js');

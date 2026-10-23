@@ -35,10 +35,22 @@ enum DisplayNames {
         for key in ["equipment.\(raw)", "enum.\(raw)", "relationship.\(raw)", "common.need.\(raw)"] {
             let text = localizer.text(key)
             if !text.isMissing {
-                return key.hasPrefix("common.need.") ? text.text.prefix(1).uppercased() + text.text.dropFirst() : text.text
+                return key.hasPrefix("common.need.") ? sentenceCase(text.text) : text.text
             }
         }
         return name(raw)
+    }
+
+    /// A disability/assistance need as a standalone label (toggle, field title, chip): sentence case in every locale.
+    /// Inside a running sentence or a "·"-joined summary, use the lowercase `common.need.*` text instead.
+    static func need(_ need: AssistanceNeed, localizer: Localizer) -> String {
+        sentenceCase(localizer("common.need.\(need.rawValue)"))
+    }
+
+    /// Capitalizes the first character only, so names, acronyms and diacritics later in the label are untouched.
+    static func sentenceCase(_ text: String) -> String {
+        guard let first = text.first else { return text }
+        return first.uppercased() + text.dropFirst()
     }
 
     static func equipment(_ equipment: PoweredEquipment, localizer: Localizer) -> String {

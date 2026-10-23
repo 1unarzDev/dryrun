@@ -35,7 +35,35 @@ final class SixHazardUITests: XCTestCase {
     private func reveal(_ control: XCUIElement, in app: XCUIApplication, steps: Int = 14) -> XCUIElement {
         _ = control.waitForExistence(timeout: 3)
         for _ in 0..<steps where !(control.exists && control.isHittable) { scroll(app, up: true) }
+        settle(control)
         return control
+    }
+    /// Waits for scroll momentum to stop, so a tap lands on the control that was found and not on a neighbour that
+    /// slid under the same point (the wave-2 water-outage run opened the Home fire setup).
+    private func settle(_ control: XCUIElement) {
+        guard control.exists else { return }
+        var last = control.frame
+        for _ in 0..<10 {
+            Thread.sleep(forTimeInterval: 0.15)
+            guard control.exists else { return }
+            let now = control.frame
+            if now == last { return }
+            last = now
+        }
+    }
+    /// Opens a scenario card and checks that its own setup opened: setup option identifiers carry the scenario ID
+    /// (`rehearsal.setup.<scenario>.<question>.<option>`), so another hazard's setup cannot pass.
+    private func openSetup(_ scenario: String, in app: XCUIApplication) {
+        let card = reveal(element("scenario.\(scenario)", in: app), in: app)
+        XCTAssertTrue(card.exists, "\(scenario) card is listed")
+        card.tap()
+        XCTAssertTrue(element("rehearsal.setup", in: app).waitForExistence(timeout: 10), "\(scenario) opens its setup")
+        let own = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH %@", "rehearsal.setup.\(scenario).")).firstMatch
+        if !own.waitForExistence(timeout: 5) {
+            shot("\(scenario)-00-wrong-setup", app)
+            let other = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'rehearsal.setup.' AND NOT (identifier BEGINSWITH 'rehearsal.setup.start')")).firstMatch
+            XCTFail("\(scenario) card opened a different setup (first setup control: \(other.exists ? other.identifier : "none")); card routing or a mis-tap")
+        }
     }
 
     func testFireSetupToDebrief() { run(0) }
@@ -48,12 +76,8 @@ final class SixHazardUITests: XCTestCase {
     private func run(_ index: Int) {
         let (scenario, option) = Self.setupChoices[index]
         let app = launch(["-demoHousehold", "hh-oak", "-demoHome", "ranch", "-demoTab", "rehearse"])
-        let card = reveal(element("scenario.\(scenario)", in: app), in: app)
-        XCTAssertTrue(card.exists, "\(scenario) card is listed")
-        card.tap()
-
         // Normal entry opens setup first; nothing starts until Start.
-        XCTAssertTrue(element("rehearsal.setup", in: app).waitForExistence(timeout: 10), "\(scenario) opens its setup")
+        openSetup(scenario, in: app)
         shot("\(scenario)-01-setup", app)
         let choice = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND identifier ENDSWITH %@",
                                                       "rehearsal.setup.", ".\(option)")).firstMatch
@@ -71,15 +95,24 @@ final class SixHazardUITests: XCTestCase {
         var decisions = 0, steps = 0
         while !(debrief.exists && debrief.isEnabled), steps < 60 {
             steps += 1
-            let options = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'"))
-            if options.count > 0 {
-                let first = reveal(options.firstMatch, in: app, steps: 8)
-                if decisions == 0 { shot("\(scenario)-03-decision", app) }
-                first.tap(); decisions += 1
+            // Next is enabled exactly when no decision is pending (RehearseViews.controls), so it decides which control
+            // to use. Querying options first matched a card that was still leaving after its answer was being saved
+            // (choose() is async), and the tap on that unresolvable match failed while Next was already enabled.
+            if next.isEnabled {
+                next.tap()
+                if steps == 2 { shot("\(scenario)-04-scene", app) }
                 continue
             }
-            if next.isEnabled { next.tap() }
-            if steps == 2 { shot("\(scenario)-04-scene", app) }
+            let options = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'"))
+            // Neither control yet (an answer still saving): wait briefly for the next card rather than burning steps.
+            guard options.count > 0 else { _ = options.firstMatch.waitForExistence(timeout: 2); continue }
+            let first = reveal(options.firstMatch, in: app, steps: 8)
+            guard first.exists, first.isHittable else { continue }
+            let tappedID = first.identifier
+            if decisions == 0 { shot("\(scenario)-03-decision", app) }
+            first.tap(); decisions += 1
+            // Wait for the answer to be committed before looking again, so the same card is not answered twice.
+            _ = element(tappedID, in: app).waitForNonExistence(timeout: 10)
         }
         XCTAssertTrue(debrief.isEnabled, "\(scenario) reaches its end within 60 steps")
         shot("\(scenario)-05-end", app)

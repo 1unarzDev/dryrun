@@ -1,0 +1,42 @@
+{
+  "report_id": "report-scan-dimension-contract-regression",
+  "run_ids": [
+    "run-404afb71fc084c409c71fdab8f906f37"
+  ],
+  "feature": "Accepted captured widths versus historical confirmation tests",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "494 tests across91 suites executed; two historical tests failed at four assertions after accepted scan dimensions changed. All observed failures demand that usable high-confidence captured widths remain unconfirmed, conflicting with the new accepted-dimensions requirement.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/GeometryTests.swift",
+      "symbol": "rotatedTranslatedScanPreservesUnitsAndTopologyAndStaysProposed",
+      "lines": [
+        136,
+        138,
+        139
+      ],
+      "diagnosis": "After separately confirming actual exterior relation, operability, step-free status and grade, the test still expects a width-confirmation warning and wheelchair no-route solely because width came from scan. Accepted captured width now removes that artificial blocker.",
+      "fix": "Assert high/medium valid recorded scan width is usable without manual confirmation; retain positive width-clearance geometry checks and distinct unknown exterior/operability/grade safeguards. Add a low-confidence/invalid-width case that remains unknown and cannot authorize wheelchair clearance."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/RouteAdversarialTests.swift",
+      "symbol": "scanImportProposalsOnly",
+      "lines": [
+        211
+      ],
+      "diagnosis": "The test globally asserts no imported width is confirmed even for its high-confidence surfaces.",
+      "fix": "Separate geometry acceptance from safety-role verification: assert valid width accepted while portals remain proposed, no exterior designation inferred, operability unknown and no route before those independent facts are supported. Keep wall-only irregular outline/measurement uncertainty checks where genuinely applicable."
+    }
+  ],
+  "recommendations": [
+    "Rename blanket never-verified-anything wording so it distinguishes measurement evidence from exit/route/operability certification.",
+    "Do not revert accepted captured dimensions to satisfy obsolete manual-width confirmation assertions. Keep low-confidence, zero/invalid dimension, inaccessible-width and unknown-safety regressions.",
+    "Re-run full Core after expectations plus meaningful uncertainty cases are reconciled; observed failures alone do not prove every new accepted-width case correct."
+  ],
+  "limitations": [
+    "Source and failed deterministic tests only; actual RoomPlan hardware measurement accuracy and native Save remain unverified.",
+    "Four failed assertions occur in two test methods, not four independent product defects."
+  ],
+  "next_owner": "orchestrator and house specialist",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

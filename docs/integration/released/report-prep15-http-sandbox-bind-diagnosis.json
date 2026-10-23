@@ -1,0 +1,30 @@
+{
+  "report_id": "report-prep15-http-sandbox-bind-diagnosis",
+  "run_ids": [
+    "run-25f203251f2044ee8d251ee19a16750f",
+    "run-6cbb4b8c949541f68e81266a6c691b6a"
+  ],
+  "review_kind": "Dedicated reviewer protected engineering test diagnosis",
+  "synopsis": "Both server test attempts were blocked by sandbox denial of localhost socket binding. Six HTTP-dependent tests fail before their substantive request assertions; no provenance contract failure is established by these captures.",
+  "fact_findings": [
+    {
+      "path": "services/ai-orchestrator/test/preparation-provenance-http.test.ts",
+      "line": 16,
+      "symbol": "http helper",
+      "diagnosis": "The helper opens an ephemeral TCP listener on loopback before issuing the actual HTTP request. Sandbox permissions deny this listen operation. All six reported failures share this setup cause; they do not reach the intended catalog delivery, fabricated provenance rejection, erased-task rejection, or honest no-action checks."
+    },
+    "Each captured attempt reported 28 tests: 21 passed, 6 failed, and 1 skipped across 3 files (2 files passed, 1 failed). These are intermediate blocked-run counts, not passing coverage."
+  ],
+  "recommendations": [
+    "Rerun the same firewall-captured server test command with require_escalated and a justification explicitly requesting permission for the localhost HTTP test listener. Workspace instructions require escalation after this sandbox denial.",
+    "Keep real HTTP end-to-end tests and their substantive assertions intact. Do not replace the listener with mocked requests or weaken provenance checks solely to bypass this environment failure.",
+    "Review the permitted rerun before claiming prep15 HTTP provenance or repair behavior passes."
+  ],
+  "limitations": [
+    "Inspected captures and authored helper source only; no code changes, additional tests, models, device, simulator, or app execution performed.",
+    "These captures establish a common setup failure and cannot assess the six intended HTTP assertions.",
+    "Current file has additional authored tests beyond the seven present in these captured HTTP-suite executions; later source needs its own rerun."
+  ],
+  "next_owner": "codex_integration and parent integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,44 @@
+{
+  "report_id": "report-night-latest-compile-contracts",
+  "run_ids": [
+    "run-0fe44020ecfb4f528a0a162950d707c8",
+    "run-fff493aaf8854568bf36ce2a065040f7",
+    "run-b398e1c7f1d849ef9a890a6c108aaaf8"
+  ],
+  "synopsis": "Latest native compile fails on an accidental continuation DTO credential replacement. Core still crashes on the same two missing authored-resource assumptions. Server typecheck fails because paging payload types were erased despite passing runtime tests.",
+  "failures": [
+    {
+      "path": "apps/ios/DryRun/Services/DirectorGatewayClient.swift",
+      "lines": [
+        74,
+        87
+      ],
+      "cause": "Continuation currently declares a second non-Encodable Credential enum and credential property, while resume constructs it using the wire token string. Outer client credential authentication is separate from the continuation operation token.",
+      "fix": "Restore Continuation token: String and remove the nested Credential enum/property; retain outer client Credential and authorization logic unchanged. Preserve binding, callID and result wire fields."
+    },
+    {
+      "path": "services/ai-orchestrator/src/private-context.ts",
+      "line": 38,
+      "cause": "body is declared Record<string,unknown>; spreading this into the inferred return loses named kind/text/items fields. New authored tests access these at private-context.test.ts lines92,94,97.",
+      "fix": "Define a discriminated paging-body union for text/array/object/scalar and retain that union in the returned valueRead type. Narrow by kind in tests before accessing text/items. Do not use any or remove reconstruction assertions."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/ShoppingListTests.swift",
+      "line": 8,
+      "cause": "Required authored content/prices/tarrant-v1.json is absent. Exact donor asset already cleared in report-night-core-resource-native-optionals.",
+      "fix": "Restore cleared static draft price asset preserving its unverified-price labels; replace forced test loading with explicit required fixture diagnostics."
+    },
+    {
+      "path": "packages/DryRunCore/Tests/DryRunCoreTests/SixHazardExperienceTests.swift",
+      "line": 133,
+      "cause": "Forced unwrap assumes a flood roads-unavailable event absent from current authored scenario resource. This matches prior failure.",
+      "fix": "Reconcile intended authored flash-flood resource mechanics and test event contract; use a required event assertion. Preserve meaningful road closure behavior; do not fabricate safe routes."
+    }
+  ],
+  "limitations": [
+    "Compiler/test logs only; no application or simulator executed.",
+    "Native build stops at the observed error; later errors may remain.",
+    "No live generation started; evaluation remains held pending explicit final context/export freeze."
+  ],
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,26 @@
+{
+  "report_id": "report-ia10-core-cache-permission-diagnosis",
+  "run_ids": [
+    "run-a4da01c2d2704379858850612a4ce279"
+  ],
+  "review_kind": "Dedicated reviewer compile diagnosis",
+  "synopsis": "The IA10 Core attempt stopped during SwiftPM manifest compilation because the sandbox denied the compiler write access to its user-level Clang module cache. No product source compiler diagnostic or test failure was reached.",
+  "failures": [
+    {
+      "path": "packages/DryRunCore/Package.swift",
+      "stage": "SwiftPM manifest compilation before package build",
+      "diagnosis": "The compiler attempted to create a cached Swift module beneath /Users/nicholascheng/.cache/clang/ModuleCache, outside permitted writable roots. The accompanying standard-library load failure follows that denied write; this capture does not establish an invalid Package.swift manifest or IA10 source defect.",
+      "fix": "Rerun the exact firewall-captured command with require_escalated and a narrowly described sandbox-cache approval, following workspace escalation instructions. Preserve capture redirection. No production source or assertion changes are warranted from this evidence."
+    }
+  ],
+  "retests": [
+    "Repeat the same IA10 Core compile/test invocation through the capture firewall with required sandbox permission. Review the new capture before treating IA10 as compiled or tested."
+  ],
+  "limitations": [
+    "No tests ran; no IA10 source compilation was established.",
+    "No device, simulator, app execution, or model run performed.",
+    "Earlier full Core passing snapshot remains separate historical evidence."
+  ],
+  "next_owner": "codex specialist and parent integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

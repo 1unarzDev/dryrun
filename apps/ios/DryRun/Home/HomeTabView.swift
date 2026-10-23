@@ -19,8 +19,7 @@ struct HomeTabView: View {
     @State private var scanning = false
     @State private var editingHousehold = false
     @State private var showingMeetingPlaceMap = false
-    /// A finished scan waiting for the scan cover to finish dismissing before the confirmation sheet is presented.
-    @State private var pendingProposal: HomeModel?
+    @State private var showingExitRoutes = true
 
     enum Mode: String, CaseIterable, Identifiable {
         case plan2D = "2D plan", dollhouse = "3D", rooms = "Room list"
@@ -60,10 +59,26 @@ struct HomeTabView: View {
                     }
                     switch mode {
                     case .plan2D:
-                        FloorPlanView(home: home, routes: [], highlightedFloorID: floorID ?? home.floors.first?.id, onSelect: { editorRequest = EditorRequest(elementID: $0) })
+                        // The saved home only: the line recomputes after each Save, Undo or Revert, never from a draft.
+                        let people = model.household?.people ?? []
+                        let exitRoutes = showingExitRoutes ? HomeCommittedRoutes.outdoorEgress(people: people, home: home) : []
+                        FloorPlanView(home: home, routes: HomeCommittedRoutes.paths(exitRoutes), highlightedFloorID: floorID ?? home.floors.first?.id, onSelect: { editorRequest = EditorRequest(elementID: $0) })
                             .frame(height: 320)
                             .listRowInsets(EdgeInsets())
                             .accessibilityIdentifier("home.scene")
+                        if !people.isEmpty {
+                            Toggle(s("Show the way out from each starting room"), isOn: $showingExitRoutes)
+                                .font(.callout)
+                                .accessibilityIdentifier("home.exitRoutes")
+                            ForEach(exitRoutes.filter { $0.path == nil }) { entry in
+                                if let person = people.first(where: { $0.id == entry.personID }), let reason = entry.noRouteReason {
+                                    Label(person.localizedLabel(model.localizer) + ": " + model.localizer("plan.route.reason.\(reason.rawValue)"),
+                                          systemImage: "exclamationmark.triangle")
+                                        .font(.footnote)
+                                        .accessibilityIdentifier("home.exitRoutes.missing.\(entry.personID)")
+                                }
+                            }
+                        }
                     case .dollhouse:
                         DollhouseView(home: home, routes: [], floorID: floorID ?? home.floors.first?.id)
                             .frame(height: 320)
@@ -104,8 +119,30 @@ struct HomeTabView: View {
                         .accessibilityIdentifier("home.markerKey")
                     }
                 }
+                Section {
+                    NavigationLink { SiteEvidenceView() } label: {
+                        Label(model.localizer("site.title"), systemImage: "map")
+                    }.accessibilityIdentifier("home.siteEvidence")
+                    NavigationLink { PhotoReviewView() } label: {
+                        Label(model.localizer("photo.title"), systemImage: "camera.viewfinder")
+                    }.accessibilityIdentifier("home.photoReview")
+                }
                 Section(s("Change the home")) {
                     Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { editorRequest = EditorRequest(elementID: nil) }
+                        .accessibilityIdentifier("home.edit")
+                    // Saved versions (last 20 per home): each step is a new revision-checked save, never a silent rewrite.
+                    if model.canUndoHomeSave || model.canRedoHomeSave {
+                        HStack {
+                            Button(model.localizer("spatial.card.undoSave"), systemImage: "arrow.uturn.backward") { Task { await model.undoHomeSave() } }
+                                .disabled(!model.canUndoHomeSave)
+                                .accessibilityIdentifier("home.undoSave")
+                            Spacer()
+                            Button(model.localizer("spatial.card.redoSave"), systemImage: "arrow.uturn.forward") { Task { await model.redoHomeSave() } }
+                                .disabled(!model.canRedoHomeSave)
+                                .accessibilityIdentifier("home.redoSave")
+                        }
+                        .buttonStyle(.borderless)
+                    }
                     scanControls
                 }
                 if let household = model.household, !household.people.isEmpty {
@@ -154,7 +191,7 @@ struct HomeTabView: View {
                     }
                     Button(s("Choose on map"), systemImage: "map") { showingMeetingPlaceMap = true }
                 }
-                let issues = HomeValidator.validate(home)
+                let issues = HomeValidator.validate(home).filter { $0.kind != .spaceNeedsMeasurement && $0.kind != .spaceLabelUnconfirmed }
                 Section(model.localizer("spatial.issues-count", ["count": String(issues.count)])) {
                     if issues.isEmpty { Text(s("Nothing outstanding in the home model.")) }
                     ForEach(issues) { issue in
@@ -194,42 +231,33 @@ struct HomeTabView: View {
             }
         }
         .navigationTitle(model.localizer("common.tab.home"))
-        .sheet(item: $editorRequest) { request in
+        .sheet(item: $editorRequest, onDismiss: { manualDraft = nil }) { request in
             if let home = manualDraft ?? model.home {
                 NavigationStack {
-                    ManualHomeEditorView(home: home, baseRevision: model.home?.revision, selectedElementID: request.elementID) { updated, baseRevision in
+                    ManualHomeEditorView(home: home, selectedElementID: request.elementID, savedBaseRevision: model.home?.revision, scopeSessionID: model.scopeSessionID) { updated, baseRevision, scope in
                         manualDraft = updated
-                        let success = await model.updateHome(updated, expectedRevision: baseRevision)
-                        if success { editorRequest = nil; manualDraft = nil }
-                        return success
+                        let saved = await model.updateHome(updated, baseRevision: baseRevision, scopeSessionID: scope)
+                        if saved { editorRequest = nil; manualDraft = nil }
+                        return saved
                     }
                 }
                 .interactiveDismissDisabled()
             }
         }
-        .fullScreenCover(isPresented: $scanning, onDismiss: {
-            // A scan is only a proposal: go straight into the confirmation pass before it is saved. Presented from
-            // onDismiss because SwiftUI can drop a sheet requested while the cover is still dismissing.
-            if let proposed = pendingProposal {
-                pendingProposal = nil
-                manualDraft = proposed
-                editorRequest = EditorRequest(elementID: nil)
-            }
-        }) {
-            RoomScanFlowView { proposed in
-                pendingProposal = proposed
-                scanning = false
-            }
-            .interactiveDismissDisabled()
+        .roomScanToHome(isPresented: $scanning)
+        .onChange(of: model.scopeSessionID) { _, _ in
+            scanning = false; editorRequest = nil; manualDraft = nil
         }
         .navigationDestination(isPresented: $editingHousehold) { FocusedHouseholdEditor(focus: .family) }
         .sheet(isPresented: $showingMeetingPlaceMap) {
             MeetingPlaceChooser(purpose: .outsideMeetingPoint)
         }
-
     }
 
     @ViewBuilder private var scanControls: some View {
+        NavigationLink { ScannerHomeView() } label: {
+            Label(model.localizer("spatial.scanner.title"), systemImage: "sensor.tag.radiowaves.forward")
+        }.accessibilityIdentifier("home.scanner")
         switch model.capabilities.plan.scan {
         case .available:
             Button(s("Scan with RoomPlan"), systemImage: "camera.viewfinder") { scanning = true }

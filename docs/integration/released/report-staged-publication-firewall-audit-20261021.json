@@ -1,0 +1,54 @@
+{
+  "report_id": "report-staged-publication-firewall-audit-20261021",
+  "run_ids": [],
+  "review_kind": "Dedicated reviewer staged-index publication firewall audit; no production edits or runtime generation",
+  "fixture_snapshot": {
+    "branch": "codex/native-integration-20261021",
+    "staged_tree": "95e69851a8663ac67b9740b689ad58bcb9f97aa8",
+    "staged_files": 321,
+    "masked_png_files": 17,
+    "protected_manifest_sha256": "f7c80155963eb4c710f6a59386d0e8d0c7de61b50f54916f80fd154ce97b4a41",
+    "protected_audit_archive": "/private/tmp/dryrun-protected/staged-publication-audit"
+  },
+  "synopsis": "No publication-firewall blocker found in this exact staged tree. Reviewed staged paths, structured reports and authored source/resource provenance, protected-output overlap findings, secret-signature findings, all17 masked capture derivatives, and final staged guard/documentation additions. Commit and branch push may proceed for this tree; this is publication clearance, not product completion or new runtime acceptance.",
+  "fact_findings": [
+    {
+      "check": "Staged path containment",
+      "result": "No .env, __pycache__, raw logs, result bundles, fixtures/ai, content/ai/replay, owner-vault data or raw runtime artifact paths staged. Existing server .env and reviewer Python cache paths match ignore rules. No broad worktree or owner secret inspection performed."
+    },
+    {
+      "check": "Secret and raw-output signatures",
+      "result": "No credential or raw-response payload finding. Matches were reviewer firewall denylist literals and synthetic marker construction, which are authored controls, not protected values. Synthetic Codex profile contains endpoint/alias/capability metadata and no credential."
+    },
+    {
+      "check": "Actual-output overlap",
+      "result": "Compared staged text against protected runtime agent-message word sequences. Findings were contiguous canonical context fact-ID lists in released diagnostic reports only; no actual generated answer prose was found. Source/resource/test content inspected in its authored/reconciled context, retaining protected replay exclusions."
+    },
+    {
+      "check": "Released report content",
+      "result": "Staged released JSON reports carry semantic-release attestation and substantive author-written engineering/fact-use diagnostics. No quoted generated answers, raw errors, transcripts, or reconstructive answer payloads found. Commands, schema paths, assertion semantics and canonical IDs are cleared engineering diagnostics."
+    },
+    {
+      "check": "Capture derivatives",
+      "result": "All17 staged PNGs are flattened RGB, contain no metadata or alpha payload, and were visually reviewed as masked derivatives. AI-bearing prose/decision text is obscured; remaining room controls, static labels and fictional family inputs are authored data. Original geometry remains visible. No raw original capture staged."
+    },
+    {
+      "check": "Final staged delta",
+      "result": "Final continuation/ledger updates, test full-encoding comparison, supporting-context reports, Gemini-only photo consent and synthetic-household guards inspected. Staged tree equals parent-frozen95e69851a8663ac67b9740b689ad58bcb9f97aa8."
+    }
+  ],
+  "failures": [],
+  "recommendations": [
+    "Commit the exact audited tree and push only the dedicated branch. Any subsequent staged source/artifact changes require scoped publication review.",
+    "Keep this audit report outside the approved tree for the first commit as parent requested; it can remain local or be added separately after semantic release.",
+    "Preserve protected archives and earlier failures locally. Do not add raw runtime/capture/replay artifacts while publishing."
+  ],
+  "limitations": [
+    "Shared-filesystem procedural firewall, not OS-enforced isolation or proof that arbitrary future generated files are safe. Signature and overlap scans support semantic review and are not a universal secret/output detector.",
+    "This audit does not independently rerun builds/tests, validate final test counts, verify clinical/public-source claims, perform native execution, or qualify preparation15 live quality. Existing reports retain their snapshot and skip limits.",
+    "No models, phone, simulator, external messages, commit, push, owner-vault or credential access performed by this reviewer.",
+    "Branch is separate from newer remote main; merge/reconciliation status is outside this publication firewall decision."
+  ],
+  "next_owner": "Root: commit audited tree and push dedicated branch; preserve stated pending live/native verification.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

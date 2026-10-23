@@ -1,0 +1,77 @@
+{
+  "report_id": "report-family-experience-journey-persistence-1",
+  "run_ids": [
+    "run-aed5cf96876943aa839c774f7a902fb5",
+    "run-53c46749c2ae421d86ebc640e3ce5cd6"
+  ],
+  "feature": "Independent bounded physical family journey and durable home edit",
+  "review_kind": "synthetic agent audit",
+  "versions": {
+    "candidate": "run-4f94651a675b4fe485895c7e733a02d6",
+    "device": "plugged iPhone16Pro",
+    "variant": "English, ordinary text, existing dark appearance"
+  },
+  "fixture_snapshot": "hh-oak fictional in-memory journeys; separate UUID-isolated encrypted synthetic home persistence fixture",
+  "criteria": [
+    {
+      "id": "HOME-02",
+      "verdict": "actual physical room rename and opening reclassification persisted after process relaunch"
+    },
+    {
+      "id": "PREP-01/GEO-02",
+      "verdict": "bounded connected authored journey passed; live discovery not established"
+    },
+    {
+      "id": "MAC-01",
+      "verdict": "five selected UI XCTest methods passed after one infrastructure initialization failure"
+    }
+  ],
+  "synopsis": "The single permitted retry recovered automation and all five preregistered UI tests passed. A family can open direct family/card entries, start without an invented home, record a backup meetup, see its preparation record, complete a fire rehearsal through supported options, and retain the meetup on the card/PDF path. Separate encrypted UUID persistence proved a room rename and door-to-window correction survive a real process relaunch.",
+  "fact_findings": [
+    {
+      "evidence": "HomePersistenceUITests body and retained physical opening screenshot",
+      "finding": "Restored room name appears in the diagram and selected opening description; Window is selected after relaunch. Per-person escape confirmation remains separate, so reclassification itself does not imply usable egress."
+    },
+    {
+      "evidence": "Prepare screenshot from testPreparationActionsLeadSupportingEditors",
+      "finding": "Prior urgency palette conflict is improved: urgent effort badges now share urgency treatment and warnings occupy a trailing column. Domain/title text still repeats an equipment subject in separate title and detail areas, adding density."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "low",
+      "region": "Restored opening editor toolbar",
+      "observed": "Screen title truncates between a wide leading navigation control and Undo/Save at ordinary text size.",
+      "impact": "Selected-object identity relies on the inspector below rather than a readable screen title.",
+      "correction": "Use a shorter stable editor title or redistribute leading navigation width while preserving obvious Save."
+    },
+    {
+      "severity": "low",
+      "region": "Restored opening type segmented control",
+      "observed": "Longest opening-type segment truncates at ordinary size while selected Window remains legible.",
+      "impact": "An alternative classification label is harder to identify.",
+      "correction": "Use a compact picker or adaptive layout with full option labels at large text sizes."
+    }
+  ],
+  "references": [
+    "Protected results and two exported screenshots retained under family-experience-final; source and exact xctestrun copied before execution.",
+    "Native results: 5 tests, zero failures, 333.138 seconds. Home persistence method 120.457 seconds."
+  ],
+  "recommendations": [
+    "Preserve the initial automation failure in coverage counts; it was not a feature failure and the retry passed.",
+    "Independent matched accessibility capture is in progress; do not extrapolate these ordinary-text screenshots to large-text acceptance."
+  ],
+  "retests": [
+    "Full family/hazard matrix, decision alternatives and late-scope isolation remain outside these five journeys.",
+    "Needs, medication, floor/access, inventory, budget and prior-performance controlled pairs remain instrumentation-dependent."
+  ],
+  "limitations": [
+    "No gateway environment was configured, so this authored/native journey proves no live Codex operation or native full-context usage.",
+    "Only hh-oak current journey tested here; no full six-hazard or all-family claim.",
+    "No native rubric score or practice retirement asserted by these tests.",
+    "Actual RoomPlan scan/movement remains unverified.",
+    "Review is synthetic agent assessment; no real-family research."
+  ],
+  "next_owner": "family_experience_review retains device reservation for bounded accessibility tour then releases; orchestrator owns remaining acceptance gates",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

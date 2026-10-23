@@ -111,7 +111,6 @@ struct ScorecardCard: View {
                         }
                     }
                 }
-                Text(l("score.version", ["version": rubric.version])).font(.caption).foregroundStyle(.secondary)
             }
             Text(l("score.notSafety")).font(.caption).foregroundStyle(.secondary)
         }

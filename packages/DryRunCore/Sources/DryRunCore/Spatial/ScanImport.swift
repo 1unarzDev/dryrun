@@ -168,8 +168,15 @@ public enum ScanImport {
             let sideA: PortalDestination = near.count >= 1 ? .space(near[0]) : .unknown
             let sideB: PortalDestination = (kind != .window && near.count >= 2) ? .space(near[1]) : .unknown
             if near.count > 2 { notes.append("Opening \(rp.surface.id) is near more than two rooms; confirm where it leads.") }
+            // Valid captured dimensions are measurements from the scan. Accept
+            // those dimensions without a second manual measurement workflow;
+            // operability, exterior destination and step-free access stay unknown.
+            let width = rp.surface.dimensions.x
+            let capturedWidth: EvidenceValue<Double> = rp.surface.confidence != .low && width.isFinite && width > 0
+                ? EvidenceValue(value: width, origin: .scanObserved, status: .confirmed, unit: "m")
+                : .unknown
             portals.append(Portal(id: "pt-\(rp.surface.id)", floorID: rp.floorID, kind: kind, a: rp.a, b: rp.b, sideA: sideA, sideB: sideB,
-                                  clearWidthMeters: .scanned(rp.surface.dimensions.x, unit: "m"), operable: .unknown, stepFree: .unknown,
+                                  clearWidthMeters: capturedWidth, operable: .unknown, stepFree: .unknown,
                                   verification: .proposed,
                                   note: kind == .window ? "Scanned window: not an exit" : "Scanned; confirm where this leads"))
             if case .unknown = sideB { incomplete = true }
@@ -200,6 +207,7 @@ public enum ScanImport {
                              completenessNote: incomplete ? "Scan is incomplete or has unconfirmed openings." : "Confirm the scan covers the whole home.",
                              isFictional: false)
         home.sourceCaptureFrameID = capture.coordinateFrameID
+        home.scanSnapshot = ScanSnapshot(home)
         return ScanImportResult(home: home, notes: notes)
     }
 

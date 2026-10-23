@@ -4,6 +4,7 @@ import {primaryAttempt} from './provider-failure.js';
 import {z} from 'zod';
 import {resourcePlan} from './features.js';
 import type {AgentProvider} from './provider.js';
+import {OwnerWindowQuota,type QuotaWindowOptions} from './owner-window-quota.js';
 const id=z.string().min(1).max(120),text=z.string().min(1).max(600);
 export const researchBrief=z.object({taskID:id,locality:z.object({city:z.string().min(1).max(100),administrativeArea:z.string().min(1).max(100),countryCode:z.string().regex(/^[A-Z]{2}$/)}).strict(),capabilities:z.array(z.enum(['drinkingWater','foodAssistance','pharmacy','equipmentSupport','extinguisher','cooling','warming','stepFree','delivery','emergencyDepartment','emergencyManagement','fireStation','policeStation','shelter','hardware','warmClothing'])).min(1).max(6),travelMode:z.enum(['walking','transit','driving','assistance']),maximumDistanceKm:z.number().positive().max(100),limitedBudget:z.boolean()}).strict();
 const option=z.object({name:z.string().min(1).max(180),locality:text,documentedService:text,whyUseful:text,nextAction:text,unknowns:z.array(text).min(1).max(6),sourceURLs:z.array(z.url()).min(1).max(6),publishedOrUpdatedAt:z.string().max(100).nullable()}).strict();
@@ -20,12 +21,12 @@ export function researchBriefFromPlan(raw:unknown,locality:ResearchBrief['locali
 export class ResourceDiscovery {
  calls=0;
  usage:unknown[]=[];
- private primaryCircuit=new QuotaCircuit();
- constructor(private provider:AgentProvider,private maximumCalls=12,private now=()=>new Date(),private fallback?:Pick<GroqResourceDiscovery,'discover'>,private primaryAttemptMs=45000){}
- async discover(raw:unknown,parentSignal:AbortSignal=AbortSignal.timeout(90000)){
+ private primaryCircuit=new QuotaCircuit();private quota:OwnerWindowQuota;
+ constructor(private provider:AgentProvider,private maximumCalls=12,private now=()=>new Date(),private fallback?:Pick<GroqResourceDiscovery,'discover'>,private primaryAttemptMs=45000,quotaOptions:QuotaWindowOptions={}){this.quota=new OwnerWindowQuota(maximumCalls,{now:()=>this.now().getTime(),...quotaOptions});}
+ async discover(raw:unknown,parentSignal:AbortSignal=AbortSignal.timeout(90000),owner='internal-research'){
   researchBrief.parse(raw);
   const signal=AbortSignal.any([parentSignal,AbortSignal.timeout(90000)]);
-  const operation=new ProviderOperation(signal,4,0.15,90000,()=>{if(this.calls>=this.maximumCalls)throw new Error('research_budget');this.calls++;});
+  const operation=new ProviderOperation(signal,4,0.15,90000,()=>{this.quota.consume(owner);this.calls++;});
   const eligible=this.primaryCircuit.enter(),quotaGeneration=this.primaryCircuit.generation;
   try {
    if(!eligible)throw new Error('provider_rate_limited');
@@ -43,7 +44,7 @@ export class ResourceDiscovery {
  private async discoverGemini(raw:unknown,parentSignal:AbortSignal,operation:ProviderOperation){
   const brief=researchBrief.parse(raw);
   const signal=AbortSignal.any([parentSignal,AbortSignal.timeout(90000)]);
-  if(this.calls+2>this.maximumCalls)throw new Error('research_budget');
+  operation.check();
   // Exclude the private task identifier from public research text.
   const {taskID,...publicBrief}=brief;
   operation.reserve(0.012);

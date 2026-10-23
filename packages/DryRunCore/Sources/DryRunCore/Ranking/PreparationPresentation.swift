@@ -17,6 +17,7 @@ public enum PreparationPresentation {
         case "prep.medicalBackup", "act.generator.outdoor-placement": "bolt.heart"
         case "prep.medication", "prep.equipmentSupplies", "prep.firstAid": "cross.case"
         case "prep.helper": "person.2.fill"
+        case "prep.stairPlan": "figure.stairs"
         case "prep.pets": "pawprint.fill"
         case "prep.contact", "prep.outOfAreaContact", "prep.waterUtility", "prep.reconnect": "phone"
         case "prep.nearMeetup", "prep.backupMeetup": "mappin.and.ellipse"

@@ -163,6 +163,24 @@ public enum HomeGeometryEditor {
         home.edit { $0.connectors[index] = corrected }
     }
 
+    /// Corrects classification without changing captured endpoints or stable identity. A change of
+    /// opening type invalidates prior escape suitability: a window cannot inherit a door's exit check.
+    public static func reclassifyOpening(in home: inout HomeModel, portalID: String, kind: PortalKind) throws {
+        guard let index = home.portals.firstIndex(where: { $0.id == portalID }) else { throw CorrectionError.unknownPortal }
+        guard home.portals[index].kind != kind else { return }
+        let previousKind = home.portals[index].kind
+        home.edit {
+            $0.portals[index].kind = kind
+            $0.portals[index].emergencyEscapeConfirmed = nil
+            $0.portals[index].emergencyEscapePersonIDs = nil
+            // An open doorway has no operable leaf. Reclassifying it must not manufacture
+            // confirmation that a newly classified door/window can actually be opened.
+            if previousKind == .opening || kind == .opening {
+                $0.portals[index].operable = .unknown
+            }
+        }
+    }
+
     /// Repositions an existing opening on an explicitly selected real wall. Clear width/operability are retained;
     /// the new connection is proposed until reviewed. Failure leaves the original home and evidence untouched.
     public static func placeOpening(in home: inout HomeModel, portalID: String, from roomID: String,

@@ -98,7 +98,6 @@ struct HomeConfirmationView: View {
                 TextField(s("Room name"), text: $labelText)
                 Picker(s("Room type"), selection: $labelKind) { ForEach(SpaceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: model.localizer)).tag($0) } }
                 Button(s("Save name")) { answer(.labelSpace(spaceID: step.elementID, label: labelText.isEmpty ? s("Room") : labelText, kind: labelKind), for: step) }
-                Button(s("Room needs measuring")) { answer(.needsMeasurement(spaceID: step.elementID), for: step) }
             }
         case .confirmPortal:
             let portal = home.portal(step.elementID)
@@ -112,7 +111,6 @@ struct HomeConfirmationView: View {
                 Picker(s("Threshold"), selection: $stepFree) {
                     Text(s("Step-free")).tag(Bool?.some(true)); Text(s("Has a step")).tag(Bool?.some(false)); Text(s("Not sure")).tag(Bool?.none)
                 }
-                TextField(s("Clear width in meters (optional)"), text: $widthText).keyboardType(.decimalPad)
                 if unknownSide {
                     if portal?.kind != .window {
                         Picker(s("This opening also leads to"), selection: $interiorRoomID) {

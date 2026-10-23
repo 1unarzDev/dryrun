@@ -290,4 +290,33 @@ public enum SampleHomes {
         return h
     }
     public static var all: [HomeModel] { [ranch, twoStory, apartment, apartmentComplex, manufactured] }
+
+    /// The equipment each sample medical-equipment marker depicts. A marker not listed here describes nobody's equipment.
+    static let medicalMarkerPurposes: [String: EquipmentPurpose] = ["an-medical": .oxygenConcentrator]
+
+    /// Any example family can be paired with any sample home, but a marker that depicts one family's equipment must
+    /// not appear in another family's home (the ranch's oxygen concentrator belongs to Oak, not Lake or Pine). Keeps a
+    /// medical-equipment marker only when the household records equipment of that purpose. Personal homes are untouched.
+    public static func forExampleHousehold(_ home: HomeModel, _ household: HouseholdProfile) -> HomeModel {
+        guard home.isFictional, household.isFictional else { return home }
+        let purposes = Set(household.equipment.map(\.purpose))
+        var adjusted = home
+        adjusted.annotations.removeAll { marker in
+            marker.kind == .medicalEquipment && !(medicalMarkerPurposes[marker.id].map(purposes.contains) ?? false)
+        }
+        return adjusted
+    }
+
+    /// Demo and UI-test stand-in for a RoomPlan capture of the ranch (fictional): scan source, ground floor confirmed,
+    /// every other opening still a proposal, and the frozen scan snapshot. Not part of `all`.
+    public static var scannedRanch: HomeModel {
+        var home = ranch
+        home.id = "home-sample-scanned"
+        home.label = "Scanned ranch (fictional demo)"
+        home.source = .roomPlanScan
+        for i in home.floors.indices { home.floors[i].exteriorGrade = .ground }
+        for i in home.portals.indices where i % 2 == 0 { home.portals[i].verification = .proposed }
+        home.scanSnapshot = ScanSnapshot(home)
+        return home
+    }
 }

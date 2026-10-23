@@ -1,0 +1,32 @@
+{
+  "report_id": "report-context-contract-pass-2",
+  "run_ids": [
+    "run-238de999ea114994bc4d3105366a6e4f",
+    "run-58092f051d4645e4912623d9fdf05159",
+    "run-d3eed082a870417387357fe3656336c2"
+  ],
+  "feature": "Context retrieval and server/client compile contract retest",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Server targeted suite executed all 17 tests across two files with zero failures and no skipped count. Swift AuthorizedAIContextTests executed all three methods successfully after locale/display-name context changes. TypeScript typecheck completed successfully.",
+  "criteria": [
+    {
+      "id": "CTX-01",
+      "verdict": "synthetic contract tests pass",
+      "evidence": "Exact Swift-wire path explicitly supplied by specialist and 17/17 reported passed, including its conditional strict-schema test."
+    },
+    {
+      "id": "CTX-02",
+      "verdict": "targeted synthetic isolation tests pass",
+      "evidence": "Scope/revision/consent and concurrent context-reader cases in selected suites passed."
+    }
+  ],
+  "recommendations": [
+    "Retain actual Swift-byte roundtrip and paired retrieval assertions. Next require a real native consumer send plus live meaningful fact-use review; source contract passes alone cannot establish native context reaches service."
+  ],
+  "limitations": [
+    "Synthetic provider transport only; no additional live capability or family experience claim.",
+    "Wire-path setting provenance comes from specialist command report; test summary confirms no skip but does not independently print the path."
+  ],
+  "next_owner": "orchestrator and codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,21 @@
+{
+  "report_id": "report-core-scan-bridge-final-pass",
+  "run_ids": [
+    "run-aa104d35cab04fda9e5e6849fe8c7f57",
+    "run-6b6502f0000d4eb3b82807897e5763fb",
+    "run-d93787c5466348159dfc44a7aa97e459"
+  ],
+  "feature": "Final Core scan-width and authored-bridge regression",
+  "review_kind": "synthetic agent engineering audit",
+  "synopsis": "Final full Swift Testing run passed500 tests across93 suites. XCTest section executed4 methods with one explicitly skipped exporter and zero failures. Earlier498-test run failed only the same four obsolete scan-width expectations described in report-scan-dimension-contract-regression; new authored bridge did not add failures. Its three targeted tests also passed separately.",
+  "recommendations": [
+    "Record500/93 as Swift Testing count and4 XCTest methods with1skip separately. A skipped exporter is not executed acceptance.",
+    "Native scan hardware, native bridge feedback/persistence and UI flows remain independent gates despite Core pass."
+  ],
+  "limitations": [
+    "Actual physical LiDAR capture and native UI automation not established by this report.",
+    "Existing retained legacy reference unchanged; versioned spatial comparison limitations remain documented separately."
+  ],
+  "next_owner": "orchestrator and independent native reviewer",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

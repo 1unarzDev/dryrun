@@ -1,0 +1,54 @@
+{
+  "report_id": "report-family-heldout-1-execution-not-run-20261022",
+  "review_kind": "Dedicated output reviewer assigned to execute family-heldout/1 under execution addendum 2; synthetic agent audit only",
+  "run_ids": [
+    "run-28f6b40b79174751b6935147f142005f"
+  ],
+  "feature": "Preparation recommendations (preparation/16, Codex-only) on the sealed family-heldout/1 set: 5 matched pairs x 2 sides x 3 repetitions = 30 attempts, PREP-01/REL-01/PROMPT-01 criteria",
+  "fixture_snapshot": "Sealed handle family-heldout-prereg-20261021; sealed-manifest sha256 96e86b12...e40a and preregistered-spec sha256 566326ef...e174 both match the addendum; all 20 input files match their sealed hashes; frozen export /private/tmp/l7-heldout-frozen-e5a1634 source hashes for all 10 listed files, capability profile dbbac9f7...c53b and harness codex-feature-eval.ts f2a9d5d9...1047 match the addendum.",
+  "versions": {
+    "prompt": "preparation/16",
+    "condition": "candidate",
+    "model": "gpt-6.1-sol (capability profile)",
+    "runtime": "0.163.0",
+    "harness": "codex-feature-eval.ts f2a9d5d9...1047",
+    "callAllowance": "400 (addendum)"
+  },
+  "criteria": {
+    "REL-01_reliability": "NOT EVALUATED - 0 of 30 sealed attempts executed",
+    "PREP-01_pair_sensitivity_and_critical": "NOT EVALUATED - no outputs",
+    "PROMPT-01_promotion": "NO RECOMMENDATION for preparation/16 on held-out evidence; held-out claim remains unestablished"
+  },
+  "synopsis": "Preflight checks passed: the sealed manifest, spec, all 20 input hashes, frozen source hashes, profile hash and harness hash match addendum 2, and the sealed 30-entry order was turned into a protected case-order file with one entry per attempt. The first capture (run-28f6b40b) stopped in provider configuration before any request was built. It emitted zero execution inputs and zero model calls, because the frozen export has no service environment file and none was named. Relaunching required pointing the harness at the service-owned provider secret file through an environment variable. The permission system denied that action as credential exposure. The reviewer did not work around the denial, so the held-out set is untouched: no sealed attempt has been consumed and no case outcome was observed.",
+  "fact_findings": [
+    "No case bytes were sent to any model; the held-out set remains fresh and valid for a single future execution."
+  ],
+  "failures": [
+    {
+      "id": "H1",
+      "severity": "blocking",
+      "where": "Provider configuration in the frozen export (configuredCodexProvider requires CODEX_LB_API_KEY or DRYRUN_SERVICE_ENV_FILE)",
+      "expected": "Codex-only execution of the sealed 30-attempt order",
+      "observed": "missing_provider_secret before the first attempt; relaunch with the service env path denied by permission policy",
+      "impact": "Held-out promotion evidence for preparation/16 unavailable"
+    }
+  ],
+  "likely_stage": "Execution environment and permissions, not prompt, model or data",
+  "references": [
+    "run-28f6b40b receipt: status failed, exit 1, empty stdout (0 attempts)",
+    "Protected order file: /private/tmp/dryrun-protected/heldout-exec-20261022/sealed-order.json (reviewer-only; derived 1:1 from attemptOrder)"
+  ],
+  "recommendations": [
+    "The user or orchestrator should grant, or run in person, a capture that sets DRYRUN_SERVICE_ENV_FILE to the service-owned .env (or exports CODEX_LB_API_KEY) for the frozen export. Then a fresh dedicated reviewer runs firewall.py capture --timeout 1800 with DRYRUN_FROZEN_ADDENDUM set to the addendum, DRYRUN_EVAL_FEATURE_CALLS=400, and the existing protected sealed-order file, exactly once.",
+    "Because 30 attempts averaging 30-46 s each (development receipts) approach the 1800 s capture ceiling, consider splitting the sealed order into two contiguous protected order files run back to back. Each attempt still runs once in sealed sequence, which avoids a timeout truncating the tail."
+  ],
+  "retests": [
+    "Single sealed execution of family-heldout/1 under addendum 2 (30 attempts, no reruns), then independent review against PREP-01/REL-01/PROMPT-01."
+  ],
+  "limitations": [
+    "No outputs exist, so there is no quality judgement. run-28f6b40b counts as a pre-call configuration failure, not a sealed attempt.",
+    "Synthetic agent audit; not clinical or real-family validation."
+  ],
+  "next_owner": "Orchestrator/user (permission for provider secret path), then a fresh dedicated output reviewer",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

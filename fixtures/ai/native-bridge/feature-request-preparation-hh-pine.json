@@ -297,6 +297,7 @@
       },
       "transport" : "car"
     },
+    "locale" : "es",
     "rubric" : {
       "criteria" : [
         {

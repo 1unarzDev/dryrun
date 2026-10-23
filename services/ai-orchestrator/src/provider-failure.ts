@@ -1,7 +1,19 @@
-export type FailureKind='rate_limit'|'quota_exhausted'|'timeout'|'configuration'|'unsupported'|'refusal'|'invalid_output'|'cancelled'|'unavailable';
+/** request_too_large: one request over the provider tier's whole per-minute token ceiling; waiting cannot help. */
+export type FailureKind='rate_limit'|'quota_exhausted'|'request_too_large'|'timeout'|'configuration'|'unsupported'|'refusal'|'invalid_output'|'cancelled'|'unavailable';
 export class ProviderFailure extends Error {
  constructor(readonly kind:FailureKind,readonly provider:string,readonly status?:number,readonly retryAfterMs?:number,readonly diagnostic?:string,message=`${provider}_${kind}`){super(message);}
 }
+/** Provider/budget outcomes some adapters raise as plain Error messages; the HTTP layer reports each as itself. */
+export const providerOutcomeMessages:readonly string[]=['provider_rate_limited','provider_overloaded','provider_model_unavailable','provider_access_denied','provider_request_rejected','provider_timeout_or_cancelled','provider_unavailable','spend_budget','operation_budget','research_budget'];
+/** Host validation still rejected a feature proposal after its one bounded repair. Provider-neutral: it names the
+ * provider that served the rejected turn and an allowlisted validator code, never model text. Distinct from a
+ * provider runtime outage (codex_* / provider_<kind>). */
+export class FeatureValidationFailure extends Error {
+ readonly code:string;
+ constructor(readonly provider:string,code:string){super('provider_validation_failure');this.name='FeatureValidationFailure';this.code=validatorCode(code);}
+}
+/** Machine-code allowlist: lower snake case up to 48 characters, else a fixed placeholder. */
+export function validatorCode(value:unknown):string{return typeof value==='string'&&/^[a-z][a-z0-9_]{1,47}$/.test(value)?value:'unclassified';}
 /** HTTP Retry-After is seconds or an HTTP date; Groq reset durations use e.g. 2m59.56s. */
 export function resetDuration(value:string|null):number|undefined {
  if(!value)return;let total=0,end=0;const re=/(\d+(?:\.\d+)?)(ms|s|m|h)/g;for(const m of value.matchAll(re)){if(m.index!==end)return;total+=Number(m[1])*({ms:1,s:1000,m:60000,h:3600000}[m[2]!]??0);end=m.index+m[0].length;}return end===value.length&&end>0?total:undefined;

@@ -1,0 +1,98 @@
+{
+  "report_id": "report-native-baseline-captures-1",
+  "run_ids": [
+    "run-335df67308354c5b82cf183d470f56eb",
+    "run-227aeb7043b94407ad1e21d52ae4ef8b"
+  ],
+  "feature": "Physical native baseline visual review",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "hh-oak; EN; existing ordinary text size; dark appearance; ranch and apartment-complex fire; physical iPhone16Pro",
+  "versions": {
+    "build": "run-ac17fc7252364320984469c336ee00d0; pre-home/score/UI changes; baseline only",
+    "native_bounds": "402 by 874 points; screenshots 1206 by 2622 pixels"
+  },
+  "criteria": [
+    {
+      "id": "MAC-01",
+      "verdict": "physical baseline capture verified",
+      "evidence": "Existing XCTest screenshot tour executed successfully on plugged phone, five intended screens captured and originals inspected."
+    },
+    {
+      "id": "REVIEW-01",
+      "verdict": "cleared derivative path exercised",
+      "evidence": "Actual PNGs flattened opaque text masks; semantic reviewer inspected originals and derivatives. App displayed text was never changed for screenshots."
+    },
+    {
+      "id": "UI-01",
+      "verdict": "baseline defects observed",
+      "evidence": "Task hierarchy/leading offsets and urgent-effort palette inconsistent; later fixes require matching captures."
+    }
+  ],
+  "synopsis": "Prepare, Plan, Home 2D, ranch fire decision and apartment fire decision are reachable on the physical iPhone. The current visual foundation is coherent dark cards with teal actions, but Prepare task rows are dense and misaligned. Baseline capture does not establish that the later source fixes are rendered correctly.",
+  "failures": [
+    {
+      "severity": "medium",
+      "region": "Prepare first two task rows",
+      "diagnosis": "Title leading positions vary with the width of the domain icon and warning symbol. First title begins at 94.0 points, next at 91.7; associated detail begins at 70.3 and 68.0. Warning consumes a separate leading column, so title and detail do not share one consistent text start.",
+      "fix": "Reserve a stable domain icon column and move urgency/status to a stable trailing location or align all text under one shared leading edge."
+    },
+    {
+      "severity": "medium",
+      "region": "Prepare urgent task effort badge",
+      "diagnosis": "Urgent red indicators are paired with a saturated teal effort badge, competing with the urgency hierarchy.",
+      "fix": "Use urgency-consistent or neutral effort treatment with accessible semantic meaning; verify on actual same state after rebuild."
+    },
+    {
+      "severity": "medium",
+      "region": "Prepare task descriptions",
+      "diagnosis": "Task explanations truncate to two lines, while the first long title occupies four lines. Repeated subject labels and multiple hazard glyphs add density before the family/home entry points.",
+      "fix": "Preserve a concise decision-useful preview and make details available on open; remove redundant subject repetition when already explicit in title."
+    },
+    {
+      "severity": "low",
+      "region": "Home 2D compact storage space",
+      "diagnosis": "A compact room label and storage symbol are vertically crowded; map-like symbols need a clearer separation from room labels.",
+      "fix": "Review label/icon collision rules against compact spaces and longer translations."
+    }
+  ],
+  "references": [
+    {
+      "capture": "docs/integration/released/captures-baseline/next-steps.png",
+      "clearance": "opaque flattened derivative; actual occupied text-line extents retained"
+    },
+    {
+      "capture": "docs/integration/released/captures-baseline/en-fire-decision.png",
+      "clearance": "opaque flattened derivative"
+    },
+    {
+      "capture": "docs/integration/released/captures-baseline/en-apartment-fire-decision.png",
+      "clearance": "opaque flattened derivative"
+    },
+    {
+      "capture": "docs/integration/released/captures-baseline/en-home-2d.png",
+      "clearance": "opaque flattened derivative; known authored room names and deterministic diagram labels remain"
+    },
+    {
+      "capture": "docs/integration/released/captures-baseline/en-plan-tab.png",
+      "clearance": "opaque flattened derivative"
+    }
+  ],
+  "recommendations": [
+    "Fire decision options fit the physical viewport with comfortable large tappable rows, and the fixed action strip is visibly separated from bottom tabs. No decision was committed, so visual fit does not prove causal outcome correctness.",
+    "Plan card and meetup blocks use consistent outer margins; no overlap observed in inspected first viewport. Scroll depth, share, later content and persistence remain unverified.",
+    "Release device reservation now: screenshot tour ended after terminating its demo app; no settings were changed. A future signed integrated build can proceed.",
+    "native_ui requested family editor and accessibility-text rechecks. Those screens/settings were not in this bounded baseline; add next integrated capture run rather than claim coverage."
+  ],
+  "retests": [
+    "Matched integrated Prepare urgent/ordinary rows, family editor persistent name/relationship labels, family briefing icon, ordinary and accessibility sizes.",
+    "All six hazards/families, actual selection/Save, RoomPlan physical scan, VoiceOver operation and persistence remain required."
+  ],
+  "limitations": [
+    "One screenshot-tour XCTest method passed; five screenshots reviewed. This is not app-wide UI acceptance.",
+    "No Codex-generated app operation was invoked by this baseline. All originals remain protected conservatively.",
+    "Masks preserve actual screenshot dimensions, component bounds and occupied text-line geometry; some overlapping accessibility aggregate bounds obscure controls, so layout judgments above come from reviewer inspection of originals, not derivatives alone.",
+    "No locale or text-size settings changed. Device original focus/appearance left unchanged."
+  ],
+  "next_owner": "orchestrator for integrated rebuild; native_ui for fixes; reviewer for matched capture",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

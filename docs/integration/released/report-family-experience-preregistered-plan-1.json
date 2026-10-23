@@ -1,0 +1,141 @@
+{
+  "report_id": "report-family-experience-preregistered-plan-1",
+  "run_ids": [
+    "run-d596f5dafad14c8da77784369c376dd1"
+  ],
+  "feature": "Independent family journey preregistration",
+  "review_kind": "synthetic agent audit; source-only plan, native review pending",
+  "fixture_snapshot": {
+    "families": [
+      "hh-oak",
+      "hh-lake",
+      "hh-pine"
+    ],
+    "hazards": [
+      "home-fire",
+      "tornado",
+      "flash-flood",
+      "freeze-power-loss",
+      "heat-grid-strain",
+      "water-outage"
+    ],
+    "isolation": "Only fictional in-memory fixtures; explicit -uiTestingInMemory; no owner vault changes"
+  },
+  "versions": {
+    "candidate": "Existing .build-mac/codex-iphone physical build identified by supplied build receipt; later source patches are excluded from candidate claims",
+    "reference": "DryRun_Codex_Integration_Reference.txt revision 2"
+  },
+  "criteria": [
+    {
+      "id": "PREP-01/CTX-01",
+      "expected": "Family/home facts lead to a small feasible action and direct correction; recorded facts are not requested again."
+    },
+    {
+      "id": "GEO-01/GEO-02",
+      "expected": "Resources explain relevance, sources and uncertainty; ordinary directions never imply disaster-safe routes."
+    },
+    {
+      "id": "HAZ-01..06/DEMO-01",
+      "expected": "All three selectable families and six hazards have distinct feasible decisions, committed effects and readable consequence; multiple branches require separate evidence."
+    },
+    {
+      "id": "SCORE-01",
+      "expected": "Practice retires eligible checks, preserves unrelated competencies and refreshes evidence; wording cannot determine score or prove purchased supplies."
+    },
+    {
+      "id": "CTX-02/REL-01",
+      "expected": "Switch, cancel, reset, stale reply and resume preserve scope and last valid state."
+    },
+    {
+      "id": "MAC-01/UI-01",
+      "expected": "Actual physical journey supports understanding, comfortable controls and a useful next step; capture alone cannot prove persistence."
+    }
+  ],
+  "synopsis": "Preregistered independent criteria before inspecting assigned native originals. Current device reservation remains with output_review; no launch, capture, reset or device-setting change performed. Source supports a bounded existing XCTest journey and targeted screen tests; physical acceptance remains pending.",
+  "fact_findings": [
+    {
+      "fixture": "hh-oak",
+      "role": "Parent assisting older adult",
+      "decision_facts": [
+        "p-oak-4 limited mobility/cold sensitivity",
+        "eq-oxygen essential with unknown runtime and no linked compatible backup",
+        "bk-station setup unknown",
+        "private electric well",
+        "5 gallons stored water"
+      ],
+      "expected": "Continuity uncertainty and well dependency should change sequencing; battery ownership alone cannot establish oxygen backup."
+    },
+    {
+      "fixture": "hh-lake",
+      "role": "Adult son helping older adult",
+      "decision_facts": [
+        "p-lake-1 heat sensitivity/limited mobility",
+        "eq-insulin refrigerated medication",
+        "no car",
+        "public-transit agreement unknown",
+        "limited budget/storage",
+        "2 gallons water"
+      ],
+      "expected": "Cooling, storage continuity, affordable sequencing and supported transport should differ from Oak; no medication treatment instructions invented."
+    },
+    {
+      "fixture": "hh-pine",
+      "role": "Adult supporting wheelchair user and child",
+      "decision_facts": [
+        "p-pine-2 uses wheelchair/cannot use stairs",
+        "eq-chair essential",
+        "vehicle not wheelchair accessible",
+        "manufactured home",
+        "stored water unknown",
+        "heating electricity dependency unknown"
+      ],
+      "expected": "Stair-only routes are excluded; access and shelter uncertainty are explicit; unknown water cannot count as owned supply."
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "preregistered controlled pairs",
+      "cases": [
+        "Assistance need present versus absent: reachable actions/helper assignment should differ without inferring needs from diagnosis.",
+        "Medication storage instruction recorded versus unknown: continuity preparation should use recorded instruction and preserve unknown state.",
+        "Single-floor versus upper-floor home with stair limitation: feasible routes/shelters must change; no invented connectors.",
+        "Extinguisher confirmed owned versus confirmed absent: avoid duplicate purchase, distinguish maintenance/location from acquisition.",
+        "Limited budget/no car versus unconstrained budget/accessible agreed transport: sequencing and destinations must change.",
+        "Existing independent route/communication evidence versus fresh history: short continuity check preserves unrelated evidence and does not farm points."
+      ],
+      "instrumentation": "No arbitrary fixture-pair or history injection launch seam found in inspected DemoLaunch. Feature owner must supply isolated exact-input fixture instrumentation; reviewer will not implement it."
+    },
+    {
+      "type": "bounded native run after explicit reservation handoff",
+      "cases": [
+        "DemoJourneyUITests/testFamilyEditorAndLivePlanHaveDirectEntryPoints",
+        "DemoJourneyUITests/testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected",
+        "DemoJourneyUITests/testPreparationActionsLeadSupportingEditors",
+        "DemoJourneyUITests/testPersonalLayoutAbsentShowsManualHomePath"
+      ],
+      "execution": "test-without-building only against supplied candidate; preserve exact copied test source, xctestrun and commands beside protected results; capture wrapper returns receipt only. Existing demo relaunch reloads baseline and cannot prove durable edits."
+    }
+  ],
+  "references": [
+    "apps/ios/DryRun/App/DemoLaunch.swift",
+    "packages/DryRunCore/Sources/DryRunCore/Content/SampleHouseholds.swift",
+    "apps/ios/DryRunUITests/DemoJourneyUITests.swift",
+    "apps/ios/DryRunUITests/FamilyHazardMatrixUITests.swift",
+    "apps/ios/DryRunUITests/ScreenshotTourUITests.swift",
+    "docs/integration/ui-inventory.md",
+    "docs/integration/work-orders.md",
+    "docs/integration/source-map.md"
+  ],
+  "limitations": [
+    "No independent native output inspected yet; existing released reports were read as required context, their verdicts will not substitute for own inspection.",
+    "Prior cleared reports indicate useful physical baseline and deterministic preservation coverage, but do not establish Codex/native full-context, scoring, live research or causal journey acceptance.",
+    "CODEX-01, CODEX-02 and CTX-01 remain explicit gates until exact native request/context/retrieval/output/committed-state chain is observed; mocks and absence of logs cannot certify it.",
+    "No new build, installation or target modification authorized by this review plan; source has progressed after candidate build.",
+    "No actual RoomPlan physical movement possible without owner assistance.",
+    "No native device automation MCP discovered; shell xcodebuild/XCTest, devicectl/xcresulttool and existing review scripts are candidate tools, not evidence of successful execution.",
+    "Reopen/persistence in normal real-household mode requires a synthetic isolated persistence seam; current simulator-only isolated-vault XCTest cannot certify the required phone path.",
+    "This is a synthetic agent audit, not real family research or clinical/emergency expertise."
+  ],
+  "next_owner": "output_review retains exclusive phone reservation until orchestrator handoff; family_experience_review remains active for independent physical run after handoff; implementers own requested fixture/context/persistence instrumentation",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

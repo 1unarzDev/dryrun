@@ -82,7 +82,7 @@ import Testing
         #expect(throws:SessionError.persistence){try fresh.beginPracticeCheck(id:"check",variantID:"practice-check-a/1",sessionIDs:["initial","adapt","comms","power"],library:SimFixtures.library,persist:{_ in throw SessionError.persistence})}
         #expect(try DryRunJSON.encoder().encode(fresh)==freshOriginal)
     }
-    @Test func newerIncompleteEquivalentVariantSupersedesCompletedHistory()throws {
+    @Test func newerIncompleteEquivalentVariantPreservesUntouchedCompetencies()throws {
         var local=try state();try begin(&local)
         for index in 0..<4 {try answer(&local,index)}
         #expect(try score(local).practice==100)
@@ -94,10 +94,10 @@ import Testing
         }
         local.sessions += fresh.sessions
         try local.beginPracticeCheck(id:"later",variantID:"practice-check-b/1",sessionIDs:["power-new","comms-new","adapt-new","initial-new"],library:SimFixtures.library)
-        #expect(try score(local).practice==0);#expect(try score(local).practiceAssessed==0)
+        #expect(try score(local).practice==100);#expect(try score(local).practiceAssessed==4)
         let power=try #require(local.sessions.first{$0.id=="power-new"})
         try local.submitPracticeAction(attemptID:"later",competencyID:"continuity",commit:.init(id:"later-none",actor:"user",baseRevision:power.revision,commands:[.init(kind:"allocatePower",target:"device",value:"none")]),library:SimFixtures.library)
-        #expect(try score(local).practice==0);#expect(try score(local).practiceAssessed==1)
+        #expect(try score(local).practice==75);#expect(try score(local).practiceAssessed==4)
         #expect(try local.eligiblePracticeAttempts(library:SimFixtures.library)[0].answers.count==4)
     }
     @Test func missingPhaseMetadataReusedSourcesAndUnknownActionsCannotManufactureCredit()throws {

@@ -1,0 +1,154 @@
+{
+  "report_id": "report-preparation14-v5-schema-blocked-comparison",
+  "run_ids": [
+    "run-a76a9615d0204678a0e47c6582798455",
+    "run-764c80d838204c99914bf7dcfd4d4100",
+    "run-841f8ab1a0e2428a9c9bf5e652f301fd"
+  ],
+  "feature": "Actual HTTP preparation14 baseline versus preparation14 plus investigation1; frozen native v5 three example families, two repetitions each condition.",
+  "fixture_snapshot": {
+    "directory": "/private/tmp/dryrun-native-gateway-inputs-v5",
+    "source_manifest_sha256": "dc633eb86cba5a6b0ee7c329efe254478d9d53c3570bab108c3f07f6dec471bc",
+    "source_files_verified": 47,
+    "mismatches": 0,
+    "protected_evidence_bundle": "/private/tmp/dryrun-protected/preparation14-v5-comparison"
+  },
+  "versions": {
+    "baseline": "preparation/14",
+    "candidate": "preparation/14+preparation-investigation/1",
+    "reader": "dryrun.context-reader/2",
+    "runtime": "0.163.0",
+    "requested_alias": "gpt-6.1-sol",
+    "research": false,
+    "images": false
+  },
+  "synopsis": "All twelve authorized generation attempts failed before producing a family decision: each condition zero completions out of six. No prompt preference or quality improvement can be inferred. Rich donor task destinations introduce a strict-wire-schema incompatibility missed by synthetic tests.",
+  "failures": [
+    {
+      "condition": "baseline",
+      "run_id": "run-764c80d838204c99914bf7dcfd4d4100",
+      "attempts": [
+        {
+          "family": "oak",
+          "repetition": 1,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 2361
+        },
+        {
+          "family": "oak",
+          "repetition": 2,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1927
+        },
+        {
+          "family": "lake",
+          "repetition": 1,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1683
+        },
+        {
+          "family": "lake",
+          "repetition": 2,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1970
+        },
+        {
+          "family": "pine",
+          "repetition": 1,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1696
+        },
+        {
+          "family": "pine",
+          "repetition": 2,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1785
+        }
+      ]
+    },
+    {
+      "condition": "investigation",
+      "run_id": "run-841f8ab1a0e2428a9c9bf5e652f301fd",
+      "attempts": [
+        {
+          "family": "oak",
+          "repetition": 1,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 2493
+        },
+        {
+          "family": "oak",
+          "repetition": 2,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1900
+        },
+        {
+          "family": "lake",
+          "repetition": 1,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1750
+        },
+        {
+          "family": "lake",
+          "repetition": 2,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1787
+        },
+        {
+          "family": "pine",
+          "repetition": 1,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1574
+        },
+        {
+          "family": "pine",
+          "repetition": 2,
+          "status": 503,
+          "reason": "codex_unavailable",
+          "elapsed_ms": 1826
+        }
+      ]
+    }
+  ],
+  "likely_stage": {
+    "stage": "upstream structured-output schema acceptance before dynamic context retrieval",
+    "schema_path": "properties.tasks.items.properties.destination.anyOf[0].oneOf",
+    "cause": "Nested discriminated destination union remains oneOf in codexStrictSchema; current strict runtime rejects that keyword. Ten protected runtime records preserve the explicit schema diagnosis; two records stop after systemError without retaining the subsequent explicit terminal error. All twelve HTTP responses report the same finite unavailable category.",
+    "source": "services/ai-orchestrator/src/codex-schema.ts",
+    "diagnostic_gap": "Adapter currently preserves oneOf recursively. Synthetic tests passed despite not exercising the real preparation14 rich-destination wire schema against upstream strict acceptance."
+  },
+  "criteria": {
+    "Q1_consequential_fact_use": "Not assessable: no generated decision or context-reader call observed.",
+    "Q2_feasible_action_and_safety": "Not assessable: no completed task proposal. Host did not publish a model task.",
+    "Q3_saved_facts_unknowns_inventory": "Not assessable: schema blocked prior meaningful retrieval; no evidence of successful canonical fact use.",
+    "Q4_repeated_reliability": "Failed: baseline0/6 and candidate0/6, every family0/2 per condition. Requests fail promptly in roughly1.6\u20132.5 seconds; no late runtime linger in this capture.",
+    "Q5_native_fit": "Unverified: phone unplugged and no simulator/app execution authorized."
+  },
+  "recommendations": [
+    "Implement a wire-only conversion of discriminated oneOf to an allowed representation such as anyOf where literal discriminators keep branches disjoint; retain original host/domain schema validation and optional-null normalization. Do not remove destination validation.",
+    "Add meaningful authored coverage using the actual preparation14 output schema and representative destination branches, plus recursive forbidden-keyword checks. Consider other restored roles before calling strict compatibility complete.",
+    "After source/check freeze, repeat the same complete twelve-attempt v5 development comparison as a new retained experiment. Do not count schema retries as quality wins or silently replace these failures.",
+    "Fresh heldout material-fact pairs and independent acceptance remain gated on working development coverage; no package promotion is justified.",
+    "Ensure protected runtime terminal diagnostics flush before immediate close on systemError; two attempts retained only the precursor while ten preserved the exact cause."
+  ],
+  "limitations": [
+    "One initial sandbox IPC startup failure occurred before attempts; rerun with approved escalation produced exactly six baseline attempts. It is retained separately and excluded from twelve model attempts.",
+    "No rescue calls, model changes, fixture changes, prompt patches or partial successes were added.",
+    "Sequential condition labels were visible to reviewer; no blind quality comparison occurred because every attempt failed before a response.",
+    "Historical preparation11 comparison is retained but cannot qualify the materially different14 package.",
+    "No real-family data, device execution, research capability, heldout generalization or model identity attestation established."
+  ],
+  "next_owner": "Codex integration specialist: wire schema repair; root: authorize full retained retest after checks.",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

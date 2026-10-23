@@ -11,6 +11,9 @@ struct RehearsalSetupView: View {
     @Binding var refugeID: String
     @Binding var startingSpaceIDs: [String:String]
     let onStart: () -> Void
+    @State private var askingBeacon = false
+    @State private var beaconReason: String?
+    @State private var beaconFailed = false
     private var tint: Color { RehearseTabView.tints[design.scenarioID] ?? Theme.accent }
 
     var body: some View {
@@ -76,6 +79,36 @@ struct RehearsalSetupView: View {
                         }.accessibilityIdentifier("rehearsal.setup.start.\(person.id)")
                     }
                 }.accessibilityIdentifier("rehearsal.setup.startingRooms")
+            }
+            if model.preparationAIAvailable, model.home != nil, [.homeFire, .tornado, .flashFlood].contains(design.hazard) {
+                SectionCard(title: l("drill.ai.title"), systemImage: "sparkles") {
+                    if let beaconReason {
+                        Text(beaconReason).font(.callout).accessibilityIdentifier("drill.ai.reason")
+                        Text(l("drill.ai.note")).font(.caption).foregroundStyle(.secondary)
+                    } else if beaconFailed {
+                        Text(l("drill.ai.unavailable")).font(.footnote).foregroundStyle(Theme.caution)
+                            .accessibilityIdentifier("drill.ai.unavailable")
+                        #if DEBUG
+                        if let reason = model.drillSetupFailure { Text(reason).font(.caption2).foregroundStyle(.tertiary) }
+                        #endif
+                    }
+                    Button {
+                        Task {
+                            askingBeacon = true
+                            defer { askingBeacon = false }
+                            guard let (accepted, _) = await model.beaconDrillSetup(scenarioID: design.scenarioID) else { beaconFailed = true; return }
+                            beaconFailed = false
+                            if let origin = accepted.originSpaceID, design.hazard == .homeFire { originID = origin }
+                            for (person, room) in accepted.startingSpaceIDs { startingSpaceIDs[person] = room }
+                            beaconReason = accepted.reason
+                        }
+                    } label: {
+                        Label(askingBeacon ? l("drill.ai.working") : l("drill.ai.run"), systemImage: "sparkles")
+                            .frame(minHeight: Theme.minTap)
+                    }
+                    .disabled(askingBeacon)
+                    .accessibilityIdentifier("drill.ai.run")
+                }
             }
             Button(action: onStart) { Label(l("experience.setup.start"), systemImage: "play.fill") }
                 .buttonStyle(PrimaryButtonStyle(tint: tint))

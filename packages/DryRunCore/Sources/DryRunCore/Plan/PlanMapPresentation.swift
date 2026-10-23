@@ -1,5 +1,23 @@
 import Foundation
 
+/// Coordinate equality cannot establish household identity: examples and real households can
+/// share an address. Native discovery, sheets and in-flight directions use this entire key.
+public struct MapPlanningScope: Sendable, Hashable {
+    public let householdID: String
+    public let homeID: String
+    public let isExample: Bool
+    public let homeCoordinate: GeographicCoordinate?
+    public let sessionID: String?
+
+    public init(householdID: String, homeID: String, isExample: Bool, homeCoordinate: GeographicCoordinate?, sessionID: String? = nil) {
+        self.householdID = householdID
+        self.homeID = homeID
+        self.isExample = isExample
+        self.homeCoordinate = homeCoordinate
+        self.sessionID = sessionID
+    }
+}
+
 /// Plain map panels shared by live previews, snapshot export and missing-image reporting.
 public struct PlanMapExtent: Sendable, Hashable, Identifiable {
     public let id: String

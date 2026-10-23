@@ -46,6 +46,84 @@ import Testing
         #expect(attempt.observations?.count == 4)
     }
 
+    @Test func theSecondSetAsksDifferentQuestionsThanTheFirst() throws {
+        let household = SampleHouseholds.oak
+        func scenarios(_ variant: String) throws -> [String: String] {
+            let sources = try PracticeCheckSources.prepare(attemptID: "x", variantID: variant, household: household, home: SampleHomes.ranch,
+                                                           contentVersion: "2026.10.0", library: library)
+            return Dictionary(uniqueKeysWithValues: zip(IntegratedAIState.practiceOrder(variant), sources.map(\.initial.scenarioID)))
+        }
+        let first = try scenarios("practice-check-a/2"), second = try scenarios(PracticeCheckSources.secondSetVariant)
+        #expect(first["initialResponse"] == "home-fire" && second["initialResponse"] == "tornado")
+        #expect(first["communication"] == "water-outage" && second["communication"] == "tornado")
+        #expect(first["adaptation"] == "home-fire" && second["adaptation"] == "freeze-power-loss")
+        #expect(first["continuity"] == "water-outage" && second["continuity"] == "freeze-power-loss")
+        // Without essential equipment to power, continuity stays the assessable stored-water situation.
+        var noDevices = household; noDevices.equipment = noDevices.equipment.map { var e = $0; e.isEssential = false; return e }
+        let fallback = try PracticeCheckSources.prepare(attemptID: "y", variantID: PracticeCheckSources.secondSetVariant, household: noDevices,
+                                                        home: SampleHomes.ranch, contentVersion: "2026.10.0", library: library)
+        #expect(fallback[0].initial.scenarioID == "water-outage")
+        // The fictional sample home starts on set A, a scanned home on set B, and later checks alternate.
+        #expect(PracticeCheckSources.variant(previousChecks: 0) == "practice-check-a/2")
+        #expect(PracticeCheckSources.variant(previousChecks: 0, scannedHome: true) == PracticeCheckSources.secondSetVariant)
+        #expect(PracticeCheckSources.variant(previousChecks: 1, scannedHome: true) == "practice-check-a/2")
+    }
+
+    @Test func secondSetAnchoredAnswersEarnPracticeCredit() throws {
+        var household = SampleHouseholds.oak
+        // A fully documented device and backup, so the powered outcome is known rather than unknown.
+        household.equipment[0].compatibleBackupIDs = ["bk-station"]
+        household.equipment[0].documentedBackupRuntimeHours = .confirmed(4)
+        household.equipment[0].powerWatts = .confirmed(10)
+        household.backupPower[0].setupConfirmed = .confirmed(true)
+        let variant = PracticeCheckSources.secondSetVariant
+        var (state, attempt) = try begin(household, home: SampleHomes.ranch, variant: variant)
+        var credits: [String: Double?] = [:]
+        for competency in IntegratedAIState.practiceOrder(variant) {
+            let session = try #require(try state.activePracticeCheckSession(attemptID: attempt.id, library: library))
+            let command: SessionCommand
+            switch competency {
+            case "initialResponse":
+                #expect(PracticeCheckSources.authoredChoice(session, competency: competency, library: library)?.id == "choice.tornado.warning")
+                command = .init(kind: "choose", target: "choice.tornado.warning", value: "go-to-shelter")
+            case "communication": command = .init(kind: "contact", target: try #require(household.contacts.first { $0.isComplete }).id)
+            case "continuity": command = .init(kind: "allocatePower", target: "eq-oxygen", value: "bk-station")
+            default:
+                #expect(PracticeCheckSources.authoredChoice(session, competency: competency, library: library)?.id == "choice.freeze-power-loss.keep-warm")
+                command = .init(kind: "choose", target: "choice.freeze-power-loss.keep-warm", value: "layer-up")
+            }
+            let observation = try state.submitPracticeAction(attemptID: attempt.id, competencyID: competency,
+                commit: SessionCommit(id: "answer-\(competency)", actor: "user", baseRevision: session.revision, commands: [command]), library: library)
+            credits[competency] = observation.credit
+            _ = try state.revealPracticeFeedback(attemptID: attempt.id, actionID: observation.actionID)
+        }
+        #expect(credits["initialResponse"] == 1)
+        #expect(credits["communication"] == 1)
+        #expect(credits["continuity"] == 1)
+        #expect(credits["adaptation"] == 1)
+        attempt = try #require(state.practiceAttempts.last)
+        #expect(attempt.observations?.count == 4)
+        _ = try state.validatePhasedPractice(attempt, library: library)
+    }
+
+    @Test func unsafeTornadoAndIndoorHeatingChoicesEarnZero() throws {
+        var (state, attempt) = try begin(SampleHouseholds.oak, home: SampleHomes.ranch, variant: PracticeCheckSources.secondSetVariant)
+        for competency in IntegratedAIState.practiceOrder(PracticeCheckSources.secondSetVariant) {
+            let session = try #require(try state.activePracticeCheckSession(attemptID: attempt.id, library: library))
+            let command = switch competency {
+            case "initialResponse": SessionCommand(kind: "choose", target: "choice.tornado.warning", value: "go-outside")
+            case "adaptation": SessionCommand(kind: "choose", target: "choice.freeze-power-loss.keep-warm", value: "generator-indoors")
+            default: SessionCommand(kind: "wait")
+            }
+            let observation = try state.submitPracticeAction(attemptID: attempt.id, competencyID: competency,
+                commit: SessionCommit(id: "a-\(competency)", actor: "user", baseRevision: session.revision, commands: [command]), library: library)
+            if ["initialResponse", "adaptation"].contains(competency) { #expect(observation.credit == 0) }
+            _ = try state.revealPracticeFeedback(attemptID: attempt.id, actionID: observation.actionID)
+        }
+        attempt = try #require(state.practiceAttempts.last)
+        #expect(attempt.observations?.count == 4)
+    }
+
     @Test func anUnsafeFirstMoveEarnsZeroAndCannotBeRerolled() throws {
         var (state, attempt) = try begin(SampleHouseholds.oak, home: SampleHomes.ranch, variant: "practice-check-a/2")
         let session = try #require(try state.activePracticeCheckSession(attemptID: attempt.id, library: library))

@@ -377,7 +377,7 @@ struct RoomScanFlowView: View {
                 ForEach(r.notes, id: \.self) { Text(SpatialStrings.scanImportNote($0, localizer: model.localizer)) }
             }
             Section {
-                Button(s("Continue to confirmation")) { onFinish(r.home) }
+                Button(model.localizer("spatial.review-captured-home")) { onFinish(r.home) }
             }
         }
     }

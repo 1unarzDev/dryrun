@@ -1,0 +1,73 @@
+{
+  "report_id": "report-codex-extended-protocol-1",
+  "run_ids": [
+    "run-6a16e4d48ef443a289e6294259693f0f",
+    "run-f02dbb2b0abf4d8a8e45d632f20775b6",
+    "run-d913f70d876240419107b3ac4c830b32"
+  ],
+  "feature": "Extended real Codex continuation and lifecycle diagnostics",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "Frozen synthetic-context-v1; equipment-a-runtime; no app facts or commits",
+  "versions": {
+    "runtime": "codex-cli0.163.0",
+    "requested_alias": "gpt-6.1-sol",
+    "harness": "scripts/review/protocol_probe.mts; lifecycle_faults.mts"
+  },
+  "criteria": [
+    {
+      "id": "CODEX-02.continuation",
+      "verdict": "live runtime follow-up passed",
+      "evidence": "Same ephemeral thread completed first retrieved-fact turn and a second follow-up. Follow-up made zero new tool calls and retained correct fact linkage and deterministic arithmetic."
+    },
+    {
+      "id": "CODEX-02.cancellation",
+      "verdict": "bounded live transport checks passed",
+      "evidence": "Abort while awaiting dynamic tool result closed connection and rejected a later result. Abort shortly after active turn start rejected later RPC request. No mutation tool existed."
+    },
+    {
+      "id": "CODEX-02.schema",
+      "verdict": "live invalid schema rejected",
+      "evidence": "Deliberately invalid schema produced failed terminal turn with no final answer and no runtime retry."
+    },
+    {
+      "id": "REL-01.typed-failures",
+      "verdict": "adapter diagnosis required",
+      "evidence": "Synthetic injection inspected separately; current adapter sanitizes distinct failure causes into the same generic unavailable category."
+    }
+  ],
+  "synopsis": "The LB/runtime supports a genuine second turn retaining retrieved synthetic context, beyond the earlier single response/tool loop. Cancellation closes private transport and blocks late results. Invalid schema is rejected upstream. The production adapter still loses distinctions needed for precise retry and UI policy.",
+  "failures": [
+    {
+      "severity": "medium",
+      "path": "services/ai-orchestrator/src/codex-provider.ts",
+      "stage": "typed failure mapping",
+      "diagnosis": "Synthetic timeout, HTTP429 event and malformed-schema event all reject through codex_runtime_unavailable. The adapter outer catch collapses the timer-specific category, and error notifications are unclassified.",
+      "fix": "Map only allowlisted protocol status/error metadata into separate deadline/cancel, throttled, invalid-schema, unavailable and unsupported-capability types. Never forward raw message/detail text. Preserve bounded retry ownership in one layer; do not automatically retry malformed schemas."
+    },
+    {
+      "severity": "low",
+      "stage": "reviewer harness bootstrap",
+      "diagnosis": "First extended harness attempt failed before network because external .ts module was compiled in CommonJS mode despite top-level await.",
+      "fix": "Reviewer harness moved to .mts; subsequent run executed successfully. Failed bootstrap retained for complete run accounting."
+    }
+  ],
+  "fact_findings": [
+    {
+      "fact_id": "equipment-a-runtime",
+      "status": "retrieved first turn, reused correctly without repeat retrieval on follow-up"
+    }
+  ],
+  "recommendations": [
+    "Keep live runtime follow-up evidence separate from shipping feature session behavior: current CodexProvider closes its session after final answer, so multi-feature follow-up requires a deliberate canonical-context/session contract and must not be claimed enabled merely from runtime capability.",
+    "Cancellation probes prove local process/connection rejection only. They do not establish upstream billing cancellation, server-side release latency, or absence of every late event across a deployed native job.",
+    "429 handling here is synthetic fault injection, not a real throttled LB response; do not intentionally exhaust quota to manufacture one. Record true live 429 gate unverified until safely observed or authorized service-side fault injection exists.",
+    "The deadline probe uses explicit abort after 50ms of active work. The provider deadline path was separately injected against an unresponsive synthetic connection; real inference timeout over its full shipping deadline remains unverified."
+  ],
+  "limitations": [
+    "One live extended sequence, no held-out quality or native presentation acceptance.",
+    "No public research, page inspection, image grounding, domain commits or scoring performed.",
+    "All raw input/output/transcripts remain protected. Report gives semantic criteria without reproducing answers."
+  ],
+  "next_owner": "codex_integration for safe typed errors and deliberate session policy; fresh acceptance reviewer later",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -208,7 +208,7 @@ public enum RecommendationRanker {
 
     private static let medicalDependency: Set<String> = ["prep.medicalBackup", "prep.coldStorage", "prep.medication", "prep.equipmentSupplies"]
     private static let medicalDependencyPrefixes = ["act.backup.", "act.medical.", "act.refrigeration."]
-    private static let lifeSafety: Set<String> = ["prep.helper", "prep.smokeAlarms", "prep.coAlarms", "prep.clearExits", "prep.shelterPlan",
+    private static let lifeSafety: Set<String> = ["prep.helper", "prep.stairPlan", "prep.smokeAlarms", "prep.coAlarms", "prep.clearExits", "prep.shelterPlan",
                                                   "act.assist.assign-helper", "act.fire.smoke-alarms", "act.fire.verify-second-exit", "act.tornado.choose-shelter"]
 
     /// 0: keeps a life-sustaining medical need going (powered or refrigerated equipment, essential medication);
@@ -220,8 +220,15 @@ public enum RecommendationRanker {
 
     /// The Prepare list's order: tier, then dependency (never promoting an item past a more urgent tier;
     /// DryRun_AI_Implementation_Reference.md: unresolved powered-medical needs come earlier), effort, breadth, ID.
-    static func prepareOrderKey(_ r: Recommendation, breadth: Int) -> (Int, Int, Int, Int, String) {
-        (r.tier.rawValue, dependencyRank(r.actionID), effortRank(r.effort), -breadth, r.id)
+    /// With a recorded tight budget, free steps come before purchases inside a tier, except that a life-sustaining
+    /// medical dependency still leads its tier. Tiers are never crossed, so cost never hides a more urgent gap.
+    static func prepareOrderKey(_ r: Recommendation, breadth: Int, limitedBudget: Bool = false) -> (Int, Int, Int, Int, String) {
+        let dependency = dependencyRank(r.actionID)
+        if limitedBudget, dependency > 0 {
+            // (tier, medical-first band, effort, dependency, breadth) folded into the same tuple shape.
+            return (r.tier.rawValue, 1 + effortRank(r.effort) * 4 + dependency, 0, -breadth, r.id)
+        }
+        return (r.tier.rawValue, limitedBudget ? 0 : dependency, effortRank(r.effort), -breadth, r.id)
     }
 
     public static func rank(_ recs: [Recommendation]) -> [Recommendation] {

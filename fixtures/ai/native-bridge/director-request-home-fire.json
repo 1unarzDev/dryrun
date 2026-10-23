@@ -1,7 +1,27 @@
 {
   "context" : {
+    "assistance" : [
+      {
+        "helperID" : "p-oak-1",
+        "personID" : "p-oak-3",
+        "reachStatus" : "reachable",
+        "sharedWithPersonIDs" : [
+
+        ],
+        "simultaneousCapacity" : "notAssessed"
+      },
+      {
+        "helperID" : "p-oak-2",
+        "personID" : "p-oak-4",
+        "reachStatus" : "reachable",
+        "sharedWithPersonIDs" : [
+
+        ],
+        "simultaneousCapacity" : "notAssessed"
+      }
+    ],
     "binding" : {
-      "contextDigest" : "7eb026c1fb706e58",
+      "contextDigest" : "1194f55eb2288640",
       "eventSequence" : 5,
       "homeRevision" : 1,
       "householdRevision" : 1,
@@ -61,6 +81,218 @@
       "awaitingUserAction" : false,
       "scheduledEventCount" : 1,
       "stageID" : "evt.home-fire.alarm"
+    },
+    "experience" : {
+      "accountedPersonIDs" : [
+
+      ],
+      "availableWaterGallons" : 5,
+      "debrief" : [
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "smoke-egress-accounting",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-1",
+            "p-oak-2",
+            "p-oak-3",
+            "p-oak-4"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "outsideAccounting",
+          "nextActionID" : "prep.nearMeetup",
+          "subjectIDs" : [
+            "p-oak-1",
+            "p-oak-2",
+            "p-oak-3",
+            "p-oak-4"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "noIndependentSecondEscape",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-1"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "excludedEscapeConnections",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-1",
+            "pt-balcony",
+            "pt-win-bed1"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "noIndependentSecondEscape",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-2"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "excludedEscapeConnections",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-2",
+            "pt-balcony",
+            "pt-win-bed1"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "noIndependentSecondEscape",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-3"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "excludedEscapeConnections",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-3",
+            "pt-balcony",
+            "pt-win-bed1"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "noIndependentSecondEscape",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-4"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "evt.choice.home-fire.first-move",
+            "user.user-1"
+          ],
+          "kind" : "excludedEscapeConnections",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "p-oak-4",
+            "pt-balcony",
+            "pt-win-bed1"
+          ]
+        },
+        {
+          "eventIDs" : [
+            "user.user-1"
+          ],
+          "kind" : "action.choose",
+          "nextActionID" : "prep.fireDrill",
+          "subjectIDs" : [
+            "choice.home-fire.first-move",
+            "get-out"
+          ]
+        }
+      ],
+      "destinationIDs" : [
+
+      ],
+      "escapeHelperByPersonID" : {
+
+      },
+      "feasibleCommands" : [
+        {
+          "kind" : "escape",
+          "target" : "p-oak-1",
+          "value" : "pt-building-exit"
+        },
+        {
+          "kind" : "escape",
+          "target" : "p-oak-2",
+          "value" : "pt-building-exit"
+        },
+        {
+          "kind" : "escape",
+          "target" : "p-oak-3",
+          "value" : "pt-building-exit"
+        },
+        {
+          "kind" : "accompanyEscape",
+          "target" : "p-oak-3",
+          "value" : "pt-building-exit"
+        },
+        {
+          "kind" : "escape",
+          "target" : "p-oak-4",
+          "value" : "pt-building-exit"
+        },
+        {
+          "kind" : "accompanyEscape",
+          "target" : "p-oak-4",
+          "value" : "pt-building-exit"
+        }
+      ],
+      "hazard" : "homeFire",
+      "identifiedGapIDs" : [
+
+      ],
+      "mechanicsVersion" : "dryrun.hazard-mechanics/7",
+      "objective" : "Exit by a supported clear path and account outside; never re-enter.",
+      "occupantRoomIDs" : {
+        "p-oak-1" : "sp-bed1",
+        "p-oak-2" : "sp-bed1",
+        "p-oak-3" : "sp-bed2",
+        "p-oak-4" : "sp-living"
+      },
+      "openGapIDs" : [
+
+      ],
+      "outsidePersonIDs" : [
+
+      ],
+      "relocated" : false,
+      "scene" : "smoke-egress-accounting",
+      "shelteredPersonIDs" : [
+
+      ],
+      "supportedActions" : [
+        "escape",
+        "accountOutside",
+        "closeDoor",
+        "accompanyEscape",
+        "identifyGap"
+      ],
+      "waterService" : "operational"
     },
     "homeScene" : {
       "connectors" : [
@@ -1848,6 +2080,7 @@
     "learningObjectives" : [
       "Practice getting everyone out by recorded routes and reaching the meeting place; never use elevators"
     ],
+    "locale" : "en",
     "profiles" : [
       {
         "canStart" : true,
@@ -1958,6 +2191,11 @@
     }
   },
   "contractVersion" : "dryrun.ai/1",
+  "providerConsent" : [
+    "codex",
+    "gemini",
+    "groq"
+  ],
   "requestID" : "native-home-fire-1",
   "role" : "director",
   "synthetic" : true

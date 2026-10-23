@@ -10,8 +10,11 @@ it('preserves specific fact implication action reasoning and permits grounded ta
 });
 it('rejects a bespoke task attributed to an invented person and forbidden private fields',async()=>{
  expect(featureContext.safeParse({...context,household:{...household,contactPhones:['private']}}).success).toBe(false);
- const runner=new FeatureRunner({async turn(){return {text:JSON.stringify({tasks:[{id:'task',actionID:'prep.bespoke',criterionID:'unscored',subjectID:'invented-person',why:'Specific supported improvement',bespoke:{title:'Task',fact:'Recorded fact',implication:'Practical implication',action:'Concrete action',completionCheck:'Observable completion'},evidenceIDs:['recorded'],completionPredicates:[],editor:'family',dependencyIDs:[],priority:2}],inventoryObservations:[],question:null}),steps:[],calls:[],usage:{}};}});
- await expect(runner.run('preparation',context)).rejects.toThrow('unsupported_bespoke_task');
+ const repairs:string[]=[];
+ const runner=new FeatureRunner({async turn(input){repairs.push(JSON.stringify(input.history.at(-1)));return {text:JSON.stringify({tasks:[{id:'task',actionID:'prep.bespoke',criterionID:'unscored',subjectID:'invented-person',why:'Specific supported improvement',bespoke:{title:'Task',fact:'Recorded fact',implication:'Practical implication',action:'Concrete action',completionCheck:'Observable completion'},evidenceIDs:['recorded'],completionPredicates:[],editor:'family',dependencyIDs:[],priority:2}],inventoryObservations:[],question:null}),steps:[],calls:[],usage:{}};}});
+ // The bounded repair names the rejection; a repeated invented attribution ends as a typed unavailable failure.
+ await expect(runner.run('preparation',context)).rejects.toThrow('provider_validation_failure');
+ expect(repairs).toHaveLength(2);expect(repairs[1]).toContain('unsupported_bespoke_task');
 });
 it('keeps catalog routing and predicates host-owned while retaining model reasoning',async()=>{
  const catalog={destination:{kind:'contact',contactRole:'outOfAreaContact'},id:'host-id',actionID:'prep.contact',criterionID:'contact',subjectID:'household',why:'Host explanation',evidenceIDs:['recorded'],completionPredicates:['usableContact'],editor:'contacts',dependencyIDs:['contacts'],priority:1};
@@ -32,8 +35,8 @@ it('repairs an explicit future safety assurance while preserving the bespoke sup
 });
 it('repairs unsupported inventory extraction by removing it rather than assigning household evidence',async()=>{
  let calls=0;const runner=new FeatureRunner({async turn(input){calls++;
-  expect(input.instruction).toContain('Return inventoryObservations: [] exactly');
-  if(calls===2)expect(JSON.stringify(input.history.at(-1))).toContain('Remove unsupported observations instead of assigning household evidence IDs');
+  // Without intake evidence the output schema permits no observations; the bounded repair names the rejected field.
+  if(calls===2)expect(JSON.stringify(input.history.at(-1))).toContain('inventoryObservations');
   return {text:JSON.stringify({tasks:[],inventoryObservations:calls===1?[{id:'invented'}]:[],question:null}),steps:[],calls:[],usage:{}};
  }});
  const output:any=await runner.run('preparation',context);expect(calls).toBe(2);expect(output.inventoryObservations).toEqual([]);

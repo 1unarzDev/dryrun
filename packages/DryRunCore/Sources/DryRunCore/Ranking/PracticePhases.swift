@@ -2,8 +2,8 @@ import Foundation
 
 public extension IntegratedAIState {
     static let phasedPracticeEvaluatorVersion="dryrun.practice-anchors/2"
-    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2"]
-    private static func phasedEvaluator(_ variant:String)->String {variant.hasSuffix("/2") ? "dryrun.practice-anchors/3":phasedPracticeEvaluatorVersion}
+    static let phasedPracticeVariants=["practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2",PracticeCheckSources.secondSetVariant]
+    private static func phasedEvaluator(_ variant:String)->String {variant.hasSuffix("/1") ? phasedPracticeEvaluatorVersion:"dryrun.practice-anchors/3"}
 
     /// Freeze all situations before presenting any question. No reroll, source switching or
     /// director difficulty changes are allowed during the scored check. Training stays separate.
@@ -19,7 +19,7 @@ public extension IntegratedAIState {
         var sources:[PracticeAttemptSource]=[]
         for (index,id) in sessionIDs.enumerated() {
             guard let session=sessions.first(where:{$0.id==id}),session.concernSeed==nil,
-                  session.initial.scenarioID==Self.practiceScenario(order[index],variant:variantID),
+                  session.initial.scenarioID==Self.practiceScenario(order[index],variant:variantID,household:session.initial.household),
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
             let receipt=try session.query(library:library)
@@ -84,7 +84,7 @@ public extension IntegratedAIState {
         for (index,source) in sources.enumerated() {
             guard source.contractVersion=="dryrun.practice-capture/1",source.evaluatorVersion==Self.phasedEvaluator(attempt.variantID),
                   let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
-                  session.initial.scenarioID==Self.practiceScenario(Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID),
+                  session.initial.scenarioID==Self.practiceScenario(Self.practiceOrder(attempt.variantID)[index],variant:attempt.variantID,household:session.initial.household),
                   session.initial.choices.isEmpty,session.initial.interventions.isEmpty,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   source.startingRevision>=0,source.startingRevision<=session.revision,
@@ -115,10 +115,8 @@ public extension IntegratedAIState {
         return accepted
     }
 
-    private static func practiceScenario(_ competency:String,variant:String)->String {
-        if variant.hasSuffix("/2") {
-            return ["initialResponse","adaptation"].contains(competency) ? "home-fire":"water-outage"
-        }
+    private static func practiceScenario(_ competency:String,variant:String,household:HouseholdProfile)->String {
+        if !variant.hasSuffix("/1") {return PracticeCheckSources.scenario(competency,variantID:variant,household:household)}
         switch competency {
         case "initialResponse","communication":return "water-outage"
         case "adaptation":return "home-fire"

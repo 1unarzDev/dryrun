@@ -130,7 +130,7 @@ extension SixHazardExperienceTests {
         #expect(departed.experience?.debrief.contains{$0.kind=="earlyDepartureUsed"}==true)
         #expect(departed.experience?.debrief.contains{$0.kind=="noSupportedRefugeApproach"}==false)
         #expect(throws:SessionError.invalidCommand){try act(&early,[.init(kind:"leaveEarly",target:"alternative")])}
-        let closed=SimFixtures.library.scenario("flash-flood")!.events.first{$0.params["service"]==Svc.roads && $0.params["state"]=="unavailable"}!
+        let closed = try #require(SimFixtures.library.scenario("flash-flood")?.events.first { $0.params["service"] == Svc.roads && $0.params["state"] == "unavailable" })
         _=try act(&late,[.init(kind:"schedule",target:"evt.flash-flood.warning",minute:0),.init(kind:"schedule",target:closed.id,minute:1),.init(kind:"advance",minute:1)],actor:"director")
         #expect(throws:SessionError.invalidCommand){try act(&late,[.init(kind:"leaveEarly",target:"alternative")])}
         var input=early.initial;input.household.transport.vehicles=[]

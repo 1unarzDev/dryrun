@@ -20,6 +20,10 @@ import Testing
                     answers[choice.id] = option
                     receipt = try session.commit(.init(id: "user-\(session.revision)", actor: "user", baseRevision: session.revision,
                                                        commands: [.init(kind: "choose", target: choice.id, value: option)]), library: library)
+                } else if HazardChoices.waitAvailable(session: session, receipt: receipt, library: library) {
+                    // An open "what do you do" moment (mechanics v7 freeze opening): keep watching, as the app's Wait.
+                    receipt = try session.commit(.init(id: "user-\(session.revision)", actor: "user", baseRevision: session.revision,
+                                                       commands: [.init(kind: "wait")]), library: library)
                 } else {
                     Issue.record("the local director paused with no authored choice due")
                     break
@@ -61,7 +65,13 @@ import Testing
         var receipt = try session.query(library: library)
         for _ in 0..<64 where !receipt.finished {
             if receipt.directorState?.awaitingUserAction == true {
-                let choice = try #require(LocalDirector.dueChoice(session: session, receipt: receipt, library: library))
+                guard let choice = LocalDirector.dueChoice(session: session, receipt: receipt, library: library) else {
+                    // Mechanics v7 freeze opening: an open moment with no authored question; keep watching.
+                    #expect(HazardChoices.waitAvailable(session: session, receipt: receipt, library: library))
+                    receipt = try session.commit(.init(id: "u-\(session.revision)", actor: "user", baseRevision: session.revision,
+                                                       commands: [.init(kind: "wait")]), library: library)
+                    continue
+                }
                 let fired = Set(receipt.events.map(\.id))
                 let expected = scenario.events.filter { LocalDirector.applies($0.when, session) && $0.minute <= choice.minute }.map(\.id)
                 #expect(Set(expected).isSubset(of: fired), "\(choice.id) asked before \(Set(expected).subtracting(fired).sorted())")

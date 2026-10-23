@@ -1,0 +1,29 @@
+{
+  "report_id": "report-night-final-mac-checks-20261021",
+  "run_ids": [
+    "run-203f8e9947bb40ee84b78435ee8df204",
+    "run-9c44a597b4f2472990d40d921e65705d"
+  ],
+  "review_kind": "Dedicated reviewer final captured Mac engineering checks",
+  "synopsis": "Full Core checks and unsigned generic-iOS build-for-testing succeeded at their captured snapshots. These results establish Core test success and native compilation, with three opt-in or exploratory test skips across the Core runners. Native tests were compiled but not executed.",
+  "fact_findings": [
+    {
+      "run_id": "run-203f8e9947bb40ee84b78435ee8df204",
+      "result": "Exit zero. Swift Testing reported 570 tests in 105 suites passed, with simulationExploreDump explicitly skipped. XCTest reported 18 cases with two skipped and zero failures. The two XCTest skips were the canonical private director request test requiring an explicit authored content root, and the native gateway input export test requiring explicit synthetic export paths. Total capture duration was 183.204 seconds. The Swift Testing phase reported 134.531 seconds."
+    },
+    {
+      "run_id": "run-9c44a597b4f2472990d40d921e65705d",
+      "result": "Exit zero. Generic unsigned iOS build-for-testing succeeded in 15.105 seconds of capture time. Both native app and native test targets compiled; no native test execution occurred."
+    }
+  ],
+  "fixture_snapshot": "Parent-provided provenance places full Core after IA10 full-context/source reconciliation. Latest generic native build includes score refresh, reusable reminder scope predicate and cancellation regression tests, optional-ideas disclosure, decision scroll positioning, and current exit map handoff. This is scope attribution, not independent runtime validation of those features.",
+  "limitations": [
+    "The opt-in canonical private director request case was skipped in this full Core run; this capture alone cannot establish that specific context-binding assertion passed. Separate targeted evidence is needed for that claim.",
+    "The opt-in native gateway export and exploration cases were also skipped.",
+    "No device, simulator, native app, or native unit/UI test execution occurred. Runtime reminder scheduling, navigation, map handoff, layout, accessibility, and persistence on iOS remain outside this compile result.",
+    "No live model quality or model schema behavior is established by these engineering checks. Independently retained model evaluation findings remain applicable.",
+    "Reports apply to captured source snapshots. Subsequent edits require appropriate revalidation; parent states Core production source was unchanged after full Core start, apart from separate server work."
+  ],
+  "next_owner": "parent integration owner",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

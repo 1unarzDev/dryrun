@@ -57,7 +57,7 @@ public struct PreparednessScorecard: Codable, Sendable {
 }
 public enum ScoreCompiler {
     public static let competencies=["initialResponse","adaptation","communication","continuity"]
-    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","hazard-check/1"]
+    public static let variants=["practice-check-a/0","practice-check-b/0","practice-check-a/1","practice-check-b/1","practice-check-a/2","practice-check-b/2","practice-check-b/3","hazard-check/1"]
     public static func compile(rubric:RubricDefinition,assessments:[CriterionAssessment],attempts:[PracticeAttempt]=[]) throws -> PreparednessScorecard {
         guard rubric.preparationWeight==0.9,rubric.practiceWeight==0.1,
               rubric.domainWeights.values.allSatisfy({$0.isFinite && $0>0}),
@@ -98,41 +98,42 @@ public enum ScoreCompiler {
         for domain in rubric.domainWeights.keys.sorted() {let w=rubric.domainWeights[domain]!;if let possible=domainPossible[domain],possible>0{earned += w*(domainEarned[domain,default:0]/possible);coverage += w*(domainAssessed[domain,default:0]/possible);weight += w}}
         let preparation=hasAssessed && weight>0 ? 100*earned/weight : nil
         var practice=0.0,practiceAssessed=0
-        // New retiring checks update their competency only. Historical four-phase checks keep
-        // their original latest-attempt semantics until a source-bound hazard check is present.
-        let latest=attempts.max(by:{$0.sequence<$1.sequence})
-        var contributing:[(PracticeAttempt,PracticeAnswer)]=[]
-        let hasHazardChecks=attempts.contains(where:{$0.checkID != nil})
+        // The fixed 25-point competency budgets are preserved. A short check changes
+        // its own competency only; untouched independent four-phase evidence survives.
+        var independent:[String:(PracticeAttempt,PracticeAnswer)]=[:]
         var latestAnchors:[String:(PracticeAttempt,PracticeAnswer)]=[:]
-        if hasHazardChecks {
-            for attempt in attempts.sorted(by:{$0.sequence<$1.sequence}) {
-                guard let id=attempt.checkID,let check=HazardPracticeCheck.bank.first(where:{$0.id==id}) else {continue}
-                if let answer=attempt.answers.first(where:{$0.competencyID==check.competencyID}) {latestAnchors[id]=(attempt,answer)}
-            }
-        } else if let latest {contributing=latest.answers.map{(latest,$0)}}
-        for attempt in attempts {
+        for attempt in attempts.sorted(by:{$0.sequence<$1.sequence}) {
             guard variants.contains(attempt.variantID),Set(attempt.answers.map(\.competencyID)).count==attempt.answers.count,
                   Set(attempt.answers.map(\.committedActionID)).count==attempt.answers.count else {throw SessionError.invalidCommand}
             for answer in attempt.answers {
                 guard competencies.contains(answer.competencyID),[0,0.5,1].contains(answer.credit),!answer.committedActionID.isEmpty else {throw SessionError.invalidCommand}
             }
-        }
-        for (attempt,answer) in contributing where !attempt.coached && answer.beforeFeedback {
-            practice += 25*answer.credit;practiceAssessed += 1
-        }
-        var hazardCoverage:Double?,hazards:[String]?
-        if hasHazardChecks {
-            var assessedCompetencies=Set<String>(),assessedHazards=Set<String>(),anchors=0
-            for check in HazardPracticeCheck.bank {
-                guard let (attempt,answer)=latestAnchors[check.id],!attempt.coached,answer.beforeFeedback else {continue}
-                let denominator=Double(HazardPracticeCheck.bank.filter{$0.competencyID==check.competencyID}.count)
-                practice += 25*answer.credit/denominator
-                assessedCompetencies.insert(check.competencyID);assessedHazards.insert(check.scenarioID);anchors += 1
+            guard !attempt.coached,attempt.archivedUnverified != true else {continue}
+            if let id=attempt.checkID {
+                guard let check=HazardPracticeCheck.bank.first(where:{$0.id==id}) else {throw SessionError.invalidCommand}
+                if let answer=attempt.answers.first(where:{$0.competencyID==check.competencyID}) {latestAnchors[id]=(attempt,answer)}
+            } else {
+                for answer in attempt.answers where answer.beforeFeedback {independent[answer.competencyID]=(attempt,answer)}
             }
-            practiceAssessed=assessedCompetencies.count;hazards=assessedHazards.sorted()
-            hazardCoverage=Double(anchors)/Double(HazardPracticeCheck.bank.count)*100
         }
-        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,practiceEvaluatorVersion:attempts.max(by:{$0.sequence<$1.sequence})?.source.map{$0.evaluatorVersion ?? PracticeEvaluator.legacyVersion},practiceAnchorCoverage:hazardCoverage,practiceHazardsAssessed:hazards,rubricVersion:rubric.version,preparation:preparation,practice:practice,
+        var assessedHazards=Set<String>(),anchors=0
+        for check in HazardPracticeCheck.bank {
+            if let (_,answer)=latestAnchors[check.id],answer.beforeFeedback {anchors += 1;assessedHazards.insert(check.scenarioID)}
+        }
+        for competency in competencies {
+            let checks=HazardPracticeCheck.bank.filter{$0.competencyID==competency}
+            let checked=checks.compactMap{latestAnchors[$0.id]}
+            let latest=checked.map{$0.0.sequence}.max() ?? Int.min
+            if let (attempt,answer)=independent[competency],attempt.sequence>=latest {
+                practice += 25*answer.credit;practiceAssessed += 1
+            } else if !checked.isEmpty {
+                let eligible=checked.filter{$0.1.beforeFeedback}
+                practice += 25*eligible.reduce(0){$0+$1.1.credit}/Double(checks.count)
+                if !eligible.isEmpty {practiceAssessed += 1}
+            }
+        }
+        let hasHazardChecks=attempts.contains{$0.checkID != nil}
+        return PreparednessScorecard(assessmentVersion:assessmentVersions.first,practiceEvaluatorVersion:attempts.max(by:{$0.sequence<$1.sequence})?.source.map{$0.evaluatorVersion ?? PracticeEvaluator.legacyVersion},practiceAnchorCoverage:hasHazardChecks ? Double(anchors)/Double(HazardPracticeCheck.bank.count)*100:nil,practiceHazardsAssessed:hasHazardChecks ? assessedHazards.sorted():nil,rubricVersion:rubric.version,preparation:preparation,practice:practice,
             overall:preparation.map{min(0.9*$0+0.1*practice,cap)},evidenceCoverage:weight>0 ? 100*coverage/weight : 0,
             practiceAssessed:practiceAssessed,provisional:true,cap:cap,capReasons:reasons.sorted(),statuses:statuses)
     }

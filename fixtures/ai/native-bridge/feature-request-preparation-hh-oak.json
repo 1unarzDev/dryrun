@@ -371,6 +371,7 @@
       },
       "transport" : "car"
     },
+    "locale" : "en",
     "rubric" : {
       "criteria" : [
         {

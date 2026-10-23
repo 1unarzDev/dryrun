@@ -1,0 +1,67 @@
+{
+  "report_id": "report-codex-live-probe-1",
+  "run_ids": [
+    "run-6fa42901bdfd44628332c0accca529f4"
+  ],
+  "feature": "Real Codex LB protocol baseline",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "synthetic-context-v1; equipment-a-runtime; no owner data",
+  "versions": {
+    "runtime": "codex-cli 0.163.0",
+    "requested_alias": "gpt-5.4; not verified supported",
+    "endpoint": "https://codex.lunarz.dev/backend-api/codex"
+  },
+  "criteria": [
+    {
+      "id": "CODEX-01",
+      "verdict": "blocked",
+      "evidence": "Runtime initialized and an ephemeral thread accepted configured provider, but inference transport failed before any response/tool invocation."
+    },
+    {
+      "id": "CODEX-02",
+      "verdict": "not exercised",
+      "evidence": "Zero dynamic tool requests and zero text deltas; structured answer and continuation not reached."
+    }
+  ],
+  "synopsis": "The initial live request reached the LB Responses path. It was rejected with HTTP 503 for unavailable upstream account capacity supporting the requested alias. Five runtime retries did not change the result. The turn terminated as failed. The process exit code was zero because the probe treats every terminal event as completion.",
+  "failures": [
+    {
+      "severity": "blocking",
+      "stage": "LB model/upstream availability",
+      "impact": "No family fact retrieval or arithmetic answer was produced. This does not test answer quality."
+    },
+    {
+      "severity": "high",
+      "stage": "probe success classification",
+      "impact": "A zero process exit and one terminal-event counter can be misread as inference success.",
+      "fix": "Inspect turn/completed status and error; count only completed success as successful final. Emit a safe failed probe receipt or nonzero exit for failed/cancelled turns. Preserve all terminal failures for reviewers."
+    },
+    {
+      "severity": "medium",
+      "stage": "runtime model metadata",
+      "impact": "Installed runtime lacked metadata for the requested alias and used fallback metadata. This is not proof the alias is supported or actually routed."
+    }
+  ],
+  "fact_findings": [
+    {
+      "fact_id": "equipment-a-runtime",
+      "status": "not retrieved because inference never started"
+    }
+  ],
+  "recommendations": [
+    "Determine the LB-supported model alias through an authorized model-list/config capability path or service documentation before another generation probe. Do not guess success from model self-identification.",
+    "Keep the exact synthetic context/tool/schema unchanged for a supported-alias retest. Require actual dynamic read, deterministic arithmetic check, honest limitation, requested output schema and successful terminal status.",
+    "Record that the runtime used the supplied base with a Responses suffix; this particular request reached the LB, but all other capability gates remain unverified.",
+    "Bound runtime retries for compatibility probes so unavailable upstream capacity does not monopolize the native UI job budget."
+  ],
+  "retests": [
+    "Supported alias initial read/tool/schema; then follow-up same-thread continuation, cancellation, stale-state rejection, search/page-open and synthetic vision if claimed."
+  ],
+  "limitations": [
+    "No live model answer, successful SSE deltas, schema success, tool execution, continuation or research occurred.",
+    "Credential was consumed by the service-owned probe without printing its value. No secret inspected by reviewer.",
+    "This is a synthetic compatibility failure, not native family-experience validation."
+  ],
+  "next_owner": "codex_integration",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

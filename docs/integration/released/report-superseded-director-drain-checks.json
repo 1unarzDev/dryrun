@@ -1,0 +1,25 @@
+{
+  "report_id": "report-superseded-director-drain-checks",
+  "run_ids": [
+    "run-a4da01c2d2704379858850612a4ce279",
+    "run-ea54cbe944cc4296bcc2bbe70b969596"
+  ],
+  "synopsis": "Prior native director check was blocked by sandbox cache access before source compilation. Prior synthetic diagnostic-drain test classified an invalid-schema fault as generic unavailable. Both are superseded by subsequent specialist-reported passing checks.",
+  "failures": [
+    {
+      "run_id": "run-a4da01c2d2704379858850612a4ce279",
+      "cause": "Swift manifest compiler cannot write its Clang module cache under the sandbox; no native source defect established.",
+      "fix": "Approved escalation or writable explicitly configured module cache; do not change production code to satisfy this infrastructure failure."
+    },
+    {
+      "run_id": "run-ea54cbe944cc4296bcc2bbe70b969596",
+      "path": "services/ai-orchestrator/test/codex-provider.test.ts",
+      "cause": "Authored error-drain test expected invalid_schema but emitted unavailable. Specialist reports fixture machine-code fix and later checks passing; this report does not independently attest later counts."
+    }
+  ],
+  "limitations": [
+    "No device or simulator execution.",
+    "Historical failed captures retained; current live comparison proceeds against separate new frozen source archive."
+  ],
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

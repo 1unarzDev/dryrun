@@ -20,13 +20,14 @@ final class DemoJourneyUITests: XCTestCase {
         let control = element(id, in: app)
         _ = control.waitForExistence(timeout: 3)
         for _ in 0..<12 {
-            if control.exists && control.isHittable && !underTabBar(control, in: app) { return control }
+            if control.exists && control.isHittable && !underTabBar(control, in: app) { settle(control); return control }
             scroll(app, up: true)
         }
         for _ in 0..<6 {
-            if control.exists && control.isHittable && !underTabBar(control, in: app) { return control }
+            if control.exists && control.isHittable && !underTabBar(control, in: app) { settle(control); return control }
             scroll(app, up: false)
         }
+        settle(control)
         return control
     }
     /// Drags near the leading edge so the gesture never starts on a map or canvas inside the page.
@@ -35,10 +36,31 @@ final class DemoJourneyUITests: XCTestCase {
         let high = app.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.38))
         if up { low.press(forDuration: 0.05, thenDragTo: high) } else { high.press(forDuration: 0.05, thenDragTo: low) }
     }
+    /// Under the floating tab bar, or under a rehearsal's bottom action bar (Replay / Next / Debrief), which the
+    /// scroll view insets for but which covers content while a scroll is still settling.
     private func underTabBar(_ control: XCUIElement, in app: XCUIApplication) -> Bool {
+        var top = CGFloat.greatestFiniteMagnitude
         let bar = app.tabBars.firstMatch
-        guard bar.exists, bar.isHittable else { return false }
-        return control.frame.maxY > bar.frame.minY - 4 && control.frame.minY < bar.frame.maxY
+        if bar.exists, bar.isHittable { top = bar.frame.minY }
+        for id in ["rehearsal.replay", "rehearsal.next", "rehearsal.debrief"] where !control.identifier.hasPrefix(id) {
+            let button = element(id, in: app)
+            // Only a bar that is on screen and not covered (a sheet above the rehearsal hides it from hit-testing).
+            if button.exists, button.isHittable { top = min(top, button.frame.minY - 8) }
+        }
+        guard top < .greatestFiniteMagnitude else { return false }
+        return control.frame.maxY > top - 4
+    }
+    /// Waits for scroll momentum to stop before a tap, so the tap lands on the control that was found.
+    private func settle(_ control: XCUIElement) {
+        guard control.exists else { return }
+        var last = control.frame
+        for _ in 0..<10 {
+            Thread.sleep(forTimeInterval: 0.15)
+            guard control.exists else { return }
+            let now = control.frame
+            if now == last { return }
+            last = now
+        }
     }
     private func tap(_ id: String, in app: XCUIApplication) {
         let control = reveal(id, in: app)
@@ -94,7 +116,8 @@ final class DemoJourneyUITests: XCTestCase {
     }
 
     /// "Describe your household" → review → add; then County → Tarrant shows county help. Works with or without
-    /// Apple Intelligence on the host (model or keyword reader).
+    /// Apple Intelligence on the host (model or keyword reader). The county is chosen in Help: on the short create
+    /// form it now sits below the contact section, past the intake card, where the first-screen tap no longer found it.
     func testDescribeHouseholdReviewThenTarrantCountyHelp() {
         let app = launch()
         XCTAssertTrue(app.buttons["onboarding.create"].waitForExistence(timeout: 20))
@@ -116,14 +139,14 @@ final class DemoJourneyUITests: XCTestCase {
         XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS[c] %@", "wheelchair")).firstMatch.exists)
         tap("intake.add", in: app)
         XCTAssertTrue(hasText("Mother", in: app), "Added person's relationship is shown under the name")
-        tap("county.picker", in: app)
-        let tarrant = app.buttons["Tarrant County"].firstMatch
-        XCTAssertTrue(tarrant.waitForExistence(timeout: 5))
-        tarrant.tap()
         tap("setup.finishLater", in: app)
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 15))
         openPlan(app)
         tap("plan.help", in: app)
+        tap("county.picker", in: app)
+        let tarrant = app.buttons["Tarrant County"].firstMatch
+        XCTAssertTrue(tarrant.waitForExistence(timeout: 5))
+        tarrant.tap()
         XCTAssertTrue(scrollToText("Tarrant County Emergency Management", in: app))
         XCTAssertTrue(scrollToText("Tarrant Ready Alerts", in: app))
         XCTAssertTrue(scrollToText("888-313-4747", in: app))
@@ -274,24 +297,37 @@ final class DemoJourneyUITests: XCTestCase {
         let recorded = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'next.recorded.prep.backupMeetup'")).firstMatch
         // Prepare recomputes after the edit; give it time, then scroll to the recorded list.
         _ = element("next.recordedSection", in: app).waitForExistence(timeout: 20)
-        for _ in 0..<16 where !recorded.waitForExistence(timeout: 1) { scroll(app, up: true) }
+        // The recorded list previews three items; open the rest when the meetup is not among them.
+        let showAllRecorded = element("next.recorded.showAll", in: app)
+        var expandedRecorded = false
+        for _ in 0..<16 where !recorded.waitForExistence(timeout: 1) {
+            if !expandedRecorded && showAllRecorded.exists && showAllRecorded.isHittable {
+                showAllRecorded.tap(); expandedRecorded = true; continue
+            }
+            scroll(app, up: true)
+        }
         XCTAssertTrue(recorded.exists, "The saved backup meetup should appear as a recorded preparation")
         app.tabBars.buttons.element(boundBy: 1).tap()
         tap("scenario.home-fire", in: app)
+        // Normal entry opens the setup questions first; nothing runs until Start (defaults kept).
+        XCTAssertTrue(element("rehearsal.setup", in: app).waitForExistence(timeout: 15), "Fire opens its setup")
+        // Its own setup, not a neighbouring card's: option identifiers carry the scenario ID.
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'rehearsal.setup.home-fire.'")).firstMatch
+            .waitForExistence(timeout: 5), "The fire card opened the fire setup")
+        tap("rehearsal.setup.start", in: app)
         XCTAssertTrue(element("rehearsal.scene", in: app).waitForExistence(timeout: 15))
         let debrief = element("rehearsal.debrief", in: app)
         XCTAssertTrue(debrief.waitForExistence(timeout: 10))
+        let next = element("rehearsal.next", in: app)
         for _ in 0..<50 {
             if debrief.isEnabled { break }
+            // Next is enabled exactly when no decision is pending, so it chooses the control (see SixHazardUITests).
+            if next.isEnabled { next.tap(); continue }
             let option = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'decision.option.'")).firstMatch
-            if option.exists {
-                tap(option.identifier, in: app)
-            } else {
-                let next = element("rehearsal.next", in: app)
-                XCTAssertTrue(next.isEnabled, "Exercise has no available next decision or advance")
-                if !next.isEnabled { break }
-                next.tap()
-            }
+            guard option.waitForExistence(timeout: 5) else { XCTFail("Exercise has no available next decision or advance"); break }
+            let id = option.identifier
+            tap(id, in: app)
+            _ = element(id, in: app).waitForNonExistence(timeout: 10)
         }
         XCTAssertTrue(debrief.isEnabled)
         openPlan(app)

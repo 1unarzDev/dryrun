@@ -294,6 +294,7 @@
       },
       "transport" : "noCar"
     },
+    "locale" : "vi",
     "rubric" : {
       "criteria" : [
         {

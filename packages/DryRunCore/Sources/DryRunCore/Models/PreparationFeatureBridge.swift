@@ -7,6 +7,14 @@ import Foundation
 /// data; the app's transport does, and only for fictional households.
 public enum PreparationFeatureBridge {
     public struct Context: Encodable, Sendable {
+        /// Set only for the `debrief` role: which rehearsal just finished and, when supplied, the host receipt of what
+        /// the family actually committed in it (DebriefFeatureBridge.RehearsalReceipt).
+        public struct Debrief: Encodable, Sendable {
+            public var scenarioID: String
+            public var rehearsal: DebriefFeatureBridge.RehearsalReceipt?
+            public init(scenarioID: String, rehearsal: DebriefFeatureBridge.RehearsalReceipt? = nil) { self.scenarioID = scenarioID; self.rehearsal = rehearsal }
+        }
+        public var debrief: Debrief?
         public var household: HouseholdContextSnapshot
         public var tasks: [PreparationTaskProposal] = []
         public var gaps: [SupplyGap]
@@ -15,6 +23,9 @@ public enum PreparationFeatureBridge {
         public var allowedCriterionIDs: [String]
         public var rubric: RubricDefinition
         public var scene: HomeSceneContext?
+        public var locale: String?
+        public var privateContext: AuthorizedAIContext?
+        public var contextBinding: AuthorizedAIContext.Binding?
     }
 
     public struct Request: Encodable, Sendable {
@@ -22,20 +33,28 @@ public enum PreparationFeatureBridge {
         public var requestID: String
         public var synthetic = true
         public var role = "preparation"
+        /// Providers the gateway may use, in order; nil leaves the configured gateway provider default.
+        public var providerConsent: [String]?
         public var context: Context
     }
 
     public static func request(requestID: String, household: HouseholdProfile, home: HomeModel?, inventory: InventoryLedger,
-                               rubric: RubricDefinition, at date: Date = Date()) throws -> Request {
+                               rubric: RubricDefinition, at date: Date = Date(), state: IntegratedAIState? = nil,
+                               places: [SavedPlace] = [], scopeSessionID: String? = nil, locale: String? = nil, currentScorecard: PreparednessScorecard? = nil) throws -> Request {
         guard household.isFictional else { throw SessionError.invalidCommand }
         let catalog = PreparationTaskCatalog.build(household: household, home: home, rubric: rubric, at: date)
-        let context = Context(
+        var context = Context(
+            debrief: nil,
             household: HouseholdContextSnapshot(household, inventory: inventory, at: date),
             gaps: try inventory.preparationGaps(personIDs: household.people.map(\.id), at: date),
             taskCatalog: catalog,
             allowedActionIDs: BaselinePreparedness.evaluate(household: household, home: home, referenceDate: date).map(\.actionID),
             allowedCriterionIDs: rubric.criteria.map(\.id), rubric: rubric,
-            scene: home.map { HomeSceneContext($0, household: household) })
+            scene: home.map { HomeSceneContext($0, household: household) }, locale: locale ?? household.preferredLocale,
+            privateContext: try scopeSessionID.map { try AuthorizedAIContext(household: household, home: home,
+                state: state ?? IntegratedAIState(inventory: inventory), places: places, tasks: catalog,
+                sessionID: $0, cloudPlanningConsent: true, currentScorecard: currentScorecard) })
+        context.contextBinding = context.privateContext?.binding
         return Request(requestID: requestID, context: context)
     }
 

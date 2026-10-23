@@ -8,12 +8,13 @@ struct VaultPrivateDataStore: PrivateDataStore {
     let repository: HouseholdVaultRepository
 
     static func makeDefault() -> VaultPrivateDataStore {
-        #if DEBUG && targetEnvironment(simulator)
-        // Explicit simulator-only UI testing uses the real encrypted repository/Keychain bridge in a
+        #if DEBUG
+        // Explicit UI testing uses the real encrypted repository/Keychain bridge in a
         // unique namespace. It never reads, clears, or replaces the household's normal vault.
         let arguments = ProcessInfo.processInfo.arguments
-        if let index = arguments.firstIndex(of: "-uiTestingVaultID"), index + 1 < arguments.count,
-           let identifier = UUID(uuidString: arguments[index + 1]) {
+        if let index = arguments.firstIndex(of: "-uiTestingVaultID") {
+            // Malformed testing arguments must never fall through to the owner vault.
+            let identifier = index + 1 < arguments.count ? UUID(uuidString: arguments[index + 1]) ?? UUID() : UUID()
             let testRoot = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
                 .appendingPathComponent("DryRunUITests", isDirectory: true)
                 .appendingPathComponent(identifier.uuidString, isDirectory: true)
@@ -39,16 +40,14 @@ struct VaultPrivateDataStore: PrivateDataStore {
             }
             let plan = payload.retainedPlans.max { $0.generatedAt < $1.generatedAt }
                 .flatMap { try? DryRunJSON.decoder().decode(PlanDocument.self, from: $0.document) }
-            var aiState: IntegratedAIState?
-            if let data = payload.integratedAIState {
-                // Unreadable local AI state is a recovery case, never an empty start the next save would overwrite.
-                guard let decoded = try? DryRunJSON.decoder().decode(IntegratedAIState.self, from: data) else {
+            if let state = payload.integratedAIState {
+                guard let decoded = try? DryRunJSON.decoder().decode(IntegratedAIState.self, from: state),
+                      decoded.schemaVersion == IntegratedAIState().schemaVersion else {
                     return .needsRecovery("Saved supplies, reviews or practice could not be read. The original file was kept.")
                 }
-                aiState = decoded
             }
             return .loaded(PrivateSnapshot(household: household, home: payload.home, savedPlan: plan,
-                                           savedPlaces: payload.savedPlaces, aiState: aiState))
+                                           savedPlaces: payload.savedPlaces, integratedAIState: payload.integratedAIState))
         } catch {
             switch error {
             case .keyUnavailableWhileLocked:
@@ -77,7 +76,7 @@ struct VaultPrivateDataStore: PrivateDataStore {
         try await repository.save(VaultPayload(household: snapshot.household, home: snapshot.home,
                                                retainedPlans: plans, savedPlaces: snapshot.savedPlaces,
                                                homeGeometryIntentionallyAbsent: snapshot.home == nil,
-                                               integratedAIState: try snapshot.aiState.map { try DryRunJSON.encoder().encode($0) }))
+                                               integratedAIState: snapshot.integratedAIState))
     }
 
     func deleteAll() async throws {

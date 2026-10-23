@@ -1,0 +1,83 @@
+{
+  "report_id": "report-baseline-build-review",
+  "run_ids": [
+    "run-87cae950e50d495f960e27d8bdfc5134",
+    "handoff-classification-1"
+  ],
+  "feature": "Untouched native simulator baseline",
+  "review_kind": "synthetic agent engineering audit",
+  "fixture_snapshot": "generic iOS Simulator; code signing disabled; existing checkout",
+  "versions": {
+    "build": ".build-mac/codex-integration-baseline",
+    "scheme": "DryRun"
+  },
+  "criteria": [
+    {
+      "id": "MAC-01",
+      "verdict": "failed",
+      "evidence": "Build exited unsuccessfully before app launch. Core library reached both simulator-architecture outputs; app target typechecking failed."
+    }
+  ],
+  "synopsis": "The immediate blocker is missing native intake and family-briefing definitions from the app compilation scope. Subsequent State macro and Equatable diagnostics are consistent with those missing types, rather than evidence for independent UI defects.",
+  "fact_findings": [],
+  "failures": [
+    {
+      "severity": "blocking",
+      "path": "apps/ios/DryRun/Home/HouseholdSetupView.swift",
+      "lines": [
+        139,
+        152
+      ],
+      "symbol": "DescribeHouseholdSection",
+      "impact": "Setup form cannot compile its intake review state or intake component."
+    },
+    {
+      "severity": "blocking",
+      "path": "apps/ios/DryRun/Next/NextStepsView.swift",
+      "lines": [
+        10,
+        73,
+        75,
+        87,
+        101,
+        107,
+        116
+      ],
+      "symbol": "FamilyBriefingService",
+      "impact": "Prepare screen cannot compile its briefing state, request construction or source comparison."
+    }
+  ],
+  "likely_stage": "native target source membership or missing source integration",
+  "references": [
+    "protected build stdout/stderr handle run-87cae950e50d495f960e27d8bdfc5134",
+    "docs/MACOS_VERIFICATION.md",
+    "docs/CLAUDE_NATIVE_HANDOFF.md",
+    "docs/ai/mac-integration-handoff.md",
+    "docs/REVISION_EVIDENCE.md"
+  ],
+  "recommendations": [
+    "Locate the two definitions in the actual checkout. If present, reconcile apps/ios/project.yml and generated Xcode target source membership, regenerate through the existing project generator, then repeat the identical baseline build. Preserve local implementation and do not remove callers to make compilation pass.",
+    "If definitions are truly absent, recover intended existing implementations from authorized current changes/history before designing replacements. Do not treat cascading State/Equatable diagnostics as separate fixes until source membership is resolved.",
+    "Cleared for direct engineering reads: docs/MACOS_VERIFICATION.md, docs/CLAUDE_NATIVE_HANDOFF.md, docs/REVISION_EVIDENCE.md. These are authored workflow/evidence descriptions, but contain contradictory historical success/failure statements. Their claims require current reproduction.",
+    "Do not directly open docs/ai/mac-integration-handoff.md yet: it combines engineering guidance with descriptions of retained live executions and illustrative response material whose provenance is uncertain. Use the cleared substantive instructions below.",
+    "Preserve IntegratedAIState in every encrypted Vault save. Commit inventory/household changes atomically before publishing; keep simulation previews separate from actual household facts.",
+    "Director proposals bind the session revision, event sequence, source digest and current receipt. Source edits invalidate pending results. Recent user-action context must come from the committed session log, preserving command order.",
+    "Gateway continuation must execute supported native tools against the same authoritative session and validate candidate previews before actual commits. Cancel both native transport and suspended gateway work; reject late responses after scope or source changes.",
+    "Retain optional session inventory/dependency policies, practice evaluator versions, image-geometry companions and frozen practice sources on resume. Historical missing policy fields must retain their historical semantics.",
+    "Keep resource identity matching, service evidence and ordinary MapKit geometry distinct; never upgrade a nearby named listing into activated or accessible support without evidence.",
+    "Use current complete authorized context requirements over historical handoff instructions that minimized away address/care context. Preserve private/public search separation rather than stripping decision-changing authorized facts.",
+    "Do not run legacy screenshot workflows that automatically open artifacts as a feature agent. Route original screenshot/accessibility/PDF capture to output reviewers and publish cleared layout evidence."
+  ],
+  "retests": [
+    "Repeat native simulator build after resolving app target definitions; review all fresh compile diagnostics through protected capture.",
+    "Only after successful build reserve simulator session for reviewed baseline launch/captures; no simulator launch performed by this reviewer.",
+    "Physical RoomPlan, persisted opening edits, map behavior and share/print lifecycle remain independent native gates."
+  ],
+  "limitations": [
+    "No generated-app response was needed to diagnose this compile failure. No app execution, UI fit, persistence, provider or physical-device claim is made.",
+    "Historical documents describe earlier runs and Linux-era contracts. They are reconciliation inputs, not authoritative completion evidence.",
+    "LB capability probes require exact specialist-owned synthetic requests and configuration contract before reviewer execution. No secret was inspected or live probe performed."
+  ],
+  "next_owner": "orchestrator for native source membership; integration specialist for exact LB probe inputs",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

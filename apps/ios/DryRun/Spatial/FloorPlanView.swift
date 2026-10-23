@@ -106,6 +106,17 @@ struct FloorPlanView: View {
             let selected = home.space(id)?.label ?? home.portal(id).map { DisplayNames.name($0.kind.rawValue, localizer: model.localizer) }
                 ?? home.annotations.first(where: { $0.id == id })?.localizedLabel(model.localizer)
             if let selected { summary += " " + model.localizer("spatial.selected-home-item") + ": " + selected }
+            if let opening = home.portal(id) {
+                let sides = [opening.sideA, opening.sideB].map { side -> String in
+                    switch side {
+                    case .space(let room): HomeScenePresentation.roomLabel(room, in: home)
+                    case .exterior: model.localizer("spatial.card.outside")
+                    case .commonArea: s("building corridor")
+                    case .unknown: model.localizer("spatial.card.notSure")
+                    }
+                }
+                summary += " (" + sides.joined(separator: " ↔ ") + ")"
+            }
         }
         if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid {
             return summary + " " + model.localizer("spatial.recorded-start-room", ["room": room.label])
@@ -247,6 +258,13 @@ struct FloorPlanView: View {
         if let id = highlightedElementID {
             if let room = home.space(id), room.floorID == fid { ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }
             if let opening = home.portal(id), opening.floorID == fid {
+                // Both sides of the selected opening are tinted, so a "Leads to" answer is visible on the plan at once.
+                for roomID in ScanCorrections.sideRoomIDs(opening) {
+                    guard let side = home.space(roomID), side.floorID == fid else { continue }
+                    let outline = path(side.polygon, f, closed: true)
+                    ctx.fill(outline, with: .color(.purple.opacity(0.14)))
+                    ctx.stroke(outline, with: .color(.purple.opacity(0.7)), style: StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
                 ctx.stroke(path([opening.a, opening.b], f, closed: false), with: .color(.purple), lineWidth: 9)
             }
             if let connector = home.connectors.first(where: { $0.id == id }) {
@@ -318,7 +336,8 @@ struct FloorPlanView: View {
             // A label that does not fit its room is shrunk, then dropped rather than drawn across a neighbour; the
             // room list and the VoiceOver summary name every room.
             let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
-            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
+            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 8, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 6)
+            guard room.width > 0, room.height > 0 else { continue }
             // Wrapping happens between words only: a word wider than the room would otherwise break mid-word.
             func widestWord(_ font: Font) -> CGFloat {
                 s.label.split(separator: " ").map { word -> CGFloat in
@@ -327,7 +346,9 @@ struct FloorPlanView: View {
                 }.max() ?? 0
             }
             var drawn = false
-            for font in [Font.caption2, .system(size: 8)] {
+            // Diagram labels use one bounded geometry scale. Full Dynamic Type
+            // remains available in the accompanying room list and VoiceOver.
+            for font in [Font.system(size: 11), .system(size: 9)] {
                 let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
                 let need = text.measure(in: CGSize(width: room.width, height: .infinity))
                 if need.width <= room.width && need.height <= room.height && widestWord(font) <= room.width {
@@ -337,16 +358,20 @@ struct FloorPlanView: View {
                     if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
                         c.y = max(c.y - need.height / 2 - 9, (ys.min() ?? c.y) + need.height / 2 + 1)
                     }
+                    c.x = min(max(c.x, (xs.min() ?? c.x) + need.width / 2 + 4), (xs.max() ?? c.x) - need.width / 2 - 4)
+                    c.y = min(max(c.y, (ys.min() ?? c.y) + need.height / 2 + 3), (ys.max() ?? c.y) - need.height / 2 - 3)
                     let rect = CGRect(x: c.x - need.width / 2, y: c.y - need.height / 2, width: need.width, height: need.height)
-                    ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                    var labelContext = ctx
+                    labelContext.clip(to: path(s.polygon, f, closed: true))
+                    labelContext.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
                              with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
-                    ctx.draw(text, in: rect)
+                    labelContext.draw(text, in: rect)
                     break
                 }
             }
             // A tall, narrow room (a corridor or stair landing) reads its name vertically instead of losing it.
             if !drawn, room.height > room.width {
-                for font in [Font.caption2, .system(size: 8)] {
+                for font in [Font.system(size: 11), .system(size: 9)] {
                     let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
                     let need = text.measure(in: CGSize(width: room.height, height: .infinity))
                     guard need.width <= room.height, need.height <= room.width, widestWord(font) <= room.height else { continue }

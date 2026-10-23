@@ -1,0 +1,50 @@
+{
+  "report_id": "report-native-feature-baseline-schema-failure",
+  "run_ids": [
+    "run-05901c9a4beb4bffac0f9c862620d6f4",
+    "run-e05420a3473148cbb12fa545dcbff6a5"
+  ],
+  "feature": "Actual Swift-native three-family preparation baseline",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "Native Swift-generated oak/lake/pine requests; empty AI state; baseline preparation/11; each repeated twice",
+  "criteria": [
+    {
+      "id": "PROMPT-01",
+      "verdict": "baseline blocked before generation",
+      "evidence": "All6 HTTP feature attempts returned503 unavailable. No selection was produced; failures all retained."
+    },
+    {
+      "id": "CODEX-02.schema",
+      "verdict": "real feature schema incompatible",
+      "evidence": "Additional single-oak diagnostic preserved triggering runtime error before teardown and identified response-format rejection."
+    }
+  ],
+  "synopsis": "Minimal compatibility schema succeeds, but the actual native preparation schema fails upstream strict-schema validation. An optional inventory-observation property is declared in properties without appearing in required. No answer quality or family fact-use judgment is possible until that contract is fixed.",
+  "failures": [
+    {
+      "severity": "blocking",
+      "stage": "schema serialization/provider compatibility",
+      "reference": "outputSchema.properties.inventoryObservations.items.required",
+      "diagnosis": "Strict response schema requires every declared property in required; preparationKind is optional in the generated inventory item schema. Even when inventoryObservations max length is zero, upstream validates its item schema.",
+      "fix": "Build a provider-compatible strict schema projection: optional properties become required nullable fields where supported, while domain validation still interprets null as absent and preserves actual invariants. Apply recursively to all optional fields/union shapes. Alternatively for no-observation operations omit the unused item schema safely, without weakening the normal inventory contract. Verify actual production feature schema live, not only simple hand-authored compatibility JSON."
+    },
+    {
+      "severity": "medium",
+      "stage": "runtime protected logging order",
+      "path": "services/ai-orchestrator/src/codex-runtime.ts",
+      "diagnosis": "Adapter closes transcript stream while handling an error notification before the later raw-data listener writes that triggering chunk. The protected transcript ends with systemError and loses the actionable error.",
+      "fix": "Persist received bytes before invoking callbacks that can close streams, or queue graceful log finalization. Keep all resulting text reviewer-only; never forward raw error to native UI."
+    }
+  ],
+  "recommendations": [
+    "Do not tune prompts to fix this failure. Fix schema projection and protected evidence capture, then rerun all six baseline attempts using same frozen native inputs.",
+    "The first six attempts are a retained failed baseline, not successful quality runs. Comparison package should keep same schema and locale between baseline and candidate.",
+    "Native client guards real household upload and response catalog identity, but context.gaps currently encodes string array while server expects structured gap objects; empty baseline array masks that mismatch. Define one typed shared gap DTO before populating it."
+  ],
+  "limitations": [
+    "Additional single-oak diagnostic bypassed HTTP only to retain triggering protocol notification; it uses same FeatureRunner/context/provider schema and did not produce content.",
+    "No native rendering, fact-use quality, paired hypothesis improvement or held-out result yet."
+  ],
+  "next_owner": "codex_integration for strict-schema projection and logging; reviewer for repeated baseline retest",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

@@ -1,0 +1,46 @@
+{
+  "report_id": "report-hosted-research-unavailable-1",
+  "run_ids": [
+    "run-453296da3c7d447fab85b995bd6ad370"
+  ],
+  "feature": "Public-only real hosted search and page-open probe",
+  "review_kind": "synthetic agent audit",
+  "fixture_snapshot": "Stephenville TX future-water-outage planning; no private family context; exact authored public prompt",
+  "versions": {
+    "runtime": "0.163.0",
+    "requested_alias": "gpt-6.1-sol",
+    "requested_search_mode": "live"
+  },
+  "criteria": [
+    {
+      "id": "CODEX-02.research",
+      "verdict": "failed unavailable",
+      "evidence": "No actual webSearch/search/openPage events or retrieved page evidence. Runtime only enumerated empty MCP resources/templates. Successful terminal turn contains an explicit capability limitation rather than researched results."
+    }
+  ],
+  "synopsis": "Requesting live hosted search did not expose usable search/page-open capabilities in this LB/runtime profile. The response honestly declined to substitute memory or invented links. This is correct unavailable behavior but does not meet discovery/research acceptance.",
+  "failures": [
+    {
+      "severity": "blocking",
+      "stage": "effective research capability",
+      "impact": "No official candidates discovered, no pages opened, no contact/service evidence verified.",
+      "fix": "Expose a real configured public search backend plus guarded page-open tools through the existing private feature provider. Keep researchfalse until an actual live query and selected-page inspection are observed."
+    },
+    {
+      "severity": "medium",
+      "stage": "probe result classification",
+      "impact": "Script exit0/successfulTerminal true represents a completed limitation response, not successful research.",
+      "fix": "Probe must distinguish terminal transport completion from capability acceptance; require actual search and page-open events and evidence before marking research successful."
+    }
+  ],
+  "recommendations": [
+    "Preserve honest unavailable behavior. Do not set researchtrue, ship remembered source categories as discovered results or claim grounded resource discovery from this run.",
+    "Current staged PublicResearchTools has no configured backend. Its guarded page inspector is a useful foundation, but adding a tool name without real discovery does not close this gate."
+  ],
+  "limitations": [
+    "One public-only attempt. No private facts disclosed to search. No page content fetched and no current disaster-safety claim reviewed.",
+    "Observed absence concerns this effective runtime/profile; it does not prove the upstream vendor never supports hosted search."
+  ],
+  "next_owner": "codex_integration and orchestrator for real research backend",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

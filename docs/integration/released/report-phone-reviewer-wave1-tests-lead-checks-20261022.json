@@ -1,0 +1,260 @@
+{
+  "report_id": "report-phone-reviewer-wave1-tests-lead-checks-20261022",
+  "run_ids": [
+    "run-62036ecb1c8844e99abb29758031425f",
+    "run-07cbd6147bea4cd589e71f296032330f",
+    "run-705662cf6ddc42ce8cd310653b1f1893",
+    "run-310a1ea0750e4a82921effe733e39548",
+    "run-583a6bd7a3db45d6a83dc2f6a70281dd",
+    "run-216f900bdfc54149bacd2ba4238114b2"
+  ],
+  "feature": "Integrated build physical-iPhone regression, requested lead phone checks, family x hazard smoke and isolation, Codex-first gateway (reference 9, 11, 12.4, 12.5)",
+  "review_kind": "synthetic agent audit (dedicated output reviewer + family experience reviewer); not real-family, clinical or responder validation",
+  "fixture_snapshot": {
+    "build": "codex/native-integration-20261021 at bd6974a, Debug, DEVELOPMENT_TEAM MDD7D3HTMP, bundle com.dryrun.dev.mdd7d3htmp",
+    "device": "iPhone 16 Pro 00008140-0002703A2242801C over Wi-Fi (devicectl localNetwork); exclusive reservation held and released",
+    "families": [
+      "hh-oak",
+      "hh-lake",
+      "hh-pine"
+    ],
+    "homes": [
+      "ranch",
+      "twostory",
+      "manufactured",
+      "apartment-complex"
+    ],
+    "hazards": [
+      "home-fire",
+      "tornado",
+      "flash-flood",
+      "freeze-power-loss",
+      "heat-grid-strain",
+      "water-outage"
+    ],
+    "gateway": "scripts/mac/beacon-gateway.sh --install, provider chain codex,gemini,groq; synthetic-only Codex profile; default cap DRYRUN_MAX_USD=2",
+    "device_settings": "No device Settings changed. Text size and locale were varied only by launch arguments; nothing to restore."
+  },
+  "versions": {
+    "prompt_runtime": "as integrated at bd6974a (preparation/16, debrief/2, resources/6 per ledger)",
+    "xcode_tests": "DryRunTests, DryRunUITests at bd6974a plus a temporary reviewer probe built in a disposable worktree (removed; nothing committed)"
+  },
+  "criteria": [
+    {
+      "id": "UNIT",
+      "verdict": "fail (1 of 68)",
+      "evidence": "DryRunTests on phone: 68 executed, 67 passed, 1 failed. MapRequestTests.testParallelCategoriesDoNotCancelEachOtherAndOldHomeResultsCannotReplaceNewHome fails deterministically (3 of 3 reruns): expects 3 results, gets 2."
+    },
+    {
+      "id": "UI-SUITE",
+      "verdict": "fail (8 of 31 run)",
+      "evidence": "DryRunUITests: 33 executed, 23 passed, 8 failed, 2 skipped (Gemini DeviceAudit tests). Per suite: BeaconUnplugged 1/1 pass; FamilyHazardMatrix 1/1 pass; HomePersistence 1/1 pass; ScreenshotTour 1/1 pass; DemoJourney 9/11 pass (testAddressMeetupPreparationRehearsalAndUpdatedPlanStayConnected, testDescribeHouseholdReviewThenTarrantCountyHelp fail); DeviceAudit 6/8 run pass, 2 skipped (testAdaptiveApartmentFireCommitsActionsFromReceipts, testPracticeCheckRecordsFourFirstAnswersBeforeFeedback fail); SixHazard 4/6 pass (fire and tornado fail, reproduced 2 of 2 on rerun); UIInventory 0/2 pass (assertion misses ONB-03, PREP-17, HOME-04; see the inventory report)."
+    },
+    {
+      "id": "REGRESSION-RINGS",
+      "verdict": "partial",
+      "evidence": "DeviceAuditUITests.testScorecardOnPrepareForEachHousingDemo passes with the rings card. DemoJourney address/meetup journey and SixHazard fire/tornado do not pass; the causes found are listed under failures and are not caused by the rings card."
+    },
+    {
+      "id": "BEACON-UNPLUGGED",
+      "verdict": "pass (single live run)",
+      "evidence": "BeaconUnpluggedUITests passed over Wi-Fi with no launch config: Prepare was tailored by a live gateway answer (not the replay). The gateway logged a completed feature call, and a Codex runtime record with a model id exists for that minute. Only one repetition was run."
+    },
+    {
+      "id": "LIVE-COVERAGE",
+      "verdict": "limited",
+      "evidence": "About 20 minutes into the session the gateway's owner spend window (default 2 USD cap set by the script) rejected every Prepare feature call as provider_rate_limit owner_window_quota. From then on Prepare showed the Beacon-unavailable path. Director operations (adaptive rehearsals) kept working: 6 live Codex-served director runs in the probe (one each for heat/hh-lake, freeze/hh-oak x2, flood/hh-oak twostory, tornado/hh-pine manufactured, fire/hh-oak ranch). One more live Prepare call completed after the window reset."
+    },
+    {
+      "id": "MATRIX",
+      "verdict": "smoke pass; causal depth not established",
+      "evidence": "18 of 18 family x hazard cells reached a decision and rendered choice feedback (FamilyHazardMatrixUITests). Provider mode per cell: authored/local choices with the bundled gateway present, which makes it local plus director-capable. Live Codex director cells: heat/hh-lake, freeze/hh-oak, flash-flood/hh-oak-twostory, tornado/hh-pine-manufactured, home-fire/hh-oak-ranch. Live Prepare cells: hh-oak (before the cap) and hh-lake (after the switch). All other cells are local."
+    },
+    {
+      "id": "ISOLATION",
+      "verdict": "partial pass",
+      "evidence": "Oak loaded from onboarding, then switched to Lake through Settings within seconds of Oak's Beacon starting. Lake's Prepare and its later live Beacon section showed only Lake facts: no Oak member, device or contact terms in the full text dump, and the Lake locale was applied. Only one feature request reached the gateway (Lake's), so a late Oak response arriving after the switch was not actually exercised. The Pine switch did not run because the probe could not find the picker label under the vi locale."
+    },
+    {
+      "id": "LEAD-HEAT-MOVE",
+      "verdict": "blocked: no native affordance",
+      "evidence": "heat-grid-strain/hh-lake adaptive: the action list offers water use, contacting a neighbor and a helper assignment. It offers no shade-a-room action and no move-to-a-shaded-room choice. hh-lake has no home in demo mode, so there is no move picker either. The Codex director suggested shading rooms, but the user has no control that can do that."
+    },
+    {
+      "id": "LEAD-FREEZE-POWER",
+      "verdict": "blocked: no native affordance",
+      "evidence": "freeze-power-loss/hh-oak ranch adaptive (two runs): neither run offered a battery-to-oxygen allocation or a layer-up action at the first moments, so the powered vs unpowered debrief comparison could not be run. The run stopped while the director advance was pending (Next disabled)."
+    },
+    {
+      "id": "LEAD-FLOOD-REFUGE",
+      "verdict": "blocked: no native affordance",
+      "evidence": "flash-flood/hh-oak twostory: there is no refuge-arrival action. Only the generic person/room move picker and generic actions are offered. The core supports refuge arrival and the access-loss facts, but nothing in apps/ios/DryRun references those commands."
+    },
+    {
+      "id": "LEAD-TORNADO-MANUFACTURED",
+      "verdict": "pass (single run)",
+      "evidence": "tornado/hh-pine manufactured: no shelter-arrival action is offered. The scene says no route has been established for this stage and never shows a generic sheltered state. The live director narration correctly declined to treat the closet as refuge and pointed to the missing advance shelter plan."
+    },
+    {
+      "id": "LEAD-FIRE-ACCOUNT",
+      "verdict": "partial: re-entry absent, escape/account actions not offered",
+      "evidence": "home-fire/hh-oak ranch adaptive: re-entry is not offered, which is correct. Escape and account-outside are also not offered as user actions: only door-closing, helper, contact and water actions plus the move picker appear. The ordered-debrief check could not be run. The SixHazard authored fire run reaches the outside call step."
+    },
+    {
+      "id": "LEAD-HOME-ROUTES",
+      "verdict": "pass",
+      "evidence": "hh-oak ranch 2D plan: a practice-route line is drawn from each resident's starting room, home.exitRoutes is on by default and hides the lines when switched off, and there were no missing-route rows in the default state."
+    },
+    {
+      "id": "LEAD-OPENING-CARD",
+      "verdict": "pass (editor-list entry point, not a tap on the plan)",
+      "evidence": "pt-front opens the card with Living room tinted and Door checked. Choosing Window moves the check. Saving changes the overlay routes (the front exit disappears and all routes go to the kitchen exit). home.undoSave restores Door (asserted), and home.redoSave reapplies Window (asserted)."
+    },
+    {
+      "id": "LEAD-LEADSTO",
+      "verdict": "pass with risk",
+      "evidence": "For pt-living-hall, Leads to lists Hallway and Outside only. Choosing Outside immediately turned this interior door into an exterior EXIT on the plan, and saved routes used it. See failures."
+    },
+    {
+      "id": "LEAD-NOT-USABLE",
+      "verdict": "pass for the exterior door; doorway case unresolved",
+      "evidence": "With the front door set Not usable and saved, it shows the red not-available mark and no route uses it. Switched back on, the mark clears. With the open doorway pt-living-kitchen set Not usable, Grandpa was listed with no route because room connections were not confirmed. That state was reached after the Leads-to-Outside change above, so it needs a clean retest."
+    },
+    {
+      "id": "LEAD-NOT-AN-OPENING",
+      "verdict": "pass",
+      "evidence": "Just wall on pt-bed2-hall returned the editor to the overview and removed the opening. Editor Undo brought it back. Cancel left the saved home with the opening present."
+    },
+    {
+      "id": "LEAD-HOME-PERSIST",
+      "verdict": "pass",
+      "evidence": "HomePersistenceUITests.testRoomAndOpeningEditsSurvivePhysicalAppRelaunch passed on the device."
+    },
+    {
+      "id": "LEAD-WRITE-FAILURE, LEAD-ROOMPLAN-SCAN, LEAD-PREPARE-EXTINGUISHER/HOOK/MEDSTORAGE/BUDGET/UPSTAIRS, LEAD-ADDRESS-GEOCODE/AMBIGUOUS",
+      "verdict": "unverified",
+      "evidence": "Not run this session. The injected write failure has no launch hook. The real RoomPlan scan needs the owner to move the phone. The Prepare supply/shopping and synthetic-family edits need typed edits and synthetic families that were not driven. Pine has no saved addressLine, so the saved-address geocode path is not reachable with the fixture."
+    },
+    {
+      "id": "LEAD-WHERE-TO-GO",
+      "verdict": "partial",
+      "evidence": "Lake passes the requested elements: walk only with no Drive segment, the cooler item, the seasonal cooling-center role, why/service/source lines, Not confirmed open, a route preview and Apple source labels; this is a usable milestone-4 capture candidate (reviewer-only original). Oak shows no rows: FEMA has no open shelters and there are no cooling rows near the fictional Stephenville origin, so Oak's per-row why/service/flag checks cannot be verified. Pine shows the save-address prompt, a map with places, and the outlet and step-free household notes."
+    },
+    {
+      "id": "LEAD-WHERE-TO-MEET",
+      "verdict": "partial pass",
+      "evidence": "The Oak list shows gathering point, neighborhood and out-of-area with a call link. The backup Abilene house is listed as the Nearby neighborhood meeting place; see failures. The text-only save/relaunch and simulation-context entries were not run."
+    },
+    {
+      "id": "PREP-01/02/03",
+      "verdict": "pass",
+      "evidence": "At ordinary text, the first action row is hittable below the rings for all three families. At accessibility sizes the rings stack with labels and numbers untruncated. Both info buttons measure 44x44 pt at ordinary text and about 64x62 pt at AX, are labelled About this list and About this score, and reveal their notes inline without overlap. VoiceOver itself was not run."
+    },
+    {
+      "id": "URGENT-ROWS",
+      "verdict": "pass (visual)",
+      "evidence": "The warning icon sits in a fixed trailing column at ordinary and AX sizes, task text stays aligned, and the urgent rows' No cost pill uses the red-family tint (no blue pill). No rubric version is visible in the score disclosure."
+    },
+    {
+      "id": "PREP-05/06, PREP-08/PLAN-04",
+      "verdict": "partial",
+      "evidence": "The family panel has the person.2 title, an aligned row and a trailing chevron. Name and Relationship are labelled, with Relationship under Name. At accessibility size the Relationship picker value truncates mid-word in en, es and vi. Contact Name, Relationship and Phone are labelled and stack at AX; only the navigation title truncates."
+    },
+    {
+      "id": "PLAN-03, REH-01",
+      "verdict": "pass (visual)",
+      "evidence": "The family card is pushed with a back button and add-device control, with no Done button. The practice and scenario cards do not clip at AX."
+    }
+  ],
+  "synopsis": "The integrated build installs and runs on the iPhone over Wi-Fi with Codex as the primary provider. The home opening card, route overlay, undo/redo and persistence work on the device. Three gaps matter most. First, the core's hazard actions (shade a room, layer up, escape, account outside, refuge arrival, move to a shaded room) never reach the native rehearsal UI, so most of the requested scenario-lead checks cannot be performed, and the live director can recommend actions the user cannot take. Second, the director stalls: an adaptive session sat at minute 0 with Next and End disabled after an operation returned needs_client_tools. Third, a 2 USD default spend window cut off live Prepare coverage early in the session. Several regression tests fail because the flows changed (setup-first rehearsal entry, the hospital-category filter, the moved county picker), and the alert banner component has no call site in this build.",
+  "fact_findings": [
+    "hh-lake heat: the director used the heat-sensitive Grandma and cooling facts, and recommended an action (room shading) with no native control: an unsupported affordance.",
+    "hh-pine tornado manufactured home: the director and scene correctly treat the closet as non-refuge and point to the missing advance shelter plan.",
+    "hh-lake Prepare after the switch: the live Beacon section raised a question tied to the refrigerated medication's storage facts. No Oak facts appeared.",
+    "hh-oak Where to meet: the backup meetup (Abilene, out of area) is shown in the Nearby neighborhood slot, which misreads the meetup's role."
+  ],
+  "failures": [
+    {
+      "severity": "high",
+      "stage": "rendering/contract wiring",
+      "diagnosis": "HazardExperience feasible commands (reduceSolarGain, warmLayers, escape, accountOutside, refuge arrival, heat moveTo proposals) are not referenced anywhere in apps/ios/DryRun. ExerciseActions offers only water, power allocation (when compatibleBackupIDs exist), contact, helper and fire door actions. The lead's six-hazard branches are therefore not playable on the phone.",
+      "fix": "Render HazardExperience.feasibleCommands as accepted actions in AdaptiveRehearsalView and PracticeCheckView, with localized titles. Check that hh-oak's oxygen concentrator exposes its battery station allocation in freeze."
+    },
+    {
+      "severity": "high",
+      "stage": "state/director client",
+      "diagnosis": "DeviceAudit adaptive apartment-complex fire: the director operation returned needs_client_tools and the app never continued it. The session stayed at +0h00m with Next and End disabled for more than 20 s. The probe runs showed the same disabled-Next pause after the first advance.",
+      "fix": "Add a client deadline that commits the local director's step when the Beacon director has not finished. Keep End always enabled. Make sure client-tool continuation is triggered."
+    },
+    {
+      "severity": "high",
+      "stage": "operational config",
+      "diagnosis": "The gateway's default DRYRUN_MAX_USD=2 owner window was used up within about 4 Prepare calls. Every later Prepare Beacon request returned owner_window_quota, so the phone silently showed the non-live path for most of the session.",
+      "fix": "Raise the cap for reviewer sessions (or set it in .env), and show the quota state in the gateway log and in a reviewer-visible receipt."
+    },
+    {
+      "severity": "medium",
+      "stage": "integration",
+      "diagnosis": "AlertBannerCard has no call site. The call site exists only on branch dryrun-six-hazard-continue (commit 2a9d974), so -demoAlert and the live NWS banner never render (PREP-17).",
+      "fix": "Port the Prepare call site, or retire the inventory entry."
+    },
+    {
+      "severity": "medium",
+      "stage": "state",
+      "diagnosis": "Settings > Try a sample family > Load this family, with the same family (Oak) already loaded, left Prepare on 'Running all six practice scenarios' with no action list for more than 2.5 minutes, twice. Switching to a different family (Lake) completed promptly.",
+      "fix": "Investigate the recompute when reloading the active example: likely a cancelled or duplicate recompute that never resolves. Add a timeout and retry."
+    },
+    {
+      "severity": "medium",
+      "stage": "domain validation",
+      "diagnosis": "The opening card allows an interior door (pt-living-hall) to lead Outside. It immediately becomes an exterior EXIT and routes use it.",
+      "fix": "Only offer Outside for an opening on an exterior wall, or require a confirm step and mark the result unverified until confirmed."
+    },
+    {
+      "severity": "medium",
+      "stage": "rendering",
+      "diagnosis": "The Relationship picker value truncates mid-word at accessibility sizes in en, es and vi (PREP-08 and the family editor).",
+      "fix": "Stack the picker label and value, or use a navigation-link picker at accessibility sizes."
+    },
+    {
+      "severity": "medium",
+      "stage": "projection",
+      "diagnosis": "Where to meet labels the Oak backup (out-of-area) meetup as the Nearby neighborhood meeting place.",
+      "fix": "Map the meetup roles explicitly: backupMeetingPlace must not fill the neighborhood slot."
+    },
+    {
+      "severity": "low",
+      "stage": "tests",
+      "diagnosis": "MapRequestTests: the fake hospital results have no category, so the new hospital-category filter drops one of them. DemoJourney address journey: the rehearsal now opens setup first, and the test never taps rehearsal.setup.start. DemoJourney describe: the county picker is no longer on the first setup screen. SixHazard fire and tornado: an answered decision leaves an unresolvable decision.option match, so the harness tap fails while Next step stays enabled. Practice check: no decision.option is reachable at the expected moment.",
+      "fix": "Update the tests to the current flow and fixtures. Retest the practice-check flow for a real regression."
+    },
+    {
+      "severity": "low",
+      "stage": "copy",
+      "diagnosis": "The Plan map list still shows 'Let Gemini plan these searches' while Codex is primary. At accessibility size in es, the map sheet's safety disclaimer is truncated with an ellipsis.",
+      "fix": "Use a provider-neutral label. Let the disclaimer wrap."
+    }
+  ],
+  "likely_stage": "rendering/contract wiring for hazard actions; director client continuation; gateway quota configuration; test drift for most regression failures",
+  "references": [
+    "Protected originals: reviewer-session ui/probe/probe2 xcresults (handles above). AI-bearing regions: adaptive header suggestion block, Prepare Beacon section. No cleared derivatives were released: the probe did not capture accessibility trees for these frames, so clear_capture.py could not be applied; findings above are measured on the originals."
+  ],
+  "recommendations": [
+    "Wire the HazardExperience actions into the native UI before more scenario prompt tuning. Prompt work cannot fix actions that do not exist.",
+    "Make director stalls fall back locally within a few seconds.",
+    "Rerun this checklist with a higher spend cap so Prepare stays live across the matrix."
+  ],
+  "retests": [
+    "After wiring: the heat shade then move-Ba choice; freeze powered vs unpowered debrief; flood refuge before vs after access loss; fire escape, account, then ordered debrief with forced provider fallback.",
+    "Clean-state open-doorway Not usable route check; the Oak same-family reload hang; the Pine switch and a late-response injection.",
+    "The Prepare extinguisher/hook/medication/budget/upstairs rows; the address geocode and ambiguity flows with a synthetic family; the write-failure injection; the owner-assisted RoomPlan scan revert."
+  ],
+  "limitations": [
+    "Single repetitions for live director and Prepare runs. Most Prepare runs were quota-blocked rather than live.",
+    "The Codex-served claim rests on gateway access-log timing plus Codex runtime records with a model id. The gateway does not log the serving provider per request, and other agents may have run Codex concurrently.",
+    "Home checks used the editor list entry rather than tapping the plan, and VoiceOver was not exercised.",
+    "Synthetic agent audit only."
+  ],
+  "next_owner": "orchestrator; scenario/house leads (hazard action wiring, Leads-to validation); codex-context (director continuation, quota); native UI (relationship picker, alert banner); maps (meetup role mapping)",
+  "reviewer_attestation": "semantic-review-complete-no-protected-content"
+}

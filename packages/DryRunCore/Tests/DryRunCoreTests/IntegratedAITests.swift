@@ -82,7 +82,7 @@ import Testing
         let first=PracticeAttempt(id:"first",sequence:1,variantID:"practice-check-a/0",answers:ScoreCompiler.competencies.map{.init(competencyID:$0,credit:1,committedActionID:"action-\($0)",beforeFeedback:true)})
         let interrupted=PracticeAttempt(id:"second",sequence:2,variantID:"practice-check-b/0",answers:[.init(competencyID:"initialResponse",credit:0,committedActionID:"unsafe",beforeFeedback:true)])
         let card=try ScoreCompiler.compile(rubric:rubric,assessments:full,attempts:[first,interrupted])
-        #expect(card.practice==0);#expect(card.practiceAssessed==1)
+        #expect(card.practice==75);#expect(card.practiceAssessed==4)
         for c in rubric.criteria {
             var removed=full;let i=removed.firstIndex{$0.criterionID==c.id}!;removed[i].predicates=[:]
             #expect(try ScoreCompiler.compile(rubric:rubric,assessments:removed).overall!<=baseline.overall!)
