@@ -12,8 +12,7 @@ struct BeaconDebriefCard: View {
         SectionCard(title: l("debrief.ai.title"), systemImage: "sparkles") {
             switch model.beaconDebriefState(for: result.input) {
             case .working, nil:
-                HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("debrief.ai.working")).foregroundStyle(.secondary) }
-                    .accessibilityElement(children: .combine)
+                BeaconThinkingView(activity: .debriefing, title: l("debrief.ai.working"))
             case .ready(let accepted, let replay):
                 Text(accepted.summary).font(.callout)
                     .accessibilityIdentifier("debrief.ai.summary")

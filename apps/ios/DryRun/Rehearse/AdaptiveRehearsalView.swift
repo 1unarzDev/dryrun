@@ -95,7 +95,7 @@ struct AdaptiveRehearsalView: View {
             }
             if model.directorTurnInFlight {
                 // Brief progress while a gateway turn runs; End stays available, and past the deadline this phone takes the step.
-                Label(l("adaptive.director.inFlight"), systemImage: "hourglass").font(.footnote).foregroundStyle(.secondary)
+                BeaconThinkingView(activity: .directing, title: l("adaptive.director.inFlight"))
                     .accessibilityIdentifier("adaptive.director.inFlight")
             }
             if let note = model.directorFallbackNote {

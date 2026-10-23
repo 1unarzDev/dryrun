@@ -13,8 +13,7 @@ struct PreparationAICard: View {
         SectionCard(title: l("prep.ai.title"), systemImage: "sparkles") {
             switch model.preparationAIState {
             case .working:
-                HStack(spacing: Theme.Space.s) { ProgressView(); Text(l("prep.ai.working")).foregroundStyle(.secondary) }
-                    .accessibilityElement(children: .combine)
+                BeaconThinkingView(activity: .preparing, title: l("prep.ai.working"))
                     .accessibilityIdentifier("next.ai.working")
             case .ready(let p):
                 Label(l("prep.ai.applied", ["count": "\(p.ranked.count)"]), systemImage: "checkmark.shield")

@@ -104,6 +104,9 @@ struct PracticeCheckView: View {
             } else {
                 actionList(step)
             }
+        } else if model.preparationAIAvailable {
+            // Beacon may be preparing this set; show calm progress rather than a bare spinner.
+            BeaconThinkingView(activity: .practice)
         } else {
             ProgressView().frame(maxWidth: .infinity)
         }
