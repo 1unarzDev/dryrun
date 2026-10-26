@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "id": "flash-flood",
+  "version": "1.0.0",
+  "hazard": "flashFlood",
+  "titleKey": "scenario.flash-flood.title",
+  "summaryKey": "scenario.flash-flood.summary",
+  "startingConditionsKey": "scenario.flash-flood.starting",
+  "fictional": true,
+  "reviewStatus": "draft",
+  "durationMinutes": 4320,
+  "ambient": "none",
+  "phases": [
+    {
+      "id": "early",
+      "startMinute": 0,
+      "titleKey": "scenario.flash-flood.phase.early",
+      "kind": "progression"
+    },
+    {
+      "id": "warning",
+      "startMinute": 90,
+      "titleKey": "scenario.flash-flood.phase.warning",
+      "kind": "immediate"
+    },
+    {
+      "id": "recovery",
+      "startMinute": 240,
+      "titleKey": "scenario.flash-flood.phase.recovery",
+      "kind": "recovery"
+    }
+  ],
+  "variants": [
+    {
+      "id": "home-flooded",
+      "labelKey": "scenario.flash-flood.variant.home-flooded"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt.flash-flood.watch",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "early",
+      "rule": "rule.note",
+      "titleKey": "scenario.flash-flood.event.watch",
+      "severity": "caution",
+      "sourceIDs": [
+        "S23"
+      ]
+    },
+    {
+      "id": "evt.flash-flood.warning",
+      "minute": 90,
+      "priority": 0,
+      "phaseID": "warning",
+      "rule": "rule.flood.warning",
+      "titleKey": "scenario.flash-flood.event.warning",
+      "severity": "critical",
+      "sourceIDs": [
+        "S23"
+      ]
+    },
+    {
+      "id": "evt.flash-flood.power-cut",
+      "minute": 240,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.flash-flood.event.power-cut",
+      "severity": "caution",
+      "sourceIDs": [
+        "S20"
+      ],
+      "params": {
+        "service": "svc.grid",
+        "state": "unavailable"
+      }
+    },
+    {
+      "id": "evt.flash-flood.displacement",
+      "minute": 300,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.displacement",
+      "titleKey": "scenario.flash-flood.event.displacement",
+      "severity": "caution",
+      "sourceIDs": [
+        "S29"
+      ],
+      "when": [
+        "variant:home-flooded"
+      ]
+    },
+    {
+      "id": "evt.flash-flood.checkpoint-24h",
+      "minute": 1440,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.flash-flood.event.checkpoint-24h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.flash-flood.roads-reopen",
+      "minute": 2160,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.flash-flood.event.roads-reopen",
+      "severity": "info",
+      "sourceIDs": [
+        "S23"
+      ],
+      "params": {
+        "service": "svc.roads",
+        "state": "operational"
+      }
+    },
+    {
+      "id": "evt.flash-flood.power-restored",
+      "minute": 2880,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.power-restored",
+      "titleKey": "scenario.flash-flood.event.power-restored",
+      "severity": "info",
+      "sourceIDs": [
+        "S20"
+      ]
+    }
+  ],
+  "choicePoints": [
+    {
+      "id": "choice.flash-flood.early",
+      "minute": 30,
+      "phaseID": "early",
+      "promptKey": "scenario.flash-flood.choice.early.prompt",
+      "defaultOptionID": "monitor",
+      "options": [
+        {
+          "id": "leave-early",
+          "labelKey": "scenario.flash-flood.choice.early.leave-early",
+          "feedbackKey": "scenario.flash-flood.choice.early.leave-early.feedback",
+          "effect": "leaveEarly",
+          "unsafe": false
+        },
+        {
+          "id": "monitor",
+          "labelKey": "scenario.flash-flood.choice.early.monitor",
+          "feedbackKey": "scenario.flash-flood.choice.early.monitor.feedback",
+          "effect": "waitForInstructions",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S23"
+      ]
+    },
+    {
+      "id": "choice.flash-flood.warning",
+      "minute": 100,
+      "phaseID": "warning",
+      "promptKey": "scenario.flash-flood.choice.warning.prompt",
+      "defaultOptionID": "higher-ground",
+      "options": [
+        {
+          "id": "higher-ground",
+          "labelKey": "scenario.flash-flood.choice.warning.higher-ground",
+          "feedbackKey": "scenario.flash-flood.choice.warning.higher-ground.feedback",
+          "effect": "waitForInstructions",
+          "unsafe": false
+        },
+        {
+          "id": "leave-official-route",
+          "labelKey": "scenario.flash-flood.choice.warning.leave-official-route",
+          "feedbackKey": "scenario.flash-flood.choice.warning.leave-official-route.feedback",
+          "effect": "leaveEarly",
+          "unsafe": false
+        },
+        {
+          "id": "drive-through",
+          "labelKey": "scenario.flash-flood.choice.warning.drive-through",
+          "feedbackKey": "scenario.flash-flood.choice.warning.drive-through.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        },
+        {
+          "id": "around-barricade",
+          "labelKey": "scenario.flash-flood.choice.warning.around-barricade",
+          "feedbackKey": "scenario.flash-flood.choice.warning.around-barricade.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S23"
+      ]
+    }
+  ],
+  "ruleIDs": [
+    "rule.note",
+    "rule.flood.warning",
+    "rule.external.set",
+    "rule.recovery.displacement",
+    "rule.checkpoint",
+    "rule.recovery.power-restored"
+  ],
+  "sourceIDs": [
+    "S18",
+    "S20",
+    "S23",
+    "S24",
+    "S29"
+  ],
+  "debrief": {
+    "pointKeys": [
+      "scenario.flash-flood.debrief.1",
+      "scenario.flash-flood.debrief.2",
+      "scenario.flash-flood.debrief.3",
+      "scenario.flash-flood.debrief.4"
+    ],
+    "sourceIDs": [
+      "S18",
+      "S20",
+      "S23",
+      "S24",
+      "S29"
+    ]
+  }
+}

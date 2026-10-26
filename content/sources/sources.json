@@ -1,0 +1,407 @@
+{
+  "schemaVersion": 1,
+  "manifestVersion": "2026.10.0",
+  "note": "checkedAt records when the URL/scope was recorded from the brief. reviewState 'needsReview' means no human content review yet; 'verified' would require a recorded human check.",
+  "sources": [
+    {
+      "id": "S01",
+      "publisher": "Congressional App Challenge",
+      "title": "2026 official rules",
+      "url": "https://www.congressionalappchallenge.us/wp-content/uploads/2026/05/2026-CAC-Rules.pdf",
+      "category": "competition",
+      "scopeNote": "AI-assistance and student-contribution rules.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S02",
+      "publisher": "Congressional App Challenge",
+      "title": "Student registration and deadline",
+      "url": "https://www.congressionalappchallenge.us/students/student-registration/",
+      "category": "competition",
+      "scopeNote": "National deadline Oct 26, 2026 noon ET / 11 a.m. CT.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S03",
+      "publisher": "Texas Legislature",
+      "title": "2021 enacted congressional district description (SB 6, Section 25)",
+      "url": "https://capitol.texas.gov/tlodocs/873/billtext/html/SB00006F.htm",
+      "category": "geography",
+      "scopeNote": "Current geography must still be confirmed for submission.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S04",
+      "publisher": "Census Reporter",
+      "title": "TX-25 profile (ACS 2024 one-year)",
+      "url": "https://censusreporter.org/profiles/50000US4825-congressional-district-25-tx/",
+      "category": "geography",
+      "scopeNote": "826,421 is an ACS estimate, not a user count.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S05",
+      "publisher": "Texas DSHS",
+      "title": "February 2021 winter storm mortality surveillance report",
+      "url": "https://www.dshs.texas.gov/sites/default/files/news/updates/SMOC_FebWinterStorm_MortalitySurvReport_12-30-21.pdf",
+      "category": "context",
+      "scopeNote": "246 statewide storm-related deaths; not all power-loss, not TX-25-specific.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S06",
+      "publisher": "Texas A&M University",
+      "title": "State climatologist assessment through 2036",
+      "url": "https://artsci.tamu.edu/news/2024/04/texans-should-prepare-for-hotter-temperatures-greater-risk-of-fire-and-flooding.html",
+      "category": "context",
+      "scopeNote": "Heat, drought, wildfire conditions, urban flooding; not every hazard.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S07",
+      "publisher": "Congressional App Challenge",
+      "title": "DisasterReady winner profile (OK-05)",
+      "url": "https://www.congressionalappchallenge.us/25-ok05/",
+      "category": "competition",
+      "scopeNote": "Prior art; avoid 'first ever' claims.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S08",
+      "publisher": "Apple",
+      "title": "RoomPlan overview",
+      "url": "https://developer.apple.com/augmented-reality/roomplan/",
+      "category": "platform",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S09",
+      "publisher": "Apple",
+      "title": "WWDC23: Explore enhancements to RoomPlan (multiroom)",
+      "url": "https://developer.apple.com/videos/play/wwdc2023/10192/",
+      "category": "platform",
+      "scopeNote": "~2,000 sq ft single-floor recommendation; not a guarantee.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S10",
+      "publisher": "Apple",
+      "title": "RoomCaptureSession.isSupported",
+      "url": "https://developer.apple.com/documentation/RoomPlan/RoomCaptureSession/isSupported",
+      "category": "platform",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S11",
+      "publisher": "Apple",
+      "title": "RealityView",
+      "url": "https://developer.apple.com/documentation/realitykit/realityview",
+      "category": "platform",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S12",
+      "publisher": "Apple",
+      "title": "WWDC25: SceneKit to RealityKit guidance",
+      "url": "https://developer.apple.com/videos/play/wwdc2025/288/",
+      "category": "platform",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S13",
+      "publisher": "Apple Developer Forums",
+      "title": "MapKit offline limitations (DTS)",
+      "url": "https://developer.apple.com/forums/thread/772258",
+      "category": "platform",
+      "scopeNote": "Map tiles are not an offline guarantee.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S14",
+      "publisher": "Apple",
+      "title": "Keychain data protection",
+      "url": "https://support.apple.com/guide/security/keychain-data-protection-secb0694df1a/web",
+      "category": "privacy",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S15",
+      "publisher": "Apple",
+      "title": "SystemLanguageModel",
+      "url": "https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel",
+      "category": "platform",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S16",
+      "publisher": "Apple",
+      "title": "Foundation Models acceptable-use requirements",
+      "url": "https://developer.apple.com/support/terms/acceptable-use-requirements-for-the-foundation-models-framework",
+      "category": "platform",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S17",
+      "publisher": "National Weather Service",
+      "title": "API web service documentation",
+      "url": "https://www.weather.gov/documentation/services-web-api",
+      "category": "publicData",
+      "scopeNote": "User-Agent required; alerts by UGC zone/county.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S18",
+      "publisher": "FEMA",
+      "title": "National Flood Hazard Layer",
+      "url": "https://www.fema.gov/flood-maps/national-flood-hazard-layer",
+      "category": "publicData",
+      "scopeNote": "Mapped hazard context, not current depth or road safety.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S19",
+      "publisher": "U.S. Fire Administration",
+      "title": "Home fire escape plans",
+      "url": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+      "category": "safety",
+      "scopeNote": "Two ways out, outside meeting place, never go back inside.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S20",
+      "publisher": "CDC",
+      "title": "What to do to protect yourself during a power outage",
+      "url": "https://www.cdc.gov/natural-disasters/response/what-to-do-protect-yourself-during-a-power-outage.html",
+      "category": "safety",
+      "scopeNote": "Generators outdoors, >= 20 ft from windows/doors/vents; no stove/oven for heat.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S21",
+      "publisher": "CDC",
+      "title": "Heat and health",
+      "url": "https://www.cdc.gov/heat-health/about/index.html",
+      "category": "safety",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S22",
+      "publisher": "National Weather Service",
+      "title": "Tornado safety: during",
+      "url": "https://www.weather.gov/safety/tornado-during",
+      "category": "safety",
+      "scopeNote": "Lowest floor, interior room; mobile homes are not safe shelter.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S23",
+      "publisher": "National Weather Service",
+      "title": "Flood safety: during",
+      "url": "https://www.weather.gov/safety/flood-during",
+      "category": "safety",
+      "scopeNote": "Turn Around Don't Drown; never drive through flood water.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S24",
+      "publisher": "CDC",
+      "title": "Drinking water advisories overview",
+      "url": "https://www.cdc.gov/water-emergency/about/drinking-water-advisories-an-overview.html",
+      "category": "safety",
+      "scopeNote": "Boil / do-not-drink / do-not-use differ; boiling does not remove chemicals.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S25",
+      "publisher": "FDA",
+      "title": "Medical devices and natural disasters",
+      "url": "https://www.fda.gov/medical-devices/emergency-situations-medical-devices/fda-offers-tips-about-medical-devices-and-natural-disasters",
+      "category": "safety",
+      "scopeNote": "Use manufacturer/care-plan info for device continuity.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S26",
+      "publisher": "CDC",
+      "title": "Creating and storing an emergency water supply",
+      "url": "https://www.cdc.gov/water-emergency/about/how-to-create-and-store-an-emergency-water-supply.html",
+      "category": "safety",
+      "scopeNote": "1 gallon per person per day storage target, at least 3 days.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S27",
+      "publisher": "2-1-1 Texas",
+      "title": "Contact 2-1-1",
+      "url": "https://www.211texas.org/contact-2-1-1/",
+      "category": "help",
+      "scopeNote": "877-541-7905; Option 1 resources, Option 4 STEAR (per page at review).",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S28",
+      "publisher": "Texas Division of Emergency Management",
+      "title": "State of Texas Emergency Assistance Registry (STEAR)",
+      "url": "https://www.tdem.texas.gov/response/state-of-texas-emergency-assistance-registry",
+      "category": "help",
+      "scopeNote": "Voluntary; shares data with planners/responders; does not guarantee assistance.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S29",
+      "publisher": "USAGov",
+      "title": "Disaster assistance",
+      "url": "https://www.usa.gov/disaster-assistance",
+      "category": "help",
+      "scopeNote": "Eligibility depends on declarations and programs.",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S30",
+      "publisher": "Hono",
+      "title": "Cloudflare Workers getting started",
+      "url": "https://hono.dev/docs/getting-started/cloudflare-workers",
+      "category": "engineering",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S31",
+      "publisher": "Cloudflare",
+      "title": "Workers platform limits",
+      "url": "https://developers.cloudflare.com/workers/platform/limits/",
+      "category": "engineering",
+      "scopeNote": "",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S41",
+      "publisher": "Erath County",
+      "title": "Emergency Management",
+      "url": "https://www.co.erath.tx.us/210/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S42",
+      "publisher": "Hood County",
+      "title": "Emergency Management Coordinator",
+      "url": "https://hoodcounty.texas.gov/departments/emergency_management/index.php",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S43",
+      "publisher": "National Weather Service",
+      "title": "Zone and county UGC listings (api.weather.gov/zones, area=TX)",
+      "url": "https://api.weather.gov/zones?area=TX&type=county",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "publicData",
+      "scopeNote": "UGC IDs used for alert association."
+    },
+    {
+      "id": "S44",
+      "publisher": "Comanche County",
+      "title": "Emergency Management",
+      "url": "https://www.comanchecountytx.gov/217/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S45",
+      "publisher": "Jack County",
+      "title": "Emergency Management",
+      "url": "https://www.jackcounty.texas.gov/emergency-management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S46",
+      "publisher": "Palo Pinto County",
+      "title": "Emergency Management",
+      "url": "https://www.co.palo-pinto.tx.us/page/HazardMitigation",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S47",
+      "publisher": "Parker County",
+      "title": "Emergency Management",
+      "url": "https://www.parkercountytx.gov/119/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S48",
+      "publisher": "Somervell County",
+      "title": "Emergency Management",
+      "url": "https://www.somervell.co/162/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    },
+    {
+      "id": "S49",
+      "publisher": "Young County",
+      "title": "Emergency Management",
+      "url": "https://www.co.young.tx.us/page/young.EOC",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "category": "help",
+      "scopeNote": "County OEM; fetched 2026-10-09."
+    }
+  ]
+}

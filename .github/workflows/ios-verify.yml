@@ -1,0 +1,54 @@
+# Optional cloud Mac: runs the same verification on a GitHub-hosted macOS runner and uploads the artifact bundle.
+# Manual trigger only (Actions tab > "iOS verify" > Run workflow). Requires the repo to be pushed to GitHub.
+# Simulator only: no signing secrets, no device access, fictional data only.
+name: iOS verify
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "verify (full) or screens (screenshot tour only)"
+        default: verify
+        type: choice
+        options: [verify, screens]
+      locales:
+        description: "Screenshot locales"
+        default: "en,es,vi"
+      runner:
+        description: "macOS runner label (needs Xcode 16.3+; Xcode 26 for Foundation Models)"
+        default: macos-15
+      xcode:
+        description: "Optional Xcode app name, e.g. Xcode_16.4 (empty = runner default)"
+        default: ""
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        if: ${{ inputs.xcode != '' }}
+        run: sudo xcode-select -s "/Applications/${{ inputs.xcode }}.app"
+      - name: Tools
+        run: brew install xcodegen
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run
+        run: |
+          if [ "${{ inputs.mode }}" = "screens" ]; then
+            scripts/mac/screens.sh --locales "${{ inputs.locales }}"
+          else
+            scripts/mac/verify.sh --locales "${{ inputs.locales }}"
+          fi
+      - name: Upload bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dryrun-${{ inputs.mode }}-${{ github.run_number }}
+          path: artifacts/*.tar.gz
+          retention-days: 14

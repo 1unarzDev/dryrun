@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "id": "water-outage",
+  "version": "1.0.0",
+  "hazard": "waterOutage",
+  "titleKey": "scenario.water-outage.title",
+  "summaryKey": "scenario.water-outage.summary",
+  "startingConditionsKey": "scenario.water-outage.starting",
+  "fictional": true,
+  "reviewStatus": "draft",
+  "durationMinutes": 4320,
+  "ambient": "none",
+  "phases": [
+    {
+      "id": "outage",
+      "startMinute": 0,
+      "titleKey": "scenario.water-outage.phase.outage",
+      "kind": "progression"
+    },
+    {
+      "id": "advisory",
+      "startMinute": 360,
+      "titleKey": "scenario.water-outage.phase.advisory",
+      "kind": "progression"
+    },
+    {
+      "id": "recovery",
+      "startMinute": 3600,
+      "titleKey": "scenario.water-outage.phase.recovery",
+      "kind": "recovery"
+    }
+  ],
+  "variants": [
+    {
+      "id": "do-not-drink",
+      "labelKey": "scenario.water-outage.variant.do-not-drink"
+    },
+    {
+      "id": "do-not-use",
+      "labelKey": "scenario.water-outage.variant.do-not-use"
+    },
+    {
+      "id": "with-power-loss",
+      "labelKey": "scenario.water-outage.variant.with-power-loss"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt.water-outage.main-break",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.water.advisory",
+      "titleKey": "scenario.water-outage.event.main-break",
+      "severity": "critical",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "advisory": "quantityUnavailable"
+      },
+      "when": [
+        "waterSource:municipal"
+      ]
+    },
+    {
+      "id": "evt.water-outage.well-pump-failure",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.water-outage.event.well-pump-failure",
+      "severity": "critical",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "service": "svc.wellPump.mechanical",
+        "state": "unavailable"
+      },
+      "when": [
+        "waterSource:privateWell"
+      ]
+    },
+    {
+      "id": "evt.water-outage.power-loss",
+      "minute": 5,
+      "priority": 0,
+      "phaseID": "outage",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.water-outage.event.power-loss",
+      "severity": "caution",
+      "sourceIDs": [
+        "S20"
+      ],
+      "params": {
+        "service": "svc.grid",
+        "state": "unavailable"
+      },
+      "when": [
+        "variant:with-power-loss"
+      ]
+    },
+    {
+      "id": "evt.water-outage.pressure-returns",
+      "minute": 360,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.water-outage.event.pressure-returns",
+      "severity": "info",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "service": "svc.water.municipal",
+        "state": "operational"
+      },
+      "when": [
+        "waterSource:municipal"
+      ]
+    },
+    {
+      "id": "evt.water-outage.boil-advisory",
+      "minute": 361,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.water.advisory",
+      "titleKey": "scenario.water-outage.event.boil-advisory",
+      "severity": "caution",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "advisory": "boilWater"
+      },
+      "when": [
+        "waterSource:municipal",
+        "!variant:do-not-drink",
+        "!variant:do-not-use"
+      ]
+    },
+    {
+      "id": "evt.water-outage.do-not-drink",
+      "minute": 361,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.water.advisory",
+      "titleKey": "scenario.water-outage.event.do-not-drink",
+      "severity": "critical",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "advisory": "doNotDrink"
+      },
+      "when": [
+        "waterSource:municipal",
+        "variant:do-not-drink"
+      ]
+    },
+    {
+      "id": "evt.water-outage.do-not-use",
+      "minute": 361,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.water.advisory",
+      "titleKey": "scenario.water-outage.event.do-not-use",
+      "severity": "critical",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "advisory": "doNotUse"
+      },
+      "when": [
+        "waterSource:municipal",
+        "variant:do-not-use"
+      ]
+    },
+    {
+      "id": "evt.water-outage.well-quality-unknown",
+      "minute": 361,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.water-outage.event.well-quality-unknown",
+      "severity": "caution",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "service": "svc.water.wellSafety",
+        "state": "unknown"
+      },
+      "when": [
+        "waterSource:privateWell"
+      ]
+    },
+    {
+      "id": "evt.water-outage.checkpoint-24h",
+      "minute": 1440,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.water-outage.event.checkpoint-24h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.water-outage.power-restored",
+      "minute": 1800,
+      "priority": 0,
+      "phaseID": "advisory",
+      "rule": "rule.recovery.power-restored",
+      "titleKey": "scenario.water-outage.event.power-restored",
+      "severity": "info",
+      "sourceIDs": [
+        "S20"
+      ],
+      "when": [
+        "variant:with-power-loss"
+      ]
+    },
+    {
+      "id": "evt.water-outage.well-repaired",
+      "minute": 2880,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.water-outage.event.well-repaired",
+      "severity": "info",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "service": "svc.wellPump.mechanical",
+        "state": "operational"
+      },
+      "when": [
+        "waterSource:privateWell"
+      ]
+    },
+    {
+      "id": "evt.water-outage.checkpoint-72h",
+      "minute": 4320,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.checkpoint",
+      "titleKey": "scenario.water-outage.event.checkpoint-72h",
+      "severity": "info",
+      "sourceIDs": [
+        "S26"
+      ]
+    },
+    {
+      "id": "evt.water-outage.advisory-lifted",
+      "minute": 3600,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.external.set",
+      "titleKey": "scenario.water-outage.event.advisory-lifted",
+      "severity": "info",
+      "sourceIDs": [
+        "S24"
+      ],
+      "params": {
+        "service": "svc.water.utilitySafety",
+        "state": "operational"
+      },
+      "when": [
+        "waterSource:municipal"
+      ]
+    }
+  ],
+  "choicePoints": [
+    {
+      "id": "choice.water-outage.drinking-water",
+      "minute": 400,
+      "phaseID": "advisory",
+      "promptKey": "scenario.water-outage.choice.drinking-water.prompt",
+      "defaultOptionID": "use-stored",
+      "options": [
+        {
+          "id": "use-stored",
+          "labelKey": "scenario.water-outage.choice.drinking-water.use-stored",
+          "feedbackKey": "scenario.water-outage.choice.drinking-water.use-stored.feedback",
+          "effect": "useStoredWater",
+          "unsafe": false
+        },
+        {
+          "id": "boil-tap",
+          "labelKey": "scenario.water-outage.choice.drinking-water.boil-tap",
+          "feedbackKey": "scenario.water-outage.choice.drinking-water.boil-tap.feedback",
+          "effect": "boilTapWater",
+          "unsafe": false
+        },
+        {
+          "id": "drink-tap",
+          "labelKey": "scenario.water-outage.choice.drinking-water.drink-tap",
+          "feedbackKey": "scenario.water-outage.choice.drinking-water.drink-tap.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S24",
+        "S26"
+      ]
+    },
+    {
+      "id": "choice.water-outage.stored-water",
+      "minute": 1500,
+      "phaseID": "advisory",
+      "promptKey": "scenario.water-outage.choice.stored-water.prompt",
+      "defaultOptionID": "prioritize",
+      "options": [
+        {
+          "id": "prioritize",
+          "labelKey": "scenario.water-outage.choice.stored-water.prioritize",
+          "feedbackKey": "scenario.water-outage.choice.stored-water.prioritize.feedback",
+          "effect": "prioritizeStored",
+          "unsafe": false
+        },
+        {
+          "id": "use-for-everything",
+          "labelKey": "scenario.water-outage.choice.stored-water.use-for-everything",
+          "feedbackKey": "scenario.water-outage.choice.stored-water.use-for-everything.feedback",
+          "effect": "useStoredForAll",
+          "unsafe": false
+        },
+        {
+          "id": "tap-for-handwashing",
+          "labelKey": "scenario.water-outage.choice.stored-water.tap-for-handwashing",
+          "feedbackKey": "scenario.water-outage.choice.stored-water.tap-for-handwashing.feedback",
+          "effect": "tapForHygiene",
+          "unsafe": false
+        }
+      ],
+      "sourceIDs": [
+        "S24",
+        "S26"
+      ]
+    }
+  ],
+  "ruleIDs": [
+    "rule.checkpoint",
+    "rule.external.set",
+    "rule.recovery.power-restored",
+    "rule.water.advisory"
+  ],
+  "sourceIDs": [
+    "S20",
+    "S24",
+    "S26"
+  ],
+  "debrief": {
+    "pointKeys": [
+      "scenario.water-outage.debrief.1",
+      "scenario.water-outage.debrief.2",
+      "scenario.water-outage.debrief.3",
+      "scenario.water-outage.debrief.4"
+    ],
+    "sourceIDs": [
+      "S20",
+      "S24",
+      "S26"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "regionID": "48143",
+  "fetchedAt": "2026-10-09T19:00:00Z",
+  "status": "ok",
+  "alerts": [
+    {
+      "id": "demo-erath-freeze-1",
+      "event": "Hard Freeze Warning",
+      "headline": "DEMO ONLY - not a real warning",
+      "description": "DEMO ONLY. Fictional alert used for contract tests and the offline demo.",
+      "instruction": null,
+      "severity": "Moderate",
+      "areaDesc": "Erath, TX",
+      "affectedZones": ["TXZ130"],
+      "sent": "2026-10-09T18:00:00Z",
+      "effective": "2026-10-09T18:00:00Z",
+      "expires": "2026-10-10T18:00:00Z",
+      "ends": null,
+      "fetchedAt": "2026-10-09T19:00:00Z",
+      "sourceURL": "https://api.weather.gov/alerts/demo-erath-freeze-1",
+      "classification": "demo"
+    }
+  ]
+}

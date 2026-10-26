@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "id": "home-fire",
+  "version": "1.0.0",
+  "hazard": "homeFire",
+  "titleKey": "scenario.home-fire.title",
+  "summaryKey": "scenario.home-fire.summary",
+  "startingConditionsKey": "scenario.home-fire.starting",
+  "fictional": true,
+  "reviewStatus": "draft",
+  "durationMinutes": 4320,
+  "ambient": "none",
+  "phases": [
+    {
+      "id": "escape",
+      "startMinute": 0,
+      "titleKey": "scenario.home-fire.phase.escape",
+      "kind": "immediate"
+    },
+    {
+      "id": "recovery",
+      "startMinute": 10,
+      "titleKey": "scenario.home-fire.phase.recovery",
+      "kind": "recovery"
+    }
+  ],
+  "variants": [
+    {
+      "id": "second-exit-blocked",
+      "labelKey": "scenario.home-fire.variant.second-exit-blocked"
+    },
+    {
+      "id": "night",
+      "labelKey": "scenario.home-fire.variant.night"
+    },
+    {
+      "id": "hallway-smoke",
+      "labelKey": "scenario.home-fire.variant.hallway-smoke"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt.home-fire.alarm",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "escape",
+      "rule": "rule.fire.ignition",
+      "titleKey": "scenario.home-fire.event.alarm",
+      "severity": "critical",
+      "sourceIDs": [
+        "S19"
+      ]
+    },
+    {
+      "id": "evt.home-fire.fire-origin",
+      "minute": 1,
+      "priority": 0,
+      "phaseID": "escape",
+      "rule": "rule.fire.block-primary",
+      "titleKey": "scenario.home-fire.event.fire-origin",
+      "severity": "critical",
+      "sourceIDs": [
+        "S19"
+      ],
+      "params": {
+        "originKind": "kitchen"
+      }
+    },
+    {
+      "id": "evt.home-fire.second-blocked",
+      "minute": 2,
+      "priority": 0,
+      "phaseID": "escape",
+      "rule": "rule.fire.block-primary",
+      "titleKey": "scenario.home-fire.event.second-blocked",
+      "severity": "critical",
+      "sourceIDs": [
+        "S19"
+      ],
+      "params": {
+        "mode": "currentRoutes"
+      },
+      "when": [
+        "variant:second-exit-blocked"
+      ]
+    },
+    {
+      "id": "evt.home-fire.hallway-smoke",
+      "minute": 2,
+      "priority": 1,
+      "phaseID": "escape",
+      "rule": "rule.fire.block-primary",
+      "titleKey": "scenario.home-fire.event.hallway-smoke",
+      "severity": "critical",
+      "sourceIDs": [
+        "S19"
+      ],
+      "params": {
+        "originKind": "hallway"
+      },
+      "when": [
+        "variant:hallway-smoke"
+      ]
+    },
+    {
+      "id": "evt.home-fire.displacement",
+      "minute": 30,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.recovery.displacement",
+      "titleKey": "scenario.home-fire.event.displacement",
+      "severity": "caution",
+      "sourceIDs": [
+        "S29"
+      ]
+    },
+    {
+      "id": "evt.home-fire.contacts",
+      "minute": 60,
+      "priority": 0,
+      "phaseID": "recovery",
+      "rule": "rule.note",
+      "titleKey": "scenario.home-fire.event.contacts",
+      "severity": "info",
+      "sourceIDs": [
+        "S27",
+        "S29"
+      ]
+    }
+  ],
+  "choicePoints": [
+    {
+      "id": "choice.home-fire.first-move",
+      "minute": 0,
+      "phaseID": "escape",
+      "promptKey": "scenario.home-fire.choice.first-move.prompt",
+      "defaultOptionID": "get-out",
+      "options": [
+        {
+          "id": "get-out",
+          "labelKey": "scenario.home-fire.choice.first-move.get-out",
+          "feedbackKey": "scenario.home-fire.choice.first-move.get-out.feedback",
+          "effect": "takeExit",
+          "unsafe": false
+        },
+        {
+          "id": "grab-belongings",
+          "labelKey": "scenario.home-fire.choice.first-move.grab-belongings",
+          "feedbackKey": "scenario.home-fire.choice.first-move.grab-belongings.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        },
+        {
+          "id": "find-pet",
+          "labelKey": "scenario.home-fire.choice.first-move.find-pet",
+          "feedbackKey": "scenario.home-fire.choice.first-move.find-pet.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        },
+        {
+          "id": "fight-fire",
+          "labelKey": "scenario.home-fire.choice.first-move.fight-fire",
+          "feedbackKey": "scenario.home-fire.choice.first-move.fight-fire.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S19"
+      ]
+    },
+    {
+      "id": "choice.home-fire.outside",
+      "minute": 3,
+      "phaseID": "escape",
+      "promptKey": "scenario.home-fire.choice.outside.prompt",
+      "defaultOptionID": "call-from-outside",
+      "options": [
+        {
+          "id": "call-from-outside",
+          "labelKey": "scenario.home-fire.choice.outside.call-from-outside",
+          "feedbackKey": "scenario.home-fire.choice.outside.call-from-outside.feedback",
+          "effect": "takeExit",
+          "unsafe": false
+        },
+        {
+          "id": "go-back-in",
+          "labelKey": "scenario.home-fire.choice.outside.go-back-in",
+          "feedbackKey": "scenario.home-fire.choice.outside.go-back-in.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S19"
+      ]
+    }
+  ],
+  "ruleIDs": [
+    "rule.fire.ignition",
+    "rule.fire.block-primary",
+    "rule.recovery.displacement",
+    "rule.note"
+  ],
+  "sourceIDs": [
+    "S19",
+    "S27",
+    "S29"
+  ],
+  "debrief": {
+    "pointKeys": [
+      "scenario.home-fire.debrief.1",
+      "scenario.home-fire.debrief.2",
+      "scenario.home-fire.debrief.3",
+      "scenario.home-fire.debrief.4",
+      "scenario.home-fire.debrief.5"
+    ],
+    "sourceIDs": [
+      "S19",
+      "S27",
+      "S29"
+    ]
+  }
+}

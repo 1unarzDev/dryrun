@@ -1,0 +1,459 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "2026.10.0",
+  "packID": "tx-25-counties",
+  "generatedAt": "2026-10-09T19:00:00Z",
+  "expiresAt": "2027-01-09T00:00:00Z",
+  "classification": "curated",
+  "regions": [
+    {
+      "id": "48093",
+      "name": "Comanche County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ141"
+      ],
+      "nwsCountyIDs": [
+        "TXC093"
+      ],
+      "coverage": "oemOnly",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48133",
+      "name": "Eastland County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ129"
+      ],
+      "nwsCountyIDs": [
+        "TXC133"
+      ],
+      "coverage": "notStarted",
+      "coverageNote": "Not verified: no county emergency management contact page found on eastlandcounty.gov or eastlandcountytexas.com on 2026-10-09 (an alert-portal page exists but was not fetched and verified).",
+      "inTX25": "all"
+    },
+    {
+      "id": "48143",
+      "name": "Erath County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ130"
+      ],
+      "nwsCountyIDs": [
+        "TXC143"
+      ],
+      "coverage": "verifiedPartial",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48221",
+      "name": "Hood County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ131"
+      ],
+      "nwsCountyIDs": [
+        "TXC221"
+      ],
+      "coverage": "verifiedPartial",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48237",
+      "name": "Jack County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ101"
+      ],
+      "nwsCountyIDs": [
+        "TXC237"
+      ],
+      "coverage": "oemOnly",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48363",
+      "name": "Palo Pinto County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ116"
+      ],
+      "nwsCountyIDs": [
+        "TXC363"
+      ],
+      "coverage": "oemOnly",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48425",
+      "name": "Somervell County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ132"
+      ],
+      "nwsCountyIDs": [
+        "TXC425"
+      ],
+      "coverage": "oemOnly",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48429",
+      "name": "Stephens County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ115"
+      ],
+      "nwsCountyIDs": [
+        "TXC429"
+      ],
+      "coverage": "notStarted",
+      "coverageNote": "Not verified: no Stephens County government emergency management page found on 2026-10-09; only news articles and the City of Breckenridge page. No contact included.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48503",
+      "name": "Young County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ100"
+      ],
+      "nwsCountyIDs": [
+        "TXC503"
+      ],
+      "coverage": "oemOnly",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "all"
+    },
+    {
+      "id": "48059",
+      "name": "Callahan County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ128"
+      ],
+      "nwsCountyIDs": [
+        "TXC059"
+      ],
+      "coverage": "notStarted",
+      "coverageNote": "Not verified: no Callahan County emergency management page found on callahancounty.org on 2026-10-09. No contact included.",
+      "inTX25": "part"
+    },
+    {
+      "id": "48251",
+      "name": "Johnson County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ133"
+      ],
+      "nwsCountyIDs": [
+        "TXC251"
+      ],
+      "coverage": "notStarted",
+      "coverageNote": "Not verified: the official Johnson County emergency management page (johnsoncountytx.org/public-safety/emergency-management) returned HTTP 403 to automated fetches on 2026-10-09. No contact included.",
+      "inTX25": "part"
+    },
+    {
+      "id": "48367",
+      "name": "Parker County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ117"
+      ],
+      "nwsCountyIDs": [
+        "TXC367"
+      ],
+      "coverage": "oemOnly",
+      "coverageNote": "County OEM contact quoted from the official county page on 2026-10-09 (automated fetch; human review pending). No shelter/warming/cooling sites curated.",
+      "inTX25": "part"
+    },
+    {
+      "id": "48439",
+      "name": "Tarrant County",
+      "kind": "county",
+      "nwsZoneIDs": [
+        "TXZ118"
+      ],
+      "nwsCountyIDs": [
+        "TXC439"
+      ],
+      "coverage": "notStarted",
+      "coverageNote": "Not verified: candidate official Tarrant County OEM pages returned HTTP 404 on 2026-10-09. No contact included rather than an unverified number.",
+      "inTX25": "part"
+    }
+  ],
+  "resources": [
+    {
+      "contact": {
+        "phone": "254-965-1326",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.co.erath.tx.us/210/Emergency-Management",
+        "address": "100 W Washington, Stephenville, TX 76401"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48143-oem",
+      "name": "Erath County Emergency Management",
+      "publisher": "Erath County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Erath County, TX",
+      "regionIDs": [
+        "48143"
+      ],
+      "summary": "County emergency management office. The county page invites residents to sign up for the CodeRED alert notification system.",
+      "sourceIDs": [
+        "S41"
+      ]
+    },
+    {
+      "contact": {
+        "phone": "817-579-3335",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://hoodcounty.texas.gov/departments/emergency_management/index.php",
+        "address": "401 Deputy Larry Miller Dr, Granbury, TX"
+      },
+      "activation": "notApplicable",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated",
+      "id": "r-48221-oem",
+      "name": "Hood County Emergency Management",
+      "publisher": "Hood County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Hood County, TX",
+      "regionIDs": [
+        "48221"
+      ],
+      "summary": "County emergency management office. The county page links to emergency notification sign-up.",
+      "sourceIDs": [
+        "S42"
+      ]
+    },
+    {
+      "id": "r-48093-oem",
+      "name": "Comanche County Emergency Management",
+      "publisher": "Comanche County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Comanche County, TX",
+      "regionIDs": [
+        "48093"
+      ],
+      "contact": {
+        "phone": "325-356-5805",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.comanchecountytx.gov/217/Emergency-Management",
+        "address": "211 S. Austin, Comanche, TX 76442"
+      },
+      "summary": "County emergency management office. The county page links to CodeRED alert sign-up.",
+      "activation": "notApplicable",
+      "sourceIDs": [
+        "S44"
+      ],
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated"
+    },
+    {
+      "id": "r-48237-oem",
+      "name": "Jack County Emergency Management",
+      "publisher": "Jack County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Jack County, TX",
+      "regionIDs": [
+        "48237"
+      ],
+      "contact": {
+        "phone": "940-567-2259",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.jackcounty.texas.gov/emergency-management"
+      },
+      "summary": "County emergency management office (county building: 100 N Main Street, Jacksboro; office address not stated on the page). The county page links to a Hyper-Reach emergency alert sign-up.",
+      "activation": "notApplicable",
+      "sourceIDs": [
+        "S45"
+      ],
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated"
+    },
+    {
+      "id": "r-48363-oem",
+      "name": "Palo Pinto County Emergency Management",
+      "publisher": "Palo Pinto County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Palo Pinto County, TX",
+      "regionIDs": [
+        "48363"
+      ],
+      "contact": {
+        "phone": "940-325-5762",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.co.palo-pinto.tx.us/page/HazardMitigation",
+        "address": "100 SE 6th Ave, Ste 203, Mineral Wells, TX 76067"
+      },
+      "summary": "County emergency management / fire marshal office. Other county pages list different numbers for the coordinator; this number is from the page cited.",
+      "activation": "notApplicable",
+      "sourceIDs": [
+        "S46"
+      ],
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated"
+    },
+    {
+      "id": "r-48367-oem",
+      "name": "Parker County Emergency Management",
+      "publisher": "Parker County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Parker County, TX",
+      "regionIDs": [
+        "48367"
+      ],
+      "contact": {
+        "phone": "817-598-0969",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.parkercountytx.gov/119/Emergency-Management",
+        "address": "215 Trinity St., Weatherford, TX 76086"
+      },
+      "summary": "County emergency management office. The county page links to Hyper-Reach alert sign-up.",
+      "activation": "notApplicable",
+      "sourceIDs": [
+        "S47"
+      ],
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated"
+    },
+    {
+      "id": "r-48425-oem",
+      "name": "Somervell County Emergency Management",
+      "publisher": "Somervell County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Somervell County, TX",
+      "regionIDs": [
+        "48425"
+      ],
+      "contact": {
+        "phone": "254-897-2135",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.somervell.co/162/Emergency-Management",
+        "address": "102 NE Vine Street, Glen Rose, TX 76043"
+      },
+      "summary": "County emergency management office. The county page lists CodeRED among its quick links.",
+      "activation": "notApplicable",
+      "sourceIDs": [
+        "S48"
+      ],
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated"
+    },
+    {
+      "id": "r-48503-oem",
+      "name": "Young County Emergency Management",
+      "publisher": "Young County",
+      "serviceType": "emergencyManagement",
+      "jurisdiction": "Young County, TX",
+      "regionIDs": [
+        "48503"
+      ],
+      "contact": {
+        "phone": "940-549-1555",
+        "phoneNote": "Office line. For emergencies call 9-1-1.",
+        "url": "https://www.co.young.tx.us/page/young.EOC",
+        "address": "315 N Cliff Dr, Graham, TX 76450"
+      },
+      "summary": "County emergency management coordinator. No alert sign-up is named on this page.",
+      "activation": "notApplicable",
+      "sourceIDs": [
+        "S49"
+      ],
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview",
+      "classification": "curated"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S41",
+      "publisher": "Erath County",
+      "title": "Emergency Management",
+      "url": "https://www.co.erath.tx.us/210/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S42",
+      "publisher": "Hood County",
+      "title": "Emergency Management Coordinator",
+      "url": "https://hoodcounty.texas.gov/departments/emergency_management/index.php",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S43",
+      "publisher": "National Weather Service",
+      "title": "Zone and county UGC listings (api.weather.gov/zones, area=TX)",
+      "url": "https://api.weather.gov/zones?area=TX&type=county",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S44",
+      "publisher": "Comanche County",
+      "title": "Emergency Management",
+      "url": "https://www.comanchecountytx.gov/217/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S45",
+      "publisher": "Jack County",
+      "title": "Emergency Management",
+      "url": "https://www.jackcounty.texas.gov/emergency-management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S46",
+      "publisher": "Palo Pinto County",
+      "title": "Emergency Management",
+      "url": "https://www.co.palo-pinto.tx.us/page/HazardMitigation",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S47",
+      "publisher": "Parker County",
+      "title": "Emergency Management",
+      "url": "https://www.parkercountytx.gov/119/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S48",
+      "publisher": "Somervell County",
+      "title": "Emergency Management",
+      "url": "https://www.somervell.co/162/Emergency-Management",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    },
+    {
+      "id": "S49",
+      "publisher": "Young County",
+      "title": "Emergency Management",
+      "url": "https://www.co.young.tx.us/page/young.EOC",
+      "checkedAt": "2026-10-09",
+      "reviewState": "needsReview"
+    }
+  ]
+}

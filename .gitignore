@@ -6,3 +6,10 @@ node_modules/
 DerivedData/
 .DS_Store
 /tmp/
+.build-mac/
+artifacts/
+apps/ios/DryRun.xcodeproj/
+# Written by XcodeGen from project.yml
+apps/ios/DryRun/Resources/Info.plist
+apps/ios/DryRun/Resources/DryRun.entitlements
+.swiftpm/
