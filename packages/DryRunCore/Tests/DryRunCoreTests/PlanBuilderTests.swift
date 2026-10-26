@@ -32,6 +32,22 @@ struct PlanBuilderTests {
         return Localizer(locale: locale, tables: tables, manifest: manifest ?? lib.localeManifest)
     }
 
+    @Test("Every home-validation issue and confirmation question resolves in all supported languages")
+    func spatialReviewLocales() throws {
+        let library = try ContentLibrary.load(from: LeadTestSupport.contentRoot)
+        let questions = ConfirmationStepKind.allCases.map(\.rawValue)
+        let keys = HomeIssueKind.allCases.map { "spatial.issue.\($0.rawValue)" }
+            + questions.map { "spatial.question.\($0)" }
+        for locale in ["en", "es", "vi"] {
+            let localizer = Localizer(locale: locale, tables: library.tables, manifest: library.localeManifest)
+            for key in keys {
+                let resolved = localizer.text(key, ["room": "Home room", "floor": "Home level"])
+                #expect(!resolved.isMissing && !resolved.isFallback && resolved.unfilledPlaceholders.isEmpty,
+                    "\(locale):\(key) must never disappear or fall back during a safety-related review")
+            }
+        }
+    }
+
     @Test("English plan for every sample household validates with no unresolved keys or placeholders")
     func englishPlansValidate() throws {
         let l = try Self.localizer("en")
@@ -40,9 +56,9 @@ struct PlanBuilderTests {
             let results = PlanBuilder.scenarioOrder.map { Self.fakeResult($0, household: h, home: home) }
             let doc = PlanBuilder.build(household: h, home: home, results: results, localizer: l, resources: [],
                                         contentVersion: "2026.10.0", generatedAt: LeadTestSupport.fixedDate)
-            #expect(doc.pages.count == 7, "one essentials page plus one page per scenario")
+            #expect(doc.pages.count == 8, "family card, essentials and one page per scenario")
             #expect(PlanValidator.validate(doc, household: h).isEmpty, "\(PlanValidator.validate(doc, household: h))")
-            #expect(doc.pages.flatMap(\.sections).flatMap(\.lines).contains { $0.text.contains("911") })
+            #expect(!doc.pages.flatMap(\.sections).flatMap(\.lines).contains { $0.key == "plan.help.911" }, "unknown country never receives a default emergency number")
         }
     }
 
@@ -52,9 +68,9 @@ struct PlanBuilderTests {
         let l = try Self.localizer("en")
         let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: Self.tinyHome(), results: [], localizer: l,
                                     resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
-        let water = doc.pages[0].sections.first { $0.id == "water" }!.lines[0].text
-        #expect(water.contains("12 gallons"))
-        #expect(water.contains("storage target"))
+        let water = doc.pages.first { $0.id == "essentials" }!.sections.first { $0.id == "water" }!.lines[0].text
+        #expect(water.contains("45.4 L"), "unknown country presents metric without assuming the US")
+        #expect(water.contains("Storage target"))
     }
 
     @Test("Plan dates are the household's local calendar day, not the UTC day")
@@ -66,7 +82,7 @@ struct PlanBuilderTests {
             let options = tz.map { PlanBuilder.Options(timeZone: $0) } ?? PlanBuilder.Options()
             let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: Self.tinyHome(), results: [], localizer: l,
                                         resources: [], contentVersion: "x", generatedAt: instant, options: options)
-            return doc.pages[0].sections.flatMap(\.lines).map(\.text).first { $0.contains("generated") } ?? ""
+            return doc.pages.first { $0.id == "essentials" }!.sections.flatMap(\.lines).map(\.text).first { $0.contains("generated") } ?? ""
         }
         #expect(generatedLine(TimeZone(identifier: "America/Chicago")!).contains("2026-10-09"))
         #expect(generatedLine(nil).contains("2026-10-10"), "the default stays UTC so builds are deterministic")
@@ -88,7 +104,7 @@ struct PlanBuilderTests {
         }
         let doc = PlanBuilder.build(household: SampleHouseholds.lake, home: Self.tinyHome(), results: [], localizer: l,
                                     resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
-        #expect(doc.pages[0].title == "Thông tin thiết yếu của gia đình")
+        #expect(doc.pages.first { $0.id == "essentials" }!.title == "Thông tin thiết yếu của gia đình")
         #expect(doc.draftTranslationBanner?.contains("Draft translation - language review pending") == true,
                 "the exact English draft phrase is always visible alongside the localized banner")
         #expect(PlanValidator.validate(doc, household: SampleHouseholds.lake).isEmpty)
@@ -103,8 +119,8 @@ struct PlanBuilderTests {
                                         results: [Self.fakeResult("water-outage", household: SampleHouseholds.oak, home: Self.tinyHome())],
                                         localizer: l, resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
             let all = doc.pages.flatMap(\.sections).flatMap(\.lines)
-            #expect(all.contains { $0.text.contains("911") })
-            #expect(all.contains { $0.text.contains("12") }, "water target number survives in \(locale)")
+            #expect(!all.contains { $0.key == "plan.help.911" })
+            #expect(all.contains { $0.text.contains("45,4 L") }, "metric water target survives in \(locale) without an assumed US country")
             #expect(PlanValidator.validate(doc, household: SampleHouseholds.oak).isEmpty, "\(locale): \(PlanValidator.validate(doc, household: SampleHouseholds.oak))")
             if all.contains(where: { $0.resolvedLocale == locale }) {
                 #expect(doc.draftTranslationBanner != nil, "AI-drafted \(locale) text must carry the draft banner")
@@ -140,8 +156,9 @@ struct PlanBuilderTests {
     func unknownRuntime() throws {
         let l = try Self.localizer("en")
         let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: Self.tinyHome(), results: [], localizer: l,
-                                    resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
-        let eq = doc.pages[0].sections.first { $0.id == "equipment" }!.lines[0].text
+                                    resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate,
+                                    options: .init(familyCardSelection: .init(includeCriticalInformation: true)))
+        let eq = doc.pages.first { $0.id == "essentials" }!.sections.first { $0.id == "equipment" }!.lines[0].text
         #expect(eq.contains("unknown"))
         #expect(eq.contains("not confirmed"))
     }
@@ -172,7 +189,7 @@ struct PlanBuilderTests {
         let doc = PlanBuilder.build(household: SampleHouseholds.oak, home: home,
                                     results: [Self.fakeResult("home-fire", household: SampleHouseholds.oak, home: home, routes: [noRoute])],
                                     localizer: l, resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
-        let lines = doc.pages[1].sections.first { $0.id == "homeplan" }!.lines.map(\.text)
+        let lines = doc.pages.first { $0.kind == .scenario("home-fire") }!.sections.first { $0.id == "homeplan" }!.lines.map(\.text)
         #expect(lines.contains { $0.contains("No verified practice route from Bedroom 1") && $0.contains("no verified exterior exit") })
         #expect(lines.contains { $0.contains("No outside meeting point is chosen yet") }, "unverified meeting point is not printed as chosen")
         #expect(lines.contains { $0.contains("not a real-time safest route") })
@@ -186,7 +203,7 @@ struct PlanBuilderTests {
         let doc = PlanBuilder.build(household: SampleHouseholds.pine, home: home,
                                     results: [Self.fakeResult("tornado", household: SampleHouseholds.pine, home: home)],
                                     localizer: l, resources: [], contentVersion: "x", generatedAt: LeadTestSupport.fixedDate)
-        let shelter = doc.pages[1].sections.first { $0.id == "shelter" }!.lines.map(\.text)
+        let shelter = doc.pages.first { $0.kind == .scenario("tornado") }!.sections.first { $0.id == "shelter" }!.lines.map(\.text)
         #expect(shelter.contains { $0.contains("not safe shelter") })
         #expect(!shelter.contains { $0.contains("Shelter spot: Closet") })
     }

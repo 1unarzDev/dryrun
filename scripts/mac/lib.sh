@@ -131,19 +131,43 @@ skip_step() {
   echo "    SKIP $1: $2"
 }
 
-# Picks an available iPhone simulator: $SIM_UDID, else name match on $SIM_NAME, else newest iOS runtime.
+# Read the actual tab-separated status column. POSIX/BSD grep does not treat \t as a tab.
+# Optional step name restricts the query; no argument checks the complete ledger.
+steps_failed() {
+  awk -F '\t' -v wanted="${1:-}" '
+    NR > 1 && $2 == "FAIL" && (wanted == "" || $1 == wanted) { failed = 1 }
+    END { exit !failed }
+  ' "$STEPS"
+}
+
+# Picks an available iPhone: explicit UDID/runtime, else a runtime supported by the selected SDK.
 pick_simulator() {
   if [ -n "${SIM_UDID:-}" ]; then echo "$SIM_UDID"; return 0; fi
-  xcrun simctl list devices available -j | /usr/bin/python3 -c '
+  local simulator_sdk
+  simulator_sdk="$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null)"
+  xcrun simctl list devices available -j | DRYRUN_SIMULATOR_SDK="$simulator_sdk" /usr/bin/python3 -c '
 import json, os, re, sys
 data = json.load(sys.stdin)["devices"]
 want = os.environ.get("SIM_NAME", "")
+want_runtime = os.environ.get("SIM_RUNTIME", "")
+def version_tuple(raw):
+    match = re.fullmatch(r"(\d+)[.-](\d+)(?:[.-]\d+)?", raw)
+    return (int(match.group(1)), int(match.group(2))) if match else None
+sdk_version = version_tuple(os.environ.get("DRYRUN_SIMULATOR_SDK", ""))
+requested_version = version_tuple(want_runtime) if want_runtime else None
+if want_runtime and requested_version is None:
+    sys.exit("SIM_RUNTIME must be an iOS version such as 18.5")
 best = None
 for runtime, devices in data.items():
     m = re.search(r"iOS-(\d+)-(\d+)", runtime)
     if not m:
         continue
     version = (int(m.group(1)), int(m.group(2)))
+    if requested_version is not None:
+        if version != requested_version:
+            continue
+    elif sdk_version is not None and version > sdk_version:
+        continue
     for d in devices:
         if not d.get("isAvailable", True) or not d["name"].startswith("iPhone"):
             continue
@@ -155,7 +179,7 @@ for runtime, devices in data.items():
         if best is None or key > best[0]:
             best = (key, d["udid"])
 if best is None:
-    sys.exit("no matching iPhone simulator; set SIM_NAME or SIM_UDID, or install an iOS simulator runtime with:"
+    sys.exit("no matching SDK-compatible iPhone simulator; set SIM_NAME/SIM_RUNTIME/SIM_UDID, or install a runtime with:"
              " xcodebuild -downloadPlatform iOS")
 print(best[1])
 '

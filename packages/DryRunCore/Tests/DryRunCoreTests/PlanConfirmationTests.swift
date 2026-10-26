@@ -8,7 +8,7 @@ struct PlanConfirmationTests {
     static func scanned() -> HomeModel {
         HomeModel(
             id: "home-scan", label: "Scan", source: .roomPlanScan,
-            floors: [Floor(id: "f0", level: 0, label: "Ground")],
+            floors: [Floor(id: "f0", level: 0, label: "Ground", exteriorGrade: .ground)],
             spaces: [
                 Space(id: "s1", floorID: "f0", label: "Room 1", kind: .other,
                       polygon: [Vec2(0, 0), Vec2(4, 0), Vec2(4, 3), Vec2(0, 3)], labelConfirmed: false),
@@ -45,6 +45,40 @@ struct PlanConfirmationTests {
         #expect(route.homeRevision == home.revision)
     }
 
+    @Test("An unresolved interior side can be assigned without claiming operability, and measured exterior width is retained")
+    func assignInteriorAndMeasureExterior() {
+        var home = Self.scanned()
+        home = HomeConfirmation.apply(.assignPortalInterior(portalID: "p-out", spaceID: "s1"), to: home)
+        #expect(home.portal("p-out")?.sideB == .space("s1"))
+        #expect(home.portal("p-out")?.verification == .proposed)
+        #expect(home.portal("p-out")?.operable.value == nil)
+
+        // Recreate an unresolved exit; the measured constructor uses the same call shape as the UI.
+        home.portals[1].sideB = .unknown
+        home = HomeConfirmation.apply(.markPortalExteriorMeasured(portalID: "p-out", operable: true, stepFree: true,
+                                                                   clearWidthMeters: 0.86), to: home)
+        #expect(home.portal("p-out")?.clearWidthMeters.value == 0.86)
+        #expect(home.portal("p-out")?.verification == .verified)
+
+        var evidence = Self.scanned()
+        evidence = HomeConfirmation.apply(.confirmPortalEvidence(portalID: "p-int", operable: nil, stepFree: nil,
+                                                                  clearWidthMeters: 0.91), to: evidence)
+        #expect(evidence.portal("p-int")?.operable.value == nil)
+        #expect(evidence.portal("p-int")?.stepFree.value == nil)
+        #expect(evidence.portal("p-int")?.clearWidthMeters.value == 0.91)
+        evidence = HomeConfirmation.apply(.markPortalExteriorEvidence(portalID: "p-out", operable: nil, stepFree: nil,
+                                                                       clearWidthMeters: 0.86), to: evidence)
+        #expect(evidence.portal("p-out")?.operable.value == nil)
+        #expect(evidence.portal("p-out")?.clearWidthMeters.value == 0.86)
+
+        var unresolved = home
+        unresolved.portals[1].sideA = .unknown
+        unresolved.portals[1].sideB = .unknown
+        let unchanged = HomeConfirmation.apply(.markPortalExteriorMeasured(portalID: "p-out", operable: true,
+                                                                            stepFree: true, clearWidthMeters: 0.86), to: unresolved)
+        #expect(unchanged == unresolved, "outside confirmation still needs the room side")
+    }
+
     @Test("Skipping leaves an opening unknown and out of every route; windows are never made walking exits by a door answer")
     func skipAndWindows() {
         var home = Self.scanned()
@@ -78,7 +112,9 @@ struct PlanConfirmationTests {
         #expect(home.meetingPoint == nil)
         home = HomeConfirmation.apply(.meetingPoint(label: "Neighbor's oak tree (fictional)"), to: home)
         #expect(home.meetingPoint?.verification == .verified)
-        home = HomeConfirmation.apply(.shelterSpot(spaceID: "s1", interiorNoWindows: true), to: home)
+        #expect(HomeConfirmation.apply(.shelterSpot(spaceID: "s1", interiorNoWindows: true), to: home) == home,
+            "The recorded window contradicts a no-window shelter answer")
+        home = HomeConfirmation.apply(.shelterSpot(spaceID: "s2", interiorNoWindows: true), to: home)
         let shelter = home.annotations.first { $0.kind == .tornadoShelterCandidate }
         #expect(shelter?.note?.contains("not an engineered safe room") == true)
         #expect(!HomeConfirmation.steps(for: home).contains { $0.kind == .meetingPoint || $0.kind == .shelterSpot })

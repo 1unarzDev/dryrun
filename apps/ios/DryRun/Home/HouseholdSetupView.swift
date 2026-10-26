@@ -4,6 +4,7 @@ import DryRunCore
 struct OnboardingView: View {
     @Environment(AppModel.self) private var model
     @State private var creating = false
+    @State private var showingExamples = false
 
     var body: some View {
         let l = model.localizer
@@ -18,7 +19,7 @@ struct OnboardingView: View {
                     Text(l("ui.onboarding.headline")).font(.largeTitle.weight(.bold))
                     Text(l("ui.onboarding.body")).font(.title3)
                     VStack(alignment: .leading, spacing: Theme.Space.m) {
-                        IconRow(systemImage: "bolt.slash.fill", tint: Theme.critical, title: l("ui.onboarding.point1"))
+                        IconRow(systemImage: "figure.walk.motion", tint: Theme.critical, title: l("ui.onboarding.point1"))
                         IconRow(systemImage: "list.bullet.clipboard.fill", tint: Theme.accent, title: l("ui.onboarding.point2"))
                         IconRow(systemImage: "lock.fill", tint: Theme.success, title: l("common.privacy.promise"))
                     }
@@ -39,31 +40,43 @@ struct OnboardingView: View {
                         }
                         .buttonStyle(.secondary)
                         .accessibilityIdentifier("onboarding.create")
+                        Text(l("ui.onboarding.createNote")).font(.footnote).foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
                     }
 
-                    Text(l("ui.onboarding.moreExamples")).font(.headline).padding(.top, Theme.Space.m)
-                    ForEach(SampleHouseholds.all) { sample in
-                        Button {
-                            Task { await model.useSampleHousehold(sample) }
-                        } label: {
-                            HStack(spacing: Theme.Space.m) {
-                                Text(Self.flag(sample.preferredLocale)).font(.title2).accessibilityHidden(true)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(sample.displayName).font(.body.weight(.semibold))
-                                    Text(summary(sample)).font(.footnote).foregroundStyle(.secondary)
+                    // Other example families stay available but out of the way: the first screen has two choices.
+                    DisclosureGroup(isExpanded: $showingExamples) {
+                        VStack(spacing: Theme.Space.s) {
+                            ForEach(SampleHouseholds.all) { sample in
+                                Button {
+                                    Task { await model.useSampleHousehold(sample) }
+                                } label: {
+                                    HStack(spacing: Theme.Space.m) {
+                                        Text(Self.flag(sample.preferredLocale)).font(.title2).accessibilityHidden(true)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(sample.displayName).font(.body.weight(.semibold))
+                                            Text(summary(sample)).font(.footnote).foregroundStyle(.secondary)
+                                        }
+                                        Spacer(minLength: 0)
+                                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+                                    }
+                                    .multilineTextAlignment(.leading)
+                                    .padding(Theme.Space.m)
+                                    .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
+                                    .contentShape(Rectangle())
                                 }
-                                Spacer(minLength: 0)
-                                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+                                .buttonStyle(.plain)
+                                .accessibilityHint(l("ui.onboarding.sampleHint"))
+                                .accessibilityIdentifier("onboarding.sample.\(sample.id)")
                             }
-                            .multilineTextAlignment(.leading)
-                            .padding(Theme.Space.m)
-                            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
-                            .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityHint(l("ui.onboarding.sampleHint"))
-                        .accessibilityIdentifier("onboarding.sample.\(sample.id)")
+                        .padding(.top, Theme.Space.s)
+                    } label: {
+                        Text(l("ui.onboarding.moreExamples")).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary)
+                            .accessibilityIdentifier("onboarding.moreExamples")
                     }
+                    .tint(.secondary)
+                    .padding(.top, Theme.Space.m)
                 }
                 .padding()
             }
@@ -73,8 +86,8 @@ struct OnboardingView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        ForEach([("en", "English"), ("es", "Español"), ("vi", "Tiếng Việt")], id: \.0) { code, name in
-                            Button(name) { model.locale = code }
+                        ForEach(l.selectableLocales, id: \.self) { code in
+                            Button(model.content?.localeManifest?.entry(code)?.nativeName ?? code) { model.locale = code }
                         }
                     } label: {
                         Label(l("common.plan.language"), systemImage: "globe")
@@ -91,13 +104,16 @@ struct OnboardingView: View {
         switch locale { case "es": "ES"; case "vi": "VI"; default: "EN" }
     }
 
-    private func summary(_ h: HouseholdProfile) -> String {
-        let l = model.localizer
+    private func summary(_ h: HouseholdProfile) -> String { Self.summary(h, localizer: model.localizer) }
+
+    /// "4 people · Oxygen concentrator · Single-family house": the same one-line description in onboarding and
+    /// at the start of a rehearsal.
+    static func summary(_ h: HouseholdProfile, localizer l: Localizer) -> String {
         var parts = [l("ui.onboarding.people", ["count": "\(h.people.count)"])]
-        if let eq = h.equipment.first { parts.append(eq.label.lowercased()) }
-        parts.append(h.housing.homeType.displayName.lowercased())
+        if let eq = h.equipment.first { parts.append(eq.localizedLabel(l)) }
+        parts.append(DisplayNames.name(h.housing.homeType.rawValue, localizer: l))
         if !h.transport.hasVehicle { parts.append(l("ui.onboarding.noCar")) }
-        if h.housing.waterSource == .privateWell { parts.append(DisplayNames.name("privateWell").lowercased()) }
+        if h.housing.waterSource == .privateWell { parts.append(DisplayNames.name("privateWell", localizer: l)) }
         return parts.joined(separator: " · ")
     }
 }
@@ -113,57 +129,115 @@ struct HouseholdSetupView: View {
     @State private var draft: HouseholdProfile = HouseholdSetupView.blank()
     @State private var step = 0
     @State private var loaded = false
+    @State private var saving = false
+    @State private var saveFailed = false
+    /// Address suggestions come from Apple only; a typed address alone is still valid offline.
+    @State private var completion = AddressCompletionService()
+    @State private var resolvingAddress = false
+    /// Which create-form field has the keyboard. The floating Save bar hides while typing so it never covers a field.
+    @FocusState private var focus: Field?
+    @State private var intakeReview: DescribeHouseholdSection.Review?
 
     enum Step: Int, CaseIterable { case area, people, medical, backup, home, contacts, travel }
+    enum Field: Hashable { case name, person(Int), contactName, contactPhone, address, unit }
 
     var body: some View {
         let l = model.localizer
         let current = Step(rawValue: step) ?? .area
         Form {
-            Section {
-                VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    Text(l("ui.setup.stepOf", ["n": "\(step + 1)", "total": "\(Step.allCases.count)"]))
-                        .font(.caption.weight(.semibold)).foregroundStyle(Theme.accent)
-                    ProgressView(value: Double(step + 1), total: Double(Step.allCases.count)).tint(Theme.accent)
-                        .accessibilityHidden(true)
-                    Text(l("ui.setup.\(current).question")).font(.title2.weight(.bold))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
-                    Text(l("ui.setup.\(current).why")).font(.callout).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+            if mode == .create {
+                // Short on purpose: a name is enough. The one extra ask is a contact, because a card without a
+                // phone number is not useful to anyone. Everything else is reachable from Prepare afterwards.
+                // Optional fastest path: describe the household once and confirm what was understood.
+                DescribeHouseholdSection(draft: $draft, review: $intakeReview)
+                Section {
+                    TextField(l("family.name"), text: $draft.people[0].alias)
+                        .textContentType(.givenName)
+                        .focused($focus, equals: .name)
+                        .accessibilityIdentifier("setup.name")
+                    personSummary(draft.people[0])
+                    ForEach(Array(draft.people.indices.dropFirst()), id: \.self) { i in
+                        TextField(draft.people[i].relationship.map { DisplayNames.name($0.rawValue, localizer: l) } ?? l("family.name"),
+                                  text: $draft.people[i].alias)
+                            .focused($focus, equals: .person(i))
+                        personSummary(draft.people[i])
+                    }
+                    Button(l("family.add"), systemImage: "person.badge.plus") {
+                        draft.people.append(Person(id: UUID().uuidString, alias: "", ageBand: .unknown))
+                    }
+                } header: { Text(l("family.you")) } footer: { Text(l("ui.setup.nameHint")) }
+                addedFromDescription
+                Section {
+                    TextField(l("ui.contact.name"), text: $draft.contacts[0].alias)
+                        .textContentType(.name)
+                        .focused($focus, equals: .contactName)
+                        .accessibilityIdentifier("setup.contactName")
+                    TextField(l("ui.contact.phone"), text: Binding(get: { draft.contacts[0].phone ?? "" }, set: { draft.contacts[0].phone = $0.isEmpty ? nil : $0 }))
+                        .keyboardType(.phonePad).textContentType(.telephoneNumber)
+                        .focused($focus, equals: .contactPhone)
+                        .accessibilityIdentifier("setup.contactPhone")
+                } header: { Text(l("ui.setup.contactHeader")) } footer: { Text(l("ui.setup.contactWhy")) }
+                areaStep
+            } else {
+                switch current {
+                case .area: areaStep
+                case .people: peopleStep
+                case .medical: equipmentStep
+                case .backup: backupStep
+                case .home: housingStep
+                case .contacts: contactsStep
+                case .travel: transportStep; petsStep; suppliesStep
                 }
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
             }
-            switch current {
-            case .area: areaStep
-            case .people: peopleStep
-            case .medical: equipmentStep
-            case .backup: backupStep
-            case .home: housingStep
-            case .contacts: contactsStep
-            case .travel: transportStep; petsStep; suppliesStep
-            }
+            if saveFailed { Text(model.lastError ?? l("ui.tryFailed")).foregroundStyle(Theme.caution) }
         }
         .scrollContentBackground(.hidden)
+        .scrollDismissesKeyboard(.interactively)
+        .sheet(item: $intakeReview) { review in
+            NavigationStack {
+                IntakeReviewView(proposal: review.proposal) { accepted in HouseholdIntake.apply(accepted, to: &draft) }
+            }
+        }
         .background(Theme.background)
         .navigationTitle(mode == .create ? l("ui.setup.titleCreate") : l("ui.setup.titleEdit"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if mode == .edit {
                 ToolbarItem(placement: .cancellationAction) { Button(l("ui.cancel")) { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) { Button(l("ui.save")) { save() } }
+                ToolbarItem(placement: .confirmationAction) { Button(l("ui.save")) { save() }.disabled(saving) }
+            }
+            // The keyboard otherwise covers the save button with no way to dismiss it on a Form.
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button(l("ui.setup.keyboardDone")) { dismissKeyboard() }
             }
         }
         .safeAreaInset(edge: .bottom) {
+            if mode == .create && focus == nil {
+                // One obvious way to finish, visible whenever the keyboard is down. The identifier is kept for the
+                // existing journeys.
+                VStack(spacing: Theme.Space.xs) {
+                    Button { dismissKeyboard(); save() } label: {
+                        if saving { ProgressView().tint(Theme.onAccent) } else { Label(l("ui.setup.saveContinue"), systemImage: "checkmark") }
+                    }
+                    .buttonStyle(.primary)
+                    .disabled(saving)
+                    .accessibilityIdentifier("setup.finishLater")
+                    Text(l("ui.setup.travel.why")).font(.caption).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.horizontal).padding(.vertical, Theme.Space.s)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                .background(.bar)
+            } else if mode == .edit {
             AdaptiveStack(spacing: Theme.Space.s) {
-                if step > 0 {
+                if mode == .edit && step > 0 {
                     Button { withAnimation { step -= 1 } } label: { Label(l("ui.back"), systemImage: "chevron.left") }
                         .buttonStyle(.secondary)
                         .frame(maxWidth: 140)
                         .accessibilityIdentifier("setup.back")
                 }
-                if step < Step.allCases.count - 1 {
+                if mode == .edit && step < Step.allCases.count - 1 {
                     Button { withAnimation { step += 1 } } label: { Label(l("ui.next"), systemImage: "chevron.right") }
                         .buttonStyle(.primary)
                         .accessibilityIdentifier("setup.next")
@@ -171,11 +245,13 @@ struct HouseholdSetupView: View {
                     Button { save() } label: { Label(l("ui.setup.finish"), systemImage: "checkmark") }
                         .buttonStyle(.primary)
                         .accessibilityIdentifier("setup.save")
+                        .disabled(saving)
                 }
             }
             .padding(.horizontal).padding(.vertical, Theme.Space.s)
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .background(.bar)
+            }
         }
         .onAppear {
             guard !loaded else { return }
@@ -184,20 +260,103 @@ struct HouseholdSetupView: View {
         }
     }
 
+    /// "Mother · Older adult · Uses a wheelchair · Oxygen concentrator" under a name, once anything beyond the name is known.
+    @ViewBuilder private func personSummary(_ person: Person) -> some View {
+        let l = model.localizer
+        let parts = [person.relationship.map { DisplayNames.name($0.rawValue, localizer: l) },
+                     person.ageBand == .unknown ? nil : DisplayNames.name(person.ageBand.rawValue, localizer: l)].compactMap { $0 }
+            + person.needs.map { DisplayNames.name($0.rawValue, localizer: l) }
+            + draft.equipment.filter { $0.personID == person.id }.map { DisplayNames.equipment($0, localizer: l) }
+        if !parts.isEmpty {
+            Text(parts.joined(separator: " · ")).font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+
+    /// Equipment nobody was named for, pets and home details from "Describe your household", each removable here.
+    @ViewBuilder private var addedFromDescription: some View {
+        let l = model.localizer
+        let unassigned = draft.equipment.filter { e in e.personID == nil || !draft.people.contains { $0.id == e.personID } }
+        let housing = [draft.housing.homeType == .other ? nil : draft.housing.homeType.rawValue,
+                       draft.housing.tenancy == .other ? nil : draft.housing.tenancy.rawValue,
+                       draft.housing.heatingFuel == .unknown ? nil : draft.housing.heatingFuel.rawValue,
+                       draft.housing.cooling == .unknown ? nil : draft.housing.cooling.rawValue,
+                       draft.housing.waterSource == .unknown ? nil : draft.housing.waterSource.rawValue].compactMap { $0 }
+        if !unassigned.isEmpty || !draft.pets.isEmpty || !housing.isEmpty {
+            Section(l("ui.intake.alsoAdded")) {
+                ForEach(unassigned) { e in
+                    HStack {
+                        Text(DisplayNames.equipment(e, localizer: l))
+                        Spacer()
+                        Button(l("ui.remove"), role: .destructive) { draft.equipment.removeAll { $0.id == e.id } }.buttonStyle(.borderless)
+                    }
+                }
+                ForEach(draft.pets) { pet in
+                    HStack {
+                        Text("\(DisplayNames.name(pet.kind.rawValue, localizer: l)) × \(pet.count)")
+                        Spacer()
+                        Button(l("ui.remove"), role: .destructive) { draft.pets.removeAll { $0.id == pet.id } }.buttonStyle(.borderless)
+                    }
+                }
+                if !housing.isEmpty {
+                    Text(housing.map { DisplayNames.name($0, localizer: l) }.joined(separator: " · ")).font(.callout)
+                }
+            }
+        }
+    }
+
+    private func dismissKeyboard() {
+        focus = nil
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+
     // MARK: Steps
 
     private var areaStep: some View {
         let l = model.localizer
         return Section {
             Picker(l("common.plan.language"), selection: $draft.preferredLocale) {
-                Text("English").tag("en"); Text("Español").tag("es"); Text("Tiếng Việt").tag("vi")
+                ForEach(l.selectableLocales, id: \.self) { code in
+                    Text(model.content?.localeManifest?.entry(code)?.nativeName ?? code).tag(code)
+                }
             }
             .onChange(of: draft.preferredLocale) { _, new in model.locale = new }
-            Picker(l("ui.setup.county"), selection: $draft.regionID) {
-                ForEach(Self.regions, id: \.id) { Text($0.name).tag($0.id) }
+            CountyPicker(selection: $draft.regionID)
+            TextField(l("family.location"), text: Binding(get: { draft.privateLocation?.addressLine ?? "" }, set: { value in
+                let unit = draft.privateLocation?.unit
+                // Typing again replaces any earlier resolved pin: an old coordinate never stays with a new address.
+                draft.privateLocation = value.isEmpty && (unit ?? "").isEmpty ? nil : PrivateLocation(addressLine: value, unit: unit)
+                completion.update(value)
+            }))
+            .textContentType(.fullStreetAddress)
+            .focused($focus, equals: .address)
+            .accessibilityIdentifier("setup.address")
+            ForEach(completion.suggestions) { suggestion in
+                Button {
+                    resolvingAddress = true
+                    Task {
+                        defer { resolvingAddress = false }
+                        guard var resolved = try? await completion.resolve(suggestion) else { return }
+                        resolved.unit = draft.privateLocation?.unit
+                        draft.privateLocation = resolved
+                        completion.cancel()
+                    }
+                } label: {
+                    VStack(alignment: .leading) { Text(suggestion.title); Text(suggestion.subtitle).font(.caption).foregroundStyle(.secondary) }
+                }
             }
+            if resolvingAddress { ProgressView() }
+            if let location = draft.privateLocation, location.latitude != nil {
+                Label([location.city, location.administrativeArea, location.countryCode].compactMap { $0 }.joined(separator: ", "), systemImage: "mappin.circle.fill")
+                    .font(.footnote).foregroundStyle(Theme.success)
+                    .accessibilityIdentifier("setup.addressPinned")
+            }
+            TextField(l("family.unit"), text: Binding(get: { draft.privateLocation?.unit ?? "" }, set: { value in
+                if draft.privateLocation == nil { draft.privateLocation = PrivateLocation() }
+                draft.privateLocation?.unit = value
+            }))
+            .focused($focus, equals: .unit)
         } footer: {
-            Text(l("ui.setup.countyFooter"))
+            Text(l("family.addressPrivacy"))
         }
     }
 
@@ -208,7 +367,7 @@ struct HouseholdSetupView: View {
                 Section(person.alias.isEmpty ? l("ui.person") : person.alias) {
                     TextField(l("ui.setup.nickname"), text: $person.alias)
                     Picker(l("ui.setup.age"), selection: $person.ageBand) {
-                        ForEach(AgeBand.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                        ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
                     }
                     ForEach(AssistanceNeed.allCases, id: \.self) { need in
                         Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(
@@ -220,7 +379,7 @@ struct HouseholdSetupView: View {
             .onDelete { idx in if draft.people.count > idx.count { draft.people.remove(atOffsets: idx) } }
             Section {
                 Button(l("ui.setup.addPerson"), systemImage: "person.badge.plus") {
-                    draft.people.append(Person(id: "p-\(UUID().uuidString.prefix(8))", alias: "", ageBand: .adult))
+                    draft.people.append(Person(id: "p-\(UUID().uuidString.prefix(8))", alias: "", ageBand: .unknown))
                 }
             }
         }
@@ -231,22 +390,14 @@ struct HouseholdSetupView: View {
         return Group {
             ForEach($draft.equipment) { $eq in
                 Section {
-                    Picker(l("ui.medical.purpose"), selection: $eq.purpose) {
-                        ForEach(EquipmentPurpose.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                    }
-                    TextField(l("ui.medical.label"), text: $eq.label)
-                    Picker(l("ui.medical.usedBy"), selection: $eq.personID) {
-                        Text(l("ui.notSure")).tag(String?.none)
-                        ForEach(draft.people) { Text($0.alias.isEmpty ? l("ui.person") : $0.alias).tag(Optional($0.id)) }
-                    }
-                    Toggle(l("ui.medical.refrigeration"), isOn: $eq.needsRefrigeration)
+                    EquipmentEditorFields(equipment: $eq, people: draft.people)
                 }
             }
             .onDelete { draft.equipment.remove(atOffsets: $0) }
             Section {
                 Button(l("ui.card.addDevice"), systemImage: "plus") {
                     draft.equipment.append(PoweredEquipment(id: "eq-\(UUID().uuidString.prefix(8).lowercased())", purpose: .oxygenConcentrator,
-                                                            label: EquipmentPurpose.oxygenConcentrator.displayName, personID: draft.people.first?.id))
+                                                            label: "", personID: draft.people.first?.id))
                 }
                 .accessibilityIdentifier("setup.addDevice")
             } footer: {
@@ -260,17 +411,15 @@ struct HouseholdSetupView: View {
         return Group {
             ForEach($draft.backupPower) { $backup in
                 Section {
-                    TextField(l("ui.medical.backupName"), text: $backup.label)
-                    Picker(l("ui.medical.backupKind"), selection: $backup.kind) {
-                        ForEach(BackupPowerKind.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                    }
-                    TriStateRow(title: l("ui.medical.tested"), value: $backup.setupConfirmed)
+                    BackupEditorFields(backup: $backup, onKindChanged: { draft.invalidateBackupCompatibility(for: $0) })
                     ForEach($draft.equipment) { $eq in
-                        Toggle(l("ui.medical.worksWith", ["device": eq.label.isEmpty ? l("ui.medical.thisDevice") : eq.label]), isOn: Binding(
-                            get: { eq.compatibleBackupIDs.contains(backup.id) },
-                            set: { on in
-                                if on { eq.compatibleBackupIDs.append(backup.id) } else { eq.compatibleBackupIDs.removeAll { $0 == backup.id } }
-                            }))
+                        if eq.requiresElectricalPower {
+                            Toggle(l("family.compatibility", ["device": eq.localizedLabel(l)]), isOn: Binding(
+                                get: { eq.compatibleBackupIDs.contains(backup.id) },
+                                set: { on in
+                                    if on { eq.compatibleBackupIDs.append(backup.id) } else { eq.compatibleBackupIDs.removeAll { $0 == backup.id } }
+                                }))
+                        }
                     }
                 }
             }
@@ -278,7 +427,7 @@ struct HouseholdSetupView: View {
             Section {
                 Button(l("ui.medical.addBackup"), systemImage: "plus") {
                     draft.backupPower.append(BackupPowerSource(id: "bk-\(UUID().uuidString.prefix(8).lowercased())", kind: .portableBatteryStation,
-                                                               label: BackupPowerKind.portableBatteryStation.displayName))
+                                                               label: ""))
                 }
             } footer: {
                 Text(l("ui.medical.backupFooter"))
@@ -290,23 +439,23 @@ struct HouseholdSetupView: View {
         let l = model.localizer
         return Group {
             Section {
-                Picker(l("ui.setup.homeType"), selection: $draft.housing.homeType) { ForEach(HomeType.allCases, id: \.self) { Text($0.displayName).tag($0) } }
-                Picker(l("ui.setup.tenancy"), selection: $draft.housing.tenancy) { ForEach(Tenancy.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.homeType"), selection: $draft.housing.homeType) { ForEach(HomeType.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
+                Picker(l("ui.setup.tenancy"), selection: $draft.housing.tenancy) { ForEach(Tenancy.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 Stepper(l("ui.setup.floors", ["count": "\(draft.housing.floorCount)"]), value: $draft.housing.floorCount, in: 1...4)
             }
             Section {
-                Picker(l("ui.setup.heat"), selection: $draft.housing.heatingFuel) { ForEach(HeatingFuel.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.heat"), selection: $draft.housing.heatingFuel) { ForEach(HeatingFuel.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 TriStateRow(title: l("ui.setup.heatNeedsPower"), value: $draft.housing.heatingNeedsElectricity)
-                Picker(l("ui.setup.cooling"), selection: $draft.housing.cooling) { ForEach(CoolingKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.cooling"), selection: $draft.housing.cooling) { ForEach(CoolingKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
             } footer: {
                 Text(l("ui.setup.heatFooter"))
             }
             Section {
-                Picker(l("ui.setup.water"), selection: $draft.housing.waterSource) { ForEach(WaterSourceKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.water"), selection: $draft.housing.waterSource) { ForEach(WaterSourceKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 if draft.housing.waterSource == .privateWell {
                     TriStateRow(title: l("ui.setup.wellPump"), value: $draft.housing.wellPumpElectric)
                 }
-                Picker(l("ui.setup.sanitation"), selection: $draft.housing.sanitation) { ForEach(SanitationKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.setup.sanitation"), selection: $draft.housing.sanitation) { ForEach(SanitationKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
             }
         }
     }
@@ -363,7 +512,7 @@ struct HouseholdSetupView: View {
         let l = model.localizer
         return Section(l("ui.setup.pets")) {
             ForEach($draft.pets) { $pet in
-                Picker(l("ui.medical.backupKind"), selection: $pet.kind) { ForEach(PetKind.allCases, id: \.self) { Text($0.displayName).tag($0) } }
+                Picker(l("ui.medical.backupKind"), selection: $pet.kind) { ForEach(PetKind.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) } }
                 Stepper(l("ui.setup.petCount", ["count": "\(pet.count)"]), value: $pet.count, in: 1...20)
                 TriStateRow(title: l("ui.setup.carrier"), value: $pet.carrierAvailable)
             }
@@ -374,7 +523,7 @@ struct HouseholdSetupView: View {
     private var suppliesStep: some View {
         let l = model.localizer
         return Section(l("ui.setup.supplies")) {
-            NumberEvidenceRow(title: l("ui.setup.water.gallons"), value: $draft.supplies.storedWaterGallons, unit: "gal")
+            WaterStorageEvidenceRow(value: $draft.supplies.storedWaterGallons, countryCode: draft.privateLocation?.countryCode)
             NumberEvidenceRow(title: l("ui.setup.food.days"), value: $draft.supplies.shelfStableFoodDays, unit: "d")
             Toggle(l("ui.setup.limitedSpace"), isOn: $draft.supplies.limitedStorageSpace)
             Toggle(l("ui.setup.limitedBudget"), isOn: $draft.supplies.limitedBudget)
@@ -382,29 +531,41 @@ struct HouseholdSetupView: View {
     }
 
     private func save() {
-        draft.contacts.removeAll { $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && ($0.phone ?? "").isEmpty }
-        for i in draft.equipment.indices where draft.equipment[i].label.trimmingCharacters(in: .whitespaces).isEmpty {
-            draft.equipment[i].label = draft.equipment[i].purpose.displayName
+        guard !saving else { return }
+        // The draft keeps its blank rows (the form binds to them); only the candidate is cleaned up.
+        var candidate = draft
+        candidate.contacts.removeAll { $0.alias.trimmingCharacters(in: .whitespaces).isEmpty && ($0.phone ?? "").isEmpty }
+        candidate.people.removeAll { person in
+            !(person.isSelf ?? false) && person.alias.trimmingCharacters(in: .whitespaces).isEmpty && person.ageBand == .unknown
+                && person.needs.isEmpty && person.relationship == nil && !candidate.equipment.contains { $0.personID == person.id }
         }
+        if candidate.displayName.isEmpty { candidate.displayName = model.localizer("family.personal") }
+        saving = true
         Task {
+            let saved: Bool
             if mode == .create {
-                await model.useSampleHouseholdIfNoHome(draft)
+                saved = await model.useSampleHouseholdIfNoHome(candidate)
+                // Whether this came from onboarding or from the demo debrief, a new household starts on Prepare.
+                if saved { model.pendingTab = RootView.Tab.prepare.rawValue }
             } else {
-                let d = draft
-                await model.updateHousehold { $0 = d }
+                saved = await model.updateHousehold(candidate)
                 // The language chosen here is the app's language; without this it only changed after a relaunch.
-                model.locale = d.preferredLocale
+                if saved { model.locale = candidate.preferredLocale }
             }
-            dismiss()
+            saving = false
+            saveFailed = !saved
+            if saved { dismiss() }
         }
     }
 
+    /// One person (you) and one empty contact row for the create form; blank rows are dropped on save.
     static func blank() -> HouseholdProfile {
         HouseholdProfile(
-            id: "hh-\(UUID().uuidString.prefix(8))", displayName: "My household", regionID: "48143",
-            people: [Person(id: "p-1", alias: "Me", ageBand: .adult)],
-            housing: Housing(homeType: .singleFamily, tenancy: .owner, heatingFuel: .unknown, cooling: .unknown, waterSource: .unknown),
-            transport: Transport(), supplies: Supplies())
+            id: "hh-\(UUID().uuidString.prefix(8))", displayName: "", regionID: "",
+            people: [Person(id: "p-1", alias: "", ageBand: .unknown, isSelf: true)],
+            housing: Housing(homeType: .other, tenancy: .other, heatingFuel: .unknown, cooling: .unknown, waterSource: .unknown),
+            transport: Transport(), supplies: Supplies(),
+            contacts: [HouseholdContact(id: "ct-\(UUID().uuidString.prefix(8).lowercased())", role: .other, alias: "")])
     }
 
     /// TX-25 counties (all or parts of 13). Partial-county membership is not asserted here.
@@ -431,6 +592,7 @@ struct TriStateRow: View {
 }
 
 struct NumberEvidenceRow: View {
+    @Environment(AppModel.self) private var model
     let title: String
     @Binding var value: EvidenceValue<Double>
     let unit: String
@@ -451,18 +613,6 @@ struct NumberEvidenceRow: View {
                     value = EvidenceValue<Double>.unknown
                 }
             }
-            .accessibilityLabel("\(title). Leave empty if not sure.")
-    }
-}
-
-extension AppModel {
-    /// New households start with the fictional sample home until the user builds or scans their own,
-    /// which is clearly labeled in the Home tab.
-    func useSampleHouseholdIfNoHome(_ household: HouseholdProfile) async {
-        self.household = household
-        if home == nil { home = SampleHomes.ranch }
-        locale = household.preferredLocale
-        phase = .ready
-        await persist()
+            .accessibilityLabel(title + ". " + model.localizer("family.numberUnknown"))
     }
 }

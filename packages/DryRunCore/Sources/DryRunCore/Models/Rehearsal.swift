@@ -22,7 +22,8 @@ public struct Intervention: Codable, Sendable, Hashable {
 /// Immutable rehearsal input. Counterfactual replay copies this and changes only `interventions`.
 public struct RehearsalInput: Codable, Sendable, Hashable {
     public var household: HouseholdProfile
-    public var home: HomeModel
+    /// Intentionally absent until the household supplies a layout. Never substitute fictional geometry.
+    public var home: HomeModel?
     public var scenarioID: String
     public var scenarioVersion: String
     public var contentVersion: String
@@ -33,12 +34,13 @@ public struct RehearsalInput: Codable, Sendable, Hashable {
     public var interventions: [Intervention]
     /// Named variant toggles authored in the scenario (e.g. "night" for tornado).
     public var variants: [String]
-    public init(household: HouseholdProfile, home: HomeModel, scenarioID: String, scenarioVersion: String,
+    public var spatialOptions: SpatialExerciseOptions?
+    public init(household: HouseholdProfile, home: HomeModel? = nil, scenarioID: String, scenarioVersion: String,
                 contentVersion: String, seed: UInt64 = 1, choices: [String: String] = [:],
-                interventions: [Intervention] = [], variants: [String] = []) {
+                interventions: [Intervention] = [], variants: [String] = [], spatialOptions: SpatialExerciseOptions? = nil) {
         self.household = household; self.home = home; self.scenarioID = scenarioID; self.scenarioVersion = scenarioVersion
         self.contentVersion = contentVersion; self.seed = seed; self.choices = choices
-        self.interventions = interventions; self.variants = variants
+        self.interventions = interventions; self.variants = variants; self.spatialOptions = spatialOptions
     }
 }
 
@@ -95,8 +97,11 @@ public struct SimulationSnapshot: Codable, Sendable, Hashable {
     public var unmetRequirements: [String]
     public var unknowns: [String]
     public var firedEventIDs: [String]
+    public var spatialState: SpatialExerciseState?
+    public var revealedEventCount: Int?
     public init(simMinute: Int, services: [String: ServiceState], resources: [String: ResourceQuantity],
-                unmetRequirements: [String], unknowns: [String], firedEventIDs: [String]) {
+                unmetRequirements: [String], unknowns: [String], firedEventIDs: [String], spatialState: SpatialExerciseState? = nil, revealedEventCount: Int? = nil) {
+        self.spatialState = spatialState; self.revealedEventCount = revealedEventCount
         self.simMinute = simMinute; self.services = services; self.resources = resources
         self.unmetRequirements = unmetRequirements; self.unknowns = unknowns; self.firedEventIDs = firedEventIDs
     }
@@ -134,7 +139,8 @@ public enum PriorityTier: Int, Codable, Sendable, Hashable, Comparable, CaseIter
 public enum EffortBand: String, Codable, Sendable, Hashable { case noCost, low, moderate, high }
 
 public struct Recommendation: Codable, Sendable, Hashable, Identifiable {
-    public var id: String { actionID }
+    public var subjectID: String?
+    public var id: String { subjectID.map { "\(actionID)|\($0)" } ?? actionID }
     public var actionID: String
     public var tier: PriorityTier
     public var titleKey: String
@@ -154,8 +160,8 @@ public struct Recommendation: Codable, Sendable, Hashable, Identifiable {
     public init(actionID: String, tier: PriorityTier, titleKey: String, whyKey: String, templateValues: [String: String] = [:],
                 matchedFactIDs: [String], causeEventIDs: [String], scenarioIDs: [String], tryIntervention: Intervention?,
                 modeledEffectKey: String?, effort: EffortBand, feasibilityNotes: [String] = [], unconfirmed: [String] = [],
-                sourceIDs: [String], verificationStatus: EvidenceStatus) {
-        self.actionID = actionID; self.tier = tier; self.titleKey = titleKey; self.whyKey = whyKey
+                sourceIDs: [String], verificationStatus: EvidenceStatus, subjectID: String? = nil) {
+        self.actionID = actionID; self.subjectID = subjectID; self.tier = tier; self.titleKey = titleKey; self.whyKey = whyKey
         self.templateValues = templateValues; self.matchedFactIDs = matchedFactIDs; self.causeEventIDs = causeEventIDs
         self.scenarioIDs = scenarioIDs; self.tryIntervention = tryIntervention; self.modeledEffectKey = modeledEffectKey
         self.effort = effort; self.feasibilityNotes = feasibilityNotes; self.unconfirmed = unconfirmed
@@ -188,6 +194,7 @@ public struct RehearsalDiff: Codable, Sendable, Hashable {
     public var resolvedRequirements: [String]
     public var newRequirements: [String]
     public var resourceChanges: [String: [ResourceQuantity]]
+    /// Exact recommendation IDs (action plus subject). One resolved device never resolves its peers.
     public var resolvedRecommendations: [String]
     public init(addedEventIDs: [String], removedEventIDs: [String], serviceChanges: [String: [ServiceState]],
                 resolvedRequirements: [String], newRequirements: [String], resourceChanges: [String: [ResourceQuantity]],

@@ -14,7 +14,44 @@ public enum ManualLayout {
         case wallTooShort(available: Double)
     }
 
-    /// An empty manual home with one starting room.
+    /// A manual draft without invented rooms, openings or exterior-grade facts. Adding the first room is an
+    /// explicit household edit; saving a draft does not make it a reviewed layout.
+    public static func emptyHome(id: String) -> HomeModel {
+        HomeModel(id: id, label: "My home", source: .manual,
+                  frame: CoordinateFrame(note: "Manual layout entered by the household; dimensions are estimates until measured."),
+                  floors: [Floor(id: "fl-1", level: 0, label: "Level 1", exteriorGrade: .unknown)],
+                  spaces: [], portals: [], completeness: .incomplete,
+                  completenessNote: "Add the rooms and confirm the floor's relationship to the ground before reviewing routes.")
+    }
+
+    /// Explicitly creates the first room from household-entered dimensions. Exterior grade remains unknown.
+    @discardableResult
+    public static func addFirstRoom(to home: inout HomeModel, label: String, kind: SpaceKind,
+                                    width: Double, depth: Double, floorID: String? = nil) throws -> Space {
+        guard width.isFinite, depth.isFinite, width > 0.3, depth > 0.3 else { throw LayoutError.invalidSize }
+        guard let floor = home.floors.first(where: { floorID == nil || $0.id == floorID }),
+              !home.spaces.contains(where: { $0.floorID == floor.id }) else { throw LayoutError.unknownSpace("first-room") }
+        var n = home.spaces.count + 1
+        while home.spaces.contains(where: { $0.id == "sp-\(n)" }) { n += 1 }
+        var space = Space(id: "sp-\(n)", floorID: floor.id, label: label, kind: kind,
+                          polygon: SampleHomes.rect(0, 0, width, depth), labelConfirmed: true, needsMeasurement: true)
+        space.usesOutlineWalls = true
+        home.edit { $0.spaces.append(space) }
+        return space
+    }
+
+    /// User-entered level order and elevation, never inferred from capture order or an overlapping room.
+    @discardableResult
+    public static func addFloor(to home: inout HomeModel, label: String, level: Int, elevationMeters: Double) throws -> Floor {
+        guard elevationMeters.isFinite else { throw LayoutError.invalidSize }
+        var n = home.floors.count + 1
+        while home.floors.contains(where: { $0.id == "fl-\(n)" }) { n += 1 }
+        let floor = Floor(id: "fl-\(n)", level: level, label: label, elevationMeters: elevationMeters, exteriorGrade: .unknown)
+        home.edit { $0.floors.append(floor) }
+        return floor
+    }
+
+    /// Legacy convenience for callers that explicitly want a provisional starting room.
     public static func newHome(id: String, firstRoomLabel: String = "Living room", width: Double = 5, depth: Double = 4) -> HomeModel {
         HomeModel(id: id, label: "My home", source: .manual,
                   frame: CoordinateFrame(note: "Manual layout entered by the household; dimensions are estimates until measured."),
@@ -33,7 +70,7 @@ public enum ManualLayout {
     @discardableResult
     public static func addRoom(to home: inout HomeModel, label: String, kind: SpaceKind, width: Double, depth: Double,
                                attachedTo anchorID: String, side: Side, offset: Double = 0) throws -> Space {
-        guard width > 0.3, depth > 0.3 else { throw LayoutError.invalidSize }
+        guard width.isFinite, depth.isFinite, offset.isFinite, width > 0.3, depth > 0.3 else { throw LayoutError.invalidSize }
         guard let anchor = home.space(anchorID) else { throw LayoutError.unknownSpace(anchorID) }
         let b = bounds(anchor.polygon)
         let poly: [Vec2]
@@ -52,8 +89,9 @@ public enum ManualLayout {
         }
         var n = home.spaces.count + 1
         while home.spaces.contains(where: { $0.id == "sp-\(n)" }) { n += 1 }
-        let space = Space(id: "sp-\(n)", floorID: anchor.floorID, label: label, kind: kind, polygon: poly,
+        var space = Space(id: "sp-\(n)", floorID: anchor.floorID, label: label, kind: kind, polygon: poly,
                           labelConfirmed: true, needsMeasurement: true)
+        space.usesOutlineWalls = true
         home.edit { $0.spaces.append(space) }
         return space
     }
@@ -84,17 +122,22 @@ public enum ManualLayout {
     /// The `side` edge of a rectangular-ish space, if no other space on the floor shares it.
     public static func exteriorWall(of space: Space, side: Side, in home: HomeModel) -> (Vec2, Vec2)? {
         let b = bounds(space.polygon)
-        let edge: (Vec2, Vec2)
-        switch side {
-        case .north: edge = (Vec2(b.minX, b.maxY), Vec2(b.maxX, b.maxY))
-        case .south: edge = (Vec2(b.minX, b.minY), Vec2(b.maxX, b.minY))
-        case .east: edge = (Vec2(b.maxX, b.minY), Vec2(b.maxX, b.maxY))
-        case .west: edge = (Vec2(b.minX, b.minY), Vec2(b.minX, b.maxY))
+        // Use an actual outline segment on the chosen extreme, never a bounding-box edge spanning a
+        // concave notch. Rotated/irregular outlines without this wall need a different recorded connection.
+        let candidates = Geometry.edges(space.polygon).filter { edge in
+            switch side {
+            case .north: abs(edge.0.y - b.maxY) < 0.01 && abs(edge.1.y - b.maxY) < 0.01
+            case .south: abs(edge.0.y - b.minY) < 0.01 && abs(edge.1.y - b.minY) < 0.01
+            case .east: abs(edge.0.x - b.maxX) < 0.01 && abs(edge.1.x - b.maxX) < 0.01
+            case .west: abs(edge.0.x - b.minX) < 0.01 && abs(edge.1.x - b.minX) < 0.01
+            }
+        }.sorted { $0.0.distance(to: $0.1) > $1.0.distance(to: $1.1) }
+        return candidates.first { edge in
+            !home.spaces.contains { other in
+                other.id != space.id && other.floorID == space.floorID &&
+                sharedWall(space, other).map { Geometry.collinearOverlap($0.0, $0.1, edge.0, edge.1, epsilon: 0.01) } == true
+            }
         }
-        for other in home.spaces where other.id != space.id && other.floorID == space.floorID {
-            if let s = sharedWall(space, other), Geometry.collinearOverlap(s.0, s.1, edge.0, edge.1, epsilon: 0.01) { return nil }
-        }
-        return edge
     }
 
     /// Adds a door/opening centred on the shared wall (or exterior side). New doors start `.proposed` unless
@@ -127,15 +170,15 @@ public enum ManualLayout {
                             operable: operable.map { .confirmed($0) } ?? .unknown,
                             stepFree: stepFree.map { .confirmed($0) } ?? .unknown,
                             verification: verified ? .verified : .proposed)
+        guard PortalAttachment.check(portal, in: home).attached else { throw LayoutError.noSharedWall }
         home.edit { $0.portals.append(portal) }
         return portal
     }
 
-    /// Walls for display when a manual home has none: every space edge, de-duplicated.
+    /// Dynamic outlines are never cached into captured walls; later edits cannot leave stale derived segments.
     public static func derivedWalls(_ home: HomeModel) -> [WallSegment] {
-        if !home.walls.isEmpty { return home.walls }
-        var out: [WallSegment] = []
-        for s in home.spaces {
+        var out = home.walls
+        for s in home.spaces where home.walls.isEmpty || s.usesOutlineWalls == true {
             for (i, e) in Geometry.edges(s.polygon).enumerated() {
                 if out.contains(where: { $0.floorID == s.floorID && Geometry.collinearOverlap($0.a, $0.b, e.0, e.1, epsilon: 0.01)
                     && abs($0.a.distance(to: $0.b) - e.0.distance(to: e.1)) < 0.01 }) { continue }

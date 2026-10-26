@@ -1,7 +1,8 @@
 import Foundation
+import DryRunCore
 
 /// Readable names for core enums shown in pickers and summaries, so raw case names ("singleFamily") never reach the
-/// screen. English only, like the rest of the setup forms; `common.*` locale keys are used where they exist.
+/// screen. Native forms supply their selected localizer; the no-localizer overload is an English fallback.
 enum DisplayNames {
     /// Cases whose de-camel-cased name reads wrong (acronyms, awkward phrasing).
     static let overrides: [String: String] = [
@@ -29,6 +30,18 @@ enum DisplayNames {
         "none": "None",
         "unknown": "Not sure",
     ]
+
+    static func name(_ raw: String, localizer: Localizer) -> String {
+        for key in ["equipment.\(raw)", "enum.\(raw)", "relationship.\(raw)", "common.need.\(raw)"] {
+            let text = localizer.text(key)
+            if !text.isMissing { return text.text }
+        }
+        return name(raw)
+    }
+
+    static func equipment(_ equipment: PoweredEquipment, localizer: Localizer) -> String {
+        equipment.label.isEmpty ? name(equipment.purpose.rawValue, localizer: localizer) : equipment.label
+    }
 
     static func name(_ raw: String) -> String {
         if let n = overrides[raw] { return n }

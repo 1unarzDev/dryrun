@@ -303,9 +303,14 @@ struct SimulationTests {
         }
         #expect(r.decisions.flatMap(\.options).filter { $0.id == "go-back-in" }.allSatisfy { !$0.isRecommended })
         // Reachability never passes through a blocked room, even when it is the only connection.
-        #expect(!RunState.reachable(from: "sp-bed1", to: "sp-bed2", home: SimFixtures.home, blockedSpaces: ["sp-hall"], blockedPortals: []))
-        #expect(RunState.reachable(from: "sp-bed1", to: "sp-bed2", home: SimFixtures.home, blockedSpaces: ["sp-kitchen"], blockedPortals: []))
-        #expect(!RunState.reachable(from: "sp-bed1", to: "sp-kitchen", home: SimFixtures.home, blockedSpaces: ["sp-kitchen"], blockedPortals: []))
+        let planner = EgressPlanner()
+        func reach(_ target: String, blocked: [String]) -> RouteResult {
+            planner.plan(.init(startSpaceID: "sp-bed1", exclusions: .init(blockedSpaceIDs: blocked),
+                               purpose: .helperReach, destinationSpaceID: target), in: SimFixtures.home)
+        }
+        #expect(reach("sp-bed2", blocked: ["sp-hall"]).primary == nil)
+        #expect(reach("sp-bed2", blocked: ["sp-kitchen"]).primary != nil)
+        #expect(reach("sp-kitchen", blocked: ["sp-kitchen"]).primary == nil)
     }
 
     @Test("Water outage: stored-water use decision; chemical advisories never reward boiling or tap use")
@@ -355,7 +360,9 @@ struct SimulationTests {
 
         let oak = try SimFixtures.run(SampleHouseholds.oak, "tornado")
         #expect(oak.events.contains { $0.id == "evt.tornado.shelter-preselected" })
-        #expect(oak.routes.isEmpty)   // never routes to a distant shelter
+        #expect(!oak.routes.isEmpty)
+        #expect(oak.routes.allSatisfy { $0.request.purpose == .interiorShelter && $0.primary?.exitPortalID == "space:sp-closet" })
+        #expect(oak.routes.compactMap(\.primary).allSatisfy { RouteGeometryAudit.violations($0, in: SampleHomes.ranch).isEmpty })
 
         var h = SampleHouseholds.oak
         h.communications.handsetRuntimeHours = .assumed(0.5, unit: "h")
@@ -382,7 +389,10 @@ struct SimulationTests {
         let d = try #require(r.decisions.first { $0.id == "choice.flash-flood.warning" })
         #expect(d.options.first { $0.id == "drive-through" }?.isRecommended == false)
         #expect(d.options.first { $0.id == "around-barricade" }?.isRecommended == false)
-        #expect(r.routes.isEmpty)
+        // The single-storey fixture has no confirmed higher refuge. Typed indoor failures are useful;
+        // they must never be confused with a road route through floodwater.
+        #expect(r.routes.count == SampleHouseholds.lake.people.count)
+        #expect(r.routes.allSatisfy { $0.request.purpose == .higherRefuge && $0.primary == nil && $0.noRouteReason != nil })
         let oak = try SimFixtures.run(SampleHouseholds.oak, "flash-flood")
         #expect(oak.recommendations.contains { $0.actionID == "act.water.well-test-after-flood" })
     }

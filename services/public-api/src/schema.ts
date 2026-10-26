@@ -42,6 +42,8 @@ export const PublicResource = z.object({
   activation: ActivationState,
   latitude: z.number().optional(),
   longitude: z.number().optional(),
+  coordinateSourceIDs: z.array(z.string()).min(1).optional(),
+  coordinateCheckedAt: z.string().optional(),
   accessibilityNote: z.string().optional(),
   petPolicy: z.string().optional(),
   sourceIDs: z.array(z.string()).min(1),
@@ -49,7 +51,13 @@ export const PublicResource = z.object({
   expiresAt: z.string().optional(),
   reviewState: ReviewState,
   classification: DataClassification,
-}).strict().refine((r) => r.activation !== "active" || r.expiresAt !== undefined, "activation requires expiresAt");
+}).strict()
+  .refine((r) => (r.latitude === undefined) === (r.longitude === undefined), "latitude and longitude must be supplied together")
+  .refine((r) => r.latitude === undefined || (Number.isFinite(r.latitude) && r.latitude >= -90 && r.latitude <= 90), "latitude out of range")
+  .refine((r) => r.longitude === undefined || (Number.isFinite(r.longitude) && r.longitude >= -180 && r.longitude <= 180), "longitude out of range")
+  .refine((r) => r.latitude === undefined || r.coordinateSourceIDs !== undefined, "coordinates require coordinateSourceIDs")
+  .refine((r) => r.coordinateSourceIDs === undefined || r.coordinateSourceIDs.length > 0, "coordinateSourceIDs must not be empty")
+  .refine((r) => r.activation !== "active" || r.expiresAt !== undefined, "activation requires expiresAt");
 
 export const RegionInfo = z.object({
   id: RegionID,
@@ -60,7 +68,15 @@ export const RegionInfo = z.object({
   coverage: CoverageStatus,
   coverageNote: z.string().optional(),
   inTX25: z.enum(["all", "part", "n/a"]),
-}).strict();
+  mapCenterLatitude: z.number().optional(),
+  mapCenterLongitude: z.number().optional(),
+  mapSpanLatitude: z.number().positive().optional(),
+  mapSpanLongitude: z.number().positive().optional(),
+}).strict()
+  .refine((r) => (r.mapCenterLatitude === undefined) === (r.mapCenterLongitude === undefined), "map center must be a pair")
+  .refine((r) => (r.mapSpanLatitude === undefined) === (r.mapSpanLongitude === undefined), "map span must be a pair")
+  .refine((r) => r.mapCenterLatitude === undefined || (Number.isFinite(r.mapCenterLatitude) && r.mapCenterLatitude >= -90 && r.mapCenterLatitude <= 90), "map center latitude out of range")
+  .refine((r) => r.mapCenterLongitude === undefined || (Number.isFinite(r.mapCenterLongitude) && r.mapCenterLongitude >= -180 && r.mapCenterLongitude <= 180), "map center longitude out of range");
 
 export const RegionPack = z.object({
   schemaVersion: z.literal(1),
@@ -76,6 +92,7 @@ export const RegionPack = z.object({
   const ids = new Set(p.sources.map((s) => s.id));
   for (const r of p.resources) {
     for (const s of r.sourceIDs) if (!ids.has(s)) ctx.addIssue({ code: "custom", message: `${r.id} cites unknown source ${s}` });
+    for (const s of r.coordinateSourceIDs ?? []) if (!ids.has(s)) ctx.addIssue({ code: "custom", message: `${r.id} cites unknown coordinate source ${s}` });
   }
 });
 

@@ -50,6 +50,24 @@ struct PublicPackStoreTests {
         await #expect(throws: PublicPackError.self) { try await store.updatePack(Data(json.utf8), expectedRegionID: "tx-statewide") }
     }
 
+    @Test func invalidCoordinateAndMapSpanPairsAreRejected() async throws {
+        let store = PublicPackStore(directory: makeTempRoot())
+        let halfCoordinate = String(decoding: packJSON(), as: UTF8.self)
+            .replacingOccurrences(of: "\"summary\":\"Local services.\",",
+                                  with: "\"summary\":\"Local services.\",\"latitude\":32.2,")
+        let outOfRange = String(decoding: packJSON(), as: UTF8.self)
+            .replacingOccurrences(of: "\"summary\":\"Local services.\",",
+                                  with: "\"summary\":\"Local services.\",\"latitude\":91,\"longitude\":-98,\"coordinateSourceIDs\":[\"S27\"],")
+        let halfSpan = String(decoding: packJSON(), as: UTF8.self)
+            .replacingOccurrences(of: "\"inTX25\":\"n/a\"}",
+                                  with: "\"inTX25\":\"n/a\",\"mapSpanLatitude\":0.2}")
+        for json in [halfCoordinate, outOfRange, halfSpan] {
+            await #expect(throws: PublicPackError.self) {
+                try await store.updatePack(Data(json.utf8), expectedRegionID: "tx-statewide")
+            }
+        }
+    }
+
     @Test func expiredCachedAlertNeverCurrentOffline() async throws {
         let store = PublicPackStore(directory: makeTempRoot())
         let alerts = Data("""

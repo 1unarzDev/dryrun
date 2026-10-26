@@ -1,9 +1,22 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "2026.10.0",
-  "generatedAt": "2026-10-09T00:00:00Z",
+  "contentVersion": "2026.10.3",
+  "generatedAt": "2026-10-19T07:19:33Z",
   "reviewState": "draft",
   "note": "AI-assisted first-review content. Safety text is paraphrased from the cited official sources and has NOT yet had independent human safety-content or language review. Do not distribute as dependable guidance until reviewed.",
-  "domains": ["common", "plan", "help", "scenarios", "actions"],
-  "locales": ["en", "es", "vi"]
+  "domains": [
+    "common",
+    "plan",
+    "help",
+    "scenarios",
+    "actions",
+    "spatial",
+    "native",
+    "ai"
+  ],
+  "locales": [
+    "en",
+    "es",
+    "vi"
+  ]
 }

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "pauseForDecision",
+        "finishExercise",
+        "advanceUntilHostBoundary",
+        "scheduledIncident",
+        "noAdvance"
+      ]
+    },
+    "requestedMinute": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4320
+    },
+    "maximumDurationMinutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4320
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false
+}

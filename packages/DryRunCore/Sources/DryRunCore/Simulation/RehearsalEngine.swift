@@ -16,7 +16,7 @@ public enum RehearsalError: Error, Equatable, Sendable {
 /// emitted as derived events with their evidence chain. No wall-clock time, randomness, or hashing
 /// order affects results; `seed` is carried for future authored variation and recorded in the input.
 public struct RehearsalEngine: Sendable {
-    public static let engineVersion = "cascade-engine/1"
+    public static let engineVersion = "cascade-engine/2"
     public static let maxEvents = 5_000
 
     public let library: ScenarioLibrary
@@ -30,18 +30,7 @@ public struct RehearsalEngine: Sendable {
     }
 
     public func run(_ input: RehearsalInput) throws -> RehearsalResult {
-        guard let scenario = library.scenario(input.scenarioID) else { throw RehearsalError.unknownScenario(input.scenarioID) }
-        guard scenario.version == input.scenarioVersion else {
-            throw RehearsalError.scenarioVersionMismatch(expected: scenario.version, actual: input.scenarioVersion)
-        }
-        // Interventions apply to a simulation COPY. `input` is a value and is never mutated.
-        let (household, home) = InterventionApplier.apply(input.interventions, household: input.household, home: input.home)
-        var run = RunState(scenario: scenario, input: input, household: household, home: home, planner: planner)
-        try run.execute()
-        let recs = RecommendationRanker.rank(ActionRules.evaluate(run.summary(), catalog: actions))
-        return RehearsalResult(input: input, events: run.events, snapshots: run.snapshots, decisions: run.decisions,
-                               routes: run.routes, recommendations: recs, unknowns: run.unknowns.sorted(),
-                               engineVersion: Self.engineVersion)
+        try SimulationSession.authoredResult(input,library:library,planner:planner,actions:actions)
     }
 
     /// Counterfactual replay: same seed, scenario/content versions, choices, variants, and schedule;
@@ -61,7 +50,7 @@ public struct RehearsalEngine: Sendable {
 public struct RunSummary: Sendable {
     public var scenario: ScenarioDefinition
     public var household: HouseholdProfile
-    public var home: HomeModel
+    public var home: HomeModel?
     public var unmetEver: Set<String>
     public var unknowns: Set<String>
     public var flags: Set<String>
@@ -82,11 +71,11 @@ struct ScheduledItem {
 
 struct RunState {
     let scenario: ScenarioDefinition
-    let input: RehearsalInput
-    let household: HouseholdProfile
-    let home: HomeModel
+    var input: RehearsalInput
+    var household: HouseholdProfile
+    let home: HomeModel?
     let planner: EgressPlanning
-    let model: DependencyModel
+    var model: DependencyModel
     let allocator = BackupAllocator()
 
     var minute = 0
@@ -123,12 +112,13 @@ struct RunState {
     var stickyUnmet: Set<String> = []
     var idCounts: [String: Int] = [:]
     var currentRoutes: [String: RouteResult] = [:]
+    var spatialState: SpatialExerciseState?
     var onBackup: Set<String> = []
     var phaseID: String
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
-    let interventionChoices: [String: String]
+    var interventionChoices: [String: String]
 
-    init(scenario: ScenarioDefinition, input: RehearsalInput, household: HouseholdProfile, home: HomeModel, planner: EgressPlanning) {
+    init(scenario: ScenarioDefinition, input: RehearsalInput, household: HouseholdProfile, home: HomeModel?, planner: EgressPlanning) {
         self.scenario = scenario; self.input = input; self.household = household; self.home = home; self.planner = planner
         self.model = DependencyModel.build(household: household)
         self.storedWater = household.supplies.storedWaterGallons.confirmedValue
@@ -148,48 +138,17 @@ struct RunState {
 
     // MARK: Execution
 
-    mutating func execute() throws {
-        noteStaticUnknowns()
-        try reevaluate(trigger: nil, emit: false)
-        snapshot()
-
-        var schedule: [ScheduledItem] = []
-        for e in scenario.events where Applicability.holds(e.when, household: household, home: home, variants: input.variants) {
-            schedule.append(ScheduledItem(minute: e.minute, priority: e.priority, id: e.id, kind: .event(e)))
-        }
-        for c in scenario.choicePoints where Applicability.holds(c.when, household: household, home: home, variants: input.variants) {
-            schedule.append(ScheduledItem(minute: c.minute, priority: 100, id: c.id, kind: .choice(c)))
-        }
-        schedule.sort { ($0.minute, $0.priority, $0.id) < ($1.minute, $1.priority, $1.id) }
-
-        var idx = 0
-        var guardCount = 0
-        while true {
-            guardCount += 1
-            if guardCount > RehearsalEngine.maxEvents { throw RehearsalError.eventLimitExceeded }
-            let next = idx < schedule.count ? schedule[idx] : nil
-            if let dep = nextDepletion(), dep.minute <= scenario.durationMinutes, next == nil || dep.minute <= next!.minute {
-                advance(to: dep.minute)
-                try handleDepletion(dep.resource)
-                snapshot()
-                continue
-            }
-            guard let item = next else { break }
-            idx += 1
-            advance(to: item.minute)
-            switch item.kind {
-            case .event(let e): try apply(e)
-            case .choice(let c): try choose(c)
-            }
-            snapshot()
-        }
-        advance(to: max(minute, scenario.durationMinutes))
+    /// Explicit spatial options and the native variant path select the same authored exercise.
+    var effectiveVariants: [String] {
+        var variants = input.variants.filter { $0 != "householdLeak" }
+        if scenario.hazard == .flashFlood && input.effectiveSpatialOptions.floodIsHouseholdLeak { variants.append("householdLeak") }
+        return variants
     }
 
     func summary() -> RunSummary {
         RunSummary(scenario: scenario, household: household, home: home, unmetEver: unmetEver, unknowns: unknowns,
                    flags: flags, causes: causes, finalServices: services, everUnavailable: everUnavailable,
-                   variants: input.variants)
+                   variants: effectiveVariants)
     }
 
     // MARK: Time and resources
@@ -213,12 +172,17 @@ struct RunState {
 
     var handsetDrawPerMinute: Double { (homePowerUp || relocated) ? 0 : 1.0 / 60.0 }
 
-    func nextDepletion() -> (minute: Int, resource: String)? {
-        var best: (Int, String)?
+    func nextDepletion() -> (minute: Int, resource: String)? { depletionSchedule().first }
+
+    func depletionSchedule() -> [(minute: Int, resource: String)] {
+        var candidates: [(Int, String)] = []
         func consider(_ amount: Double?, _ rate: Double, _ id: String) {
-            guard let a = amount, a > 0, rate > 0 else { return }
-            let t = minute + Int((a / rate).rounded(.up))
-            if best == nil || (t, id) < (best!.0, best!.1) { best = (t, id) }
+            guard let a = amount, a.isFinite, a > 0, rate.isFinite, rate > 0, minute<=scenario.durationMinutes else { return }
+            let delay=(a/rate).rounded(.up)
+            // Extremely large confirmed quantities cannot overflow integer time or create a boundary
+            // beyond this exercise. No resource amount is clamped or silently replenished here.
+            guard delay.isFinite,delay<=Double(scenario.durationMinutes-minute),delay<Double(Int.max) else {return}
+            candidates.append((minute+Int(delay), id))
         }
         consider(storedWater, waterDrawPerMinute, "res.water.stored")
         consider(handsetHours, handsetDrawPerMinute, "res.handset.hours")
@@ -229,7 +193,7 @@ struct RunState {
             guard let hours = r, assignments[Load.equipment(eid)]?.state == .operational, !homePowerUp, !relocated else { continue }
             consider(hours, 1.0 / 60.0, "res.device.\(eid).runtime")
         }
-        return best.map { (minute: $0.0, resource: $0.1) }
+        return candidates.sorted { ($0.0, $0.1) < ($1.0, $1.1) }.map { (minute: $0.0, resource: $0.1) }
     }
 
     mutating func advance(to t: Int) {
@@ -322,7 +286,7 @@ struct RunState {
                 emitServiceChange(node: node, state: new, trigger: trigger)
             }
             // Running on backup is a distinct, explained state (not just "operational").
-            for eq in household.equipment.sorted(by: { $0.id < $1.id }) where !eq.needsRefrigeration {
+            for eq in household.equipment.sorted(by: { $0.id < $1.id }) where eq.requiresElectricalPower {
                 let a = assignments[Load.equipment(eq.id)]
                 let ob = merged[Svc.device(eq.id)] == .operational && merged[Svc.homePower] != .operational && !relocated
                     && a?.state == .operational && a?.sourceID != nil
@@ -386,6 +350,10 @@ struct RunState {
     }
 
     mutating func noteStaticUnknowns() {
+        if home == nil && [.homeFire, .flashFlood, .tornado].contains(scenario.hazard) {
+            unknowns.insert("home")
+            flags.insert("spatial.layoutUnavailable")
+        }
         let h = household
         if [.naturalGas, .propane].contains(h.housing.heatingFuel), !h.housing.heatingNeedsElectricity.isConfirmed {
             unknowns.insert("housing.heatingNeedsElectricity")
@@ -395,7 +363,7 @@ struct RunState {
             if !h.housing.wellPressureTankGallons.isConfirmed { unknowns.insert("housing.wellPressureTankGallons") }
         }
         if !h.supplies.storedWaterGallons.isConfirmed { unknowns.insert("supplies.storedWaterGallons") }
-        for eq in h.equipment where eq.isEssential && !eq.needsRefrigeration {
+        for eq in h.equipment where eq.isEssential && eq.requiresElectricalPower {
             if eq.compatibleBackupIDs.isEmpty { unknowns.insert("equipment.\(eq.id).backup") }
         }
         for b in h.backupPower where !b.setupConfirmed.isConfirmed { unknowns.insert("backup.\(b.id).setupConfirmed") }
@@ -421,8 +389,9 @@ struct RunState {
         for eq in household.equipment where eq.isEssential {
             let s = services[Svc.device(eq.id)] ?? .unknown
             if s == .unavailable || s == .unknown {
-                unmet.insert(eq.needsRefrigeration ? "req.refrigeration.\(eq.id)" : "req.power.\(eq.id)")
-            } else if s == .degraded, eq.needsRefrigeration {
+                if eq.requiresColdStorage { unmet.insert("req.refrigeration.\(eq.id)") }
+                if eq.requiresElectricalPower { unmet.insert("req.power.\(eq.id)") }
+            } else if s == .degraded, eq.requiresColdStorage {
                 unmet.insert("req.refrigeration.\(eq.id)")
             }
         }
@@ -444,13 +413,17 @@ struct RunState {
             "res.handset.powerBankCharges": ResourceQuantity(amount: powerBankCharges, unit: "charges"),
         ]
         for (sid, e) in backupEnergy { res["res.backup.\(sid)"] = ResourceQuantity(amount: e.map(Fmt.round2), unit: "Wh") }
-        for (eid, r) in deviceRuntime where household.equipment.contains(where: { $0.id == eid && !$0.needsRefrigeration }) {
+        for (eid, r) in deviceRuntime where household.equipment.contains(where: { $0.id == eid && $0.requiresElectricalPower }) {
             res["res.device.\(eid).runtime"] = ResourceQuantity(amount: r.map(Fmt.round2), unit: "h")
         }
         let fired = events.filter { $0.simMinute == minute }.map(\.id)
+        let sceneTriggerCount: Int
+        if let scene = spatialState, scene != snapshots.last?.spatialState,
+           let trigger = events.firstIndex(where: { $0.id == scene.stageID }) { sceneTriggerCount = trigger + 1 }
+        else { sceneTriggerCount = events.count }
         let snap = SimulationSnapshot(simMinute: minute, services: services, resources: res, unmetRequirements: currentUnmet.sorted(),
-                                      unknowns: unknowns.sorted(), firedEventIDs: fired)
-        if let last = snapshots.last, last.simMinute == minute { snapshots[snapshots.count - 1] = snap } else { snapshots.append(snap) }
+                                      unknowns: unknowns.sorted(), firedEventIDs: fired, spatialState: spatialState, revealedEventCount: sceneTriggerCount)
+        snapshots.append(snap)
     }
 
     // MARK: Emission
@@ -498,11 +471,13 @@ enum Fmt {
 
 /// Applicability predicates for authored events/choices.
 public enum Applicability {
-    public static func holds(_ preds: [String], household h: HouseholdProfile, home: HomeModel, variants: [String]) -> Bool {
+    public static func holds(_ preds: [String], household h: HouseholdProfile, home: HomeModel?, variants: [String]) -> Bool {
         preds.allSatisfy { holds($0, h, home, variants) }
     }
 
-    static func holds(_ p: String, _ h: HouseholdProfile, _ home: HomeModel, _ variants: [String]) -> Bool {
+    static func holds(_ p: String, _ h: HouseholdProfile, _ home: HomeModel?, _ variants: [String]) -> Bool {
+        // Absence is not evidence of "no stairs", even under a negated predicate.
+        if home == nil && p.drop(while: { $0 == "!" }) == "hasStairs" { return false }
         if p.hasPrefix("!") { return !holds(String(p.dropFirst()), h, home, variants) }
         let parts = p.split(separator: ":", maxSplits: 1).map(String.init)
         let key = parts[0], val = parts.count > 1 ? parts[1] : ""
@@ -514,7 +489,7 @@ public enum Applicability {
         case "noVehicle": return !h.transport.hasVehicle
         case "hasEssentialEquipment": return h.equipment.contains { $0.isEssential }
         case "heatingFuel": return h.housing.heatingFuel.rawValue == val
-        case "hasStairs": return !home.connectors.isEmpty
+        case "hasStairs": return home.map { !$0.connectors.isEmpty } ?? false
         default: return false
         }
     }

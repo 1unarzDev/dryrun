@@ -16,6 +16,14 @@ public struct EgressPlanner: EgressPlanning {
     public init(tolerance: GeometryTolerance = .standard) { self.tolerance = tolerance }
 
     public func plan(_ request: RouteRequest, in home: HomeModel) -> RouteResult {
+        guard Set(home.floors.map(\.id)).count == home.floors.count,
+              Set(home.spaces.map(\.id)).count == home.spaces.count,
+              Set(home.portals.map(\.id)).count == home.portals.count,
+              Set(home.connectors.map(\.id)).count == home.connectors.count else {
+            return RouteResult(request: request, primary: nil, alternative: nil, alternativeStatus: .none,
+                               noRouteReason: .invalidGeometry, exclusions: [], homeID: home.id,
+                               homeRevision: home.revision, homeFingerprint: HomeFingerprint.of(home))
+        }
         let graph = Graph(home: home, request: request, tol: tolerance, extraBlockedSpaces: [], extraBlockedPortals: [], extraBlockedConnectors: [])
         let fingerprint = HomeFingerprint.of(home)
         func fail(_ reason: NoRouteReason) -> RouteResult {
@@ -24,12 +32,29 @@ public struct EgressPlanner: EgressPlanning {
         }
         guard let startSpace = home.space(request.startSpaceID) else { return fail(.unknownStartSpace) }
         if request.exclusions.blockedSpaceIDs.contains(startSpace.id) { return fail(.blockedByScenario) }
+        if let purpose = request.purpose, purpose != .outdoorEgress {
+            guard let destinationID = request.destinationSpaceID, let destination = home.space(destinationID) else { return fail(.incompleteConnectivity) }
+            guard !request.exclusions.blockedSpaceIDs.contains(destinationID) else { return fail(.blockedByScenario) }
+            if purpose == .interiorShelter {
+                guard ShelterSuitability.isConfirmed(roomID: destinationID, in: home) else { return fail(.incompleteConnectivity) }
+            }
+            if purpose == .higherRefuge {
+                guard destination.kind != .closet, destination.higherRefugeConfirmed?.confirmedValue == true,
+                      let floor = home.floors.first(where: { $0.id == destination.floorID }), floor.exteriorGrade != nil,
+                      floor.exteriorGrade != .unknown else { return fail(.incompleteConnectivity) }
+            }
+        }
         guard graph.startNode != nil else { return fail(.invalidGeometry) }
 
         guard let primary = graph.shortestPath() else {
             return fail(diagnose(request, home))
         }
 
+        if request.purpose != nil && request.purpose != .outdoorEgress {
+            return RouteResult(request: request, primary: primary, alternative: nil, alternativeStatus: .none,
+                               noRouteReason: nil, exclusions: graph.exclusions, homeID: home.id,
+                               homeRevision: home.revision, homeFingerprint: fingerprint)
+        }
         // Alternative: different exit, avoiding the primary's interior chokepoints.
         let chokeSpaces = Set(primary.spaceSequence.dropFirst())
         let chokePortals = Set(primary.portalSequence.filter { $0 != primary.exitPortalID })
@@ -72,7 +97,7 @@ public struct EgressPlanner: EgressPlanning {
         if home.portals.contains(where: { if case .commonArea = $0.sideA { return true }; if case .commonArea = $0.sideB { return true }; return false }) {
             return .missingBuildingPlan
         }
-        let groundFloors = Set(home.floors.filter { Graph.isGround($0, tolerance) }.map(\.id))
+        let groundFloors = Set(home.floors.filter { Graph.isGround($0, tolerance) && !(home.source == .roomPlanScan && $0.exteriorGrade == nil) }.map(\.id))
         let anyVerifiedExit = home.portals.contains { $0.leadsToExterior && $0.verification == .verified && groundFloors.contains($0.floorID) && $0.kind != .window }
         return anyVerifiedExit ? .incompleteConnectivity : .noVerifiedExteriorExit
     }
@@ -110,7 +135,10 @@ struct Graph {
     var startNode: Int?
     var verificationNeeded: [String: [String]] = [:]  // portal ID -> notes
 
-    static func isGround(_ f: Floor, _ tol: GeometryTolerance) -> Bool { f.level == 0 && f.elevationMeters <= tol.groundElevationMeters }
+    static func isGround(_ f: Floor, _ tol: GeometryTolerance) -> Bool {
+        if let grade = f.exteriorGrade { return grade == .ground || grade == .walkout }
+        return f.level == 0 && f.elevationMeters <= tol.groundElevationMeters
+    }
 
     init(home: HomeModel, request: RouteRequest, tol: GeometryTolerance,
          extraBlockedSpaces: Set<String>, extraBlockedPortals: Set<String>, extraBlockedConnectors: Set<String>) {
@@ -126,9 +154,13 @@ struct Graph {
         let spaces = Dictionary(uniqueKeysWithValues: home.spaces.map { ($0.id, $0) })
 
         for id in request.exclusions.blockedSpaceIDs.sorted() { exclusions.append(RouteExclusion(elementID: id, reason: "blockedByScenario")) }
+        for room in home.spaces.sorted(by: { $0.id < $1.id }) where room.geometryNeedsReview == true {
+            exclusions.append(RouteExclusion(elementID: room.id, reason: "correctedGeometryNeedsReview"))
+        }
 
         func usable(_ spaceID: String) -> Space? {
-            guard let s = spaces[spaceID], !blockedSpaces.contains(spaceID), Geometry.isSimplePolygon(s.polygon) else { return nil }
+            guard let s = spaces[spaceID], !blockedSpaces.contains(spaceID), s.geometryNeedsReview != true,
+                  Geometry.isSimplePolygon(s.polygon) else { return nil }
             return s
         }
 
@@ -219,7 +251,8 @@ struct Graph {
                 if let reason { exclusions.append(RouteExclusion(elementID: cn.id, reason: reason)) }
                 continue
             }
-            guard let fs = usable(cn.fromSpaceID), let ts = usable(cn.toSpaceID),
+            guard HomeGeometryEditor.validLandings(cn, in: home),
+                  let fs = usable(cn.fromSpaceID), let ts = usable(cn.toSpaceID),
                   Geometry.contains(fs.polygon, cn.fromPoint), Geometry.contains(ts.polygon, cn.toPoint) else {
                 if !(blockedSpaces.contains(cn.fromSpaceID) || blockedSpaces.contains(cn.toSpaceID)) {
                     exclusions.append(RouteExclusion(elementID: cn.id, reason: "invalidGeometry: connector endpoints not inside their spaces"))
@@ -237,6 +270,13 @@ struct Graph {
             spaceNodes[ts.id, default: []].append(ib)
         }
 
+        if request.purpose != nil && request.purpose != .outdoorEgress,
+           let destinationID = request.destinationSpaceID, let destination = usable(destinationID),
+           let anchor = RoomPaths.anchor(in: destination, home: home, clearance: clearance) {
+            let target = addNode(Node(id: "destination", floorID: destination.floorID, spaceID: destination.id,
+                                      point: anchor, exitPortalID: "space:\(destinationID)"))
+            spaceNodes[destination.id, default: []].append(target)
+        }
         // Within-room edges.
         for sid in spaceNodes.keys.sorted() {
             guard let s = spaces[sid] else { continue }
@@ -295,11 +335,14 @@ struct Graph {
             guard isExit else { return "windowNotAWalkingConnection" }
         }
         if isExit {
-            guard let f = floors[p.floorID], Graph.isGround(f, tol) else { return "notGroundLevelExit" }
+            guard let f = floors[p.floorID], Graph.isGround(f, tol), !(home.source == .roomPlanScan && f.exteriorGrade == nil) else { return "notGroundLevelExit" }
         }
         if p.kind == .window {
             if request.mobility.requiresStepFree { return "incompatibleMobility: window exit" }
             if p.operable.confirmedValue != true { return "windowOperabilityUnconfirmed" }
+            guard let personID = request.personID, p.emergencyEscapePersonIDs?.contains(personID) == true else {
+                return "windowEscapeSuitabilityUnconfirmed"
+            }
         }
         if p.kind != .opening {
             if p.operable.value == false { return "inoperable" }            // even an unconfirmed "no" rules it out
@@ -344,7 +387,10 @@ struct Graph {
                 if nd < dist[e.to] - 1e-9 { dist[e.to] = nd; prev[e.to] = (u, ei) }
             }
         }
-        let exits = nodes.indices.filter { nodes[$0].exitPortalID != nil && dist[$0].isFinite }
+        let exits = nodes.indices.filter {
+            guard let destination = nodes[$0].exitPortalID, dist[$0].isFinite else { return false }
+            return request.purpose == nil || request.purpose == .outdoorEgress ? !destination.hasPrefix("space:") : destination == "space:\(request.destinationSpaceID ?? "")"
+        }
         guard let best = exits.min(by: { dist[$0] < dist[$1] - 1e-9 || (abs(dist[$0] - dist[$1]) <= 1e-9 && nodes[$0].id < nodes[$1].id) }) else { return nil }
 
         var chain: [Edge] = []

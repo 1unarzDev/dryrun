@@ -141,7 +141,7 @@ public enum Geometry {
 
     /// Simple polygon: >= 3 vertices, non-zero area, no non-adjacent edge intersections.
     public static func isSimplePolygon(_ poly: [Vec2]) -> Bool {
-        guard poly.count >= 3, abs(signedArea(poly)) > 1e-9 else { return false }
+        guard poly.count >= 3, poly.allSatisfy({ $0.x.isFinite && $0.y.isFinite }), abs(signedArea(poly)) > 1e-9 else { return false }
         let es = edges(poly)
         for i in es.indices {
             for j in es.indices where j > i + 1 && !(i == 0 && j == es.count - 1) {
@@ -149,6 +149,82 @@ public enum Geometry {
             }
         }
         return true
+    }
+
+    /// Positive-area intersection, including crossing strips whose vertices all lie on/outside the other
+    /// boundary. Shared walls and corner-only contact are not overlap. Works with concave simple polygons.
+    public static func polygonsOverlap(_ a: [Vec2], _ b: [Vec2], areaToleranceSquareMeters: Double = 1e-8) -> Bool {
+        guard let at = triangulate(a), let bt = triangulate(b) else { return false }
+        for ai in at {
+            for bi in bt {
+                var clipped = ai.map { a[$0] }
+                let triangle = bi.map { b[$0] }, sign = signedArea(triangle) >= 0 ? 1.0 : -1.0
+                for (p, q) in edges(triangle) {
+                    let input = clipped; clipped = []
+                    guard !input.isEmpty else { break }
+                    let axis = q - p
+                    for index in input.indices {
+                        let start = input[index], end = input[(index + 1) % input.count]
+                        let sd = sign * cross(axis, start - p), ed = sign * cross(axis, end - p)
+                        let sin = sd >= 0, ein = ed >= 0
+                        if sin != ein {
+                            let fraction = sd / (sd - ed)
+                            clipped.append(start + (end - start) * fraction)
+                        }
+                        if ein { clipped.append(end) }
+                    }
+                }
+                if abs(signedArea(clipped)) > areaToleranceSquareMeters { return true }
+            }
+        }
+        return false
+    }
+
+    /// Ear-clips a simple polygon into triangles, preserving the input winding. The returned values are indices
+    /// into `poly`; a nil result means the outline is empty, self-intersecting, degenerate, or could not be reduced.
+    /// This is intentionally a small deterministic triangulator for display meshes. It does not accept holes.
+    public static func triangulate(_ poly: [Vec2], epsilon: Double = 1e-9) -> [[Int]]? {
+        guard isSimplePolygon(poly), poly.count >= 3 else { return nil }
+        let winding = signedArea(poly) >= 0 ? 1.0 : -1.0
+        var remaining = Array(poly.indices)
+        var triangles: [[Int]] = []
+
+        func isInside(_ p: Vec2, _ a: Vec2, _ b: Vec2, _ c: Vec2) -> Bool {
+            let ab = cross(b - a, p - a), bc = cross(c - b, p - b), ca = cross(a - c, p - c)
+            let hasNegative = ab < -epsilon || bc < -epsilon || ca < -epsilon
+            let hasPositive = ab > epsilon || bc > epsilon || ca > epsilon
+            return !(hasNegative && hasPositive)
+        }
+
+        // A simple polygon with n vertices always has n - 2 ears. The guard prevents malformed input from
+        // looping forever when all remaining corners are collinear at floating-point precision.
+        while remaining.count > 3 {
+            var clipped = false
+            for offset in remaining.indices {
+                let prevIndex = remaining[(offset + remaining.count - 1) % remaining.count]
+                let currentIndex = remaining[offset]
+                let nextIndex = remaining[(offset + 1) % remaining.count]
+                let a = poly[prevIndex], b = poly[currentIndex], c = poly[nextIndex]
+                guard winding * cross(b - a, c - b) > epsilon else { continue }
+
+                var containsOther = false
+                for candidate in remaining where candidate != prevIndex && candidate != currentIndex && candidate != nextIndex {
+                    if isInside(poly[candidate], a, b, c) {
+                        containsOther = true
+                        break
+                    }
+                }
+                guard !containsOther else { continue }
+                triangles.append([prevIndex, currentIndex, nextIndex])
+                remaining.remove(at: offset)
+                clipped = true
+                break
+            }
+            guard clipped else { return nil }
+        }
+        guard remaining.count == 3 else { return nil }
+        triangles.append(remaining)
+        return triangles
     }
 
     public static func polylineLength(_ pts: [Vec2]) -> Double {

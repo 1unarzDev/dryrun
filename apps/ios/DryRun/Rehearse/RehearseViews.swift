@@ -2,8 +2,10 @@ import SwiftUI
 import DryRunCore
 
 struct RehearseTabView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
-    static let scenarioIDs = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
+    // Spatial exercises first, home fire as the flagship; all six hazards stay available.
+    static let scenarioIDs = ["home-fire", "tornado", "flash-flood", "freeze-power-loss", "heat-grid-strain", "water-outage"]
     static let symbols = ["freeze-power-loss": "snowflake", "heat-grid-strain": "thermometer.sun", "tornado": "tornado",
                           "flash-flood": "water.waves", "home-fire": "flame", "water-outage": "drop.triangle"]
     static let tints: [String: Color] = ["freeze-power-loss": .blue, "heat-grid-strain": .orange, "tornado": .purple,
@@ -17,6 +19,15 @@ struct RehearseTabView: View {
                     .font(.footnote).foregroundStyle(.secondary)
                 if !model.capabilities.isOnline {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote).foregroundStyle(.secondary)
+                }
+                if let home = model.home {
+                    SectionCard(title: home.label, systemImage: "house") {
+                        if home.isFictional { Label(s("Example home"), systemImage: "sparkles").font(.caption) }
+                        FloorPlanView(home: home, routes: [], highlightedFloorID: nil).frame(height: 210)
+                    }
+                } else {
+                    Label(s("Add and review a home layout to practice spatial routes. Other scenarios remain available."), systemImage: "house")
+                        .font(.callout).foregroundStyle(.secondary)
                 }
                 Text(l("common.chooseScenario")).font(.headline).padding(.top, Theme.Space.s)
                 ForEach(Self.scenarioIDs, id: \.self) { id in
@@ -34,6 +45,7 @@ struct RehearseTabView: View {
 }
 
 struct ScenarioCard: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let id: String
 
@@ -64,10 +76,16 @@ struct ScenarioCard: View {
 /// One rehearsal, one step at a time. The newest event is the hero; the decision (when one is pending) comes right
 /// after it; only the services that just changed are shown, with the full list one tap away.
 struct RehearsalView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     let scenarioID: String
     @Environment(AppModel.self) private var model
     @State private var showDebrief = false
     @State private var showAllServices = false
+    @State private var originID = ""
+    @State private var waterEntryID = ""
+    @State private var refugeID = ""
+    @State private var householdLeak = false
+    @State private var daytimeStarts: [String: String] = [:]
 
     var body: some View {
         let l = model.localizer
@@ -77,15 +95,29 @@ struct RehearsalView: View {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 VStack(alignment: .leading, spacing: Theme.Space.s) {
                     PracticeBanner(text: l("common.practiceLabel")).id("top")
-                    if let session { clock(session) }
+                    if session?.result.input.effectiveSpatialOptions.floodIsHouseholdLeak == true {
+                        Label(l("scenario.household-leak.title"), systemImage: "drop").font(.headline)
+                    }
+                    if let session { stepLabel(session) }
                 }
                 if let session {
+                    if let home = session.result.input.home, ["home-fire", "flash-flood", "tornado"].contains(scenarioID) {
+                        SpatialRehearsalScene(home: home, household: session.result.input.household,
+                                              state: session.snapshotAtCursor?.spatialState,
+                                              previous: session.spatialStateBeforeCursor)
+                            .accessibilityIdentifier("rehearsal.scene")
+                        sceneOptions(session, home: home)
+                    }
+                    if session.result.input.home == nil { Label(model.localizer("map.layoutMissing"), systemImage: "house").font(.callout).foregroundStyle(.secondary) }
                     let events = session.visibleEvents
                     if let latest = events.last {
                         EventCard(event: latest, isCurrent: true, result: session.result)
                         changedServices(latest)
+                        if session.pendingDecision == nil, let (_, option) = answeredChoice(session, latest: latest) {
+                            choiceFeedback(option)
+                        }
                     } else {
-                        SectionCard { Text(l("ui.rehearse.ready")).foregroundStyle(.secondary) }
+                        intro(session)
                     }
                     if let decision = session.pendingDecision {
                         DecisionCard(decision: decision) { option in
@@ -93,7 +125,7 @@ struct RehearsalView: View {
                         }
                         .id("decision")
                     }
-                    if session.isFinished && !session.result.routes.isEmpty {
+                    if session.isFinished && !["home-fire", "flash-flood", "tornado"].contains(scenarioID) && !session.result.routes.isEmpty {
                         RouteSummaryView(routes: session.result.routes)
                     }
                     if let snapshot = session.snapshotAtCursor {
@@ -131,7 +163,7 @@ struct RehearsalView: View {
         }
         .background(Theme.background)
         .safeAreaInset(edge: .bottom) { if let session { controls(session) } }
-        .navigationTitle(l("common.scenario.\(scenarioID)"))
+        .navigationTitle(l(session?.result.input.effectiveSpatialOptions.floodIsHouseholdLeak == true ? "scenario.household-leak.title" : "common.scenario.\(scenarioID)"))
         .navigationBarTitleDisplayMode(.inline)
         .task {
             if model.rehearsal?.result.input.scenarioID != scenarioID {
@@ -141,15 +173,122 @@ struct RehearsalView: View {
             }
         }
         .sheet(isPresented: $showDebrief) { NavigationStack { DebriefView() } }
+        .onChange(of: session?.result.input, initial: true) { _, input in
+            guard let input else { return }
+            let options = input.effectiveSpatialOptions
+            originID = options.originSpaceID ?? ""
+            waterEntryID = options.floodAffectedSpaceIDs.first ?? ""
+            refugeID = options.refugeSpaceID ?? ""
+            householdLeak = options.floodIsHouseholdLeak
+            daytimeStarts = options.startingSpaceIDs
+        }
+    }
+
+    private func sceneOptions(_ session: RehearsalCursor, home: HomeModel) -> some View {
+        DisclosureGroup(s("Exercise starting assumptions")) {
+            if scenarioID == "home-fire" {
+                Picker(s("Fire starts in one room"), selection: $originID) {
+                    Text(s("Use the authored default")).tag("")
+                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                }
+            }
+            if scenarioID == "flash-flood" {
+                Toggle(s("Local household leak exercise"), isOn: $householdLeak)
+                Picker(s("Water-affected room (optional)"), selection: $waterEntryID) {
+                    Text(householdLeak ? model.localizer("spatial.leak-location-unknown") : s("Regional warning; indoor extent unknown")).tag("")
+                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                }
+                if !householdLeak {
+                    Picker(s("Higher refuge to review (optional)"), selection: $refugeID) {
+                        Text(s("No refuge established")).tag("")
+                        ForEach(home.spaces.filter { $0.kind != .closet }) { Text($0.label).tag($0.id) }
+                    }
+                }
+            }
+            ForEach(session.result.input.household.people) { person in
+                Picker(model.localizer("spatial.start-person", ["name": person.localizedLabel(model.localizer)]), selection: Binding(get: { daytimeStarts[person.id] ?? "" }, set: { daytimeStarts[person.id] = $0 })) {
+                    Text(s("Use recorded assignment")).tag("")
+                    ForEach(home.spaces) { Text($0.label).tag($0.id) }
+                }
+            }
+            Button(s("Restart with these assumptions")) {
+                var variants = session.result.input.variants.filter { !$0.hasPrefix("origin:") && !$0.hasPrefix("waterEntry:") && !$0.hasPrefix("refuge:") && !$0.hasPrefix("start:") && $0 != "householdLeak" }
+                if !originID.isEmpty { variants.append("origin:\(originID)") }
+                if !waterEntryID.isEmpty { variants.append("waterEntry:\(waterEntryID)") }
+                if !householdLeak && !refugeID.isEmpty { variants.append("refuge:\(refugeID)") }
+                if householdLeak { variants.append("householdLeak") }
+                for key in daytimeStarts.keys.sorted() { if let room = daytimeStarts[key], !room.isEmpty { variants.append("start:\(key)|\(room)") } }
+                Task { await model.startRehearsal(scenarioID: scenarioID, variants: variants) }
+            }
+        }
+        .font(.callout)
+        .accessibilityIdentifier("rehearsal.assumptions")
+    }
+
+    /// "Step 2 of 6": progress through the exercise. Exercise minutes are not shown up front, so nothing reads as a
+    /// countdown or a prediction of how much time a household has. Before the first step only the total is shown.
+    private func stepLabel(_ session: RehearsalCursor) -> some View {
+        let text = session.revealed == 0
+            ? model.localizer("ui.rehearse.stepCount", ["total": "\(session.keyMomentCount)"])
+            : model.localizer("ui.rehearse.step", ["step": "\(max(session.keyMomentsRevealed, 1))", "total": "\(session.keyMomentCount)"])
+        return Label(text, systemImage: "list.number")
+            .font(.subheadline.weight(.semibold).monospacedDigit())
+            .foregroundStyle(.secondary)
+            .accessibilityIdentifier("rehearsal.step")
+    }
+
+    /// Who the family is and what is about to happen, so the first screen is not an empty box. The scenario blurb
+    /// is the same one shown on the Rehearse list; the household line matches onboarding.
+    private func intro(_ session: RehearsalCursor) -> some View {
+        let l = model.localizer
+        let household = session.result.input.household
+        return SectionCard(title: l("ui.rehearse.introTitle"), systemImage: "info.circle") {
+            Text(l("ui.scenario.\(scenarioID).blurb")).font(.title3.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+            Text(l("ui.rehearse.introHousehold", ["household": household.displayName, "summary": OnboardingView.summary(household, localizer: l)]))
+                .font(.callout)
+            if household.isFictional { StatusPill(text: l("family.example"), systemImage: "house", tint: Theme.caution) }
+            Text(l("ui.rehearse.introHow")).font(.footnote).foregroundStyle(.secondary)
+        }
+        .accessibilityIdentifier("rehearsal.intro")
+    }
+
+    /// The decision answered at the current step, until the exercise moves past that minute. The same option text and
+    /// feedback appear again in the debrief.
+    private func answeredChoice(_ session: RehearsalCursor, latest: SimulationEvent) -> (DecisionPoint, DecisionPoint.Option)? {
+        let result = session.result
+        let next = session.revealed < result.events.count ? result.events[session.revealed] : nil
+        // A decision just answered is one the cursor has reached but not moved past (same test that made it pending),
+        // or one whose outcome event is the newest thing on screen.
+        func current(_ d: DecisionPoint) -> Bool {
+            if latest.id == "evt.\(d.id)" { return true }
+            guard d.simMinute >= latest.simMinute else { return false }
+            guard let next else { return true }
+            return next.id == "evt.\(d.id)" || next.simMinute > d.simMinute
+        }
+        guard let decision = result.decisions
+                .filter({ result.input.choices[$0.id] != nil && current($0) })
+                .max(by: { ($0.simMinute, $0.id) < ($1.simMinute, $1.id) }),
+              let chosen = result.input.choices[decision.id],
+              let option = decision.options.first(where: { $0.id == chosen }) else { return nil }
+        return (decision, option)
+    }
+
+    private func choiceFeedback(_ option: DecisionPoint.Option) -> some View {
+        let l = model.localizer
+        return SectionCard(title: l("ui.rehearse.youChose"), systemImage: "checkmark.circle", tint: Theme.success) {
+            Text(l(option.labelKey)).font(.body.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+            Text(l(option.feedbackKey)).font(.callout).fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityIdentifier("rehearsal.choiceFeedback")
     }
 
     private func clock(_ session: RehearsalCursor) -> some View {
         let minute = session.currentMinute
-        let text = String(format: "+%dh %02dm", minute / 60, minute % 60)
+        let text = RehearsalPresentation.compactTime(minutes: minute, localizer: model.localizer)
         return Label(model.localizer("common.simClock", ["time": text]), systemImage: "clock")
             .font(.subheadline.weight(.semibold).monospacedDigit())
             .foregroundStyle(.secondary)
-            .accessibilityLabel("Exercise time \(minute / 60) hours \(minute % 60) minutes after the scenario starts")
+            .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: minute, localizer: model.localizer))
     }
 
     /// Services and resources the newest event changed, as status pills.
@@ -161,7 +300,7 @@ struct RehearsalView: View {
                 ForEach(event.serviceChanges.keys.sorted(), id: \.self) { id in
                     let state = event.serviceChanges[id] ?? .unknown
                     HStack {
-                        Text(ServiceNames.name(id, household: model.household))
+                        Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                         Spacer()
                         StatusPill(text: l("common.status.\(state.rawValue)"), systemImage: Theme.symbol(for: state),
                                    tint: Theme.color(for: state))
@@ -188,7 +327,7 @@ struct RehearsalView: View {
             .accessibilityLabel(l("common.action.replay"))
             .accessibilityIdentifier("rehearsal.replay")
             // Both stay visible so the next step is always obvious: "Next" until the end, then "Debrief".
-            Button { model.rehearsal?.advance() } label: {
+            Button { model.rehearsal?.advanceToNextKeyEvent() } label: {
                 Label(session.pendingDecision != nil ? l("ui.rehearse.chooseAbove") : l("common.action.advance"),
                       systemImage: session.pendingDecision != nil ? "hand.point.up" : "forward.frame")
             }
@@ -207,7 +346,112 @@ struct RehearsalView: View {
     }
 }
 
+struct SpatialRehearsalScene: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
+    let home: HomeModel
+    let household: HouseholdProfile
+    let state: SpatialExerciseState?
+    var previous: SpatialExerciseState? = nil
+    @State private var personID: String?
+    @State private var show3D = false
+    @State private var selectedFloorID: String?
+    private var route: RouteResult? { state?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
+    private var previousRoute: RouteResult? { previous?.routes.first { $0.request.personID == (personID ?? household.people.first?.id) } }
+    /// Only the selected person's current routes. An earlier route that is no longer valid is never drawn as available.
+    private var currentPaths: [RoutePath] { [route?.primary, route?.alternative].compactMap { $0 } }
+
+    /// What this stage changed compared with the previous one, in words.
+    private var changes: [String] {
+        guard let state else { return [] }
+        let l = model.localizer
+        var out: [String] = []
+        let newRooms = state.affectedSpaceIDs.filter { !(previous?.affectedSpaceIDs.contains($0) ?? false) }.compactMap { home.space($0)?.label }
+        if !newRooms.isEmpty { out.append(l("ui.scene.newAffected", ["rooms": newRooms.joined(separator: ", ")])) }
+        let newPortals = state.affectedPortalIDs.filter { !(previous?.affectedPortalIDs.contains($0) ?? false) }
+        if !newPortals.isEmpty { out.append(l("ui.scene.newBlocked", ["count": "\(newPortals.count)"])) }
+        if let before = previousRoute?.primary, before != route?.primary {
+            out.append(l(route?.primary == nil ? "ui.scene.routeLost" : "ui.scene.routeChanged"))
+        }
+        return out
+    }
+
+    private var sceneFloorID: String? {
+        HomeScenePresentation.sceneFloorID(in: home, selected: selectedFloorID, route: route, destinationID: state?.destinationSpaceID)
+    }
+
+    var body: some View {
+        SectionCard(title: s("Current exercise scene"), systemImage: "house") {
+            if home.isFictional { Label(s("Example home"), systemImage: "sparkles").font(.caption.weight(.semibold)) }
+            if household.people.count > 1 {
+                Picker(s("Person"), selection: Binding(get: { personID ?? household.people.first?.id ?? "" }, set: { personID = $0 })) {
+                    ForEach(household.people) { Text($0.localizedLabel(model.localizer)).tag($0.id) }
+                }
+                .accessibilityIdentifier("rehearsal.person")
+            }
+            if home.floors.count > 1 {
+                Picker(model.localizer("spatial.floor"), selection: Binding(get: { sceneFloorID ?? "" }, set: { selectedFloorID = $0 })) {
+                    ForEach(home.floors) { Text($0.label).tag($0.id) }
+                }.accessibilityIdentifier("rehearsal.floor")
+            }
+            FloorPlanView(home: home, routes: currentPaths, highlightedFloorID: sceneFloorID,
+                          highlightedElementID: nil, spatialState: state, selectedRoute: route)
+                .frame(height: 300)
+            if !changes.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(model.localizer("ui.scene.newThisStep")).font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                    ForEach(changes, id: \.self) { Label($0, systemImage: "arrow.turn.down.right").font(.callout.weight(.semibold)) }
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("rehearsal.changes")
+            }
+            if let room = HomeScenePresentation.startingRoom(in: home, route: route) {
+                Label(model.localizer("spatial.recorded-start-room", ["room": room.label]), systemImage: "person.crop.circle")
+                    .font(.footnote)
+            } else if route != nil {
+                // Only when this stage has a route request: before the first route there is nothing to contradict later.
+                Text(model.localizer("spatial.start-room-unknown")).font(.footnote)
+            }
+            if let state {
+                Text(state.assumptionKey.map { model.localizer($0) } ?? state.assumption).font(.footnote).foregroundStyle(.secondary)
+                if !state.affectedSpaceIDs.isEmpty {
+                    Label(state.affectedSpaceIDs.compactMap { home.space($0)?.label }.joined(separator: ", "), systemImage: "exclamationmark.triangle")
+                        .font(.callout)
+                }
+            }
+            if let exposed = state?.exposedSpaceIDs, !exposed.isEmpty {
+                Label(model.localizer("spatial.window-exposure", ["rooms": exposed.compactMap { home.space($0)?.label }.joined(separator: ", ")]), systemImage: "window.vertical.closed")
+                    .font(.footnote)
+            }
+            if let route {
+                if let path = route.primary {
+                    Text(path.spaceSequence.compactMap { id in
+                        guard let room = home.space(id) else { return nil }
+                        let floor = home.floors.first(where: { $0.id == room.floorID })?.label ?? ""
+                        return home.floors.count > 1 ? "\(room.label) (\(floor))" : room.label
+                    }.joined(separator: " → ")).font(.callout.weight(.semibold))
+                    if !path.verificationNeeded.isEmpty { Text(s("Some opening measurements still need confirmation.")).font(.footnote) }
+                } else {
+                    Label(s(route.noRouteReason == .blockedByScenario ? "No supported route: the starting room or a required connection is affected." : "No supported route from the recorded starting room. Review the layout, destination and this person's access needs."), systemImage: "exclamationmark.triangle")
+                        .font(.callout)
+                }
+            } else { Text(s("No route has been established for this stage.")).font(.footnote).foregroundStyle(.secondary) }
+            DisclosureGroup(s("Room list")) { HomeRoomListView(home: home, spatialState: state, selectedRoute: route) }
+            DisclosureGroup(s("3D layout"), isExpanded: $show3D) {
+                if show3D {
+                    DollhouseView(home: home, routes: currentPaths, floorID: sceneFloorID, spatialState: state, selectedRoute: route).frame(height: 230)
+                    DollhouseKey(home: home, spatialState: state, selectedRoute: route, hasRoutes: !currentPaths.isEmpty)
+                }
+            }
+        }
+        .onChange(of: personID) { _, _ in selectedFloorID = nil }
+        .onChange(of: state?.stageID) { _, _ in selectedFloorID = nil }
+    }
+}
+
 struct PracticeBanner: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     let text: String
     var body: some View {
         Label(text, systemImage: "figure.walk.motion")
@@ -220,6 +464,7 @@ struct PracticeBanner: View {
 }
 
 struct ServiceStateGrid: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let snapshot: SimulationSnapshot
 
@@ -228,15 +473,15 @@ struct ServiceStateGrid: View {
         // Problems first, then unknowns, then working: what needs attention is at the top.
         let rank: [ServiceState: Int] = [.unavailable: 0, .degraded: 1, .unknown: 2, .operational: 3]
         let ids = snapshot.services.keys.sorted {
-            (rank[snapshot.services[$0] ?? .unknown] ?? 9, ServiceNames.name($0, household: model.household))
-                < (rank[snapshot.services[$1] ?? .unknown] ?? 9, ServiceNames.name($1, household: model.household))
+            (rank[snapshot.services[$0] ?? .unknown] ?? 9, ServiceNames.name($0, household: model.household, localizer: model.localizer))
+                < (rank[snapshot.services[$1] ?? .unknown] ?? 9, ServiceNames.name($1, household: model.household, localizer: model.localizer))
         }
         VStack(alignment: .leading, spacing: Theme.Space.s) {
             ForEach(ids, id: \.self) { id in
                 let state = snapshot.services[id] ?? .unknown
                 HStack {
                     Image(systemName: Theme.symbol(for: state)).foregroundStyle(Theme.color(for: state)).accessibilityHidden(true)
-                    Text(ServiceNames.name(id, household: model.household))
+                    Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                     Spacer()
                     Text(l("common.status.\(state.rawValue)")).foregroundStyle(.secondary)
                 }
@@ -247,9 +492,9 @@ struct ServiceStateGrid: View {
                 let q = snapshot.resources[id]!
                 HStack {
                     Image(systemName: "shippingbox").foregroundStyle(.secondary).accessibilityHidden(true)
-                    Text(ServiceNames.name(id, household: model.household))
+                    Text(ServiceNames.name(id, household: model.household, localizer: model.localizer))
                     Spacer()
-                    Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit) } ?? l("common.status.unknown"))
+                    Text(q.amount.map { ServiceNames.quantity($0, unit: q.unit, localizer: l, countryCode: model.household?.privateLocation?.countryCode) } ?? l("common.status.unknown"))
                         .foregroundStyle(.secondary)
                 }
                 .font(.callout)
@@ -262,6 +507,7 @@ struct ServiceStateGrid: View {
 /// An event. The current one is large; earlier ones use `TimelineRow`. "Why did this happen?" names the household
 /// facts, the events that caused it, and the sources — never raw rule or fact IDs.
 struct EventCard: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let event: SimulationEvent
     var isCurrent = false
@@ -273,25 +519,26 @@ struct EventCard: View {
         let tint = Theme.color(for: event.severity)
         VStack(alignment: .leading, spacing: Theme.Space.s) {
             HStack(spacing: Theme.Space.s) {
-                Text(String(format: "+%dh %02dm", event.simMinute / 60, event.simMinute % 60))
+                Text(RehearsalPresentation.compactTime(minutes: event.simMinute, localizer: model.localizer))
+                    .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: event.simMinute, localizer: model.localizer))
                     .font(.caption.weight(.semibold).monospacedDigit()).foregroundStyle(.secondary)
                 if event.severity != .info {
                     StatusPill(text: event.severity == .critical ? l("common.critical") : l("common.caution"),
                                systemImage: Theme.symbol(for: event.severity), tint: tint)
                 }
             }
-            Text(l(event.titleKey, event.templateValues))
+            Text(l(event.titleKey, event.localizedTemplateValues(household: model.household, localizer: model.localizer)))
                 .font(isCurrent ? .title3.weight(.bold) : .body.weight(.semibold))
                 .fixedSize(horizontal: false, vertical: true)
-            if let detail = event.detailKey { Text(l(detail, event.templateValues)).font(.callout) }
+            if let detail = event.detailKey { Text(l(detail, event.localizedTemplateValues(household: model.household, localizer: model.localizer))).font(.callout) }
             DisclosureGroup(l("common.whyHappened"), isExpanded: $expanded) {
                 VStack(alignment: .leading, spacing: 4) {
                     if !event.evidence.factIDs.isEmpty {
-                        Text(l("ui.basedOn", ["facts": event.evidence.factIDs.map { UnknownNames.describe($0, household: model.household) }.joined(separator: "; ")]))
+                        Text(l("ui.basedOn", ["facts": event.evidence.factIDs.map { UnknownNames.describe($0, household: model.household, localizer: model.localizer) }.joined(separator: "; ")]))
                     }
                     let causes = event.evidence.causedByEventIDs.compactMap { id in result?.events.first { $0.id == id } }
                     if !causes.isEmpty {
-                        Text(l("ui.causedBy", ["events": causes.map { l($0.titleKey, $0.templateValues) }.joined(separator: "; ")]))
+                        Text(l("ui.causedBy", ["events": causes.map { l($0.titleKey, $0.localizedTemplateValues(household: model.household, localizer: l)) }.joined(separator: "; ")]))
                     }
                     let sources = event.evidence.sourceIDs.compactMap { model.content?.source($0) }
                     if !sources.isEmpty {
@@ -316,6 +563,7 @@ struct EventCard: View {
 }
 
 struct TimelineRow: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let event: SimulationEvent
     var result: RehearsalResult?
@@ -324,18 +572,20 @@ struct TimelineRow: View {
     var body: some View {
         Button { expanded.toggle() } label: {
             HStack(alignment: .firstTextBaseline, spacing: Theme.Space.m) {
-                Text(String(format: "+%dh %02dm", event.simMinute / 60, event.simMinute % 60))
+                Text(RehearsalPresentation.compactTime(minutes: event.simMinute, localizer: model.localizer))
+                    .accessibilityLabel(RehearsalPresentation.spokenTime(minutes: event.simMinute, localizer: model.localizer))
                     .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-                    .frame(width: 64, alignment: .leading)
+                    .frame(minWidth: 64, alignment: .leading)
+                    .fixedSize(horizontal: true, vertical: false)
                 Image(systemName: Theme.symbol(for: event.severity)).font(.caption).foregroundStyle(Theme.color(for: event.severity))
                     .accessibilityHidden(true)
-                Text(model.localizer(event.titleKey, event.templateValues)).font(.callout).multilineTextAlignment(.leading)
+                Text(model.localizer(event.titleKey, event.localizedTemplateValues(household: model.household, localizer: model.localizer))).font(.callout).multilineTextAlignment(.leading)
                 Spacer(minLength: 0)
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Shows details")
+        .accessibilityHint(model.localizer(expanded ? "spatial.hide-details" : "spatial.show-details"))
         if expanded {
             EventCard(event: event, result: result)
         }
@@ -343,6 +593,7 @@ struct TimelineRow: View {
 }
 
 struct DecisionCard: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let decision: DecisionPoint
     let onChoose: (String) -> Void
@@ -370,6 +621,7 @@ struct DecisionCard: View {
 }
 
 struct RouteSummaryView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let routes: [RouteResult]
 
@@ -378,7 +630,7 @@ struct RouteSummaryView: View {
         SectionCard(title: l("common.practiceRoutes"), systemImage: "figure.walk.departure") {
             if let home = model.home {
                 ForEach(Array(routes.enumerated()), id: \.offset) { _, route in
-                    let start = home.space(route.request.startSpaceID)?.label ?? route.request.startSpaceID
+                    let start = RehearsalPresentation.startingRoom(route.request.startSpaceID, in: home, localizer: l)
                     VStack(alignment: .leading, spacing: 4) {
                         if let p = route.primary {
                             Text(l("ui.route.from", ["start": start, "steps": p.spaceSequence.compactMap { home.space($0)?.label }.joined(separator: " → ")]))
@@ -397,7 +649,7 @@ struct RouteSummaryView: View {
                 FloorPlanView(home: home, routes: routes.compactMap(\.primary), highlightedFloorID: home.floors.first?.id)
                     .frame(height: 260)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.control))
-                    .accessibilityLabel("Floor plan with practice routes. The route is also described in text above.")
+                    .accessibilityLabel(l("spatial.route-scene-summary"))
             }
             Text(l("plan.route.caveat")).font(.caption).foregroundStyle(.secondary)
         }
@@ -405,9 +657,11 @@ struct RouteSummaryView: View {
 }
 
 struct DebriefView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     @State private var showAll = false
+    @State private var settingUp = false
 
     var body: some View {
         let l = model.localizer
@@ -448,10 +702,11 @@ struct DebriefView: View {
                     if !result.unknowns.isEmpty {
                         SectionCard(title: l("common.unconfirmed"), systemImage: "questionmark.circle", tint: Theme.caution) {
                             ForEach(result.unknowns, id: \.self) {
-                                IconRow(systemImage: "questionmark", tint: Theme.caution, title: UnknownNames.describe($0, household: model.household))
+                                IconRow(systemImage: "questionmark", tint: Theme.caution, title: UnknownNames.describe($0, household: model.household, localizer: model.localizer))
                             }
                         }
                     }
+                    nextAction
                 }
             }
             .padding()
@@ -459,19 +714,44 @@ struct DebriefView: View {
         .background(Theme.background)
         .navigationTitle(l("common.debrief"))
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } } }
+        // Pushed inside the debrief's own stack, so there is no sheet on a sheet. Saving replaces the example household.
+        .navigationDestination(isPresented: $settingUp) { HouseholdSetupView(mode: .create) }
+    }
+
+    /// The debrief ends with a way forward instead of a dead end: the example family offers "Set up my household";
+    /// a real household goes straight to its preparation list.
+    private var nextAction: some View {
+        let l = model.localizer
+        return VStack(spacing: Theme.Space.s) {
+            if model.household?.isFictional == true {
+                Button { settingUp = true } label: { Label(l("ui.debrief.setUpOwn"), systemImage: "person.2.badge.plus") }
+                    .buttonStyle(.primary)
+                    .accessibilityIdentifier("debrief.setUpOwn")
+                Text(l("ui.debrief.setUpOwnWhy")).font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Button { model.pendingTab = RootView.Tab.prepare.rawValue; dismiss() } label: { Label(l("ui.debrief.goPrepare"), systemImage: "checklist") }
+                    .buttonStyle(.secondary)
+                    .accessibilityIdentifier("debrief.goPrepare")
+            } else {
+                Button { model.pendingTab = RootView.Tab.prepare.rawValue; dismiss() } label: { Label(l("ui.debrief.goPrepare"), systemImage: "checklist") }
+                    .buttonStyle(.primary)
+                    .accessibilityIdentifier("debrief.goPrepare")
+            }
+        }
+        .padding(.top, Theme.Space.s)
     }
 }
 
 struct RecommendationRow: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     let recommendation: Recommendation
     var body: some View {
         let l = model.localizer
         HStack(alignment: .top, spacing: Theme.Space.m) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(l(recommendation.titleKey, recommendation.templateValues)).font(.body.weight(.semibold))
+                Text(l(recommendation.titleKey, recommendation.localizedTemplateValues(household: model.household, localizer: l))).font(.body.weight(.semibold))
                     .multilineTextAlignment(.leading)
-                Text(l(recommendation.whyKey, recommendation.templateValues)).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                Text(l(recommendation.whyKey, recommendation.localizedTemplateValues(household: model.household, localizer: l))).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
                     .multilineTextAlignment(.leading)
                 StatusPill(text: l("common.effort.\(recommendation.effort.rawValue)"), systemImage: "dollarsign.circle", tint: Theme.accent)
             }
@@ -487,90 +767,46 @@ struct RecommendationDetailView: View {
     @Environment(AppModel.self) private var model
     let recommendation: Recommendation
     @State private var showComparison = false
-    @State private var tryFailed = false
-    @State private var trying = false
-    @State private var explanation: String?
+    @State private var comparing = false
+
+    private var preparation: NextStep? {
+        let canonical = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
+            "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water", "act.fire.meeting-point": "prep.nearMeetup",
+            "act.fire.smoke-alarms": "prep.smokeAlarms", "act.assist.assign-helper": "prep.helper"][recommendation.actionID] ?? recommendation.actionID
+        guard let summary = model.nextSteps else { return nil }
+        return (summary.toDo + summary.completed).first {
+            $0.recommendation.id == recommendation.id
+                || ($0.recommendation.actionID == canonical && $0.recommendation.subjectID == recommendation.subjectID)
+        }
+    }
 
     var body: some View {
-        let l = model.localizer
-        let r = recommendation
-        let completed = model.household?.completedPreparations.contains { $0.actionID == r.actionID } ?? false
-        ScrollView {
-            VStack(alignment: .leading, spacing: Theme.Space.l) {
-                Text(l(r.titleKey, r.templateValues)).font(.title2.weight(.bold))
-                SectionCard(title: l("common.why"), systemImage: "lightbulb") {
-                    Text(l(r.whyKey, r.templateValues))
-                    if let explanation { Text(explanation).font(.callout).foregroundStyle(.secondary) }
-                    if !r.matchedFactIDs.isEmpty {
-                        Text(l("ui.basedOn", ["facts": r.matchedFactIDs.map { UnknownNames.describe($0, household: model.household) }.joined(separator: "; ")]))
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                    let causes = r.causeEventIDs.compactMap { id in model.rehearsal?.result.events.first { $0.id == id } }
-                    if !causes.isEmpty {
-                        Text(l("ui.causedBy", ["events": causes.map { l($0.titleKey, $0.templateValues) }.joined(separator: "; ")]))
-                            .font(.footnote).foregroundStyle(.secondary)
-                    }
-                }
-                if let effect = r.modeledEffectKey {
-                    SectionCard(title: l("common.whatChanges"), systemImage: "arrow.triangle.2.circlepath") { Text(l(effect, r.templateValues)) }
-                }
-                if !r.unconfirmed.isEmpty || !r.feasibilityNotes.isEmpty {
-                    SectionCard(title: l("common.unconfirmed"), systemImage: "questionmark.circle", tint: Theme.caution) {
-                        ForEach(r.unconfirmed, id: \.self) { Text(UnknownNames.describe($0, household: model.household)) }
-                        ForEach(r.feasibilityNotes, id: \.self) { Text(l($0)) }
-                    }
-                }
-                SourcesCard(sourceIDs: r.sourceIDs)
-                VStack(spacing: Theme.Space.s) {
-                    if let intervention = r.tryIntervention {
-                        Button {
-                            trying = true
-                            Task {
-                                await model.tryChange(intervention)
-                                trying = false
-                                // Only open the sheet for a comparison that was actually produced.
-                                tryFailed = model.comparison == nil
-                                showComparison = model.comparison != nil
-                            }
-                        } label: {
-                            if trying { ProgressView().tint(Theme.onAccent) } else {
-                                Label(l("common.action.tryChange"), systemImage: "wand.and.stars")
-                            }
-                        }
-                        .buttonStyle(.primary)
-                        .disabled(trying)
-                        .accessibilityIdentifier("recommendation.tryChange")
-                        if tryFailed {
-                            // Shown here because the app-wide error alert cannot appear over this sheet.
-                            Text(l("ui.tryFailed")).font(.footnote).foregroundStyle(Theme.caution)
+        if let preparation {
+            PreparationTaskEditor(step: preparation)
+                .toolbar {
+                    if preparation.recommendation.tryIntervention != nil {
+                        ToolbarItem(placement: .bottomBar) {
+                            Button(model.localizer("common.action.tryChange")) {
+                                comparing = true
+                                Task { showComparison = await model.tryChange(for: preparation); comparing = false }
+                            }.disabled(comparing)
                         }
                     }
-                    Button {
-                        Task { await model.markPreparationCompleted(r.actionID) }
-                    } label: {
-                        Label(completed ? l("common.completed") : l("common.action.markDone"),
-                              systemImage: completed ? "checkmark.seal.fill" : "checkmark.seal")
-                    }
-                    .buttonStyle(SecondaryButtonStyle(tint: Theme.success))
-                    .disabled(completed)
-                    .accessibilityIdentifier("recommendation.markDone")
-                    Text(l("common.tryVsDone")).font(.footnote).foregroundStyle(.secondary)
                 }
-            }
-            .padding()
+                // Pushed within the debrief stack: a comparison never opens as a sheet on top of a sheet.
+                .navigationDestination(isPresented: $showComparison) { ComparisonView() }
         }
-        .background(Theme.background)
-        .navigationTitle(l("common.preparation"))
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showComparison) { NavigationStack { ComparisonView() } }
-        .task {
-            explanation = await ExplanationService.explain(templateText: l(r.whyKey, r.templateValues), recommendation: r, locale: model.locale)
+        else {
+            // A changed household can resolve an old rehearsal gap. The real facts remain editable;
+            // a generic Done button never certifies a route or medical compatibility.
+            FocusedHouseholdEditor(focus: .supplies)
         }
     }
 }
 
 /// Before and after "Try this change": the same scenario with one change. Hypothetical; the household is unchanged.
 struct ComparisonView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
 
@@ -593,10 +829,10 @@ struct ComparisonView: View {
                             let states = d.serviceChanges[id] ?? []
                             if states.count == 2 {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(ServiceNames.name(id, household: model.household)).font(.body.weight(.semibold))
+                                    Text(ServiceNames.name(id, household: model.household, localizer: model.localizer)).font(.body.weight(.semibold))
                                     HStack(spacing: Theme.Space.s) {
                                         StatusPill(text: l("common.status.\(states[0].rawValue)"), systemImage: Theme.symbol(for: states[0]), tint: Theme.color(for: states[0]))
-                                        Image(systemName: "arrow.right").foregroundStyle(.secondary).accessibilityLabel("becomes")
+                                        Image(systemName: "arrow.right").foregroundStyle(.secondary).accessibilityLabel(l("spatial.becomes"))
                                         StatusPill(text: l("common.status.\(states[1].rawValue)"), systemImage: Theme.symbol(for: states[1]), tint: Theme.color(for: states[1]))
                                     }
                                 }
@@ -606,26 +842,30 @@ struct ComparisonView: View {
                         ForEach(d.resourceChanges.keys.sorted(), id: \.self) { id in
                             let q = d.resourceChanges[id] ?? []
                             if q.count == 2 {
-                                Text("\(ServiceNames.name(id, household: model.household)): \(q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit) } ?? l("common.status.unknown")) → \(q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit) } ?? l("common.status.unknown"))")
+                                let name = ServiceNames.name(id, household: model.household, localizer: l)
+                                let before = q[0].amount.map { ServiceNames.quantity($0, unit: q[0].unit, localizer: l, countryCode: model.household?.privateLocation?.countryCode) } ?? l("common.status.unknown")
+                                let after = q[1].amount.map { ServiceNames.quantity($0, unit: q[1].unit, localizer: l, countryCode: model.household?.privateLocation?.countryCode) } ?? l("common.status.unknown")
+                                Text("\(name): \(before) → \(after)")
+                                    .accessibilityLabel(RehearsalPresentation.transition(name: name, before: before, after: after, localizer: l))
                             }
                         }
                         ForEach(d.resolvedRequirements, id: \.self) {
-                            IconRow(systemImage: "checkmark", tint: Theme.success, title: l("common.resolved", ["item": UnknownNames.describe($0, household: model.household)]))
+                            IconRow(systemImage: "checkmark", tint: Theme.success, title: l("common.resolved", ["item": UnknownNames.describe($0, household: model.household, localizer: model.localizer)]))
                         }
                         ForEach(d.newRequirements, id: \.self) {
-                            IconRow(systemImage: "exclamationmark.triangle", tint: Theme.caution, title: l("common.newGap", ["item": UnknownNames.describe($0, household: model.household)]))
+                            IconRow(systemImage: "exclamationmark.triangle", tint: Theme.caution, title: l("common.newGap", ["item": UnknownNames.describe($0, household: model.household, localizer: model.localizer)]))
                         }
                     }
                     if !d.removedEventIDs.isEmpty || !d.addedEventIDs.isEmpty {
                         SectionCard(title: l("common.events"), systemImage: "list.bullet") {
                             ForEach(d.removedEventIDs, id: \.self) { id in
                                 if let e = c.baseline.events.first(where: { $0.id == id }) {
-                                    IconRow(systemImage: "minus.circle", tint: Theme.success, title: l(e.titleKey, e.templateValues), subtitle: l("ui.compare.noLonger"))
+                                    IconRow(systemImage: "minus.circle", tint: Theme.success, title: l(e.titleKey, e.localizedTemplateValues(household: model.household, localizer: l)), subtitle: l("ui.compare.noLonger"))
                                 }
                             }
                             ForEach(d.addedEventIDs, id: \.self) { id in
                                 if let e = c.modified.events.first(where: { $0.id == id }) {
-                                    IconRow(systemImage: "plus.circle", tint: Theme.caution, title: l(e.titleKey, e.templateValues), subtitle: l("ui.compare.new"))
+                                    IconRow(systemImage: "plus.circle", tint: Theme.caution, title: l(e.titleKey, e.localizedTemplateValues(household: model.household, localizer: l)), subtitle: l("ui.compare.new"))
                                 }
                             }
                         }
@@ -641,5 +881,15 @@ struct ComparisonView: View {
         .navigationTitle(l("common.beforeAfter"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } } }
+    }
+}
+
+extension RehearsalCursor {
+    /// The spatial state one revealed event earlier, so a scene can say what this step changed.
+    var spatialStateBeforeCursor: SpatialExerciseState? {
+        guard revealed > 1 else { return nil }
+        let earlier = revealed - 1
+        let minute = result.events[earlier - 1].simMinute
+        return result.snapshots.last { ($0.revealedEventCount.map { $0 <= earlier } ?? ($0.simMinute <= minute)) }?.spatialState
     }
 }

@@ -9,19 +9,25 @@ public enum InterventionApplier {
         EvidenceValue(value: v, origin: .scenarioAssumption, status: .confirmed, unit: unit)
     }
 
-    public static func apply(_ interventions: [Intervention], household: HouseholdProfile, home: HomeModel) -> (HouseholdProfile, HomeModel) {
+    public static func apply(_ interventions: [Intervention], household: HouseholdProfile, home: HomeModel?) -> (HouseholdProfile, HomeModel?) {
         var h = household
         var m = home
         for i in interventions { apply(i, &h, &m) }
         return (h, m)
     }
 
-    static func apply(_ i: Intervention, _ h: inout HouseholdProfile, _ m: inout HomeModel) {
+    /// Preserve source compatibility for geometry-backed callers while the optional overload serves no-layout runs.
+    public static func apply(_ interventions: [Intervention], household: HouseholdProfile, home: HomeModel) -> (HouseholdProfile, HomeModel) {
+        let (household, revisedHome) = apply(interventions, household: household, home: Optional(home))
+        return (household, revisedHome ?? home)
+    }
+
+    static func apply(_ i: Intervention, _ h: inout HouseholdProfile, _ home: inout HomeModel?) {
         switch i.actionID {
         case "act.backup.confirm-medical-backup":
             let targets = h.equipment.indices.filter { idx in
                 let eq = h.equipment[idx]
-                return eq.isEssential && !eq.needsRefrigeration && (i.parameters["equipment"].map { $0 == eq.id } ?? true)
+                return eq.isEssential && eq.requiresElectricalPower && (i.parameters["equipment"].map { $0 == eq.id } ?? true)
             }
             for idx in targets {
                 // Prefer an existing battery station the household owns; otherwise a hypothetical compatible one.
@@ -63,16 +69,23 @@ public enum InterventionApplier {
         case "act.refrigeration.cooler-plan":
             h.supplies.coolerAndIcePacks = hypothetical(true)
         case "act.tornado.choose-shelter":
-            let lowest = m.floors.map(\.level).min() ?? 0
-            let floors = Set(m.floors.filter { $0.level == lowest }.map(\.id))
+            guard var m = home else { return }
             let preferred: [SpaceKind] = [.closet, .bathroom, .hallway]
             for kind in preferred {
                 if let idx = m.spaces.indices.sorted(by: { m.spaces[$0].id < m.spaces[$1].id })
-                    .first(where: { m.spaces[$0].kind == kind && floors.contains(m.spaces[$0].floorID) }) {
+                    .first(where: { m.spaces[$0].kind == kind && ShelterSuitability.canConfirm(roomID: m.spaces[$0].id, in: m) }) {
+                    // Both the room answer and selection are hypothetical, confined to this simulation copy.
+                    // Recorded windows, unknown floors and unreviewed corrections still cannot be overridden.
                     m.spaces[idx].interiorNoWindowsConfirmed = hypothetical(true)
+                    m.annotations.removeAll { $0.kind == .tornadoShelterCandidate }
+                    m.annotations.append(Annotation(id: "an-hypothetical-tornado-shelter-\(m.spaces[idx].id)",
+                        kind: .tornadoShelterCandidate, floorID: m.spaces[idx].floorID, spaceID: m.spaces[idx].id,
+                        label: m.spaces[idx].label, verification: .verified,
+                        note: "Hypothetical exercise selection only; not a recorded household confirmation or an engineered safe room."))
                     break
                 }
             }
+            home = m
         case "act.assist.assign-helper":
             for idx in h.people.indices {
                 let p = h.people[idx]

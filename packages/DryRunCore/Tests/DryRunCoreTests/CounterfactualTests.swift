@@ -30,7 +30,7 @@ struct CounterfactualTests {
         #expect(cmp.diff.serviceChanges["svc.device.eq-oxygen"] == [.unavailable, .operational])
         // Heat and water are unaffected by a device backup.
         #expect(!cmp.diff.resolvedRequirements.contains("req.heat"))
-        #expect(cmp.diff.resolvedRecommendations.contains("act.backup.confirm-medical-backup"))
+        #expect(cmp.diff.resolvedRecommendations.contains(rec.id))
         // Hypothetical evidence is marked as a scenario assumption.
         #expect(cmp.modified.recommendations.contains { $0.actionID == "act.medical.document-runtime" })
     }
@@ -91,7 +91,7 @@ struct CounterfactualTests {
         ]
         for (name, actual) in cases {
             let url = SimFixtures.repoRoot.appendingPathComponent("fixtures/scenarios/\(name)")
-            if ProcessInfo.processInfo.environment["DRYRUN_WRITE_FIXTURES"] != nil {
+            if ProcessInfo.processInfo.environment["DRYRUN_WRITE_FIXTURES"] == "1" {
                 try DryRunJSON.encoder().encode(actual).write(to: url)
             }
             let expected = try DryRunJSON.decoder().decode(Expected.self, from: Data(contentsOf: url))

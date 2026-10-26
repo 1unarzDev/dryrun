@@ -44,7 +44,7 @@ struct LeadAdversarialTests {
         let d = try plan(h, ["home-fire"], locale: "en")
         let routeLines = lines(d, page: "scenario-home-fire", section: "homeplan").filter { $0.key == "plan.route.from" || $0.key == "plan.route.none" }
         let r = try SimFixtures.run(h, "home-fire")
-        let usual = r.routes.filter { $0.request.exclusions == .none }
+        let usual = r.routes
         let distinct = Set(usual.map { "\($0.request.startSpaceID)|\($0.request.mobility.requiresStepFree)" })
         #expect(routeLines.count == distinct.count)
     
@@ -53,7 +53,7 @@ struct LeadAdversarialTests {
     @Test("No English words injected into translated route lines without a fallback flag")
     func outsideWordNotLocalized() throws {
         let d = try plan(SampleHouseholds.oak, ["home-fire"], locale: "vi")
-        let from = lines(d, page: "scenario-home-fire", section: "homeplan").filter { $0.key == "plan.route.from" }
+        let from = lines(d, page: "scenario-home-fire", section: "homeplan").filter { $0.key == "plan.route.from" || $0.key == "plan.route.none" }
         #expect(!from.isEmpty)
         #expect(from.allSatisfy { !$0.text.contains("outside") || $0.isFallback })
     
@@ -115,6 +115,26 @@ struct LeadAdversarialTests {
         #expect(cursor.pendingDecision?.id == "choice.home-fire.first-move")
         #expect(cursor.visibleEvents.contains { $0.id == "evt.home-fire.alarm" })
     
+    }
+
+    @Test("Key-moment stepping skips no event and still stops at every decision and warning")
+    func keyMoments() throws {
+        for scenario in ["home-fire", "tornado", "flash-flood", "freeze-power-loss", "heat-grid-strain", "water-outage"] {
+            let r = try SimFixtures.engine.run(SimFixtures.input(SampleHouseholds.oak, scenario))
+            var fine = RehearsalCursor(result: r), keyed = RehearsalCursor(result: r)
+            var stops = 0
+            while !keyed.isFinished && keyed.pendingDecision == nil && stops < 500 {
+                let before = keyed.revealed
+                keyed.advanceToNextKeyEvent(); stops += 1
+                // Every event between stops is revealed (nothing hidden), and only the last one may be a warning.
+                let span = r.events[before..<keyed.revealed]
+                #expect(span.dropLast().allSatisfy { $0.severity == .info }, "\(scenario): a warning was passed over")
+            }
+            fine.advanceUntilDecisionOrEnd()
+            // Both reach the same place: the first unanswered decision (or the end).
+            #expect(keyed.revealed == fine.revealed && keyed.pendingDecision?.id == fine.pendingDecision?.id, "\(scenario)")
+            #expect(stops <= r.events.count && keyed.keyMomentsRevealed <= keyed.keyMomentCount)
+        }
     }
 
     @Test("Cursor finishes cleanly when all decisions are answered")

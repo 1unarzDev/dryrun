@@ -1,0 +1,233 @@
+{
+  "version": "dryrun-rubric/0.1-draft",
+  "domainWeights": {
+    "protection": 25,
+    "supplies": 25,
+    "communication": 20,
+    "continuity": 20,
+    "maintenance": 10
+  },
+  "criteria": [
+    {
+      "id": "alarms",
+      "domain": "protection",
+      "weight": 1,
+      "predicateIDs": [
+        "present",
+        "location",
+        "coverage",
+        "checked"
+      ],
+      "sourceIDs": [
+        "S19",
+        "S20"
+      ],
+      "critical": true,
+      "applicabilityRule": "always",
+      "freshnessDays": 30
+    },
+    {
+      "id": "escape",
+      "domain": "protection",
+      "weight": 1,
+      "predicateIDs": [
+        "confirmedExit",
+        "independentAlternative",
+        "reviewed"
+      ],
+      "sourceIDs": [
+        "S19"
+      ],
+      "critical": true,
+      "applicabilityRule": "always",
+      "freshnessDays": null
+    },
+    {
+      "id": "shelter",
+      "domain": "protection",
+      "weight": 1,
+      "predicateIDs": [
+        "suitable",
+        "reachable"
+      ],
+      "sourceIDs": [
+        "S22"
+      ],
+      "critical": true,
+      "applicabilityRule": "hazard-not-applicable",
+      "freshnessDays": null
+    },
+    {
+      "id": "water",
+      "domain": "supplies",
+      "weight": 1,
+      "predicateIDs": [
+        "quantity",
+        "accessible"
+      ],
+      "sourceIDs": [
+        "S26"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": null
+    },
+    {
+      "id": "food",
+      "domain": "supplies",
+      "weight": 1,
+      "predicateIDs": [
+        "quantity",
+        "accessible"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": null
+    },
+    {
+      "id": "essentials",
+      "domain": "supplies",
+      "weight": 1,
+      "predicateIDs": [
+        "light",
+        "firstAid",
+        "sanitation"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": null
+    },
+    {
+      "id": "contact",
+      "domain": "communication",
+      "weight": 1,
+      "predicateIDs": [
+        "usableContact",
+        "offlineAccess"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": null
+    },
+    {
+      "id": "meetups",
+      "domain": "communication",
+      "weight": 1,
+      "predicateIDs": [
+        "near",
+        "backup",
+        "transport"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": null
+    },
+    {
+      "id": "assistance",
+      "domain": "communication",
+      "weight": 1,
+      "predicateIDs": [
+        "assigned",
+        "available"
+      ],
+      "sourceIDs": [
+        "S19"
+      ],
+      "critical": false,
+      "applicabilityRule": "no-assistance-needs",
+      "freshnessDays": null
+    },
+    {
+      "id": "device",
+      "domain": "continuity",
+      "weight": 1,
+      "predicateIDs": [
+        "approvedAlternative",
+        "capacity",
+        "accessible"
+      ],
+      "sourceIDs": [
+        "S25"
+      ],
+      "critical": true,
+      "applicabilityRule": "no-essential-device",
+      "freshnessDays": null
+    },
+    {
+      "id": "care",
+      "domain": "continuity",
+      "weight": 1,
+      "predicateIDs": [
+        "caregiving",
+        "recordedSupplies"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "no-care-needs",
+      "freshnessDays": null
+    },
+    {
+      "id": "pets",
+      "domain": "continuity",
+      "weight": 1,
+      "predicateIDs": [
+        "supplies",
+        "transport"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "no-pets",
+      "freshnessDays": null
+    },
+    {
+      "id": "review",
+      "domain": "maintenance",
+      "weight": 1,
+      "predicateIDs": [
+        "currentPlan",
+        "currentContacts"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": 180
+    },
+    {
+      "id": "expiry",
+      "domain": "maintenance",
+      "weight": 1,
+      "predicateIDs": [
+        "suppliesCurrent",
+        "equipmentReviewed"
+      ],
+      "sourceIDs": [
+        "S53"
+      ],
+      "critical": false,
+      "applicabilityRule": "always",
+      "freshnessDays": 180
+    }
+  ],
+  "preparationWeight": 0.9,
+  "practiceWeight": 0.1,
+  "knownGapCap": 59,
+  "unknownGapCap": 79
+}

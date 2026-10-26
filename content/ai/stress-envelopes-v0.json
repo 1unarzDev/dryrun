@@ -1,0 +1,15 @@
+{
+  "version": "dryrun-stress-envelope/0.1-draft",
+  "status": "Human review pending; educational graph analysis",
+  "scoredEnvelopes": [{
+    "criterionID": "escape",
+    "predicateID": "independentAlternative",
+    "preconditions": ["Exact source household digest and home fingerprint still match", "Host-computed routes expose shared canonical geometry IDs"],
+    "unmet": "Alternative route shares a host-identified chokepoint",
+    "met": "Existing deterministic route assessment establishes independent alternatives; a stress run alone cannot grant credit",
+    "unknown": "Missing geometry or unsupported route evidence",
+    "deduplication": "One predicate assessment, regardless of trace count"
+  }],
+  "advisoryOnly": ["Arbitrary incident duration", "Hypothetical supply depletion", "Unverified destination capability", "Shared helper without confirmed simultaneous inability", "Extreme or unsupported hazards"],
+  "authority": "Stress findings do not change household facts. No model-defined deduction or criterion weight. Controlled improvements remain hypothetical until separately confirmed."
+}

@@ -1,0 +1,1653 @@
+{
+  "synthetic": true,
+  "provider": "gemini-3.1-flash-lite",
+  "metrics": {
+    "calls": 3,
+    "usage": [
+      {
+        "total_tokens": 1138,
+        "total_input_tokens": 1129,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 1129
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 9,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 0
+      },
+      {
+        "total_tokens": 1169,
+        "total_input_tokens": 1145,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 1145
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 24,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 0
+      },
+      {
+        "total_tokens": 1283,
+        "total_input_tokens": 1177,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 1177
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 106,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 0
+      }
+    ],
+    "outcomes": []
+  },
+  "trace": [
+    {
+      "name": "inspectScene",
+      "arguments": {},
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 0,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "a7d9bf2fd782734e",
+        "observation": {
+          "kind": "inspectScene",
+          "scene": {
+            "schemaVersion": "dryrun.home-scene/1",
+            "homeRevision": 1,
+            "units": "meter",
+            "coordinateConvention": "per-floor x/y right-handed; floor transforms to common",
+            "floors": [
+              {
+                "id": "fl-ground",
+                "elevation": 0,
+                "transform": {
+                  "rotationRadians": 0,
+                  "translation": {
+                    "x": 0,
+                    "y": 0
+                  }
+                }
+              }
+            ],
+            "rooms": [
+              {
+                "id": "sp-living",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 0,
+                    "y": 0
+                  },
+                  {
+                    "x": 7,
+                    "y": 0
+                  },
+                  {
+                    "x": 7,
+                    "y": 5
+                  },
+                  {
+                    "x": 0,
+                    "y": 5
+                  }
+                ],
+                "use": "livingRoom",
+                "confirmed": true
+              },
+              {
+                "id": "sp-kitchen",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 7,
+                    "y": 0
+                  },
+                  {
+                    "x": 12,
+                    "y": 0
+                  },
+                  {
+                    "x": 12,
+                    "y": 5
+                  },
+                  {
+                    "x": 7,
+                    "y": 5
+                  }
+                ],
+                "use": "kitchen",
+                "confirmed": true
+              },
+              {
+                "id": "sp-hall",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 0,
+                    "y": 5
+                  },
+                  {
+                    "x": 12,
+                    "y": 5
+                  },
+                  {
+                    "x": 12,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 0,
+                    "y": 6.2
+                  }
+                ],
+                "use": "hallway",
+                "confirmed": true
+              },
+              {
+                "id": "sp-bed1",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 0,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 4.5,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 4.5,
+                    "y": 10
+                  },
+                  {
+                    "x": 0,
+                    "y": 10
+                  }
+                ],
+                "use": "bedroom",
+                "confirmed": true
+              },
+              {
+                "id": "sp-closet",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 4.5,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 7,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 7,
+                    "y": 7.4
+                  },
+                  {
+                    "x": 4.5,
+                    "y": 7.4
+                  }
+                ],
+                "use": "closet",
+                "confirmed": true
+              },
+              {
+                "id": "sp-bath",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 4.5,
+                    "y": 7.4
+                  },
+                  {
+                    "x": 7,
+                    "y": 7.4
+                  },
+                  {
+                    "x": 7,
+                    "y": 10
+                  },
+                  {
+                    "x": 4.5,
+                    "y": 10
+                  }
+                ],
+                "use": "bathroom",
+                "confirmed": true
+              },
+              {
+                "id": "sp-bed2",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 7,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 12,
+                    "y": 6.2
+                  },
+                  {
+                    "x": 12,
+                    "y": 10
+                  },
+                  {
+                    "x": 7,
+                    "y": 10
+                  }
+                ],
+                "use": "bedroom",
+                "confirmed": true
+              }
+            ],
+            "portals": [
+              {
+                "id": "pt-front",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 3,
+                  "y": 0
+                },
+                "b": {
+                  "x": 3.9,
+                  "y": 0
+                },
+                "sideA": "sp-living",
+                "sideB": "exterior",
+                "clearWidth": {
+                  "value": 0.9,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-back",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 12,
+                  "y": 2
+                },
+                "b": {
+                  "x": 12,
+                  "y": 2.9
+                },
+                "sideA": "sp-kitchen",
+                "sideB": "exterior",
+                "clearWidth": {
+                  "value": 0.86,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": false,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-living-kitchen",
+                "floorID": "fl-ground",
+                "kind": "opening",
+                "verification": "verified",
+                "a": {
+                  "x": 7,
+                  "y": 1
+                },
+                "b": {
+                  "x": 7,
+                  "y": 2.2
+                },
+                "sideA": "sp-living",
+                "sideB": "sp-kitchen",
+                "clearWidth": {
+                  "value": 1.2,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-living-hall",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 5,
+                  "y": 5
+                },
+                "b": {
+                  "x": 5.9,
+                  "y": 5
+                },
+                "sideA": "sp-living",
+                "sideB": "sp-hall",
+                "clearWidth": {
+                  "value": 0.9,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-kitchen-hall",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 8,
+                  "y": 5
+                },
+                "b": {
+                  "x": 8.86,
+                  "y": 5
+                },
+                "sideA": "sp-kitchen",
+                "sideB": "sp-hall",
+                "clearWidth": {
+                  "value": 0.86,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-bed1-hall",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 3,
+                  "y": 6.2
+                },
+                "b": {
+                  "x": 3.85,
+                  "y": 6.2
+                },
+                "sideA": "sp-bed1",
+                "sideB": "sp-hall",
+                "clearWidth": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-bed2-hall",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 9,
+                  "y": 6.2
+                },
+                "b": {
+                  "x": 9.86,
+                  "y": 6.2
+                },
+                "sideA": "sp-bed2",
+                "sideB": "sp-hall",
+                "clearWidth": {
+                  "value": 0.86,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-closet-hall",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 5.2,
+                  "y": 6.2
+                },
+                "b": {
+                  "x": 5.9,
+                  "y": 6.2
+                },
+                "sideA": "sp-closet",
+                "sideB": "sp-hall",
+                "clearWidth": {
+                  "value": 0.7,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-bed1-bath",
+                "floorID": "fl-ground",
+                "kind": "door",
+                "verification": "verified",
+                "a": {
+                  "x": 4.5,
+                  "y": 8
+                },
+                "b": {
+                  "x": 4.5,
+                  "y": 8.75
+                },
+                "sideA": "sp-bed1",
+                "sideB": "sp-bath",
+                "clearWidth": {
+                  "value": 0.75,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": [],
+                  "unit": "m"
+                },
+                "operable": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": true,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-win-bed1",
+                "floorID": "fl-ground",
+                "kind": "window",
+                "verification": "proposed",
+                "a": {
+                  "x": 1.5,
+                  "y": 10
+                },
+                "b": {
+                  "x": 2.5,
+                  "y": 10
+                },
+                "sideA": "sp-bed1",
+                "sideB": "exterior",
+                "clearWidth": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "operable": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": false,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-win-bed2",
+                "floorID": "fl-ground",
+                "kind": "window",
+                "verification": "proposed",
+                "a": {
+                  "x": 9.5,
+                  "y": 10
+                },
+                "b": {
+                  "x": 10.5,
+                  "y": 10
+                },
+                "sideA": "sp-bed2",
+                "sideB": "exterior",
+                "clearWidth": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "operable": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": false,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              },
+              {
+                "id": "pt-win-living",
+                "floorID": "fl-ground",
+                "kind": "window",
+                "verification": "proposed",
+                "a": {
+                  "x": 0.8,
+                  "y": 0
+                },
+                "b": {
+                  "x": 2,
+                  "y": 0
+                },
+                "sideA": "sp-living",
+                "sideB": "exterior",
+                "clearWidth": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "operable": {
+                  "origin": "unknown",
+                  "status": "unknown",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                },
+                "stepFree": {
+                  "value": false,
+                  "origin": "userConfirmed",
+                  "status": "confirmed",
+                  "sourceIDs": [],
+                  "inputIDs": []
+                }
+              }
+            ],
+            "walls": [
+              {
+                "id": "w-ext-s",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 0,
+                  "y": 0
+                },
+                "b": {
+                  "x": 12,
+                  "y": 0
+                },
+                "thicknessMeters": 0.2
+              },
+              {
+                "id": "w-ext-e",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 12,
+                  "y": 0
+                },
+                "b": {
+                  "x": 12,
+                  "y": 10
+                },
+                "thicknessMeters": 0.2
+              },
+              {
+                "id": "w-ext-n",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 12,
+                  "y": 10
+                },
+                "b": {
+                  "x": 0,
+                  "y": 10
+                },
+                "thicknessMeters": 0.2
+              },
+              {
+                "id": "w-ext-w",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 0,
+                  "y": 10
+                },
+                "b": {
+                  "x": 0,
+                  "y": 0
+                },
+                "thicknessMeters": 0.2
+              },
+              {
+                "id": "w-living-kitchen",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 7,
+                  "y": 0
+                },
+                "b": {
+                  "x": 7,
+                  "y": 5
+                },
+                "thicknessMeters": 0.12
+              },
+              {
+                "id": "w-south-hall",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 0,
+                  "y": 5
+                },
+                "b": {
+                  "x": 12,
+                  "y": 5
+                },
+                "thicknessMeters": 0.12
+              },
+              {
+                "id": "w-hall-north",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 0,
+                  "y": 6.2
+                },
+                "b": {
+                  "x": 12,
+                  "y": 6.2
+                },
+                "thicknessMeters": 0.12
+              },
+              {
+                "id": "w-bed1-east",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 4.5,
+                  "y": 6.2
+                },
+                "b": {
+                  "x": 4.5,
+                  "y": 10
+                },
+                "thicknessMeters": 0.12
+              },
+              {
+                "id": "w-closet-bath",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 4.5,
+                  "y": 7.4
+                },
+                "b": {
+                  "x": 7,
+                  "y": 7.4
+                },
+                "thicknessMeters": 0.12
+              },
+              {
+                "id": "w-bed2-west",
+                "floorID": "fl-ground",
+                "a": {
+                  "x": 7,
+                  "y": 6.2
+                },
+                "b": {
+                  "x": 7,
+                  "y": 10
+                },
+                "thicknessMeters": 0.12
+              }
+            ],
+            "connectors": [],
+            "obstacles": [
+              {
+                "id": "ob-sofa",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 1,
+                    "y": 3.4
+                  },
+                  {
+                    "x": 4,
+                    "y": 3.4
+                  },
+                  {
+                    "x": 4,
+                    "y": 4.3
+                  },
+                  {
+                    "x": 1,
+                    "y": 4.3
+                  }
+                ]
+              },
+              {
+                "id": "ob-island",
+                "floorID": "fl-ground",
+                "polygon": [
+                  {
+                    "x": 8.8,
+                    "y": 2
+                  },
+                  {
+                    "x": 10.4,
+                    "y": 2
+                  },
+                  {
+                    "x": 10.4,
+                    "y": 3
+                  },
+                  {
+                    "x": 8.8,
+                    "y": 3
+                  }
+                ]
+              }
+            ],
+            "objects": [
+              {
+                "id": "an-smoke-hall",
+                "kind": "smokeAlarm",
+                "roomID": "sp-hall",
+                "verification": "verified"
+              },
+              {
+                "id": "an-smoke-bed1",
+                "kind": "smokeAlarm",
+                "roomID": "sp-bed1",
+                "verification": "verified"
+              },
+              {
+                "id": "an-smoke-bed2",
+                "kind": "smokeAlarm",
+                "roomID": "sp-bed2",
+                "verification": "proposed"
+              },
+              {
+                "id": "an-co-hall",
+                "kind": "coAlarm",
+                "roomID": "sp-hall",
+                "verification": "verified"
+              },
+              {
+                "id": "an-extinguisher",
+                "kind": "fireExtinguisher",
+                "roomID": "sp-kitchen",
+                "verification": "verified"
+              },
+              {
+                "id": "an-shutoff-water",
+                "kind": "utilityShutoffWater",
+                "roomID": "sp-kitchen",
+                "verification": "verified"
+              },
+              {
+                "id": "an-shutoff-elec",
+                "kind": "utilityShutoffElectric",
+                "roomID": "sp-hall",
+                "verification": "verified"
+              },
+              {
+                "id": "an-supplies",
+                "kind": "supplies",
+                "roomID": "sp-closet",
+                "verification": "verified"
+              },
+              {
+                "id": "an-medical",
+                "kind": "medicalEquipment",
+                "roomID": "sp-living",
+                "verification": "verified"
+              },
+              {
+                "id": "an-tornado",
+                "kind": "tornadoShelterCandidate",
+                "roomID": "sp-closet",
+                "verification": "verified"
+              },
+              {
+                "id": "an-hydrant",
+                "kind": "exteriorHydrant",
+                "verification": "verified"
+              },
+              {
+                "id": "an-meeting",
+                "kind": "outsideMeetingPoint",
+                "verification": "verified"
+              }
+            ],
+            "unknowns": [
+              "Window operability/exterior grade require recorded confirmation",
+              "Geometry does not establish structural shelter performance",
+              "Image observations cannot create graph edges"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "queryRoutes",
+      "arguments": {},
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 0,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "a7d9bf2fd782734e",
+        "observation": {
+          "kind": "queryRoutes",
+          "routes": []
+        }
+      }
+    },
+    {
+      "name": "evaluateResources",
+      "arguments": {},
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 0,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "a7d9bf2fd782734e",
+        "observation": {
+          "kind": "evaluateResources"
+        }
+      }
+    },
+    {
+      "name": "inspectDependencies",
+      "arguments": {},
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 0,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "a7d9bf2fd782734e",
+        "observation": {
+          "kind": "inspectDependencies",
+          "dependencies": [
+            {
+              "id": "contact|channel",
+              "kind": "contactChannel",
+              "subjectIDs": [
+                "ct-oak-1"
+              ],
+              "evidenceIDs": [
+                "a7d9bf2fd782734e"
+              ],
+              "status": "recorded handset and cellular operational in exercise"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "runCounterfactual",
+      "arguments": {
+        "profileIDs": [
+          "evt.water-outage.well-pump-failure"
+        ]
+      },
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 0,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "a7d9bf2fd782734e",
+        "observation": {
+          "kind": "runCounterfactual",
+          "scope": "initial_household_with_selected_profiles",
+          "failed": true,
+          "criterionID": "water",
+          "dependencyIDs": [
+            "req.water"
+          ],
+          "baseline": {
+            "simMinute": 4320,
+            "resources": {
+              "res.backup.bk-station": {
+                "amount": 1000,
+                "unit": "Wh"
+              },
+              "res.device.eq-oxygen.runtime": {
+                "unit": "h"
+              },
+              "res.handset.hours": {
+                "amount": 18,
+                "unit": "h"
+              },
+              "res.handset.powerBankCharges": {
+                "amount": 2,
+                "unit": "charges"
+              },
+              "res.water.stored": {
+                "amount": 0,
+                "unit": "gal"
+              }
+            },
+            "services": {
+              "svc.alerts": "operational",
+              "svc.cellular": "operational",
+              "svc.cooling": "operational",
+              "svc.destination": "unavailable",
+              "svc.device.eq-oxygen": "operational",
+              "svc.grid": "operational",
+              "svc.handset": "operational",
+              "svc.heat": "operational",
+              "svc.power.home": "operational",
+              "svc.refrigeration": "operational",
+              "svc.roads": "operational",
+              "svc.transport": "operational",
+              "svc.water.safety": "operational",
+              "svc.water.supply": "unavailable",
+              "svc.wellPump": "unavailable",
+              "svc.wifi": "operational"
+            },
+            "unmetRequirements": [
+              "req.water"
+            ],
+            "unknowns": [
+              "backup.bk-station.setupConfirmed",
+              "equipment.eq-oxygen.backup",
+              "housing.wellPressureTankGallons",
+              "pets.waterNeeds"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "evaluateCandidateAction",
+      "arguments": {
+        "command": {
+          "kind": "advance",
+          "minute": 120
+        }
+      },
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 120,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "4ab23f203d13fd46"
+      }
+    },
+    {
+      "continuation": "inspectDependencies",
+      "arguments": {},
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 0,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "a7d9bf2fd782734e",
+        "observation": {
+          "kind": "inspectDependencies",
+          "dependencies": [
+            {
+              "id": "contact|channel",
+              "kind": "contactChannel",
+              "subjectIDs": [
+                "ct-oak-1"
+              ],
+              "evidenceIDs": [
+                "a7d9bf2fd782734e"
+              ],
+              "status": "recorded handset and cellular operational in exercise"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "continuation": "evaluateCandidateAction",
+      "arguments": {
+        "command": {
+          "kind": "advance",
+          "minute": 360
+        }
+      },
+      "result": {
+        "binding": {
+          "sessionID": "synthetic-session",
+          "revision": 0,
+          "eventSequence": 0,
+          "contextDigest": "a7d9bf2fd782734e",
+          "householdRevision": 1,
+          "homeRevision": 1
+        },
+        "snapshot": {
+          "simMinute": 360,
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "unmetRequirements": [],
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ]
+        },
+        "contextDigest": "7ef45b4d3a240f06"
+      }
+    }
+  ],
+  "proposal": {
+    "id": "tool-chain",
+    "actor": "director",
+    "baseRevision": 0,
+    "commands": [
+      {
+        "kind": "advance",
+        "minute": 360
+      },
+      {
+        "kind": "requestDecision"
+      }
+    ],
+    "purpose": "Advance to the 6-hour mark to monitor water reserves and prepare for the upcoming well quality status change.",
+    "evidenceIDs": [
+      "a7d9bf2fd782734e"
+    ]
+  },
+  "receipt": {
+    "contextDigest": "fabec97d6da1f9ff",
+    "eventSequence": 0,
+    "events": [],
+    "finished": false,
+    "pending": [],
+    "revision": 1,
+    "routes": [],
+    "sessionID": "synthetic-session",
+    "snapshot": {
+      "firedEventIDs": [],
+      "resources": {
+        "res.backup.bk-station": {
+          "amount": 1000,
+          "unit": "Wh"
+        },
+        "res.device.eq-oxygen.runtime": {
+          "unit": "h"
+        },
+        "res.handset.hours": {
+          "amount": 18,
+          "unit": "h"
+        },
+        "res.handset.powerBankCharges": {
+          "amount": 2,
+          "unit": "charges"
+        },
+        "res.water.stored": {
+          "amount": 5,
+          "unit": "gal"
+        }
+      },
+      "revealedEventCount": 0,
+      "services": {
+        "svc.alerts": "operational",
+        "svc.cellular": "operational",
+        "svc.cooling": "operational",
+        "svc.destination": "unavailable",
+        "svc.device.eq-oxygen": "operational",
+        "svc.grid": "operational",
+        "svc.handset": "operational",
+        "svc.heat": "operational",
+        "svc.power.home": "operational",
+        "svc.refrigeration": "operational",
+        "svc.roads": "operational",
+        "svc.transport": "operational",
+        "svc.water.safety": "operational",
+        "svc.water.supply": "operational",
+        "svc.wellPump": "operational",
+        "svc.wifi": "operational"
+      },
+      "simMinute": 360,
+      "unknowns": [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "unmetRequirements": []
+    }
+  }
+}

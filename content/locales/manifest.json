@@ -11,7 +11,10 @@
         "plan": "draft",
         "help": "draft",
         "scenarios": "draft",
-        "actions": "draft"
+        "actions": "draft",
+        "native": "draft",
+        "spatial": "draft",
+        "ai": "draft"
       },
       "note": "Authored source language. Marked draft: no human safety-content review has happened yet (AI-assisted authoring, 2026-10-09)."
     },
@@ -24,7 +27,10 @@
         "plan": "draft",
         "help": "draft",
         "scenarios": "draft",
-        "actions": "draft"
+        "actions": "draft",
+        "native": "draft",
+        "spatial": "draft",
+        "ai": "draft"
       },
       "note": "Draft translation - language review pending. AI-assisted; must not be released as dependable safety guidance until reviewed by a qualified Spanish reviewer."
     },
@@ -37,7 +43,10 @@
         "plan": "draft",
         "help": "draft",
         "scenarios": "draft",
-        "actions": "draft"
+        "actions": "draft",
+        "native": "draft",
+        "spatial": "draft",
+        "ai": "draft"
       },
       "note": "Draft translation - language review pending. AI-assisted; must not be released as dependable safety guidance until reviewed by a qualified Vietnamese reviewer."
     }

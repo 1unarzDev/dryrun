@@ -37,16 +37,21 @@ public struct ContentLibrary: Sendable {
 
     public func source(_ id: String) -> SourceRef? { sources.first { $0.id == id } }
 
-    /// Statewide resources plus resources for this region, deterministic order.
+    /// Statewide resources plus resources for an explicitly supported region, deterministic order.
+    /// An unsupported address must not inherit Texas resources from a syntactically valid numeric ID.
     public func resources(forRegion regionID: String) -> [PublicResource] {
-        var seen = Set<String>()
-        var out: [PublicResource] = []
+        guard PublicDataPolicy.isAllowedRegionID(regionID) else { return [] }
+        var order: [String] = []
+        var byID: [String: PublicResource] = [:]
         for pack in regionPacks {
             for r in pack.resources where r.regionIDs.contains(regionID) || r.regionIDs.contains("tx-statewide") {
-                if seen.insert(r.id).inserted { out.append(r) }
+                if byID[r.id] == nil { order.append(r.id) }
+                // Later validated packs are newer precedence than the bundled
+                // baseline, while preserving the first-seen display order.
+                byID[r.id] = r
             }
         }
-        return out
+        return order.compactMap { byID[$0] }
     }
 
     public func region(_ id: String) -> RegionInfo? {

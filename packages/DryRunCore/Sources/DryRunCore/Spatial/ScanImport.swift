@@ -45,20 +45,25 @@ public struct ScanRoom: Codable, Sendable, Hashable {
     public var story: Int
     public var surfaces: [ScanSurface]
     public var objects: [ScanObject]
-    public init(id: String, story: Int = 0, surfaces: [ScanSurface], objects: [ScanObject] = []) {
-        self.id = id; self.story = story; self.surfaces = surfaces; self.objects = objects
+    /// Room type the scanner recognised (RoomPlan sections). Only a pre-fill for the person to confirm: it never
+    /// marks the name confirmed and never affects routes.
+    public var suggestedKind: SpaceKind? = nil
+    public init(id: String, story: Int = 0, surfaces: [ScanSurface], objects: [ScanObject] = [], suggestedKind: SpaceKind? = nil) {
+        self.id = id; self.story = story; self.surfaces = surfaces; self.objects = objects; self.suggestedKind = suggestedKind
     }
 }
 
 public struct ScanCapture: Codable, Sendable, Hashable {
     public var rooms: [ScanRoom]
+    public var coordinateFrameID: String?
     /// True when every room was captured in ONE shared coordinate frame (single session / shared ARSession /
     /// StructureBuilder output). Independently scanned rooms are never placed by guessing.
     public var sharedCoordinateFrame: Bool
     /// True when the capture session ended normally.
     public var sessionCompleted: Bool
-    public init(rooms: [ScanRoom], sharedCoordinateFrame: Bool, sessionCompleted: Bool = true) {
+    public init(rooms: [ScanRoom], sharedCoordinateFrame: Bool, sessionCompleted: Bool = true, coordinateFrameID: String? = nil) {
         self.rooms = rooms; self.sharedCoordinateFrame = sharedCoordinateFrame; self.sessionCompleted = sessionCompleted
+        self.coordinateFrameID = coordinateFrameID
     }
 }
 
@@ -100,8 +105,8 @@ public enum ScanImport {
         }
         let base = floorElev[stories.first!] ?? 0
         let floors = stories.map { st in
-            Floor(id: "fl-\(st)", level: st - stories.first!, label: st == stories.first! ? "Scanned floor" : "Scanned floor \(st - stories.first! + 1)",
-                  elevationMeters: (floorElev[st] ?? base) - base)
+            Floor(id: "fl-\(st)", level: st, label: "Captured story \(st)",
+                  elevationMeters: (floorElev[st] ?? base) - base, exteriorGrade: .unknown, capturedStory: st)
         }
 
         var spaces: [Space] = []
@@ -127,8 +132,9 @@ public enum ScanImport {
             }
             if Geometry.signedArea(outline) < 0 { outline.reverse() }
             let lowConfidence = room.surfaces.contains { $0.confidence == .low }
-            spaces.append(Space(id: spaceID, floorID: fid, label: "Room \(ri + 1)", kind: .other, polygon: outline,
+            spaces.append(Space(id: spaceID, floorID: fid, label: "Room \(ri + 1)", kind: room.suggestedKind ?? .other, polygon: outline,
                                 labelConfirmed: false, needsMeasurement: hullFallback || lowConfidence || outline.count < 3))
+            spaces[spaces.count - 1].sourceScanRoomID = room.id
             for w in room.surfaces where w.category == .wall {
                 let e = endpoints(w)
                 walls.append(WallSegment(id: "w-\(w.id)", floorID: fid, a: e[0], b: e[1], thicknessMeters: max(0.05, w.dimensions.z)))
@@ -169,20 +175,15 @@ public enum ScanImport {
             if case .unknown = sideB { incomplete = true }
         }
 
-        // Stairs: a connector is only proposed when the other story's space containing the stairs is known.
-        var connectors: [FloorConnector] = []
-        for (o, fid) in stairsObjects {
-            let c = RigidTransform3D.projectToFloor(o.transform.translation)
-            let here = spaces.first { $0.floorID == fid && Geometry.contains($0.polygon, c) }
-            let other = spaces.first { $0.floorID != fid && Geometry.contains($0.polygon, c) }
-            if let here, let other {
-                connectors.append(FloorConnector(id: "cn-\(o.id)", kind: .stairs, fromSpaceID: here.id, toSpaceID: other.id,
-                                                 fromPoint: c, toPoint: c, verification: .proposed))
-            } else {
-                incomplete = true
-                notes.append("Stairs detected; the floor they connect to was not captured. Confirm the connection before routes can use it.")
-            }
+        // A vertically overlapping room is not evidence of a stair endpoint or landing.
+        // Retain detected stairs as reviewable obstacles; the household adds confirmed endpoints explicitly.
+        let connectors: [FloorConnector] = []
+        for (object, floorID) in stairsObjects {
+            obstacles.append(Obstacle(id: "stairs-\(object.id)", floorID: floorID, label: "Stairs — confirm both landings", polygon: footprint(object)))
+            incomplete = true
+            notes.append("Stairs detected. Choose both landings; overlapping rooms do not establish a connection.")
         }
+        notes.append("Confirm each captured floor's relation to exterior ground. The lowest captured story is not necessarily ground level.")
 
         let area = spaces.reduce(0) { $0 + abs(Geometry.signedArea($1.polygon)) }
         if area > recommendedMaxAreaSquareMeters {
@@ -191,13 +192,14 @@ public enum ScanImport {
         }
         notes.append("Scanned doors and openings are proposals. Confirm each connection and choose your exterior exits.")
 
-        let home = HomeModel(id: homeID, revision: 1, label: label, source: .roomPlanScan,
+        var home = HomeModel(id: homeID, revision: 1, label: label, source: .roomPlanScan,
                              frame: CoordinateFrame(units: "meters", handedness: "right", sourceUpAxis: "y",
                                                     note: "Projected from RoomPlan world (x, y-up, z) to floor plane (x, -z)."),
                              floors: floors, spaces: spaces, walls: walls, portals: portals, obstacles: obstacles,
                              connectors: connectors, annotations: [], completeness: incomplete ? .incomplete : .unknown,
                              completenessNote: incomplete ? "Scan is incomplete or has unconfirmed openings." : "Confirm the scan covers the whole home.",
                              isFictional: false)
+        home.sourceCaptureFrameID = capture.coordinateFrameID
         return ScanImportResult(home: home, notes: notes)
     }
 

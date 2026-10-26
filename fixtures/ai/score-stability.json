@@ -1,0 +1,13 @@
+{
+  "synthetic": true,
+  "passed": true,
+  "cases": 60,
+  "independentHostProcesses": 3,
+  "permutedRubric": true,
+  "exactNumberEquality": true,
+  "hashes": [
+    "a90670b2f620f0451dfcb4cdbddbd62be3714b898fad5a6becf33959b206b5ea",
+    "a90670b2f620f0451dfcb4cdbddbd62be3714b898fad5a6becf33959b206b5ea",
+    "a90670b2f620f0451dfcb4cdbddbd62be3714b898fad5a6becf33959b206b5ea"
+  ]
+}

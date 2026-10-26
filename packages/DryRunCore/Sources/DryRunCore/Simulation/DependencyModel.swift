@@ -171,30 +171,26 @@ public struct DependencyModel: Sendable {
 
         // Essential equipment: power from grid/home circuits OR an allocated, confirmed compatible backup.
         for eq in h.equipment.sorted(by: { $0.id < $1.id }) {
-            let req: Requirement
-            if eq.needsRefrigeration {
-                req = .any([.service(Svc.refrigeration), .service(Svc.relocatedPower), .partialFact(h.supplies.coolerAndIcePacks.confirmedValue)])
-            } else {
-                // After relocation to a destination with confirmed conditions, the device can use power there.
-                req = .any([.service(Svc.homePower), .backupSupply(loadID: Load.equipment(eq.id)), .service(Svc.relocatedPower)])
+            var requirements: [Requirement] = []
+            if eq.requiresColdStorage {
+                requirements.append(.any([.service(Svc.refrigeration), .service(Svc.relocatedPower), .partialFact(h.supplies.coolerAndIcePacks.confirmedValue)]))
             }
+            if eq.requiresElectricalPower {
+                requirements.append(.any([.service(Svc.homePower), .backupSupply(loadID: Load.equipment(eq.id)), .service(Svc.relocatedPower)]))
+            }
+            let req: Requirement = .all(requirements)
             nodes.append(DependencyNode(id: Svc.device(eq.id), requirement: req,
                                         factIDs: ["equipment.\(eq.id)"] + eq.compatibleBackupIDs.map { "backup.\($0).setupConfirmed" },
                                         ruleID: "rule.dependency.device"))
         }
 
         // Transport: roads AND (a suitable vehicle OR an agreed alternative). "No car" is a normal path.
-        let wheelchair = h.people.contains { $0.needs.contains(.usesWheelchair) }
+        let wheelchair = TransportReadiness.needsAccessibleTransport(h)
         var transportOptions: [Requirement] = h.transport.vehicles.sorted { $0.id < $1.id }.map { v in
-            wheelchair ? .fact(v.wheelchairAccessible.confirmedValue) : .fixed(.operational)
+            .fact(TransportReadiness.vehicleAvailability(v, household: h))
         }
         transportOptions += h.transport.alternatives.sorted { $0.id < $1.id }.map { a in
-            let agreed = a.agreed.confirmedValue
-            if wheelchair {
-                guard let ag = agreed else { return .fact(nil) }
-                return ag ? .fact(a.wheelchairAccessible.confirmedValue) : .fact(false)
-            }
-            return .fact(agreed)
+            .fact(TransportReadiness.alternativeAvailability(a, household: h))
         }
         nodes.append(DependencyNode(id: Svc.transport, requirement: .all([.service(Svc.roads), .any(transportOptions)]),
                                     factIDs: ["transport.vehicles", "transport.alternatives"] + (wheelchair ? ["people.needs.usesWheelchair"] : []),

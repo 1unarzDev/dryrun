@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "dryrun.director-policy/1"
+    },
+    "permittedHazardFamilies": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "freezePowerLoss",
+          "heatGridStrain",
+          "tornado",
+          "flashFlood",
+          "homeFire",
+          "waterOutage"
+        ]
+      }
+    },
+    "maximumActiveIncidents": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "schedulingHorizonMinutes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4320
+    },
+    "eventBudget": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 32
+    },
+    "maximumPendingEvents": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "allowedStageTransitions": {
+      "maxItems": 820,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "to": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "version",
+    "permittedHazardFamilies",
+    "maximumActiveIncidents",
+    "schedulingHorizonMinutes",
+    "eventBudget",
+    "maximumPendingEvents",
+    "allowedStageTransitions"
+  ],
+  "additionalProperties": false
+}

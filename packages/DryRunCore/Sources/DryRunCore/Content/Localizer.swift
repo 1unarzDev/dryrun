@@ -56,6 +56,22 @@ public struct Localizer: Sendable {
 
     public var availableLocales: [String] { tables.keys.sorted() }
 
+    /// Languages offered by the app must cover the bundled source, including native controls and spatial text.
+    /// Structural completeness is separate from human review: a complete translation can still be a draft.
+    public var selectableLocales: [String] {
+        guard let source = tables[sourceLocale], !source.isEmpty else { return [] }
+        return availableLocales.filter { code in
+            guard let translated = tables[code] else { return false }
+            return source.allSatisfy { domain, sourceTable in
+                guard let table = translated[domain] else { return false }
+                return sourceTable.allSatisfy { key, value in
+                    guard let text = table[key], !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+                    return Self.placeholders(in: text) == Self.placeholders(in: value)
+                }
+            }
+        }
+    }
+
     public func text(_ key: String, _ values: [String: String] = [:]) -> LocalizedText {
         for candidate in [locale, sourceLocale] {
             guard let domains = tables[candidate] else { continue }

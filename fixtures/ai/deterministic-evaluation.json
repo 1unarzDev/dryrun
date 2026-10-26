@@ -1,0 +1,2147 @@
+{
+  "synthetic": true,
+  "referenceStatus": "Policy-authored synthetic arithmetic expectations; not human-adjudicated. Profile diversity is descriptive; predicates are explicit accepted test evidence.",
+  "passed": 60,
+  "households": 60,
+  "results": [
+    {
+      "id": "household-01",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 75.69444444444444,
+        "overall": 50.5,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 56.11111111111111,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "met",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-02",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape"
+        ],
+        "evidenceCoverage": 70.83333333333333,
+        "overall": 49.75,
+        "practice": 12.5,
+        "practiceAssessed": 1,
+        "preparation": 53.888888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "met",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "met",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-03",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 74.86111111111111,
+        "overall": 53.875,
+        "practice": 25,
+        "practiceAssessed": 2,
+        "preparation": 57.08333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-04",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 74.44444444444444,
+        "overall": 54,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 55.83333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "met",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-05",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 71.24999999999999,
+        "overall": 50,
+        "practice": 50,
+        "practiceAssessed": 4,
+        "preparation": 50,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "met",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-06",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 75,
+        "overall": 54.4375,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 60.48611111111111,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "met",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-07",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 71.11111111111111,
+        "overall": 47.49999999999999,
+        "practice": 0,
+        "practiceAssessed": 1,
+        "preparation": 52.77777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-08",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 70.83333333333333,
+        "overall": 51.75,
+        "practice": 37.5,
+        "practiceAssessed": 2,
+        "preparation": 53.33333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "met",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-09",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 75.55555555555556,
+        "overall": 55,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 56.94444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "met",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-10",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 70.97222222222223,
+        "overall": 48.25,
+        "practice": 37.5,
+        "practiceAssessed": 4,
+        "preparation": 49.44444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-11",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.33333333333333,
+        "overall": 50.75,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 56.388888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "met"
+        }
+      }
+    },
+    {
+      "id": "household-12",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 77.91666666666666,
+        "overall": 53.49999999999999,
+        "practice": 25,
+        "practiceAssessed": 1,
+        "preparation": 56.66666666666666,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "met",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-13",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 66.38888888888889,
+        "overall": 46.375,
+        "practice": 12.5,
+        "practiceAssessed": 2,
+        "preparation": 50.138888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "met",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-14",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 76.52777777777777,
+        "overall": 55.62499999999999,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 57.63888888888888,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-15",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.22222222222221,
+        "overall": 55.99999999999999,
+        "practice": 62.5,
+        "practiceAssessed": 4,
+        "preparation": 55.27777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "met",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-16",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 69.02777777777777,
+        "overall": 45.5,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 50.55555555555556,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "met",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-17",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.88888888888889,
+        "overall": 53.625,
+        "practice": 12.5,
+        "practiceAssessed": 1,
+        "preparation": 58.19444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "met",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-18",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 76.11111111111111,
+        "overall": 49.99999999999999,
+        "practice": 25,
+        "practiceAssessed": 2,
+        "preparation": 52.77777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-19",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 66.94444444444444,
+        "overall": 48.25,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 49.44444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-20",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 72.5,
+        "overall": 55.87499999999999,
+        "practice": 50,
+        "practiceAssessed": 4,
+        "preparation": 56.52777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "met",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-21",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.63888888888889,
+        "overall": 45,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 50,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-22",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.22222222222221,
+        "overall": 51.25,
+        "practice": 0,
+        "practiceAssessed": 1,
+        "preparation": 56.94444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "met"
+        }
+      }
+    },
+    {
+      "id": "household-23",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 75.69444444444444,
+        "overall": 54.25,
+        "practice": 37.5,
+        "practiceAssessed": 2,
+        "preparation": 56.11111111111111,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "met",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-24",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape"
+        ],
+        "evidenceCoverage": 70.83333333333333,
+        "overall": 52.25,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 53.888888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "met",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "met",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-25",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 77.08333333333334,
+        "overall": 55.62499999999999,
+        "practice": 37.5,
+        "practiceAssessed": 4,
+        "preparation": 57.63888888888888,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-26",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 69.44444444444444,
+        "overall": 50.25,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 55.83333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "met",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-27",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 65.76388888888889,
+        "overall": 48.37499999999999,
+        "practice": 25,
+        "practiceAssessed": 1,
+        "preparation": 50.972222222222214,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "met",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-28",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 75.55555555555557,
+        "overall": 53.125,
+        "practice": 12.5,
+        "practiceAssessed": 2,
+        "preparation": 57.638888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "met",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-29",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.88888888888889,
+        "overall": 50.74999999999999,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 52.222222222222214,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-30",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 70.83333333333333,
+        "overall": 54.25,
+        "practice": 62.5,
+        "practiceAssessed": 4,
+        "preparation": 53.33333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "met",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-31",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 75.55555555555556,
+        "overall": 51.25,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 56.94444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "met",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-32",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.63888888888889,
+        "overall": 46.25,
+        "practice": 12.5,
+        "practiceAssessed": 1,
+        "preparation": 50,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-33",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 68.33333333333333,
+        "overall": 53.25,
+        "practice": 25,
+        "practiceAssessed": 2,
+        "preparation": 56.388888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "met"
+        }
+      }
+    },
+    {
+      "id": "household-34",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 73.81944444444444,
+        "overall": 53.875,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 55.69444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "met",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-35",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape"
+        ],
+        "evidenceCoverage": 72.5,
+        "overall": 54,
+        "practice": 50,
+        "practiceAssessed": 4,
+        "preparation": 54.44444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "met",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "met",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-36",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 74.86111111111111,
+        "overall": 51.375,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 57.08333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-37",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.22222222222221,
+        "overall": 49.74999999999999,
+        "practice": 0,
+        "practiceAssessed": 1,
+        "preparation": 55.27777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "met",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-38",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 69.02777777777777,
+        "overall": 49.25,
+        "practice": 37.5,
+        "practiceAssessed": 2,
+        "preparation": 50.55555555555556,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "met",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-39",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.22222222222223,
+        "overall": 53.62499999999999,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 55.41666666666666,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-40",
+      "split": "development",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 71.11111111111111,
+        "overall": 51.24999999999999,
+        "practice": 37.5,
+        "practiceAssessed": 4,
+        "preparation": 52.77777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-41",
+      "split": "holdout",
+      "card": {
+        "cap": 79,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 70.13888888888889,
+        "overall": 51.125,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 56.80555555555556,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "met",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-42",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 76.1111111111111,
+        "overall": 53.25,
+        "practice": 25,
+        "practiceAssessed": 1,
+        "preparation": 56.388888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "met",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-43",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 70.97222222222223,
+        "overall": 45.75,
+        "practice": 12.5,
+        "practiceAssessed": 2,
+        "preparation": 49.44444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-44",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.22222222222221,
+        "overall": 55,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 56.94444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "met"
+        }
+      }
+    },
+    {
+      "id": "household-45",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 75.69444444444444,
+        "overall": 56.75,
+        "practice": 62.5,
+        "practiceAssessed": 4,
+        "preparation": 56.11111111111111,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "met",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-46",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape"
+        ],
+        "evidenceCoverage": 69.16666666666666,
+        "overall": 48,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 53.33333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "met",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "met",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-47",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.08333333333334,
+        "overall": 53.12499999999999,
+        "practice": 12.5,
+        "practiceAssessed": 1,
+        "preparation": 57.63888888888888,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-48",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 74.86111111111111,
+        "overall": 51.875,
+        "practice": 25,
+        "practiceAssessed": 2,
+        "preparation": 54.86111111111111,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "met",
+          "shelter": "notApplicable",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-49",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 71.24999999999999,
+        "overall": 51.24999999999999,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 52.77777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "met",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-50",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.88888888888889,
+        "overall": 57.375,
+        "practice": 50,
+        "practiceAssessed": 4,
+        "preparation": 58.19444444444444,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "met",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-51",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.88888888888889,
+        "overall": 46.99999999999999,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 52.222222222222214,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-52",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 70.83333333333333,
+        "overall": 48,
+        "practice": 0,
+        "practiceAssessed": 1,
+        "preparation": 53.33333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "met",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-53",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.88888888888889,
+        "overall": 55.5,
+        "practice": 37.5,
+        "practiceAssessed": 2,
+        "preparation": 57.5,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "met",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-54",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.63888888888889,
+        "overall": 48.75,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 50,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "notApplicable",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-55",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "escape"
+        ],
+        "evidenceCoverage": 77.08333333333333,
+        "overall": 56.625,
+        "practice": 37.5,
+        "practiceAssessed": 4,
+        "preparation": 58.75,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "notApplicable",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "notApplicable",
+          "water": "met"
+        }
+      }
+    },
+    {
+      "id": "household-56",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 73.47222222222221,
+        "overall": 46.99999999999999,
+        "practice": 0,
+        "practiceAssessed": 0,
+        "preparation": 52.222222222222214,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "notApplicable",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-57",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape"
+        ],
+        "evidenceCoverage": 70.83333333333333,
+        "overall": 51,
+        "practice": 25,
+        "practiceAssessed": 1,
+        "preparation": 53.888888888888886,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "met",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "met",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-58",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 74.86111111111111,
+        "overall": 52.625,
+        "practice": 12.5,
+        "practiceAssessed": 2,
+        "preparation": 57.08333333333333,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-59",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 72.22222222222221,
+        "overall": 53.49999999999999,
+        "practice": 37.5,
+        "practiceAssessed": 3,
+        "preparation": 55.27777777777777,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "partlyMet",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "partlyMet",
+          "review": "met",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    },
+    {
+      "id": "household-60",
+      "split": "holdout",
+      "card": {
+        "cap": 59,
+        "capReasons": [
+          "alarms",
+          "device",
+          "escape",
+          "shelter"
+        ],
+        "evidenceCoverage": 66.24999999999999,
+        "overall": 51.25,
+        "practice": 62.5,
+        "practiceAssessed": 4,
+        "preparation": 50,
+        "provisional": true,
+        "rubricVersion": "dryrun-rubric/0.1-draft",
+        "statuses": {
+          "alarms": "partlyMet",
+          "assistance": "partlyMet",
+          "care": "partlyMet",
+          "contact": "met",
+          "device": "partlyMet",
+          "escape": "partlyMet",
+          "essentials": "partlyMet",
+          "expiry": "partlyMet",
+          "food": "partlyMet",
+          "meetups": "partlyMet",
+          "pets": "notApplicable",
+          "review": "partlyMet",
+          "shelter": "partlyMet",
+          "water": "partlyMet"
+        }
+      }
+    }
+  ]
+}

@@ -93,8 +93,42 @@ public actor PublicPackStore {
                 throw .invalid("resource \(r.id) cites unknown source")
             }
             if let u = r.contact.url, !isHTTPS(u) { throw .invalid("resource \(r.id) url") }
+            // Coordinates are optional for list-only contacts, but a partial,
+            // out-of-range, or unproven pair must never become a map marker.
+            let hasLatitude = r.latitude != nil
+            let hasLongitude = r.longitude != nil
+            guard hasLatitude == hasLongitude else { throw .invalid("resource \(r.id) coordinate pair") }
+            if let latitude = r.latitude, let longitude = r.longitude {
+                guard GeographicCoordinate(latitude: latitude, longitude: longitude) != nil else {
+                    throw .invalid("resource \(r.id) coordinate range")
+                }
+                guard let coordinateSourceIDs = r.coordinateSourceIDs,
+                      !coordinateSourceIDs.isEmpty,
+                      coordinateSourceIDs.allSatisfy(sourceIDs.contains) else {
+                    throw .invalid("resource \(r.id) coordinate source")
+                }
+            }
             // A pack may not claim activation without an expiry: activation is a time-bound fact.
             if r.activation == .active && r.expiresAt == nil { throw .invalid("resource \(r.id) active without expiry") }
+        }
+        for region in pack.regions {
+            let hasLatitude = region.mapCenterLatitude != nil
+            let hasLongitude = region.mapCenterLongitude != nil
+            guard hasLatitude == hasLongitude else { throw .invalid("region \(region.id) map center pair") }
+            let hasLatitudeSpan = region.mapSpanLatitude != nil
+            let hasLongitudeSpan = region.mapSpanLongitude != nil
+            guard hasLatitudeSpan == hasLongitudeSpan else { throw .invalid("region \(region.id) map span pair") }
+            if let latitude = region.mapCenterLatitude, let longitude = region.mapCenterLongitude {
+                guard GeographicCoordinate(latitude: latitude, longitude: longitude) != nil else {
+                    throw .invalid("region \(region.id) map center range")
+                }
+            }
+            if let span = region.mapSpanLatitude {
+                guard span.isFinite, span > 0, span <= 180 else { throw .invalid("region \(region.id) latitude span") }
+            }
+            if let span = region.mapSpanLongitude {
+                guard span.isFinite, span > 0, span <= 360 else { throw .invalid("region \(region.id) longitude span") }
+            }
         }
     }
 

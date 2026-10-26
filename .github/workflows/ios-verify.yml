@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "verify (full) or screens (screenshot tour only)"
+        description: "verify (full), build (compile only), or screens (screenshot tour only)"
         default: verify
         type: choice
-        options: [verify, screens]
+        options: [verify, build, screens]
       locales:
         description: "Screenshot locales"
         default: "en,es,vi"
@@ -19,6 +19,13 @@ on:
       xcode:
         description: "Optional Xcode app name, e.g. Xcode_16.4 (empty = runner default)"
         default: ""
+      simulator:
+        description: "Optional simulator name (for example iPhone SE (3rd generation))"
+        default: ""
+      xxl:
+        description: "Largest accessibility text for screens mode"
+        default: false
+        type: boolean
 permissions:
   contents: read
 jobs:
@@ -39,11 +46,20 @@ jobs:
         with:
           node-version: 22
       - name: Run
+        env:
+          DRYRUN_VERIFY_MODE: ${{ inputs.mode }}
+          DRYRUN_VERIFY_LOCALES: ${{ inputs.locales }}
+          SIM_NAME: ${{ inputs.simulator }}
+          DRYRUN_VERIFY_XXL: ${{ inputs.xxl }}
         run: |
-          if [ "${{ inputs.mode }}" = "screens" ]; then
-            scripts/mac/screens.sh --locales "${{ inputs.locales }}"
+          if [ "$DRYRUN_VERIFY_MODE" = "screens" ]; then
+            args=(--locales "$DRYRUN_VERIFY_LOCALES")
+            if [ "$DRYRUN_VERIFY_XXL" = true ]; then args+=(--xxl); fi
+            scripts/mac/screens.sh "${args[@]}"
+          elif [ "$DRYRUN_VERIFY_MODE" = build ]; then
+            scripts/mac/verify.sh --build-only
           else
-            scripts/mac/verify.sh --locales "${{ inputs.locales }}"
+            scripts/mac/verify.sh --locales "$DRYRUN_VERIFY_LOCALES"
           fi
       - name: Upload bundle
         if: always()

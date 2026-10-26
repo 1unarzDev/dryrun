@@ -4,6 +4,7 @@ public enum HomeIssueKind: String, Codable, Sendable, Hashable, CaseIterable {
     case invalidPolygon
     case duplicateID
     case unknownFloor
+    case exteriorGradeUnknown
     case portalUnverified
     case portalDestinationUnknown
     case portalSpaceMissing
@@ -21,6 +22,8 @@ public enum HomeIssueKind: String, Codable, Sendable, Hashable, CaseIterable {
     case clearWidthUnknown
     case structureIncomplete
     case overlappingSpaces
+    case correctedGeometryNeedsReview
+    case connectorGeometryInvalid
     case shelterCandidateNotEngineered
 }
 
@@ -51,21 +54,26 @@ public enum HomeValidator {
             out.append(HomeIssue(kind: .duplicateID, severity: .blocking, elementID: id, message: "ID \(id) is used more than once."))
         }
 
+        for floor in home.floors where floor.exteriorGrade == .unknown || (home.source == .roomPlanScan && floor.exteriorGrade == nil) {
+            out.append(HomeIssue(kind: .exteriorGradeUnknown, severity: .needsConfirmation, elementID: floor.id,
+                message: "Confirm how \(floor.label) relates to exterior ground; captured story order cannot establish a walking exit."))
+        }
         for s in home.spaces {
             if floors[s.floorID] == nil { out.append(HomeIssue(kind: .unknownFloor, severity: .blocking, elementID: s.id, message: "\(s.label) refers to a missing floor.")) }
             if !Geometry.isSimplePolygon(s.polygon) {
                 out.append(HomeIssue(kind: .invalidPolygon, severity: .blocking, elementID: s.id, message: "\(s.label) has an invalid outline."))
             }
             if s.needsMeasurement { out.append(HomeIssue(kind: .spaceNeedsMeasurement, severity: .needsConfirmation, elementID: s.id, message: "\(s.label) needs measurement.")) }
+            if s.geometryNeedsReview == true {
+                out.append(HomeIssue(kind: .correctedGeometryNeedsReview, severity: .blocking, elementID: s.id,
+                                     message: "Review this corrected room outline and the positions of its openings, stairs and obstacles before routing."))
+            }
             if !s.labelConfirmed { out.append(HomeIssue(kind: .spaceLabelUnconfirmed, severity: .needsConfirmation, elementID: s.id, message: "Confirm the name of this room.")) }
         }
-        // Overlap check: a vertex of one space strictly inside another on the same floor.
+        // Positive-area intersection catches aligned overlapping strips and crossing concave outlines.
         for (i, a) in home.spaces.enumerated() {
             for b in home.spaces[(i + 1)...] where a.floorID == b.floorID {
-                let ca = Geometry.centroid(a.polygon), cb = Geometry.centroid(b.polygon)
-                if a.polygon.contains(where: { Geometry.contains(b.polygon, $0, tolerance: tolerance.boundaryContactMeters) })
-                    || b.polygon.contains(where: { Geometry.contains(a.polygon, $0, tolerance: tolerance.boundaryContactMeters) })
-                    || Geometry.contains(b.polygon, ca) || Geometry.contains(a.polygon, cb) {
+                if Geometry.polygonsOverlap(a.polygon, b.polygon) {
                     out.append(HomeIssue(kind: .overlappingSpaces, severity: .blocking, elementID: "\(a.id)|\(b.id)", message: "\(a.label) and \(b.label) overlap."))
                 }
             }
@@ -76,7 +84,7 @@ public enum HomeValidator {
             guard let floor = floors[p.floorID] else {
                 out.append(HomeIssue(kind: .unknownFloor, severity: .blocking, elementID: p.id, message: "Opening refers to a missing floor.")); continue
             }
-            let ground = Graph.isGround(floor, tolerance)
+            let ground = Graph.isGround(floor, tolerance) && !(home.source == .roomPlanScan && floor.exteriorGrade == nil)
             for side in [p.sideA, p.sideB] {
                 switch side {
                 case .unknown:
@@ -105,7 +113,10 @@ public enum HomeValidator {
                 } else if p.kind == .window {
                     out.append(HomeIssue(kind: .windowNotAnExit, severity: .info, elementID: p.id,
                                          message: "Windows are not exits unless you confirm everyone who would use it can open it and climb out."))
-                } else if p.verification == .verified {
+                } else if p.verification == .verified && PortalAttachment.check(p, in: home, tolerance: tolerance).attached
+                            && (p.kind == .opening || p.operable.confirmedValue == true)
+                            && ![p.sideA, p.sideB].contains(.unknown)
+                            && !home.spaces.contains(where: { ($0.id == spaceID(p.sideA) || $0.id == spaceID(p.sideB)) && $0.geometryNeedsReview == true }) {
                     verifiedGroundExit = true
                 }
             }
@@ -122,6 +133,10 @@ public enum HomeValidator {
         for c in home.connectors where c.verification != .verified {
             out.append(HomeIssue(kind: .connectorUnverified, severity: .needsConfirmation, elementID: c.id, message: "Confirm these \(c.kind.rawValue) connect the two floors."))
         }
+        for c in home.connectors where !HomeGeometryEditor.validLandings(c, in: home) {
+            out.append(HomeIssue(kind: .connectorGeometryInvalid, severity: .blocking, elementID: c.id,
+                                 message: "Correct both stair landings inside their actual rooms on different floors."))
+        }
         for a in home.annotations where a.kind == .tornadoShelterCandidate {
             out.append(HomeIssue(kind: .shelterCandidateNotEngineered, severity: .info, elementID: a.id,
                                  message: "A shelter candidate is a planning choice, not an engineered safe room."))
@@ -135,6 +150,11 @@ public enum HomeValidator {
         var seenIssues = Set<String>()
         out = out.filter { seenIssues.insert($0.id).inserted }
         return out.sorted { (rank[$0.severity]!, $0.kind.rawValue, $0.elementID) < (rank[$1.severity]!, $1.kind.rawValue, $1.elementID) }
+    }
+
+    private static func spaceID(_ side: PortalDestination) -> String? {
+        if case .space(let id) = side { return id }
+        return nil
     }
 
     /// "window in Kitchen", "door between Hallway and Kitchen", "door from Kitchen to outside": which opening an issue

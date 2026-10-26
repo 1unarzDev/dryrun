@@ -54,6 +54,11 @@ extension RunState {
         case RuleID.tornadoWarning: tornadoWarning(cause: id)
         case RuleID.recoveryDisplacement: displacement(cause: id)
         case RuleID.floodWarning: floodWarning(cause: id)
+        case RuleID.householdLeak: householdLeak(cause: id)
+        case RuleID.setExternal:
+            if scenario.hazard == .flashFlood && e.params["service"] == Svc.roads && e.params["state"] == ServiceState.unavailable.rawValue {
+                advanceFloodScene(cause: id)
+            }
         case RuleID.waterAdvisory:
             if flags.contains("advisory.chemical") {
                 emit("evt.\(scenario.id).advisory.boil-not-remedy", title: "scenario.common.advisory.boil-not-remedy", severity: .critical,
@@ -152,13 +157,16 @@ extension RunState {
     // MARK: Fire (immediate exercise; practice routes under authored assumptions)
 
     func startSpace(for p: Person) -> String {
-        if let s = p.sleepingSpaceID, home.space(s) != nil { return s }
-        return home.spaces.first { $0.kind == .livingRoom }?.id ?? home.spaces.first?.id ?? "unknown"
+        // A missing or stale assignment is an explicit unknown. Never silently start a person in
+        // the living room (or the first scanned room), which can make a rehearsal claim a route
+        // from the wrong place.
+        guard let s = input.effectiveSpatialOptions.startingSpaceIDs[p.id] ?? p.sleepingSpaceID, home?.space(s) != nil else { return "unknown" }
+        return s
     }
 
     /// Human label for an exit: the room it leaves from (household-entered label), never the raw portal ID.
     func exitRoomLabel(_ portalID: String) -> String {
-        guard let pt = home.portal(portalID) else { return "" }
+        guard let home, let pt = home.portal(portalID) else { return "" }
         for side in [pt.sideA, pt.sideB] { if case .space(let sid) = side, let sp = home.space(sid) { return sp.label } }
         return pt.note ?? ""
     }
@@ -167,6 +175,16 @@ extension RunState {
 
     mutating func fireIgnition(cause: String) {
         flags.insert("fire")
+        if !BaselinePreparedness.hasRecordedAlarmReadiness("smokeAlarms", household: household) {
+            unknowns.insert("home.smokeAlarms")
+            flags.insert("fire.smokeAlarmsUnverified")
+        }
+        // Household coordination still applies without a scan; no geometry or room assignment is fabricated.
+        guard let home else {
+            assistanceCheck(cause: cause, rule: "rule.fire.assistance", sources: ["S19"])
+            if !household.pets.isEmpty { flags.insert("fire.pets") }
+            return
+        }
         // Usual (practised) routes with no exercise exclusions.
         for p in household.people.sorted(by: { $0.id < $1.id }) {
             let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p)), in: home)
@@ -189,30 +207,39 @@ extension RunState {
                  rule: "rule.fire.meeting-point", facts: ["home.annotations"], causedBy: cause, sources: ["S19"])
             requireSticky("req.meetingPoint", cause: cause)
         }
-        let alarms = home.annotations.filter { $0.kind == .smokeAlarm && $0.verification == .verified }
-        if alarms.isEmpty {
-            unknowns.insert("home.smokeAlarms")
-            flags.insert("fire.smokeAlarmsUnverified")
-        }
         if !household.pets.isEmpty { flags.insert("fire.pets") }
+        updateSpatialScene(stage: cause, affected: [], assumption: "Exercise: routes before the authored smoke blockage. Starting rooms are recorded household assignments.")
     }
 
-    /// Applies authored blockage. `originKind` blocks every space of that kind (the authored fire origin);
+    /// Applies authored blockage. `originKind` proposes one actual room as the authored origin;
     /// `mode == "currentRoutes"` additionally blocks the exits of everyone's current practice route.
-    /// If the home has no space of `originKind`, the origin falls back to the exit room of the first person's usual route.
+    /// If a scanned home has no space of `originKind`, preserve the missing authored input as an
+    /// unknown instead of relabelling an unrelated room as the fire origin.
     mutating func fireBlock(e: AuthoredEvent, cause: String) {
+        guard let home else { return }
         var blockedSpaces = Set<String>(), blockedPortals = Set<String>()
         for (_, r) in currentRoutes {
             blockedSpaces.formUnion(r.request.exclusions.blockedSpaceIDs)
             blockedPortals.formUnion(r.request.exclusions.blockedPortalIDs)
         }
         if let kindRaw = e.params["originKind"], let kind = SpaceKind(rawValue: kindRaw) {
-            let origin = home.spaces.filter { $0.kind == kind }.map(\.id)
-            if origin.isEmpty, let first = household.people.sorted(by: { $0.id < $1.id }).compactMap({ currentRoutes[$0.id]?.primary }).first,
-               let last = first.spaceSequence.last {
-                blockedSpaces.insert(last)
+            // One actual origin, selected explicitly or by a stable seeded choice among matching rooms.
+            var neighbors: Set<String> = []
+            for portal in home.portals where portal.verification == .verified {
+                if case .space(let a) = portal.sideA, case .space(let b) = portal.sideB {
+                    if blockedSpaces.contains(a) { neighbors.insert(b) }
+                    if blockedSpaces.contains(b) { neighbors.insert(a) }
+                }
+            }
+            let candidates = home.spaces.filter { $0.kind == kind && (blockedSpaces.isEmpty || neighbors.contains($0.id)) }.sorted { $0.id < $1.id }
+            let selected = blockedSpaces.isEmpty ? input.effectiveSpatialOptions.originSpaceID.flatMap(home.space) : nil
+            let origin = selected ?? (candidates.isEmpty ? nil : candidates[Int(input.seed % UInt64(candidates.count))])
+            if let origin {
+                blockedSpaces.insert(origin.id)
+                if spatialState?.originSpaceID == nil { spatialState?.originSpaceID = origin.id }
             } else {
-                blockedSpaces.formUnion(origin)
+                unknowns.insert("home.fireOrigin.\(kindRaw)")
+                flags.insert("fire.originUnresolved")
             }
         }
         if e.params["mode"] == "currentRoutes" {
@@ -222,9 +249,7 @@ extension RunState {
         for p in household.people.sorted(by: { $0.id < $1.id }) {
             let previous = currentRoutes[p.id]?.primary
             // A person who starts in a blocked room keeps that start; nobody is ever routed back in (no re-entry).
-            var exP = ex
-            exP.blockedSpaceIDs.removeAll { $0 == startSpace(for: p) }
-            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: exP), in: home)
+            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: ex), in: home)
             currentRoutes[p.id] = r
             routes.append(r)
             if let path = r.primary {
@@ -245,19 +270,25 @@ extension RunState {
             }
             if r.primary != nil, r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
         }
+        updateSpatialScene(stage: cause, affected: blockedSpaces.sorted(), portals: blockedPortals.sorted(), assumption: "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.")
         helperReachCheck(blockedSpaces: blockedSpaces, blockedPortals: blockedPortals, cause: cause)
     }
 
     /// Can each assigned helper reach the person they help without entering an authored blocked space?
-    /// Conservative room-level reachability over VERIFIED, operable, non-window interior connections and verified
-    /// stairs; a helper is never sent into a blocked room (no entry into the fire area, no re-entry).
+    /// Uses the same portal attachment, geometry, clearance and mobility contract as every practice route.
+    /// A helper is never sent into a blocked room (no entry into the fire area, no re-entry).
     /// If unreachable, the plan must not rely on that helper: we say so instead of "assigned".
     mutating func helperReachCheck(blockedSpaces: Set<String>, blockedPortals: Set<String>, cause: String) {
+        guard let home else { return }
         for p in household.people.sorted(by: { $0.id < $1.id }) {
             guard let hid = p.helperPersonID, let helper = household.people.first(where: { $0.id == hid }),
                   !flags.contains("fire.helperBlocked.\(p.id)") else { continue }
             let from = startSpace(for: helper), to = startSpace(for: p)
-            if Self.reachable(from: from, to: to, home: home, blockedSpaces: blockedSpaces, blockedPortals: blockedPortals) { continue }
+            let reach = planner.plan(RouteRequest(personID: helper.id, startSpaceID: from,
+                mobility: mobility(for: helper),
+                exclusions: ScenarioExclusions(blockedSpaceIDs: blockedSpaces.sorted(), blockedPortalIDs: blockedPortals.sorted()),
+                purpose: .helperReach, destinationSpaceID: to), in: home)
+            if reach.primary != nil { continue }
             flags.insert("fire.helperBlocked.\(p.id)")
             emit("evt.home-fire.assist.helper-blocked.\(p.id)", title: "scenario.common.assist.helper-blocked",
                  detail: "scenario.common.assist.helper-blocked.options",
@@ -266,29 +297,6 @@ extension RunState {
                  causedBy: cause, sources: ["S19"])
             requireSticky("req.assistance.reach.\(p.id)", cause: cause)
         }
-    }
-
-    static func reachable(from: String, to: String, home: HomeModel, blockedSpaces: Set<String>, blockedPortals: Set<String>) -> Bool {
-        if from == to { return true }
-        if blockedSpaces.contains(to) { return false }
-        var adj: [String: Set<String>] = [:]
-        for pt in home.portals where pt.verification == .verified && pt.kind != .window && !blockedPortals.contains(pt.id) {
-            guard case .space(let a) = pt.sideA, case .space(let b) = pt.sideB else { continue }
-            if pt.kind != .opening && pt.operable.confirmedValue != true { continue }
-            adj[a, default: []].insert(b); adj[b, default: []].insert(a)
-        }
-        for c in home.connectors where c.verification == .verified && c.kind != .elevator {
-            adj[c.fromSpaceID, default: []].insert(c.toSpaceID); adj[c.toSpaceID, default: []].insert(c.fromSpaceID)
-        }
-        var seen: Set<String> = [from], queue = [from]
-        while !queue.isEmpty {
-            let cur = queue.removeFirst()
-            for n in (adj[cur] ?? []).sorted() where !seen.contains(n) && !blockedSpaces.contains(n) {
-                if n == to { return true }
-                seen.insert(n); queue.append(n)
-            }
-        }
-        return false
     }
 
     mutating func assistanceCheck(cause: String, rule: String, sources: [String]) {
@@ -312,12 +320,7 @@ extension RunState {
     // MARK: Tornado
 
     var shelterSpace: Space? {
-        let lowest = home.floors.map(\.level).min() ?? 0
-        let lowestFloors = Set(home.floors.filter { $0.level == lowest }.map(\.id))
-        let annotated = home.annotations.filter { $0.kind == .tornadoShelterCandidate && $0.verification == .verified }.compactMap(\.spaceID)
-        return home.spaces.sorted { $0.id < $1.id }.first { s in
-            lowestFloors.contains(s.floorID) && (annotated.contains(s.id) || s.interiorNoWindowsConfirmed.confirmedValue == true)
-        }
+        home.flatMap { ShelterSuitability.confirmedRoom(in: $0) }
     }
 
     mutating func tornadoWarning(cause: String) {
@@ -348,12 +351,44 @@ extension RunState {
                 requireSticky("req.alerts.night", cause: cause)
             }
         }
+        if household.housing.homeType != .manufacturedHome, let shelter = shelterSpace {
+            routeToInterior(shelter, purpose: .interiorShelter, exclusions: .none)
+        } else { recordUnavailableInterior(purpose: .interiorShelter, exclusions: .none) }
+        updateSpatialScene(stage: cause, affected: [], destination: shelterSpace?.id,
+                           assumption: "Exercise: household-chosen interior shelter, not an engineered safe room. Windows indicate exposure; opening windows does not help.")
         assistanceCheck(cause: cause, rule: "rule.tornado.assistance", sources: ["S22"])
     }
 
     // MARK: Flood
 
+    mutating func householdLeak(cause: String) {
+        guard let home else { return }
+        let affected = input.effectiveSpatialOptions.floodAffectedSpaceIDs.filter { home.space($0) != nil }.sorted()
+        // A household leak does not establish a need to go upstairs, a regional evacuation, a power
+        // failure, impassable roads or a contaminated well. Do not borrow those regional-flood effects.
+        currentRoutes = [:]
+        updateSpatialScene(stage: cause, affected: affected,
+            assumption: "Exercise: a local household leak affects only the selected spaces. This is separate from regional flood evacuation guidance. Keep away from water near electrical equipment; no route through the affected space is established.")
+    }
+
     mutating func floodWarning(cause: String) {
+        if let home {
+            let affected = input.effectiveSpatialOptions.floodAffectedSpaceIDs.filter { home.space($0) != nil }.sorted()
+            recordUnavailableInterior(purpose: .higherRefuge, exclusions: ScenarioExclusions(blockedSpaceIDs: affected))
+            if let refugeID = input.effectiveSpatialOptions.refugeSpaceID, let refuge = home.space(refugeID),
+               let targetFloor = home.floors.first(where: { $0.id == refuge.floorID }), targetFloor.exteriorGrade != .unknown,
+               affected.allSatisfy({ id in
+                   guard let room = home.space(id), let floor = home.floors.first(where: { $0.id == room.floorID }),
+                         floor.exteriorGrade != nil, floor.exteriorGrade != .unknown else { return false }
+                   return floor.elevationMeters < targetFloor.elevationMeters
+               }), !affected.isEmpty, refuge.kind != .closet {
+                routeToInterior(refuge, purpose: .higherRefuge, exclusions: ScenarioExclusions(blockedSpaceIDs: affected))
+            }
+            updateSpatialScene(stage: cause, affected: affected, destination: input.effectiveSpatialOptions.refugeSpaceID,
+                               assumption: input.effectiveSpatialOptions.floodIsHouseholdLeak ? "Exercise: a local household leak affects only the selected spaces. This is separate from regional flood evacuation guidance. Keep away from water near electrical equipment; no route through the affected space is established."
+                               : affected.isEmpty ? "Exercise: regional flood warning. Indoor water location is unknown; follow official instructions and act early. No indoor route is established."
+                               : "Exercise: selected water-affected spaces are excluded. Higher refuge is considered only with recorded floor relationships; never cross water or enter a closed attic.")
+        }
         // Mapped hazard or map directions never establish that a road is passable.
         emit("evt.flash-flood.no-crossing", title: "scenario.flash-flood.no-crossing", severity: .critical,
              rule: "rule.flood.never-through-water", facts: [], causedBy: cause, sources: ["S23"])
@@ -363,6 +398,72 @@ extension RunState {
             emit("evt.flash-flood.well-quality-unknown", title: "scenario.flash-flood.well-quality-unknown", severity: .caution,
                  rule: "rule.flood.well-quality", facts: ["housing.waterSource"], causedBy: cause, sources: ["S24"])
         }
+    }
+
+    mutating func advanceFloodScene(cause: String) {
+        guard let home, var scene = spatialState, !scene.affectedSpaceIDs.isEmpty,
+              !input.effectiveSpatialOptions.floodIsHouseholdLeak else { return }
+        let affected = Set(scene.affectedSpaceIDs)
+        var expanded = affected
+        for portal in home.portals where portal.verification == .verified {
+            guard case .space(let a) = portal.sideA, case .space(let b) = portal.sideB else { continue }
+            for (from, to) in [(a,b), (b,a)] where affected.contains(from) {
+                guard let source = home.space(from), let target = home.space(to),
+                      let sourceFloor = home.floors.first(where: { $0.id == source.floorID }),
+                      let targetFloor = home.floors.first(where: { $0.id == target.floorID }),
+                      sourceFloor.exteriorGrade != nil, sourceFloor.exteriorGrade != .unknown,
+                      targetFloor.exteriorGrade != nil, targetFloor.exteriorGrade != .unknown,
+                      targetFloor.elevationMeters <= sourceFloor.elevationMeters else { continue }
+                expanded.insert(to)
+            }
+        }
+        let exclusions = ScenarioExclusions(blockedSpaceIDs: expanded.sorted())
+        recordUnavailableInterior(purpose: .higherRefuge, exclusions: exclusions)
+        if let destinationID = scene.destinationSpaceID, let destination = home.space(destinationID),
+           !expanded.contains(destinationID), let targetFloor = home.floors.first(where: { $0.id == destination.floorID }),
+           expanded.allSatisfy({ id in
+               guard let room = home.space(id), let floor = home.floors.first(where: { $0.id == room.floorID }) else { return false }
+               return floor.elevationMeters < targetFloor.elevationMeters
+           }) { routeToInterior(destination, purpose: .higherRefuge, exclusions: exclusions) }
+        scene.stageID = cause; scene.affectedSpaceIDs = expanded.sorted()
+        scene.routes = currentRoutes.keys.sorted().compactMap { currentRoutes[$0] }
+        scene.assumption = "Exercise: a later authored stage excludes connected lower spaces. This topology illustration is not a flood depth or arrival-time prediction."
+        scene.assumptionKey = "spatial.assumption.flood-later"
+        spatialState = scene
+    }
+
+    mutating func recordUnavailableInterior(purpose: RoutePurpose, exclusions: ScenarioExclusions) {
+        guard let home else { return }
+        for person in household.people.sorted(by: { $0.id < $1.id }) {
+            currentRoutes[person.id] = planner.plan(RouteRequest(personID: person.id, startSpaceID: startSpace(for: person),
+                mobility: mobility(for: person), exclusions: exclusions, purpose: purpose), in: home)
+        }
+    }
+
+    mutating func routeToInterior(_ destination: Space, purpose: RoutePurpose, exclusions: ScenarioExclusions) {
+        guard let home else { return }
+        for person in household.people.sorted(by: { $0.id < $1.id }) {
+            currentRoutes[person.id] = planner.plan(RouteRequest(personID: person.id, startSpaceID: startSpace(for: person),
+                mobility: mobility(for: person), exclusions: exclusions, purpose: purpose, destinationSpaceID: destination.id), in: home)
+        }
+    }
+
+    mutating func updateSpatialScene(stage: String, affected: [String], portals: [String] = [], destination: String? = nil, assumption: String) {
+        guard let home else { spatialState = nil; return }
+        let origin = spatialState?.originSpaceID ?? affected.first
+        let assumptionKey: String
+        switch scenario.hazard {
+        case .homeFire: assumptionKey = affected.isEmpty ? "spatial.assumption.fire-before" : "spatial.assumption.fire-blocked"
+        case .tornado: assumptionKey = "spatial.assumption.tornado"
+        case .flashFlood: assumptionKey = input.effectiveSpatialOptions.floodIsHouseholdLeak ? "spatial.assumption.leak" : affected.isEmpty ? "spatial.assumption.flood-unknown" : "spatial.assumption.flood-selected"
+        default: assumptionKey = "spatial.assumption.unknown"
+        }
+        let exposed = scenario.hazard == .tornado ? home.portals.filter { $0.kind == .window }.flatMap { portal in
+            [portal.sideA, portal.sideB].compactMap { side -> String? in if case .space(let id) = side { return id }; return nil }
+        } : []
+        spatialState = SpatialExerciseState(hazard: scenario.hazard, seed: input.seed, stageID: stage, originSpaceID: origin,
+            affectedSpaceIDs: affected, affectedPortalIDs: portals, destinationSpaceID: destination,
+            routes: currentRoutes.keys.sorted().compactMap { currentRoutes[$0] }, assumption: assumption, assumptionKey: assumptionKey, exposedSpaceIDs: Array(Set(exposed)).sorted())
     }
 
     // MARK: Choices

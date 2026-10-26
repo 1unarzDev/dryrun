@@ -86,6 +86,13 @@ enum TemporaryExports {
 
     /// Set while a preview/share/print may still read the file.
     @MainActor static var hasActiveExport = false
+    @MainActor private static var activityReaders = 0
+    @MainActor private static var purgeRequested = false
+    @MainActor static func retainActivity() { activityReaders += 1 }
+    @MainActor static func releaseActivity() {
+        activityReaders = max(0, activityReaders - 1)
+        if activityReaders == 0 && purgeRequested && !hasActiveExport { purgeAll() }
+    }
 
     static func write(_ data: Data, name: String) throws -> URL {
         let fm = FileManager.default
@@ -110,7 +117,9 @@ enum TemporaryExports {
         return url
     }
 
-    static func purgeAll() {
+    @MainActor static func purgeAll() {
+        guard activityReaders == 0 else { purgeRequested = true; return }
+        purgeRequested = false
         try? FileManager.default.removeItem(at: directory)
     }
 }

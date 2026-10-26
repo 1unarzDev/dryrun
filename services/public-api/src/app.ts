@@ -78,7 +78,9 @@ export function createApp(deps: AppDeps) {
     // Return the pack scoped to this region plus statewide resources it can use.
     const { info, pack } = entry;
     const resources = pack.resources.filter((r) => r.regionIDs.includes(info.id));
-    const cited = new Set(resources.flatMap((r) => r.sourceIDs));
+    // Coordinate provenance is an independent citation and must survive
+    // regional scoping alongside the resource's service source.
+    const cited = new Set(resources.flatMap((r) => [...r.sourceIDs, ...(r.coordinateSourceIDs ?? [])]));
     const scoped: RegionPackT = { ...pack, packID: `${pack.packID}.${info.id}`.slice(0, 64), regions: [info], resources,
       sources: pack.sources.filter((s) => cited.has(s.id)) };
     if (scoped.sources.length === 0) scoped.sources = pack.sources.slice(0, 1);

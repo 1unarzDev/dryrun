@@ -5,10 +5,10 @@ import Foundation
 ///
 ///   -demoHousehold hh-oak|hh-lake|hh-pine   load a fictional household (enables demo mode)
 ///   -demoLocale en|es|vi                    plan/UI language
-///   -demoTab next|rehearse|home|plan|help   initial tab (default: next, or rehearse with -demoScenario)
+///   -demoTab prepare|rehearse|plan          initial tab (default: prepare, or rehearse with -demoScenario)
 ///   -demoScenario <scenarioID>              open that rehearsal
 ///   -demoStep start|decision|end            how far to advance it (end answers each decision with the recommended option)
-///   -demoHomeMode 2d|3d|rooms               Home tab view
+///   -demoHomeMode 2d|3d|rooms               Home sheet view
 ///   -demoPlan all|<id,id,...>               generate a plan for these scenarios at launch
 ///   -demoWritePlanPDFs                      DEBUG only: write EN/ES/VI PDFs + JSON to Documents/demo-plans, then DONE
 ///   -disableAnimations                      steadier screenshots

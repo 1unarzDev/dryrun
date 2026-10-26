@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "concerns": {
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "possibleObstruction",
+              "tripHazard",
+              "supplyAccess"
+            ]
+          },
+          "roomID": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "imageID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "box": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            ],
+            "items": false,
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "visibleEvidence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "concern": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "alternatives": {
+            "minItems": 1,
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "urgency": {
+            "type": "string",
+            "enum": [
+              "review",
+              "soon"
+            ]
+          },
+          "confirmationPrompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "sourceIDs": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "S19",
+                "S20",
+                "S26"
+              ]
+            }
+          },
+          "actionID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "scenarioIDs": {
+            "minItems": 1,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "home-fire",
+                "tornado",
+                "flash-flood",
+                "freeze-power-loss",
+                "heat-grid-strain",
+                "water-outage"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "roomID",
+          "imageID",
+          "box",
+          "visibleEvidence",
+          "concern",
+          "alternatives",
+          "urgency",
+          "confirmationPrompt",
+          "sourceIDs",
+          "actionID",
+          "scenarioIDs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "limitations": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 600
+      }
+    }
+  },
+  "required": [
+    "concerns",
+    "limitations"
+  ],
+  "additionalProperties": false
+}

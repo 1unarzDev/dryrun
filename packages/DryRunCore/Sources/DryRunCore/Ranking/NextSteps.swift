@@ -2,7 +2,7 @@ import Foundation
 
 /// One preparation on the "Next steps" screen, merged across every rehearsed scenario that raised it.
 public struct NextStep: Sendable, Hashable, Identifiable {
-    public var id: String { recommendation.actionID }
+    public var id: String { recommendation.id }
     /// The highest-priority instance (lowest tier). Its event IDs and "Try this change" intervention belong to
     /// `sourceScenarioID`, so a comparison must be run against that scenario.
     public var recommendation: Recommendation
@@ -18,6 +18,8 @@ public struct NextStep: Sendable, Hashable, Identifiable {
 public struct NextStepsSummary: Sendable, Hashable {
     public var toDo: [NextStep]
     public var completed: [NextStep]
+    /// Factual progress remains visible after its real preparation gap closes. No completion date is inferred.
+    public var recorded: [NextStep] = []
     /// Household facts the rehearsals could not confirm (IDs as in `RehearsalResult.unknowns`), de-duplicated.
     public var unknownFacts: [String]
     /// Scenarios these steps were computed from.
@@ -25,38 +27,99 @@ public struct NextStepsSummary: Sendable, Hashable {
 }
 
 public enum NextSteps {
-    public static func summarize(_ results: [RehearsalResult], household: HouseholdProfile) -> NextStepsSummary {
+    public static func summarize(_ results: [RehearsalResult], household: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> NextStepsSummary {
         var best: [String: (rec: Recommendation, scenario: String)] = [:]
         var scenarios: [String: Set<String>] = [:]
         for r in results {
             let scenario = r.input.scenarioID
             for rec in r.recommendations {
-                scenarios[rec.actionID, default: []].insert(scenario)
-                if let current = best[rec.actionID] {
+                scenarios[rec.id, default: []].insert(scenario)
+                if let current = best[rec.id] {
                     // Keep the highest-priority instance; ties go to the scenario listed first, so the result
                     // does not depend on the order results were computed in.
                     let better = rec.tier < current.rec.tier
                         || (rec.tier == current.rec.tier && PlanBuilder.order(scenario) < PlanBuilder.order(current.scenario))
-                    if better { best[rec.actionID] = (rec, scenario) }
+                    if better { best[rec.id] = (rec, scenario) }
                 } else {
-                    best[rec.actionID] = (rec, scenario)
+                    best[rec.id] = (rec, scenario)
                 }
             }
         }
-        let completedAt = Dictionary(household.completedPreparations.map { ($0.actionID, $0.completedAt) },
-                                     uniquingKeysWith: { a, _ in a })
+        for rec in BaselinePreparedness.evaluate(household: household, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate) {
+            best[rec.id] = (rec, rec.scenarioIDs.first ?? "")
+            scenarios[rec.id] = Set(rec.scenarioIDs)
+        }
+        // One real preparation can explain several exercise gaps. Retain the exercise intervention
+        // and source scenario while keeping the direct factual editor and household wording.
+        let equivalents = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
+                           "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water",
+                           "act.fire.meeting-point": "prep.nearMeetup", "act.fire.smoke-alarms": "prep.smokeAlarms",
+                           "act.assist.assign-helper": "prep.helper", "act.comms.weather-radio": "prep.radio", "act.alerts.enroll-local": "prep.alerts",
+                           "act.fire.practice-drill": "prep.fireDrill", "act.flood.higher-ground-plan": "prep.floodPlan",
+                           "act.water.well-test-after-flood": "prep.wellFloodPlan", "act.water.save-utility-contact": "prep.waterUtility"]
+        let factualOnly = Set(["prep.radio", "prep.alerts", "prep.fireDrill", "prep.floodPlan", "prep.wellFloodPlan", "prep.waterUtility"])
+        for key in best.keys.sorted() {
+            guard let exercise = best[key], let action = equivalents[exercise.rec.actionID] else { continue }
+            let canonical = exercise.rec.subjectID.map { "\(action)|\($0)" } ?? action
+            guard var baseline = best[canonical] else {
+                // Actual readiness may be recorded or the household need may be inapplicable.
+                // An authored exercise must not recreate the closed factual preparation task.
+                if factualOnly.contains(action) { best.removeValue(forKey: key) }
+                continue
+            }
+            baseline.rec.tier = min(baseline.rec.tier, exercise.rec.tier)
+            baseline.rec.matchedFactIDs = Array(Set(baseline.rec.matchedFactIDs + exercise.rec.matchedFactIDs)).sorted()
+            baseline.rec.sourceIDs = Array(Set(baseline.rec.sourceIDs + exercise.rec.sourceIDs)).sorted()
+            if baseline.rec.tryIntervention == nil, exercise.rec.tryIntervention != nil {
+                baseline.rec.tryIntervention = exercise.rec.tryIntervention
+                baseline.rec.modeledEffectKey = exercise.rec.modeledEffectKey
+                baseline.scenario = exercise.scenario
+            }
+            scenarios[canonical, default: []].formUnion(scenarios[key] ?? [])
+            best[canonical] = baseline
+            best.removeValue(forKey: key)
+        }
         let steps = best.map { id, value in
             NextStep(recommendation: value.rec, sourceScenarioID: value.scenario,
                      scenarioIDs: (scenarios[id] ?? []).sorted { PlanBuilder.order($0) < PlanBuilder.order($1) },
-                     completedAt: completedAt[id])
+                     completedAt: household.completedPreparations.first { PreparationCompletion.isValid($0, for: value.rec, household: household, home: home) }?.completedAt)
         }
         .sorted {
-            ($0.recommendation.tier, -$0.scenarioIDs.count, $0.id) < ($1.recommendation.tier, -$1.scenarioIDs.count, $1.id)
+            ($0.recommendation.tier, RecommendationRanker.effortRank($0.recommendation.effort), -$0.scenarioIDs.count, $0.id) < ($1.recommendation.tier, RecommendationRanker.effortRank($1.recommendation.effort), -$1.scenarioIDs.count, $1.id)
         }
         return NextStepsSummary(
             toDo: steps.filter { $0.completedAt == nil },
             completed: steps.filter { $0.completedAt != nil },
+            recorded: BaselinePreparedness.recorded(household: household, home: home, savedPlaces: savedPlaces, referenceDate: referenceDate).map {
+                NextStep(recommendation: $0, sourceScenarioID: $0.scenarioIDs.first ?? "", scenarioIDs: $0.scenarioIDs, completedAt: nil)
+            },
             unknownFacts: Array(Set(results.flatMap(\.unknowns))).sorted(),
             scenarioIDs: results.map(\.input.scenarioID).sorted { PlanBuilder.order($0) < PlanBuilder.order($1) })
+    }
+}
+
+extension Recommendation {
+    /// Type labels follow the selected language; personal names and custom model names remain unchanged.
+    public func localizedTemplateValues(household: HouseholdProfile?, localizer: Localizer) -> [String: String] {
+        var values = templateValues
+        if actionID == "act.water.store-3day" || actionID == "prep.water" {
+            values = PlanningMeasurements.waterValues(values, keys: ["target", "stored"], countryCode: household?.privateLocation?.countryCode, localizer: localizer)
+        }
+        guard let household else { return values }
+        if let subjectID, subjectID.hasPrefix("equipment."), let equipment = household.equipment.first(where: { "equipment.\($0.id)" == subjectID }) {
+            values["device"] = equipment.localizedLabel(localizer)
+            if actionID == "prep.medication" { values["person"] = equipment.localizedLabel(localizer) }
+        }
+        if let subjectID, subjectID.hasPrefix("person."), let person = household.people.first(where: { "person.\($0.id)" == subjectID }) {
+            values["person"] = person.alias.isEmpty ? localizer(person.isSelf == true ? "family.you" : "ui.person") : person.alias
+        }
+        if let subjectID, subjectID.hasPrefix("backup."), let backup = household.backupPower.first(where: { "backup.\($0.id)" == subjectID }) {
+            values["backup"] = backup.label.isEmpty ? localizer("enum.\(backup.kind.rawValue)") : backup.label
+        }
+        if let item = values["item"] {
+            let base = item.hasPrefix("medication.") ? "medication" : (item.hasPrefix("equipmentSupplies.") ? "equipmentSupplies" : item)
+            values["item"] = localizer("prep.\(base).title", values)
+        }
+        return values
     }
 }

@@ -1,0 +1,13 @@
+{
+  "simulation.user.allocatePower": "You changed a backup power assignment in this exercise.",
+  "simulation.user.useStoredWater": "You selected a stored-water use policy for this exercise.",
+  "simulation.user.choose": "You chose an exercise option.",
+  "simulation.user.assignHelper": "You changed a helper assignment in this exercise.",
+  "simulation.user.contact": "You attempted to reach a recorded contact in this exercise.",
+  "simulation.user.unsupported": "This action is not modeled in this exercise.",
+  "simulation.user.moveTo": "You tried a move in this exercise. The scene shows whether a route was available.",
+  "simulation.user.takeSupply": "You took a recorded supply item in this exercise.",
+  "simulation.user.transferSupply": "You placed the supply item you were carrying in your current exercise room.",
+  "simulation.user.closeDoor": "You closed an operable door in this exercise. No change in smoke spread is modeled.",
+  "simulation.user.finish": "You ended this exercise."
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "flash-flood",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "hazard": "flashFlood",
   "titleKey": "scenario.flash-flood.title",
   "summaryKey": "scenario.flash-flood.summary",
@@ -34,6 +34,10 @@
     {
       "id": "home-flooded",
       "labelKey": "scenario.flash-flood.variant.home-flooded"
+    },
+    {
+      "id": "householdLeak",
+      "labelKey": "scenario.household-leak.title"
     }
   ],
   "events": [
@@ -47,6 +51,9 @@
       "severity": "caution",
       "sourceIDs": [
         "S23"
+      ],
+      "when": [
+        "!variant:householdLeak"
       ]
     },
     {
@@ -59,6 +66,9 @@
       "severity": "critical",
       "sourceIDs": [
         "S23"
+      ],
+      "when": [
+        "!variant:householdLeak"
       ]
     },
     {
@@ -75,7 +85,10 @@
       "params": {
         "service": "svc.grid",
         "state": "unavailable"
-      }
+      },
+      "when": [
+        "!variant:householdLeak"
+      ]
     },
     {
       "id": "evt.flash-flood.displacement",
@@ -89,7 +102,8 @@
         "S29"
       ],
       "when": [
-        "variant:home-flooded"
+        "variant:home-flooded",
+        "!variant:householdLeak"
       ]
     },
     {
@@ -102,6 +116,9 @@
       "severity": "info",
       "sourceIDs": [
         "S26"
+      ],
+      "when": [
+        "!variant:householdLeak"
       ]
     },
     {
@@ -118,7 +135,10 @@
       "params": {
         "service": "svc.roads",
         "state": "operational"
-      }
+      },
+      "when": [
+        "!variant:householdLeak"
+      ]
     },
     {
       "id": "evt.flash-flood.power-restored",
@@ -130,6 +150,40 @@
       "severity": "info",
       "sourceIDs": [
         "S20"
+      ],
+      "when": [
+        "!variant:householdLeak"
+      ]
+    },
+    {
+      "id": "evt.household-leak.selected-area",
+      "minute": 0,
+      "priority": 0,
+      "phaseID": "early",
+      "rule": "rule.flood.household-leak",
+      "titleKey": "scenario.household-leak.event.detected",
+      "detailKey": "scenario.household-leak.event.detected.detail",
+      "severity": "caution",
+      "sourceIDs": [
+        "S23"
+      ],
+      "when": [
+        "variant:householdLeak"
+      ]
+    },
+    {
+      "id": "evt.household-leak.review",
+      "minute": 3,
+      "priority": 0,
+      "phaseID": "early",
+      "rule": "rule.note",
+      "titleKey": "scenario.household-leak.event.review",
+      "severity": "info",
+      "sourceIDs": [
+        "S23"
+      ],
+      "when": [
+        "variant:householdLeak"
       ]
     }
   ],
@@ -158,6 +212,9 @@
       ],
       "sourceIDs": [
         "S23"
+      ],
+      "when": [
+        "!variant:householdLeak"
       ]
     },
     {
@@ -198,6 +255,67 @@
       ],
       "sourceIDs": [
         "S23"
+      ],
+      "when": [
+        "!variant:householdLeak"
+      ]
+    },
+    {
+      "id": "choice.household-leak.keep-clear",
+      "minute": 1,
+      "phaseID": "early",
+      "promptKey": "scenario.household-leak.choice.clear.prompt",
+      "defaultOptionID": "keep-clear",
+      "options": [
+        {
+          "id": "keep-clear",
+          "labelKey": "scenario.household-leak.choice.clear.keep-clear",
+          "feedbackKey": "scenario.household-leak.choice.clear.keep-clear.feedback",
+          "effect": "waitForInstructions",
+          "unsafe": false
+        },
+        {
+          "id": "enter-water",
+          "labelKey": "scenario.household-leak.choice.clear.enter-water",
+          "feedbackKey": "scenario.household-leak.choice.clear.enter-water.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S23"
+      ],
+      "when": [
+        "variant:householdLeak"
+      ]
+    },
+    {
+      "id": "choice.household-leak.help",
+      "minute": 4,
+      "phaseID": "early",
+      "promptKey": "scenario.household-leak.choice.help.prompt",
+      "defaultOptionID": "get-help",
+      "options": [
+        {
+          "id": "get-help",
+          "labelKey": "scenario.household-leak.choice.help.get-help",
+          "feedbackKey": "scenario.household-leak.choice.help.get-help.feedback",
+          "effect": "waitForInstructions",
+          "unsafe": false
+        },
+        {
+          "id": "touch-electrics",
+          "labelKey": "scenario.household-leak.choice.help.touch-electrics",
+          "feedbackKey": "scenario.household-leak.choice.help.touch-electrics.feedback",
+          "effect": "unsafe",
+          "unsafe": true
+        }
+      ],
+      "sourceIDs": [
+        "S23"
+      ],
+      "when": [
+        "variant:householdLeak"
       ]
     }
   ],
@@ -207,7 +325,8 @@
     "rule.external.set",
     "rule.recovery.displacement",
     "rule.checkpoint",
-    "rule.recovery.power-restored"
+    "rule.recovery.power-restored",
+    "rule.flood.household-leak"
   ],
   "sourceIDs": [
     "S18",

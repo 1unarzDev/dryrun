@@ -33,12 +33,21 @@ public enum ActionRules {
             var notes = def.feasibilityNotes
             if h.housing.tenancy == .renter, !def.renterFriendly { notes.append("feasibility.renter-permission") }
             if h.supplies.limitedBudget, def.effort == .moderate || def.effort == .high { notes.append("feasibility.budget") }
+            func subject(_ prefix: String, ids: [String]) -> String? {
+                // IDs may contain dots. Match declared subjects, preferring the longest exact prefix.
+                ids.sorted { ($0.count, $0) > ($1.count, $1) }.first { id in
+                    facts.contains { $0 == "\(prefix).\(id)" || $0.hasPrefix("\(prefix).\(id).") }
+                }.map { "\(prefix).\($0)" }
+            }
+            let subjectID = values["device"] != nil ? subject("equipment", ids: h.equipment.map(\.id))
+                : (values["person"] != nil ? subject("person", ids: h.people.map(\.id))
+                   : (values["backup"] != nil ? subject("backup", ids: h.backupPower.map(\.id)) : nil))
             out.append(Recommendation(
                 actionID: id, tier: tier, titleKey: "action.\(id).title", whyKey: "action.\(id).why" + (whySuffix.map { ".\($0)" } ?? ""), templateValues: values,
                 matchedFactIDs: facts, causeEventIDs: Array(Set(causeIDs)).sorted(), scenarioIDs: def.scenarioIDs,
                 tryIntervention: def.simulates != nil ? Intervention(actionID: id, parameters: tryParams ?? [:]) : nil,
                 modeledEffectKey: def.simulates != nil ? "action.\(id).effect" : nil, effort: def.effort,
-                feasibilityNotes: notes, unconfirmed: unconfirmed, sourceIDs: def.sourceIDs, verificationStatus: status))
+                feasibilityNotes: notes, unconfirmed: unconfirmed, sourceIDs: def.sourceIDs, verificationStatus: status, subjectID: subjectID))
         }
 
         // Essential powered equipment.
@@ -120,7 +129,9 @@ public enum ActionRules {
         if s.flags.contains("fire.smokeAlarmsUnverified") {
             add("act.fire.smoke-alarms", tier: .blockingUnknownFact, facts: ["home.annotations"], status: .unknown)
         }
-        if scen == "home-fire" { add("act.fire.practice-drill", tier: .general, facts: []) }
+        if scen == "home-fire", !BaselinePreparedness.hasRecordedReadiness("fireDrill", household: h) {
+            add("act.fire.practice-drill", tier: .general, facts: ["preparedness.fireDrill"])
+        }
 
         // Heating dependency unknown.
         if s.unknowns.contains("housing.heatingNeedsElectricity"), s.scenario.ambient == "cold" || scen == "freeze-power-loss" {
@@ -137,13 +148,18 @@ public enum ActionRules {
                 unconfirmed: h.pets.isEmpty ? [] : ["pets.waterNeeds"],
                 whySuffix: h.supplies.storedWaterGallons.isConfirmed ? nil : "unknown")
         }
-        if scen == "water-outage" || s.flags.contains(where: { $0.hasPrefix("advisory.") }) {
-            add("act.water.save-utility-contact", tier: .multiScenarioPreparation, facts: ["housing.waterSource"])
+        if h.housing.waterSource == .municipal,
+           (scen == "water-outage" || s.flags.contains(where: { $0.hasPrefix("advisory.") })),
+           !BaselinePreparedness.hasRecordedReadiness("waterUtility", household: h) {
+            add("act.water.save-utility-contact", tier: .multiScenarioPreparation, facts: ["housing.waterSource", "contacts.waterUtility"])
         }
-        if scen == "flash-flood", h.housing.waterSource == .privateWell {
-            add("act.water.well-test-after-flood", tier: .scenarioSupplyOrContinuityGap, facts: ["housing.waterSource"])
+        if scen == "flash-flood", !s.variants.contains("householdLeak"), h.housing.waterSource == .privateWell,
+           !BaselinePreparedness.hasRecordedReadiness("wellFloodPlan", household: h) {
+            add("act.water.well-test-after-flood", tier: .scenarioSupplyOrContinuityGap, facts: ["housing.waterSource", "preparedness.wellFloodPlan"])
         }
-        if scen == "flash-flood" { add("act.flood.higher-ground-plan", tier: .multiScenarioPreparation, facts: []) }
+        if scen == "flash-flood", !s.variants.contains("householdLeak"), !BaselinePreparedness.hasRecordedReadiness("floodPlan", household: h) {
+            add("act.flood.higher-ground-plan", tier: .multiScenarioPreparation, facts: ["preparedness.floodPlan"])
+        }
 
         // Communications.
         if s.unmetEver.contains("req.comms.handset") {
@@ -167,7 +183,12 @@ public enum ActionRules {
         }
 
         // Cross-scenario, no cost.
-        add("act.alerts.enroll-local", tier: .multiScenarioPreparation, facts: ["regionID"])
+        let alerts = h.preparedness?.items["alerts"]
+        let enrolled = alerts?.available.confirmedValue == true
+            && !(alerts?.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        if PublicDataPolicy.isAllowedRegionID(h.regionID), !enrolled {
+            add("act.alerts.enroll-local", tier: .multiScenarioPreparation, facts: ["regionID", "preparedness.alerts"])
+        }
         return out
     }
 }
@@ -186,27 +207,27 @@ public enum RecommendationRanker {
     public static func rank(_ recs: [Recommendation]) -> [Recommendation] {
         var merged: [String: Recommendation] = [:]
         for r in recs {
-            if var existing = merged[r.actionID] {
+            if var existing = merged[r.id] {
                 if r.tier < existing.tier {
                     var keep = r
                     keep.matchedFactIDs = Array(Set(existing.matchedFactIDs + r.matchedFactIDs)).sorted()
                     keep.causeEventIDs = Array(Set(existing.causeEventIDs + r.causeEventIDs)).sorted()
-                    merged[r.actionID] = keep
+                    merged[r.id] = keep
                 } else {
                     existing.matchedFactIDs = Array(Set(existing.matchedFactIDs + r.matchedFactIDs)).sorted()
                     existing.causeEventIDs = Array(Set(existing.causeEventIDs + r.causeEventIDs)).sorted()
                     for (k, v) in r.templateValues where existing.templateValues[k] == nil { existing.templateValues[k] = v }
-                    merged[r.actionID] = existing
+                    merged[r.id] = existing
                 }
             } else {
                 var r2 = r
                 r2.matchedFactIDs = Array(Set(r.matchedFactIDs)).sorted()
-                merged[r.actionID] = r2
+                merged[r.id] = r2
             }
         }
         return merged.values.sorted { a, b in
-            (a.tier.rawValue, effortRank(a.effort), -a.scenarioIDs.count, a.actionID)
-                < (b.tier.rawValue, effortRank(b.effort), -b.scenarioIDs.count, b.actionID)
+            (a.tier.rawValue, effortRank(a.effort), -a.scenarioIDs.count, a.id)
+                < (b.tier.rawValue, effortRank(b.effort), -b.scenarioIDs.count, b.id)
         }
     }
 }
@@ -232,7 +253,7 @@ public enum RehearsalDiffer {
         for k in Set(ra.keys).union(rb.keys) where ra[k] != rb[k] {
             res[k] = [ra[k] ?? ResourceQuantity(amount: nil, unit: rb[k]?.unit ?? ""), rb[k] ?? ResourceQuantity(amount: nil, unit: ra[k]?.unit ?? "")]
         }
-        let recA = Set(a.recommendations.map(\.actionID)), recB = Set(b.recommendations.map(\.actionID))
+        let recA = Set(a.recommendations.map(\.id)), recB = Set(b.recommendations.map(\.id))
         return RehearsalDiff(addedEventIDs: eb.subtracting(ea).sorted(), removedEventIDs: ea.subtracting(eb).sorted(), serviceChanges: svc,
                              resolvedRequirements: ua.subtracting(ub).sorted(), newRequirements: ub.subtracting(ua).sorted(),
                              resourceChanges: res, resolvedRecommendations: recA.subtracting(recB).sorted())

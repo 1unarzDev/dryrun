@@ -1,0 +1,3 @@
+/* Draft app-authored permission descriptions; human language review pending. */
+"NSCameraUsageDescription" = "Dry Run chỉ dùng camera khi bạn quét phòng bằng RoomPlan. Bản quét được giữ trên thiết bị này.";
+"NSLocationWhenInUseUsageDescription" = "Tùy chọn: dùng vị trí của bạn làm điểm xuất phát trên bản đồ khi bạn yêu cầu. Dry Run không gửi vị trí đến dịch vụ của mình; Apple Maps có thể nhận vị trí để hiển thị bản đồ, tìm kiếm hoặc chỉ đường.";

@@ -252,6 +252,7 @@ extension IconRow where Trailing == EmptyView {
 
 /// Phone number shown as text with an explicit call button. Never auto-dials.
 struct PhoneRow: View {
+    @Environment(AppModel.self) private var model
     let label: String
     let number: String
     var systemImage = "phone.fill"
@@ -265,12 +266,13 @@ struct PhoneRow: View {
             Spacer(minLength: 0)
             if let url = PhoneLink.url(number) {
                 Link(destination: url) {
-                    Label("Call", systemImage: systemImage).labelStyle(.iconOnly)
+                    Label(model.localizer("common.action.call"), systemImage: systemImage).labelStyle(.iconOnly)
                         .font(.title3)
                         .frame(width: Theme.minTap, height: Theme.minTap)
                         .background(Theme.accent.opacity(0.12), in: Circle())
                 }
-                .accessibilityLabel("Call \(label), \(number)")
+                .accessibilityLabel(model.localizer("common.accessibility.call", ["name": label, "number": number]))
+                .accessibilityHint(model.localizer("common.accessibility.callHint"))
             }
         }
     }
@@ -279,8 +281,9 @@ struct PhoneRow: View {
 enum PhoneLink {
     /// tel: URL from the digits of a displayed number ("2-1-1" → tel:211). Nil when there are no digits.
     static func url(_ number: String) -> URL? {
-        let digits = number.filter(\.isNumber)
-        return digits.isEmpty ? nil : URL(string: "tel:\(digits)")
+        let digits = number.filter { $0.isASCII && $0.isNumber }
+        guard (3...15).contains(digits.count) else { return nil }
+        return URL(string: "tel:\(number.trimmingCharacters(in: .whitespaces).hasPrefix("+") ? "+" : "")\(digits)")
     }
 }
 

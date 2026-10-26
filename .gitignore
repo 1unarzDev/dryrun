@@ -13,3 +13,7 @@ apps/ios/DryRun.xcodeproj/
 apps/ios/DryRun/Resources/Info.plist
 apps/ios/DryRun/Resources/DryRun.entitlements
 .swiftpm/
+# Server-only secrets
+.env
+.env.local
+.dev.vars

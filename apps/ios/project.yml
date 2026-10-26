@@ -46,7 +46,7 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSCameraUsageDescription: "Dry Run uses the camera only while you scan rooms with RoomPlan. The scan stays on this device."
-        NSLocationWhenInUseUsageDescription: "Optional: show your position on the help map. Dry Run does not send your location to its server."
+        NSLocationWhenInUseUsageDescription: "Optional: use your position for a map planning origin after you ask. Dry Run does not send it to its service; Apple Maps may receive the location for map, search, or travel services."
         CFBundleLocalizations: [en, es, vi]
         CFBundleDevelopmentRegion: en
         ITSAppUsesNonExemptEncryption: false
@@ -64,6 +64,17 @@ targets:
         # side is already gated by `#if canImport(FoundationModels)` and `#available(iOS 26.0, *)`.
         "OTHER_LDFLAGS[sdk=iphoneos26*]": "$(inherited) -weak_framework FoundationModels"
         "OTHER_LDFLAGS[sdk=iphonesimulator26*]": "$(inherited) -weak_framework FoundationModels"
+  DryRunTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [DryRunTests]
+    dependencies:
+      - target: DryRun
+      - package: DryRunCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: $(DRYRUN_BUNDLE_ID).tests
   DryRunUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -81,4 +92,4 @@ schemes:
       targets:
         DryRun: all
     test:
-      targets: [DryRunUITests]
+      targets: [DryRunTests, DryRunUITests]

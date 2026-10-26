@@ -1,13 +1,15 @@
 import SwiftUI
 import DryRunCore
 
-/// Medical power-outage card: one card per essential device, readable in about 15 seconds by a neighbor or a
-/// dispatcher. Built by `OutageCardBuilder` from household-recorded facts only; gaps link to the editor that fixes them.
+/// Universal household emergency card, with intentionally selected clinical information.
+/// The legacy type name remains for existing entry points; device continuity is supporting content.
 struct OutageCardView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     /// One sheet slot: two `.sheet` modifiers on one view fail to present the second right after the first closes.
     @State private var sheet: ActiveSheet?
+    /// Shown only when presented modally; when pushed, the back button is the way out.
+    var showsDone = false
 
     enum ActiveSheet: Identifiable {
         case edit(String)
@@ -22,7 +24,8 @@ struct OutageCardView: View {
 
     var body: some View {
         let l = model.localizer
-        let doc = model.outageCard()
+        let doc = model.outageCard(selection: model.cardSelection)
+        @Bindable var model = model
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.l) {
                 if let banner = doc?.draftTranslationBanner {
@@ -31,6 +34,13 @@ struct OutageCardView: View {
                 if let doc, !doc.pages.isEmpty {
                     ForEach(doc.pages) { page in
                         CardPageView(page: page) { if case .outageCard(let id) = page.kind { sheet = .edit(id) } }
+                    }
+                    SectionCard(title: l("family.selected"), systemImage: "checklist") {
+                        Toggle(l("family.critical"), isOn: $model.cardSelection.includeCriticalInformation)
+                        Toggle(l("family.medication"), isOn: $model.cardSelection.includeMedication)
+                        Toggle(l("family.instructions"), isOn: $model.cardSelection.includeResponderInstructions)
+                        Toggle(l("family.contacts"), isOn: $model.cardSelection.includeContacts)
+                        Text(l("family.selectedWhy")).font(.footnote).foregroundStyle(.secondary)
                     }
                     Button { share(doc) } label: { Label(l("ui.card.printShare"), systemImage: "printer") }
                         .buttonStyle(.primary)
@@ -50,12 +60,14 @@ struct OutageCardView: View {
         .navigationTitle(l("ui.card.title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } }
+            if showsDone {
+                ToolbarItem(placement: .confirmationAction) { Button(l("common.done")) { dismiss() } }
+            }
             if doc?.pages.isEmpty == false {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .primaryAction) {
                     Button { sheet = .edit(MedicalSetupView.newDeviceID) } label: {
                         Label(l("ui.card.addDevice"), systemImage: "plus")
-                    }
+                    }.accessibilityIdentifier("card.addDevice")
                 }
             }
         }
@@ -74,7 +86,7 @@ struct OutageCardView: View {
     private func share(_ doc: PlanDocument) {
         let output = PlanPDFRenderer().render(doc)
         do {
-            let url = try TemporaryExports.write(output.data, name: "DryRun-outage-card-\(doc.locale).pdf")
+            let url = try TemporaryExports.write(output.data, name: "DryRun-family-card-\(doc.locale).pdf")
             TemporaryExports.hasActiveExport = true
             sheet = .preview(url)
         } catch {
@@ -83,7 +95,8 @@ struct OutageCardView: View {
     }
 }
 
-/// One device's card. Large type, sections in reading order, phone numbers as text with an explicit call button.
+/// The phone view of one card page. Same section order and vocabulary as the PDF: a heading band per section,
+/// critical information inverted, people and contacts as rows, missing information in italics, never blank.
 struct CardPageView: View {
     @Environment(AppModel.self) private var model
     let page: PlanPage
@@ -91,79 +104,144 @@ struct CardPageView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Space.m) {
-            Label(page.title, systemImage: "bolt.heart.fill")
-                .font(.title3.weight(.bold))
-                .foregroundStyle(Theme.critical)
+            Text(page.title)
+                .font(.title2.weight(.bold))
                 .accessibilityAddTraits(.isHeader)
-            ForEach(page.sections) { section in
-                VStack(alignment: .leading, spacing: Theme.Space.s) {
-                    Label(section.heading, systemImage: Self.icon(section.id))
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(section.id == "gaps" ? Theme.caution : Theme.accent)
-                        .accessibilityAddTraits(.isHeader)
-                    ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in
-                        CardLine(line: line)
+            if let review = page.sections.first(where: { $0.id == "review" })?.lines.first {
+                Label(model.localizer("pdf.lastReviewed") + ": " + (review.parts?.fields.first?.value ?? review.text), systemImage: "calendar")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(review.parts?.isMissing == true ? Theme.caution : .secondary)
+            }
+            ForEach(page.sections.filter { $0.id != "review" }) { section in
+                if section.id == "identity" {
+                    VStack(alignment: .leading, spacing: 2) {
+                        ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in
+                            if line.style == .caveat {
+                                StatusPill(text: line.text, systemImage: "sparkles", tint: Theme.caution)
+                            } else {
+                                Text(line.text)
+                                    .font(line.parts?.subject != nil ? .headline : (line.parts?.isMissing == true ? .callout.italic() : .callout))
+                                    .foregroundStyle(line.parts?.isMissing == true ? .secondary : .primary)
+                            }
+                        }
                     }
-                    if section.id == "gaps" {
-                        Button(action: onFix) { Label(model.localizer("ui.card.fix"), systemImage: "square.and.pencil") }
-                            .buttonStyle(SecondaryButtonStyle(tint: Theme.caution))
-                            .accessibilityIdentifier("card.fix")
-                    }
+                } else {
+                    CardSectionView(section: section, onFix: onFix)
                 }
-                if section.id != page.sections.last?.id { Divider() }
             }
         }
         .padding(Theme.Space.l)
         .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous).strokeBorder(Theme.critical.opacity(0.35), lineWidth: 1.5))
+        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.card, style: .continuous).strokeBorder(Theme.ink.opacity(0.25), lineWidth: 1))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("card.page")
     }
 
-    static func icon(_ sectionID: String) -> String {
-        switch sectionID {
-        case "device": "person.fill"
-        case "backup": "battery.100.bolt"
-        case "steps": "list.number"
-        case "contacts": "phone.fill"
-        case "goTo": "house.fill"
-        case "help": "cross.case.fill"
-        case "gaps": "questionmark.circle.fill"
-        default: "circle"
+    static func icon(_ sectionID: String) -> String { PlanPDFRenderer.symbol(for: sectionID) }
+}
+
+struct CardSectionView: View {
+    @Environment(AppModel.self) private var model
+    let section: PlanSection
+    var onFix: () -> Void = {}
+
+    private var critical: Bool { section.isSafetyCritical && section.id != "contacts" }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Label(section.heading.uppercased(), systemImage: CardPageView.icon(section.id))
+                .font(.caption.weight(.bold))
+                .kerning(0.4)
+                .foregroundStyle(critical ? Color(uiColor: .systemBackground) : Theme.ink)
+                .padding(.horizontal, 10).padding(.vertical, 6)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(critical ? Theme.ink : Theme.ink.opacity(0.08))
+                .accessibilityAddTraits(.isHeader)
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(Array(section.lines.enumerated()), id: \.offset) { index, line in
+                    if index > 0 { Divider() }
+                    CardLine(line: line, sectionID: section.id)
+                }
+                if section.id == "gaps" {
+                    Button(action: onFix) { Label(model.localizer("ui.card.fix"), systemImage: "square.and.pencil") }
+                        .buttonStyle(SecondaryButtonStyle(tint: Theme.caution))
+                        .accessibilityIdentifier("card.fix")
+                }
+            }
+            .padding(10)
         }
+        .overlay(Rectangle().strokeBorder(critical ? Theme.ink : Theme.ink.opacity(0.3), lineWidth: critical ? 2 : 1))
     }
 }
 
 struct CardLine: View {
+    @Environment(AppModel.self) private var model
     let line: PlanLine
+    var sectionID = ""
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
-            Text(line.text)
-                .font(line.style == .caveat ? .callout : .body)
-                .foregroundStyle(line.style == .caveat ? .secondary : .primary)
-                .fixedSize(horizontal: false, vertical: true)
-            if line.isFallback {
-                Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary).accessibilityLabel("Shown in English")
-            }
-            Spacer(minLength: 0)
-            if line.style == .contact, let number = PhoneLink.firstNumber(in: line.text), let url = PhoneLink.url(number) {
-                Link(destination: url) {
-                    Image(systemName: "phone.fill").font(.body)
-                        .frame(width: Theme.minTap, height: Theme.minTap)
-                        .background(Theme.accent.opacity(0.12), in: Circle())
+        Group {
+            if let parts = line.parts {
+                structured(parts)
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: Theme.Space.s) {
+                    if line.style != .normal {
+                        Image(systemName: line.style == .prohibition ? "exclamationmark.triangle.fill" : line.style == .contact ? "phone.fill" : "info.circle")
+                            .font(.footnote).foregroundStyle(line.style == .prohibition ? Theme.critical : .secondary)
+                            .accessibilityHidden(true)
+                    }
+                    Text(line.text)
+                        .font(line.style == .caveat ? .callout : line.style == .prohibition ? .body.weight(.semibold) : .body)
+                        .foregroundStyle(line.style == .caveat ? .secondary : .primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if line.isFallback {
+                        Text("EN").font(.caption2.weight(.bold)).padding(2).border(.secondary).accessibilityLabel(model.localizer("common.fallbackShown"))
+                    }
+                    Spacer(minLength: 0)
                 }
-                .accessibilityLabel("Call \(number)")
             }
         }
     }
-}
 
-extension PhoneLink {
-    /// The first dialable number in a line of text: 555-555-0100, 2-1-1, or 911.
-    static func firstNumber(in text: String) -> String? {
-        let pattern = #"\b(\d{3}-\d{3}-\d{4}|\d-\d-\d|911)\b"#
-        guard let range = text.range(of: pattern, options: .regularExpression) else { return nil }
-        return String(text[range])
+    @ViewBuilder private func phoneView(_ parts: PlanLineParts) -> some View {
+        if let phone = parts.phone {
+            Group {
+                if let url = PhoneLink.url(phone) {
+                    Link(destination: url) { Label(phone, systemImage: "phone.fill") }
+                        .accessibilityHint(model.localizer("common.help.call"))
+                } else {
+                    Text(phone)
+                }
+            }
+            .font(.body.monospacedDigit().weight(.semibold))
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
+        }
+    }
+
+    @ViewBuilder private func structured(_ parts: PlanLineParts) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            if let subject = parts.subject {
+                // Name and number side by side when they fit; otherwise the number gets its own line, never split.
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline) { Text(subject).font(.headline); Spacer(minLength: 8); phoneView(parts) }
+                    VStack(alignment: .leading, spacing: 2) { Text(subject).font(.headline); phoneView(parts) }
+                }
+            }
+            if let detail = parts.detail { Text(detail).font(.footnote).foregroundStyle(.secondary) }
+            ForEach(Array(parts.fields.enumerated()), id: \.offset) { _, field in
+                Group {
+                    if let label = field.label {
+                        Text(label + ": ").fontWeight(.semibold) + Text(field.value)
+                    } else {
+                        Text(field.value)
+                    }
+                }
+                .font(parts.isMissing ? .callout.italic() : .callout)
+                .foregroundStyle(parts.isMissing ? .secondary : .primary)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityElement(children: .combine)
     }
 }

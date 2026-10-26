@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "tasks": {
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "actionID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "criterionID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "subjectID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "evidenceIDs": {
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "completionPredicates": {
+            "minItems": 1,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "editor": {
+            "type": "string",
+            "enum": [
+              "family",
+              "contacts",
+              "supplies",
+              "medical",
+              "home",
+              "meetingPlace"
+            ]
+          },
+          "dependencyIDs": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          }
+        },
+        "required": [
+          "id",
+          "actionID",
+          "criterionID",
+          "subjectID",
+          "why",
+          "evidenceIDs",
+          "completionPredicates",
+          "editor",
+          "dependencyIDs",
+          "priority"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "inventoryObservations": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "physicalID": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "liter",
+              "usGallon",
+              "count",
+              "wattHour",
+              "day"
+            ]
+          },
+          "evidenceIDs": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          "unknowns": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          }
+        },
+        "required": [
+          "id",
+          "physicalID",
+          "category",
+          "quantity",
+          "unit",
+          "evidenceIDs",
+          "unknowns"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "question": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "tasks",
+    "inventoryObservations",
+    "question"
+  ],
+  "additionalProperties": false
+}

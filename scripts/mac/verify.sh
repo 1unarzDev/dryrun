@@ -2,18 +2,20 @@
 # Full macOS verification for Dry Run. Every step is logged and recorded; a failing step never stops the run.
 # Produces artifacts/mac-<timestamp>/ and artifacts/mac-<timestamp>.tar.gz (fictional data only).
 #
-# Usage: scripts/mac/verify.sh [--quick] [--no-ui] [--no-backend] [--locales en,es,vi] [--sim-name "iPhone 16"]
+# Usage: scripts/mac/verify.sh [--quick] [--build-only] [--no-ui] [--no-backend] [--locales en,es,vi] [--sim-name "iPhone 16"]
 #   --quick       core/vault tests + app build + journeys only (no screenshot tour, no PDFs, no backend)
 #   --no-ui       skip all simulator UI tests, screenshots, and PDFs
 #   --no-backend  skip services/public-api
+#   --build-only  compile simulator test targets and unsigned device app; skip test execution
 set -u
 # shellcheck source=scripts/mac/lib.sh
 . "$(dirname "$0")/lib.sh"
 
-QUICK=0; NO_UI=0; NO_BACKEND=0; LOCALES="en,es,vi"
+QUICK=0; BUILD_ONLY=0; NO_UI=0; NO_BACKEND=0; LOCALES="en,es,vi"
 while [ $# -gt 0 ]; do
   case "$1" in
     --quick) QUICK=1; NO_BACKEND=1 ;;
+    --build-only) BUILD_ONLY=1; NO_UI=1; NO_BACKEND=1 ;;
     --no-ui) NO_UI=1 ;;
     --no-backend) NO_BACKEND=1 ;;
     --locales) LOCALES="$2"; shift ;;
@@ -29,9 +31,15 @@ new_run mac
 "$(dirname "$0")/doctor.sh" "$OUT/environment.md" >/dev/null
 redact_file "$OUT/environment.md"
 
+step verification-helper-tests bash "$ROOT/scripts/tests/mac-helpers.sh"
+
 # 1. Swift packages, native macOS (vault uses CryptoKit here, not swift-crypto)
-step core-tests swift test --package-path "$ROOT/packages/DryRunCore" --scratch-path "$ROOT/.build-mac/core"
-step vault-tests swift test --package-path "$ROOT/packages/DryRunVault" --scratch-path "$ROOT/.build-mac/vault"
+if [ "$BUILD_ONLY" = 1 ]; then
+  skip_step core-tests "--build-only"; skip_step vault-tests "--build-only"
+else
+  step core-tests swift test --package-path "$ROOT/packages/DryRunCore" --scratch-path "$ROOT/.build-mac/core"
+  step vault-tests swift test --package-path "$ROOT/packages/DryRunVault" --scratch-path "$ROOT/.build-mac/vault"
+fi
 
 # 2. Backend (optional)
 if [ "$NO_BACKEND" = 1 ]; then skip_step backend "disabled"
@@ -61,13 +69,21 @@ else
   # Build diagnostics in one place, deduplicated: compiler, linker, and package-resolution errors.
   build_diagnostics "$OUT/logs/app-build.log" "$OUT/compile-errors.txt"
   grep -E ' warning: ' "$OUT/logs/app-build.log" | sort -u >"$OUT/compile-warnings.txt" || true
+  # Simulator success alone does not compile iphoneos-specific paths. No signing or installation occurs.
+  step app-device-build xcodebuild build -project "$PROJECT" -scheme "$SCHEME" \
+    -destination 'generic/platform=iOS' -derivedDataPath "$ROOT/.build-mac/DeviceDerivedData" CODE_SIGNING_ALLOWED=NO
+  build_diagnostics "$OUT/logs/app-device-build.log" "$OUT/device-compile-errors.txt"
 fi
 
 # 4. UI journeys, screenshot tour, plan PDFs
 if [ "$NO_UI" = 1 ]; then
-  skip_step ui-journeys "build failed, no simulator, or disabled"; skip_step screenshot-tour "build failed, no simulator, or disabled"
+  skip_step app-integration-tests "build failed, no simulator, or disabled"; skip_step ui-journeys "build failed, no simulator, or disabled"; skip_step screenshot-tour "build failed, no simulator, or disabled"
   skip_step plan-pdfs "build failed, no simulator, or disabled"
 else
+  step app-integration-tests xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
+    -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
+    -only-testing:DryRunTests -resultBundlePath "$OUT/app-tests.xcresult"
+  result_summary "$OUT/app-tests.xcresult" "$OUT/app-tests-summary.json"
   step ui-journeys xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" \
     -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
     -only-testing:DryRunUITests/DemoJourneyUITests -resultBundlePath "$OUT/journeys.xcresult"
@@ -79,8 +95,7 @@ else
     TEST_RUNNER_TOUR_LOCALES="$LOCALES" step screenshot-tour xcodebuild test-without-building -project "$PROJECT" \
       -scheme "$SCHEME" -destination "platform=iOS Simulator,id=$SIM" -derivedDataPath "$DERIVED" \
       -only-testing:DryRunUITests/ScreenshotTourUITests -resultBundlePath "$OUT/tour.xcresult"
-    export_attachments "$OUT/tour.xcresult" "$OUT/screenshots" >>"$OUT/logs/screenshot-tour.log" 2>&1 || true
-    redact_file "$OUT/logs/screenshot-tour.log"
+    step screenshot-export export_attachments "$OUT/tour.xcresult" "$OUT/screenshots"
     step plan-pdfs "$(dirname "$0")/plan-pdfs.sh" "$SIM" "$OUT/pdfs"
   fi
 fi
@@ -96,7 +111,7 @@ fi
   if [ -s "$OUT/compile-errors.txt" ]; then
     echo "## Build errors ($(wc -l <"$OUT/compile-errors.txt" | xargs) unique lines, first 40)"
     echo '```'; head -40 "$OUT/compile-errors.txt"; echo '```'
-  elif grep -q "^app-build	FAIL" "$STEPS"; then
+  elif steps_failed app-build; then
     # The build failed without a line the filter recognises: show the end of the log rather than nothing.
     echo "## Build failed (last 40 log lines)"
     echo '```'; tail -40 "$OUT/logs/app-build.log"; echo '```'
@@ -120,5 +135,5 @@ cat "$OUT/SUMMARY.md"
 echo
 echo "Bundle: ${TARBALL#"$ROOT"/}  ← send this file"
 # A failing step never stops the run, but automation (the GitHub workflow) should not report success for it.
-if [ -n "${CI:-}" ] && grep -q "	FAIL	" "$STEPS"; then exit 1; fi
+if [ -n "${CI:-}" ] && steps_failed; then exit 1; fi
 exit 0

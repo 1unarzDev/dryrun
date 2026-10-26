@@ -6,9 +6,15 @@ import DryRunCore
 // AUTHORED, NOT COMPILED in this environment.
 
 struct HomeRoomListView: View {
+    private func s(_ english: String) -> String { SpatialStrings.text(english, localizer: model.localizer) }
+    @Environment(AppModel.self) private var model
     let home: HomeModel
+    let spatialState: SpatialExerciseState?
+    let selectedRoute: RouteResult?
 
-    init(home: HomeModel) { self.home = home }
+    init(home: HomeModel, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil) {
+        self.home = home; self.spatialState = spatialState; self.selectedRoute = selectedRoute
+    }
 
     var body: some View {
         ForEach(home.floors.sorted { $0.level < $1.level }) { floor in
@@ -20,30 +26,30 @@ struct HomeRoomListView: View {
                 Text(floor.label).font(.headline)
             }
         }
-        DisclosureGroup("Exits and outside openings") {
+        DisclosureGroup(s("Exits and outside openings")) {
             let exterior = home.portals.filter { $0.leadsToExterior || isCommonArea($0) }
-            if exterior.isEmpty { Text("No outside doors recorded yet.") }
+            if exterior.isEmpty { Text(s("No outside doors recorded yet.")) }
             ForEach(exterior) { portalRow($0) }
         }
         if !home.connectors.isEmpty {
-            DisclosureGroup("Stairs and floor connections") {
+            DisclosureGroup(s("Stairs and floor connections")) {
                 ForEach(home.connectors) { c in
                     VStack(alignment: .leading) {
-                        Text("\(c.kind.rawValue.capitalized): \(label(c.fromSpaceID)) ↔ \(label(c.toSpaceID))")
+                        Text("\(model.localizer("spatial.connector.\(c.kind.rawValue)")): \(label(c.fromSpaceID)) ↔ \(label(c.toSpaceID))")
                         Text(stateText(c.verification)).font(.caption).foregroundStyle(.secondary)
                     }
                     .accessibilityElement(children: .combine)
                 }
             }
         }
-        DisclosureGroup("Safety markers") {
+        DisclosureGroup(s("Safety markers")) {
             let markers = home.annotations.sorted { priority($0.kind) < priority($1.kind) }
-            if markers.isEmpty { Text("No markers yet. Add smoke alarms and a meeting point.") }
+            if markers.isEmpty { Text(s("No markers yet. Add smoke alarms and a meeting point.")) }
             ForEach(markers) { a in
                 Label {
                     VStack(alignment: .leading) {
-                        Text(a.label)
-                        Text([a.spaceID.map(label) ?? "Outside", stateText(a.verification)].joined(separator: " · "))
+                        Text(a.localizedLabel(model.localizer))
+                        Text([a.spaceID.map(label) ?? s("Outside"), stateText(a.verification)].joined(separator: " · "))
                             .font(.caption).foregroundStyle(.secondary)
                         if let note = a.note { Text(note).font(.caption).foregroundStyle(.secondary) }
                     }
@@ -55,15 +61,16 @@ struct HomeRoomListView: View {
         }
     }
 
-    private func spaceRow(_ s: Space) -> some View {
-        let doors = home.portals.filter { p in p.sideA == .space(s.id) || p.sideB == .space(s.id) }
-        let area = abs(Geometry.signedArea(s.polygon))
+    private func spaceRow(_ space: Space) -> some View {
+        let doors = home.portals.filter { p in p.sideA == .space(space.id) || p.sideB == .space(space.id) }
+        let area = abs(Geometry.signedArea(space.polygon)).formatted(.number.precision(.fractionLength(0)).locale(Locale(identifier: model.locale)))
         return VStack(alignment: .leading, spacing: 2) {
-            Text(s.label + (s.labelConfirmed ? "" : " (name not confirmed)"))
-            Text(String(format: "About %.0f m²", area) + (s.needsMeasurement ? " · needs measurement" : ""))
+            Text(space.label + (space.labelConfirmed ? "" : " " + s("(name not confirmed)")))
+            Text(model.localizer("spatial.room-area", ["area": area]) + (space.needsMeasurement ? " · " + s("needs measurement") : ""))
                 .font(.caption).foregroundStyle(.secondary)
+            if space.geometryNeedsReview == true { Text(model.localizer("spatial.issue.correctedGeometryNeedsReview")).font(.caption) }
             ForEach(doors) { p in
-                Text("• \(p.kind.rawValue.capitalized) to \(destination(p, from: s.id)) — \(stateText(p.verification))")
+                Text(model.localizer("spatial.opening-summary", ["kind": DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "destination": destination(p, from: space.id), "status": openingText(p)]))
                     .font(.caption)
             }
         }
@@ -72,18 +79,33 @@ struct HomeRoomListView: View {
 
     private func portalRow(_ p: Portal) -> some View {
         let inside = [p.sideA, p.sideB].compactMap { if case .space(let id) = $0 { return label(id) }; return nil }.first ?? "?"
-        var facts: [String] = [stateText(p.verification)]
-        if p.kind == .window { facts.append("window — not counted as an exit") }
-        if isCommonArea(p) { facts.append("opens to a shared building area that is not modelled") }
-        if let w = p.clearWidthMeters.value { facts.append(String(format: "%.2f m wide%@", w, p.clearWidthMeters.isConfirmed ? "" : " (scanned, unconfirmed)")) }
-        else if p.kind != .window { facts.append("width not measured") }
-        if let sf = p.stepFree.value { facts.append(sf ? "step-free" : "has a step") }
-        if p.operable.value == nil && p.kind != .opening { facts.append("opening not confirmed") }
+        var facts: [String] = [stateText(p.verification), openingText(p)]
+        if p.kind == .window { facts.append(s("window — not counted as an exit")) }
+        if isCommonArea(p) { facts.append(s("opens to a shared building area that is not modelled")) }
+        if let w = p.clearWidthMeters.value {
+            let width = w.formatted(.number.precision(.fractionLength(2)).locale(Locale(identifier: model.locale)))
+            facts.append(model.localizer("spatial.opening-width", ["width": width]) + (p.clearWidthMeters.isConfirmed ? "" : " · " + model.localizer("spatial.scanned-unconfirmed")))
+        }
+        else if p.kind != .window { facts.append(s("width not measured")) }
+        if let sf = p.stepFree.value { facts.append(s(sf ? "step-free" : "has a step")) }
+        if p.operable.value == nil && p.kind != .opening { facts.append(s("opening not confirmed")) }
         return VStack(alignment: .leading, spacing: 2) {
-            Text("\(p.note ?? p.kind.rawValue.capitalized) (from \(inside))")
+            Text(model.localizer("spatial.opening-from", ["opening": p.note ?? DisplayNames.name(p.kind.rawValue, localizer: model.localizer), "room": inside]))
             Text(facts.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func openingText(_ portal: Portal) -> String {
+        let key: String
+        switch HomeScenePresentation.openingStatus(portal, in: home, state: spatialState, request: selectedRoute?.request) {
+        case .availableExit: key = "spatial.opening.available-exit"
+        case .confirmedConnection: key = "spatial.opening.confirmed-connection"
+        case .window: key = "spatial.opening.window-inventory"
+        case .unconfirmed: key = "spatial.opening.review-required"
+        case .unavailable: key = "spatial.opening.unavailable"
+        }
+        return model.localizer(key)
     }
 
     private func isCommonArea(_ p: Portal) -> Bool {
@@ -94,9 +116,9 @@ struct HomeRoomListView: View {
         let other = p.sideA == .space(id) ? p.sideB : p.sideA
         switch other {
         case .space(let sid): return label(sid)
-        case .exterior: return "outside"
-        case .commonArea: return "building corridor"
-        case .unknown: return "unknown"
+        case .exterior: return s("outside")
+        case .commonArea: return s("building corridor")
+        case .unknown: return s("unknown")
         }
     }
 
@@ -104,10 +126,10 @@ struct HomeRoomListView: View {
 
     private func stateText(_ v: VerificationState) -> String {
         switch v {
-        case .verified: return "Confirmed"
-        case .proposed: return "Needs confirmation"
-        case .unknown: return "Unknown"
-        case .rejected: return "Marked not usable"
+        case .verified: return s("Confirmed")
+        case .proposed: return s("Needs confirmation")
+        case .unknown: return s("Unknown")
+        case .rejected: return s("Marked not usable")
         }
     }
 

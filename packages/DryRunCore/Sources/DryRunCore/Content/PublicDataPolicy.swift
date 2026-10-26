@@ -76,11 +76,16 @@ public enum PublicDataPolicy {
 
     // MARK: Region IDs
 
-    /// Texas county FIPS (48 + 3 digits) or an explicit named grouping. Never an address or URL.
+    /// Explicit public-content coverage, not a test of whether a value looks like a county FIPS.
+    /// Keep this in sync with the bundled region records; adding coverage requires reviewed content.
+    public static let supportedRegionIDs: Set<String> = [
+        "48059", "48093", "48133", "48143", "48221", "48237", "48251",
+        "48363", "48367", "48425", "48429", "48439", "48503", "tx-statewide", "tx-25"
+    ]
+
+    /// Never infer coverage from an Apple administrative-area label or a numeric prefix.
     public static func isAllowedRegionID(_ id: String) -> Bool {
-        if id == "tx-statewide" || id == "tx-25" { return true }
-        guard id.count == 5, id.hasPrefix("48") else { return false }
-        return id.allSatisfy { $0.isASCII && $0.isNumber }
+        supportedRegionIDs.contains(id)
     }
 }
 

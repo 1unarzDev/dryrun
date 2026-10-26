@@ -9,7 +9,7 @@ struct DryRunApp: App {
 
     init() {
         let demo = DemoLaunch.current
-        // Demo/UI-test launches never touch the real vault.
+        // Demo launches use memory; explicit simulator persistence tests use their own encrypted namespace.
         let store: PrivateDataStore = demo.usesInMemoryStore ? InMemoryPrivateDataStore() : VaultPrivateDataStore.makeDefault()
         if demo.disableAnimations { UIView.setAnimationsEnabled(false) }
         _model = State(initialValue: AppModel(store: store))

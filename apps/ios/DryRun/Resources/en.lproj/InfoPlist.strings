@@ -1,0 +1,3 @@
+/* Draft app-authored permission descriptions; human language review pending. */
+"NSCameraUsageDescription" = "Dry Run uses the camera only while you scan rooms with RoomPlan. The scan stays on this device.";
+"NSLocationWhenInUseUsageDescription" = "Optional: use your position for a map planning origin after you ask. Dry Run does not send it to its service; Apple Maps may receive the location for map, search, or travel services.";

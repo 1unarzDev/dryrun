@@ -6,34 +6,64 @@ import DryRunCore
 /// Phone and website actions always require a tap. Nothing auto-calls, and nothing private is sent.
 struct HelpTabView: View {
     @Environment(AppModel.self) private var model
-    @State private var showMap = false
+    @State private var showMapPlanner = false
     @State private var showCard = false
 
     var body: some View {
         let l = model.localizer
-        let regionID = model.household?.regionID ?? "tx-statewide"
-        let resources = model.content?.resources(forRegion: regionID) ?? []
-        let region = model.content?.region(regionID)
+        let regionID = model.household?.regionID ?? ""
+        let resources = model.regionalResources?.resources(for: regionID)
+            ?? model.content?.resources(forRegion: regionID) ?? []
+        let region = model.regionalResources?.regionInfo(for: regionID)
+            ?? model.content?.region(regionID)
         List {
             Section {
                 // A number shown as text with an explicit call button; nothing dials on its own.
-                PhoneRow(label: l("common.help.call911"), number: "911", systemImage: "phone.fill")
-                    .listRowBackground(Theme.critical.opacity(0.08))
+                if ["US", "CA"].contains(model.household?.privateLocation?.countryCode?.uppercased() ?? "") {
+                    PhoneRow(label: l("common.help.call911"), number: "911")
+                        .listRowBackground(Theme.critical.opacity(0.08))
+                } else {
+                    Text(l("plan.help.localUnknown"))
+                }
                 if !model.capabilities.isOnline {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
                 }
-                if let h = model.household, !OutageCardBuilder.devices(in: h).isEmpty {
+                if model.household != nil {
                     Button { showCard = true } label: { Label(l("ui.card.open"), systemImage: "bolt.heart.fill") }
                         .foregroundStyle(Theme.critical)
                         .accessibilityIdentifier("help.outageCard")
                 }
             }
-            if let contacts = model.household?.contacts.filter({ $0.phone != nil }), !contacts.isEmpty {
+            if model.content != nil {
+                Section {
+                    Button {
+                        showMapPlanner = true
+                    } label: {
+                        Label(l("map.title"), systemImage: "map.fill")
+                    }
+                    .font(.headline)
+                    .accessibilityIdentifier("help.openMap")
+                } footer: {
+                    Text(l("help.mapPlanning.footer"))
+                }
+            }
+            if let contacts = model.household?.contacts.filter({ $0.hasUsablePhone }), !contacts.isEmpty {
                 Section(l("plan.section.contacts")) {
                     ForEach(contacts) { c in PhoneRow(label: "\(c.alias) · \(l("ui.contact.role.\(c.role.rawValue)"))", number: c.phone ?? "") }
                 }
             }
-            AlertsSection(regionID: regionID)
+            if model.household != nil {
+                Section {
+                    CountyPicker(selection: Binding(get: { regionID }, set: { new in
+                        Task { await model.updateHousehold { $0.regionID = new } }
+                    }))
+                } footer: { Text(l("ui.county.why")) }
+            }
+            if PublicDataPolicy.isAllowedRegionID(regionID) {
+                AlertsSection(regionID: regionID)
+            } else {
+                Section { Text(l("native.localHelp")) }
+            }
             if let region {
                 Section {
                     Text("\(region.name): \(coverageText(region.coverage))").font(.footnote)
@@ -45,19 +75,18 @@ struct HelpTabView: View {
                     ForEach(items) { ResourceRow(resource: $0) }
                 }
             }
-            Section {
-                Button(showMap ? l("common.help.hideMap") : l("common.help.showMap"), systemImage: "map") { showMap.toggle() }
-                if showMap {
-                    DirectoryMapView(resources: resources)
-                        .frame(height: 300)
-                        .listRowInsets(EdgeInsets())
-                }
-            } footer: {
-                Text(l("common.help.mapFooter"))
-            }
         }
         .navigationTitle(l("common.tab.help"))
-        .sheet(isPresented: $showCard) { NavigationStack { OutageCardView() } }
+        .sheet(isPresented: $showCard) { NavigationStack { OutageCardView(showsDone: true) } }
+        .sheet(isPresented: $showMapPlanner) {
+            if let regionalResources = model.regionalResources {
+                MapPlanningView(store: regionalResources)
+            } else if let content = model.content {
+                MapPlanningView(content: content, client: model.publicClient, regionID: regionID)
+            } else {
+                ProgressView(l("native.loading"))
+            }
+        }
     }
 
     private func groups(_ resources: [PublicResource]) -> [(ResourceServiceType, [PublicResource])] {
@@ -68,55 +97,42 @@ struct HelpTabView: View {
     }
 
     private func coverageText(_ c: CoverageStatus) -> String {
-        switch c {
-        case .verifiedPartial: "some local resources verified"
-        case .oemOnly: "emergency management office only"
-        case .statewideOnly: "statewide resources only"
-        case .notStarted: "local resources not yet verified; statewide resources shown"
-        }
+        model.localizer(c == .notStarted ? "help.coverage.status.notStarted" : "help.coverage.\(c.rawValue)")
     }
 
     private func typeName(_ t: ResourceServiceType) -> String {
-        switch t {
-        case .emergencyManagement: "Emergency management"
-        case .publicHealth: "Public health"
-        case .waterProvider: "Water"
-        case .electricUtility: "Electricity"
-        case .transportation: "Transportation"
-        case .assistanceLine: "Help lines"
-        case .assistanceRegistry: "Assistance registry (opt-in)"
-        case .disasterAssistance: "Disaster assistance"
-        case .warmingCenter: "Warming sites"
-        case .coolingCenter: "Cooling sites"
-        case .shelter: "Shelters"
-        case .alertEnrollment: "Alert sign-up"
-        case .other: "Other"
-        }
+        model.localizer("help.service.\(t.rawValue)")
     }
 }
 
 struct ResourceRow: View {
+    @Environment(AppModel.self) private var model
     let resource: PublicResource
 
     var body: some View {
+        let l = model.localizer
         VStack(alignment: .leading, spacing: 6) {
             Text(resource.name).font(.body.weight(.semibold))
             Text(resource.summary).font(.callout)
+            if model.locale != "en" { Text(l("common.fallbackShown")).font(.caption).foregroundStyle(.secondary) }
             if let phone = resource.contact.phone {
                 // Phone numbers are always shown as text so they remain useful offline and in print.
                 HStack {
                     Text(phone).font(.callout.monospacedDigit()).textSelection(.enabled)
-                    if let note = resource.contact.phoneNote { Text(note).font(.caption).foregroundStyle(.secondary) }
                     Spacer()
-                    if let url = URL(string: "tel:\(phone.filter { $0.isNumber })") {
-                        Link(destination: url) { Label("Call", systemImage: "phone") }
+                    if let url = PhoneLink.url(phone) {
+                        Link(destination: url) { Label(l("common.help.call"), systemImage: "phone") }
                             .buttonStyle(.bordered)
-                            .accessibilityHint("Opens the phone app. Dry Run never calls automatically.")
+                            .accessibilityLabel(l("common.accessibility.call", ["name": resource.name, "number": phone]))
+                            .accessibilityHint(l("common.accessibility.callHint"))
                     }
                 }
             }
+            // Shown with or without a number: some notes are the instructions (e.g. "your physician submits the form").
+            if let note = resource.contact.phoneNote { Text(note).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
             if let site = resource.contact.url, let url = URL(string: site) {
-                Link(destination: url) { Label("Official website", systemImage: "safari") }.font(.callout)
+                Link(destination: url) { Label(l("common.help.website"), systemImage: "safari") }.font(.callout)
+                    .accessibilityLabel(l("help.action.websiteFor", ["name": resource.name]))
             }
             let display = PublicDataPolicy.activationDisplay(for: resource, now: Date())
             if display != .notApplicable {
@@ -124,9 +140,9 @@ struct ResourceRow: View {
             }
             HStack(spacing: 8) {
                 Text("\(resource.publisher)")
-                Text("Checked \(resource.checkedAt)")
-                if resource.reviewState != .reviewed { Text("Needs review").foregroundStyle(Theme.caution) }
-                if resource.classification == .demo || resource.classification == .fixture { Text("Demo data").foregroundStyle(Theme.critical) }
+                Text(l("help.freshness.checkedOn", ["date": resource.checkedAt]))
+                if resource.reviewState != .reviewed { Text(l("help.review.needsReview")).foregroundStyle(Theme.caution) }
+                if resource.classification == .demo || resource.classification == .fixture { Text(l("help.freshness.demo")).foregroundStyle(Theme.critical) }
             }
             .font(.caption).foregroundStyle(.secondary)
         }
@@ -136,24 +152,28 @@ struct ResourceRow: View {
     /// Only unexpired source evidence can say a site is open; unknown is never shown as open or closed.
     private func activationText(_ d: PublicDataPolicy.ActivationDisplay) -> String {
         switch d {
-        case .confirmedActive: "Activated (per official source)"
-        case .confirmedInactive: "Not currently activated (per official source)"
-        case .unconfirmed: "Activation not confirmed — check the official source before going"
+        case .confirmedActive: model.localizer("help.activation.status.active")
+        case .confirmedInactive: model.localizer("help.activation.status.inactive")
+        case .unconfirmed: model.localizer("help.activation.unconfirmed")
         case .notApplicable: ""
         }
     }
 }
 
 struct DirectoryMapView: View {
+    @Environment(AppModel.self) private var model
     let resources: [PublicResource]
     var body: some View {
         Map {
-            ForEach(resources.filter { $0.latitude != nil && $0.longitude != nil }) { r in
-                Marker(r.name, systemImage: "building.2", coordinate: CLLocationCoordinate2D(latitude: r.latitude!, longitude: r.longitude!))
+            ForEach(resources) { r in
+                if let latitude = r.latitude, let longitude = r.longitude,
+                   let coordinate = GeographicCoordinate(latitude: latitude, longitude: longitude) {
+                    Marker(r.name, systemImage: "building.2", coordinate: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude))
+                }
             }
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
-        .accessibilityLabel("Map of listed offices. The same places are listed above as text.")
+        .accessibilityLabel(model.localizer("help.directory.mapSummary"))
     }
 }
 
@@ -167,26 +187,27 @@ struct AlertsSection: View {
     @State private var freshness: PublicAPIClient.Freshness?
 
     var body: some View {
-        Section("Official alerts (National Weather Service)") {
+        let l = model.localizer
+        Section(l("help.alerts.nwsTitle")) {
             if let envelope, envelope.regionID == regionID {
                 let now = Date()
                 let current = PublicDataPolicy.currentOfficialAlerts(envelope.alerts, now: now)
                 let stale = envelope.alerts.filter { PublicDataPolicy.freshness(of: $0, now: now) == .stale }
                 if case .cached(let date) = freshness {
-                    Label("Offline. Showing alerts saved \(date ?? envelope.fetchedAt).", systemImage: "clock.arrow.circlepath")
+                    Label(l("help.alerts.cached", ["date": date ?? envelope.fetchedAt]), systemImage: "clock.arrow.circlepath")
                         .font(.footnote)
                 }
                 ForEach(current) { AlertRow(alert: $0, isStale: false) }
                 ForEach(stale) { AlertRow(alert: $0, isStale: true) }
                 if current.isEmpty && stale.isEmpty {
                     if freshness == .updated {
-                        Text("No alerts in effect as of \(envelope.fetchedAt).").font(.callout)
+                        Text(l("help.alerts.noneAsOf", ["date": envelope.fetchedAt])).font(.callout)
                     } else {
-                        Text("Current alert status is unknown. Check local media or weather.gov.").font(.callout)
+                        Text(l("help.alerts.unknown")).font(.callout)
                     }
                 }
             } else {
-                Text("Current conditions are unavailable right now. Rehearsals and your saved plan still work.").font(.callout)
+                Text(l("help.alerts.unavailable")).font(.callout)
             }
         }
         .task(id: regionID) {
@@ -199,18 +220,42 @@ struct AlertsSection: View {
 }
 
 private struct AlertRow: View {
+    @Environment(AppModel.self) private var model
     let alert: PublicAlert
     let isStale: Bool
     var body: some View {
+        let l = model.localizer
         VStack(alignment: .leading, spacing: 4) {
             Text(alert.event).font(.headline)
+            if l.locale != "en" { Text(l("common.fallbackShown")).font(.caption).foregroundStyle(.secondary) }
             if isStale {
-                Text("May be out of date — last updated \(alert.fetchedAt). Check for newer information.")
+                Text(l("help.alerts.staleCheck", ["date": alert.fetchedAt]))
                     .font(.caption.weight(.semibold)).foregroundStyle(Theme.caution)
             }
             if let headline = alert.headline { Text(headline).font(.callout) }
-            Text("Issued \(alert.sent) · expires \(alert.expires ?? "unknown")").font(.caption).foregroundStyle(.secondary)
+            Text(l("help.alerts.issued", ["time": alert.sent]) + " · " + l("help.alerts.expires", ["time": alert.expires ?? l("family.unknown")]))
+                .font(.caption).foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// "Your county": the only way a household gets local emergency numbers. Apple's place names are never trusted as
+/// coverage, so the family picks from the counties Dry Run has a reviewed directory for. Tarrant is listed first.
+struct CountyPicker: View {
+    @Environment(AppModel.self) private var model
+    @Binding var selection: String
+
+    var body: some View {
+        let l = model.localizer
+        let counties = (model.content?.regionPacks.flatMap(\.regions) ?? [])
+            .filter { $0.kind == "county" && PublicDataPolicy.isAllowedRegionID($0.id) }
+            .sorted { ($0.id == "48439" ? 0 : 1, $0.name) < ($1.id == "48439" ? 0 : 1, $1.name) }
+        Picker(l("ui.county.label"), selection: $selection) {
+            Text(l("ui.county.notSet")).tag("")
+            ForEach(counties) { Text($0.name).tag($0.id) }
+            if !PublicDataPolicy.isAllowedRegionID(selection), !selection.isEmpty { Text(l("ui.county.notSet")).tag(selection) }
+        }
+        .accessibilityIdentifier("county.picker")
     }
 }

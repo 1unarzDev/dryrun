@@ -58,7 +58,7 @@ struct OutageCardTests {
         #expect(OutageCardBuilder.gaps(for: h.equipment[0], in: h).isEmpty)
         let page = try Self.card(h).pages[0]
         let text = page.sections.flatMap(\.lines).map(\.text).joined(separator: "\n")
-        #expect(text.contains("Portable battery station: recorded as working with this device and tested by the household."))
+        #expect(text.contains("Portable battery station: compatibility and source setup are recorded."))
         #expect(text.contains("6 hours (documented by the household)"))
         #expect(text.contains("Switch Oxygen concentrator to Portable battery station."))
         #expect(text.contains("Oxygen supplier (fictional): 254-555-0199"))
@@ -109,24 +109,26 @@ struct NextStepsTests {
         let ids = summary.toDo.map(\.id)
         #expect(!ids.isEmpty)
         #expect(Set(ids).count == ids.count, "each preparation appears once")
-        #expect(Set(ids) == Set(results.flatMap(\.recommendations).map(\.actionID)))
+        #expect(ids.contains("prep.water"))
+        #expect(!ids.contains("act.water.store-3day"), "the same water record is not listed twice")
+        #expect(ids.contains("prep.medicalBackup|equipment.eq-oxygen"))
         let tiers = summary.toDo.map(\.recommendation.tier)
         #expect(tiers == tiers.sorted(), "ordered by the ranker's tier")
-        for step in summary.toDo {
-            let raisedIn = Set(results.filter { $0.recommendations.contains { $0.actionID == step.id } }.map(\.input.scenarioID))
+        for step in summary.toDo where !step.recommendation.actionID.hasPrefix("prep.") {
+            let raisedIn = Set(results.filter { $0.recommendations.contains { $0.id == step.id } }.map(\.input.scenarioID))
             #expect(Set(step.scenarioIDs) == raisedIn)
             #expect(step.scenarioIDs.contains(step.sourceScenarioID))
-            let best = results.flatMap(\.recommendations).filter { $0.actionID == step.id }.map(\.tier).min()
+            let best = results.flatMap(\.recommendations).filter { $0.id == step.id }.map(\.tier).min()
             #expect(step.recommendation.tier == best)
         }
-        #expect(summary.toDo.contains { $0.id == "act.backup.confirm-medical-backup" }, "the oxygen backup is a next step")
+        #expect(summary.toDo.contains { $0.id == "prep.medicalBackup|equipment.eq-oxygen" }, "the oxygen backup has its own subject and direct editor")
     }
 
     @Test("Marking a preparation completed moves it from to-do to completed")
     func completedMoves() throws {
         var h = SampleHouseholds.oak
         let results = try Self.results(h)
-        let first = try #require(NextSteps.summarize(results, household: h).toDo.first)
+        let first = try #require(NextSteps.summarize(results, household: h).toDo.first { !$0.recommendation.actionID.hasPrefix("prep.") && $0.recommendation.subjectID == nil })
         h.completedPreparations.append(CompletedPreparation(actionID: first.id, completedAt: LeadTestSupport.fixedDate))
         let after = NextSteps.summarize(results, household: h)
         #expect(!after.toDo.contains { $0.id == first.id })

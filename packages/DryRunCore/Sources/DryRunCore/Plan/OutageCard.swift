@@ -4,9 +4,13 @@ import Foundation
 /// do or record; none is a score.
 public enum OutageCardGap: String, Codable, Sendable, Hashable, CaseIterable {
     /// No backup source is recorded as working with this device.
+    case storageInstructionsUnknown
+    case storagePlanUnconfirmed
     case noCompatibleBackup
     /// A compatible backup is recorded, but nobody has set it up and tested it.
     case backupNotTested
+    /// Source prerequisites or the allocation to this device remain unresolved.
+    case backupPrerequisitesUnconfirmed
     /// The runtime on backup is not documented (manufacturer or care plan). Dry Run never estimates it.
     case runtimeUnknown
     /// No supplier, care team, or utility medical registry contact is recorded.
@@ -32,7 +36,7 @@ public enum OutageCardBuilder {
     }
 
     public static func careContacts(in h: HouseholdProfile) -> [HouseholdContact] {
-        h.contacts.filter { $0.role == .careProvider || $0.role == .utilityMedicalRegistry }
+        h.contacts.filter { ($0.role == .careProvider || $0.role == .utilityMedicalRegistry) && $0.hasUsablePhone }
     }
 
     public static func confirmedDestinations(in h: HouseholdProfile) -> [RelocationDestination] {
@@ -42,11 +46,18 @@ public enum OutageCardBuilder {
     public static func gaps(for eq: PoweredEquipment, in h: HouseholdProfile) -> [OutageCardGap] {
         var out: [OutageCardGap] = []
         let backups = compatibleBackups(for: eq, in: h)
+        if eq.requiresElectricalPower {
         if backups.isEmpty { out.append(.noCompatibleBackup) }
         else if !backups.contains(where: { $0.setupConfirmed.confirmedValue == true }) { out.append(.backupNotTested) }
-        if eq.documentedBackupRuntimeHours.confirmedValue == nil { out.append(.runtimeUnknown) }
+        else if MedicalBackupReadiness.assignment(for: eq, in: h)?.state != .operational { out.append(.backupPrerequisitesUnconfirmed) }
+        if !MedicalBackupReadiness.hasRecordedRuntime(eq) { out.append(.runtimeUnknown) }
+        }
+        if eq.requiresColdStorage {
+            if (eq.storageInstructions ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { out.append(.storageInstructionsUnknown) }
+            if eq.storagePlanConfirmed?.confirmedValue != true { out.append(.storagePlanUnconfirmed) }
+        }
         if careContacts(in: h).isEmpty { out.append(.noCareContact) }
-        if !h.contacts.contains(where: { $0.role == .outOfAreaContact }) { out.append(.noOutOfAreaContact) }
+        if !h.contacts.contains(where: { $0.role == .outOfAreaContact && $0.hasUsablePhone }) { out.append(.noOutOfAreaContact) }
         if confirmedDestinations(in: h).isEmpty { out.append(.noConfirmedDestination) }
         return out
     }
@@ -76,9 +87,9 @@ public enum OutageCardBuilder {
         var sections: [PlanSection] = []
 
         // Who and what.
-        var device = [user.map { b.line("card.device.usedBy", ["device": eq.label, "person": $0.alias]) }
-                      ?? b.line("card.device.line", ["device": eq.label])]
-        if eq.needsRefrigeration { device.append(b.line("card.device.needsRefrigeration")) }
+        var device = [user.map { b.line("card.device.usedBy", ["device": eq.localizedLabel(b.localizer), "person": $0.localizedLabel(b.localizer)]) }
+                      ?? b.line("card.device.line", ["device": eq.localizedLabel(b.localizer)])]
+        if eq.requiresColdStorage { device.append(b.line("card.device.needsRefrigeration")) }
         if let notes = eq.carePlanNotes, !notes.isEmpty, options.includePrivateNotes {
             device.append(PlanLine(text: notes, style: .normal, key: "private.carePlanNotes", resolvedLocale: b.localizer.locale,
                                    isFallback: false, isDraftTranslation: false, sourceIDs: []))
@@ -86,33 +97,50 @@ public enum OutageCardBuilder {
         sections.append(b.section("device", "card.section.device", device, critical: false))
 
         // Backup power: only what the household recorded; never an estimate.
-        var power: [PlanLine] = backups.map { bk in
-            b.line(bk.setupConfirmed.confirmedValue == true ? "card.backup.tested" : "card.backup.notTested",
-                   ["backup": bk.label], sources: ["S25"])
+        if eq.requiresElectricalPower {
+        var power: [PlanLine] = backups.flatMap { bk in
+            var lines = [b.line(bk.setupConfirmed.confirmedValue == true ? "card.backup.tested" : "card.backup.notTested",
+                   ["backup": bk.localizedLabel(b.localizer)], sources: ["S25"])]
+            let usability = BackupAllocator.usability(bk, energyRemaining: bk.usableEnergyWh.confirmedValue)
+            if usability != .usable {
+                lines.append(b.line("card.backup.prerequisites", ["reason": b.l("reason.\(usability.rawValue)")], style: .caveat, sources: ["S25"]))
+            }
+            return lines
         }
         if backups.isEmpty { power.append(b.line("card.backup.none", sources: ["S25"])) }
+        if !backups.isEmpty, let assignment = MedicalBackupReadiness.assignment(for: eq, in: h), assignment.state != .operational,
+           !backups.contains(where: { BackupAllocator.usability($0, energyRemaining: $0.usableEnergyWh.confirmedValue).rawValue == assignment.reason }) {
+            power.append(b.line("card.backup.prerequisites", ["reason": b.l("reason.\(assignment.reason)")], style: .caveat, sources: ["S25"]))
+        }
         let runtime = eq.documentedBackupRuntimeHours.confirmedValue.map {
-            b.l("plan.equipment.runtimeKnown", ["hours": PlanBuilder.formatNumber($0)])
+            b.l("plan.equipment.runtimeKnown", ["hours": PlanBuilder.formatNumber($0, locale: b.localizer.locale)])
         } ?? b.l("plan.equipment.runtimeUnknown")
         power.append(b.line("card.backup.runtime", ["runtime": runtime], sources: ["S25"]))
         sections.append(b.section("backup", "card.section.backup", power, critical: true))
 
+        }
+        if eq.requiresColdStorage {
+            let storage = [PlanLine(text: eq.storageInstructions ?? b.l("family.providerPrompt"), style: .normal, key: "private.storageInstructions", resolvedLocale: b.localizer.locale, isFallback: false, isDraftTranslation: false, sourceIDs: ["S54"])]
+            sections.append(b.section("storage", "family.storageInstructions", storage, critical: true))
+        }
         // First steps when the power goes out.
-        var steps = [b.line("plan.help.911", style: .contact)]
-        if let tested = backups.first(where: { $0.setupConfirmed.confirmedValue == true }) {
-            steps.append(b.line("card.steps.switchToBackup", ["device": eq.label, "backup": tested.label]))
+        var steps: [PlanLine] = []
+        if h.privateLocation?.countryCode?.uppercased() == "US" || (h.privateLocation?.countryCode == nil && PublicDataPolicy.isAllowedRegionID(h.regionID)) { steps.append(b.line("plan.help.911", style: .contact)) }
+        if let assignment = MedicalBackupReadiness.assignment(for: eq, in: h), assignment.state == .operational,
+           let selected = backups.first(where: { $0.id == assignment.sourceID }) {
+            steps.append(b.line("card.steps.switchToBackup", ["device": eq.localizedLabel(b.localizer), "backup": selected.localizedLabel(b.localizer)]))
         }
         let care = careContacts(in: h)
         if let first = care.first {
             steps.append(b.line("card.steps.callCare", ["contact": first.alias]))
         }
         if let helperID = user?.helperPersonID, let helper = h.people.first(where: { $0.id == helperID }), let user {
-            steps.append(b.line("plan.person.helper", ["helper": helper.alias, "alias": user.alias]))
+            steps.append(b.line("plan.person.helper", ["helper": helper.localizedLabel(b.localizer), "alias": user.localizedLabel(b.localizer)]))
         }
         sections.append(b.section("steps", "card.section.steps", steps, critical: true))
 
         // People to call: care team first, then out-of-area contacts.
-        var people: [PlanLine] = (care + h.contacts.filter { $0.role == .outOfAreaContact }).map { c in
+        var people: [PlanLine] = (care + h.contacts.filter { $0.role == .outOfAreaContact && $0.hasUsablePhone }).map { c in
             c.phone.map { b.line("plan.contact.line", ["alias": c.alias, "phone": $0], style: .contact) }
                 ?? b.line("plan.contact.noPhone", ["alias": c.alias])
         }
@@ -126,12 +154,12 @@ public enum OutageCardBuilder {
             : destinations.map { b.line("card.goTo.confirmed", ["place": $0.label]) }
         sections.append(b.section("goTo", "card.section.goTo", goTo, critical: false))
 
-        sections.append(b.section("help", "plan.section.help", PlanBuilder.helpLines(b, resources), critical: true))
+        sections.append(b.section("help", "plan.section.help", PlanBuilder.helpLines(b, resources, countryCode: h.privateLocation?.countryCode), critical: true))
 
         let gapLines = gaps(for: eq, in: h).map { b.line("card.gap.\($0.rawValue)", style: .caveat) }
         if !gapLines.isEmpty { sections.append(b.section("gaps", "card.section.gaps", gapLines, critical: false)) }
 
         return PlanPage(id: "card-\(eq.id)", kind: .outageCard(eq.id),
-                        title: b.l("card.title", ["device": eq.label]), sections: sections)
+                        title: b.l("card.title", ["device": eq.localizedLabel(b.localizer)]), sections: sections)
     }
 }

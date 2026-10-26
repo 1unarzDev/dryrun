@@ -21,6 +21,31 @@ struct GeometryTests {
         #expect(abs(p.x - 1) < 1e-12 && abs(p.y - 1) < 1e-12)
     }
 
+    @Test func concavePolygonTriangulationPreservesAreaAndRejectsBowties() {
+        // An L-shaped floor: the notch must remain empty in the display mesh.
+        let concave = [Vec2(0, 0), Vec2(4, 0), Vec2(4, 1), Vec2(1, 1), Vec2(1, 4), Vec2(0, 4)]
+        let triangles = try! #require(Geometry.triangulate(concave))
+        #expect(triangles.count == concave.count - 2)
+        let triangleArea = triangles.reduce(0.0) { total, t in
+            total + abs(Geometry.signedArea(t.map { concave[$0] }))
+        }
+        #expect(abs(triangleArea - abs(Geometry.signedArea(concave))) < 1e-9)
+
+        let bowtie = [Vec2(0, 0), Vec2(2, 2), Vec2(0, 2), Vec2(2, 0)]
+        #expect(Geometry.triangulate(bowtie) == nil)
+    }
+
+    @Test func roomOverlapDistinguishesAlignedStripsFromSharedWallsAndConcaveNotches() {
+        let first = SampleHomes.rect(0, 0, 5, 4)
+        #expect(Geometry.polygonsOverlap(first, SampleHomes.rect(4, 0, 7, 4)))
+        #expect(!Geometry.polygonsOverlap(first, SampleHomes.rect(5, 0, 7, 4)))
+        #expect(!Geometry.polygonsOverlap(first, SampleHomes.rect(5, 4, 7, 6)))
+        let l = [Vec2(0, 0), Vec2(4, 0), Vec2(4, 1), Vec2(1, 1), Vec2(1, 4), Vec2(0, 4)]
+        #expect(!Geometry.polygonsOverlap(l, SampleHomes.rect(1, 1, 4, 4)))
+        #expect(Geometry.polygonsOverlap(l, SampleHomes.rect(0.5, 2, 2, 3)))
+        #expect(!Geometry.isSimplePolygon([Vec2(0, 0), Vec2(.infinity, 0), Vec2(0, 1)]))
+    }
+
     // House-local layout (metres, x/z ground plane, y up). Room A: 4×4 at origin; Room B: 4×3 to the east.
     static let worldYaw = 0.5
     static let worldT = Vec3(10, 0, -3)
@@ -95,6 +120,8 @@ struct GeometryTests {
 
         // After the confirmation pass the same geometry routes cleanly.
         var confirmed = home
+        #expect(confirmed.floors.allSatisfy { $0.exteriorGrade == .unknown })
+        confirmed = HomeConfirmation.apply(.floorGrade(floorID: confirmed.floors[0].id, grade: .ground), to: confirmed)
         confirmed.edit { h in
             for i in h.portals.indices where h.portals[i].kind == .door {
                 h.portals[i].verification = .verified
@@ -113,6 +140,19 @@ struct GeometryTests {
         if let p = r2.primary { #expect(RouteGeometryAudit.violations(p, in: confirmed).isEmpty) }
     }
 
+    @Test func recognisedRoomTypeIsOnlyAnUnconfirmedPrefill() throws {
+        var capture = Self.capture
+        capture.rooms[0].suggestedKind = .bedroom
+        let home = try ScanImport.importCapture(capture, homeID: "home-scan-kind").home
+        let rooms = home.spaces.sorted { $0.id < $1.id }
+        #expect(rooms.map(\.kind) == [.bedroom, .other])
+        #expect(rooms.allSatisfy { !$0.labelConfirmed })
+        // The suggestion changes no geometry: same rooms, openings and outlines as without it.
+        let plain = try ScanImport.importCapture(Self.capture, homeID: "home-scan-kind").home
+        #expect(plain.spaces.map(\.polygon) == home.spaces.map(\.polygon))
+        #expect(plain.portals == home.portals)
+    }
+
     @Test func independentlyScannedRoomsAreNeverPlacedByGuessing() {
         var c = Self.capture
         c.sharedCoordinateFrame = false
@@ -120,6 +160,14 @@ struct GeometryTests {
             try ScanImport.importCapture(c, homeID: "x")
         }
         #expect(throws: ScanImportError.empty) { try ScanImport.importCapture(ScanCapture(rooms: [], sharedCoordinateFrame: true), homeID: "x") }
+    }
+
+    @Test func interruptedCaptureRemainsIncompleteEvenWithSeveralSavedRooms() throws {
+        var capture = Self.capture
+        capture.sessionCompleted = false
+        let result = try ScanImport.importCapture(capture, homeID: "interrupted")
+        #expect(result.home.completeness == .incomplete)
+        #expect(result.notes.contains { $0.contains("did not finish") })
     }
 
     @Test func nearTouchingScannedRoomsWithoutADoorAreNotConnected() throws {

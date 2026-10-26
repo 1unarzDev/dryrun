@@ -5,7 +5,8 @@ import DryRunCore
 
 // Maps RoomPlan output into DryRunCore's plain ScanImport structs. All geometry decisions (projection,
 // adjacency proposals, de-duplication, completeness) live in DryRunCore/Spatial/ScanImport.swift and are
-// tested on Linux; this file only copies numbers. AUTHORED, NOT COMPILED in this environment.
+// tested on Linux; this file copies SDK identifiers and numbers. Native CI checks SDK signatures;
+// real-space coordinate and scale assumptions still require a consenting device measurement.
 //
 // API assumptions to confirm against the installed SDK (iOS 17+ RoomPlan):
 //  - CapturedRoom.walls/doors/windows/openings/floors: [CapturedRoom.Surface]; .objects: [CapturedRoom.Object]; .story: Int
@@ -61,14 +62,38 @@ enum RoomPlanMapping {
         )
     }
 
-    static func room(_ r: CapturedRoom, index: Int) -> ScanRoom {
+    static func room(_ r: CapturedRoom) -> ScanRoom {
         let surfaces = (r.floors + r.walls + r.doors + r.windows + r.openings).compactMap(surface)
-        return ScanRoom(id: "room-\(index)", story: r.story, surfaces: surfaces, objects: r.objects.map(object))
+        var room = projectedRoom(identifier: r.identifier, story: r.story, surfaces: surfaces, objects: r.objects.map(object))
+        room.suggestedKind = suggestedKind(r.sections.map(\.label))
+        return room
+    }
+
+    /// One recognised room type pre-fills the confirmation step. Mixed or unidentified sections (an open-plan
+    /// kitchen and living room) suggest nothing rather than a guess.
+    static func suggestedKind(_ labels: [CapturedRoom.Section.Label]) -> SpaceKind? {
+        let kinds = Set(labels.compactMap { label -> SpaceKind? in
+            switch label {
+            case .bedroom: return .bedroom
+            case .bathroom: return .bathroom
+            case .kitchen: return .kitchen
+            case .livingRoom: return .livingRoom
+            case .diningRoom: return .dining
+            default: return nil
+            }
+        })
+        return kinds.count == 1 ? kinds.first : nil
+    }
+
+    /// StructureBuilder can reorder rooms. Only the SDK's originating identifier is identity evidence;
+    /// ScanImport separately assigns the current Room 1 / Room 2 display labels and local space IDs.
+    static func projectedRoom(identifier: UUID, story: Int, surfaces: [ScanSurface], objects: [ScanObject]) -> ScanRoom {
+        ScanRoom(id: identifier.uuidString, story: story, surfaces: surfaces, objects: objects)
     }
 
     /// Rooms from one RoomCaptureSession / shared ARSession, or from StructureBuilder, share a frame.
     static func capture(rooms: [CapturedRoom], sharedFrame: Bool, completed: Bool) -> ScanCapture {
-        ScanCapture(rooms: rooms.enumerated().map { room($0.element, index: $0.offset) },
+        ScanCapture(rooms: rooms.map(room),
                     sharedCoordinateFrame: sharedFrame, sessionCompleted: completed)
     }
 }

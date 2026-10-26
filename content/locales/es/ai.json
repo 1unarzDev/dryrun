@@ -1,0 +1,13 @@
+{
+  "simulation.user.allocatePower": "Cambiaste una asignación de energía de respaldo en este ejercicio.",
+  "simulation.user.useStoredWater": "Elegiste cómo usar el agua almacenada en este ejercicio.",
+  "simulation.user.choose": "Elegiste una opción del ejercicio.",
+  "simulation.user.assignHelper": "Cambiaste la persona asignada para ayudar en este ejercicio.",
+  "simulation.user.contact": "Intentaste comunicarte con un contacto registrado en este ejercicio.",
+  "simulation.user.unsupported": "Esta acción no está modelada en este ejercicio.",
+  "simulation.user.moveTo": "Intentaste moverte en este ejercicio. La escena muestra si había una ruta disponible.",
+  "simulation.user.takeSupply": "Tomaste un artículo registrado de tus suministros en este ejercicio.",
+  "simulation.user.transferSupply": "Dejaste el artículo que llevabas en la habitación donde estás en el ejercicio.",
+  "simulation.user.closeDoor": "Cerraste una puerta que se puede abrir y cerrar en este ejercicio. No se modela ningún cambio en la propagación del humo.",
+  "simulation.user.finish": "Terminaste este ejercicio."
+}
