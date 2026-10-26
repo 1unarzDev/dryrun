@@ -1,0 +1,131 @@
+{
+  "synthetic": true,
+  "newModelCalls": 0,
+  "sourceInventoryConfirmed": true,
+  "keys": {
+    "fiveGallons": {
+      "gapCategories": [
+        "food",
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "bf5838cd73d714d4",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "sixGallons": {
+      "gapCategories": [
+        "food",
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "adae0590b457604a",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "wording": {
+      "gapCategories": [
+        "food",
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "bf5838cd73d714d4",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "explicitDependency": {
+      "gapCategories": [
+        "food",
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "796a94911ca775bb",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    },
+    "unrelatedDisplayEdit": {
+      "gapCategories": [
+        "food",
+        "water"
+      ],
+      "limitedBudget": false,
+      "normalizedInputDigest": "adae0590b457604a",
+      "regionID": "48143",
+      "relatedTaskIDs": [
+        "prep.water"
+      ],
+      "schemaVersion": "dryrun.resource-strategy-key/1",
+      "transport": "car"
+    }
+  },
+  "gaps": {
+    "fiveGallons": [
+      {
+        "category": "water",
+        "confirmedUsable": 18.92705892,
+        "deficit": 26.497882487999995,
+        "required": 45.424941407999995,
+        "sourceIDs": [
+          "S26"
+        ],
+        "unit": "liter",
+        "unknown": false
+      },
+      {
+        "category": "food",
+        "confirmedUsable": 0,
+        "required": 3,
+        "sourceIDs": [
+          "S64"
+        ],
+        "unit": "day",
+        "unknown": true
+      }
+    ],
+    "sixGallons": [
+      {
+        "category": "water",
+        "confirmedUsable": 22.712470703999998,
+        "deficit": 22.712470703999998,
+        "required": 45.424941407999995,
+        "sourceIDs": [
+          "S26"
+        ],
+        "unit": "liter",
+        "unknown": false
+      },
+      {
+        "category": "food",
+        "confirmedUsable": 0,
+        "required": 3,
+        "sourceIDs": [
+          "S64"
+        ],
+        "unit": "day",
+        "unknown": true
+      }
+    ]
+  },
+  "assertions": {
+    "changedDeficitInvalidates": true,
+    "wordingIgnored": true,
+    "explicitDependencyInvalidates": true,
+    "unrelatedDisplayEditIgnored": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "version": "dryrun.inventory-preparation-kinds/1",
+  "promptVersion": "preparation/4",
+  "assessmentVersion": "dryrun.household-assessment/5",
+  "kinds": [
+    {
+      "id": "flashlight",
+      "category": "light",
+      "unit": "count",
+      "legacyField": "supplies.flashlights",
+      "predicate": "essentials.light"
+    },
+    {
+      "id": "firstAidKit",
+      "category": "firstAid",
+      "unit": "count",
+      "legacyField": "supplies.firstAidKit",
+      "predicate": "essentials.firstAid"
+    }
+  ],
+  "rules": [
+    "Identity is an optional model observation until the user confirms the item batch.",
+    "Generic category does not establish kind: candles are not flashlights and loose bandages are not a complete first-aid kit.",
+    "Usable whole counts, actual access, expiry, subject scope and evidence validation apply. No clinical or household-specific kit adequacy inference.",
+    "Removing or changing a previously projected kind clears its stale legacy value; save failures publish neither ledger nor household.",
+    "Location, technique, specific care requirements, sanitation adequacy and non-water exercise consumption remain separate."
+  ]
+}

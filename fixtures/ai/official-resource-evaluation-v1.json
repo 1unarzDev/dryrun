@@ -1,0 +1,201 @@
+{
+  "synthetic": true,
+  "model": "gemini-3.1-flash-lite",
+  "sdk": "2.30.0",
+  "prompt": "resources/3",
+  "calls": 4,
+  "usage": [
+    {
+      "total_tokens": 1105,
+      "total_input_tokens": 1074,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1074
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 31,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1489,
+      "total_input_tokens": 1115,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1115
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 374,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1105,
+      "total_input_tokens": 1074,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1074
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 31,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1390,
+      "total_input_tokens": 1115,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1115
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 275,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    }
+  ],
+  "estimatedUSD": 0.0021610000000000006,
+  "results": [
+    {
+      "regionID": "48439",
+      "reference": "Synthetic development query for actual host alert-enrollment task; no native listings or private data",
+      "task": {
+        "actionID": "prep.alerts",
+        "completionPredicates": [
+          "usableContact",
+          "offlineAccess"
+        ],
+        "criterionID": "contact",
+        "dependencyIDs": [
+          "preparedness.alerts",
+          "regionID"
+        ],
+        "editor": "supplies",
+        "evidenceIDs": [
+          "household-needs"
+        ],
+        "id": "prep.alerts",
+        "priority": 2,
+        "subjectID": "household",
+        "why": "prep.alerts.why"
+      },
+      "output": {
+        "searchPlans": [
+          {
+            "id": "search-oem-alerts-48439",
+            "taskID": "prep.alerts",
+            "dependencyIDs": [
+              "preparedness.alerts"
+            ],
+            "hazardIDs": [
+              "severe-weather"
+            ],
+            "category": "emergencyManagement",
+            "purpose": "Verify registration process for Tarrant County mass notification system (Tarrant Ready Alerts) to ensure offline access to emergency information.",
+            "mandatoryCapabilities": [
+              "Mass notification registration",
+              "SMS/Email alert configuration"
+            ],
+            "unknowns": [
+              "Current registration status",
+              "Availability of non-cellular alert methods"
+            ],
+            "travelMode": "assistance",
+            "maximumDistanceKm": 1,
+            "expansionLimit": 0,
+            "requiredEvidence": [
+              "Official Tarrant County Emergency Management alert sign-up page"
+            ],
+            "cloudReturnPolicy": "local_only"
+          }
+        ],
+        "officialRecommendations": [
+          {
+            "resourceID": "r-48439-oem",
+            "taskID": "prep.alerts",
+            "reason": "This official emergency-management listing may help you investigate your communication plan. Its current service, activation, access and suitability need confirmation; this is not a confirmed destination. Record last checked 2026-10-18.",
+            "fieldIDs": [
+              "serviceType",
+              "checkedAt",
+              "sourceIDs"
+            ]
+          }
+        ],
+        "question": "Would you like to review the Tarrant County Emergency Management alert registration steps to ensure your household is covered for severe weather notifications?"
+      },
+      "calls": 2,
+      "latencyMs": 6739,
+      "matched": true,
+      "officialRecordCount": 7
+    },
+    {
+      "regionID": "99999",
+      "reference": "Synthetic development query for actual host alert-enrollment task; no native listings or private data",
+      "task": {
+        "actionID": "prep.alerts",
+        "completionPredicates": [
+          "usableContact",
+          "offlineAccess"
+        ],
+        "criterionID": "contact",
+        "dependencyIDs": [
+          "preparedness.alerts",
+          "regionID"
+        ],
+        "editor": "supplies",
+        "evidenceIDs": [
+          "household-needs"
+        ],
+        "id": "prep.alerts",
+        "priority": 2,
+        "subjectID": "household",
+        "why": "prep.alerts.why"
+      },
+      "output": {
+        "searchPlans": [
+          {
+            "id": "search-emergency-mgmt-99999",
+            "taskID": "prep.alerts",
+            "dependencyIDs": [
+              "preparedness.alerts"
+            ],
+            "hazardIDs": [
+              "general-preparedness"
+            ],
+            "category": "emergencyManagement",
+            "purpose": "Identify official channels for local emergency alerts to satisfy the prep.alerts task requirement for usable contact and offline access.",
+            "mandatoryCapabilities": [
+              "official alert dissemination",
+              "accessibility for limited mobility households"
+            ],
+            "unknowns": [
+              "current alert subscription methods",
+              "availability of non-digital alert options"
+            ],
+            "travelMode": "driving",
+            "maximumDistanceKm": 20,
+            "expansionLimit": 1,
+            "requiredEvidence": [
+              "official emergency management contact registry"
+            ],
+            "cloudReturnPolicy": "local_only"
+          }
+        ],
+        "question": "Are there specific local emergency alert systems in region 99999 that provide offline-accessible notifications for households with limited mobility and power-dependent medical equipment?"
+      },
+      "calls": 2,
+      "latencyMs": 9743,
+      "matched": true,
+      "officialRecordCount": 0
+    }
+  ],
+  "limits": "Two synthetic region/task queries; repeated source pack, no independent household sample, native search/identity joins and live service capability unverified. Host explanation normalization, not model-prose factual certification."
+}

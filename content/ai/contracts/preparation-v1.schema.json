@@ -112,8 +112,34 @@
           },
           "category": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 120
+            "enum": [
+              "water",
+              "food",
+              "light",
+              "firstAid",
+              "sanitation",
+              "medication",
+              "petSupplies",
+              "infantSupplies",
+              "power",
+              "fuel",
+              "communication",
+              "other"
+            ]
+          },
+          "preparationKind": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "flashlight",
+                  "firstAidKit"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "quantity": {
             "anyOf": [

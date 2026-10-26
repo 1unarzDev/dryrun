@@ -103,3 +103,15 @@ it('rejects already applied profiles and keeps non-spatial incidents out of spat
  expect(()=>validateCommands([{kind:'startIncident',target:'outage',hazard:'waterOutage',minute:20}],context)).toThrow();
  expect(()=>validateCommands([{kind:'advance',minute:20}],context)).not.toThrow();
 });
+
+
+it('binds recent action ordering and latest action to the current host revision',()=>{
+ const action={contractVersion:'dryrun.committed-action-context/1',id:'actual-followup',kind:'useStoredWater',value:'essential',commitRevision:1,commandIndex:0};
+ const context={...request.context,lastAction:action,recentActions:[action]};
+ expect(directorContext.safeParse(context).success).toBe(true);
+ expect(directorContext.safeParse({...context,lastAction:{...action,value:'all'}}).success).toBe(false);
+ expect(directorContext.safeParse({...context,recentActions:[{...action,commitRevision:2}]}).success).toBe(false);
+ expect(directorContext.safeParse({...context,recentActions:[action,action]}).success).toBe(false);
+ expect(directorContext.safeParse({...context,recentActions:[{id:'unbound',kind:'unsupported'}]}).success).toBe(false);
+ expect(directorContext.safeParse({...context,lastAction:{...action,phone:'private'}}).success).toBe(false);
+});

@@ -82,6 +82,19 @@
     "tier.4": "fcf8f717e747c25b",
     "tier.5": "33d9ffd2a7144f02"
    },
+   "ai": {
+    "simulation.user.allocatePower": "e84aa557303569fd",
+    "simulation.user.assignHelper": "528407a5b3b8c4e7",
+    "simulation.user.choose": "36d06ccb62b0ebc6",
+    "simulation.user.closeDoor": "1d3bb233d926e054",
+    "simulation.user.contact": "c2ce01d3b496ab02",
+    "simulation.user.finish": "5cce5c55665fc007",
+    "simulation.user.moveTo": "82d5eab59797206a",
+    "simulation.user.takeSupply": "5aa4127740732e5b",
+    "simulation.user.transferSupply": "5066fe431f8d1ff9",
+    "simulation.user.unsupported": "3d487abfbf04b089",
+    "simulation.user.useStoredWater": "10a10e0f207f8538"
+   },
    "common": {
     "card.gap.storageInstructionsUnknown": "c883bba0c20a24a0",
     "card.gap.storagePlanUnconfirmed": "350077d323e61543",
@@ -1902,6 +1915,19 @@
     "tier.3": "5393889c61b355e2",
     "tier.4": "fcf8f717e747c25b",
     "tier.5": "33d9ffd2a7144f02"
+   },
+   "ai": {
+    "simulation.user.allocatePower": "e84aa557303569fd",
+    "simulation.user.assignHelper": "528407a5b3b8c4e7",
+    "simulation.user.choose": "36d06ccb62b0ebc6",
+    "simulation.user.closeDoor": "1d3bb233d926e054",
+    "simulation.user.contact": "c2ce01d3b496ab02",
+    "simulation.user.finish": "5cce5c55665fc007",
+    "simulation.user.moveTo": "82d5eab59797206a",
+    "simulation.user.takeSupply": "5aa4127740732e5b",
+    "simulation.user.transferSupply": "5066fe431f8d1ff9",
+    "simulation.user.unsupported": "3d487abfbf04b089",
+    "simulation.user.useStoredWater": "10a10e0f207f8538"
    },
    "common": {
     "card.gap.storageInstructionsUnknown": "c883bba0c20a24a0",

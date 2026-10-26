@@ -37,7 +37,7 @@ struct SessionSupplyLedger {
         sources=Dictionary(uniqueKeysWithValues:checked.items.map{($0.id,$0)})
         state=ExerciseInventory(sourceRevision:seed.ledger.revision,items:checked.items.sorted{$0.id<$1.id}.map{
             ExerciseSupply(id:$0.id,physicalID:$0.physicalID,category:$0.category,unit:$0.unit,
-                remaining:$0.usableQuantity.confirmedValue,consumed:0,locationID:$0.locationID,carrierPersonID:nil,accessible:nil)
+                remaining:$0.quantity.confirmedValue==0 ? 0:$0.usableQuantity.confirmedValue,consumed:0,locationID:$0.locationID,carrierPersonID:nil,accessible:nil)
         })
     }
     /// Settle the existing RunState draw, then recompute access from the same committed hazard/occupants.
@@ -46,7 +46,7 @@ struct SessionSupplyLedger {
             guard after<=before+1e-9 else {throw SessionError.invalidCommand} // no implicit replenishment
             var liters=max(0,before-after)*3.785411784
             for index in state.items.indices where state.items[index].category=="water" && state.items[index].accessible==true {
-                guard let remaining=state.items[index].remaining else {continue}
+                guard let remaining=state.items[index].remaining,let source=sources[state.items[index].id],InventoryLedger.coversHousehold(source,personIDs:run.household.people.map(\.id)) else {continue}
                 let factor=state.items[index].unit == .usGallon ? 3.785411784 : 1
                 let used=min(remaining,liters/factor)
                 state.items[index].remaining=max(0,remaining-used)
@@ -56,7 +56,7 @@ struct SessionSupplyLedger {
             guard liters<1e-7 else {throw SessionError.invalidCommand}
         }
         var reachableLocations:[String:Bool]=[:]
-        var gallons=0.0,unknown = !state.items.contains{$0.category=="water"}
+        var gallons=0.0,unknown = !state.items.contains{$0.category=="water"},scopeUnsupported=false
         for index in state.items.indices {
             let source=sources[state.items[index].id]!
             var access=source.accessible.confirmedValue
@@ -69,7 +69,7 @@ struct SessionSupplyLedger {
                     if run.spatialState?.affectedSpaceIDs.contains(location)==true {access=false}
                     else if let home=run.home,home.space(location) != nil {
                         let reachable=reachableLocations[location] ?? run.household.people.contains{person in
-                            EgressPlanner().plan(RouteRequest(personID:person.id,startSpaceID:run.startSpace(for:person),mobility:run.mobility(for:person),exclusions:ScenarioExclusions(blockedSpaceIDs:run.spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:run.spatialState?.affectedPortalIDs ?? []),purpose:.helperReach,destinationSpaceID:location),in:home).primary != nil
+                            run.planner.plan(RouteRequest(personID:person.id,startSpaceID:run.startSpace(for:person),mobility:run.mobility(for:person),exclusions:ScenarioExclusions(blockedSpaceIDs:run.spatialState?.affectedSpaceIDs ?? [],blockedPortalIDs:run.spatialState?.affectedPortalIDs ?? []),purpose:.helperReach,destinationSpaceID:location),in:home).primary != nil
                         }
                         reachableLocations[location]=reachable
                         if !reachable {access=false}
@@ -79,12 +79,16 @@ struct SessionSupplyLedger {
             state.items[index].accessible=access
             if source.category=="water" {
                 guard source.unit == .liter || source.unit == .usGallon else {throw SessionError.invalidCommand}
-                if access==false {continue}
+                if access==false || state.items[index].remaining==0 {continue}
+                if !InventoryLedger.coversHousehold(source,personIDs:run.household.people.map(\.id)) {unknown=true;scopeUnsupported=true;continue}
                 if access != true || state.items[index].remaining == nil {unknown=true;continue}
                 gallons += state.items[index].remaining! * (source.unit == .usGallon ? 1 : 1/3.785411784)
+                guard gallons.isFinite else {throw SessionError.invalidCommand}
             }
         }
         // Unknown stock cannot be turned into a confident forecast or an invented draw amount.
+        if scopeUnsupported {run.unknowns.insert("inventory.water.subjectScope")}
+        else {run.unknowns.remove("inventory.water.subjectScope")}
         projectedGallons=unknown ? nil : gallons
         run.storedWater=projectedGallons
         if unknown {run.unknowns.insert("inventory.water.available")}

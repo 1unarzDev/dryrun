@@ -31,3 +31,27 @@ it('rejects a driving search strategy for a household with no car after bounded 
  const runner=new FeatureRunner({async turn(){calls++;return {steps:[],calls:[],usage:{},text:JSON.stringify({searchPlans:[plan],question:null})}}});
  await expect(runner.run('resources',context)).rejects.toThrow('unsupported_travel');expect(calls).toBe(2);
 });
+
+it('rejects noncanonical inventory categories before they bypass host arithmetic',async()=>{
+ const {preparationOutput}=await import('../src/features.js');
+ const observation={id:'bottle',physicalID:'one-bottle',category:'water',quantity:2,unit:'liter',evidenceIDs:['typed'],unknowns:[]};
+ expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[observation],question:null}).success).toBe(true);
+ expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,category:'hydration'}],question:null}).success).toBe(false);
+});
+
+
+it('supports station and meetup searches without granting geographic data forwarding',()=>{
+ const base={id:'meetup-search',taskID:'recorded-meetup-task',dependencyIDs:['meetingPlace'],hazardIDs:[],purpose:'Review a communication or meetup preparation option',mandatoryCapabilities:[],unknowns:['Actual role and household agreement; no shelter capability established'],travelMode:'walking',maximumDistanceKm:5,expansionLimit:0,requiredEvidence:['Confirm the household arrangement and actual facility role'],cloudReturnPolicy:'local_only'};
+ for(const category of ['policeStation','fireStation','trustedMeetup']){
+  expect(resourcePlan.safeParse({...base,category}).success).toBe(true);
+  expect(resourcePlan.safeParse({...base,category,cloudReturnPolicy:'send_listings'}).success).toBe(false);
+ }
+});
+
+
+it('keeps optional reviewed item kind separate from broad inventory category',async()=>{
+ const {preparationOutput}=await import('../src/features.js');
+ const observation={id:'one-batch',physicalID:'batch',category:'light',quantity:3,unit:'count',evidenceIDs:['typed'],unknowns:[]};
+ for(const preparationKind of [undefined,null,'flashlight'])expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,preparationKind}],question:null}).success).toBe(true);
+ expect(preparationOutput.safeParse({tasks:[],inventoryObservations:[{...observation,preparationKind:'any-light-is-a-flashlight'}],question:null}).success).toBe(false);
+});

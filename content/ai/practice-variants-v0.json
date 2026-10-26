@@ -1,15 +1,33 @@
 {
- "version":"practice-check/0",
- "status":"provisional; equivalence and human content review pending",
- "variants":[
-  {"id":"practice-check-a/0","order":["initialResponse","adaptation","communication","continuity"],"accessibility":"Equivalent text, VoiceOver, translation and extra reading time; no speed grading"},
-  {"id":"practice-check-b/0","order":["continuity","communication","adaptation","initialResponse"],"accessibility":"Same anchors and fixed denominator; order comparability unvalidated"}
- ],
- "anchors":{
-  "initialResponse":"Full: appropriate independent action under the recorded hazard; partial only from explicit reviewed subpredicate; unsafe: zero",
-  "adaptation":"Full: validated supported alternative after the original option fails; no route: not credited by narration",
-  "communication":"Full: uses recorded usable communication/reunification/assistance option; inaccessible or unavailable option cannot pass",
-  "continuity":"Full: confirmed compatible source with computed capacity for the recorded dependency; equipment specification unknown: unassessed"
- },
- "restriction":"Only local committed actions matched to these anchors can populate practice evidence. Adaptive training itself does not earn points. Native must capture pre-feedback answers and resume the latest attempt. Do not represent model narrative as eligible performance."
+  "version": "practice-check/0",
+  "status": "provisional; equivalence and human content review pending",
+  "variants": [
+    {
+      "id": "practice-check-a/0",
+      "order": [
+        "initialResponse",
+        "adaptation",
+        "communication",
+        "continuity"
+      ],
+      "accessibility": "Equivalent text, VoiceOver, translation and extra reading time; no speed grading"
+    },
+    {
+      "id": "practice-check-b/0",
+      "order": [
+        "continuity",
+        "communication",
+        "adaptation",
+        "initialResponse"
+      ],
+      "accessibility": "Same anchors and fixed denominator; order comparability unvalidated"
+    }
+  ],
+  "anchors": {
+    "initialResponse": "Full: appropriate independent action under the recorded hazard; partial only from explicit reviewed subpredicate; unsafe: zero",
+    "adaptation": "Full: validated supported alternative after the original option fails; no route: not credited by narration",
+    "communication": "Full: uses recorded usable communication/reunification/assistance option; inaccessible or unavailable option cannot pass",
+    "continuity": "Full: confirmed compatible source with computed capacity for the recorded dependency; equipment specification unknown: unassessed"
+  },
+  "restriction": "Only local committed actions matched to these anchors can populate practice evidence. Adaptive training itself does not earn points. Native must capture pre-feedback answers and resume the latest attempt. Do not represent model narrative as eligible performance. Concern-seeded sessions add unevaluated assumptions and cannot be relabeled as these practice variants; they remain educational training/stress exercises."
 }

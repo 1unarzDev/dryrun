@@ -2,33 +2,64 @@
   "synthetic": true,
   "model": "gemini-3.1-flash-lite",
   "sdk": "2.30.0",
-  "calls": 2,
+  "prompt": "preparation/3",
+  "schema": "preparation-v1",
+  "inventoryCategoryVersion": "dryrun.inventory-categories/1",
+  "calls": 4,
   "usage": [
     {
-      "total_tokens": 1031,
-      "total_input_tokens": 900,
+      "total_tokens": 1122,
+      "total_input_tokens": 990,
       "input_tokens_by_modality": [
         {
           "modality": "text",
-          "tokens": 900
+          "tokens": 990
         }
       ],
       "total_cached_tokens": 0,
-      "total_output_tokens": 131,
+      "total_output_tokens": 132,
       "total_tool_use_tokens": 0,
       "total_thought_tokens": 0
     },
     {
-      "total_tokens": 1055,
-      "total_input_tokens": 902,
+      "total_tokens": 1143,
+      "total_input_tokens": 992,
       "input_tokens_by_modality": [
         {
           "modality": "text",
-          "tokens": 902
+          "tokens": 992
         }
       ],
       "total_cached_tokens": 0,
-      "total_output_tokens": 153,
+      "total_output_tokens": 151,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1148,
+      "total_input_tokens": 1012,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1012
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 136,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 1150,
+      "total_input_tokens": 1004,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 1004
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 146,
       "total_tool_use_tokens": 0,
       "total_thought_tokens": 0
     }
@@ -38,12 +69,14 @@
       "id": "typed-water",
       "intake": "I have one sealed water bottle. Its printed volume is 2 liters. This describes one physical bottle, not a shopping request.",
       "expected": 2,
+      "expectedCategory": "water",
+      "expectedUnit": "liter",
       "output": {
         "tasks": [],
         "inventoryObservations": [
           {
             "id": "obs-water-001",
-            "physicalID": "water-bottle-01",
+            "physicalID": "sealed-water-bottle-1",
             "category": "water",
             "quantity": 2,
             "unit": "liter",
@@ -53,7 +86,7 @@
             "unknowns": []
           }
         ],
-        "question": "Do you have any backup power source or generator documentation available for the oxygen equipment required by the older adult in your household?"
+        "question": "Could you provide the specific power requirements or battery backup duration for the oxygen equipment used by the older adult in your household?"
       },
       "matched": true
     },
@@ -61,25 +94,79 @@
       "id": "unknown-water",
       "intake": "I have one water container. The volume label is unreadable and I do not know how full it is. Do not estimate the quantity.",
       "expected": null,
+      "expectedCategory": "water",
+      "expectedUnit": null,
       "output": {
         "tasks": [],
         "inventoryObservations": [
           {
-            "id": "obs-water-container-001",
+            "id": "obs-water-001",
             "physicalID": "water-container-01",
             "category": "water",
             "quantity": null,
-            "unit": "liter",
+            "unit": "usGallon",
             "evidenceIDs": [
               "unknown-water"
             ],
             "unknowns": [
-              "Volume capacity of container is unreadable",
+              "Volume label is unreadable",
               "Current fill level is unknown"
             ]
           }
         ],
-        "question": "Could you provide the power requirements or model number for the oxygen equipment to help determine the necessary backup power capacity?"
+        "question": "Could you provide the model number or power specifications for the oxygen equipment to help determine the necessary backup power capacity?"
+      },
+      "matched": true
+    },
+    {
+      "id": "whole-household-food-days",
+      "intake": "I own nonperishable, easy-to-prepare food. I have reviewed it and know it covers my entire household for exactly three days. This is recorded household coverage, not a package count.",
+      "expected": 3,
+      "expectedCategory": "food",
+      "expectedUnit": "day",
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-food-001",
+            "physicalID": "nonperishable-food-stock",
+            "category": "food",
+            "quantity": 3,
+            "unit": "day",
+            "evidenceIDs": [
+              "whole-household-food-days"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide the specific power requirements or battery backup duration for the oxygen equipment used by the older adult in your household?"
+      },
+      "matched": true
+    },
+    {
+      "id": "food-package-count",
+      "intake": "I own six cans of beans, all six are one recorded batch. I do not know how many days they cover my household. Preserve the package count; do not estimate days.",
+      "expected": 6,
+      "expectedCategory": "food",
+      "expectedUnit": "count",
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-beans-001",
+            "physicalID": "canned-beans-batch-1",
+            "category": "food",
+            "quantity": 6,
+            "unit": "count",
+            "evidenceIDs": [
+              "food-package-count"
+            ],
+            "unknowns": [
+              "Household coverage duration in days is unknown."
+            ]
+          }
+        ],
+        "question": "Could you provide the documentation or power specifications for the oxygen equipment used by the older adult in your household?"
       },
       "matched": true
     }

@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "homeRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "imageID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "imageDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "box": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "roomID": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "possibleObstruction",
+        "tripHazard",
+        "supplyAccess"
+      ]
+    },
+    "visibleEvidence": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 600
+    },
+    "unknowns": {
+      "minItems": 1,
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 600
+      }
+    },
+    "actionID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "scenarioIDs": {
+      "minItems": 1,
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      }
+    }
+  },
+  "required": [
+    "id",
+    "homeRevision",
+    "imageID",
+    "imageDigest",
+    "box",
+    "category",
+    "visibleEvidence",
+    "unknowns",
+    "actionID",
+    "scenarioIDs"
+  ],
+  "additionalProperties": false
+}

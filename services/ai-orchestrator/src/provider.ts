@@ -13,12 +13,16 @@ export class GeminiProvider implements AgentProvider {
  private queue:Promise<void>=Promise.resolve();private lastCall=0;
  constructor(key:string,readonly model='gemini-3.1-flash-lite',readonly budget=new SpendBudget(),private roleModels:Partial<Record<'home'|'adjudication',string>>={}){if(!key)throw new Error('missing_provider_secret');if([model,...Object.values(roleModels)].some(id=>!['gemini-3.1-flash-lite','gemini-3.8-flash'].includes(id)))throw new Error('unsupported_model');this.ai=new GoogleGenAI({apiKey:key});}
  async turn(input:{history:History;instruction:string;tools:Interactions.Tool[];toolMode?:'any'|'none'|'auto';modelRole?:'home'|'adjudication';outputSchema?:Record<string,unknown>;signal:AbortSignal}):Promise<ProviderReply>{
- let release!:()=>void;const previous=this.queue;this.queue=new Promise<void>(resolve=>{release=resolve});await previous;
+ let release!:()=>void;const previous=this.queue;
+ const slot=new Promise<void>(resolve=>{release=resolve});
+ // Even when this waiter is cancelled, successors still wait for the earlier active call.
+ this.queue=previous.then(()=>slot,()=>slot);
  try {
+ await waitWithSignal(previous,input.signal);
  const model=(input.modelRole&&this.roleModels[input.modelRole])||this.model;
  const spacing=Number(process.env.DRYRUN_CALL_SPACING_MS??5000);
  const delay=Math.max(0,spacing-(Date.now()-this.lastCall));
- if(delay)await new Promise<void>((resolve,reject)=>{const timer=setTimeout(resolve,delay);input.signal.addEventListener('abort',()=>{clearTimeout(timer);reject(new Error('provider_cancelled'));},{once:true});});
+ if(delay){let timer:ReturnType<typeof setTimeout>|undefined;try {await waitWithSignal(new Promise<void>(resolve=>{timer=setTimeout(resolve,delay)}),input.signal);}finally{if(timer)clearTimeout(timer)}}
  input.signal.throwIfAborted();
  const requestBytes=Buffer.byteLength(JSON.stringify(input.history)+input.instruction+JSON.stringify(input.outputSchema??{}));
  if(requestBytes>6500000)throw new Error('request_budget');
@@ -29,6 +33,7 @@ export class GeminiProvider implements AgentProvider {
  const response=await this.ai.interactions.create({model,store:false,input:input.history,system_instruction:input.instruction,tools:input.tools,
  response_format:input.outputSchema&&(!input.tools.length||input.history.some(s=>s.type==='function_result'))?{type:'text',mime_type:'application/json',schema:providerSchema(input.outputSchema)}:undefined,generation_config:{max_output_tokens:2400,temperature:0.2,tool_choice:input.tools.length?(input.toolMode??(!input.history.some(s=>s.type==='function_result')?'any':'none')):undefined}},{signal:input.signal});
  this.budget.charge(response.usage,model,upperBoundUSD);
+ input.signal.throwIfAborted();
  const steps=response.steps??[];return {steps,text:response.output_text??'',calls:steps.filter(s=>s.type==='function_call'),usage:response.usage};
  }catch(error){const status=typeof error==='object'&&error&&'status'in error?error.status:undefined;throw new Error(status===429?'provider_rate_limited':input.signal.aborted?'provider_timeout_or_cancelled':'provider_unavailable');}finally{release();}
  }
@@ -46,4 +51,15 @@ export function providerSchema(value:Record<string,unknown>):Record<string,unkno
   else if((key==='anyOf'||key==='oneOf')&&Array.isArray(v))result.anyOf=v.map(x=>providerSchema(x));
  }
  return result;
+}
+
+
+/** Abort only this wait; the underlying call retains its own signal and queue position. */
+function waitWithSignal(promise:Promise<void>,signal:AbortSignal):Promise<void>{
+ if(signal.aborted)return Promise.reject(new Error('provider_cancelled'));
+ return new Promise<void>((resolve,reject)=>{
+  const aborted=()=>{signal.removeEventListener('abort',aborted);reject(new Error('provider_cancelled'));};
+  signal.addEventListener('abort',aborted,{once:true});
+  promise.then(()=>{signal.removeEventListener('abort',aborted);resolve();},error=>{signal.removeEventListener('abort',aborted);reject(error);});
+ });
 }

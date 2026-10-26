@@ -1,0 +1,5586 @@
+{
+  "synthetic": true,
+  "households": 1,
+  "variations": 8,
+  "repeats": 1,
+  "referenceCase": "household-01",
+  "referenceStatus": "Policy-authored development case, not human-adjudicated",
+  "model": "gemini-3.1-flash-lite",
+  "sdk": "2.30.0",
+  "calls": 32,
+  "usage": [
+    {
+      "total_tokens": 3274,
+      "total_input_tokens": 2456,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2456
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 818,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3209,
+      "total_input_tokens": 2393,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2393
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 816,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3196,
+      "total_input_tokens": 2396,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2396
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 800,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 4776,
+      "total_input_tokens": 3920,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 3920
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 856,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3272,
+      "total_input_tokens": 2456,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2456
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 816,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3181,
+      "total_input_tokens": 2393,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2393
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 788,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3199,
+      "total_input_tokens": 2396,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2396
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 803,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 4695,
+      "total_input_tokens": 3892,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 3892
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 803,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 4070,
+      "total_input_tokens": 3254,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 3254
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 816,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3985,
+      "total_input_tokens": 3191,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 3191
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 794,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3979,
+      "total_input_tokens": 3194,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 3194
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 785,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 5507,
+      "total_input_tokens": 4678,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4678
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 829,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3530,
+      "total_input_tokens": 2708,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2708
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 822,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3435,
+      "total_input_tokens": 2645,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2645
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 790,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3447,
+      "total_input_tokens": 2648,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2648
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 799,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 5071,
+      "total_input_tokens": 4148,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4148
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 923,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3583,
+      "total_input_tokens": 2750,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2750
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 833,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3483,
+      "total_input_tokens": 2687,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2687
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 796,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3486,
+      "total_input_tokens": 2690,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2690
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 796,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 5029,
+      "total_input_tokens": 4203,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4203
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 826,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3435,
+      "total_input_tokens": 2666,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2666
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 769,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3431,
+      "total_input_tokens": 2603,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2603
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 828,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3402,
+      "total_input_tokens": 2606,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2606
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 796,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 4914,
+      "total_input_tokens": 4089,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4089
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 825,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3464,
+      "total_input_tokens": 2694,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2694
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 770,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3429,
+      "total_input_tokens": 2631,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2631
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 798,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3438,
+      "total_input_tokens": 2634,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2634
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 804,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 4975,
+      "total_input_tokens": 4096,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4096
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 879,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3474,
+      "total_input_tokens": 2582,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2582
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 892,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3261,
+      "total_input_tokens": 2519,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2519
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 742,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 3322,
+      "total_input_tokens": 2522,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 2522
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 800,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    },
+    {
+      "total_tokens": 4901,
+      "total_input_tokens": 4045,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 4045
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 856,
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 0
+    }
+  ],
+  "estimatedUSD": 0.06329825,
+  "baseline": {
+    "cap": 59,
+    "capReasons": [
+      "alarms",
+      "device",
+      "escape",
+      "shelter"
+    ],
+    "evidenceCoverage": 75.69444444444444,
+    "overall": 50.5,
+    "practice": 0,
+    "practiceAssessed": 0,
+    "preparation": 56.11111111111111,
+    "provisional": true,
+    "rubricVersion": "dryrun-rubric/0.1-draft",
+    "statuses": {
+      "alarms": "partlyMet",
+      "assistance": "met",
+      "care": "partlyMet",
+      "contact": "partlyMet",
+      "device": "partlyMet",
+      "escape": "partlyMet",
+      "essentials": "partlyMet",
+      "expiry": "partlyMet",
+      "food": "partlyMet",
+      "meetups": "partlyMet",
+      "pets": "partlyMet",
+      "review": "partlyMet",
+      "shelter": "partlyMet",
+      "water": "partlyMet"
+    }
+  },
+  "expectedStatuses": [
+    {
+      "criterionID": "alarms",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "escape",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "shelter",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "water",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "food",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "essentials",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "contact",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "meetups",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "assistance",
+      "status": "met"
+    },
+    {
+      "criterionID": "device",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "care",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "pets",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "review",
+      "status": "partlyMet"
+    },
+    {
+      "criterionID": "expiry",
+      "status": "partlyMet"
+    }
+  ],
+  "results": [
+    {
+      "variant": "base",
+      "contextHash": "450a0fa036e6e76867dec4afd0264e1bcec40d3c8d25f2263c4136253c349e26",
+      "latencyMs": 17645,
+      "calls": 4,
+      "oneReviewerAgreement": 0.7857142857142857,
+      "rawCouncilAgreement": 0.7142857142857143,
+      "oneReviewerCriticalFalsePass": 0,
+      "rawCouncilCriticalFalsePass": 0,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The 'present' predicate is false, indicating alarms are not installed."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exit and review are met, but independent alternative is not evidenced."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable but not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is not confirmed."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are met, but first aid is not evidenced."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is met, but offline access is not."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup is met, but near and transport are not evidenced."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assigned and available assistance confirmed."
+              },
+              {
+                "criterionID": "device",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessible are met, but capacity is not evidenced."
+              },
+              {
+                "criterionID": "care",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Recorded supplies are met, but caregiving is not evidenced."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Transport is met, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is met, but current contacts are not evidenced."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies current is met, but equipment reviewed is not."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The alarm presence predicate is confirmed as false."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exit and review predicates are met."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water accessibility is confirmed, but quantity is not verified."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is confirmed as false."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are confirmed, but first aid is not verified."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is confirmed, but offline access is false."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but near and transport predicates are not verified."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance needs are not applicable as the household has no identified assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "outsideScope",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Criterion is outside scope because the household has an essential device (oxygen)."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Care needs are not applicable."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is confirmed, but supplies are confirmed as false."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are not verified."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies current is confirmed, but equipment review is false."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not present in the home."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and the plan has been reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter location is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supplies are accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible but the required quantity is not met."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Lighting and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is established."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance needs are not applicable for this household."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical equipment is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but pet supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is in place."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              }
+            ],
+            "question": "Would you like assistance in creating a plan to acquire smoke/CO alarms or improving your food supply storage?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "The 'present' predicate is confirmed as false, indicating smoke/CO alarms are not installed."
+            },
+            {
+              "criterionID": "escape",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Confirmed exit and review are met, but independent alternative is not evidenced."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "Shelter is suitable but not reachable."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Accessible, but quantity is not confirmed."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "Food quantity is confirmed as false."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation are met, but first aid is not evidenced."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact is met, but offline access is not."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup is met, but near and transport are not evidenced."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Assistance needs are not applicable as the household has no identified assistance needs."
+            },
+            {
+              "criterionID": "device",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative and accessible are met, but capacity is not evidenced."
+            },
+            {
+              "criterionID": "care",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Recorded supplies are met, but caregiving is not evidenced."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Pet transport is met, but supplies are not."
+            },
+            {
+              "criterionID": "review",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is met, but current contacts are not evidenced."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies current is met, but equipment reviewed is not."
+            }
+          ],
+          "question": "Would you like assistance in creating a plan to acquire smoke/CO alarms or improving your food supply storage?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "assistance",
+            "proposed": "notApplicable",
+            "accepted": "met"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "reverse-order",
+      "contextHash": "8d97eabfe9c89e67ab9ce045b9a6432fd80d3c6bcd85b8a4138c637d26b87c2c",
+      "latencyMs": 19849,
+      "calls": 4,
+      "oneReviewerAgreement": 0.8571428571428571,
+      "rawCouncilAgreement": 0.42857142857142855,
+      "oneReviewerCriticalFalsePass": 1,
+      "rawCouncilCriticalFalsePass": 2,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are not documented."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Transport is confirmed, but pet supplies are not."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility for essential device are confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but proximity and transport are not fully assessed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is confirmed, but offline access is not."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are confirmed, but first aid is not."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable, but not reachable."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit and review are confirmed, but independent alternative is not."
+              },
+              {
+                "criterionID": "alarms",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Location and checked status are confirmed, but presence and coverage are not."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review has not been completed."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "The current plan has been reviewed."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Transport for the pet is confirmed, but supplies for the pet are not."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Recorded supplies for caregiving needs are present."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility for the essential medical device are confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is available, but offline access is not."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible, but the required quantity is not confirmed."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supplies are accessible."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable, but not currently reachable."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit is confirmed and reviewed."
+              },
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Alarms are not present, despite location and checking being confirmed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review status is not confirmed."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Transport for the pet is planned, but supplies for the pet are not confirmed."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility for the essential medical device are confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is confirmed, but offline access is not."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible, but the required quantity is not confirmed."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable, but not currently reachable."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit is confirmed and reviewed."
+              },
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Alarms are not present, despite location and check status."
+              }
+            ],
+            "question": "Would you like assistance in sourcing the missing supplies for your pet or confirming the reachability of your shelter?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies are current, but equipment review status is not confirmed."
+            },
+            {
+              "criterionID": "review",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is confirmed."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Transport for the pet is planned, but supplies for the pet are not confirmed."
+            },
+            {
+              "criterionID": "care",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Caregiving supplies are recorded."
+            },
+            {
+              "criterionID": "device",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative and accessibility for the essential medical device are confirmed."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Assistance is assigned and available."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup meetup location is confirmed."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact is confirmed, but offline access is not."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation supplies are confirmed."
+            },
+            {
+              "criterionID": "food",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "Food is accessible, but the required quantity is not confirmed."
+            },
+            {
+              "criterionID": "water",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Water is accessible."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "Shelter is suitable, but not currently reachable."
+            },
+            {
+              "criterionID": "escape",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Exit is confirmed and reviewed."
+            },
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "Alarms are not present, despite location and check status."
+            }
+          ],
+          "question": "Would you like assistance in sourcing the missing supplies for your pet or confirming the reachability of your shelter?"
+        },
+        "accepted": [
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "review",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "care",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "device",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "meetups",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "essentials",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "water",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "escape",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "long-wording",
+      "contextHash": "54d9da1518b74f82a03c300f0481e1eb8cb3c1608b2cfcaf63767584692baedb",
+      "latencyMs": 20539,
+      "calls": 4,
+      "oneReviewerAgreement": 0.5714285714285714,
+      "rawCouncilAgreement": 0.5714285714285714,
+      "oneReviewerCriticalFalsePass": 0,
+      "rawCouncilCriticalFalsePass": 1,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not currently present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exit and review are met, but independent alternative is unknown."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "The shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is unknown."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are present, but first aid is unknown."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is confirmed, but offline access is not."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but near and transport are unknown."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "The household has no assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "The household has essential medical devices, making this criterion inapplicable."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "The household has no caregiving needs."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is confirmed, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are unknown."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review is not confirmed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but near/transport predicates are missing."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance needs are not present in the household."
+              },
+              {
+                "criterionID": "device",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Essential device criteria are not applicable due to household status."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving needs are not present."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is confirmed, but pet supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are not."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Alarms are not present in the household."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supply is accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible but quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Essential items including light and sanitation are present."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not established."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is established."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical device is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but pet supplies are missing."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is in place."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              }
+            ],
+            "question": "Would you like to prioritize setting up smoke/CO alarms or securing food and pet supplies first?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not currently present."
+            },
+            {
+              "criterionID": "escape",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Confirmed exit and review are met, but independent alternative is unknown."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "The shelter is not reachable."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Water is accessible, but quantity is unknown."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "Food quantity is insufficient."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation are present, but first aid is unknown."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact is confirmed, but offline access is not."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup meetup is confirmed, but near and transport are unknown."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "The household has no assistance needs."
+            },
+            {
+              "criterionID": "device",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative for essential medical device is accessible."
+            },
+            {
+              "criterionID": "care",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "The household has no caregiving needs."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Pet transport is confirmed, but supplies are not."
+            },
+            {
+              "criterionID": "review",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is confirmed, but current contacts are unknown."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies are current, but equipment review is not confirmed."
+            }
+          ],
+          "question": "Would you like to prioritize setting up smoke/CO alarms or securing food and pet supplies first?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "assistance",
+            "proposed": "notApplicable",
+            "accepted": "met"
+          },
+          {
+            "criterionID": "device",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "care",
+            "proposed": "notApplicable",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "spanish-wording",
+      "contextHash": "5176a2bce75eddb7f27ccf8a1c3d7a5c01ae0f4a39d6fe58bfb5b4350ef43701",
+      "latencyMs": 28017,
+      "calls": 4,
+      "oneReviewerAgreement": 0.7857142857142857,
+      "rawCouncilAgreement": 0.6428571428571429,
+      "oneReviewerCriticalFalsePass": 0,
+      "rawCouncilCriticalFalsePass": 0,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not installed."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exits and review are met, but independent alternative exit status is unknown."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "The shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is unknown."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are present, but first aid status is unknown."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is met, but offline access is not."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is met, but near location and transport status are unknown."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility are met, but capacity is unknown."
+              },
+              {
+                "criterionID": "care",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Recorded supplies are met, but caregiving status is unknown."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Transport is met, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is met, but current contacts status is unknown."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies current is met, but equipment review is not."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Alarms are not present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supply is accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are present, but first aid status is unknown."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not available."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is planned, but near location and transport details are missing."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Household has no assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility are met, but capacity is unknown."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Household has no caregiving needs."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is recorded, but current contacts are unknown."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not confirmed as present in the household."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit routes are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter location is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supply is accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible but quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are covered, but first aid status is missing."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not established."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is established."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance needs are assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Alternative power for essential medical equipment is approved and accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but pet supplies are insufficient."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is in place."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review is incomplete."
+              }
+            ],
+            "question": "Would you like assistance in creating a plan to address the missing smoke alarms or the insufficient food supplies?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "The 'present' predicate is confirmed as false, indicating smoke/CO alarms are not installed."
+            },
+            {
+              "criterionID": "escape",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Confirmed exits and review are met, but independent alternative exit status is unknown."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "The shelter is not reachable."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Water is accessible, but quantity is unknown."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "Food quantity is insufficient."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation are present, but first aid status is unknown."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact is met, but offline access is not."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup meetup is met, but near location and transport status are unknown."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Household has no assistance needs."
+            },
+            {
+              "criterionID": "device",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative and accessibility are met, but capacity is unknown."
+            },
+            {
+              "criterionID": "care",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Household has no caregiving needs."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Transport is met, but supplies are not."
+            },
+            {
+              "criterionID": "review",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is met, but current contacts status is unknown."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies current is met, but equipment review is not."
+            }
+          ],
+          "question": "Would you like assistance in creating a plan to address the missing smoke alarms or the insufficient food supplies?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "assistance",
+            "proposed": "notApplicable",
+            "accepted": "met"
+          },
+          {
+            "criterionID": "care",
+            "proposed": "notApplicable",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "vietnamese-wording",
+      "contextHash": "30a211bd20ed750652627adebc024674dc4c90266f04328b7291cf016e671aa0",
+      "latencyMs": 17664,
+      "calls": 4,
+      "oneReviewerAgreement": 0.7857142857142857,
+      "rawCouncilAgreement": 0.7142857142857143,
+      "oneReviewerCriticalFalsePass": 0,
+      "rawCouncilCriticalFalsePass": 1,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not installed."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exits and review are present, but independent alternative escape routes are not confirmed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable but not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible but the required quantity is not met."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are present, but first aid supplies are not confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is available, but offline access is not."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but near-home meetups and transport are not."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility are confirmed, but capacity is not."
+              },
+              {
+                "criterionID": "care",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Recorded supplies are confirmed, but caregiving status is not."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Transport is available, but pet supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are not."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review is not."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are addressed, but first aid status is unknown."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is planned, but near-location and transport details are missing."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Household has no assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical device is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Household has no caregiving needs."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is recorded, but current contacts are not."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not confirmed as present in the household."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit routes are confirmed and have been reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable but not confirmed as reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supplies are accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible but quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is established."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical equipment is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but supplies are insufficient."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is in place."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been recently reviewed."
+              }
+            ],
+            "question": "Would you like assistance in creating a plan to acquire the missing food supplies and smoke/CO alarms?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "Smoke and CO alarms are not present in the household."
+            },
+            {
+              "criterionID": "escape",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Confirmed exits and review are documented."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "Shelter is not reachable."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Water is accessible, but quantity is not confirmed."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "Food quantity is insufficient."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation are present, but first aid status is unknown."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact exists, but offline access is not confirmed."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup meetup is planned, but near-location and transport details are missing."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Assistance is assigned and available."
+            },
+            {
+              "criterionID": "device",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative is accessible, but capacity is not confirmed."
+            },
+            {
+              "criterionID": "care",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Recorded supplies are confirmed, but caregiving status is not."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Pet transport is planned, but supplies are not."
+            },
+            {
+              "criterionID": "review",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is recorded, but current contacts are not."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies are current, but equipment has not been reviewed."
+            }
+          ],
+          "question": "Would you like assistance in creating a plan to acquire the missing food supplies and smoke/CO alarms?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "escape",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "gemini-proposer-cue",
+      "contextHash": "3104d39af7f6ff398d241dfdf771e804f3d976e87b1f89ff4fd24042bcfc66a2",
+      "latencyMs": 25314,
+      "calls": 4,
+      "oneReviewerAgreement": 0.7142857142857143,
+      "rawCouncilAgreement": 0.42857142857142855,
+      "oneReviewerCriticalFalsePass": 0,
+      "rawCouncilCriticalFalsePass": 2,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The alarm presence predicate is false."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Independent alternative exit route is not confirmed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "The shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Quantity of water is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "The food quantity predicate is false."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "First aid supplies are not confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Offline access to contacts is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Near meetup location and transport plan are not confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Household has no assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Capacity for essential medical device is not confirmed."
+              },
+              {
+                "criterionID": "care",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving needs are not confirmed."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet supplies are not confirmed."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current contacts list is not confirmed."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Equipment review is not confirmed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Alarms are not confirmed as present in the household."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are present, but first aid is not confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is available, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but near location and transport are not."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Household has identified needs for an older adult, making this criterion applicable; however, the rubric rule 'no-assistance-needs' excludes this household."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility for essential medical device are confirmed."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Rubric rule 'no-care-needs' applies."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is confirmed, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are not."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review is not confirmed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not confirmed as present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is suitable but not confirmed as reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supply is accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible but quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Contact is usable, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup plan is confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Household does not have documented assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Alternative power/device plan is approved and accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but pet supplies are insufficient."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is recorded."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment has not been reviewed."
+              }
+            ],
+            "question": "Would you like assistance in creating a plan to address the missing smoke/CO alarms or the insufficient food and pet supplies?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not confirmed as present."
+            },
+            {
+              "criterionID": "escape",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Exits are confirmed and reviewed."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "The 'reachable' predicate is false."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Water is accessible, but quantity is not confirmed."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "The 'quantity' predicate is false."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation are confirmed, but first aid is not."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact is available, but offline access is not confirmed."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup is confirmed, but near location and transport are not."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Household does not have documented assistance needs."
+            },
+            {
+              "criterionID": "device",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative and accessibility for essential medical device are confirmed."
+            },
+            {
+              "criterionID": "care",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Caregiving supplies are recorded."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Pet transport is confirmed, but supplies are not."
+            },
+            {
+              "criterionID": "review",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is recorded."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies are current, but equipment review is not confirmed."
+            }
+          ],
+          "question": "Would you like assistance in creating a plan to address the missing smoke/CO alarms or the insufficient food and pet supplies?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "escape",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "assistance",
+            "proposed": "notApplicable",
+            "accepted": "met"
+          },
+          {
+            "criterionID": "device",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "care",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "review",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "other-proposer-cue",
+      "contextHash": "152bfe878069a260670d3e2da019cbdf07c40659b17991f28fd1641df3e8a094",
+      "latencyMs": 23226,
+      "calls": 4,
+      "oneReviewerAgreement": 0.6428571428571429,
+      "rawCouncilAgreement": 0.5,
+      "oneReviewerCriticalFalsePass": 2,
+      "rawCouncilCriticalFalsePass": 2,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The 'present' predicate is false, indicating alarms are not installed."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exit and review predicates are met."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "The 'reachable' predicate is false."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Only accessibility is confirmed; quantity is unknown."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "The 'quantity' predicate is false."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "First aid supplies are not confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Near and transport predicates are not confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assigned and available predicates are met."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility are met."
+              },
+              {
+                "criterionID": "care",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving predicate is not confirmed."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet supplies are not confirmed."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current contacts are not confirmed."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Equipment review is not confirmed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The alarm presence predicate is false."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exit and review predicates are met."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "The shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water accessibility is confirmed, but quantity is not evidenced."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is not met."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are met, but first aid is not evidenced."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is met, but offline access is not."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is met, but near and transport predicates are not evidenced."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Household has no assistance needs."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility for essential device are met."
+              },
+              {
+                "criterionID": "care",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Household has no caregiving needs."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is met, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is met, but current contacts are not evidenced."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies current is met, but equipment review is not."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not confirmed to be present in the household."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit routes are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter location is not confirmed to be reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supplies are accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Essential items like lighting and sanitation are prepared."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contacts exist, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup plans are established."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "notApplicable",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "No specific assistance needs identified for the household members."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical equipment is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is planned, but pet supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current emergency plan is in place."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but medical equipment has not been recently reviewed."
+              }
+            ],
+            "question": "Would you like to prioritize setting up smoke/CO alarms or securing food supplies to address the critical gaps in your current plan?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "The 'present' predicate is false, indicating alarms are not installed."
+            },
+            {
+              "criterionID": "escape",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Confirmed exit and review predicates are met."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "The 'reachable' predicate is false."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Only accessibility is confirmed; quantity is unknown."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "The 'quantity' predicate is false."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "First aid supplies are not confirmed."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Offline access is not confirmed."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Near and transport predicates are not confirmed."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Household has no assistance needs."
+            },
+            {
+              "criterionID": "device",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative and accessibility are met."
+            },
+            {
+              "criterionID": "care",
+              "status": "notApplicable",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Household has no caregiving needs."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Pet supplies are not confirmed."
+            },
+            {
+              "criterionID": "review",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current contacts are not confirmed."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Equipment review is not confirmed."
+            }
+          ],
+          "question": "Would you like to prioritize setting up smoke/CO alarms or securing food supplies to address the critical gaps in your current plan?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "escape",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "assistance",
+            "proposed": "notApplicable",
+            "accepted": "met"
+          },
+          {
+            "criterionID": "device",
+            "proposed": "met",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "care",
+            "proposed": "notApplicable",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    },
+    {
+      "variant": "low-cost-description",
+      "contextHash": "4b87eca2fcdb6f40ce0df0fdb29dea5c4b865ea8cb2e44fe6d670fc64b4a7cc4",
+      "latencyMs": 19537,
+      "calls": 4,
+      "oneReviewerAgreement": 0.7857142857142857,
+      "rawCouncilAgreement": 0.7857142857142857,
+      "oneReviewerCriticalFalsePass": 0,
+      "rawCouncilCriticalFalsePass": 0,
+      "acceptedAgreement": 1,
+      "scoreUnchanged": true,
+      "result": {
+        "reviews": [
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not confirmed as installed."
+              },
+              {
+                "criterionID": "escape",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Confirmed exit and review are present, but independent alternative escape routes are not documented."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable according to evidence."
+              },
+              {
+                "criterionID": "water",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is not confirmed."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation are confirmed, but first aid supplies are not."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact is confirmed, but offline access is not."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup is confirmed, but near/transport predicates are not."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance needs are assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative and accessibility are confirmed, but capacity is not."
+              },
+              {
+                "criterionID": "care",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Recorded supplies are confirmed, but caregiving is not."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is confirmed, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed, but current contacts are not."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review is not confirmed."
+              }
+            ],
+            "question": "The household has an essential oxygen device for an older adult but lacks confirmed capacity for it, and several safety and supply criteria (alarms, shelter, food, first aid, offline contact) are currently unmet or only partially met. Would you like to prioritize addressing the oxygen device capacity or the missing smoke/CO alarms?"
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke/CO alarms are not confirmed as present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exits are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter is not reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supply is accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food quantity is insufficient."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation supplies are confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Offline access to contacts is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance is assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical device is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet supplies are not confirmed."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is confirmed."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Equipment has not been reviewed."
+              }
+            ],
+            "question": null
+          },
+          {
+            "assessments": [
+              {
+                "criterionID": "alarms",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-0"
+                ],
+                "reason": "Smoke and carbon monoxide alarms are not confirmed to be present."
+              },
+              {
+                "criterionID": "escape",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-1"
+                ],
+                "reason": "Exit routes are confirmed and reviewed."
+              },
+              {
+                "criterionID": "shelter",
+                "status": "unmet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-2"
+                ],
+                "reason": "Shelter location is not confirmed to be reachable."
+              },
+              {
+                "criterionID": "water",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-3"
+                ],
+                "reason": "Water supplies are accessible."
+              },
+              {
+                "criterionID": "food",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-4"
+                ],
+                "reason": "Food is accessible, but quantity is not confirmed."
+              },
+              {
+                "criterionID": "essentials",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-5"
+                ],
+                "reason": "Light and sanitation essentials are confirmed."
+              },
+              {
+                "criterionID": "contact",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-6"
+                ],
+                "reason": "Usable contact exists, but offline access is not confirmed."
+              },
+              {
+                "criterionID": "meetups",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-7"
+                ],
+                "reason": "Backup meetup location is confirmed."
+              },
+              {
+                "criterionID": "assistance",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-8"
+                ],
+                "reason": "Assistance arrangements are assigned and available."
+              },
+              {
+                "criterionID": "device",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-9"
+                ],
+                "reason": "Approved alternative for essential medical equipment is accessible."
+              },
+              {
+                "criterionID": "care",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-10"
+                ],
+                "reason": "Caregiving supplies are recorded."
+              },
+              {
+                "criterionID": "pets",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-11"
+                ],
+                "reason": "Pet transport is confirmed, but supplies are not."
+              },
+              {
+                "criterionID": "review",
+                "status": "met",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-12"
+                ],
+                "reason": "Current plan is in place."
+              },
+              {
+                "criterionID": "expiry",
+                "status": "partlyMet",
+                "evidenceIDs": [
+                  "synthetic-confirmed-0-13"
+                ],
+                "reason": "Supplies are current, but equipment review is not confirmed."
+              }
+            ],
+            "question": "Would you like assistance in identifying local resources to confirm the presence of smoke alarms or to verify the reachability of your designated shelter location?"
+          }
+        ],
+        "adjudication": {
+          "assessments": [
+            {
+              "criterionID": "alarms",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-0"
+              ],
+              "reason": "The 'present' predicate is false, indicating smoke/CO alarms are not confirmed as installed."
+            },
+            {
+              "criterionID": "escape",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-1"
+              ],
+              "reason": "Confirmed exit and review are present, but independent alternative escape routes are not documented."
+            },
+            {
+              "criterionID": "shelter",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-2"
+              ],
+              "reason": "Shelter is not reachable according to evidence."
+            },
+            {
+              "criterionID": "water",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-3"
+              ],
+              "reason": "Water is accessible, but quantity is not confirmed."
+            },
+            {
+              "criterionID": "food",
+              "status": "unmet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-4"
+              ],
+              "reason": "Food quantity is not confirmed."
+            },
+            {
+              "criterionID": "essentials",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-5"
+              ],
+              "reason": "Light and sanitation are confirmed, but first aid supplies are not."
+            },
+            {
+              "criterionID": "contact",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-6"
+              ],
+              "reason": "Usable contact is confirmed, but offline access is not."
+            },
+            {
+              "criterionID": "meetups",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-7"
+              ],
+              "reason": "Backup meetup is confirmed, but near/transport predicates are not."
+            },
+            {
+              "criterionID": "assistance",
+              "status": "met",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-8"
+              ],
+              "reason": "Assistance needs are assigned and available."
+            },
+            {
+              "criterionID": "device",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-9"
+              ],
+              "reason": "Approved alternative and accessibility are confirmed, but capacity is not."
+            },
+            {
+              "criterionID": "care",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-10"
+              ],
+              "reason": "Recorded supplies are confirmed, but caregiving is not."
+            },
+            {
+              "criterionID": "pets",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-11"
+              ],
+              "reason": "Pet transport is confirmed, but supplies are not."
+            },
+            {
+              "criterionID": "review",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-12"
+              ],
+              "reason": "Current plan is confirmed, but current contacts are not."
+            },
+            {
+              "criterionID": "expiry",
+              "status": "partlyMet",
+              "evidenceIDs": [
+                "synthetic-confirmed-0-13"
+              ],
+              "reason": "Supplies are current, but equipment review is not confirmed."
+            }
+          ],
+          "question": "Would you like assistance in identifying local resources to confirm the presence of smoke alarms or to verify the reachability of your designated shelter location?"
+        },
+        "accepted": [
+          {
+            "criterionID": "alarms",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-0"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "escape",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-1"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "shelter",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-2"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "water",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-3"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "food",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-4"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "essentials",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-5"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "contact",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-6"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "meetups",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-7"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "assistance",
+            "status": "met",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-8"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "device",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-9"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "care",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-10"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "pets",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-11"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "review",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-12"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          },
+          {
+            "criterionID": "expiry",
+            "status": "partlyMet",
+            "evidenceIDs": [
+              "synthetic-confirmed-0-13"
+            ],
+            "reason": "Compiled from host-accepted predicates under dryrun-rubric/0.1-draft; model disagreement requires evidence review."
+          }
+        ],
+        "disagreements": [
+          {
+            "criterionID": "alarms",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "shelter",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          },
+          {
+            "criterionID": "food",
+            "proposed": "unmet",
+            "accepted": "partlyMet"
+          }
+        ]
+      }
+    }
+  ],
+  "unrun": [
+    "real names: excluded by minimized schema",
+    "raw photo versus typed fact: council accepts host predicates, not photos",
+    "qualified human references",
+    "additional independent households",
+    "statistical bias estimation"
+  ]
+}

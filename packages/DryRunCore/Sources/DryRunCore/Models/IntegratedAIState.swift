@@ -10,22 +10,19 @@ public struct IntegratedAIState: Codable, Sendable {
     public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[]){
         self.inventory=inventory;self.concerns=concerns;self.sessions=sessions;self.practiceAttempts=practiceAttempts;self.scorecards=scorecards
     }
-    /// Resuming the newest attempt prevents a restart from erasing unsafe pre-feedback answers.
+    /// Legacy intake can resume/import an attempt, but cannot establish pre-feedback eligibility.
+    /// Use beginPractice(...sessionID:library:persist:) for new scored checks.
     public mutating func beginPractice(id:String,variantID:String) throws -> PracticeAttempt {
-        if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),latest.answers.count<4{return latest}
-        guard ScoreCompiler.variants.contains(variantID),!practiceAttempts.contains(where:{$0.id==id}) else {throw SessionError.invalidCommand}
+        if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
+           latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4{return latest}
+        guard !id.isEmpty,ScoreCompiler.variants.contains(variantID),!practiceAttempts.contains(where:{$0.id==id}) else {throw SessionError.invalidCommand}
         let attempt=PracticeAttempt(id:id,sequence:(practiceAttempts.map(\.sequence).max() ?? 0)+1,variantID:variantID,answers:[])
         practiceAttempts.append(attempt);return attempt
     }
+    /// Caller-supplied credit/chronology is not an eligible capture path. Kept for source compatibility.
+    @available(*,deprecated,message:"Use submitPracticeAction to atomically commit and grade before feedback")
     public mutating func recordPracticeAnswer(_ answer:PracticeAnswer,attemptID:String,library:ScenarioLibrary?=nil) throws {
-        guard let index=practiceAttempts.firstIndex(where:{$0.id==attemptID}),!practiceAttempts[index].answers.contains(where:{$0.competencyID==answer.competencyID}),
-            answer.beforeFeedback,ScoreCompiler.competencies.contains(answer.competencyID),[0,0.5,1].contains(answer.credit),
-            !practiceAttempts[index].coached,
-            !practiceAttempts[index].answers.contains(where:{$0.committedActionID==answer.committedActionID}),
-            let library,let session=sessions.first(where:{$0.commits.contains(where:{$0.actor=="user" && $0.id==answer.committedActionID})}) else {throw SessionError.invalidCommand}
-        let evaluated=try PracticeEvaluator.evaluate(competencyID:answer.competencyID,actionID:answer.committedActionID,session:session,library:library)
-        guard answer.credit==evaluated.credit else {throw SessionError.invalidCommand}
-        practiceAttempts[index].answers.append(answer)
+        throw SessionError.invalidCommand
     }
 }
 
@@ -38,8 +35,26 @@ public extension IntegratedAIState {
         var candidate=self,h=household
         try candidate.inventory.confirm(items,baseRevision:baseInventoryRevision,at:date)
         if candidate.inventory.items.contains(where:{$0.category=="water"}) {
-            let gap=try candidate.inventory.waterGap(people:h.people.count,at:date)
+            let gap=try candidate.inventory.waterGap(people:h.people.count,personIDs:h.people.map(\.id),at:date)
             h.supplies.storedWaterGallons=gap.unknown ? .unknown : .confirmed(gap.confirmedUsable/3.785411784,unit:"gal",verifiedAt:date)
+        }
+        if candidate.inventory.items.contains(where:{$0.category=="food"}) {
+            let gap=try candidate.inventory.householdFoodGap(personIDs:h.people.map(\.id),at:date)
+            h.supplies.shelfStableFoodDays=gap.unknown ? .unknown : .confirmed(gap.confirmedUsable,unit:"day",verifiedAt:date)
+        }
+        if candidate.inventory.items.contains(where:{$0.preparationKind == .flashlight}) || inventory.items.contains(where:{$0.preparationKind == .flashlight}) {
+            let gap=try candidate.inventory.preparationItemGap(kind:.flashlight,personIDs:h.people.map(\.id),at:date)
+            guard gap.confirmedUsable<Double(Int.max) else {throw SessionError.invalidCommand}
+            h.supplies.flashlights=gap.unknown ? .unknown:.confirmed(Int(gap.confirmedUsable),verifiedAt:date)
+            if var fact=h.preparedness?.items["flashlight"] {
+                fact.available=h.supplies.flashlights.confirmedValue.map{.confirmed($0>0,verifiedAt:date)} ?? .unknown
+                h.preparedness?.items["flashlight"]=fact
+            }
+        }
+        if candidate.inventory.items.contains(where:{$0.preparationKind == .firstAidKit}) || inventory.items.contains(where:{$0.preparationKind == .firstAidKit}) {
+            let gap=try candidate.inventory.preparationItemGap(kind:.firstAidKit,personIDs:h.people.map(\.id),at:date)
+            h.supplies.firstAidKit=gap.deficit.map{.confirmed($0==0,verifiedAt:date)} ?? .unknown
+            if var fact=h.preparedness?.items["firstAid"] {fact.available=h.supplies.firstAidKit;h.preparedness?.items["firstAid"]=fact}
         }
         h.bumpRevision(at:date)
         try persist(h,candidate)

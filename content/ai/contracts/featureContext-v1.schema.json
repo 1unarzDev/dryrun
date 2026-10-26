@@ -384,6 +384,9 @@
               "minLength": 1,
               "maxLength": 120
             }
+          },
+          "scopeUnsupported": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -1486,6 +1489,11 @@
       "items": {
         "type": "object",
         "properties": {
+          "assessmentVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
           "criterionID": {
             "type": "string",
             "minLength": 1,

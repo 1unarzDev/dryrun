@@ -1,0 +1,29 @@
+{
+  "version": "dryrun.household-assessment/3",
+  "status": "draft-human-review-pending",
+  "rubricVersion": "dryrun-rubric/0.1-draft",
+  "purpose": "Version the interpretation of confirmed source facts separately from fixed scoring arithmetic.",
+  "rules": {
+    "all": "Any confirmed false is false; otherwise missing evidence is unknown; all confirmed true is true.",
+    "any": "Any confirmed true is true; otherwise missing evidence is unknown; all confirmed false is false.",
+    "escape": "Only paths with no verificationNeeded earn confirmed-exit credit. Missing starts, routes, connectors or alternatives remain unknown. Complete recorded shared-chokepoint geometry may establish a robustness gap.",
+    "water": "Accessible is a disjunction over recorded water items; expired items are unusable. Quantity uses the authoritative inventory ledger including units, expiry and access.",
+    "transport": "Disjunction of recorded vehicle and alternative availability; no recorded arrangement is unknown.",
+    "assistance": "Applies to step-free needs, explicit evacuation helper needs, deaf/hard-of-hearing needs, infants and children. Missing helper identity is unknown; invalid or self identity is false. Assignment does not prove reach or simultaneous capacity.",
+    "pets": "Conjunction of recorded carrier availability; missing availability is unknown.",
+    "stress": "Only source-bound findings in the approved geometry envelope may affect robustness; concern-scoped hypothetical traces cannot enter scoring.",
+    "shelter": "Use ShelterSuitability.confirmedRoom and EgressPlanner interiorShelter purpose, matching rehearsal. Confirmed suitable planning choice earns suitable; all occupants need actual paths without verification requirements for reachable. Missing/invalid candidates or routes remain unknown; no engineered-safe-room claim or hazard N/A inference.",
+    "foodAccess": "Use confirmed inventory food access and expiry with three-valued disjunction. A PreparationFact location string does not prove access.",
+    "foodQuantity": "If food items are recorded, use householdFoodGap and project the result atomically into legacy household food-days. Count explicit whole-household coverage days only; count/weight packages or partial-person stock cannot be converted to household days. Unknown cannot retain an older positive total. Without food ledger items, preserve legacy confirmed household-days. The 3-day draft rubric horizon is limited; S64 recommends 2 weeks for home, distinct from 3 days for evacuation."
+  },
+  "migration": "Preserve historical cards and accepted predicates. Legacy absent assessmentVersion decodes as unversioned. Reject mixed policy versions within one compilation. Reassessment requires a new identified snapshot and must not be displayed as earned improvement.",
+  "limitations": [
+    "Unknowns retain fixed rubric budgets and may trigger the unverified critical cap.",
+    "Assistance policy and conditional criteria require qualified review.",
+    "No new safety, physical-capacity or clinical claim is made."
+  ],
+  "supersedes": "dryrun.household-assessment/2",
+  "sourceIDs": [
+    "S64"
+  ]
+}

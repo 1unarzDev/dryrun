@@ -20,7 +20,17 @@ export const command=z.discriminatedUnion('kind',[
 export const directorOutput=z.object({commands:z.array(command).min(1).max(8),purpose:z.string().min(1).max(900),evidenceIDs:z.array(z.string().max(120)).max(20)}).strict();
 export const binding=z.object({sessionID:z.string().min(1).max(120),revision:z.number().int().nonnegative(),eventSequence:z.number().int().nonnegative(),contextDigest:z.string().min(1).max(128),householdRevision:z.number().int().nonnegative(),homeRevision:z.number().int().nonnegative()}).strict();
 export const snapshot=z.object({firedEventIDs:z.array(z.string().max(200)).max(5000).optional(),simMinute:z.number().int().nonnegative(),resources:z.record(z.string(),z.object({amount:z.number().nonnegative().nullable().optional(),unit:z.enum(['gal','Wh','h','charges'])}).strict()),services:z.record(z.string(),z.enum(['operational','degraded','unavailable','unknown'])),unmetRequirements:z.array(z.string()).max(100),unknowns:z.array(z.string()).max(100)}).strict();
-export const directorContext=z.object({binding,snapshot,directorPolicy:directorPolicy.optional(),directorState:directorState.optional(),pending:z.array(command).max(8).optional(),closedPortalIDs:z.array(z.string().max(120)).max(200).optional(),household:anonymousHousehold.optional(),homeScene:scene.optional(),profiles:z.array(z.object({id:z.string(),rule:z.string(),minute:z.number().int(),hazard:hazard.optional(),spatial:z.boolean().optional(),canStart:z.boolean().optional(),roomRequired:z.boolean().optional()}).strict()).max(40),learningObjectives:z.array(z.string().max(200)).max(6).default([]),lastAction:z.object({id:z.string(),kind:z.string(),target:z.string().optional(),value:z.string().optional()}).strict().optional()}).strict();
+export const committedActionContext=z.object({contractVersion:z.literal('dryrun.committed-action-context/1').optional(),id:z.string().min(1).max(120),kind:z.string().min(1).max(120),target:z.string().max(120).optional(),value:z.string().max(120).optional(),commitRevision:z.number().int().positive().optional(),commandIndex:z.number().int().min(0).max(7).optional()}).strict();
+export const directorContext=z.object({binding,snapshot,directorPolicy:directorPolicy.optional(),directorState:directorState.optional(),pending:z.array(command).max(8).optional(),closedPortalIDs:z.array(z.string().max(120)).max(200).optional(),household:anonymousHousehold.optional(),homeScene:scene.optional(),profiles:z.array(z.object({id:z.string(),rule:z.string(),minute:z.number().int(),hazard:hazard.optional(),spatial:z.boolean().optional(),canStart:z.boolean().optional(),roomRequired:z.boolean().optional()}).strict()).max(40),learningObjectives:z.array(z.string().max(200)).max(6).default([]),lastAction:committedActionContext.optional(),recentActions:z.array(committedActionContext).max(8).optional()}).strict().superRefine((data,ctx)=>{
+ const actions=data.recentActions;
+ if(!actions)return;
+ for(let n=0;n<actions.length;n++){
+  const action=actions[n]!,previous=actions[n-1];
+  if(action.contractVersion!=='dryrun.committed-action-context/1'||action.commitRevision===undefined||action.commandIndex===undefined||action.commitRevision>data.binding.revision||previous&&(action.commitRevision<previous.commitRevision!||action.commitRevision===previous.commitRevision&&(action.commandIndex<=previous.commandIndex!||action.id!==previous.id)))ctx.addIssue({code:'custom',path:['recentActions',n],message:'invalid_committed_action_order'});
+ }
+ const last=actions.at(-1);
+ if(last? !data.lastAction||Object.keys(last).some(key=>Reflect.get(last,key)!==Reflect.get(data.lastAction!,key)):data.lastAction!==undefined)ctx.addIssue({code:'custom',path:['lastAction'],message:'latest_committed_action_mismatch'});
+});
 export type DirectorContext=z.infer<typeof directorContext>;
 export const toolArgs=z.object({command:command.optional(),commands:z.array(command).min(1).max(8).optional()}).strict();
 const toolID=z.string().min(1).max(120);
@@ -40,9 +50,10 @@ export const toolObservation=z.discriminatedUnion('kind',[
  z.object({kind:z.literal('queryRoutes'),routes:z.array(route).max(100)}).strict(),
  z.object({kind:z.literal('evaluateResources')}).strict(),
  z.object({kind:z.literal('inspectDependencies'),dependencies:z.array(dependency).max(100)}).strict(),
- z.object({kind:z.literal('runCounterfactual'),scope:z.literal('initial_household_with_selected_profiles'),failed:z.boolean(),criterionID:toolID,dependencyIDs:z.array(toolID).max(100),baseline:snapshot}).strict(),
+ z.object({kind:z.literal('runCounterfactual'),scope:z.literal('initial_household_with_selected_profiles'),sourceConcernDigest:z.string().min(1).max(128).optional(),failed:z.boolean(),criterionID:toolID,dependencyIDs:z.array(toolID).max(100),baseline:snapshot}).strict(),
 ]);
-export const previewConsequences=z.object({routes:z.array(route).max(100),directorState:directorState.optional(),spatial:z.object({hazard,stageID:toolID,originSpaceID:toolID.optional(),affectedSpaceIDs:z.array(toolID).max(100),affectedPortalIDs:z.array(toolID).max(200),destinationSpaceID:toolID.optional(),assumptionKey:toolID.optional()}).strict().optional()}).strict();
+export const exerciseAssistance=z.object({personID:toolID,helperID:toolID.optional(),reachStatus:z.enum(['reachable','unreachable','unknown','missingHelper']),sharedWithPersonIDs:z.array(toolID).max(20),simultaneousCapacity:z.enum(['notAssessed','unknown'])}).strict();
+export const previewConsequences=z.object({assistance:z.array(exerciseAssistance).max(20).optional(),routes:z.array(route).max(100),directorState:directorState.optional(),spatial:z.object({hazard,stageID:toolID,originSpaceID:toolID.optional(),affectedSpaceIDs:z.array(toolID).max(100),affectedPortalIDs:z.array(toolID).max(200),destinationSpaceID:toolID.optional(),assumptionKey:toolID.optional()}).strict().optional()}).strict();
 export const toolResult=z.object({binding,snapshot,contextDigest:z.string().max(128),observation:toolObservation.optional(),preview:previewConsequences.optional()}).strict();
 export const operationRequest=z.object({contractVersion:z.literal(version),requestID:z.string().min(1).max(120),role:z.literal('director'),synthetic:z.literal(true),context:directorContext}).strict();
 export const continuationRequest=z.object({token:z.string(),binding,callID:z.string(),result:toolResult}).strict();

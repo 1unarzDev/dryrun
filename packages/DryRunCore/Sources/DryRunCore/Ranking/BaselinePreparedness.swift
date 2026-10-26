@@ -51,7 +51,7 @@ public enum BaselinePreparedness {
         .init(id: "extinguisher", editor: .supplies, scenarioIDs: ["home-fire"], sourceIDs: ["S19"], requiresPhysicalCheck: true),
         .init(id: "clearExits", editor: .home, scenarioIDs: ["home-fire"], sourceIDs: ["S19"], requiresPhysicalCheck: true),
         .init(id: "fireDrill", editor: .family, scenarioIDs: ["home-fire"], sourceIDs: ["S19"], requiresPhysicalCheck: true),
-        .init(id: "food", editor: .supplies, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
+        .init(id: "food", editor: .supplies, scenarioIDs: [], sourceIDs: ["S64"], requiresPhysicalCheck: false),
         .init(id: "firstAid", editor: .supplies, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
         .init(id: "flashlight", editor: .supplies, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
         .init(id: "batteries", editor: .supplies, scenarioIDs: [], sourceIDs: ["S53"], requiresPhysicalCheck: false),
@@ -110,15 +110,17 @@ public enum BaselinePreparedness {
             let fact = h.preparedness?.items[d.id]
             let alarm = d.id == "smokeAlarms" || d.id == "coAlarms"
             let owned = recordedSupplyAvailability(d.id, household: h) == true
+            // Ownership alone cannot close a task while the published draft food horizon is unmet.
+            let coverage = d.id != "food" || h.supplies.shelfStableFoodDays.confirmedValue.map{$0.isFinite && $0>=3} == true
             let complete = alarm ? hasRecordedAlarmReadiness(d.id, household: h)
-                : owned && hasLocation(fact)
+                : owned && coverage && hasLocation(fact)
                     && (!d.requiresPhysicalCheck || fact?.checkedAt != nil)
                     && (d.id != "extinguisher" || fact?.familyAware?.confirmedValue == true)
             if !complete || includeSatisfied {
                 let critical = ["smokeAlarms", "coAlarms", "clearExits"].contains(d.id)
                 add(d.id, tier: critical ? (fact?.available.confirmedValue == false || (alarm && fact?.coverageReviewed?.confirmedValue == false) ? .unmetEssentialRequirement : .blockingUnknownFact) : (d.id == "fireDrill" ? .general : .scenarioSupplyOrContinuityGap),
                     facts: ["preparedness.\(d.id)"], values: ["item": d.id], scenarios: d.scenarioIDs, sources: d.sourceIDs,
-                    whyKey: owned && !hasLocation(fact) ? "prep.location.why" : nil)
+                    whyKey: owned && coverage && !hasLocation(fact) ? "prep.location.why" : nil)
             } else if let checkedAt = fact?.checkedAt {
                 let days = alarm ? 30 : 180
                 if referenceDate.timeIntervalSince(checkedAt) >= Double(days) * 86_400 {

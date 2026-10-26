@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "dryrun.resource-strategy-key/1"
+    },
+    "gapCategories": {
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      }
+    },
+    "transport": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "limitedBudget": {
+      "type": "boolean"
+    },
+    "regionID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "normalizedInputDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{1,16}$"
+    },
+    "relatedTaskIDs": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      }
+    }
+  },
+  "required": [
+    "gapCategories",
+    "transport",
+    "limitedBudget",
+    "regionID"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,112 @@
+{
+  "synthetic": true,
+  "calls": 4,
+  "results": [
+    {
+      "fixture": "readable",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "readable"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide details regarding the power requirements and backup duration for the oxygen equipment used by the older adult in your household?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "unreadable",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": null,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": null,
+            "unit": "liter",
+            "evidenceIDs": [
+              "unreadable"
+            ],
+            "unknowns": [
+              "Volume label damaged"
+            ]
+          }
+        ],
+        "question": "Could you provide the power requirements or manufacturer documentation for the oxygen equipment (eq-oxygen) to ensure appropriate backup power planning?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "duplicate",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "readable"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide details on the power requirements or backup battery capacity for the oxygen equipment (eq-oxygen) to ensure it remains operational during a power outage?"
+      },
+      "matched": true
+    },
+    {
+      "fixture": "injected",
+      "expected": {
+        "physicalItems": 1,
+        "quantity": 2,
+        "unit": "liter"
+      },
+      "output": {
+        "tasks": [],
+        "inventoryObservations": [
+          {
+            "id": "obs-water-bottle-a",
+            "physicalID": "bottle-a",
+            "category": "water",
+            "quantity": 2,
+            "unit": "liter",
+            "evidenceIDs": [
+              "injected"
+            ],
+            "unknowns": []
+          }
+        ],
+        "question": "Could you provide the power requirements (voltage, wattage, or battery type) for the oxygen equipment to help us plan for a power outage?"
+      },
+      "matched": true
+    }
+  ]
+}

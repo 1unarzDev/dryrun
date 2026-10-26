@@ -1,0 +1,4432 @@
+{
+  "synthetic": true,
+  "receipts": [
+    {
+      "receipt": {
+        "assistance": [
+          {
+            "helperID": "p-oak-1",
+            "personID": "p-oak-3",
+            "reachStatus": "unreachable",
+            "route": {
+              "algorithmVersion": "egress-portal-graph/2",
+              "alternativeStatus": "none",
+              "exclusions": [
+                {
+                  "elementID": "sp-hall",
+                  "reason": "blockedByScenario"
+                },
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+              "homeID": "home-sample-ranch",
+              "homeRevision": 1,
+              "noRouteReason": "blockedByScenario",
+              "request": {
+                "destinationSpaceID": "sp-bed2",
+                "exclusions": {
+                  "blockedConnectorIDs": [],
+                  "blockedPortalIDs": [],
+                  "blockedSpaceIDs": [
+                    "sp-hall"
+                  ]
+                },
+                "mobility": {
+                  "minimumClearWidthMeters": 0.7,
+                  "requiresStepFree": false
+                },
+                "personID": "p-oak-1",
+                "purpose": "helperReach",
+                "startSpaceID": "sp-bed1"
+              },
+              "sharedChokepoints": []
+            },
+            "sharedWithPersonIDs": [],
+            "simultaneousCapacity": "notAssessed"
+          },
+          {
+            "helperID": "p-oak-2",
+            "personID": "p-oak-4",
+            "reachStatus": "unreachable",
+            "route": {
+              "algorithmVersion": "egress-portal-graph/2",
+              "alternativeStatus": "none",
+              "exclusions": [
+                {
+                  "elementID": "sp-hall",
+                  "reason": "blockedByScenario"
+                },
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+              "homeID": "home-sample-ranch",
+              "homeRevision": 1,
+              "noRouteReason": "blockedByScenario",
+              "request": {
+                "destinationSpaceID": "sp-living",
+                "exclusions": {
+                  "blockedConnectorIDs": [],
+                  "blockedPortalIDs": [],
+                  "blockedSpaceIDs": [
+                    "sp-hall"
+                  ]
+                },
+                "mobility": {
+                  "minimumClearWidthMeters": 0.7,
+                  "requiresStepFree": false
+                },
+                "personID": "p-oak-2",
+                "purpose": "helperReach",
+                "startSpaceID": "sp-bed2"
+              },
+              "sharedChokepoints": []
+            },
+            "sharedWithPersonIDs": [],
+            "simultaneousCapacity": "notAssessed"
+          }
+        ],
+        "contextDigest": "2a52bb9c1760df94",
+        "directorState": {
+          "activeIncidentCount": 1,
+          "awaitingUserAction": false,
+          "originSpaceID": "sp-hall",
+          "scheduledEventCount": 1,
+          "stageID": "evt.home-fire.fire-origin"
+        },
+        "eventSequence": 8,
+        "events": [
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "rule.fire.block-primary",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.fire-origin",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.event.fire-origin"
+          },
+          {
+            "detailKey": "reason.blockedByScenario",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-1",
+                "home.portals"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.none.p-oak-1",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "person": "Parent A",
+              "reason": "blockedByScenario"
+            },
+            "titleKey": "scenario.home-fire.route.none"
+          },
+          {
+            "detailKey": "reason.blockedByScenario",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-2",
+                "home.portals"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.none.p-oak-2",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "person": "Parent B",
+              "reason": "blockedByScenario"
+            },
+            "titleKey": "scenario.home-fire.route.none"
+          },
+          {
+            "detailKey": "reason.blockedByScenario",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-3",
+                "home.portals"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.none.p-oak-3",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "person": "Kid",
+              "reason": "blockedByScenario"
+            },
+            "titleKey": "scenario.home-fire.route.none"
+          },
+          {
+            "detailKey": "independence.independent",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-4",
+                "home.portal.pt-front"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.alternative.p-oak-4",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "caution",
+            "simMinute": 0,
+            "templateValues": {
+              "exitPortalID": "pt-front",
+              "exitRoom": "Living room",
+              "independence": "independent",
+              "person": "Grandpa"
+            },
+            "titleKey": "scenario.home-fire.route.alternative"
+          },
+          {
+            "detailKey": "scenario.common.assist.helper-blocked.options",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-3.helperPersonID",
+                "person.p-oak-3.sleepingSpaceID",
+                "person.p-oak-1.sleepingSpaceID"
+              ],
+              "ruleID": "rule.fire.helper-reach",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.assist.helper-blocked.p-oak-3",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "helper": "Parent A",
+              "person": "Kid"
+            },
+            "titleKey": "scenario.common.assist.helper-blocked"
+          },
+          {
+            "detailKey": "scenario.common.assist.helper-blocked.options",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-4.helperPersonID",
+                "person.p-oak-4.sleepingSpaceID",
+                "person.p-oak-2.sleepingSpaceID"
+              ],
+              "ruleID": "rule.fire.helper-reach",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.assist.helper-blocked.p-oak-4",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "helper": "Parent B",
+              "person": "Grandpa"
+            },
+            "titleKey": "scenario.common.assist.helper-blocked"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.assign-p-oak-1",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "simulation.user.assignHelper"
+          }
+        ],
+        "finished": false,
+        "pending": [],
+        "revision": 2,
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed1"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-2",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed2"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-3",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed2"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternative": {
+              "connectorSequence": [],
+              "exitPortalID": "pt-back",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 3.5,
+                      "y": 2.5
+                    },
+                    {
+                      "x": 6.55,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 7,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 7.45,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 10.972398855203435,
+                      "y": 1.6422507154978538
+                    },
+                    {
+                      "x": 11.55,
+                      "y": 2.45
+                    },
+                    {
+                      "x": 12,
+                      "y": 2.45
+                    },
+                    {
+                      "x": 12.55,
+                      "y": 2.45
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 9.595684575914769,
+              "portalSequence": [
+                "pt-living-kitchen",
+                "pt-back"
+              ],
+              "spaceSequence": [
+                "sp-living",
+                "sp-kitchen"
+              ],
+              "verificationNeeded": []
+            },
+            "alternativeStatus": "independent",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "pt-front",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 3.5,
+                      "y": 2.5
+                    },
+                    {
+                      "x": 3.45,
+                      "y": 0.45
+                    },
+                    {
+                      "x": 3.45,
+                      "y": 0
+                    },
+                    {
+                      "x": 3.45,
+                      "y": -0.55
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 3.050609665440988,
+              "portalSequence": [
+                "pt-front"
+              ],
+              "spaceSequence": [
+                "sp-living"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-4",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-living"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "sessionID": "synthetic-session",
+        "snapshot": {
+          "firedEventIDs": [
+            "evt.home-fire.fire-origin",
+            "evt.home-fire.route.none.p-oak-1",
+            "evt.home-fire.route.none.p-oak-2",
+            "evt.home-fire.route.none.p-oak-3",
+            "evt.home-fire.route.alternative.p-oak-4",
+            "evt.home-fire.assist.helper-blocked.p-oak-3",
+            "evt.home-fire.assist.helper-blocked.p-oak-4",
+            "user.assign-p-oak-1"
+          ],
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "revealedEventCount": 1,
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "simMinute": 0,
+          "spatialState": {
+            "affectedPortalIDs": [],
+            "affectedSpaceIDs": [
+              "sp-hall"
+            ],
+            "assumption": "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.",
+            "assumptionKey": "spatial.assumption.fire-blocked",
+            "exposedSpaceIDs": [],
+            "hazard": "homeFire",
+            "originSpaceID": "sp-hall",
+            "routes": [
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-1",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-bed1"
+                },
+                "sharedChokepoints": []
+              },
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-2",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-bed2"
+                },
+                "sharedChokepoints": []
+              },
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-3",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-bed2"
+                },
+                "sharedChokepoints": []
+              },
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternative": {
+                  "connectorSequence": [],
+                  "exitPortalID": "pt-back",
+                  "legs": [
+                    {
+                      "floorID": "fl-ground",
+                      "points": [
+                        {
+                          "x": 3.5,
+                          "y": 2.5
+                        },
+                        {
+                          "x": 6.55,
+                          "y": 1.6
+                        },
+                        {
+                          "x": 7,
+                          "y": 1.6
+                        },
+                        {
+                          "x": 7.45,
+                          "y": 1.6
+                        },
+                        {
+                          "x": 10.972398855203435,
+                          "y": 1.6422507154978538
+                        },
+                        {
+                          "x": 11.55,
+                          "y": 2.45
+                        },
+                        {
+                          "x": 12,
+                          "y": 2.45
+                        },
+                        {
+                          "x": 12.55,
+                          "y": 2.45
+                        }
+                      ]
+                    }
+                  ],
+                  "lengthMeters": 9.595684575914769,
+                  "portalSequence": [
+                    "pt-living-kitchen",
+                    "pt-back"
+                  ],
+                  "spaceSequence": [
+                    "sp-living",
+                    "sp-kitchen"
+                  ],
+                  "verificationNeeded": []
+                },
+                "alternativeStatus": "independent",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "primary": {
+                  "connectorSequence": [],
+                  "exitPortalID": "pt-front",
+                  "legs": [
+                    {
+                      "floorID": "fl-ground",
+                      "points": [
+                        {
+                          "x": 3.5,
+                          "y": 2.5
+                        },
+                        {
+                          "x": 3.45,
+                          "y": 0.45
+                        },
+                        {
+                          "x": 3.45,
+                          "y": 0
+                        },
+                        {
+                          "x": 3.45,
+                          "y": -0.55
+                        }
+                      ]
+                    }
+                  ],
+                  "lengthMeters": 3.050609665440988,
+                  "portalSequence": [
+                    "pt-front"
+                  ],
+                  "spaceSequence": [
+                    "sp-living"
+                  ],
+                  "verificationNeeded": []
+                },
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-4",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-living"
+                },
+                "sharedChokepoints": []
+              }
+            ],
+            "seed": 7,
+            "stageID": "evt.home-fire.fire-origin"
+          },
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ],
+          "unmetRequirements": [
+            "req.assistance.reach.p-oak-3",
+            "req.assistance.reach.p-oak-4",
+            "req.egress.p-oak-1",
+            "req.egress.p-oak-2",
+            "req.egress.p-oak-3"
+          ]
+        }
+      },
+      "dependencies": [
+        {
+          "evidenceIDs": [
+            "2a52bb9c1760df94"
+          ],
+          "id": "contact|channel",
+          "kind": "contactChannel",
+          "status": "recorded handset and cellular operational in exercise",
+          "subjectIDs": [
+            "ct-oak-1"
+          ]
+        },
+        {
+          "evidenceIDs": [
+            "2a52bb9c1760df94"
+          ],
+          "id": "helperReach|p-oak-3",
+          "kind": "helperReach",
+          "status": "committed exercise reach: unreachable; shared simultaneous capacity: notAssessed",
+          "subjectIDs": [
+            "p-oak-3",
+            "p-oak-1"
+          ]
+        },
+        {
+          "evidenceIDs": [
+            "2a52bb9c1760df94"
+          ],
+          "id": "helperReach|p-oak-4",
+          "kind": "helperReach",
+          "status": "committed exercise reach: unreachable; shared simultaneous capacity: notAssessed",
+          "subjectIDs": [
+            "p-oak-4",
+            "p-oak-2"
+          ]
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "assistance": [
+          {
+            "helperID": "p-oak-2",
+            "personID": "p-oak-3",
+            "reachStatus": "reachable",
+            "route": {
+              "algorithmVersion": "egress-portal-graph/2",
+              "alternativeStatus": "none",
+              "exclusions": [
+                {
+                  "elementID": "sp-hall",
+                  "reason": "blockedByScenario"
+                },
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+              "homeID": "home-sample-ranch",
+              "homeRevision": 1,
+              "primary": {
+                "connectorSequence": [],
+                "exitPortalID": "space:sp-bed2",
+                "legs": [
+                  {
+                    "floorID": "fl-ground",
+                    "points": [
+                      {
+                        "x": 9.499999999999998,
+                        "y": 8.1
+                      }
+                    ]
+                  }
+                ],
+                "lengthMeters": 0,
+                "portalSequence": [],
+                "spaceSequence": [
+                  "sp-bed2"
+                ],
+                "verificationNeeded": []
+              },
+              "request": {
+                "destinationSpaceID": "sp-bed2",
+                "exclusions": {
+                  "blockedConnectorIDs": [],
+                  "blockedPortalIDs": [],
+                  "blockedSpaceIDs": [
+                    "sp-hall"
+                  ]
+                },
+                "mobility": {
+                  "minimumClearWidthMeters": 0.7,
+                  "requiresStepFree": false
+                },
+                "personID": "p-oak-2",
+                "purpose": "helperReach",
+                "startSpaceID": "sp-bed2"
+              },
+              "sharedChokepoints": []
+            },
+            "sharedWithPersonIDs": [
+              "p-oak-4"
+            ],
+            "simultaneousCapacity": "unknown"
+          },
+          {
+            "helperID": "p-oak-2",
+            "personID": "p-oak-4",
+            "reachStatus": "unreachable",
+            "route": {
+              "algorithmVersion": "egress-portal-graph/2",
+              "alternativeStatus": "none",
+              "exclusions": [
+                {
+                  "elementID": "sp-hall",
+                  "reason": "blockedByScenario"
+                },
+                {
+                  "elementID": "pt-win-bed1",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-bed2",
+                  "reason": "portalNotVerified"
+                },
+                {
+                  "elementID": "pt-win-living",
+                  "reason": "portalNotVerified"
+                }
+              ],
+              "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+              "homeID": "home-sample-ranch",
+              "homeRevision": 1,
+              "noRouteReason": "blockedByScenario",
+              "request": {
+                "destinationSpaceID": "sp-living",
+                "exclusions": {
+                  "blockedConnectorIDs": [],
+                  "blockedPortalIDs": [],
+                  "blockedSpaceIDs": [
+                    "sp-hall"
+                  ]
+                },
+                "mobility": {
+                  "minimumClearWidthMeters": 0.7,
+                  "requiresStepFree": false
+                },
+                "personID": "p-oak-2",
+                "purpose": "helperReach",
+                "startSpaceID": "sp-bed2"
+              },
+              "sharedChokepoints": []
+            },
+            "sharedWithPersonIDs": [
+              "p-oak-3"
+            ],
+            "simultaneousCapacity": "unknown"
+          }
+        ],
+        "contextDigest": "d386c8b7e719dc3f",
+        "directorState": {
+          "activeIncidentCount": 1,
+          "awaitingUserAction": false,
+          "originSpaceID": "sp-hall",
+          "scheduledEventCount": 1,
+          "stageID": "evt.home-fire.fire-origin"
+        },
+        "eventSequence": 9,
+        "events": [
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "rule.fire.block-primary",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.fire-origin",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "scenario.home-fire.event.fire-origin"
+          },
+          {
+            "detailKey": "reason.blockedByScenario",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-1",
+                "home.portals"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.none.p-oak-1",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "person": "Parent A",
+              "reason": "blockedByScenario"
+            },
+            "titleKey": "scenario.home-fire.route.none"
+          },
+          {
+            "detailKey": "reason.blockedByScenario",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-2",
+                "home.portals"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.none.p-oak-2",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "person": "Parent B",
+              "reason": "blockedByScenario"
+            },
+            "titleKey": "scenario.home-fire.route.none"
+          },
+          {
+            "detailKey": "reason.blockedByScenario",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-3",
+                "home.portals"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.none.p-oak-3",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "person": "Kid",
+              "reason": "blockedByScenario"
+            },
+            "titleKey": "scenario.home-fire.route.none"
+          },
+          {
+            "detailKey": "independence.independent",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-4",
+                "home.portal.pt-front"
+              ],
+              "ruleID": "rule.fire.route",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.route.alternative.p-oak-4",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "caution",
+            "simMinute": 0,
+            "templateValues": {
+              "exitPortalID": "pt-front",
+              "exitRoom": "Living room",
+              "independence": "independent",
+              "person": "Grandpa"
+            },
+            "titleKey": "scenario.home-fire.route.alternative"
+          },
+          {
+            "detailKey": "scenario.common.assist.helper-blocked.options",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-3.helperPersonID",
+                "person.p-oak-3.sleepingSpaceID",
+                "person.p-oak-1.sleepingSpaceID"
+              ],
+              "ruleID": "rule.fire.helper-reach",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.assist.helper-blocked.p-oak-3",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "helper": "Parent A",
+              "person": "Kid"
+            },
+            "titleKey": "scenario.common.assist.helper-blocked"
+          },
+          {
+            "detailKey": "scenario.common.assist.helper-blocked.options",
+            "evidence": {
+              "causedByEventIDs": [
+                "evt.home-fire.fire-origin"
+              ],
+              "factIDs": [
+                "person.p-oak-4.helperPersonID",
+                "person.p-oak-4.sleepingSpaceID",
+                "person.p-oak-2.sleepingSpaceID"
+              ],
+              "ruleID": "rule.fire.helper-reach",
+              "sourceIDs": [
+                "S19"
+              ]
+            },
+            "id": "evt.home-fire.assist.helper-blocked.p-oak-4",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "critical",
+            "simMinute": 0,
+            "templateValues": {
+              "helper": "Parent B",
+              "person": "Grandpa"
+            },
+            "titleKey": "scenario.common.assist.helper-blocked"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.assign-p-oak-1",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "simulation.user.assignHelper"
+          },
+          {
+            "evidence": {
+              "causedByEventIDs": [],
+              "factIDs": [],
+              "ruleID": "session.user/1",
+              "sourceIDs": []
+            },
+            "id": "user.assign-p-oak-2",
+            "phaseID": "escape",
+            "priority": 0,
+            "serviceChanges": {},
+            "severity": "info",
+            "simMinute": 0,
+            "templateValues": {},
+            "titleKey": "simulation.user.assignHelper"
+          }
+        ],
+        "finished": false,
+        "pending": [],
+        "revision": 3,
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed1"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-2",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed2"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-3",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed2"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternative": {
+              "connectorSequence": [],
+              "exitPortalID": "pt-back",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 3.5,
+                      "y": 2.5
+                    },
+                    {
+                      "x": 6.55,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 7,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 7.45,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 10.972398855203435,
+                      "y": 1.6422507154978538
+                    },
+                    {
+                      "x": 11.55,
+                      "y": 2.45
+                    },
+                    {
+                      "x": 12,
+                      "y": 2.45
+                    },
+                    {
+                      "x": 12.55,
+                      "y": 2.45
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 9.595684575914769,
+              "portalSequence": [
+                "pt-living-kitchen",
+                "pt-back"
+              ],
+              "spaceSequence": [
+                "sp-living",
+                "sp-kitchen"
+              ],
+              "verificationNeeded": []
+            },
+            "alternativeStatus": "independent",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "pt-front",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 3.5,
+                      "y": 2.5
+                    },
+                    {
+                      "x": 3.45,
+                      "y": 0.45
+                    },
+                    {
+                      "x": 3.45,
+                      "y": 0
+                    },
+                    {
+                      "x": 3.45,
+                      "y": -0.55
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 3.050609665440988,
+              "portalSequence": [
+                "pt-front"
+              ],
+              "spaceSequence": [
+                "sp-living"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-4",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-living"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "sessionID": "synthetic-session",
+        "snapshot": {
+          "firedEventIDs": [
+            "evt.home-fire.fire-origin",
+            "evt.home-fire.route.none.p-oak-1",
+            "evt.home-fire.route.none.p-oak-2",
+            "evt.home-fire.route.none.p-oak-3",
+            "evt.home-fire.route.alternative.p-oak-4",
+            "evt.home-fire.assist.helper-blocked.p-oak-3",
+            "evt.home-fire.assist.helper-blocked.p-oak-4",
+            "user.assign-p-oak-1",
+            "user.assign-p-oak-2"
+          ],
+          "resources": {
+            "res.backup.bk-station": {
+              "amount": 1000,
+              "unit": "Wh"
+            },
+            "res.device.eq-oxygen.runtime": {
+              "unit": "h"
+            },
+            "res.handset.hours": {
+              "amount": 18,
+              "unit": "h"
+            },
+            "res.handset.powerBankCharges": {
+              "amount": 2,
+              "unit": "charges"
+            },
+            "res.water.stored": {
+              "amount": 5,
+              "unit": "gal"
+            }
+          },
+          "revealedEventCount": 1,
+          "services": {
+            "svc.alerts": "operational",
+            "svc.cellular": "operational",
+            "svc.cooling": "operational",
+            "svc.destination": "unavailable",
+            "svc.device.eq-oxygen": "operational",
+            "svc.grid": "operational",
+            "svc.handset": "operational",
+            "svc.heat": "operational",
+            "svc.power.home": "operational",
+            "svc.refrigeration": "operational",
+            "svc.roads": "operational",
+            "svc.transport": "operational",
+            "svc.water.safety": "operational",
+            "svc.water.supply": "operational",
+            "svc.wellPump": "operational",
+            "svc.wifi": "operational"
+          },
+          "simMinute": 0,
+          "spatialState": {
+            "affectedPortalIDs": [],
+            "affectedSpaceIDs": [
+              "sp-hall"
+            ],
+            "assumption": "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.",
+            "assumptionKey": "spatial.assumption.fire-blocked",
+            "exposedSpaceIDs": [],
+            "hazard": "homeFire",
+            "originSpaceID": "sp-hall",
+            "routes": [
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-1",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-bed1"
+                },
+                "sharedChokepoints": []
+              },
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-2",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-bed2"
+                },
+                "sharedChokepoints": []
+              },
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternativeStatus": "none",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "noRouteReason": "blockedByScenario",
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-3",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-bed2"
+                },
+                "sharedChokepoints": []
+              },
+              {
+                "algorithmVersion": "egress-portal-graph/2",
+                "alternative": {
+                  "connectorSequence": [],
+                  "exitPortalID": "pt-back",
+                  "legs": [
+                    {
+                      "floorID": "fl-ground",
+                      "points": [
+                        {
+                          "x": 3.5,
+                          "y": 2.5
+                        },
+                        {
+                          "x": 6.55,
+                          "y": 1.6
+                        },
+                        {
+                          "x": 7,
+                          "y": 1.6
+                        },
+                        {
+                          "x": 7.45,
+                          "y": 1.6
+                        },
+                        {
+                          "x": 10.972398855203435,
+                          "y": 1.6422507154978538
+                        },
+                        {
+                          "x": 11.55,
+                          "y": 2.45
+                        },
+                        {
+                          "x": 12,
+                          "y": 2.45
+                        },
+                        {
+                          "x": 12.55,
+                          "y": 2.45
+                        }
+                      ]
+                    }
+                  ],
+                  "lengthMeters": 9.595684575914769,
+                  "portalSequence": [
+                    "pt-living-kitchen",
+                    "pt-back"
+                  ],
+                  "spaceSequence": [
+                    "sp-living",
+                    "sp-kitchen"
+                  ],
+                  "verificationNeeded": []
+                },
+                "alternativeStatus": "independent",
+                "exclusions": [
+                  {
+                    "elementID": "sp-hall",
+                    "reason": "blockedByScenario"
+                  },
+                  {
+                    "elementID": "pt-win-bed1",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-bed2",
+                    "reason": "portalNotVerified"
+                  },
+                  {
+                    "elementID": "pt-win-living",
+                    "reason": "portalNotVerified"
+                  }
+                ],
+                "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+                "homeID": "home-sample-ranch",
+                "homeRevision": 1,
+                "primary": {
+                  "connectorSequence": [],
+                  "exitPortalID": "pt-front",
+                  "legs": [
+                    {
+                      "floorID": "fl-ground",
+                      "points": [
+                        {
+                          "x": 3.5,
+                          "y": 2.5
+                        },
+                        {
+                          "x": 3.45,
+                          "y": 0.45
+                        },
+                        {
+                          "x": 3.45,
+                          "y": 0
+                        },
+                        {
+                          "x": 3.45,
+                          "y": -0.55
+                        }
+                      ]
+                    }
+                  ],
+                  "lengthMeters": 3.050609665440988,
+                  "portalSequence": [
+                    "pt-front"
+                  ],
+                  "spaceSequence": [
+                    "sp-living"
+                  ],
+                  "verificationNeeded": []
+                },
+                "request": {
+                  "exclusions": {
+                    "blockedConnectorIDs": [],
+                    "blockedPortalIDs": [],
+                    "blockedSpaceIDs": [
+                      "sp-hall"
+                    ]
+                  },
+                  "mobility": {
+                    "minimumClearWidthMeters": 0.7,
+                    "requiresStepFree": false
+                  },
+                  "personID": "p-oak-4",
+                  "purpose": "outdoorEgress",
+                  "startSpaceID": "sp-living"
+                },
+                "sharedChokepoints": []
+              }
+            ],
+            "seed": 7,
+            "stageID": "evt.home-fire.fire-origin"
+          },
+          "unknowns": [
+            "backup.bk-station.setupConfirmed",
+            "equipment.eq-oxygen.backup",
+            "housing.wellPressureTankGallons",
+            "pets.waterNeeds"
+          ],
+          "unmetRequirements": [
+            "req.assistance.reach.p-oak-4",
+            "req.egress.p-oak-1",
+            "req.egress.p-oak-2",
+            "req.egress.p-oak-3"
+          ]
+        }
+      },
+      "dependencies": [
+        {
+          "evidenceIDs": [
+            "d386c8b7e719dc3f"
+          ],
+          "id": "contact|channel",
+          "kind": "contactChannel",
+          "status": "recorded handset and cellular operational in exercise",
+          "subjectIDs": [
+            "ct-oak-1"
+          ]
+        },
+        {
+          "evidenceIDs": [
+            "d386c8b7e719dc3f"
+          ],
+          "id": "helperReach|p-oak-3",
+          "kind": "helperReach",
+          "status": "committed exercise reach: reachable; shared simultaneous capacity: unknown",
+          "subjectIDs": [
+            "p-oak-3",
+            "p-oak-2"
+          ]
+        },
+        {
+          "evidenceIDs": [
+            "d386c8b7e719dc3f"
+          ],
+          "id": "helperReach|p-oak-4",
+          "kind": "helperReach",
+          "status": "committed exercise reach: unreachable; shared simultaneous capacity: unknown",
+          "subjectIDs": [
+            "p-oak-4",
+            "p-oak-2"
+          ]
+        },
+        {
+          "evidenceIDs": [
+            "people.helperPersonID"
+          ],
+          "id": "helper|p-oak-2",
+          "kind": "sharedHelper",
+          "status": "possible simultaneous conflict; not a confirmed inability",
+          "subjectIDs": [
+            "p-oak-3",
+            "p-oak-4"
+          ]
+        }
+      ]
+    }
+  ],
+  "session": {
+    "commits": [
+      {
+        "actor": "director",
+        "baseRevision": 0,
+        "commands": [
+          {
+            "hazard": "homeFire",
+            "kind": "startIncident",
+            "minute": 0,
+            "target": "evt.home-fire.fire-origin",
+            "value": "sp-hall"
+          },
+          {
+            "kind": "advance",
+            "minute": 0
+          }
+        ],
+        "id": "smoke"
+      },
+      {
+        "actor": "user",
+        "baseRevision": 1,
+        "commands": [
+          {
+            "kind": "assignHelper",
+            "target": "p-oak-3",
+            "value": "p-oak-1"
+          }
+        ],
+        "id": "assign-p-oak-1"
+      },
+      {
+        "actor": "user",
+        "baseRevision": 2,
+        "commands": [
+          {
+            "kind": "assignHelper",
+            "target": "p-oak-3",
+            "value": "p-oak-2"
+          }
+        ],
+        "id": "assign-p-oak-2"
+      }
+    ],
+    "contractVersion": "dryrun.ai/1",
+    "directorPolicy": {
+      "allowedStageTransitions": [
+        {
+          "from": "notStarted",
+          "to": "evt.home-fire.alarm"
+        },
+        {
+          "from": "notStarted",
+          "to": "evt.home-fire.fire-origin"
+        },
+        {
+          "from": "notStarted",
+          "to": "evt.home-fire.hallway-smoke"
+        },
+        {
+          "from": "evt.home-fire.alarm",
+          "to": "evt.home-fire.fire-origin"
+        },
+        {
+          "from": "evt.home-fire.alarm",
+          "to": "evt.home-fire.second-blocked"
+        },
+        {
+          "from": "evt.home-fire.alarm",
+          "to": "evt.home-fire.hallway-smoke"
+        },
+        {
+          "from": "evt.home-fire.fire-origin",
+          "to": "evt.home-fire.second-blocked"
+        },
+        {
+          "from": "evt.home-fire.fire-origin",
+          "to": "evt.home-fire.hallway-smoke"
+        },
+        {
+          "from": "evt.home-fire.second-blocked",
+          "to": "evt.home-fire.hallway-smoke"
+        }
+      ],
+      "eventBudget": 32,
+      "maximumActiveIncidents": 1,
+      "maximumPendingEvents": 8,
+      "permittedHazardFamilies": [
+        "homeFire"
+      ],
+      "schedulingHorizonMinutes": 4320,
+      "version": "dryrun.director-policy/1"
+    },
+    "id": "synthetic-session",
+    "initial": {
+      "choices": {},
+      "contentVersion": "2026.10.3",
+      "home": {
+        "annotations": [
+          {
+            "floorID": "fl-ground",
+            "id": "an-smoke-hall",
+            "kind": "smokeAlarm",
+            "label": "Smoke alarm",
+            "position": {
+              "x": 6,
+              "y": 5.6
+            },
+            "spaceID": "sp-hall",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-smoke-bed1",
+            "kind": "smokeAlarm",
+            "label": "Smoke alarm",
+            "position": {
+              "x": 2.2,
+              "y": 8.1
+            },
+            "spaceID": "sp-bed1",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-smoke-bed2",
+            "kind": "smokeAlarm",
+            "label": "Smoke alarm",
+            "note": "Battery test not recorded",
+            "position": {
+              "x": 9.5,
+              "y": 8.1
+            },
+            "spaceID": "sp-bed2",
+            "verification": "proposed"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-co-hall",
+            "kind": "coAlarm",
+            "label": "CO alarm",
+            "position": {
+              "x": 3,
+              "y": 5.6
+            },
+            "spaceID": "sp-hall",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-extinguisher",
+            "kind": "fireExtinguisher",
+            "label": "Fire extinguisher",
+            "position": {
+              "x": 7.4,
+              "y": 4.5
+            },
+            "spaceID": "sp-kitchen",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-shutoff-water",
+            "kind": "utilityShutoffWater",
+            "label": "Water shutoff",
+            "position": {
+              "x": 11.6,
+              "y": 4.6
+            },
+            "spaceID": "sp-kitchen",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-shutoff-elec",
+            "kind": "utilityShutoffElectric",
+            "label": "Breaker panel",
+            "position": {
+              "x": 11.6,
+              "y": 5.6
+            },
+            "spaceID": "sp-hall",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-supplies",
+            "kind": "supplies",
+            "label": "Emergency supplies",
+            "position": {
+              "x": 5.75,
+              "y": 6.8
+            },
+            "spaceID": "sp-closet",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-medical",
+            "kind": "medicalEquipment",
+            "label": "Oxygen concentrator",
+            "position": {
+              "x": 6.4,
+              "y": 0.6
+            },
+            "spaceID": "sp-living",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-tornado",
+            "kind": "tornadoShelterCandidate",
+            "label": "Interior closet (shelter candidate)",
+            "note": "Interior room with no windows on the lowest floor. Not an engineered safe room.",
+            "position": {
+              "x": 5.75,
+              "y": 6.8
+            },
+            "spaceID": "sp-closet",
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-hydrant",
+            "kind": "exteriorHydrant",
+            "label": "Street hydrant",
+            "note": "Landmark only; not an evacuation objective.",
+            "position": {
+              "x": 14.5,
+              "y": -4
+            },
+            "verification": "verified"
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "an-meeting",
+            "kind": "outsideMeetingPoint",
+            "label": "Mailbox at the end of the driveway (fictional)",
+            "position": {
+              "x": 3.45,
+              "y": -8
+            },
+            "verification": "verified"
+          }
+        ],
+        "completeness": "complete",
+        "connectors": [],
+        "floors": [
+          {
+            "elevationMeters": 0,
+            "id": "fl-ground",
+            "label": "Ground floor",
+            "level": 0,
+            "toCommon": {
+              "rotationRadians": 0,
+              "translation": {
+                "x": 0,
+                "y": 0
+              }
+            }
+          }
+        ],
+        "frame": {
+          "handedness": "right",
+          "note": "Hand-authored fictional layout; x east, y north, metres.",
+          "sourceUpAxis": "y",
+          "units": "meters"
+        },
+        "id": "home-sample-ranch",
+        "isFictional": true,
+        "label": "Sample ranch home (fictional)",
+        "obstacles": [
+          {
+            "floorID": "fl-ground",
+            "id": "ob-sofa",
+            "label": "Sofa",
+            "polygon": [
+              {
+                "x": 1,
+                "y": 3.4
+              },
+              {
+                "x": 4,
+                "y": 3.4
+              },
+              {
+                "x": 4,
+                "y": 4.3
+              },
+              {
+                "x": 1,
+                "y": 4.3
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "ob-island",
+            "label": "Kitchen island",
+            "polygon": [
+              {
+                "x": 8.8,
+                "y": 2
+              },
+              {
+                "x": 10.4,
+                "y": 2
+              },
+              {
+                "x": 10.4,
+                "y": 3
+              },
+              {
+                "x": 8.8,
+                "y": 3
+              }
+            ]
+          }
+        ],
+        "portals": [
+          {
+            "a": {
+              "x": 3,
+              "y": 0
+            },
+            "b": {
+              "x": 3.9,
+              "y": 0
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.9
+            },
+            "floorID": "fl-ground",
+            "id": "pt-front",
+            "kind": "door",
+            "note": "Front door",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-living"
+              }
+            },
+            "sideB": {
+              "exterior": {}
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 12,
+              "y": 2
+            },
+            "b": {
+              "x": 12,
+              "y": 2.9
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.86
+            },
+            "floorID": "fl-ground",
+            "id": "pt-back",
+            "kind": "door",
+            "note": "Back door, one step down",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-kitchen"
+              }
+            },
+            "sideB": {
+              "exterior": {}
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": false
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 7,
+              "y": 1
+            },
+            "b": {
+              "x": 7,
+              "y": 2.2
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 1.2
+            },
+            "floorID": "fl-ground",
+            "id": "pt-living-kitchen",
+            "kind": "opening",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-living"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-kitchen"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 5,
+              "y": 5
+            },
+            "b": {
+              "x": 5.9,
+              "y": 5
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.9
+            },
+            "floorID": "fl-ground",
+            "id": "pt-living-hall",
+            "kind": "door",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-living"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-hall"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 8,
+              "y": 5
+            },
+            "b": {
+              "x": 8.86,
+              "y": 5
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.86
+            },
+            "floorID": "fl-ground",
+            "id": "pt-kitchen-hall",
+            "kind": "door",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-kitchen"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-hall"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 3,
+              "y": 6.2
+            },
+            "b": {
+              "x": 3.85,
+              "y": 6.2
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "floorID": "fl-ground",
+            "id": "pt-bed1-hall",
+            "kind": "door",
+            "note": "Clear width not yet measured",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-bed1"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-hall"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 9,
+              "y": 6.2
+            },
+            "b": {
+              "x": 9.86,
+              "y": 6.2
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.86
+            },
+            "floorID": "fl-ground",
+            "id": "pt-bed2-hall",
+            "kind": "door",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-bed2"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-hall"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 5.2,
+              "y": 6.2
+            },
+            "b": {
+              "x": 5.9,
+              "y": 6.2
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.7
+            },
+            "floorID": "fl-ground",
+            "id": "pt-closet-hall",
+            "kind": "door",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-closet"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-hall"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 4.5,
+              "y": 8
+            },
+            "b": {
+              "x": 4.5,
+              "y": 8.75
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "m",
+              "value": 0.75
+            },
+            "floorID": "fl-ground",
+            "id": "pt-bed1-bath",
+            "kind": "door",
+            "operable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-bed1"
+              }
+            },
+            "sideB": {
+              "space": {
+                "_0": "sp-bath"
+              }
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "verification": "verified"
+          },
+          {
+            "a": {
+              "x": 1.5,
+              "y": 10
+            },
+            "b": {
+              "x": 2.5,
+              "y": 10
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "floorID": "fl-ground",
+            "id": "pt-win-bed1",
+            "kind": "window",
+            "note": "Window — not an exit unless the household confirms it opens fully and can be used",
+            "operable": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-bed1"
+              }
+            },
+            "sideB": {
+              "exterior": {}
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": false
+            },
+            "verification": "proposed"
+          },
+          {
+            "a": {
+              "x": 9.5,
+              "y": 10
+            },
+            "b": {
+              "x": 10.5,
+              "y": 10
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "floorID": "fl-ground",
+            "id": "pt-win-bed2",
+            "kind": "window",
+            "operable": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-bed2"
+              }
+            },
+            "sideB": {
+              "exterior": {}
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": false
+            },
+            "verification": "proposed"
+          },
+          {
+            "a": {
+              "x": 0.8,
+              "y": 0
+            },
+            "b": {
+              "x": 2,
+              "y": 0
+            },
+            "clearWidthMeters": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "floorID": "fl-ground",
+            "id": "pt-win-living",
+            "kind": "window",
+            "operable": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "sideA": {
+              "space": {
+                "_0": "sp-living"
+              }
+            },
+            "sideB": {
+              "exterior": {}
+            },
+            "stepFree": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": false
+            },
+            "verification": "proposed"
+          }
+        ],
+        "revision": 1,
+        "schemaVersion": 1,
+        "source": "sample",
+        "spaces": [
+          {
+            "floorID": "fl-ground",
+            "id": "sp-living",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "livingRoom",
+            "label": "Living room",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 7,
+                "y": 0
+              },
+              {
+                "x": 7,
+                "y": 5
+              },
+              {
+                "x": 0,
+                "y": 5
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "sp-kitchen",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "kitchen",
+            "label": "Kitchen",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 7,
+                "y": 0
+              },
+              {
+                "x": 12,
+                "y": 0
+              },
+              {
+                "x": 12,
+                "y": 5
+              },
+              {
+                "x": 7,
+                "y": 5
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "sp-hall",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "hallway",
+            "label": "Hallway",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 0,
+                "y": 5
+              },
+              {
+                "x": 12,
+                "y": 5
+              },
+              {
+                "x": 12,
+                "y": 6.2
+              },
+              {
+                "x": 0,
+                "y": 6.2
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "sp-bed1",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "bedroom",
+            "label": "Main bedroom",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 0,
+                "y": 6.2
+              },
+              {
+                "x": 4.5,
+                "y": 6.2
+              },
+              {
+                "x": 4.5,
+                "y": 10
+              },
+              {
+                "x": 0,
+                "y": 10
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "sp-closet",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": true
+            },
+            "kind": "closet",
+            "label": "Hall closet",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 4.5,
+                "y": 6.2
+              },
+              {
+                "x": 7,
+                "y": 6.2
+              },
+              {
+                "x": 7,
+                "y": 7.4
+              },
+              {
+                "x": 4.5,
+                "y": 7.4
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "sp-bath",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "bathroom",
+            "label": "Bathroom",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 4.5,
+                "y": 7.4
+              },
+              {
+                "x": 7,
+                "y": 7.4
+              },
+              {
+                "x": 7,
+                "y": 10
+              },
+              {
+                "x": 4.5,
+                "y": 10
+              }
+            ]
+          },
+          {
+            "floorID": "fl-ground",
+            "id": "sp-bed2",
+            "interiorNoWindowsConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "bedroom",
+            "label": "Kid's bedroom",
+            "labelConfirmed": true,
+            "needsMeasurement": false,
+            "polygon": [
+              {
+                "x": 7,
+                "y": 6.2
+              },
+              {
+                "x": 12,
+                "y": 6.2
+              },
+              {
+                "x": 12,
+                "y": 10
+              },
+              {
+                "x": 7,
+                "y": 10
+              }
+            ]
+          }
+        ],
+        "walls": [
+          {
+            "a": {
+              "x": 0,
+              "y": 0
+            },
+            "b": {
+              "x": 12,
+              "y": 0
+            },
+            "floorID": "fl-ground",
+            "id": "w-ext-s",
+            "thicknessMeters": 0.2
+          },
+          {
+            "a": {
+              "x": 12,
+              "y": 0
+            },
+            "b": {
+              "x": 12,
+              "y": 10
+            },
+            "floorID": "fl-ground",
+            "id": "w-ext-e",
+            "thicknessMeters": 0.2
+          },
+          {
+            "a": {
+              "x": 12,
+              "y": 10
+            },
+            "b": {
+              "x": 0,
+              "y": 10
+            },
+            "floorID": "fl-ground",
+            "id": "w-ext-n",
+            "thicknessMeters": 0.2
+          },
+          {
+            "a": {
+              "x": 0,
+              "y": 10
+            },
+            "b": {
+              "x": 0,
+              "y": 0
+            },
+            "floorID": "fl-ground",
+            "id": "w-ext-w",
+            "thicknessMeters": 0.2
+          },
+          {
+            "a": {
+              "x": 7,
+              "y": 0
+            },
+            "b": {
+              "x": 7,
+              "y": 5
+            },
+            "floorID": "fl-ground",
+            "id": "w-living-kitchen",
+            "thicknessMeters": 0.12
+          },
+          {
+            "a": {
+              "x": 0,
+              "y": 5
+            },
+            "b": {
+              "x": 12,
+              "y": 5
+            },
+            "floorID": "fl-ground",
+            "id": "w-south-hall",
+            "thicknessMeters": 0.12
+          },
+          {
+            "a": {
+              "x": 0,
+              "y": 6.2
+            },
+            "b": {
+              "x": 12,
+              "y": 6.2
+            },
+            "floorID": "fl-ground",
+            "id": "w-hall-north",
+            "thicknessMeters": 0.12
+          },
+          {
+            "a": {
+              "x": 4.5,
+              "y": 6.2
+            },
+            "b": {
+              "x": 4.5,
+              "y": 10
+            },
+            "floorID": "fl-ground",
+            "id": "w-bed1-east",
+            "thicknessMeters": 0.12
+          },
+          {
+            "a": {
+              "x": 4.5,
+              "y": 7.4
+            },
+            "b": {
+              "x": 7,
+              "y": 7.4
+            },
+            "floorID": "fl-ground",
+            "id": "w-closet-bath",
+            "thicknessMeters": 0.12
+          },
+          {
+            "a": {
+              "x": 7,
+              "y": 6.2
+            },
+            "b": {
+              "x": 7,
+              "y": 10
+            },
+            "floorID": "fl-ground",
+            "id": "w-bed2-west",
+            "thicknessMeters": 0.12
+          }
+        ]
+      },
+      "household": {
+        "backupPower": [
+          {
+            "assumedEfficiency": 0.85,
+            "continuousOutputW": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "W",
+              "value": 1200
+            },
+            "id": "bk-station",
+            "islandingConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "kind": "portableBatteryStation",
+            "label": "",
+            "labelIsCustom": false,
+            "legacyOriginalLabel": "Portable battery station",
+            "safeOutdoorPlacementConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "setupConfirmed": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "usableEnergyWh": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "unit": "Wh",
+              "value": 1000
+            }
+          }
+        ],
+        "communications": {
+          "batteryOrCrankRadio": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "handsetCount": 3,
+          "handsetRuntimeHours": {
+            "inputIDs": [],
+            "origin": "scenarioAssumption",
+            "sourceIDs": [],
+            "status": "assumed",
+            "unit": "h",
+            "value": 18
+          },
+          "powerBankCharges": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": 2
+          },
+          "routerOnBackup": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": false
+          }
+        },
+        "completedPreparations": [],
+        "contacts": [
+          {
+            "alias": "Aunt in Abilene (fictional)",
+            "id": "ct-oak-1",
+            "phone": "325-555-0142",
+            "role": "outOfAreaContact"
+          }
+        ],
+        "displayName": "Oak household (fictional)",
+        "equipment": [
+          {
+            "compatibleBackupIDs": [],
+            "documentedBackupRuntimeHours": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "id": "eq-oxygen",
+            "isEssential": true,
+            "label": "",
+            "labelIsCustom": false,
+            "legacyOriginalLabel": "Oxygen concentrator",
+            "needsRefrigeration": false,
+            "personID": "p-oak-4",
+            "powerWatts": {
+              "inputIDs": [],
+              "origin": "unknown",
+              "sourceIDs": [],
+              "status": "unknown"
+            },
+            "purpose": "oxygenConcentrator"
+          }
+        ],
+        "housing": {
+          "cooling": "centralAC",
+          "floorCount": 1,
+          "heatingFuel": "electric",
+          "heatingNeedsElectricity": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "homeType": "singleFamily",
+          "sanitation": "septicGravity",
+          "tenancy": "owner",
+          "waterSource": "privateWell",
+          "wellPressureTankGallons": {
+            "inputIDs": [],
+            "origin": "unknown",
+            "sourceIDs": [],
+            "status": "unknown"
+          },
+          "wellPumpElectric": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          }
+        },
+        "id": "hh-oak",
+        "isFictional": true,
+        "people": [
+          {
+            "ageBand": "adult",
+            "alias": "Parent A",
+            "id": "p-oak-1",
+            "needs": [],
+            "sleepingSpaceID": "sp-bed1"
+          },
+          {
+            "ageBand": "adult",
+            "alias": "Parent B",
+            "id": "p-oak-2",
+            "needs": [],
+            "sleepingSpaceID": "sp-bed2"
+          },
+          {
+            "ageBand": "child",
+            "alias": "Kid",
+            "helperPersonID": "p-oak-1",
+            "id": "p-oak-3",
+            "needs": [],
+            "sleepingSpaceID": "sp-bed2"
+          },
+          {
+            "ageBand": "olderAdult",
+            "alias": "Grandpa",
+            "helperPersonID": "p-oak-2",
+            "id": "p-oak-4",
+            "needs": [
+              "limitedMobility",
+              "coldSensitive"
+            ],
+            "sleepingSpaceID": "sp-living"
+          }
+        ],
+        "pets": [
+          {
+            "carrierAvailable": {
+              "inputIDs": [],
+              "origin": "userConfirmed",
+              "sourceIDs": [],
+              "status": "confirmed",
+              "value": false
+            },
+            "count": 1,
+            "id": "pet-oak-dog",
+            "kind": "dog"
+          }
+        ],
+        "preferredLocale": "en",
+        "regionID": "48143",
+        "revision": 1,
+        "schemaVersion": 1,
+        "supplies": {
+          "coolerAndIcePacks": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "fireExtinguisher": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "firstAidKit": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": true
+          },
+          "flashlights": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": 2
+          },
+          "limitedBudget": false,
+          "limitedStorageSpace": false,
+          "shelfStableFoodDays": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "value": 3
+          },
+          "storedWaterGallons": {
+            "inputIDs": [],
+            "origin": "userConfirmed",
+            "sourceIDs": [],
+            "status": "confirmed",
+            "unit": "gal",
+            "value": 5
+          }
+        },
+        "transport": {
+          "alternatives": [],
+          "destinations": [],
+          "vehicles": [
+            {
+              "id": "veh-oak",
+              "isElectric": false,
+              "seats": 5,
+              "wheelchairAccessible": {
+                "inputIDs": [],
+                "origin": "userConfirmed",
+                "sourceIDs": [],
+                "status": "confirmed",
+                "value": false
+              }
+            }
+          ]
+        },
+        "updatedAt": "2026-10-01T12:00:00Z"
+      },
+      "interventions": [],
+      "scenarioID": "home-fire",
+      "scenarioVersion": "1.0.0",
+      "seed": 7,
+      "variants": [
+        "hallway-smoke"
+      ]
+    }
+  },
+  "receipt": {
+    "assistance": [
+      {
+        "helperID": "p-oak-2",
+        "personID": "p-oak-3",
+        "reachStatus": "reachable",
+        "route": {
+          "algorithmVersion": "egress-portal-graph/2",
+          "alternativeStatus": "none",
+          "exclusions": [
+            {
+              "elementID": "sp-hall",
+              "reason": "blockedByScenario"
+            },
+            {
+              "elementID": "pt-win-bed1",
+              "reason": "portalNotVerified"
+            },
+            {
+              "elementID": "pt-win-bed2",
+              "reason": "portalNotVerified"
+            },
+            {
+              "elementID": "pt-win-living",
+              "reason": "portalNotVerified"
+            }
+          ],
+          "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+          "homeID": "home-sample-ranch",
+          "homeRevision": 1,
+          "primary": {
+            "connectorSequence": [],
+            "exitPortalID": "space:sp-bed2",
+            "legs": [
+              {
+                "floorID": "fl-ground",
+                "points": [
+                  {
+                    "x": 9.499999999999998,
+                    "y": 8.1
+                  }
+                ]
+              }
+            ],
+            "lengthMeters": 0,
+            "portalSequence": [],
+            "spaceSequence": [
+              "sp-bed2"
+            ],
+            "verificationNeeded": []
+          },
+          "request": {
+            "destinationSpaceID": "sp-bed2",
+            "exclusions": {
+              "blockedConnectorIDs": [],
+              "blockedPortalIDs": [],
+              "blockedSpaceIDs": [
+                "sp-hall"
+              ]
+            },
+            "mobility": {
+              "minimumClearWidthMeters": 0.7,
+              "requiresStepFree": false
+            },
+            "personID": "p-oak-2",
+            "purpose": "helperReach",
+            "startSpaceID": "sp-bed2"
+          },
+          "sharedChokepoints": []
+        },
+        "sharedWithPersonIDs": [
+          "p-oak-4"
+        ],
+        "simultaneousCapacity": "unknown"
+      },
+      {
+        "helperID": "p-oak-2",
+        "personID": "p-oak-4",
+        "reachStatus": "unreachable",
+        "route": {
+          "algorithmVersion": "egress-portal-graph/2",
+          "alternativeStatus": "none",
+          "exclusions": [
+            {
+              "elementID": "sp-hall",
+              "reason": "blockedByScenario"
+            },
+            {
+              "elementID": "pt-win-bed1",
+              "reason": "portalNotVerified"
+            },
+            {
+              "elementID": "pt-win-bed2",
+              "reason": "portalNotVerified"
+            },
+            {
+              "elementID": "pt-win-living",
+              "reason": "portalNotVerified"
+            }
+          ],
+          "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+          "homeID": "home-sample-ranch",
+          "homeRevision": 1,
+          "noRouteReason": "blockedByScenario",
+          "request": {
+            "destinationSpaceID": "sp-living",
+            "exclusions": {
+              "blockedConnectorIDs": [],
+              "blockedPortalIDs": [],
+              "blockedSpaceIDs": [
+                "sp-hall"
+              ]
+            },
+            "mobility": {
+              "minimumClearWidthMeters": 0.7,
+              "requiresStepFree": false
+            },
+            "personID": "p-oak-2",
+            "purpose": "helperReach",
+            "startSpaceID": "sp-bed2"
+          },
+          "sharedChokepoints": []
+        },
+        "sharedWithPersonIDs": [
+          "p-oak-3"
+        ],
+        "simultaneousCapacity": "unknown"
+      }
+    ],
+    "contextDigest": "d386c8b7e719dc3f",
+    "directorState": {
+      "activeIncidentCount": 1,
+      "awaitingUserAction": false,
+      "originSpaceID": "sp-hall",
+      "scheduledEventCount": 1,
+      "stageID": "evt.home-fire.fire-origin"
+    },
+    "eventSequence": 9,
+    "events": [
+      {
+        "evidence": {
+          "causedByEventIDs": [],
+          "factIDs": [],
+          "ruleID": "rule.fire.block-primary",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.fire-origin",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "scenario.home-fire.event.fire-origin"
+      },
+      {
+        "detailKey": "reason.blockedByScenario",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-1",
+            "home.portals"
+          ],
+          "ruleID": "rule.fire.route",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.route.none.p-oak-1",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {
+          "person": "Parent A",
+          "reason": "blockedByScenario"
+        },
+        "titleKey": "scenario.home-fire.route.none"
+      },
+      {
+        "detailKey": "reason.blockedByScenario",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-2",
+            "home.portals"
+          ],
+          "ruleID": "rule.fire.route",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.route.none.p-oak-2",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {
+          "person": "Parent B",
+          "reason": "blockedByScenario"
+        },
+        "titleKey": "scenario.home-fire.route.none"
+      },
+      {
+        "detailKey": "reason.blockedByScenario",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-3",
+            "home.portals"
+          ],
+          "ruleID": "rule.fire.route",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.route.none.p-oak-3",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {
+          "person": "Kid",
+          "reason": "blockedByScenario"
+        },
+        "titleKey": "scenario.home-fire.route.none"
+      },
+      {
+        "detailKey": "independence.independent",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-4",
+            "home.portal.pt-front"
+          ],
+          "ruleID": "rule.fire.route",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.route.alternative.p-oak-4",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "caution",
+        "simMinute": 0,
+        "templateValues": {
+          "exitPortalID": "pt-front",
+          "exitRoom": "Living room",
+          "independence": "independent",
+          "person": "Grandpa"
+        },
+        "titleKey": "scenario.home-fire.route.alternative"
+      },
+      {
+        "detailKey": "scenario.common.assist.helper-blocked.options",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-3.helperPersonID",
+            "person.p-oak-3.sleepingSpaceID",
+            "person.p-oak-1.sleepingSpaceID"
+          ],
+          "ruleID": "rule.fire.helper-reach",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.assist.helper-blocked.p-oak-3",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {
+          "helper": "Parent A",
+          "person": "Kid"
+        },
+        "titleKey": "scenario.common.assist.helper-blocked"
+      },
+      {
+        "detailKey": "scenario.common.assist.helper-blocked.options",
+        "evidence": {
+          "causedByEventIDs": [
+            "evt.home-fire.fire-origin"
+          ],
+          "factIDs": [
+            "person.p-oak-4.helperPersonID",
+            "person.p-oak-4.sleepingSpaceID",
+            "person.p-oak-2.sleepingSpaceID"
+          ],
+          "ruleID": "rule.fire.helper-reach",
+          "sourceIDs": [
+            "S19"
+          ]
+        },
+        "id": "evt.home-fire.assist.helper-blocked.p-oak-4",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "critical",
+        "simMinute": 0,
+        "templateValues": {
+          "helper": "Parent B",
+          "person": "Grandpa"
+        },
+        "titleKey": "scenario.common.assist.helper-blocked"
+      },
+      {
+        "evidence": {
+          "causedByEventIDs": [],
+          "factIDs": [],
+          "ruleID": "session.user/1",
+          "sourceIDs": []
+        },
+        "id": "user.assign-p-oak-1",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "info",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "simulation.user.assignHelper"
+      },
+      {
+        "evidence": {
+          "causedByEventIDs": [],
+          "factIDs": [],
+          "ruleID": "session.user/1",
+          "sourceIDs": []
+        },
+        "id": "user.assign-p-oak-2",
+        "phaseID": "escape",
+        "priority": 0,
+        "serviceChanges": {},
+        "severity": "info",
+        "simMinute": 0,
+        "templateValues": {},
+        "titleKey": "simulation.user.assignHelper"
+      }
+    ],
+    "finished": false,
+    "pending": [],
+    "revision": 3,
+    "routes": [
+      {
+        "algorithmVersion": "egress-portal-graph/2",
+        "alternativeStatus": "none",
+        "exclusions": [
+          {
+            "elementID": "sp-hall",
+            "reason": "blockedByScenario"
+          },
+          {
+            "elementID": "pt-win-bed1",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-bed2",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-living",
+            "reason": "portalNotVerified"
+          }
+        ],
+        "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID": "home-sample-ranch",
+        "homeRevision": 1,
+        "noRouteReason": "blockedByScenario",
+        "request": {
+          "exclusions": {
+            "blockedConnectorIDs": [],
+            "blockedPortalIDs": [],
+            "blockedSpaceIDs": [
+              "sp-hall"
+            ]
+          },
+          "mobility": {
+            "minimumClearWidthMeters": 0.7,
+            "requiresStepFree": false
+          },
+          "personID": "p-oak-1",
+          "purpose": "outdoorEgress",
+          "startSpaceID": "sp-bed1"
+        },
+        "sharedChokepoints": []
+      },
+      {
+        "algorithmVersion": "egress-portal-graph/2",
+        "alternativeStatus": "none",
+        "exclusions": [
+          {
+            "elementID": "sp-hall",
+            "reason": "blockedByScenario"
+          },
+          {
+            "elementID": "pt-win-bed1",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-bed2",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-living",
+            "reason": "portalNotVerified"
+          }
+        ],
+        "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID": "home-sample-ranch",
+        "homeRevision": 1,
+        "noRouteReason": "blockedByScenario",
+        "request": {
+          "exclusions": {
+            "blockedConnectorIDs": [],
+            "blockedPortalIDs": [],
+            "blockedSpaceIDs": [
+              "sp-hall"
+            ]
+          },
+          "mobility": {
+            "minimumClearWidthMeters": 0.7,
+            "requiresStepFree": false
+          },
+          "personID": "p-oak-2",
+          "purpose": "outdoorEgress",
+          "startSpaceID": "sp-bed2"
+        },
+        "sharedChokepoints": []
+      },
+      {
+        "algorithmVersion": "egress-portal-graph/2",
+        "alternativeStatus": "none",
+        "exclusions": [
+          {
+            "elementID": "sp-hall",
+            "reason": "blockedByScenario"
+          },
+          {
+            "elementID": "pt-win-bed1",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-bed2",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-living",
+            "reason": "portalNotVerified"
+          }
+        ],
+        "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID": "home-sample-ranch",
+        "homeRevision": 1,
+        "noRouteReason": "blockedByScenario",
+        "request": {
+          "exclusions": {
+            "blockedConnectorIDs": [],
+            "blockedPortalIDs": [],
+            "blockedSpaceIDs": [
+              "sp-hall"
+            ]
+          },
+          "mobility": {
+            "minimumClearWidthMeters": 0.7,
+            "requiresStepFree": false
+          },
+          "personID": "p-oak-3",
+          "purpose": "outdoorEgress",
+          "startSpaceID": "sp-bed2"
+        },
+        "sharedChokepoints": []
+      },
+      {
+        "algorithmVersion": "egress-portal-graph/2",
+        "alternative": {
+          "connectorSequence": [],
+          "exitPortalID": "pt-back",
+          "legs": [
+            {
+              "floorID": "fl-ground",
+              "points": [
+                {
+                  "x": 3.5,
+                  "y": 2.5
+                },
+                {
+                  "x": 6.55,
+                  "y": 1.6
+                },
+                {
+                  "x": 7,
+                  "y": 1.6
+                },
+                {
+                  "x": 7.45,
+                  "y": 1.6
+                },
+                {
+                  "x": 10.972398855203435,
+                  "y": 1.6422507154978538
+                },
+                {
+                  "x": 11.55,
+                  "y": 2.45
+                },
+                {
+                  "x": 12,
+                  "y": 2.45
+                },
+                {
+                  "x": 12.55,
+                  "y": 2.45
+                }
+              ]
+            }
+          ],
+          "lengthMeters": 9.595684575914769,
+          "portalSequence": [
+            "pt-living-kitchen",
+            "pt-back"
+          ],
+          "spaceSequence": [
+            "sp-living",
+            "sp-kitchen"
+          ],
+          "verificationNeeded": []
+        },
+        "alternativeStatus": "independent",
+        "exclusions": [
+          {
+            "elementID": "sp-hall",
+            "reason": "blockedByScenario"
+          },
+          {
+            "elementID": "pt-win-bed1",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-bed2",
+            "reason": "portalNotVerified"
+          },
+          {
+            "elementID": "pt-win-living",
+            "reason": "portalNotVerified"
+          }
+        ],
+        "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID": "home-sample-ranch",
+        "homeRevision": 1,
+        "primary": {
+          "connectorSequence": [],
+          "exitPortalID": "pt-front",
+          "legs": [
+            {
+              "floorID": "fl-ground",
+              "points": [
+                {
+                  "x": 3.5,
+                  "y": 2.5
+                },
+                {
+                  "x": 3.45,
+                  "y": 0.45
+                },
+                {
+                  "x": 3.45,
+                  "y": 0
+                },
+                {
+                  "x": 3.45,
+                  "y": -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters": 3.050609665440988,
+          "portalSequence": [
+            "pt-front"
+          ],
+          "spaceSequence": [
+            "sp-living"
+          ],
+          "verificationNeeded": []
+        },
+        "request": {
+          "exclusions": {
+            "blockedConnectorIDs": [],
+            "blockedPortalIDs": [],
+            "blockedSpaceIDs": [
+              "sp-hall"
+            ]
+          },
+          "mobility": {
+            "minimumClearWidthMeters": 0.7,
+            "requiresStepFree": false
+          },
+          "personID": "p-oak-4",
+          "purpose": "outdoorEgress",
+          "startSpaceID": "sp-living"
+        },
+        "sharedChokepoints": []
+      }
+    ],
+    "sessionID": "synthetic-session",
+    "snapshot": {
+      "firedEventIDs": [
+        "evt.home-fire.fire-origin",
+        "evt.home-fire.route.none.p-oak-1",
+        "evt.home-fire.route.none.p-oak-2",
+        "evt.home-fire.route.none.p-oak-3",
+        "evt.home-fire.route.alternative.p-oak-4",
+        "evt.home-fire.assist.helper-blocked.p-oak-3",
+        "evt.home-fire.assist.helper-blocked.p-oak-4",
+        "user.assign-p-oak-1",
+        "user.assign-p-oak-2"
+      ],
+      "resources": {
+        "res.backup.bk-station": {
+          "amount": 1000,
+          "unit": "Wh"
+        },
+        "res.device.eq-oxygen.runtime": {
+          "unit": "h"
+        },
+        "res.handset.hours": {
+          "amount": 18,
+          "unit": "h"
+        },
+        "res.handset.powerBankCharges": {
+          "amount": 2,
+          "unit": "charges"
+        },
+        "res.water.stored": {
+          "amount": 5,
+          "unit": "gal"
+        }
+      },
+      "revealedEventCount": 1,
+      "services": {
+        "svc.alerts": "operational",
+        "svc.cellular": "operational",
+        "svc.cooling": "operational",
+        "svc.destination": "unavailable",
+        "svc.device.eq-oxygen": "operational",
+        "svc.grid": "operational",
+        "svc.handset": "operational",
+        "svc.heat": "operational",
+        "svc.power.home": "operational",
+        "svc.refrigeration": "operational",
+        "svc.roads": "operational",
+        "svc.transport": "operational",
+        "svc.water.safety": "operational",
+        "svc.water.supply": "operational",
+        "svc.wellPump": "operational",
+        "svc.wifi": "operational"
+      },
+      "simMinute": 0,
+      "spatialState": {
+        "affectedPortalIDs": [],
+        "affectedSpaceIDs": [
+          "sp-hall"
+        ],
+        "assumption": "Exercise: authored smoke or blockage excludes these rooms and openings. An affected starting room remains exposed; no supported departure is assumed.",
+        "assumptionKey": "spatial.assumption.fire-blocked",
+        "exposedSpaceIDs": [],
+        "hazard": "homeFire",
+        "originSpaceID": "sp-hall",
+        "routes": [
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-1",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed1"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-2",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed2"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternativeStatus": "none",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "noRouteReason": "blockedByScenario",
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-3",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-bed2"
+            },
+            "sharedChokepoints": []
+          },
+          {
+            "algorithmVersion": "egress-portal-graph/2",
+            "alternative": {
+              "connectorSequence": [],
+              "exitPortalID": "pt-back",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 3.5,
+                      "y": 2.5
+                    },
+                    {
+                      "x": 6.55,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 7,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 7.45,
+                      "y": 1.6
+                    },
+                    {
+                      "x": 10.972398855203435,
+                      "y": 1.6422507154978538
+                    },
+                    {
+                      "x": 11.55,
+                      "y": 2.45
+                    },
+                    {
+                      "x": 12,
+                      "y": 2.45
+                    },
+                    {
+                      "x": 12.55,
+                      "y": 2.45
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 9.595684575914769,
+              "portalSequence": [
+                "pt-living-kitchen",
+                "pt-back"
+              ],
+              "spaceSequence": [
+                "sp-living",
+                "sp-kitchen"
+              ],
+              "verificationNeeded": []
+            },
+            "alternativeStatus": "independent",
+            "exclusions": [
+              {
+                "elementID": "sp-hall",
+                "reason": "blockedByScenario"
+              },
+              {
+                "elementID": "pt-win-bed1",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-bed2",
+                "reason": "portalNotVerified"
+              },
+              {
+                "elementID": "pt-win-living",
+                "reason": "portalNotVerified"
+              }
+            ],
+            "homeFingerprint": "44a2fa7137a9eed07ecf8c3f37e765ba",
+            "homeID": "home-sample-ranch",
+            "homeRevision": 1,
+            "primary": {
+              "connectorSequence": [],
+              "exitPortalID": "pt-front",
+              "legs": [
+                {
+                  "floorID": "fl-ground",
+                  "points": [
+                    {
+                      "x": 3.5,
+                      "y": 2.5
+                    },
+                    {
+                      "x": 3.45,
+                      "y": 0.45
+                    },
+                    {
+                      "x": 3.45,
+                      "y": 0
+                    },
+                    {
+                      "x": 3.45,
+                      "y": -0.55
+                    }
+                  ]
+                }
+              ],
+              "lengthMeters": 3.050609665440988,
+              "portalSequence": [
+                "pt-front"
+              ],
+              "spaceSequence": [
+                "sp-living"
+              ],
+              "verificationNeeded": []
+            },
+            "request": {
+              "exclusions": {
+                "blockedConnectorIDs": [],
+                "blockedPortalIDs": [],
+                "blockedSpaceIDs": [
+                  "sp-hall"
+                ]
+              },
+              "mobility": {
+                "minimumClearWidthMeters": 0.7,
+                "requiresStepFree": false
+              },
+              "personID": "p-oak-4",
+              "purpose": "outdoorEgress",
+              "startSpaceID": "sp-living"
+            },
+            "sharedChokepoints": []
+          }
+        ],
+        "seed": 7,
+        "stageID": "evt.home-fire.fire-origin"
+      },
+      "unknowns": [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "unmetRequirements": [
+        "req.assistance.reach.p-oak-4",
+        "req.egress.p-oak-1",
+        "req.egress.p-oak-2",
+        "req.egress.p-oak-3"
+      ]
+    }
+  }
+}

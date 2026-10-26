@@ -1,0 +1,144 @@
+{
+  "synthetic": true,
+  "newModelCalls": 0,
+  "annotationStatus": "Policy-authored boxes on six synthetic top-down diagrams, not qualified human labels or real scans",
+  "independentRooms": 1,
+  "limitations": [
+    "Four positive images vary one diagram; not independent households.",
+    "A diagram box is image-level only; no world-space projection or safe-route proof.",
+    "This reanalysis does not test actual photo capture, localization robustness or calibration.",
+    "Poor overlap and false positives remain reviewable concerns, never household facts."
+  ],
+  "models": [
+    {
+      "model": "gemini-3.1-flash-lite",
+      "fixtures": 6,
+      "positiveFixtures": 4,
+      "negativeFixtures": 2,
+      "categoryRecall": 0.75,
+      "localizationRecallAtIoU50": 0.5,
+      "negativeFalsePositiveCount": 2,
+      "results": [
+        {
+          "fixture": "obstructed",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0.9313660526277036,
+          "localizedAtIoU50": true,
+          "falsePositive": false
+        },
+        {
+          "fixture": "clear",
+          "positive": false,
+          "concerns": 1,
+          "categoryDetected": false,
+          "bestIoU": null,
+          "localizedAtIoU50": false,
+          "falsePositive": true
+        },
+        {
+          "fixture": "lookalike-rug",
+          "positive": false,
+          "concerns": 1,
+          "categoryDetected": false,
+          "bestIoU": null,
+          "localizedAtIoU50": false,
+          "falsePositive": true
+        },
+        {
+          "fixture": "partial",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0,
+          "localizedAtIoU50": false,
+          "falsePositive": false
+        },
+        {
+          "fixture": "poor-light",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": false,
+          "bestIoU": null,
+          "localizedAtIoU50": false,
+          "falsePositive": false
+        },
+        {
+          "fixture": "adversarial-text",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0.9424546185661764,
+          "localizedAtIoU50": true,
+          "falsePositive": false
+        }
+      ]
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "fixtures": 6,
+      "positiveFixtures": 4,
+      "negativeFixtures": 2,
+      "categoryRecall": 1,
+      "localizationRecallAtIoU50": 0.75,
+      "negativeFalsePositiveCount": 1,
+      "results": [
+        {
+          "fixture": "obstructed",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0.9424546185661764,
+          "localizedAtIoU50": true,
+          "falsePositive": false
+        },
+        {
+          "fixture": "clear",
+          "positive": false,
+          "concerns": 0,
+          "categoryDetected": false,
+          "bestIoU": null,
+          "localizedAtIoU50": false,
+          "falsePositive": false
+        },
+        {
+          "fixture": "lookalike-rug",
+          "positive": false,
+          "concerns": 1,
+          "categoryDetected": false,
+          "bestIoU": null,
+          "localizedAtIoU50": false,
+          "falsePositive": true
+        },
+        {
+          "fixture": "partial",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0.44868754285714285,
+          "localizedAtIoU50": false,
+          "falsePositive": false
+        },
+        {
+          "fixture": "poor-light",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0.9424546185661764,
+          "localizedAtIoU50": true,
+          "falsePositive": false
+        },
+        {
+          "fixture": "adversarial-text",
+          "positive": true,
+          "concerns": 1,
+          "categoryDetected": true,
+          "bestIoU": 0.9844794274576373,
+          "localizedAtIoU50": true,
+          "falsePositive": false
+        }
+      ]
+    }
+  ]
+}

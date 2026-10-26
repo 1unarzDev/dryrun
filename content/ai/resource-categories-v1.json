@@ -1,0 +1,29 @@
+{
+  "version": "dryrun.resource-categories/1",
+  "status": "native-search-mapping-and-human-content-review-pending",
+  "cloudReturnPolicy": "local_only",
+  "categories": [
+    "grocery",
+    "foodAssistance",
+    "pharmacy",
+    "equipmentSupplier",
+    "hardware",
+    "hospital",
+    "emergencyManagement",
+    "warmingCooling",
+    "shelter",
+    "clothing",
+    "policeStation",
+    "fireStation",
+    "trustedMeetup"
+  ],
+  "roleBoundaries": {
+    "policeStation": "Public-service location only; not evidence of evacuation acceptance or shelter service.",
+    "fireStation": "Public-service location only; not evidence of evacuation acceptance or shelter service.",
+    "trustedMeetup": "Candidate for household review; listing is not agreement, availability or hazard suitability.",
+    "hospital": "Facility type and capability need independent confirmation; proximity does not establish medical suitability.",
+    "warmingCooling": "Service/activation require independent official evidence.",
+    "shelter": "Service/activation/accessibility require independent official evidence."
+  },
+  "nativeResponsibilities": "Map approved categories to bounded local MapKit searches; retain actual provider fields and attribution locally. Generic listings confer no official capabilities. Preserve manually saved meeting places and ordinary calling/navigation controls."
+}

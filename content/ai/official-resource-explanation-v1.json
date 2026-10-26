@@ -1,0 +1,12 @@
+{
+  "version": "dryrun.official-resource-explanation/1",
+  "promptVersion": "resources/3",
+  "status": "draft-human-language-and-native-rendering-review-pending",
+  "rules": [
+    "Gemini selects legitimate official record IDs, linked task IDs and existing field IDs; proposed reason prose is not a capability proof.",
+    "The accepted explanation is composed from bounded service labels, the host task/criterion and record check date, with explicit current-service/activation/access/suitability uncertainty.",
+    "All current bundled records remain needsReview, activation unknown, capabilitiesVerified false; no Tarrant record was promoted.",
+    "Equality with a raw field is insufficient for capability validation: require reviewed record, verified-capability flag, nonempty source IDs, valid nonfuture check date and unexpired evidence. Activation additionally requires expiry.",
+    "Native geographic identity joins remain local and independently verified. A source record does not establish the identity of a similar map listing."
+  ]
+}
