@@ -12,7 +12,7 @@ public enum HouseholdAssessment {
     private static func requiresAssistance(_ p:Person)->Bool {
         p.requiresStepFreeRoute || p.needs.contains(.needsHelperToEvacuate) || p.needs.contains(.deafOrHardOfHearing) || p.ageBand == .infant || p.ageBand == .child
     }
-    public static let version="dryrun.household-assessment/5"
+    public static let version="dryrun.household-assessment/7"
     public static func assess(household h:HouseholdProfile,home:HomeModel?,inventory:InventoryLedger?,places:[SavedPlace]=[],stressFindings:[StressTestFinding]=[],at date:Date) throws -> [CriterionAssessment] {
         var results:[CriterionAssessment]=[]
         func append(_ id:String,_ values:[String:Bool?],evidence:[String],notApplicable:String?=nil){
@@ -38,14 +38,15 @@ public enum HouseholdAssessment {
             append("escape",["confirmedExit":all(confirmedRoutes),"independentAlternative":all(independent),"reviewed":h.preparedness?.items["clearExits"]?.available.confirmedValue],evidence:["home|\(home.id)|\(home.revision)","preparedness.clearExits"])
             // Use the same recorded tornado planning choice and interior-purpose route rules as rehearsal.
             // A missing/invalid candidate is unknown, never evidence that the household has no refuge.
-            let shelter=ShelterSuitability.confirmedRoom(in:home)
+            let manufactured = h.housing.homeType == .manufacturedHome || home.dwellingType == .manufacturedHome
+            let shelter=manufactured ? nil:ShelterSuitability.confirmedRoom(in:home)
             let shelterRoutes:[Bool?]=h.people.map {person in
                 guard let shelter else {return nil}
                 let route=EgressPlanner().plan(RouteRequest(personID:person.id,startSpaceID:person.sleepingSpaceID ?? "unknown",mobility:person.requiresStepFreeRoute ? .wheelchair:.walking,purpose:.interiorShelter,destinationSpaceID:shelter.id),in:home)
                 guard let path=route.primary,path.verificationNeeded.isEmpty else {return nil}
                 return true
             }
-            append("shelter",["suitable":shelter == nil ? nil:true,"reachable":all(shelterRoutes)],evidence:["home|\(home.id)|\(home.revision)","home.tornadoShelterCandidate"])
+            append("shelter",["suitable":manufactured ? false:(shelter == nil ? nil:true),"reachable":all(shelterRoutes)],evidence:["home|\(home.id)|\(home.revision)","home.tornadoShelterCandidate"])
         }
         let water=try inventory?.waterGap(people:h.people.count,personIDs:h.people.map(\.id),at:date)
         let waterAccess=try inventory?.usableAccess(category:"water",personIDs:h.people.map(\.id),at:date)
@@ -66,8 +67,11 @@ public enum HouseholdAssessment {
             firstAid=try inventory.preparationItemGap(kind:.firstAidKit,personIDs:h.people.map(\.id),at:date).deficit.map{$0==0}
         } else {firstAid=h.supplies.firstAidKit.confirmedValue}
         append("essentials",["light":light,"firstAid":firstAid,"sanitation":h.preparedness?.items["sanitation"]?.available.confirmedValue],evidence:["supplies","inventory.preparationKind","preparedness.sanitation"])
-        // Missing a contact is unknown, not proof no support exists.
-        append("contact",["usableContact":h.contacts.contains{$0.isComplete} ? true : nil,"offlineAccess":h.preparedness?.items["reconnect"]?.available.confirmedValue],evidence:["contacts","preparedness.reconnect"])
+        // Missing a contact is unknown, not proof no support exists. A legacy generic
+        // reconnection plan does not establish an accessible offline contact copy.
+        // No such specific copy evidence is recorded by this model yet. Preserve
+        // the legacy record, but never convert it into this different predicate.
+        append("contact",["usableContact":h.contacts.contains{$0.isComplete} ? true : nil,"offlineAccess":nil],evidence:["contacts"])
         let near=places.contains{$0.homeID==h.stableHomeID && $0.purpose == .outsideMeetingPoint}
         let backup=places.contains{$0.homeID==h.stableHomeID && $0.purpose == .backupMeetingPlace}
         append("meetups",["near":near ? true : nil,"backup":backup ? true : nil,"transport":any(h.transport.vehicles.map{TransportReadiness.vehicleAvailability($0,household:h)}+h.transport.alternatives.map{TransportReadiness.alternativeAvailability($0,household:h)})],evidence:["savedPlaces","transport"])

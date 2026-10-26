@@ -9,10 +9,28 @@ struct DryRunApp: App {
 
     init() {
         let demo = DemoLaunch.current
-        // Demo launches use memory; explicit simulator persistence tests use their own encrypted namespace.
-        let store: PrivateDataStore = demo.usesInMemoryStore ? InMemoryPrivateDataStore() : VaultPrivateDataStore.makeDefault()
+        #if DEBUG
+        // Hosted unit tests must not start the owner's default vault while
+        // XCTest constructs controlled models with their own stores.
+        let unitTestHost = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        let isolatedTestVault = ProcessInfo.processInfo.arguments.contains("-uiTestingVaultID")
+        #else
+        let unitTestHost = false
+        let isolatedTestVault = false
+        #endif
+        // Demo launches use memory; explicit physical persistence tests use their own encrypted namespace.
+        let store: PrivateDataStore
+        if isolatedTestVault {
+            store = VaultPrivateDataStore.makeDefault()
+        } else if demo.usesInMemoryStore || unitTestHost {
+            store = InMemoryPrivateDataStore()
+        } else {
+            store = VaultPrivateDataStore.makeDefault()
+        }
         if demo.disableAnimations { UIView.setAnimationsEnabled(false) }
-        _model = State(initialValue: AppModel(store: store))
+        let examples: PrivateDataStore? = isolatedTestVault || demo.usesInMemoryStore || unitTestHost
+            ? nil : InMemoryPrivateDataStore()
+        _model = State(initialValue: AppModel(store: store, exampleStore: examples))
     }
 
     var body: some Scene {
@@ -27,6 +45,7 @@ struct DryRunApp: App {
                     // App-switcher snapshots must not show household details, including inside sheets and covers,
                     // so the shield is a separate window above everything rather than a root-view overlay.
                     PrivacyShield.shared.set(visible: phase != .active)
+                    if phase == .active { Task { await model.refreshScorecard(force: true) } }
                     // Do not purge while a share/print may still be reading the file; it is purged on dismissal.
                     if phase == .background && !TemporaryExports.hasActiveExport { TemporaryExports.purgeAll() }
                 }

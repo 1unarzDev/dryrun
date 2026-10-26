@@ -31,6 +31,31 @@ public enum PortalAttachment {
             .min { ($0.thicknessMeters, $0.id) < ($1.thicknessMeters, $1.id) }
     }
 
+    /// Two rooms on the opening's floor that it would join as an ordinary interior connection (the same two-room rule
+    /// as `check`), whatever sides are currently recorded. nil means the captured geometry shows at most one room
+    /// against the opening: it sits in an outside wall, or the geometry cannot tell. Rooms on both sides mean the
+    /// opening cannot be an exterior exit.
+    public static func interiorRoomPair(_ p: Portal, in home: HomeModel, tolerance tol: GeometryTolerance = .standard) -> (String, String)? {
+        let near = home.spaces
+            .filter { $0.floorID == p.floorID && Geometry.distanceToBoundary($0.polygon, p.center) <= tol.scanPortalAttachMeters }
+            .map(\.id).sorted()
+        guard near.count >= 2 else { return nil }
+        for i in near.indices {
+            for j in near.indices where j > i {
+                var probe = p
+                probe.sideA = .space(near[i]); probe.sideB = .space(near[j])
+                if check(probe, in: home, tolerance: tol).attached { return (near[i], near[j]) }
+            }
+        }
+        return nil
+    }
+
+    /// An exterior side recorded on an opening that the geometry places between two rooms. Never a usable exit: the
+    /// planner excludes it and the plan draws it unconfirmed until the household corrects the answer.
+    public static func exteriorClaimContradictsGeometry(_ p: Portal, in home: HomeModel, tolerance tol: GeometryTolerance = .standard) -> Bool {
+        p.leadsToExterior && interiorRoomPair(p, in: home, tolerance: tol) != nil
+    }
+
     public static func check(_ p: Portal, in home: HomeModel, tolerance tol: GeometryTolerance = .standard) -> Result {
         let spaceIDs = [p.sideA, p.sideB].compactMap { d -> String? in if case .space(let id) = d { return id }; return nil }
         let spaces = spaceIDs.compactMap { home.space($0) }

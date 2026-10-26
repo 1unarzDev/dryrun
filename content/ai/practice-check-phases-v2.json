@@ -1,0 +1,18 @@
+{
+  "version": "dryrun.practice-phases/2",
+  "status": "provisional; human comparability, wording, fairness and household-suitability review pending",
+  "evaluatorVersion": "dryrun.practice-anchors/3",
+  "variants": [
+    {"id":"practice-check-a/2","order":["initialResponse","adaptation","communication","continuity"]},
+    {"id":"practice-check-b/2","order":["continuity","communication","adaptation","initialResponse"]}
+  ],
+  "situations": {
+    "initialResponse": {"scenarioID":"home-fire","anchor":"Prioritize escape using the existing authored first-response decision; unsafe authored options earn zero"},
+    "adaptation": {"scenarioID":"home-fire","anchor":"Actual verified alternative movement after a committed failure of a previously verified path"},
+    "communication": {"scenarioID":"water-outage","anchor":"Use the recorded contact through an operational host-computed channel"},
+    "continuity": {"scenarioID":"water-outage","anchor":"Use the recorded positive stored water conservatively after supply loss; compare the two policies through isolated host projections"}
+  },
+  "equipmentRequirement": "No essential powered device or backup battery is needed for this plan. Do not add equipment or stock just to make an answer pass.",
+  "limitations": "Supported route geometry, usable contact/channel and positive known water remain prerequisites for their respective anchors; unsupported situations remain unassessed in the fixed denominator. This is not universal household coverage or human-validated equivalence.",
+  "invariants": "Retain all practice-phases/1 frozen-source, first-answer, save-before-feedback, no-reroll, latest-incomplete, offline/manual/accessibility and fixed-denominator protections. Sources share the same actual household/home/inventory; separate situations do not form one combined emergency."
+}

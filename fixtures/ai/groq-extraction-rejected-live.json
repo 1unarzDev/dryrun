@@ -1,0 +1,107 @@
+{
+  "version": "dryrun.rejected-groq-extraction/1",
+  "synthetic": true,
+  "liveModelTested": true,
+  "recordedAt": "2026-10-20T04:33:25.457Z",
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "mode": "actual extraction after live120B browser_search and injected Gemini429",
+  "expected": "reject unsupported facility/program names; broader semantic/accessibility claims also fail human review",
+  "passages": [
+    {
+      "id": "source-1.passage-1",
+      "sourceID": "source-1",
+      "quote": "URL: https://www.denvergov.org/Community/Support/Heat-Resources/Daytime-Cooling-Centers Daytime Cooling Centers - City and County of Denver ## Cooling Center Activation The city opens cooling centers when the local National Weather Service (NWS) office, located in Boulder, CO, issues a heat advisory for the Denver metro region. NWS issues a heat advisory based on the heat risk to the health of people living in the area. Heat advisories are data-driven, and health-focused. The following factors"
+    },
+    {
+      "id": "source-1.passage-2",
+      "sourceID": "source-1",
+      "quote": "are considered when a heat advisory is issued for the Denver area: - How unusual the heat is for the time of the year - The duration of the heat including both daytime and nighttime temperatures - Other weather considerations, like cloud cover and incoming cold fronts - If the temperatures pose an elevated risk of heat-related health impacts based on data from the CDC A heat advisory can be issued days in advance, but because of changing weather forecasts, however, most heat advisories are"
+    },
+    {
+      "id": "source-1.passage-3",
+      "sourceID": "source-1",
+      "quote": "typically announced a day or two before the expected high heat day. ### Cooling Center Locations When a Heat Advisory is issued, Denver Parks and Recreation opens currently operating rec centers during normal business hours to visitors/guests who are seeking relief from the heat. Denver Public Library branches are also open to the public during normal business hours. City facilities would never turn away anyway who is looking for a place to get cool. Find a Rec Center Find a Library ### Contact"
+    },
+    {
+      "id": "source-4.passage-1",
+      "sourceID": "source-4",
+      "quote": "URL: https://search.211colorado.org/search?location=Colorado&page=1&servicearea=colorado&taxonomycode=2321 2-1-1 Colorado # 2-1-1 Help Center Loading"
+    },
+    {
+      "id": "source-23.passage-1",
+      "sourceID": "source-23",
+      "quote": "URL: https://denvergov.org/Community/Support/Heat-Resources/Daytime-Cooling-Centers Daytime Cooling Centers - City and County of Denver ## Cooling Center Activation The city opens cooling centers when the local National Weather Service (NWS) office, located in Boulder, CO, issues a heat advisory for the Denver metro region. NWS issues a heat advisory based on the heat risk to the health of people living in the area. Heat advisories are data-driven, and health-focused. The following factors are"
+    },
+    {
+      "id": "source-23.passage-2",
+      "sourceID": "source-23",
+      "quote": "considered when a heat advisory is issued for the Denver area: - How unusual the heat is for the time of the year - The duration of the heat including both daytime and nighttime temperatures - Other weather considerations, like cloud cover and incoming cold fronts - If the temperatures pose an elevated risk of heat-related health impacts based on data from the CDC A heat advisory can be issued days in advance, but because of changing weather forecasts, however, most heat advisories are typically"
+    },
+    {
+      "id": "source-23.passage-3",
+      "sourceID": "source-23",
+      "quote": "announced a day or two before the expected high heat day. ### Cooling Center Locations When a Heat Advisory is issued, Denver Parks and Recreation opens currently operating rec centers during normal business hours to visitors/guests who are seeking relief from the heat. Denver Public Library branches are also open to the public during normal business hours. City facilities would never turn away anyway who is looking for a place to get cool. Find a Rec Center Find a Library ### Contact 3-1-1"
+    },
+    {
+      "id": "source-35.passage-1",
+      "sourceID": "source-35",
+      "quote": "URL: https://denverlibrary.org/content/services-persons-disabilities Services for Persons with Disabilities \\| Denver Public Library # Services for Persons with Disabilities Updated July 2026 Denver Public Library is committed to providing fair and equal access for all people who wish to use the library and its collection with adaptive technologies available at the Central Library and many branches. To request ASL, CART, or other disability related accommodations, contact info@denverlibrary.org"
+    },
+    {
+      "id": "source-35.passage-2",
+      "sourceID": "source-35",
+      "quote": "or call 720-865-1111. Please allow a minimum notice of 5 business days. Questions or feedback may be submitted on our accessibility form. Visual Access Physical Access Equipment for the Deaf or Hard of Hearing Customer eBooks, Audio eBooks & Streaming Movies Other Denver Public Library Special Services Local Colorado National ### Jaws for Windows Screen Reader This screen-reading software works in conjunction with a speech synthesizer to assist the person who is blind by speaking what is on the"
+    },
+    {
+      "id": "source-35.passage-6",
+      "sourceID": "source-35",
+      "quote": "tables. ### ASL Interpretation American Sign Language (ASL) video calling via Sorenson ntouch or Purple at ADA workstations in the Central Library's Community Technology Center. ### Overdrive eBooks and Audio eBooks Overdrive\\ offers several Accessibility Features including the ability to: - Enable dyslexic font on the Overdrive website or in the app - Enable the high contrast option on the OverDrive website - Browse the OverDrive website with a screen reader - Read accessible eBooks on your"
+    },
+    {
+      "id": "source-39.passage-1",
+      "sourceID": "source-39",
+      "quote": "URL: https://www.denverlibrary.org/sites/dplorg/files/Accessible%20PDFs/Event%20Rental/AccessibleDPLEvent%20Rental%20Guide%202026.pdf ## | Event Rental ### Table of Contents About Denver Public Library: Central Library 4 Park View 6 Park View Pavilion 10 Park View Kitchen 12 Park View Green Room 14 Park View Inclusive Restrooms 16 Park View Pre-Event Function Space 17 Park View Overlook Board Room 234 20 Park View Overlook Board Room 235 22 Gates Meeting Room 24 7th Floor Training Room 27 Vida"
+    },
+    {
+      "id": "source-39.passage-4",
+      "sourceID": "source-39",
+      "quote": "teens and adults a place of wonder and discovery. ##### MISSION Together, we create welcoming spaces where all are free to explore and connect. ##### VALUES WELCOMING: We make our resources, services, and expertise accessible for all, recognize the inherent dignity in each person, and provide safe places where everyone can be themselves. CURIOSITY: We foster a culture of exploration, innovation, and forward thinking by creating environments that support learning and growth. CONNECTION: We are"
+    },
+    {
+      "id": "source-39.passage-11",
+      "sourceID": "source-39",
+      "quote": "area for volunteers and event staff making it a flexible area for your event needs. ##### About the Space Hours available: Flexible - available upon request, based on room and event schedule Square footage : 120 Capacity: 8 \u25cf 6 storage lockers Rental Fee: Fill out inquiry form #### Park View Inclusive Restrooms Event guests have access to dedicated, all-gender restrooms designed for comfort, privacy, and accessibility. ##### About the Space Hours available: Flexible - available upon request,"
+    }
+  ],
+  "response": {
+    "object": "chat.completion",
+    "created": 1792470807,
+    "model": "openai/gpt-oss-20b",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"comparison\":\"Denver Parks and Recreation Rec Centers offer dedicated cooling infrastructure and may provide more shaded or air\u2011cooled spaces, whereas Denver Public Library branches tend to have better step\u2011free access and broader accessibility features. Both are open during normal business hours and operate only when a heat advisory is issued.\",\"limitations\":[\"Cooling centers and library branches operate only when the National Weather Service issues a heat advisory; they are not open during normal weather.\"],\"options\":[{\"name\":\"Denver Parks and Recreation Rec Centers\",\"locality\":\"Denver, Colorado, US\",\"documentedService\":\"Denver Parks and Recreation opens currently operating rec centers during normal business hours to visitors/guests who are seeking relief from the heat.\",\"whyUseful\":\"Provides a cool indoor environment during heat advisories, allowing visitors to escape high temperatures. Open during normal business hours, offering accessible cooling for those who need relief.\",\"nextAction\":\"Check if a heat advisory is active and confirm the opening hours. Verify step\u2011free access via public transit and ensure the specific rec center is reachable within 15\u202fkm.\",\"unknowns\":[\"Exact activation times for each rec center\",\"Step\u2011free accessibility of the specific rec center\",\"Location of transit stops serving the rec center\"],\"publishedOrUpdatedAt\":null,\"support\":[\"source-1.passage-3\",\"source-23.passage-3\"]},{\"name\":\"Denver Public Library Branches\",\"locality\":\"Denver, Colorado, US\",\"documentedService\":\"Denver Public Library branches are also open to the public during normal business hours.\",\"whyUseful\":\"Offers cooling and accessibility in a library setting; libraries have step\u2011free access and are open during business hours, providing a safe space during heat.\",\"nextAction\":\"Check if a heat advisory is active and confirm the opening hours. Verify step\u2011free access via public transit and ensure the specific library branch is reachable within 15\u202fkm.\",\"unknowns\":[\"Exact activation times for each library branch\",\"Step\u2011free accessibility of the specific library branch\",\"Location of transit stops serving the library branch\"],\"publishedOrUpdatedAt\":null,\"support\":[\"source-1.passage-3\",\"source-23.passage-3\"]}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "queue_time": 0.169578259,
+      "prompt_tokens": 2651,
+      "prompt_time": 0.154858793,
+      "completion_tokens": 1780,
+      "completion_time": 1.9610165849999999,
+      "total_tokens": 4431,
+      "total_time": 2.115875378,
+      "completion_tokens_details": {
+        "reasoning_tokens": 1333
+      }
+    },
+    "usage_breakdown": null,
+    "service_tier": "on_demand"
+  }
+}

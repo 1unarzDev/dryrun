@@ -193,15 +193,42 @@ public enum ActionRules {
     }
 }
 
-/// Lexicographic ranking with deterministic tie-breaking:
+/// Lexicographic ranking of one rehearsal's recommendations with deterministic tie-breaking (frozen: recorded
+/// rehearsal results and fixtures depend on it):
 ///  1. priority tier (unmet essential < blocking unknown < scenario gap < multi-scenario < general)
 ///  2. effort band (no-cost first) — only *within* a tier, so price never outranks a critical dependency
 ///  3. number of scenarios the preparation helps (more first)
 ///  4. action ID (stable)
+/// The household's merged Prepare list (`NextSteps`) additionally orders by `dependencyRank` within a tier.
 /// Duplicate action IDs are merged, keeping the most urgent tier and the union of facts and causes.
 public enum RecommendationRanker {
     static func effortRank(_ e: EffortBand) -> Int {
         switch e { case .noCost: 0; case .low: 1; case .moderate: 2; case .high: 3 }
+    }
+
+    private static let medicalDependency: Set<String> = ["prep.medicalBackup", "prep.coldStorage", "prep.medication", "prep.equipmentSupplies"]
+    private static let medicalDependencyPrefixes = ["act.backup.", "act.medical.", "act.refrigeration."]
+    private static let lifeSafety: Set<String> = ["prep.helper", "prep.stairPlan", "prep.smokeAlarms", "prep.coAlarms", "prep.clearExits", "prep.shelterPlan",
+                                                  "act.assist.assign-helper", "act.fire.smoke-alarms", "act.fire.verify-second-exit", "act.tornado.choose-shelter"]
+
+    /// 0: keeps a life-sustaining medical need going (powered or refrigerated equipment, essential medication);
+    /// 1: life safety (a person who cannot leave alone, alarms, a way out, a shelter place); 2: everything else.
+    public static func dependencyRank(_ actionID: String) -> Int {
+        if medicalDependency.contains(actionID) || medicalDependencyPrefixes.contains(where: actionID.hasPrefix) { return 0 }
+        return lifeSafety.contains(actionID) ? 1 : 2
+    }
+
+    /// The Prepare list's order: tier, then dependency (never promoting an item past a more urgent tier;
+    /// DryRun_AI_Implementation_Reference.md: unresolved powered-medical needs come earlier), effort, breadth, ID.
+    /// With a recorded tight budget, free steps come before purchases inside a tier, except that a life-sustaining
+    /// medical dependency still leads its tier. Tiers are never crossed, so cost never hides a more urgent gap.
+    static func prepareOrderKey(_ r: Recommendation, breadth: Int, limitedBudget: Bool = false) -> (Int, Int, Int, Int, String) {
+        let dependency = dependencyRank(r.actionID)
+        if limitedBudget, dependency > 0 {
+            // (tier, medical-first band, effort, dependency, breadth) folded into the same tuple shape.
+            return (r.tier.rawValue, 1 + effortRank(r.effort) * 4 + dependency, 0, -breadth, r.id)
+        }
+        return (r.tier.rawValue, limitedBudget ? 0 : dependency, effortRank(r.effort), -breadth, r.id)
     }
 
     public static func rank(_ recs: [Recommendation]) -> [Recommendation] {

@@ -1,18 +1,26 @@
 import Foundation
+import DryRunCore
 
 /// Deterministic launch configuration for screenshots, UI review, and device previews.
-/// Demo mode always uses the in-memory store and fictional sample households; it never reads or writes the vault.
+/// Demo mode uses memory and fictional samples. DEBUG persistence tests may explicitly
+/// select a UUID-isolated test vault with -uiTestingVaultID; never the owner's vault.
 ///
 ///   -demoHousehold hh-oak|hh-lake|hh-pine   load a fictional household (enables demo mode)
 ///   -demoLocale en|es|vi                    plan/UI language
 ///   -demoTab prepare|rehearse|plan          initial tab (default: prepare, or rehearse with -demoScenario)
 ///   -demoScenario <scenarioID>              open that rehearsal
+///   -demoAdaptive                           open the scenario as an adaptive (incremental session) exercise
 ///   -demoStep start|decision|end            how far to advance it (end answers each decision with the recommended option)
+///   -demoHome ranch|apartment|apartment-complex|manufactured|twostory  fictional layout (requires -demoHousehold)
+///   -demoAddress resolvable|ambiguous       typed public address with no pin, for map-origin lookup checks (requires -demoHousehold)
 ///   -demoHomeMode 2d|3d|rooms               Home sheet view
+///   -demoHomeFloor <index>                  Home sheet floor (0-based, sample homes only)
 ///   -demoPlan all|<id,id,...>               generate a plan for these scenarios at launch
 ///   -demoWritePlanPDFs                      DEBUG only: write EN/ES/VI PDFs + JSON to Documents/demo-plans, then DONE
 ///   -disableAnimations                      steadier screenshots
 ///   -uiTestingInMemory                      in-memory store without loading a household
+///   -localDirector                          DEBUG only: start adaptive rehearsals with Beacon's cloud director off
+///                                           (this phone's local director), for UI tests that script local-director turns
 struct DemoLaunch: Sendable, Equatable {
     enum Step: String, Sendable { case start, decision, end }
 
@@ -23,9 +31,16 @@ struct DemoLaunch: Sendable, Equatable {
     var scenarioID: String?
     var step: Step = .start
     var homeMode: String?
+    var homeID: String?
     var planScenarios: [String] = []
     var writePlanPDFs = false
     var disableAnimations = false
+    var adaptive = false
+    var homeFloor: Int?
+    var alert: String?
+    var address: DemoAddressCheck?
+    /// DEBUG only: pins `AppModel.cloudDirectorEnabled` to false at launch. Release builds ignore the flag.
+    var localDirector = false
 
     static let allScenarios = ["freeze-power-loss", "heat-grid-strain", "tornado", "flash-flood", "home-fire", "water-outage"]
     static let current = DemoLaunch(arguments: ProcessInfo.processInfo.arguments)
@@ -43,11 +58,19 @@ struct DemoLaunch: Sendable, Equatable {
         scenarioID = value("-demoScenario").flatMap { Self.allScenarios.contains($0) ? $0 : nil }
         step = value("-demoStep").flatMap(Step.init(rawValue:)) ?? .start
         homeMode = value("-demoHomeMode")
+        homeID = value("-demoHome").flatMap { ["ranch", "apartment", "apartment-complex", "manufactured", "twostory", "scanned"].contains($0) ? "home-sample-" + $0 : nil }
         if let p = value("-demoPlan") {
             planScenarios = p == "all" ? Self.allScenarios : p.split(separator: ",").map(String.init).filter(Self.allScenarios.contains)
         }
         writePlanPDFs = arguments.contains("-demoWritePlanPDFs")
         disableAnimations = arguments.contains("-disableAnimations")
+        adaptive = arguments.contains("-demoAdaptive")
+        homeFloor = value("-demoHomeFloor").flatMap(Int.init).flatMap { (0..<8).contains($0) ? $0 : nil }
+        address = value("-demoAddress").flatMap(DemoAddressCheck.init(rawValue:))
+        #if DEBUG
+        localDirector = arguments.contains("-localDirector")
+        #endif
+        alert = value("-demoAlert").flatMap { ["tornado", "flash-flood", "heat", "winter"].contains($0) ? $0 : nil }
     }
 
     /// Demo mode is active when a sample household is requested.

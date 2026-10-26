@@ -13,7 +13,7 @@ try {
   const assessed=await host.request({op:'assess',session:state.session,inventory:state.inventory,rubric});
   const empty=assessed.assessments.find((a:any)=>a.criterionID===category);
   assert.deepEqual(empty.predicates,{quantity:false,accessible:false});
-  assert.equal(assessed.scorecard.assessmentVersion,'dryrun.household-assessment/5');
+  assert.equal(assessed.scorecard.assessmentVersion,'dryrun.household-assessment/7');
   const unreadable=await host.request({op:'confirmInventory',session:state.session,inventory:state.inventory,inventoryItems:[{...item,quantity:confirmed(2)}]});
   const observed=await host.request({op:'assess',session:unreadable.session,inventory:unreadable.inventory,rubric});
   assert.deepEqual(observed.assessments.find((a:any)=>a.criterionID===category).predicates,{accessible:true});
@@ -34,6 +34,6 @@ try {
  assert.deepEqual(scopedAssessment.assessments.find((a:any)=>a.criterionID==='water').predicates,{});
  assert.equal(restricted.receipt.inventory.items.find((i:any)=>i.id==='scoped').remaining,100);
  results.push({subjectScope:'partial household',gap:scopedGap,physicalRemaining:100,unsupportedAllocationDisclosed:true});
- await writeFile('../../fixtures/ai/inventory-validation-v5.json',JSON.stringify({synthetic:true,modelCalls:0,assessmentVersion:'dryrun.household-assessment/5',results,overflowRejected:true,limits:'Headless transaction/schema checks; inout state and failed persistence atomicity are separately covered in Core. Native UI/Vault save path still pending.'},null,2)+'\n');
+ await writeFile('../../fixtures/ai/inventory-validation-v7.json',JSON.stringify({synthetic:true,modelCalls:0,assessmentVersion:'dryrun.household-assessment/7',results,overflowRejected:true,limits:'Headless transaction/schema checks; inout state and failed persistence atomicity are separately covered in Core. Native UI/Vault save path still pending.'},null,2)+'\n');
  console.log(JSON.stringify({status:'passed',zeroNotUnknown:true,emptyNoAccessCredit:true,unknownPreserved:true,decodedOriginRejected:true,duplicateBatchRejected:true,overflowRejected:true,modelCalls:0}));
 }finally{host.close();}

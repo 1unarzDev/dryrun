@@ -1,0 +1,66 @@
+{
+  "synthetic": true,
+  "mode": "partial-live-attempt-owner-stopped",
+  "runID": "2026-10-20T11-28-30-169Z",
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "keySlot": "backup",
+  "directorPrompt": "director/28",
+  "allSixAttemptComplete": false,
+  "rows": [
+    {
+      "hazard": "home-fire",
+      "recordedStatus": "passed",
+      "finished": true,
+      "artifact": "artifacts/ai/six-hazard/runs/2026-10-20T11-28-30-169Z/home-fire.json",
+      "validationFailures": [
+        "host_rejected_suggestions",
+        "schema_mismatch:commands:too_small"
+      ],
+      "semanticAcceptance": "pending; fire debrief has unsupported safely escaped wording"
+    },
+    {
+      "hazard": "tornado",
+      "recordedStatus": "failed",
+      "finished": false,
+      "artifact": "artifacts/ai/six-hazard/runs/2026-10-20T11-28-30-169Z/tornado.json",
+      "validationFailures": [
+        "tool_arguments:redundant_advance",
+        "preview_mismatch"
+      ],
+      "semanticAcceptance": "failed"
+    },
+    {
+      "hazard": "flash-flood",
+      "recordedStatus": "failed",
+      "finished": false,
+      "artifact": "artifacts/ai/six-hazard/runs/2026-10-20T11-28-30-169Z/flash-flood.json",
+      "validationFailures": [
+        "missed_flood_departure_decision",
+        "invalid_evidence"
+      ],
+      "semanticAcceptance": "failed"
+    },
+    {
+      "hazard": "freeze-power-loss",
+      "recordedStatus": "interrupted_or_unrun",
+      "finished": null,
+      "reason": "Owner requested conserving provider tokens; active process interrupted. No completion or no-billing claim."
+    },
+    {
+      "hazard": "heat-grid-strain",
+      "recordedStatus": "interrupted_or_unrun",
+      "finished": null,
+      "reason": "Owner requested conserving provider tokens; active process interrupted. No completion or no-billing claim."
+    },
+    {
+      "hazard": "water-outage",
+      "recordedStatus": "interrupted_or_unrun",
+      "finished": null,
+      "reason": "Owner requested conserving provider tokens; active process interrupted. No completion or no-billing claim."
+    }
+  ],
+  "billing": "Run interrupted; aggregate final usage unavailable. Accepted upstream work may still be billed.",
+  "native": "pending",
+  "humanReview": "pending"
+}

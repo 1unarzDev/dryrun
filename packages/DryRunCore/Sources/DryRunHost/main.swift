@@ -12,7 +12,10 @@ struct HostRequest: Decodable {
     var aiState:IntegratedAIState?
     var attemptID:String?
     var variantID:String?
+    var practiceSessionIDs:[String]?
     var competencyID:String?
+    var checkID:String?
+    var retest:Bool?
     var feedbackActionID:String?
     var resourceTasks:[PreparationTaskProposal]?
     var strategyDependencies:[ResourceStrategyDependency]?
@@ -38,9 +41,12 @@ struct HostRequest: Decodable {
     var profileIDs: [String]?
     var stressFindings:[StressTestFinding]?
     var intervention: Intervention?
+    var retestPlan: StressRetestPlan?
     var tool:SessionToolRequest?
 }
 struct HostResponse: Encodable {
+    var commitResolution:DurableCommitResolution?
+    var pendingHazardChecks:[HazardPracticeCheck]?
     var lastAction:CommittedUserActionContext?
     var recentActions:[CommittedUserActionContext]
     var resourceStrategyKey:ResourceStrategyKey?
@@ -70,7 +76,7 @@ let encoder = DryRunJSON.encoder(); encoder.outputFormatting = [.sortedKeys, .wi
 while let line = readLine() {
     do {
         let request = try decoder.decode(HostRequest.self, from: Data(line.utf8))
-        guard ["initialize","query","tool","commit","directorCommit","interpretCommit","fallback","preview","assess","inventory","confirmInventory","stress","practiceBegin","practiceSubmit","practiceFeedback","reviewConcern","concernExercise","resourceKey"].contains(request.op) else {throw SessionError.invalidCommand}
+        guard ["initialize","query","reconcileCommit","tool","commit","directorCommit","interpretCommit","fallback","preview","assess","inventory","confirmInventory","stress","practiceHazardBegin","practiceHazardSubmit","practiceBegin","practiceCheckBegin","practiceSubmit","practiceFeedback","reviewConcern","concernExercise","resourceKey"].contains(request.op) else {throw SessionError.invalidCommand}
         var session: SimulationSession
         if request.op == "initialize" {
             let household = request.sample == "lake" ? SampleHouseholds.lake : request.sample == "pine" ? SampleHouseholds.pine : SampleHouseholds.oak
@@ -105,11 +111,23 @@ while let line = readLine() {
             if aiState==nil {aiState=IntegratedAIState(sessions:[session])}
             guard let attemptID=request.attemptID else {throw SessionError.invalidCommand}
             switch request.op {
+            case "practiceHazardBegin":
+                guard let checkID=request.checkID else {throw SessionError.invalidCommand}
+                try aiState!.beginHazardCheck(id:attemptID,checkID:checkID,sessionID:session.id,library:library,retest:request.retest ?? false)
+            case "practiceHazardSubmit":
+                guard let commit=request.commit,let rubric=request.rubric else {throw SessionError.invalidCommand}
+                try aiState!.submitHazardCheck(attemptID:attemptID,commit:commit,library:library,rubric:rubric,assessments:request.assessments ?? [])
             case "practiceBegin":
                 guard let variantID=request.variantID else {throw SessionError.invalidCommand}
                 try aiState!.beginPractice(id:attemptID,variantID:variantID,sessionID:session.id,library:library)
+            case "practiceCheckBegin":
+                guard let variantID=request.variantID,let ids=request.practiceSessionIDs else {throw SessionError.invalidCommand}
+                try aiState!.beginPracticeCheck(id:attemptID,variantID:variantID,sessionIDs:ids,library:library)
             case "practiceSubmit":
                 guard let competency=request.competencyID,let commit=request.commit else {throw SessionError.invalidCommand}
+                if aiState!.practiceAttempts.first(where:{$0.id==attemptID})?.phaseSources != nil {
+                    guard try aiState!.activePracticeCheckSession(attemptID:attemptID,library:library)?.id==session.id else {throw SessionError.stale}
+                }
                 try aiState!.submitPracticeAction(attemptID:attemptID,competencyID:competency,commit:commit,library:library)
             case "practiceFeedback":
                 guard let actionID=request.feedbackActionID else {throw SessionError.invalidCommand}
@@ -125,32 +143,34 @@ while let line = readLine() {
             var input=session.initial,local=IntegratedAIState(inventory:request.inventory ?? InventoryLedger())
             let date=ISO8601DateFormatter().date(from:"2026-10-19T00:00:00Z")!
             try local.confirmInventory(items,household:&input.household,baseHouseholdRevision:input.household.revision,baseInventoryRevision:local.inventory.revision,at:date,persist:{_,_ in})
-            session=SimulationSession(id:session.id,initial:input,inventory:SessionInventorySeed(ledger:local.inventory,asOf:date),directorPolicy:session.directorPolicy,concernSeed:session.concernSeed);confirmedInventory=local.inventory
+            session=SimulationSession(id:session.id,initial:input,inventory:SessionInventorySeed(ledger:local.inventory,asOf:date),directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,mechanicsVersion:session.mechanicsVersion);confirmedInventory=local.inventory
         }
+        if request.op == "reconcileCommit", request.commit == nil {throw SessionError.invalidCommand}
         if request.op == "commit", let commit = request.commit { try session.commit(commit, library: library) }
         if request.op == "directorCommit" {guard let proposal=request.proposal,let binding=request.binding else {throw SessionError.invalidCommand};try proposal.commit(to:&session,binding:binding,library:library,persist:{_ in})}
-        if request.op == "fallback" { try session.commit(session.fallback(), library: library) }
+        if request.op == "fallback" { try session.commit(session.fallback(library:library), library: library) }
         let receipt: SessionReceipt
         if request.op == "preview" { guard let commit=request.commit else {throw SessionError.invalidCommand}; receipt=try session.preview(commit,library:library) }
         else {receipt=try session.query(library:library)}
         let date = ISO8601DateFormatter().date(from:"2026-10-19T00:00:00Z")!
         var assessments:[CriterionAssessment]?, scorecard:PreparednessScorecard?, gaps:[SupplyGap]?, stress:StressTestFinding?
+        if request.op == "practiceHazardSubmit" {scorecard=aiState?.scorecards.last}
         if request.op == "assess", let rubric=request.rubric {
             assessments = try request.assessments ?? HouseholdAssessment.assess(household:session.initial.household,home:session.initial.home,inventory:request.inventory,stressFindings:request.stressFindings ?? [],at:date)
-            if let aiState {scorecard=try aiState.compileScorecard(rubric:rubric,assessments:assessments!,library:library)}
+            if let aiState {scorecard=try aiState.compileScorecard(rubric:rubric,assessments:assessments!,library:library,currentHousehold:session.initial.household,currentHome:session.initial.home)}
             else {scorecard = try ScoreCompiler.compile(rubric:rubric,assessments:assessments!,attempts:request.attempts ?? [])}
         }
         if request.op == "inventory" || request.op == "confirmInventory", let inventory=confirmedInventory ?? request.inventory {gaps = try inventory.preparationGaps(personIDs:session.initial.household.people.map(\.id),at:date)}
-        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed)}
+        if request.op == "stress" {stress = try PlanStressTester.execute(initial:session.initial,profileIDs:request.profileIDs ?? [],library:library,intervention:request.intervention,inventory:session.inventory,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,retestPlan:request.retestPlan)}
         var resourceStrategyKey:ResourceStrategyKey?
         if request.op=="resourceKey" {
             guard let inventory=request.inventory ?? session.inventory?.ledger,let tasks=request.resourceTasks else {throw SessionError.invalidCommand}
             let resourceGaps=try inventory.preparationGaps(personIDs:session.initial.household.people.map(\.id),at:date)
-            resourceStrategyKey=try ResourceStrategyKey.normalized(gaps:resourceGaps,tasks:tasks,transport:HouseholdContextSnapshot(session.initial.household).transport,
-                limitedBudget:session.initial.household.supplies.limitedBudget,regionID:session.initial.household.regionID,dependencies:request.strategyDependencies ?? [])
+            resourceStrategyKey=try ResourceStrategyKey.normalized(gaps:resourceGaps,tasks:tasks,transport:HouseholdContextSnapshot(session.initial.household,at:date).transport,
+                limitedBudget:session.initial.household.supplies.limitedBudget,regionID:session.initial.household.regionID,dependencies:request.strategyDependencies ?? HousingPlanning.strategyDependencies(household:session.initial.household,home:session.initial.home,at:date))
         }
         let actions=try session.userActionContexts(library:library)
-        let response = HostResponse(lastAction:actions.last,recentActions:actions,resourceStrategyKey:resourceStrategyKey,concernTasks:concernTasks,intentResult:intentResult,aiState:aiState,session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.initial.variants) }, directorProfiles:library.scenario(session.initial.scenarioID).map{scenario in scenario.events.filter{Applicability.holds($0.when,household:session.initial.household,home:session.initial.home,variants:session.initial.variants)}.map{DirectorProfileDescriptor($0,in:scenario)}}, householdContext: HouseholdContextSnapshot(session.initial.household), homeScene: session.initial.home.map(HomeSceneContext.init), preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
+        let response = HostResponse(commitResolution:request.op == "reconcileCommit" ? try request.commit.map{try session.reconcileDurableCommit($0,library:library)}:nil,pendingHazardChecks:try aiState?.pendingHazardChecks(household:session.initial.household,home:session.initial.home),lastAction:actions.last,recentActions:actions,resourceStrategyKey:resourceStrategyKey,concernTasks:concernTasks,intentResult:intentResult,aiState:aiState,session: session, receipt: receipt, profiles: library.scenario(session.initial.scenarioID)!.events.filter { Applicability.holds($0.when, household:session.initial.household,home:session.initial.home,variants:session.effectiveVariants) }, directorProfiles:library.scenario(session.initial.scenarioID).map{scenario in scenario.events.filter{Applicability.holds($0.when,household:session.initial.household,home:session.initial.home,variants:session.effectiveVariants)}.map{DirectorProfileDescriptor($0,in:scenario)}}, householdContext: HouseholdContextSnapshot(session.initial.household,inventory:confirmedInventory ?? request.inventory ?? session.inventory?.ledger,at:date), homeScene: session.initial.home.map{HomeSceneContext($0,household:session.initial.household)}, preparationActions: BaselinePreparedness.evaluate(household:session.initial.household,home:session.initial.home,referenceDate:date).map(\.actionID), taskCatalog:request.rubric.map{PreparationTaskCatalog.build(household:session.initial.household,home:session.initial.home,rubric:$0,at:date)}, assessments:assessments, scorecard:scorecard, gaps:gaps, stress:stress, tool:try request.tool.map{try session.executeTool($0,library:library)},inventory:confirmedInventory)
         print(String(decoding: try encoder.encode(response), as: UTF8.self))
         fflush(nil)
     } catch { print("{\"error\":\"\(error is SessionError ? String(describing: error) : "invalid_request")\"}"); fflush(nil) }

@@ -7,7 +7,6 @@ import DryRunCore
 struct HelpTabView: View {
     @Environment(AppModel.self) private var model
     @State private var showMapPlanner = false
-    @State private var showCard = false
 
     var body: some View {
         let l = model.localizer
@@ -29,8 +28,10 @@ struct HelpTabView: View {
                     Label(l("common.offline"), systemImage: "wifi.slash").font(.footnote)
                 }
                 if model.household != nil {
-                    Button { showCard = true } label: { Label(l("ui.card.open"), systemImage: "bolt.heart.fill") }
-                        .foregroundStyle(Theme.critical)
+                    // Pushed, not a sheet: Help is already pushed from Plan, and the card's own editor and PDF
+                    // preview are sheets, so a sheet here made three stacked layers.
+                    NavigationLink { OutageCardView() } label: { Label(l("ui.card.open"), systemImage: "person.text.rectangle.fill") }
+                        .frame(minHeight: Theme.minTap)
                         .accessibilityIdentifier("help.outageCard")
                 }
             }
@@ -77,7 +78,6 @@ struct HelpTabView: View {
             }
         }
         .navigationTitle(l("common.tab.help"))
-        .sheet(isPresented: $showCard) { NavigationStack { OutageCardView(showsDone: true) } }
         .sheet(isPresented: $showMapPlanner) {
             if let regionalResources = model.regionalResources {
                 MapPlanningView(store: regionalResources)

@@ -5,6 +5,7 @@ import DryRunCore
 // Neutral "dollhouse": floor slabs, low cut-away walls, simple markers, and route segments built from
 // the SAME canonical RoutePath points as the 2D plan (one box per segment, no smoothed ribbon).
 // iOS 18 RealityView. Rendered on an iPhone 16 Pro (iOS 26.6.1) with the example homes, October 18, 2026; not yet with a real scan.
+// That historical device evidence predates the connector-kind/exclusion changes below; those need a fresh wired-iPhone check.
 // Mapping: floor plane (x, y) → RealityKit (x, elevation, -y), metres.
 
 struct DollhouseView: View {
@@ -29,7 +30,8 @@ struct DollhouseView: View {
         let routePoints = routes.map { r in
             r.legs.map { leg in "\(leg.floorID):" + leg.points.map { "\($0.x),\($0.y)" }.joined(separator: ";") }.joined(separator: "|")
         }.joined(separator: "#")
-        return "\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)#\(spatialState?.stageID ?? "")#\(spatialState?.hazard.rawValue ?? "")#\(spatialState?.affectedSpaceIDs.joined(separator: ",") ?? "")#\(spatialState?.exposedSpaceIDs?.joined(separator: ",") ?? "")#\(spatialState?.destinationSpaceID ?? "")#\(spatialState?.affectedPortalIDs.joined(separator: ",") ?? "")#\(String(describing: selectedRoute?.request))"
+        let exclusions = selectedRoute?.exclusions.map { "\($0.elementID):\($0.reason)" }.joined(separator: "|") ?? ""
+        return "\(exclusions)#\(home.id)#\(home.revision)#\(HomeFingerprint.of(home))#\(floorID ?? "all")#\(routePoints)#\(spatialState?.stageID ?? "")#\(spatialState?.hazard.rawValue ?? "")#\(spatialState?.affectedSpaceIDs.joined(separator: ",") ?? "")#\(spatialState?.exposedSpaceIDs?.joined(separator: ",") ?? "")#\(spatialState?.destinationSpaceID ?? "")#\(spatialState?.affectedPortalIDs.joined(separator: ",") ?? "")#\(String(describing: selectedRoute?.request))"
     }
 
     var body: some View {
@@ -70,7 +72,6 @@ enum DollhouseBuilder {
         let floors = home.floors.filter { floorID == nil || $0.id == floorID }
         // uniquingKeysWith, not uniqueKeysWithValues: a duplicate floor ID is a reportable data problem
         // (HomeValidator), not a reason to crash the 3D view.
-        let elev = Dictionary(home.floors.map { ($0.id, Float($0.elevationMeters)) }, uniquingKeysWith: { first, _ in first })
         // Each floor's coordinates are placed in the shared frame with its rigid Floor.toCommon transform,
         // so storeys, stairs, and routes line up even when floors are rotated/offset relative to each other.
         let toCommon = Dictionary(home.floors.map { ($0.id, $0.toCommon) }, uniquingKeysWith: { first, _ in first })
@@ -80,9 +81,13 @@ enum DollhouseBuilder {
             .flatMap { s in s.polygon.map { (toCommon[s.floorID] ?? .identity).apply($0) } }
         let cx = Float(((pts.map(\.x).min() ?? 0) + (pts.map(\.x).max() ?? 0)) / 2)
         let cy = Float(((pts.map(\.y).min() ?? 0) + (pts.map(\.y).max() ?? 0)) / 2)
+        // Shown floors keep their relative heights, but the lowest one sits at the origin. Without this a third-floor
+        // unit (6 m) rose toward the default camera and was cropped and over-zoomed on device.
+        let baseElevation = Float(floors.map(\.elevationMeters).min() ?? 0)
         func p3(_ v: Vec2, _ fid: String, lift: Float = 0) -> SIMD3<Float> {
-            let w = (toCommon[fid] ?? .identity).apply(v)
-            return SIMD3(Float(w.x) - cx, (elev[fid] ?? 0) + lift, -(Float(w.y) - cy))
+            guard let floor = home.floors.first(where: { $0.id == fid }) else { return SIMD3(0, lift, 0) }
+            let point = HomeModelExport.point3D(v, floor: floor)
+            return SIMD3(Float(point.x) - cx, Float(point.y) - baseElevation + lift, Float(point.z) + cy)
         }
 
         let floorMat = SimpleMaterial(color: .init(white: 0.92, alpha: 1), isMetallic: false)
@@ -124,11 +129,44 @@ enum DollhouseBuilder {
             guard let from = home.space(connector.fromSpaceID), let to = home.space(connector.toSpaceID),
                   floors.contains(where: { $0.id == from.floorID || $0.id == to.floorID }) else { continue }
             let a = p3(connector.fromPoint, from.floorID, lift: 0.08), b = p3(connector.toPoint, to.floorID, lift: 0.08)
-            for index in 0...8 {
-                let t = Float(index) / 8
-                let step = ModelEntity(mesh: .generateBox(width: 0.7, height: 0.06, depth: 0.22), materials: [wallMat])
-                step.position = a + (b - a) * t
-                root.addChild(step)
+            let excluded = selectedRoute?.exclusions.contains { $0.elementID == connector.id } == true
+                || (connector.kind == .elevator && spatialState?.hazard == .homeFire)
+            let material = excluded ? SimpleMaterial(color: .systemRed, isMetallic: false) : wallMat
+            switch connector.kind {
+            case .stairs:
+                for index in 0...8 {
+                    let t = Float(index) / 8
+                    let step = ModelEntity(mesh: .generateBox(width: 0.7, height: 0.06, depth: 0.22), materials: [material])
+                    step.position = a + (b - a) * t
+                    root.addChild(step)
+                }
+            case .ramp:
+                let delta = b - a
+                let length = simd_length(delta)
+                if length > 0.001 {
+                    let ramp = ModelEntity(mesh: .generateBox(width: 0.7, height: 0.04, depth: length), materials: [material])
+                    ramp.position = (a + b) / 2
+                    ramp.orientation = simd_quatf(from: SIMD3<Float>(0, 0, 1), to: delta / length)
+                    root.addChild(ramp)
+                }
+            case .elevator:
+                // Landing frames distinguish a lift from stairs. These are orientation cues, never route segments.
+                for landing in [a, b] {
+                    for offset in [Float(-0.28), Float(0.28)] {
+                        let post = ModelEntity(mesh: .generateBox(width: 0.05, height: 0.65, depth: 0.05), materials: [material])
+                        post.position = landing + SIMD3(offset, 0.325, 0)
+                        root.addChild(post)
+                    }
+                    root.addChild(bar(from: landing + SIMD3(-0.28, 0.65, 0), to: landing + SIMD3(0.28, 0.65, 0), height: 0.05, thickness: 0.05, material: material))
+                }
+            }
+            if excluded {
+                // Shape as well as color: an X remains visible at each excluded landing.
+                for landing in [a, b] {
+                    for sign in [Float(-1), Float(1)] {
+                        root.addChild(bar(from: landing + SIMD3(-0.22, 0.1, -0.22 * sign), to: landing + SIMD3(0.22, 0.1, 0.22 * sign), height: 0.05, thickness: 0.07, material: material))
+                    }
+                }
             }
         }
         for room in home.spaces where spatialState?.affectedSpaceIDs.contains(room.id) == true && floors.contains(where: { $0.id == room.floorID }) {
@@ -276,6 +314,7 @@ enum DollhouseBuilder {
 struct DollhouseKey: View {
     @Environment(AppModel.self) private var model
     let home: HomeModel
+    var floorID: String? = nil
     var spatialState: SpatialExerciseState? = nil
     var selectedRoute: RouteResult? = nil
     var hasRoutes = false
@@ -284,8 +323,17 @@ struct DollhouseKey: View {
     /// not on screen or misses one that is.
     private var items: [(key: String, color: Color, shape: String)] {
         let l = model.localizer
+        let floorIDs = Set(home.floors.filter { floorID == nil || $0.id == floorID }.map(\.id))
+        let connectors = home.connectors.filter { connector in
+            home.space(connector.fromSpaceID).map { floorIDs.contains($0.floorID) } == true
+                || home.space(connector.toSpaceID).map { floorIDs.contains($0.floorID) } == true
+        }
         var drawn: Set<String> = []
-        for p in home.portals {
+        if connectors.contains(where: { connector in
+            selectedRoute?.exclusions.contains { $0.elementID == connector.id } == true
+                || (connector.kind == .elevator && spatialState?.hazard == .homeFire)
+        }) { drawn.insert("blocked") }
+        for p in home.portals where floorIDs.contains(p.floorID) {
             let status = HomeScenePresentation.openingStatus(p, in: home, state: spatialState, request: selectedRoute?.request)
             if status == .unavailable { drawn.insert("blocked") }
             else if p.kind == .window { drawn.insert("window") }
@@ -298,14 +346,19 @@ struct DollhouseKey: View {
         if drawn.contains("unconfirmed") { out.append((l("pdf.legend.unconfirmed"), .orange, "rectangle.fill")) }
         if drawn.contains("blocked") { out.append((l("pdf.legend.blocked"), .red, "xmark")) }
         if hasRoutes { out.append((l("pdf.legend.primary"), .blue, "line.diagonal")) }
-        if !(spatialState?.affectedSpaceIDs.isEmpty ?? true) {
+        for kind in [ConnectorKind.stairs, .ramp, .elevator] where connectors.contains(where: { $0.kind == kind }) {
+            let symbol = kind == .stairs ? "stairs" : kind == .ramp ? "figure.roll" : "arrow.up.arrow.down.square"
+            out.append((l("spatial.connector.\(kind.rawValue)"), Color(white: 0.55), symbol))
+        }
+        if spatialState?.affectedSpaceIDs.contains(where: { id in home.space(id).map { floorIDs.contains($0.floorID) } == true }) == true {
             out.append((l("pdf.legend.affected"), spatialState?.hazard == .flashFlood ? .blue : .orange, "square.fill"))
         }
-        if spatialState?.destinationSpaceID != nil || !(spatialState?.exposedSpaceIDs?.isEmpty ?? true) {
-            out.append((l(spatialState?.destinationSpaceID != nil ? "pdf.legend.shelter" : "pdf.legend.exposed"), .purple, "square"))
+        let hasDestination = spatialState?.destinationSpaceID.flatMap { home.space($0) }.map { floorIDs.contains($0.floorID) } == true
+        let hasExposure = spatialState?.exposedSpaceIDs?.contains { id in home.space(id).map { floorIDs.contains($0.floorID) } == true } == true
+        if hasDestination || hasExposure {
+            out.append((l(hasDestination ? "pdf.legend.shelter" : "pdf.legend.exposed"), .purple, "square"))
         }
-        if selectedRoute != nil, HomeScenePresentation.startingRoom(in: home, route: selectedRoute) != nil { out.append((l("pdf.legend.start"), .blue, "circle.fill")) }
-        let floorIDs = Set(home.floors.map(\.id))
+        if selectedRoute != nil, let start = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), floorIDs.contains(start.floorID) { out.append((l("pdf.legend.start"), .blue, "circle.fill")) }
         let kinds = Set(home.annotations.filter { $0.position != nil && $0.floorID.map(floorIDs.contains) == true }.map(\.kind))
         let safety = [AnnotationKind.smokeAlarm, .coAlarm, .fireExtinguisher].filter(kinds.contains)
         if !safety.isEmpty { out.append((safety.map { l("pdf.legend.\($0.rawValue)") }.joined(separator: ", "), .red, "circle.fill")) }
@@ -313,7 +366,7 @@ struct DollhouseKey: View {
         let others = kinds.subtracting(safety + [.outsideMeetingPoint]).sorted { $0.rawValue < $1.rawValue }
             .compactMap { DiagramLegendKey.key($0) }.map { l($0) }
         if !others.isEmpty { out.append((Array(Set(others)).sorted().joined(separator: ", "), Color(white: 0.35), "circle.fill")) }
-        if !home.obstacles.isEmpty { out.append((l("pdf.legend.furniture"), Color(white: 0.35), "square.fill")) }
+        if home.obstacles.contains(where: { floorIDs.contains($0.floorID) }) { out.append((l("pdf.legend.furniture"), Color(white: 0.35), "square.fill")) }
         return out
     }
 

@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "sourceHashes": {
+    "scripts/housing-layout-eval.ts": "fa23bf76ec2da3a64db0bbfc947fe6ee905ac2a8d9a23953ccf52b98c0c82bd9",
+    "src/features.ts": "3ddf9a30c77c602bf62d832fbfd546590c6aee2d8d298d8ec96f0cc1efe522b3",
+    "src/output-quality.ts": "591b884a0128fd21a13e706fd672244a42a4d2ebe93c66099ad16a014b56bf5f",
+    "../../DryRun_AI_Implementation_Reference.md": "3cdaa439835f91d94439e4a41176712f2f3e42a7141d7fcf23c44bc89092dc0f"
+  },
+  "results": [],
+  "replies": [],
+  "outputs": [],
+  "failure": "provider_timeout_or_cancelled",
+  "calls": 3
+}

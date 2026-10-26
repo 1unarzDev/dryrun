@@ -7,6 +7,9 @@ public struct PracticeAttemptSource:Codable,Sendable,Equatable {
     public var initialDigest:String
     public var startingRevision:Int
     public var startingEventSequence:Int
+    /// Missing on persisted capture/1 sources means anchors/1; never regrade old answers.
+    public var evaluatorVersion:String? = nil
+    public var startingReceiptDigest:String? = nil
 }
 public struct PracticeObservation:Codable,Sendable,Equatable {
     public var competencyID:String
@@ -16,6 +19,8 @@ public struct PracticeObservation:Codable,Sendable,Equatable {
     /// nil means unsupported/unassessed. It remains in the fixed competency denominator.
     public var credit:Double?
     public var feedbackRevealed:Bool
+    /// Explicit Next acknowledgement. Missing in old snapshots remains recoverable.
+    public var feedbackAcknowledged:Bool? = false
 }
 
 public extension IntegratedAIState {
@@ -25,8 +30,8 @@ public extension IntegratedAIState {
         library:ScenarioLibrary,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeAttempt {
         guard !practiceAttempts.contains(where:{$0.source != nil && $0.archivedUnverified==true}) else {throw SessionError.invalidCommand}
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
-           latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4 {return latest}
-        guard let session=sessions.first(where:{$0.id==sessionID}),session.concernSeed==nil,
+           latest.checkID==nil,latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4 {return latest}
+        guard !Self.phasedPracticeVariants.contains(variantID),let session=sessions.first(where:{$0.id==sessionID}),session.concernSeed==nil,
               !practiceAttempts.contains(where:{$0.source?.sessionID==sessionID}) else {throw SessionError.invalidCommand}
         let receipt=try session.query(library:library)
         guard !session.commits.contains(where:{$0.actor=="user"}) else {throw SessionError.invalidCommand}
@@ -35,7 +40,7 @@ public extension IntegratedAIState {
         var attempt=try candidate.beginPractice(id:id,variantID:variantID)
         attempt.source=PracticeAttemptSource(contractVersion:"dryrun.practice-capture/1",sessionID:sessionID,
             initialDigest:try Self.practiceSourceDigest(session),
-            startingRevision:session.revision,startingEventSequence:receipt.eventSequence)
+            startingRevision:session.revision,startingEventSequence:receipt.eventSequence,evaluatorVersion:PracticeEvaluator.version)
         attempt.observations=[]
         candidate.practiceAttempts[candidate.practiceAttempts.count-1]=attempt
         try persist(candidate);self=candidate;return attempt
@@ -54,9 +59,13 @@ public extension IntegratedAIState {
     /// No credit or beforeFeedback input is accepted. A failed persistence publishes neither.
     @discardableResult mutating func submitPracticeAction(attemptID:String,competencyID:String,
         commit:SessionCommit,library:ScenarioLibrary,persist:(IntegratedAIState)throws->Void={_ in})throws->PracticeObservation {
-        guard let a=practiceAttempts.firstIndex(where:{$0.id==attemptID}),
+        if practiceAttempts.first(where:{$0.id==attemptID})?.phaseSources != nil {
+            return try submitPhasedPracticeAction(attemptID:attemptID,competencyID:competencyID,commit:commit,library:library,persist:persist)
+        }
+        guard let a=practiceAttempts.firstIndex(where:{$0.id==attemptID}),!Self.phasedPracticeVariants.contains(practiceAttempts[a].variantID),
               practiceAttempts[a].sequence==practiceAttempts.map(\.sequence).max(),
               let source=practiceAttempts[a].source,source.contractVersion=="dryrun.practice-capture/1",
+              PracticeEvaluator.supportedVersions.contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),
               let s=sessions.firstIndex(where:{$0.id==source.sessionID}),
               sessions[s].concernSeed==nil,
               var observations=practiceAttempts[a].observations,
@@ -72,7 +81,7 @@ public extension IntegratedAIState {
         var candidate=self
         let receipt=try candidate.sessions[s].commit(commit,library:library)
         var answer:PracticeAnswer?
-        do {answer=try PracticeEvaluator.evaluate(competencyID:competencyID,actionID:commit.id,session:candidate.sessions[s],library:library)}
+        do {answer=try PracticeEvaluator.evaluate(competencyID:competencyID,actionID:commit.id,session:candidate.sessions[s],library:library,evaluatorVersion:source.evaluatorVersion ?? PracticeEvaluator.legacyVersion)}
         catch SessionError.invalidCommand {answer=nil} // Unsupported anchor, not an invented wrong/correct answer.
         let observation=PracticeObservation(competencyID:competencyID,actionID:commit.id,acceptedRevision:receipt.revision,
             receiptDigest:receipt.contextDigest,credit:answer?.credit,feedbackRevealed:false)
@@ -98,16 +107,19 @@ public extension IntegratedAIState {
     /// the numeric compiler. Legacy imported answers have no chronology proof and earn no credit.
     func eligiblePracticeAttempts(library:ScenarioLibrary)throws->[PracticeAttempt] {
         try practiceAttempts.map {attempt in
+            if attempt.checkID != nil {return try validateHazardCheck(attempt,library:library)}
+            if attempt.phaseSources != nil {return try validatePhasedPractice(attempt,library:library)}
             var accepted=attempt;accepted.answers=[]
             guard let source=attempt.source else {return accepted}
-            guard attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
+            guard !Self.phasedPracticeVariants.contains(attempt.variantID),attempt.archivedUnverified != true,source.contractVersion=="dryrun.practice-capture/1",
+              PracticeEvaluator.supportedVersions.contains(source.evaluatorVersion ?? PracticeEvaluator.legacyVersion),let session=sessions.first(where:{$0.id==source.sessionID}),session.concernSeed==nil,
                   source.initialDigest==(try Self.practiceSourceDigest(session)),
                   let observations=attempt.observations,observations.count<=4,
                   Set(observations.map(\.actionID)).count==observations.count,
                   observations.map(\.acceptedRevision)==observations.map(\.acceptedRevision).sorted(),
                   observations.map(\.competencyID)==Array(Self.practiceOrder(attempt.variantID).prefix(observations.count)) else {throw SessionError.invalidCommand}
             try Self.validatePracticeChronology(source:source,observations:observations,session:session)
-            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)
+            var prefix=SimulationSession(id:session.id,initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,dependencyPolicy:session.dependencyPolicy,mechanicsVersion:session.mechanicsVersion)
             var found=0
             let initialReceipt=try prefix.query(library:library)
             guard source.startingRevision>=0,source.startingRevision<=session.revision else {throw SessionError.invalidCommand}
@@ -119,7 +131,7 @@ public extension IntegratedAIState {
                     guard commit.actor=="user",prefix.revision>source.startingRevision,
                           observation.acceptedRevision==receipt.revision,observation.receiptDigest==receipt.contextDigest else {throw SessionError.stale}
                     var answer:PracticeAnswer?
-                    do {answer=try PracticeEvaluator.evaluate(competencyID:observation.competencyID,actionID:commit.id,session:prefix,library:library)}
+                    do {answer=try PracticeEvaluator.evaluate(competencyID:observation.competencyID,actionID:commit.id,session:prefix,library:library,evaluatorVersion:source.evaluatorVersion ?? PracticeEvaluator.legacyVersion)}
                     catch SessionError.invalidCommand {answer=nil}
                     guard observation.credit==answer?.credit else {throw SessionError.invalidCommand}
                     if let answer {accepted.answers.append(answer)}
@@ -130,8 +142,9 @@ public extension IntegratedAIState {
             return accepted
         }
     }
-    func compileScorecard(rubric:RubricDefinition,assessments:[CriterionAssessment],library:ScenarioLibrary)throws->PreparednessScorecard {
-        try ScoreCompiler.compile(rubric:rubric,assessments:assessments,attempts:eligiblePracticeAttempts(library:library))
+    func compileScorecard(rubric:RubricDefinition,assessments:[CriterionAssessment],library:ScenarioLibrary,currentHousehold:HouseholdProfile?=nil,currentHome:HomeModel?=nil)throws->PreparednessScorecard {
+        let evidence=try currentHousehold.map{try currentPracticeEvidence(household:$0,home:currentHome,library:library)} ?? eligiblePracticeAttempts(library:library)
+        return try ScoreCompiler.compile(rubric:rubric,assessments:assessments,attempts:evidence)
     }
     private static func validatePracticeChronology(source:PracticeAttemptSource,observations:[PracticeObservation],session:SimulationSession)throws {
         guard source.startingRevision>=0,source.startingRevision<=session.commits.count,
@@ -146,14 +159,16 @@ public extension IntegratedAIState {
         var inventory:SessionInventorySeed?
         var directorPolicy:DirectorPolicy?
         var concernSeed:ConcernExerciseSeed?
+        var mechanicsVersion:String?
     }
-    private static func practiceSourceDigest(_ session:SimulationSession)throws->String {
-        StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed)))
+    static func practiceSourceDigest(_ session:SimulationSession)throws->String {
+        StableDigest.of(try DryRunJSON.encoder().encode(PracticeSourceSnapshot(initial:session.initial,inventory:session.inventory,directorPolicy:session.directorPolicy,concernSeed:session.concernSeed,mechanicsVersion:session.mechanicsVersion)))
     }
-    private static func practiceOrder(_ variantID:String)->[String] {
+    static func practiceOrder(_ variantID:String)->[String] {
         switch variantID {
-        case "practice-check-a/0":return ["initialResponse","adaptation","communication","continuity"]
-        case "practice-check-b/0":return ["continuity","communication","adaptation","initialResponse"]
+        // practice-check-a/3 is the legacy name of practice-plan-a/1 (planned sets saved before the rename).
+        case "practice-check-a/0","practice-check-a/1","practice-check-a/2","practice-check-a/3","practice-plan-a/1":return ["initialResponse","adaptation","communication","continuity"]
+        case "practice-check-b/0","practice-check-b/1","practice-check-b/2","practice-check-b/3","practice-plan-b/1":return ["continuity","communication","adaptation","initialResponse"]
         default:return []
         }
     }

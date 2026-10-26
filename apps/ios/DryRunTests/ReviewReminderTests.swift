@@ -8,7 +8,7 @@ private final class ReminderSchedulerFake: ReviewReminderScheduling {
     var writes = 0
     var cancellations = 0
     func pendingDate() async -> Date? { date }
-    func schedule(at date: Date, title: String, body: String) async throws {
+    func schedule(at date: Date, title: String, body: String, isCurrent: @escaping @MainActor () -> Bool) async throws {
         writes += 1
         if let failure { throw failure }
         self.date = date
@@ -39,6 +39,49 @@ private final class SuspendedNotificationAccess: ReviewNotificationAccess {
 /// Authored native tests; they do not verify the system authorization dialog or notification delivery.
 @MainActor
 final class ReviewReminderTests: XCTestCase {
+    func testScopeChangeDuringAuthorizationIsRejectedBeforeViewCancellation() async {
+        let access = SuspendedNotificationAccess()
+        let scheduler = LocalReviewReminderScheduler(access: access)
+        var currentScope = "personal"
+        let task = Task {
+            try await scheduler.schedule(at: Date().addingTimeInterval(3600), title: "Review", body: "Plan",
+                                         isCurrent: { currentScope == "personal" })
+        }
+        while access.authorization == nil { await Task.yield() }
+        currentScope = "example"
+        access.authorization?.resume()
+        do { try await task.value; XCTFail("Changed scope must fail") } catch is CancellationError {} catch { XCTFail("Unexpected error") }
+        XCTAssertEqual(access.writes, 0)
+        XCTAssertEqual(access.cancellations, 0)
+    }
+
+    func testScopeCancellationDuringAuthorizationPreservesExistingReminder() async {
+        let access = SuspendedNotificationAccess()
+        let existing = Date(timeIntervalSince1970: 2_000_000_000)
+        access.date = existing
+        let scheduler = LocalReviewReminderScheduler(access: access)
+        let task = Task { try await scheduler.schedule(at: existing.addingTimeInterval(3600), title: "Review", body: "Plan") }
+        while access.authorization == nil { await Task.yield() }
+        task.cancel()
+        access.authorization?.resume()
+        do { try await task.value; XCTFail("Cancelled scope must fail") } catch is CancellationError {} catch { XCTFail("Unexpected error") }
+        XCTAssertEqual(access.writes, 0)
+        XCTAssertEqual(access.cancellations, 0)
+        XCTAssertEqual(access.date, existing)
+    }
+
+    func testScopeCancellationDuringAddRemovesLateRequest() async {
+        let access = SuspendedNotificationAccess(); access.suspendAdd = true
+        let scheduler = LocalReviewReminderScheduler(access: access)
+        let task = Task { try await scheduler.schedule(at: Date().addingTimeInterval(3600), title: "Review", body: "Plan") }
+        while access.addition == nil { await Task.yield() }
+        task.cancel()
+        access.addition?.resume()
+        do { try await task.value; XCTFail("Cancelled scope must fail") } catch is CancellationError {} catch { XCTFail("Unexpected error") }
+        XCTAssertNil(access.date)
+        XCTAssertEqual(access.cancellations, 1)
+    }
+
     func testDeleteDuringAuthorizationCannotScheduleLateReminder() async {
         let access = SuspendedNotificationAccess()
         let scheduler = LocalReviewReminderScheduler(access: access)

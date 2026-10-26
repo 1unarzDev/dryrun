@@ -17,6 +17,7 @@ public struct HouseholdProfile: Codable, Sendable, Hashable, Identifiable {
     public var regionID: String
     /// Optional private location. Stays in the encrypted vault; never sent to the Dry Run backend.
     public var privateLocation: PrivateLocation?
+    public var siteHazards: SiteHazardProfile?
     public var homeID: String?
     public var stableHomeID: String { homeID ?? "home-\(id)" }
     public var preparedness: PreparednessRecord?
@@ -475,6 +476,12 @@ public struct PreparationFact: Codable, Sendable, Hashable {
 extension PoweredEquipment {
     private static let legacyDefaultLabels: [EquipmentPurpose: String] = [.oxygenConcentrator: "Oxygen concentrator", .cpapOrBipap: "CPAP or BiPAP", .powerWheelchair: "Power wheelchair", .refrigeratedMedication: "Refrigerated medication", .homeDialysis: "Home dialysis", .suction: "Suction", .feedingPump: "Feeding pump", .communicationDevice: "Communication device", .other: "Other"]
     public func localizedLabel(_ localizer: Localizer) -> String { label.isEmpty ? localizer("equipment.\(purpose.rawValue)") : label }
+    /// Exercise receipt name: the family's own label, then the label it had before default labels were
+    /// cleared (`legacyOriginalLabel`), then the localized purpose. Never blank.
+    public func receiptName(_ localizer: Localizer) -> String {
+        for candidate in [label, legacyOriginalLabel ?? ""] where !candidate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return candidate }
+        return localizer("equipment.\(purpose.rawValue)")
+    }
     private enum CodingKeys: String, CodingKey {
         case id, purpose, label, personID, isEssential, compatibleBackupIDs, documentedBackupRuntimeHours, powerWatts,
              needsRefrigeration, verifiedAt, carePlanNotes, refrigeratedStorage, electricalRequirement, legacyOriginalLabel, labelIsCustom, storageInstructions, storagePlanConfirmed
@@ -508,6 +515,11 @@ extension PoweredEquipment {
 extension BackupPowerSource {
     private static let legacyDefaultLabels: [BackupPowerKind: String] = [.portableBatteryStation: "Portable battery station", .portableGenerator: "Portable generator", .standbyGenerator: "Standby generator", .solarWithBattery: "Solar with battery", .solarGridTiedOnly: "Solar (grid-tied only)", .vehicleInverter: "Vehicle inverter", .powerBank: "Power bank", .deviceInternalBattery: "Device's own battery"]
     public func localizedLabel(_ localizer: Localizer) -> String { label.isEmpty ? localizer("enum.\(kind.rawValue)") : label }
+    /// Exercise receipt name: custom label, then `legacyOriginalLabel`, then the localized kind. Never blank.
+    public func receiptName(_ localizer: Localizer) -> String {
+        for candidate in [label, legacyOriginalLabel ?? ""] where !candidate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return candidate }
+        return localizer("enum.\(kind.rawValue)")
+    }
     private enum CodingKeys: String, CodingKey {
         case id, kind, label, legacyOriginalLabel, labelIsCustom, usableEnergyWh, continuousOutputW, setupConfirmed, islandingConfirmed, safeOutdoorPlacementConfirmed, assumedEfficiency
     }

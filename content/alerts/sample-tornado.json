@@ -1,0 +1,21 @@
+{
+ "_note": "Recorded-format demo alert for the filmed demo and UI tests. Not a real NWS message; always shown as a sample.",
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "id": "urn:dryrun:sample:tornado",
+    "event": "Tornado Warning",
+    "headline": "Tornado Warning issued for Tarrant County (SAMPLE \u2014 not a real alert)",
+    "areaDesc": "Tarrant, TX",
+    "severity": "Severe",
+    "urgency": "Immediate",
+    "status": "Exercise",
+    "messageType": "Alert",
+    "effective": "2026-10-20T12:00:00-05:00",
+    "expires": "2026-10-20T13:00:00-05:00"
+   }
+  }
+ ]
+}

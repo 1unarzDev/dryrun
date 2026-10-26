@@ -25,6 +25,16 @@ try{
  const stress=await host.request({op:'stress',session:state.session,profileIDs:['evt.home-fire.alarm','evt.home-fire.fire-origin']});
  assert.equal(stress.stress.baseline.inventory.items[0].accessible,false);
  assert.ok(stress.stress.sourceInventoryDigest);
+ assert.equal(state.session.dependencyPolicy,'dryrun.dependencies/2');
+ for(const [branch,room,access] of [[blocked,'sp-kitchen','unavailable'],[protectedStock,'sp-living','available']] as const){
+  const inspected=await host.request({op:'tool',session:branch.session,tool:{kind:'inspectDependencies',baseRevision:branch.receipt.revision}});
+  const storage=inspected.tool.dependencies.find((d:any)=>d.kind==='recordedSupplyStorage');
+  assert.equal(storage.id,'storage|'+room);assert.deepEqual(storage.subjectIDs,['water']);
+  assert.ok(storage.evidenceIDs.includes(branch.receipt.contextDigest));assert.ok(storage.status.includes('access '+access));
+  assert.ok(storage.status.includes('Recorded inventory only'));assert.ok(storage.status.includes('cause unproven'));
+  assert.deepEqual(inspected.receipt,branch.receipt);
+ }
+ assert.ok(stress.stress.dependencies.some((d:any)=>d.kind==='recordedSupplyStorage'&&d.status.includes('access unavailable')));
  await writeFile('../../fixtures/ai/inventory-session-trace.json',JSON.stringify({synthetic:true,original,moved,blocked,protectedStock,stress:stress.stress},null,2)+'\n');
- console.log(JSON.stringify({status:'passed',confirmedContainers:1,blockedGallons:0,transferredGallons:5,replay:true,realFactsUnchanged:true,stressUsesInventory:true}));
+ console.log(JSON.stringify({status:'passed',confirmedContainers:1,blockedGallons:0,transferredGallons:5,replay:true,realFactsUnchanged:true,stressUsesInventory:true,recordedAccessDependencies:true}));
 }finally{host.close();}

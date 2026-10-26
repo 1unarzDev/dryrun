@@ -1,0 +1,37 @@
+{
+  "synthetic": true,
+  "status": "failed",
+  "primaryFailure": "injected_at_adapter_boundary",
+  "error": "groq_invalid_output",
+  "latencyMs": 19048,
+  "kind": "invalid_output",
+  "httpStatus": 400,
+  "diagnostic": "output_parse_failed",
+  "searchResponses": [
+    {
+      "error": {
+        "status": 400,
+        "code": "output_parse_failed",
+        "type": "invalid_request_error",
+        "message": "Parsing failed. The model generated output that could not be parsed. Please adjust your prompt. See 'failed_generation' for more details.",
+        "failedToolNames": []
+      }
+    }
+  ],
+  "extractionResponses": [],
+  "recordedAt": "2026-10-20T06:42:59.285Z",
+  "provider": {
+    "name": "groq",
+    "searchModel": "openai/gpt-oss-20b",
+    "extractorModel": "openai/gpt-oss-120b",
+    "researchVersion": "4",
+    "extractionVersion": "6",
+    "coverage": "One actual search-generation request failed; no browser evidence or extraction response returned."
+  },
+  "review": {
+    "approved": false,
+    "status": "failed before sourced discovery",
+    "independentHumanReview": "pending"
+  },
+  "sourceArtifact": "artifacts/ai/groq-search/2026-10-20T06-42-59-285Z/albuquerque.json"
+}

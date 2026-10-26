@@ -78,6 +78,7 @@ struct RunState {
     var model: DependencyModel
     let allocator = BackupAllocator()
 
+    var hazardProgress: HazardProgress?
     var minute = 0
     var external = Svc.externalDefaults
     var services: [String: ServiceState] = [:]
@@ -89,6 +90,8 @@ struct RunState {
 
     // Resources (nil = unknown; never invented)
     var storedWater: Double?
+    var tracksFood=false
+    var foodDays:Double?
     let initialStoredWater: Double?
     var backupEnergy: [String: Double?] = [:]
     let initialBackupEnergy: [String: Double?]
@@ -113,6 +116,7 @@ struct RunState {
     var idCounts: [String: Int] = [:]
     var currentRoutes: [String: RouteResult] = [:]
     var spatialState: SpatialExerciseState?
+    var occupants: [String: ExerciseOccupantState] = [:]
     var onBackup: Set<String> = []
     var phaseID: String
     /// Choice overrides carried by "Try this change" interventions (parameter keys that are choice-point IDs).
@@ -141,6 +145,7 @@ struct RunState {
     /// Explicit spatial options and the native variant path select the same authored exercise.
     var effectiveVariants: [String] {
         var variants = input.variants.filter { $0 != "householdLeak" }
+        if hazardProgress != nil {variants.append("adaptive-mechanics")}
         if scenario.hazard == .flashFlood && input.effectiveSpatialOptions.floodIsHouseholdLeak { variants.append("householdLeak") }
         return variants
     }
@@ -170,6 +175,10 @@ struct RunState {
         return Double(household.people.count) * waterDrawMultiplier / 1440.0
     }
 
+    /// Recorded whole-household coverage days, not calories, nutrition or inferred package counts.
+    /// Once relocated, this bounded home-stock exercise makes no claim about external food access.
+    var foodDrawPerMinute:Double {tracksFood && !relocated ? 1.0/1440.0:0}
+
     var handsetDrawPerMinute: Double { (homePowerUp || relocated) ? 0 : 1.0 / 60.0 }
 
     func nextDepletion() -> (minute: Int, resource: String)? { depletionSchedule().first }
@@ -185,6 +194,7 @@ struct RunState {
             candidates.append((minute+Int(delay), id))
         }
         consider(storedWater, waterDrawPerMinute, "res.water.stored")
+        if tracksFood {consider(foodDays,foodDrawPerMinute,"res.food.days")}
         consider(handsetHours, handsetDrawPerMinute, "res.handset.hours")
         for (sid, d) in drain.sorted(by: { $0.key < $1.key }) {
             if let rate = d, let e = backupEnergy[sid] ?? nil { consider(e, rate / 60.0, "res.backup.\(sid)") }
@@ -199,7 +209,9 @@ struct RunState {
     mutating func advance(to t: Int) {
         let dt = Double(max(0, t - minute))
         guard dt > 0 else { minute = max(minute, t); return }
+        advanceHazardTemperature(minutes:dt)
         if let w = storedWater { storedWater = max(0, w - waterDrawPerMinute * dt) }
+        if tracksFood,let days=foodDays {foodDays=max(0,days-foodDrawPerMinute*dt)}
         if let hh = handsetHours { handsetHours = max(0, hh - handsetDrawPerMinute * dt) }
         for (sid, d) in drain { if let rate = d, let e = backupEnergy[sid] ?? nil { backupEnergy[sid] = .some(max(0, e - rate / 60.0 * dt)) } }
         if !homePowerUp && !relocated {
@@ -213,6 +225,10 @@ struct RunState {
     mutating func handleDepletion(_ resource: String) throws {
         let causeID = events.last?.id
         switch resource {
+        case "res.food.days":
+            foodDays=0
+            emit("evt.\(scenario.id).res.food-depleted",title:"scenario.common.res.food-depleted",severity:.caution,
+                 rule:"rule.resource.food/1",facts:["inventory.food.householdDays"],causedBy:causeID,sources:["S64"])
         case "res.water.stored":
             storedWater = 0
             emit("evt.\(scenario.id).res.water-depleted", title: "scenario.common.res.water-depleted", severity: .critical,
@@ -398,6 +414,7 @@ struct RunState {
         if scenario.ambient == "cold", !relocated, services[Svc.heat] != .operational { unmet.insert("req.heat") }
         if scenario.ambient == "hot", !relocated, services[Svc.cooling] != .operational { unmet.insert("req.cooling") }
         if !tapWaterUsable, !relocated, (storedWater ?? 0) <= 0 { unmet.insert("req.water") }
+        if tracksFood,!relocated,foodDays.map({$0<=0})==true {unmet.insert("req.food")}
         if services[Svc.handset] == .unavailable { unmet.insert("req.comms.handset") }
         currentUnmet = unmet
         for u in unmet where !unmetEver.contains(u) {
@@ -407,11 +424,13 @@ struct RunState {
     }
 
     mutating func snapshot() {
+        synchronizeOccupants()
         var res: [String: ResourceQuantity] = [
             "res.water.stored": ResourceQuantity(amount: storedWater.map(Fmt.round2), unit: "gal"),
             "res.handset.hours": ResourceQuantity(amount: handsetHours.map(Fmt.round2), unit: "h"),
             "res.handset.powerBankCharges": ResourceQuantity(amount: powerBankCharges, unit: "charges"),
         ]
+        if tracksFood {res["res.food.days"]=ResourceQuantity(amount:foodDays.map(Fmt.round2),unit:"day")}
         for (sid, e) in backupEnergy { res["res.backup.\(sid)"] = ResourceQuantity(amount: e.map(Fmt.round2), unit: "Wh") }
         for (eid, r) in deviceRuntime where household.equipment.contains(where: { $0.id == eid && $0.requiresElectricalPower }) {
             res["res.device.\(eid).runtime"] = ResourceQuantity(amount: r.map(Fmt.round2), unit: "h")

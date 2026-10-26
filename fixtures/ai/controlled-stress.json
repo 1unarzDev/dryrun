@@ -8,7 +8,7 @@
       "Reviewed educational incident profiles; not a prediction of real failure"
     ],
     "baseline": {
-      "contextDigest": "268890ae3077ffc5",
+      "contextDigest": "45b6a124c7a630c4",
       "eventSequence": 4,
       "events": [
         {
@@ -164,8 +164,25 @@
         ]
       }
     },
+    "comparison": {
+      "baselineMinute": 4320,
+      "commonHorizonReached": true,
+      "newlyUnmetRequirementIDs": [],
+      "remainingRequirementIDs": [
+        "req.water"
+      ],
+      "remainingUnknownIDs": [
+        "backup.bk-station.setupConfirmed",
+        "equipment.eq-oxygen.backup",
+        "housing.wellPressureTankGallons",
+        "pets.waterNeeds"
+      ],
+      "resolvedRequirementIDs": [],
+      "retestMinute": 4320,
+      "version": "dryrun.stress-comparison/1"
+    },
     "controlledRetest": {
-      "contextDigest": "e545ba86ae0f02dc",
+      "contextDigest": "b4885b334a328617",
       "eventSequence": 4,
       "events": [
         {
@@ -327,7 +344,7 @@
     "dependencies": [
       {
         "evidenceIDs": [
-          "268890ae3077ffc5"
+          "45b6a124c7a630c4"
         ],
         "id": "contact|channel",
         "kind": "contactChannel",
@@ -341,11 +358,15 @@
       "req.water"
     ],
     "evidenceIDs": [
-      "268890ae3077ffc5"
+      "45b6a124c7a630c4"
     ],
     "failed": true,
     "id": "stress|water-outage|evt.water-outage.well-pump-failure",
     "objectiveID": "water",
+    "retestIntervention": {
+      "actionID": "act.water.store-3day",
+      "parameters": {}
+    },
     "schedule": [
       {
         "kind": "schedule",

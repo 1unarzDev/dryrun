@@ -1,34 +1,37 @@
-import {normalizeHomeReview} from './home-review.js';
-import {IntentInterpreter,intentRequest} from './intents.js';
+import {IntentInterpreter} from './intents.js';
 import {PublicEvidenceTools} from './evidence.js';
 import {createServer} from 'node:http';
 import {Gateway,fixtureAuthorize} from './gateway.js';
-import {FeatureRunner,featureContext,roleSchemas,type Role} from './features.js';
-import {z} from 'zod';
-import {GeminiProvider,SpendBudget} from './provider.js';
-if(process.env.NODE_ENV==='production')throw new Error('production_authorization_provider_required');
-const secret=process.env.DRYRUN_DEV_TOKEN??'';
-if(secret.length<24)throw new Error('local_fixture_token_required');
-const provider=new GeminiProvider(process.env.GOOGLE_AI_STUDIO_KEY??'',process.env.DRYRUN_MODEL,new SpendBudget(),{home:process.env.DRYRUN_HOME_MODEL??'gemini-3.8-flash',adjudication:process.env.DRYRUN_ASSESSMENT_MODEL??'gemini-3.1-flash-lite'});
+import {FeatureRunner} from './features.js';
+import {createAIRequestHandler} from './http.js';
+import {developmentListenHost} from './listen-config.js';
+import {AppAttestVerifier,InstallationAuth} from './app-attest.js';
+import {GroqResourceDiscovery} from './groq-discovery.js';
+import {ResourceDiscovery} from './resource-discovery.js';
+import {configuredProviders} from './provider-routing.js';
+import {quotaLimitsFromEnv} from './owner-window-quota.js';
+const production=process.env.NODE_ENV==='production';
+const attestAppID=process.env.DRYRUN_APPATTEST_APP_ID;
+const attest=attestAppID?new InstallationAuth(new AppAttestVerifier(attestAppID,
+ production||process.env.DRYRUN_APPATTEST_ENV==='production'?'production':'development'),process.env.DRYRUN_SESSION_SECRET??''):undefined;
+if(production&&!attest)throw new Error('production_authorization_provider_required');
+const secret=production?'':process.env.DRYRUN_DEV_TOKEN??'';
+if(!production&&secret.length<24)throw new Error('local_fixture_token_required');
+// One routing layer for every operation: Codex primary when DRYRUN_PROVIDER=codex, then Gemini, then Groq.
+const {gemini,groqClients,codex,provider}=await configuredProviders();
+console.log(`provider_chain ${codex?'codex,':''}gemini${groqClients?',groq':''}`);
+// Warm Codex runtimes at gateway start, so the first Beacon request skips process spawn and handshake.
+if(codex){void codex.prewarm();console.log(`codex_speed effort=${codex.speed.effort} director_effort=${codex.speed.directorEffort} service_tier=${codex.speed.serviceTier??'default'} warm=${codex.speed.warm}`);}
 const interpreter=new IntentInterpreter(provider);
-const gateway=new Gateway(provider);const features=new FeatureRunner(provider,40,await PublicEvidenceTools.bundled('../..'));const seen=new Set<string>();
-createServer(async(req,res)=>{
- res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');
- try{const owner=fixtureAuthorize(req.headers.authorization,secret,false);if(req.method!=='POST')throw new Error('method');let body='';for await(const chunk of req){body+=chunk;if(Buffer.byteLength(body)>(req.url==='/v1/features'?6000000:96000))throw new Error('payload');}const input:unknown=JSON.parse(body);
- if(req.url==='/v1/intents'){
- const r=intentRequest.parse(input);const key=owner+':'+r.requestID;
- if(seen.has(key)||seen.size>=100)throw new Error('replay_or_quota');seen.add(key);
- const controller=new AbortController();req.on('aborted',()=>controller.abort());res.on('close',()=>{if(!res.writableEnded)controller.abort()});
- const proposal=await interpreter.interpret(r,AbortSignal.any([controller.signal,AbortSignal.timeout(30000)]));
- res.end(JSON.stringify({status:'completed',requestID:r.requestID,proposal}));return;
- }
- if(req.url==='/v1/features'){
- const r=z.object({contractVersion:z.literal('dryrun.ai/1'),requestID:z.string().min(1).max(120),synthetic:z.literal(true),role:z.enum(['preparation','resources','home','stress','council']),context:featureContext,images:z.array(z.unknown()).max(4).default([])}).strict().parse(input);
- const key=owner+':'+r.requestID;if(seen.has(key)||seen.size>=100)throw new Error('replay_or_quota');seen.add(key);
- const controller=new AbortController();req.on('aborted',()=>controller.abort());res.on('close',()=>{if(!res.writableEnded)controller.abort()});
- const proposal=r.role==='council'?await features.council(r.context,controller.signal):await features.run(r.role,r.context,AbortSignal.any([controller.signal,AbortSignal.timeout(60000)]),r.images);
- res.end(JSON.stringify({status:'completed',contractVersion:'dryrun.ai/1',requestID:r.requestID,householdRevision:r.context.household.revision,proposal,...(r.role==='home'?{reviewProposals:normalizeHomeReview(proposal,r.context)}:{})}));return;
- }
- const result=req.url==='/v1/operations'?await gateway.start(owner,input):req.url==='/v1/continue'?await gateway.resume(owner,input):req.url==='/v1/cancel'&&typeof input==='object'&&input!==null&&'token'in input&&typeof input.token==='string'?gateway.cancel(owner,input.token):{status:'rejected',reason:'unknown_endpoint'};
- res.end(JSON.stringify(result));}catch{res.statusCode=400;res.end(JSON.stringify({status:'rejected',reason:'invalid_or_unauthorized_request'}));}
-}).listen(Number(process.env.PORT??8788),'127.0.0.1');
+const limits=quotaLimitsFromEnv();
+console.log(`quota_window feature_turns=${limits.featureTurns} director_starts=${limits.directorStarts} director_turns=${limits.directorTurns} http_requests=${limits.httpRequests}`);
+const prepackContext=process.env.DRYRUN_PREPACK_CONTEXT!=='0';
+const gateway=new Gateway(provider,undefined,limits.directorTurns,limits.directorStarts,{prepackContext});const features=new FeatureRunner(provider,limits.featureTurns,await PublicEvidenceTools.bundled('../..'),{prepackContext});
+const discovery=new ResourceDiscovery(gemini,12,()=>new Date(),groqClients?new GroqResourceDiscovery(groqClients.client,()=>new Date(),groqClients.extractor):undefined);
+const server=createServer(createAIRequestHandler({gateway,features,interpreter,attest,discovery,maximumRequests:limits.httpRequests,authorize:header=>{
+ if(attest&&header?.startsWith('Bearer v1.'))return attest.authorize(header);
+ return fixtureAuthorize(header,secret,production);
+}}));
+// Keep the phone's connection open between Beacon requests (Node's default is 5 s), so each question skips a reconnect.
+server.keepAliveTimeout=120_000;server.headersTimeout=125_000;
+server.listen(Number(process.env.PORT??8788),developmentListenHost());

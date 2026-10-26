@@ -21,7 +21,30 @@ public struct DirectorPresentationIntent:Codable,Sendable {
     public var renderFrom:String
     public var narration:String
 }
+public struct SuggestedRehearsalAction:Codable,Sendable {
+    public var id:String;public var label:String;public var fact:String;public var implication:String;public var commands:[SessionCommand]
+}
+public struct SuggestedActionPreview:Codable,Sendable {
+    public var action:SuggestedRehearsalAction
+    public var feasible:Bool
+    public var rejection:String?
+    public var receipt:SessionReceipt?
+}
 public struct DirectorProposal: Codable, Sendable {
+    public var suggestedActions:[SuggestedRehearsalAction]?
+    /// Call after committing the director's boundary. Infeasible suggestions remain inspectable,
+    /// but must never be presented as executable actions or silently replaced by another command.
+    public func previewSuggestions(in session:SimulationSession,library:ScenarioLibrary)throws->[SuggestedActionPreview] {
+        guard session.revision==baseRevision+1,session.commits.last?.id==id else {throw SessionError.stale}
+        return (suggestedActions ?? []).map {action in
+            do {
+                guard !action.id.isEmpty,!action.label.isEmpty,!action.commands.isEmpty,action.commands.count<=8 else {throw SessionError.invalidCommand}
+                let result=try session.preview(.init(id:"suggestion-\(action.id)-\(session.revision)",actor:"user",baseRevision:session.revision,commands:action.commands),library:library)
+                return .init(action:action,feasible:true,receipt:result)
+            } catch {return .init(action:action,feasible:false,rejection:String(describing:error))}
+        }
+    }
+
     public var contractVersion:String?
     public var requestID:String?
     public var binding:AgentContextBinding?
@@ -45,10 +68,19 @@ public struct DirectorProposal: Codable, Sendable {
         if let requestID {guard !requestID.isEmpty else {throw SessionError.invalidCommand}}
         if let intent=presentationIntent {guard intent.sceneFirst,intent.renderFrom=="committedReceipt",intent.narration=="unverifiedProposal" else {throw SessionError.invalidCommand}}
         guard actor=="director",baseRevision==binding.revision else {throw SessionError.invalidCommand}
+        if let actions=suggestedActions,!actions.isEmpty {
+            let validation=try session.executeTool(.init(kind:.validateSuggestedActions,baseRevision:baseRevision,commands:commands,suggestedActions:actions),library:library)
+            guard validation.suggestedActions?.allSatisfy({$0.feasible})==true else {throw SessionError.invalidCommand}
+        }
         return try session.commit(SessionCommit(id:id,actor:actor,baseRevision:baseRevision,commands:commands),library:library,persist:persist)
     }
 }
+public struct BespokePreparation: Codable, Sendable {
+    public var title:String; public var fact:String; public var implication:String; public var action:String; public var completionCheck:String
+}
 public struct PreparationTaskProposal: Codable, Sendable {
+    public var bespoke:BespokePreparation? = nil
+    public var destination:PreparationEditTarget? = nil
     public var id:String;public var actionID:String;public var criterionID:String;public var subjectID:String;public var why:String
     public var evidenceIDs:[String];public var completionPredicates:[String];public var editor:String;public var dependencyIDs:[String];public var priority:Int
 }
@@ -56,6 +88,13 @@ public struct ResourceSearchPlan: Codable, Sendable {
     public var id:String;public var taskID:String;public var dependencyIDs:[String];public var hazardIDs:[String];public var category:String
     public var purpose:String;public var mandatoryCapabilities:[String];public var unknowns:[String];public var travelMode:String
     public var maximumDistanceKm:Double;public var expansionLimit:Int;public var requiredEvidence:[String];public var cloudReturnPolicy:String
+    public init(id:String,taskID:String,dependencyIDs:[String],hazardIDs:[String]=[],category:String,purpose:String,
+                mandatoryCapabilities:[String]=[],unknowns:[String],travelMode:String,maximumDistanceKm:Double,
+                expansionLimit:Int,requiredEvidence:[String],cloudReturnPolicy:String="local_only") {
+        self.id=id;self.taskID=taskID;self.dependencyIDs=dependencyIDs;self.hazardIDs=hazardIDs;self.category=category
+        self.purpose=purpose;self.mandatoryCapabilities=mandatoryCapabilities;self.unknowns=unknowns;self.travelMode=travelMode
+        self.maximumDistanceKm=maximumDistanceKm;self.expansionLimit=expansionLimit;self.requiredEvidence=requiredEvidence;self.cloudReturnPolicy=cloudReturnPolicy
+    }
 }
 public struct InventoryObservationProposal: Codable, Sendable {
     public var id:String;public var physicalID:String;public var category:String;public var quantity:Double?;public var unit:InventoryUnit

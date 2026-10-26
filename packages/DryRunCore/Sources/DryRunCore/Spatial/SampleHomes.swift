@@ -237,5 +237,86 @@ public enum SampleHomes {
         )
     }
 
-    public static var all: [HomeModel] { [ranch, twoStory, apartment] }
+    /// Unit plus explicitly modeled/verified shared corridors and stairs. The unit-only example
+    /// remains incomplete; a commonArea ID never silently becomes a route edge.
+    public static var apartmentComplex: HomeModel {
+        var h=apartment
+        h.id="home-sample-apartment-complex"; h.label="Sample apartment complex (fictional)"
+        h.dwellingType = .apartment; h.completeness = .complete; h.completenessNote=nil
+        h.floors[0].exteriorGrade = .aboveGround
+        h.floors += [Floor(id:"fl-common-ground",level:0,label:"Shared ground floor",elevationMeters:0,exteriorGrade:.ground),
+                     Floor(id:"fl-common-middle",level:1,label:"Shared second floor",elevationMeters:3,exteriorGrade:.aboveGround)]
+        for (floor,room) in [("fl-apt","cm-corridor-3f"),("fl-common-middle","cm-corridor-2f"),("fl-common-ground","cm-corridor-1f")] {
+            let polygon=rect(-2,0,0,9.5)
+            h.spaces.append(Space(id:room,floorID:floor,label:"Shared corridor and stair landing",kind:.hallway,polygon:polygon))
+            for i in polygon.indices {
+                h.walls.append(WallSegment(id:"w-\(room)-\(i)",floorID:floor,a:polygon[i],b:polygon[(i+1)%polygon.count]))
+            }
+        }
+        h.portals[0].sideB = .space("cm-corridor-3f")
+        h.portals[0].note="Unit door to modeled shared corridor; fictional reviewed access"
+        h.portals.append(door("pt-building-exit","fl-common-ground",.door,Vec2(-2,1.5),Vec2(-2,2.4),.space("cm-corridor-1f"),.exterior,width:m(0.9)))
+        h.connectors=[FloorConnector(id:"cn-common-upper-stairs",kind:.stairs,fromSpaceID:"cm-corridor-3f",toSpaceID:"cm-corridor-2f",fromPoint:Vec2(-1,8),toPoint:Vec2(-1,8),verification:.verified),
+                      FloorConnector(id:"cn-common-lower-stairs",kind:.stairs,fromSpaceID:"cm-corridor-2f",toSpaceID:"cm-corridor-1f",fromPoint:Vec2(-1,1),toPoint:Vec2(-1,1),verification:.verified)]
+        h.annotations += [Annotation(id:"an-breaker",kind:.utilityShutoffElectric,floorID:"fl-apt",spaceID:"sp-hall",position:Vec2(8.7,5.5),label:"Unit breaker panel",verification:.verified),
+                          Annotation(id:"an-extinguisher",kind:.fireExtinguisher,floorID:"fl-apt",spaceID:"sp-kitchen",position:Vec2(6.3,4.5),label:"Extinguisher",verification:.verified)]
+        return h
+    }
+
+    /// Original narrow manufactured-home test model; steps at both doors require assistance planning.
+    /// A windowless closet marker is deliberately present: it can NEVER qualify as tornado shelter.
+    public static var manufactured: HomeModel {
+        let f="fl-trailer", sp=PortalDestination.space
+        var h=HomeModel(id:"home-sample-manufactured",label:"Sample manufactured home (fictional)",source:.sample,
+            floors:[Floor(id:f,level:0,label:"Home floor",exteriorGrade:.ground)],
+            spaces:[Space(id:"sp-bed1",floorID:f,label:"Bedroom",kind:.bedroom,polygon:rect(0,0,4,4)),
+                    Space(id:"sp-living",floorID:f,label:"Living room",kind:.livingRoom,polygon:rect(4,0,10,4)),
+                    Space(id:"sp-kitchen",floorID:f,label:"Kitchen",kind:.kitchen,polygon:rect(10,0,14,4)),
+                    Space(id:"sp-closet",floorID:f,label:"Supply closet",kind:.closet,polygon:rect(14,0,16,4),interiorNoWindowsConfirmed:.confirmed(true))],
+            portals:[door("pt-bed-living",f,.door,Vec2(4,1),Vec2(4,1.9),sp("sp-bed1"),sp("sp-living"),width:m(0.9)),
+                     door("pt-living-kitchen",f,.opening,Vec2(10,1),Vec2(10,2.2),sp("sp-living"),sp("sp-kitchen"),width:m(1.2)),
+                     door("pt-kitchen-closet",f,.door,Vec2(14,1),Vec2(14,1.9),sp("sp-kitchen"),sp("sp-closet"),width:m(0.9)),
+                     door("pt-front",f,.door,Vec2(5,0),Vec2(5.9,0),sp("sp-living"),.exterior,width:m(0.9),stepFree:.confirmed(false)),
+                     door("pt-back",f,.door,Vec2(12,4),Vec2(12.9,4),sp("sp-kitchen"),.exterior,width:m(0.9),stepFree:.confirmed(false)),
+                     door("pt-win-bed",f,.window,Vec2(1,4),Vec2(2,4),sp("sp-bed1"),.exterior,width:.unknown,operable:.unknown,stepFree:.confirmed(false),verification:.proposed)],
+            annotations:[Annotation(id:"an-tornado",kind:.tornadoShelterCandidate,floorID:f,spaceID:"sp-closet",position:Vec2(15,2),label:"Supply closet; NOT tornado shelter",verification:.verified),
+                         Annotation(id:"an-supplies",kind:.supplies,floorID:f,spaceID:"sp-closet",position:Vec2(15,1),label:"Emergency supplies",verification:.verified),
+                         Annotation(id:"an-breaker",kind:.utilityShutoffElectric,floorID:f,spaceID:"sp-living",position:Vec2(9.7,3),label:"Breaker panel",verification:.verified),
+                         Annotation(id:"an-extinguisher",kind:.fireExtinguisher,floorID:f,spaceID:"sp-kitchen",position:Vec2(10.3,3),label:"Extinguisher",verification:.verified)],isFictional:true)
+        h.dwellingType = .manufacturedHome
+        for room in h.spaces {
+            for i in room.polygon.indices { h.walls.append(WallSegment(id:"w-\(room.id)-\(i)",floorID:f,a:room.polygon[i],b:room.polygon[(i+1)%room.polygon.count])) }
+        }
+        return h
+    }
+    public static var all: [HomeModel] { [ranch, twoStory, apartment, apartmentComplex, manufactured] }
+
+    /// The equipment each sample medical-equipment marker depicts. A marker not listed here describes nobody's equipment.
+    static let medicalMarkerPurposes: [String: EquipmentPurpose] = ["an-medical": .oxygenConcentrator]
+
+    /// Any example family can be paired with any sample home, but a marker that depicts one family's equipment must
+    /// not appear in another family's home (the ranch's oxygen concentrator belongs to Oak, not Lake or Pine). Keeps a
+    /// medical-equipment marker only when the household records equipment of that purpose. Personal homes are untouched.
+    public static func forExampleHousehold(_ home: HomeModel, _ household: HouseholdProfile) -> HomeModel {
+        guard home.isFictional, household.isFictional else { return home }
+        let purposes = Set(household.equipment.map(\.purpose))
+        var adjusted = home
+        adjusted.annotations.removeAll { marker in
+            marker.kind == .medicalEquipment && !(medicalMarkerPurposes[marker.id].map(purposes.contains) ?? false)
+        }
+        return adjusted
+    }
+
+    /// Demo and UI-test stand-in for a RoomPlan capture of the ranch (fictional): scan source, ground floor confirmed,
+    /// every other opening still a proposal, and the frozen scan snapshot. Not part of `all`.
+    public static var scannedRanch: HomeModel {
+        var home = ranch
+        home.id = "home-sample-scanned"
+        home.label = "Scanned ranch (fictional demo)"
+        home.source = .roomPlanScan
+        for i in home.floors.indices { home.floors[i].exteriorGrade = .ground }
+        for i in home.portals.indices where i % 2 == 0 { home.portals[i].verification = .proposed }
+        home.scanSnapshot = ScanSnapshot(home)
+        return home
+    }
 }

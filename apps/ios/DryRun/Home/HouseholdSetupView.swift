@@ -157,9 +157,12 @@ struct HouseholdSetupView: View {
                         .accessibilityIdentifier("setup.name")
                     personSummary(draft.people[0])
                     ForEach(Array(draft.people.indices.dropFirst()), id: \.self) { i in
-                        TextField(draft.people[i].relationship.map { DisplayNames.name($0.rawValue, localizer: l) } ?? l("family.name"),
-                                  text: $draft.people[i].alias)
-                            .focused($focus, equals: .person(i))
+                        LabeledContent(l("family.name")) {
+                            TextField(l("family.name"), text: $draft.people[i].alias)
+                                .textContentType(.name)
+                                .multilineTextAlignment(.trailing)
+                                .focused($focus, equals: .person(i))
+                        }
                         personSummary(draft.people[i])
                     }
                     Button(l("family.add"), systemImage: "person.badge.plus") {
@@ -365,12 +368,15 @@ struct HouseholdSetupView: View {
         return Group {
             ForEach($draft.people) { $person in
                 Section(person.alias.isEmpty ? l("ui.person") : person.alias) {
-                    TextField(l("ui.setup.nickname"), text: $person.alias)
+                    // The label stays visible after typing; the nickname hint is only the empty-field prompt.
+                    LabeledTextField(label: l("family.name"), text: $person.alias, prompt: l("ui.setup.nickname"),
+                                     fieldID: "setup.personName.\(person.id)")
+                        .textContentType(.name)
                     Picker(l("ui.setup.age"), selection: $person.ageBand) {
                         ForEach(AgeBand.allCases, id: \.self) { Text(DisplayNames.name($0.rawValue, localizer: l)).tag($0) }
                     }
                     ForEach(AssistanceNeed.allCases, id: \.self) { need in
-                        Toggle(l("common.need.\(need.rawValue)"), isOn: Binding(
+                        Toggle(DisplayNames.need(need, localizer: l), isOn: Binding(
                             get: { person.needs.contains(need) },
                             set: { on in if on { person.needs.append(need) } else { person.needs.removeAll { $0 == need } } }))
                     }

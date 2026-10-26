@@ -39,7 +39,7 @@ try {
   const initialized=await host.request({op:'initialize',input});
   const confirmedState=await host.request({op:'confirmInventory',session:initialized.session,inventoryItems:c.items,rubric});
   const assessed=await host.request({op:'assess',session:confirmedState.session,inventory:confirmedState.inventory,rubric});
-  assert.equal(assessed.scorecard.assessmentVersion,'dryrun.household-assessment/5',c.id);
+  assert.equal(assessed.scorecard.assessmentVersion,'dryrun.household-assessment/7',c.id);
   for(const [criterion,expected] of Object.entries(c.expected) as [string,Record<string,unknown>][]){
    const actual=assessed.assessments.find((a:any)=>a.criterionID===criterion);assert.ok(actual,c.id+':'+criterion);
    for(const [key,value] of Object.entries(expected)){
@@ -51,6 +51,6 @@ try {
   assert.equal(foodTask,c.expected.food.quantity!==true,c.id+':food-task');
   results.push({id:c.id,split:c.split,matchedSourcePredicates:true,foodTask,assessments:assessed.assessments,scorecard:assessed.scorecard});
  }
- await writeFile('../../fixtures/ai/source-assessment-evaluation-v5.json',JSON.stringify({synthetic:true,modelCalls:0,referenceStatus:fixture.referenceStatus,assessmentVersion:'dryrun.household-assessment/5',referenceAssessmentVersion:fixture.assessmentVersion,evaluationUse:'Regression against previously exercised frozen references; not a fresh held-out generalization claim.',development:results.filter(r=>r.split==='development').length,holdout:results.filter(r=>r.split==='holdout').length,passed:results.length,results},null,2)+'\n');
+ await writeFile('../../fixtures/ai/source-assessment-evaluation-v7.json',JSON.stringify({synthetic:true,modelCalls:0,referenceStatus:fixture.referenceStatus,assessmentVersion:'dryrun.household-assessment/7',referenceAssessmentVersion:fixture.assessmentVersion,evaluationUse:'Regression against previously exercised frozen references; not a fresh held-out generalization claim.',development:results.filter(r=>r.split==='development').length,holdout:results.filter(r=>r.split==='holdout').length,passed:results.length,results},null,2)+'\n');
  console.log(JSON.stringify({status:'passed',actualSourceCases:results.length,development:40,holdout:20,modelCalls:0}));
 } finally {host.close();}

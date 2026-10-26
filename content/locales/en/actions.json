@@ -76,5 +76,8 @@
   "tier.2": "Missing information",
   "tier.3": "Supply or continuity gap",
   "tier.4": "Helps in many emergencies",
-  "tier.5": "Good practice"
+  "tier.5": "Good practice",
+  "prep.shelterPlan.title": "Review your tornado shelter plan",
+  "prep.shelterPlan.why": "A suitable windowless shelter on the lowest appropriate floor has not been confirmed. Review floor grade, windows, access and household assistance. A marker alone does not certify a shelter.",
+  "prep.shelterPlan.manufactured.why": "A manufactured or trailer home is not a tornado shelter. Arrange access and transport to an appropriate sturdy building in advance. Do not start driving to a generic distant shelter during a warning."
 }

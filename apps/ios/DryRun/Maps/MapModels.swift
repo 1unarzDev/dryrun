@@ -155,6 +155,14 @@ final class RegionalResourcesStore {
             ?? bundled.source(id)
     }
 
+    /// Exact reviewed URLs only, scoped to a pack explicitly covering this jurisdiction.
+    /// A global safety article or another state's source catalog cannot authorize a local zone.
+    func reviewedPlanningSourceURLs(for regionID: String) -> Set<String> {
+        guard PublicDataPolicy.isAllowedRegionID(regionID) else { return [] }
+        let packs = bundled.regionPacks + Array(overrides.values)
+        return MapPlanningPolicy.reviewedPlanningSourceURLs(packs: packs, jurisdictionID: regionID, at: Date())
+    }
+
     func regionName(_ id: String) -> String {
         if id == "tx-statewide" { return "Texas statewide" }
         return overrides.values.lazy.flatMap(\.regions).first(where: { $0.id == id })?.name

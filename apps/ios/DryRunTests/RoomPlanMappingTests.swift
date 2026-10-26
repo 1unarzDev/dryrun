@@ -5,6 +5,29 @@ import DryRunCore
 /// No camera or synthetic CapturedRoom decoder is involved. The app's SDK projection seam feeds the
 /// real importer and room-association service, so capture ordering and display IDs can change independently.
 final class RoomPlanMappingTests: XCTestCase {
+    func testCapturedOpeningDimensionsDoNotRequireManualMeasurementOrConfirmExitSafety() throws {
+        for confidence in [ScanConfidence.high, .medium, .low] {
+            let floor = ScanSurface(id: "floor", category: .floor, transform: .identity,
+                dimensions: Vec3(4, 0, 4),
+                polygonCorners: [Vec3(0, 0, 0), Vec3(4, 0, 0), Vec3(4, 0, -4), Vec3(0, 0, -4)], confidence: .high)
+            let opening = ScanSurface(id: "door", category: .doorClosed, transform: .identity,
+                dimensions: Vec3(0.9, 2, 0), confidence: confidence)
+            let home = try ScanImport.importCapture(.init(rooms: [.init(id: "room", surfaces: [floor, opening])],
+                sharedCoordinateFrame: true, coordinateFrameID: "capture"), homeID: "captured").home
+            let portal = try XCTUnwrap(home.portals.first)
+            if confidence == .low {
+                XCTAssertNil(portal.clearWidthMeters.confirmedValue)
+            } else {
+                XCTAssertEqual(portal.clearWidthMeters.confirmedValue, 0.9)
+                XCTAssertEqual(portal.clearWidthMeters.origin, .scanObserved)
+            }
+            XCTAssertNil(portal.operable.confirmedValue)
+            XCTAssertNil(portal.stepFree.confirmedValue)
+            XCTAssertEqual(portal.verification, .proposed)
+            XCTAssertNil(EgressPlanner().plan(RouteRequest(startSpaceID: home.spaces[0].id), in: home).primary)
+        }
+    }
+
     func testSDKRoomIdentitySurvivesReorderingWithoutReassigningThePhysicalRoom() throws {
         let firstID = try XCTUnwrap(UUID(uuidString: "A0000000-0000-0000-0000-000000000001"))
         let secondID = try XCTUnwrap(UUID(uuidString: "B0000000-0000-0000-0000-000000000002"))

@@ -3,7 +3,7 @@ import {writeFile} from 'node:fs/promises';
 import {Host} from './host.js';
 import {Gateway} from '../src/gateway.js';
 import {GeminiProvider,type AgentProvider} from '../src/provider.js';
-import {minimizedSnapshot} from '../src/contracts.js';
+import {minimizedSnapshot,minimizedAssistance} from '../src/contracts.js';
 import {executeDirectorTool} from './director-tools.js';
 const live=process.env.DRYRUN_LIVE_SPATIAL==='1';const host=new Host();
 const trace:unknown[]=[];const replies:unknown[]=[];let metrics:unknown;let final:any;
@@ -13,7 +13,7 @@ try{
  state=await host.request({op:'commit',session:state.session,commit:{id:'submitted-move',actor:'user',baseRevision:0,commands:[{kind:'moveTo',target:person,value:'sp-living'}]}});
  const source=structuredClone(state);
  const binding={sessionID:state.receipt.sessionID,revision:state.receipt.revision,eventSequence:state.receipt.eventSequence,contextDigest:state.receipt.contextDigest,householdRevision:state.session.initial.household.revision,homeRevision:state.session.initial.home.revision};
- const context={binding,snapshot:minimizedSnapshot(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Start a short hypothetical fire rehearsal after this committed occupant move. Choose a recorded room as an assumed origin and a reviewed spatial profile.', 'Preview the incident AND its applied scene/routes, then commit a bounded incident/pacing proposal leading to a useful decision. Keep household facts unchanged.']};
+ const context={binding,snapshot:minimizedSnapshot(state.receipt),assistance:minimizedAssistance(state.receipt),household:state.householdContext,homeScene:state.homeScene,directorPolicy:state.session.directorPolicy,directorState:state.receipt.directorState,pending:state.receipt.pending,closedPortalIDs:state.receipt.closedPortalIDs,profiles:state.directorProfiles,lastAction:state.lastAction,recentActions:state.recentActions,learningObjectives:['Start a short hypothetical fire rehearsal after this committed occupant move. Choose a recorded room as an assumed origin and a reviewed spatial profile.', 'Preview the incident AND its applied scene/routes, then commit a bounded incident/pacing proposal leading to a useful decision. Keep household facts unchanged.']};
  const commands=[{kind:'startIncident',target:'evt.home-fire.fire-origin',value:'sp-kitchen',hazard:'homeFire',minute:0},{kind:'advance',minute:0}];
  let turn=0;
  const fixture:AgentProvider={async turn(){turn++;if(turn<=2){const call={type:'function_call' as const,id:'call-'+turn,name:turn===1?'queryRoutes':'evaluateCandidateAction',arguments:turn===1?{}:{commands}};return {steps:[call],calls:[call],text:'',usage:{}};}return {steps:[],calls:[],usage:{},text:JSON.stringify({commands,purpose:'A recorded room is the hypothetical origin; inspect the host-computed routes before choosing the next action.',evidenceIDs:[]})};}};

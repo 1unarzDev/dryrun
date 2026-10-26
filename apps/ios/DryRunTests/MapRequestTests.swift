@@ -1,4 +1,5 @@
 import XCTest
+import MapKit
 import DryRunCore
 @testable import DryRun
 
@@ -14,9 +15,12 @@ private final class ControlledMapSearch: MapSearching {
         return try await withCheckedThrowingContinuation { response = $0 }
     }
     func waitForStart() async { if query == nil { await withCheckedContinuation { started = $0 } } }
-    func finish(name: String, latitude: Double = 32.2) {
+    /// Apple tags a real hospital with its point-of-interest category; discovery keeps only those for the hospital query
+    /// (a veterinary result has another category). The fake follows that unless `category` overrides it.
+    func finish(name: String, latitude: Double = 32.2, category: String?? = nil) {
+        let tagged = category ?? (query == "hospital" ? MKPointOfInterestCategory.hospital.rawValue : nil)
         response?.resume(returning: [AppleMapSearchResult(id: name, name: name,
-            coordinate: GeographicCoordinate(latitude: latitude, longitude: -98.2)!, address: "Example road", category: nil)])
+            coordinate: GeographicCoordinate(latitude: latitude, longitude: -98.2)!, address: "Example road", category: tagged)])
         response = nil
     }
 }
@@ -66,5 +70,18 @@ extension MapRequestTests {
         for service in services { await service.waitForStart(); service.finish(name: "One clinic") }
         await pending.value
         XCTAssertEqual(discovery.results.count, 1)
+    }
+
+    func testHospitalQueryDropsResultsWithoutTheHospitalCategory() async {
+        let services = (0..<3).map { _ in ControlledMapSearch() }
+        var index = 0
+        let discovery = NearbyDiscovery(makeService: { let service = services[index]; index += 1; return service })
+        let pending = Task { await discovery.search(region: MapRegionHint(latitude: 32.2, longitude: -98.2, spanLatitude: 0.1, spanLongitude: 0.1), locale: "en") }
+        for service in services { await service.waitForStart() }
+        services[0].finish(name: "Animal clinic", category: .some(nil))
+        services[1].finish(name: "Pharmacy")
+        services[2].finish(name: "Grocery")
+        await pending.value
+        XCTAssertEqual(discovery.results.map(\.name), ["Pharmacy", "Grocery"])
     }
 }

@@ -24,7 +24,7 @@ import Testing
         #expect(child?.helperID=="p-oak-2");#expect(child?.reachStatus == .reachable)
         #expect(!reachable.snapshot.unmetRequirements.contains("req.assistance.reach.p-oak-3"))
         #expect(s.initial==initial)
-        let dependencies=s.dependencyInspection(receipt:reachable)
+        let dependencies=try s.dependencyInspection(receipt:reachable,library:SimFixtures.library)
         #expect(dependencies.contains{$0.id=="helperReach|p-oak-3" && $0.subjectIDs==["p-oak-3","p-oak-2"] && $0.status.contains("reachable")})
         let restored=try DryRunJSON.decoder().decode(SimulationSession.self,from:DryRunJSON.encoder().encode(s))
         #expect(try restored.query(library:SimFixtures.library)==reachable)

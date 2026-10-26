@@ -41,7 +41,7 @@ try {
  assert.equal(oneDay.gaps.find((g:any)=>g.category==='food').deficit,2);
  assert.equal(twoDays.gaps.find((g:any)=>g.category==='food').deficit,1);
  assert.equal(twoDays.session.initial.household.supplies.shelfStableFoodDays.value,2);
- assert.equal(prior.scorecard.assessmentVersion,'dryrun.household-assessment/5');
+ assert.equal(prior.scorecard.assessmentVersion,'dryrun.household-assessment/7');
  await writeFile('../../fixtures/ai/assessment-policy.json',JSON.stringify({synthetic:true,modelCalls:0,method:'Fresh synthetic source snapshots plus actual Swift inventory confirmation and source assessment; no model grades.',source:{before:input,confirmed:changed},shelter:{before:prior,confirmed:reviewed},food:{inaccessible,accessible,oneDay:oneDay.gaps,twoDays:twoDays.gaps,keys:[oneKey.resourceStrategyKey,twoKey.resourceStrategyKey]},assertions:{shelterConfirmationChangesAssessment:true,foodAccessConfirmationChangesAssessment:true,unknownNotAbsent:true,foodGapProjectionAndRefresh:true}},null,2)+'\n');
  console.log(JSON.stringify({status:'passed',shelterPreparation:[prior.scorecard.preparation,reviewed.scorecard.preparation],foodPreparation:[inaccessible.scorecard.preparation,accessible.scorecard.preparation],modelCalls:0}));
 } finally {host.close();}

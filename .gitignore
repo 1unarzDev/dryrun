@@ -17,3 +17,7 @@ apps/ios/DryRun/Resources/DryRun.entitlements
 .env
 .env.local
 .dev.vars
+__pycache__/
+*.pyc
+# Beacon gateway URL + local fixture token for the debug app, written by scripts/mac/beacon-gateway.sh
+apps/ios/DryRun/Resources/BeaconGateway.json

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Plain task-to-editor contract. Subject IDs are carried intact; UI never guesses from localized titles.
-public enum PreparationEditTarget: Sendable, Hashable {
+public enum PreparationEditTarget: Codable, Sendable, Hashable {
     case contact(ContactRole)
     case family(personID: String?)
     case equipment(String)
@@ -31,6 +31,9 @@ public enum PreparationEditTarget: Sendable, Hashable {
         case "prep.backupMeetup": return .meeting(.backupMeetingPlace)
         case "prep.reviewCard": return .review
         case "prep.layout": return .homeSetup
+        case "prep.shelterPlan":
+            if recommendation.subjectID == "manufacturedAdvancePlan" {return .transport}
+            return home == nil ? .homeSetup:.home(elementID:home?.annotations.first{$0.kind == .tornadoShelterCandidate}?.spaceID)
         case "prep.helper", "act.assist.assign-helper", "act.fire.helper-reach-plan": return .family(personID: subject("person"))
         case "prep.transport", "act.relocation.arrange", "act.tornado.sturdy-building-plan": return .transport
         case "prep.water", "act.water.store-3day": return .water
@@ -40,6 +43,8 @@ public enum PreparationEditTarget: Sendable, Hashable {
             if let subject = recommendation.subjectID {
                 return .checklist(id: "medication.\(subject)", titleKey: "prep.medication.title")
             }
+        case "prep.stairPlan":
+            if let id = subject("person") { return .checklist(id: "stairPlan.person.\(id)", titleKey: "prep.stairPlan.title") }
         case "prep.equipmentSupplies":
             if let id = subject("equipment") { return .checklist(id: "equipmentSupplies.\(id)", titleKey: "prep.equipmentSupplies.title") }
         case "prep.alerts", "act.alerts.enroll-local": return .checklist(id: "alerts", titleKey: "prep.alerts.title")
@@ -68,5 +73,51 @@ public enum PreparationEditTarget: Sendable, Hashable {
         if let id = subject("equipment") { return .equipment(id) }
         if subject("backup") != nil || action == "act.generator.outdoor-placement" { return .backups }
         return .supplies
+    }
+}
+
+// Shared wire destination: these are existing native editors, not model-created screens.
+extension PreparationEditTarget {
+    private enum Key: String, CodingKey { case kind, subjectID, contactRole, purpose, checklistID, titleKey }
+    private enum Kind: String, Codable { case contact, family, equipment, backups, meeting, transport, home, homeSetup, review, water, communications, housing, checklist, supplies }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: Key.self)
+        switch try c.decode(Kind.self, forKey: .kind) {
+        case .contact: self = .contact(try c.decode(ContactRole.self, forKey: .contactRole))
+        case .family: self = .family(personID: try c.decodeIfPresent(String.self, forKey: .subjectID))
+        case .equipment: self = .equipment(try c.decode(String.self, forKey: .subjectID))
+        case .backups: self = .backups
+        case .meeting: self = .meeting(try c.decode(SavedPlacePurpose.self, forKey: .purpose))
+        case .transport: self = .transport
+        case .home: self = .home(elementID: try c.decodeIfPresent(String.self, forKey: .subjectID))
+        case .homeSetup: self = .homeSetup
+        case .review: self = .review
+        case .water: self = .water
+        case .communications: self = .communications
+        case .housing: self = .housing
+        case .checklist: self = .checklist(id: try c.decode(String.self, forKey: .checklistID), titleKey: try c.decode(String.self, forKey: .titleKey))
+        case .supplies: self = .supplies
+        }
+    }
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: Key.self)
+        let kind: Kind
+        switch self {
+        case .contact(let role): kind = .contact; try c.encode(role, forKey: .contactRole)
+        case .family(let id): kind = .family; try c.encodeIfPresent(id, forKey: .subjectID)
+        case .equipment(let id): kind = .equipment; try c.encode(id, forKey: .subjectID)
+        case .backups: kind = .backups
+        case .meeting(let purpose): kind = .meeting; try c.encode(purpose, forKey: .purpose)
+        case .transport: kind = .transport
+        case .home(let id): kind = .home; try c.encodeIfPresent(id, forKey: .subjectID)
+        case .homeSetup: kind = .homeSetup
+        case .review: kind = .review
+        case .water: kind = .water
+        case .communications: kind = .communications
+        case .housing: kind = .housing
+        case .checklist(let id, let title): kind = .checklist; try c.encode(id, forKey: .checklistID); try c.encode(title, forKey: .titleKey)
+        case .supplies: kind = .supplies
+        }
+        try c.encode(kind, forKey: .kind)
     }
 }

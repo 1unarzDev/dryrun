@@ -5,5 +5,7 @@ import DryRunCore
 struct MapPlanningDestination: Identifiable, Hashable {
     let place: SavedPlace
     var officialResource: PublicResource? = nil
+    /// Present when the place was suggested for an open preparation task.
+    var suggestion: ResourceSuggestion? = nil
     var id: String { place.id }
 }

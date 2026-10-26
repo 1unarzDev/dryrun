@@ -6,7 +6,7 @@ public enum ShelterSuitability {
     /// Facts that must hold before accepting an affirmative household confirmation. A window remains exposure
     /// even when it is proposed, inoperable or rejected as an escape option.
     public static func canConfirm(roomID: String, in home: HomeModel) -> Bool {
-        guard home.spaces.filter({ $0.id == roomID }).count == 1,
+        guard home.dwellingType != .manufacturedHome, home.spaces.filter({ $0.id == roomID }).count == 1,
               let room = home.space(roomID), room.geometryNeedsReview != true,
               Geometry.isSimplePolygon(room.polygon),
               home.floors.filter({ $0.id == room.floorID }).count == 1,

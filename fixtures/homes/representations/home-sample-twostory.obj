@@ -1,0 +1,170 @@
+# DryRun fictional home; metres; x/elevation/-y; no route certification
+o sp-living
+v 0.0 0.0 -0.0
+v 6.0 0.0 -0.0
+v 6.0 0.0 -5.5
+v 0.0 0.0 -5.5
+f 1 2 3 4
+o sp-kitchen
+v 6.0 0.0 -0.0
+v 10.0 0.0 -0.0
+v 10.0 0.0 -5.5
+v 6.0 0.0 -5.5
+f 5 6 7 8
+o sp-hall
+v 0.0 0.0 -5.5
+v 10.0 0.0 -5.5
+v 10.0 0.0 -8.0
+v 0.0 0.0 -8.0
+f 9 10 11 12
+o sp-bed1
+v 0.0 2.8 -0.0
+v 5.0 2.8 -0.0
+v 5.0 2.8 -5.5
+v 0.0 2.8 -5.5
+f 13 14 15 16
+o sp-bed2
+v 5.0 2.8 -0.0
+v 10.0 2.8 -0.0
+v 10.0 2.8 -5.5
+v 5.0 2.8 -5.5
+f 17 18 19 20
+o sp-landing
+v 0.0 2.8 -5.5
+v 10.0 2.8 -5.5
+v 10.0 2.8 -8.0
+v 0.0 2.8 -8.0
+f 21 22 23 24
+o w-g-ext-s-0
+v 0.0 0.0 -0.0
+v 2.0 0.0 -0.0
+l 25 26
+o w-g-ext-s-1
+v 2.9 0.0 -0.0
+v 10.0 0.0 -0.0
+l 27 28
+o w-g-ext-e-0
+v 10.0 0.0 -0.0
+v 10.0 0.0 -3.0
+l 29 30
+o w-g-ext-e-1
+v 10.0 0.0 -3.9
+v 10.0 0.0 -8.0
+l 31 32
+o w-g-ext-n-0
+v 10.0 0.0 -8.0
+v 0.0 0.0 -8.0
+l 33 34
+o w-g-ext-w-0
+v 0.0 0.0 -8.0
+v 0.0 0.0 -0.0
+l 35 36
+o w-u-ext-s-0
+v 0.0 2.8 -0.0
+v 2.0 2.8 -0.0
+l 37 38
+o w-u-ext-s-1
+v 3.0 2.8 -0.0
+v 7.0 2.8 -0.0
+l 39 40
+o w-u-ext-s-2
+v 8.0 2.8 -0.0
+v 10.0 2.8 -0.0
+l 41 42
+o w-u-ext-e-0
+v 10.0 2.8 -0.0
+v 10.0 2.8 -8.0
+l 43 44
+o w-u-ext-n-0
+v 10.0 2.8 -8.0
+v 0.0 2.8 -8.0
+l 45 46
+o w-u-ext-w-0
+v 0.0 2.8 -8.0
+v 0.0 2.8 -0.0
+l 47 48
+o w-g-mid-0
+v 6.0 0.0 -0.0
+v 6.0 0.0 -1.0
+l 49 50
+o w-g-mid-1
+v 6.0 0.0 -2.2
+v 6.0 0.0 -5.5
+l 51 52
+o w-g-hall-0
+v 0.0 0.0 -5.5
+v 1.5 0.0 -5.5
+l 53 54
+o w-g-hall-1
+v 2.4 0.0 -5.5
+v 7.0 0.0 -5.5
+l 55 56
+o w-g-hall-2
+v 7.9 0.0 -5.5
+v 10.0 0.0 -5.5
+l 57 58
+o w-u-mid-0
+v 5.0 2.8 -0.0
+v 5.0 2.8 -5.5
+l 59 60
+o w-u-hall-0
+v 0.0 2.8 -5.5
+v 2.0 2.8 -5.5
+l 61 62
+o w-u-hall-1
+v 2.85 2.8 -5.5
+v 7.0 2.8 -5.5
+l 63 64
+o w-u-hall-2
+v 7.85 2.8 -5.5
+v 10.0 2.8 -5.5
+l 65 66
+o pt-front_door_verified
+v 2.0 0.0 -0.0
+v 2.9 0.0 -0.0
+l 67 68
+o pt-back_door_verified
+v 10.0 0.0 -3.0
+v 10.0 0.0 -3.9
+l 69 70
+o pt-living-kitchen_opening_verified
+v 6.0 0.0 -1.0
+v 6.0 0.0 -2.2
+l 71 72
+o pt-living-hall_opening_verified
+v 1.5 0.0 -5.5
+v 2.4 0.0 -5.5
+l 73 74
+o pt-kitchen-hall_door_verified
+v 7.0 0.0 -5.5
+v 7.9 0.0 -5.5
+l 75 76
+o pt-bed1-landing_door_verified
+v 2.0 2.8 -5.5
+v 2.85 2.8 -5.5
+l 77 78
+o pt-bed2-landing_door_verified
+v 7.0 2.8 -5.5
+v 7.85 2.8 -5.5
+l 79 80
+o pt-win-up-bed1_window_verified
+v 2.0 2.8 -0.0
+v 3.0 2.8 -0.0
+l 81 82
+o pt-win-up-bed2_window_verified
+v 7.0 2.8 -0.0
+v 8.0 2.8 -0.0
+l 83 84
+o an-smoke-landing_smokeAlarm
+v 5.0 2.8 -6.7
+p 85
+o an-smoke-hall_smokeAlarm
+v 5.0 0.0 -6.7
+p 86
+o an-meeting_outsideMeetingPoint
+v 2.45 0.0 7.0
+p 87
+o cn-stairs
+v 8.8 2.8 -6.8
+v 8.8 0.0 -6.8
+l 88 89

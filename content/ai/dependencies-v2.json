@@ -1,0 +1,16 @@
+{
+  "version": "dryrun.dependencies/2",
+  "scope": "Read-only inspection of recorded sources and committed hypothetical exercise state",
+  "additionalKinds": ["recordedSupplyStorage", "recordedSupplyCarrier", "destinationConditions"],
+  "rules": [
+    "Receipt must equal the bound session's current host query.",
+    "Known empty supplies do not form stock dependencies; unknown quantities remain conditional.",
+    "Only uncarried supplies in valid recorded home spaces form storage groups.",
+    "Sole location applies only to each category's recorded potentially nonempty inventory; it is not a claim about all household stock.",
+    "Access is host-computed; an unavailable item's cause is not inferred from its storage group.",
+    "Carried supplies use the current exercise carrier, with unknown carrying capacity.",
+    "Destination conditions are recorded evidence, never inferred activation or present availability.",
+    "No real facts, tasks, or scores change from dependency observations."
+  ],
+  "compatibility": "Absent or null SimulationSession.dependencyPolicy preserves historical inspection kinds. New sessions use this version; resumed sessions preserve their source policy. Unknown policy versions fail decoding."
+}

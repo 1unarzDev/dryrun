@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import DryRunCore
 
@@ -38,4 +39,14 @@ struct PreparationEditTargetTests {
         if case .home(let opening) = target, let opening { #expect(home.portal(opening)?.kind != .window) }
         else { Issue.record("A home with openings should open the home editor") }
     }
+    @Test func wireDestinationRoundTripsAllExistingEditorsWithoutLocalizedTitleInference() throws {
+        let routes: [PreparationEditTarget] = [.contact(.waterUtility), .contact(.outOfAreaContact), .family(personID: "parent.one"), .family(personID: nil), .equipment("device.one"), .backups, .meeting(.backupMeetingPlace), .transport, .home(elementID: "door.one"), .home(elementID: nil), .homeSetup, .review, .water, .communications, .housing, .checklist(id: "medication.person.child.one", titleKey: "prep.medication.title"), .supplies]
+        for route in routes {
+            let data = try JSONEncoder().encode(route)
+            #expect(try JSONDecoder().decode(PreparationEditTarget.self, from: data) == route)
+        }
+        let wire = Data(#"{"kind":"checklist","checklistID":"fireDrill","titleKey":"prep.fireDrill.title"}"#.utf8)
+        #expect(try JSONDecoder().decode(PreparationEditTarget.self, from: wire) == .checklist(id: "fireDrill", titleKey: "prep.fireDrill.title"))
+    }
+
 }

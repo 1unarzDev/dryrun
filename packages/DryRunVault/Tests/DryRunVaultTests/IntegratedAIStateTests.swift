@@ -15,4 +15,69 @@ import DryRunCore
   #expect(try DryRunJSON.decoder().decode(IntegratedAIState.self,from:restored.integratedAIState!).schemaVersion==1)
   #expect(restored.home==legacy.home);#expect(restored.household==legacy.household)
  }
+ @Test func frozenPracticeSituationsAndWrongFirstAnswerSurviveEncryptedSave() async throws {
+  struct Recording:Decodable {
+   struct Branch:Decodable {var state:IntegratedAIState;enum CodingKeys:String,CodingKey {case state="final"}}
+   var branches:[Branch]
+  }
+  var root=URL(fileURLWithPath:#filePath)
+  for _ in 0..<5 {root.deleteLastPathComponent()}
+  let recording=try DryRunJSON.decoder().decode(Recording.self,from:Data(contentsOf:root.appendingPathComponent("fixtures/ai/practice-phases.json")))
+  let state=try #require(recording.branches.last?.state)
+  let encoded=try DryRunJSON.encoder().encode(state)
+  var payload=canaryPayload();payload.integratedAIState=encoded
+  let fixture=Fixture();defer {try? FileManager.default.removeItem(at:fixture.root)}
+  try await fixture.repo.save(payload)
+  let loaded=try #require(try await fixture.repo.load())
+  #expect(loaded.integratedAIState==encoded)
+  let restored=try DryRunJSON.decoder().decode(IntegratedAIState.self,from:#require(loaded.integratedAIState))
+  #expect(restored.practiceAttempts[0].phaseSources?.count==4)
+  #expect(restored.practiceAttempts[0].observations?[0].credit==0)
+  #expect(restored.practiceAttempts[0].observations?.count==4)
+  for (_,bytes) in allFileBytes(under:fixture.root) {
+   #expect(!contains(bytes,canary));#expect(!contains(bytes,"practice-check-a/1"));#expect(!contains(bytes,"phase-initialResponse"))
+  }
+ }
+
+ @Test func selectedCameraMetadataIsEncryptedAndDeletionPersists() async throws {
+  struct Recording:Decodable {var geometry:RoomImageCaptureGeometry}
+  var root=URL(fileURLWithPath:#filePath)
+  for _ in 0..<5 {root.deleteLastPathComponent()}
+  var record=try DryRunJSON.decoder().decode(Recording.self,from:Data(contentsOf:root.appendingPathComponent("fixtures/ai/image-geometry-v1.json"))).geometry
+  record.cameraFrameID="PRIVATE-CAMERA-FRAME-CANARY"
+  var state=IntegratedAIState(imageGeometryRecords:[record])
+  var payload=canaryPayload();payload.integratedAIState=try DryRunJSON.encoder().encode(state)
+  let fixture=Fixture();defer {try? FileManager.default.removeItem(at:fixture.root)}
+  try await fixture.repo.save(payload)
+  let loaded=try #require(try await fixture.repo.load())
+  let restored=try DryRunJSON.decoder().decode(IntegratedAIState.self,from:#require(loaded.integratedAIState))
+  #expect(restored.imageGeometryRecords==[record])
+  for (_,bytes) in allFileBytes(under:fixture.root) {#expect(!contains(bytes,record.cameraFrameID));#expect(!contains(bytes,record.captureFrameID))}
+  try state.removeImageGeometry(imageID:record.imageID,persist:{_ in})
+  payload.integratedAIState=try DryRunJSON.encoder().encode(state)
+  try await fixture.repo.save(payload)
+  let deleted=try #require(try await fixture.repo.load())
+  #expect(try DryRunJSON.decoder().decode(IntegratedAIState.self,from:#require(deleted.integratedAIState)).imageGeometryRecords?.isEmpty==true)
+ }
+
+ @Test func privateSiteRoutesAndMarkerNotesSurviveOnlyEncryptedStorage() async throws {
+  let fixture=Fixture();defer {try? FileManager.default.removeItem(at:fixture.root)}
+  let date=Date(timeIntervalSince1970:1792368000)
+  var payload=canaryPayload()
+  var h=try #require(payload.household)
+  h=SiteHazardEditing.replace(SiteHazardProfile(jurisdictionID:h.regionID,hurricane:HurricaneEvacuationPlan(zone:"PRIVATE-ZONE-CANARY",routeIDs:["PRIVATE-ROUTE-CANARY"],sourceID:"pending-review",instructions:"PRIVATE-ROUTE-DIRECTIONS")),in:h,at:date)
+  payload.household=h
+  payload.home=try HomeSafetyMarkers.place(id:"breaker",kind:.utilityShutoffElectric,roomID:"sp-living",position:Vec2(6,1),note:"PRIVATE-BREAKER-NOTE",verified:true,in:SampleHomes.ranch)
+  try await fixture.repo.save(payload)
+  let loaded=try #require(try await fixture.repo.load())
+  #expect(loaded.household?.siteHazards==h.siteHazards)
+  #expect(loaded.home==payload.home)
+  for (_,bytes) in allFileBytes(under:fixture.root) {
+   for text in ["PRIVATE-ZONE-CANARY","PRIVATE-ROUTE-CANARY","PRIVATE-ROUTE-DIRECTIONS","PRIVATE-BREAKER-NOTE"] {#expect(!contains(bytes,text))}
+  }
+  payload.household?.siteHazards=nil;payload.home=nil
+  try await fixture.repo.save(payload)
+  #expect(try await fixture.repo.load()?.household?.siteHazards==nil)
+ }
+
 }

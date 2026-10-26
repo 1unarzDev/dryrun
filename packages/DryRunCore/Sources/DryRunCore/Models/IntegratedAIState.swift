@@ -7,14 +7,28 @@ public struct IntegratedAIState: Codable, Sendable {
     public var sessions:[SimulationSession]
     public var practiceAttempts:[PracticeAttempt]
     public var scorecards:[PreparednessScorecard]
-    public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[]){
-        self.inventory=inventory;self.concerns=concerns;self.sessions=sessions;self.practiceAttempts=practiceAttempts;self.scorecards=scorecards
+    /// Optional local-only metadata for selected frames; absent in historical state. No image/depth bytes.
+    public var imageGeometryRecords:[RoomImageCaptureGeometry]?
+    /// Saved-version Undo/Redo for the household's home, so it survives relaunch. Local only: absent in historical
+    /// state, omitted when nil (existing bytes unchanged), and never projected into any provider context.
+    public var homeEditHistories:[HomeEditHistory]?
+    public init(inventory:InventoryLedger=InventoryLedger(),concerns:ConcernLedger=ConcernLedger(),sessions:[SimulationSession]=[],practiceAttempts:[PracticeAttempt]=[],scorecards:[PreparednessScorecard]=[],imageGeometryRecords:[RoomImageCaptureGeometry]?=nil,homeEditHistories:[HomeEditHistory]?=nil){
+        self.inventory=inventory;self.concerns=concerns;self.sessions=sessions;self.practiceAttempts=practiceAttempts;self.scorecards=scorecards;self.imageGeometryRecords=imageGeometryRecords
+        self.homeEditHistories=homeEditHistories
+    }
+    /// The saved-version history of `homeID`, if one was kept.
+    public func homeEditHistory(for homeID:String)->HomeEditHistory? { homeEditHistories?.first { $0.homeID==homeID } }
+    /// Keeps only the current home's history (a household has one home); an empty history is not stored.
+    public mutating func setHomeEditHistory(_ history:HomeEditHistory?) {
+        guard let history,history.canUndo || history.canRedo else { homeEditHistories=nil; return }
+        homeEditHistories=[history]
     }
     /// Legacy intake can resume/import an attempt, but cannot establish pre-feedback eligibility.
     /// Use beginPractice(...sessionID:library:persist:) for new scored checks.
     public mutating func beginPractice(id:String,variantID:String) throws -> PracticeAttempt {
+        guard !practiceAttempts.contains(where:{$0.checkID != nil && $0.observations?.isEmpty==true}) else {throw SessionError.invalidCommand}
         if let latest=practiceAttempts.max(by:{$0.sequence<$1.sequence}),
-           latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4{return latest}
+           latest.checkID==nil,latest.archivedUnverified != true,(latest.observations?.count ?? latest.answers.count)<4{return latest}
         guard !id.isEmpty,ScoreCompiler.variants.contains(variantID),!practiceAttempts.contains(where:{$0.id==id}) else {throw SessionError.invalidCommand}
         let attempt=PracticeAttempt(id:id,sequence:(practiceAttempts.map(\.sequence).max() ?? 0)+1,variantID:variantID,answers:[])
         practiceAttempts.append(attempt);return attempt

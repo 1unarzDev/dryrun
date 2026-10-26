@@ -47,9 +47,16 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSCameraUsageDescription: "Dry Run uses the camera only while you scan rooms with RoomPlan. The scan stays on this device."
         NSLocationWhenInUseUsageDescription: "Optional: use your position for a map planning origin after you ask. Dry Run does not send it to its service; Apple Maps may receive the location for map, search, or travel services."
+        NSLocalNetworkUsageDescription: "Connect to your local Dry Run development gateway for optional fictional-family planning tests."
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         CFBundleLocalizations: [en, es, vi]
         CFBundleDevelopmentRegion: en
         ITSAppUsesNonExemptEncryption: false
+        # Development gateway on the local network only (DEBUG launch arguments); internet ATS is unchanged.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        NSLocalNetworkUsageDescription: "Development builds only: reach a Dry Run test server on this network when a tester turns it on. No household information is sent from a real household."
         UIRequiredDeviceCapabilities: [arm64]
     entitlements:
       path: DryRun/Resources/DryRun.entitlements
@@ -71,6 +78,7 @@ targets:
     dependencies:
       - target: DryRun
       - package: DryRunCore
+      - package: DryRunVault
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

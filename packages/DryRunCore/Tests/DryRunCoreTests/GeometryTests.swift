@@ -132,12 +132,47 @@ struct GeometryTests {
         }
         let r2 = EgressPlanner().plan(RouteRequest(startSpaceID: "sp-scan-1"), in: confirmed)
         #expect(r2.primary?.exitPortalID == "pt-door-out")
-        // Scanned widths are evidence, not confirmation: walkers get a verification item, wheelchair users no route.
-        #expect(r2.primary?.verificationNeeded.contains("pt-door-out.clearWidth") == true)
+        // Accepted capture dimensions do not require another manual measurement.
+        // Exterior relation, operability, access and grade were independently recorded above.
+        #expect(r2.primary?.verificationNeeded.contains("pt-door-out.clearWidth") == false)
         let chair = EgressPlanner().plan(RouteRequest(startSpaceID: "sp-scan-1", mobility: .wheelchair), in: confirmed)
-        #expect(chair.primary == nil)
-        #expect(chair.exclusions.contains { $0.reason == "incompatibleMobility: scanned clear width not confirmed" })
+        #expect(chair.primary?.exitPortalID == "pt-door-out")
+        #expect(chair.exclusions.allSatisfy { $0.reason != "incompatibleMobility: scanned clear width not confirmed" })
         if let p = r2.primary { #expect(RouteGeometryAudit.violations(p, in: confirmed).isEmpty) }
+    }
+
+    @Test func lowConfidenceWidthDoesNotAuthorizeWheelchairClearance() throws {
+        var capture = Self.capture
+        for room in capture.rooms.indices {
+            for surface in capture.rooms[room].surfaces.indices where capture.rooms[room].surfaces[surface].category != .floor {
+                capture.rooms[room].surfaces[surface].confidence = .low
+            }
+        }
+        var home = try ScanImport.importCapture(capture, homeID: "low-confidence").home
+        home = HomeConfirmation.apply(.floorGrade(floorID: home.floors[0].id, grade: .ground), to: home)
+        home.edit { h in
+            for i in h.portals.indices where h.portals[i].kind == .door {
+                h.portals[i].verification = .verified
+                h.portals[i].operable = .confirmed(true)
+                h.portals[i].stepFree = .confirmed(true)
+                if h.portals[i].id == "pt-door-out" { h.portals[i].sideB = .exterior }
+            }
+        }
+        #expect(home.portals.allSatisfy { $0.clearWidthMeters.confirmedValue == nil })
+        #expect(EgressPlanner().plan(RouteRequest(startSpaceID: "sp-scan-1", mobility: .wheelchair), in: home).primary == nil)
+    }
+
+    @Test func nonpositiveCapturedOpeningWidthCannotBecomeAcceptedMeasurement() throws {
+        for width in [0.0, -0.5] {
+            var capture = Self.capture
+            for room in capture.rooms.indices {
+                for surface in capture.rooms[room].surfaces.indices where [.doorOpen, .doorClosed, .window, .opening].contains(capture.rooms[room].surfaces[surface].category) {
+                    capture.rooms[room].surfaces[surface].dimensions.x = width
+                }
+            }
+            let home = try ScanImport.importCapture(capture, homeID: "invalid-width").home
+            #expect(home.portals.allSatisfy { $0.clearWidthMeters.confirmedValue == nil })
+        }
     }
 
     @Test func recognisedRoomTypeIsOnlyAnUnconfirmedPrefill() throws {

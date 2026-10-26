@@ -25,6 +25,21 @@
       "type": "integer",
       "minimum": 0,
       "maximum": 9007199254740991
+    },
+    "evaluatorVersion": {
+      "type": "string",
+      "enum": [
+        "dryrun.practice-anchors/1",
+        "dryrun.practice-anchors/2",
+        "dryrun.practice-anchors/3",
+        "dryrun.hazard-checks/1",
+        "dryrun.hazard-checks/2"
+      ]
+    },
+    "startingReceiptDigest": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
     }
   },
   "required": [

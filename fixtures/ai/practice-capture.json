@@ -18,7 +18,8 @@
         "sequence": 1,
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
-          "initialDigest": "cbf0f30c082ae8d9",
+          "evaluatorVersion": "dryrun.practice-anchors/3",
+          "initialDigest": "298175a30871994b",
           "sessionID": "synthetic-session",
           "startingEventSequence": 3,
           "startingRevision": 1
@@ -49,6 +50,7 @@
           }
         ],
         "contractVersion": "dryrun.ai/1",
+        "dependencyPolicy": "dryrun.dependencies/2",
         "directorPolicy": {
           "allowedStageTransitions": [],
           "eventBudget": 32,
@@ -63,7 +65,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -1453,7 +1455,8 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       }
     ]
   },
@@ -1465,7 +1468,7 @@
         "competencyID": "initialResponse",
         "credit": 1,
         "feedbackRevealed": false,
-        "receiptDigest": "c804a63add279071"
+        "receiptDigest": "992866e62f93473f"
       },
       "feedback": {
         "acceptedRevision": 2,
@@ -1473,7 +1476,7 @@
         "competencyID": "initialResponse",
         "credit": 1,
         "feedbackRevealed": true,
-        "receiptDigest": "c804a63add279071"
+        "receiptDigest": "992866e62f93473f"
       }
     },
     {
@@ -1482,14 +1485,14 @@
         "actionID": "answer-adaptation",
         "competencyID": "adaptation",
         "feedbackRevealed": false,
-        "receiptDigest": "9cd1c7510e106ef"
+        "receiptDigest": "1ea60ac241dfab65"
       },
       "feedback": {
         "acceptedRevision": 3,
         "actionID": "answer-adaptation",
         "competencyID": "adaptation",
         "feedbackRevealed": true,
-        "receiptDigest": "9cd1c7510e106ef"
+        "receiptDigest": "1ea60ac241dfab65"
       }
     },
     {
@@ -1498,14 +1501,14 @@
         "actionID": "answer-communication",
         "competencyID": "communication",
         "feedbackRevealed": false,
-        "receiptDigest": "373bc9a7c1254e58"
+        "receiptDigest": "a3716354925a661e"
       },
       "feedback": {
         "acceptedRevision": 4,
         "actionID": "answer-communication",
         "competencyID": "communication",
         "feedbackRevealed": true,
-        "receiptDigest": "373bc9a7c1254e58"
+        "receiptDigest": "a3716354925a661e"
       }
     },
     {
@@ -1514,14 +1517,14 @@
         "actionID": "answer-continuity",
         "competencyID": "continuity",
         "feedbackRevealed": false,
-        "receiptDigest": "c5393279a038cb8c"
+        "receiptDigest": "9505d4a495d55bea"
       },
       "feedback": {
         "acceptedRevision": 5,
         "actionID": "answer-continuity",
         "competencyID": "continuity",
         "feedbackRevealed": true,
-        "receiptDigest": "c5393279a038cb8c"
+        "receiptDigest": "9505d4a495d55bea"
       }
     }
   ],
@@ -1552,34 +1555,35 @@
             "competencyID": "initialResponse",
             "credit": 1,
             "feedbackRevealed": true,
-            "receiptDigest": "c804a63add279071"
+            "receiptDigest": "992866e62f93473f"
           },
           {
             "acceptedRevision": 3,
             "actionID": "answer-adaptation",
             "competencyID": "adaptation",
             "feedbackRevealed": true,
-            "receiptDigest": "9cd1c7510e106ef"
+            "receiptDigest": "1ea60ac241dfab65"
           },
           {
             "acceptedRevision": 4,
             "actionID": "answer-communication",
             "competencyID": "communication",
             "feedbackRevealed": true,
-            "receiptDigest": "373bc9a7c1254e58"
+            "receiptDigest": "a3716354925a661e"
           },
           {
             "acceptedRevision": 5,
             "actionID": "answer-continuity",
             "competencyID": "continuity",
             "feedbackRevealed": true,
-            "receiptDigest": "c5393279a038cb8c"
+            "receiptDigest": "9505d4a495d55bea"
           }
         ],
         "sequence": 1,
         "source": {
           "contractVersion": "dryrun.practice-capture/1",
-          "initialDigest": "cbf0f30c082ae8d9",
+          "evaluatorVersion": "dryrun.practice-anchors/3",
+          "initialDigest": "298175a30871994b",
           "sessionID": "synthetic-session",
           "startingEventSequence": 3,
           "startingRevision": 1
@@ -1651,6 +1655,7 @@
           }
         ],
         "contractVersion": "dryrun.ai/1",
+        "dependencyPolicy": "dryrun.dependencies/2",
         "directorPolicy": {
           "allowedStageTransitions": [],
           "eventBudget": 32,
@@ -1665,7 +1670,7 @@
         "id": "synthetic-session",
         "initial": {
           "choices": {},
-          "contentVersion": "2026.10.3",
+          "contentVersion": "2026.10.6",
           "home": {
             "annotations": [
               {
@@ -3055,12 +3060,13 @@
           "scenarioVersion": "1.0.0",
           "seed": 7,
           "variants": []
-        }
+        },
+        "mechanicsVersion": "dryrun.hazard-mechanics/5"
       }
     ]
   },
   "scorecard": {
-    "assessmentVersion": "dryrun.household-assessment/5",
+    "assessmentVersion": "dryrun.household-assessment/7",
     "cap": 59,
     "capReasons": [
       "alarms",
@@ -3072,6 +3078,7 @@
     "overall": 23,
     "practice": 25,
     "practiceAssessed": 1,
+    "practiceEvaluatorVersion": "dryrun.practice-anchors/3",
     "preparation": 22.77777777777778,
     "provisional": true,
     "rubricVersion": "dryrun-rubric/0.1-draft",

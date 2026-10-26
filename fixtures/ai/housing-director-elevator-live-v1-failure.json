@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "sourceHashes": {
+    "scripts/housing-director-eval.ts": "10596ae964ac4614cebf85cd1aacc30ab989068f76dc0eeed3f9b949e6e83593",
+    "src/gateway.ts": "60bb61b1845bd9897861b1b46d2c1669fb9980840757ccb52f23012f2d132650",
+    "src/features.ts": "0281e185c469954dc6d86d5e110d23c619dc6a8dc1667a12d5c5b96e516b6acd",
+    "src/output-quality.ts": "70792b6a2c6b551e977399a3b34698ad913448873b477357f8eb77abaaf5f9f2",
+    "src/contracts.ts": "b3a836c82fcfdd55ac58e6a61e8f411296dcd225d45da6c5fe0bcb5c2e373ac6"
+  },
+  "replies": [],
+  "trace": [],
+  "calls": 0,
+  "failure": "[\n  {\n    \"origin\": \"string\",\n    \"code\": \"too_big\",\n    \"maximum\": 200,\n    \"inclusive\": true,\n    \"path\": [\n      \"context\",\n      \"learningObjectives\",\n      0\n    ],\n    \"message\": \"Too big: expected string to have <=200 characters\"\n  }\n]"
+}

@@ -19,3 +19,14 @@ describe('provider schema preserves typed command alternatives',()=>{
   expect(()=>directorToolSchemas.evaluateCandidateAction.parse({commands:[1,2,3]})).toThrow();
  });
 });
+
+it('preserves retest identifier roles in provider command descriptions',()=>{
+ const schema:any=providerSchema(z.toJSONSchema(directorToolSchemas.runCounterfactual));
+ const commands=schema.properties.retestPlan.properties.commands.items.anyOf;
+ const take=commands.find((s:any)=>s.properties.kind.enum.includes('takeSupply'));
+ expect(take.properties.target.description).toContain('inventory item ID');
+ expect(take.properties.value.description).toContain('person ID');
+ const move=commands.find((s:any)=>s.properties.kind.enum.includes('moveTo'));
+ expect(move.properties.target.description).toContain('person ID');
+ expect(move.properties.value.description).toContain('room ID');
+});

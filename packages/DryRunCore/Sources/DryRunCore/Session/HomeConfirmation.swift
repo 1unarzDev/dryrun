@@ -208,6 +208,8 @@ public enum HomeConfirmation {
             return home
         }
         guard h.portals[i].leadsToExterior else { return home }
+        // An opening the geometry places between two rooms is not an outside door, whatever the answer.
+        guard !PortalAttachment.exteriorClaimContradictsGeometry(h.portals[i], in: h) else { return home }
         h.portals[i].verification = .verified
         h.portals[i].operable = operable.map { .confirmed($0, verifiedAt: date) } ?? .unknown
         h.portals[i].stepFree = stepFree.map { .confirmed($0, verifiedAt: date) } ?? .unknown

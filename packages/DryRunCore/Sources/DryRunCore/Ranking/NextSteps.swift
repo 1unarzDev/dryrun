@@ -14,7 +14,7 @@ public struct NextStep: Sendable, Hashable, Identifiable {
 }
 
 /// The household's preparations across scenarios: what to do, what is done, and which facts are still unknown.
-/// Ordered by the ranker's tier, then by how many scenarios raised it. There is no score.
+/// Ordered by the ranker's tier and dependency, then effort and how many scenarios raised it. There is no score.
 public struct NextStepsSummary: Sendable, Hashable {
     public var toDo: [NextStep]
     public var completed: [NextStep]
@@ -27,6 +27,27 @@ public struct NextStepsSummary: Sendable, Hashable {
 }
 
 public enum NextSteps {
+    private static let equivalents = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
+                           "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water",
+                           "act.fire.meeting-point": "prep.nearMeetup", "act.fire.smoke-alarms": "prep.smokeAlarms",
+                           "act.assist.assign-helper": "prep.helper", "act.comms.weather-radio": "prep.radio", "act.alerts.enroll-local": "prep.alerts",
+                           "act.fire.practice-drill": "prep.fireDrill", "act.flood.higher-ground-plan": "prep.floodPlan",
+                           "act.water.well-test-after-flood": "prep.wellFloodPlan", "act.water.save-utility-contact": "prep.waterUtility"]
+
+    /// Shared action identity used by both summarization and native debrief navigation.
+    public static func preparationActionID(for actionID: String) -> String {
+        equivalents[actionID] ?? actionID
+    }
+
+    /// Includes recorded facts so a closed gap opens its factual editor rather than an unrelated fallback.
+    public static func matchingPreparation(for recommendation: Recommendation, in summary: NextStepsSummary) -> NextStep? {
+        let action = preparationActionID(for: recommendation.actionID)
+        return (summary.toDo + summary.completed + summary.recorded).first {
+            $0.recommendation.id == recommendation.id
+                || ($0.recommendation.actionID == action && $0.recommendation.subjectID == recommendation.subjectID)
+        }
+    }
+
     public static func summarize(_ results: [RehearsalResult], household: HouseholdProfile, home: HomeModel? = nil, savedPlaces: [SavedPlace] = [], referenceDate: Date = Date()) -> NextStepsSummary {
         var best: [String: (rec: Recommendation, scenario: String)] = [:]
         var scenarios: [String: Set<String>] = [:]
@@ -51,12 +72,6 @@ public enum NextSteps {
         }
         // One real preparation can explain several exercise gaps. Retain the exercise intervention
         // and source scenario while keeping the direct factual editor and household wording.
-        let equivalents = ["act.backup.confirm-medical-backup": "prep.medicalBackup", "act.medical.document-runtime": "prep.medicalBackup",
-                           "act.refrigeration.cooler-plan": "prep.coldStorage", "act.water.store-3day": "prep.water",
-                           "act.fire.meeting-point": "prep.nearMeetup", "act.fire.smoke-alarms": "prep.smokeAlarms",
-                           "act.assist.assign-helper": "prep.helper", "act.comms.weather-radio": "prep.radio", "act.alerts.enroll-local": "prep.alerts",
-                           "act.fire.practice-drill": "prep.fireDrill", "act.flood.higher-ground-plan": "prep.floodPlan",
-                           "act.water.well-test-after-flood": "prep.wellFloodPlan", "act.water.save-utility-contact": "prep.waterUtility"]
         let factualOnly = Set(["prep.radio", "prep.alerts", "prep.fireDrill", "prep.floodPlan", "prep.wellFloodPlan", "prep.waterUtility"])
         for key in best.keys.sorted() {
             guard let exercise = best[key], let action = equivalents[exercise.rec.actionID] else { continue }
@@ -79,13 +94,15 @@ public enum NextSteps {
             best[canonical] = baseline
             best.removeValue(forKey: key)
         }
+        let budget = household.supplies.limitedBudget
         let steps = best.map { id, value in
             NextStep(recommendation: value.rec, sourceScenarioID: value.scenario,
                      scenarioIDs: (scenarios[id] ?? []).sorted { PlanBuilder.order($0) < PlanBuilder.order($1) },
                      completedAt: household.completedPreparations.first { PreparationCompletion.isValid($0, for: value.rec, household: household, home: home) }?.completedAt)
         }
         .sorted {
-            ($0.recommendation.tier, RecommendationRanker.effortRank($0.recommendation.effort), -$0.scenarioIDs.count, $0.id) < ($1.recommendation.tier, RecommendationRanker.effortRank($1.recommendation.effort), -$1.scenarioIDs.count, $1.id)
+            RecommendationRanker.prepareOrderKey($0.recommendation, breadth: $0.scenarioIDs.count, limitedBudget: budget)
+                < RecommendationRanker.prepareOrderKey($1.recommendation, breadth: $1.scenarioIDs.count, limitedBudget: budget)
         }
         return NextStepsSummary(
             toDo: steps.filter { $0.completedAt == nil },

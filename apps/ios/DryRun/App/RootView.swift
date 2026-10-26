@@ -5,7 +5,8 @@ struct RootView: View {
     @Environment(AppModel.self) private var model
     @State private var tab = Tab(rawValue: DemoLaunch.current.tab ?? "") ?? (DemoLaunch.current.scenarioID != nil ? .rehearse : .prepare)
     @State private var showSettings = false
-    @State private var rehearsePath: [String] = DemoLaunch.current.scenarioID.map { [$0] } ?? []
+    @State private var prepareRootVersion = 0
+    @State private var rehearsePath: [String] = DemoLaunch.current.scenarioID.map { [DemoLaunch.current.adaptive ? "adaptive:\($0)" : $0] } ?? []
 
     enum Tab: String, Hashable { case prepare, rehearse, plan }
 
@@ -50,7 +51,7 @@ struct RootView: View {
         return TabView(selection: $tab) {
             NavigationStack { NextStepsView(openRehearse: { tab = .rehearse }).toolbar { settingsButton } }
                 // A new household (replacing the example one) gets a fresh stack: top of the page, large title.
-                .id(model.household?.id)
+                .id("\(model.household?.id ?? "")|\(prepareRootVersion)")
                 .tabItem { Label(l("common.tab.prepare"), systemImage: "checklist") }
                 .tag(Tab.prepare)
             NavigationStack(path: $rehearsePath) { RehearseTabView().toolbar { settingsButton } }
@@ -70,6 +71,8 @@ struct RootView: View {
         }
         .onChange(of: model.pendingTab, initial: true) { _, raw in
             guard let raw, let target = Tab(rawValue: raw) else { return }
+            // Explicit "See what to prepare next" returns to the list, not an old editor stack.
+            if target == .prepare { prepareRootVersion += 1 }
             tab = target
             if target != .rehearse { rehearsePath = [] }
             model.pendingTab = nil

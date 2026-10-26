@@ -9,5 +9,6 @@
   "simulation.user.takeSupply": "Bạn đã lấy một vật dụng dự trữ đã ghi nhận trong bài diễn tập này.",
   "simulation.user.transferSupply": "Bạn đã đặt vật dụng đang mang tại căn phòng hiện tại trong bài diễn tập.",
   "simulation.user.closeDoor": "Bạn đã đóng một cánh cửa có thể mở và đóng trong bài diễn tập này. Không mô phỏng thay đổi về sự lan truyền của khói.",
-  "simulation.user.finish": "Bạn đã kết thúc bài diễn tập này."
+  "simulation.user.finish": "Bạn đã kết thúc bài diễn tập này.",
+  "scenario.common.res.food-depleted": "Lượng thực phẩm đã ghi nhận cho cả gia đình đã hết trong bài diễn tập này."
 }

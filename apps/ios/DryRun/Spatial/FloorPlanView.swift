@@ -15,13 +15,16 @@ struct FloorPlanView: View {
     var spatialState: SpatialExerciseState?
     var selectedRoute: RouteResult?
     var onSelect: ((String) -> Void)?
+    var onSelectPoint: ((Vec2, String) -> Void)?
+    var placementPoint: Vec2?
     @State private var selectedFloorID: String?
 
-    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil, onSelect: ((String) -> Void)? = nil) {
+    init(home: HomeModel, routes: [RoutePath], highlightedFloorID: String?, highlightedElementID: String? = nil, spatialState: SpatialExerciseState? = nil, selectedRoute: RouteResult? = nil, onSelect: ((String) -> Void)? = nil, onSelectPoint: ((Vec2, String) -> Void)? = nil, placementPoint: Vec2? = nil) {
         self.home = home
         self.routes = routes
         self.highlightedFloorID = highlightedFloorID
         self.highlightedElementID = highlightedElementID; self.spatialState = spatialState; self.selectedRoute = selectedRoute; self.onSelect = onSelect
+        self.onSelectPoint = onSelectPoint; self.placementPoint = placementPoint
     }
 
     private var floorID: String? { highlightedFloorID ?? selectedFloorID ?? home.floors.first?.id }
@@ -30,7 +33,7 @@ struct FloorPlanView: View {
         VStack(spacing: 6) {
             if home.floors.count > 1 && highlightedFloorID == nil {
                 Picker(s("Floor"), selection: Binding(get: { floorID ?? "" }, set: { selectedFloorID = $0 })) {
-                    ForEach(home.floors) { f in
+                    ForEach(home.floors.sorted { ($0.level, $0.id) < ($1.level, $1.id) }) { f in
                         Text(routeFloors.contains(f.id) ? model.localizer("spatial.floor-route", ["floor": f.label]) : f.label).tag(f.id)
                     }
                 }
@@ -41,7 +44,10 @@ struct FloorPlanView: View {
                 Canvas { context, size in draw(in: &context, size: size) }
                     .contentShape(Rectangle())
                     .onTapGesture { point in
-                        if let id = hitTest(point, size: geometry.size) { onSelect?(id) }
+                        if let onSelectPoint, let fid = floorID, let fit = fit(geometry.size, fid) {
+                            let local = Vec2((point.x - fit.offset.x) / fit.scale + fit.minX, fit.maxY - (point.y - fit.offset.y) / fit.scale)
+                            onSelectPoint(local, fid)
+                        } else if let id = hitTest(point, size: geometry.size) { onSelect?(id) }
                     }
             }
             .frame(minHeight: 140)
@@ -59,16 +65,22 @@ struct FloorPlanView: View {
     /// Generated from what this scene actually shows, never a fixed list.
     private var legend: some View {
         let l = model.localizer
-        var items: [(String, String, Color)] = [(s("Verified exit"), "door.left.hand.open", PlanColors.exit), (s("Unconfirmed"), "questionmark.diamond", PlanColors.unverified)]
-        if !routes.isEmpty { items.append((l("pdf.legend.primary"), "arrow.right", PlanColors.route)) }
-        if routes.count > 1 { items.append((l("pdf.legend.alternative"), "arrow.right.circle.dotted", PlanColors.route)) }
-        if let state = spatialState {
-            if state.originSpaceID != nil && state.hazard != .flashFlood { items.append((l("ui.scene.origin"), "flame.fill", PlanColors.alarm)) }
-            if !state.affectedSpaceIDs.isEmpty { items.append((l("pdf.legend.affected"), state.hazard == .flashFlood ? "water.waves" : "smoke.fill", state.hazard == .flashFlood ? .blue : .secondary)) }
-            if state.exposedSpaceIDs?.isEmpty == false || state.hazard == .tornado { items.append((l("pdf.legend.exposed"), "exclamationmark.triangle.fill", .purple)) }
-            if state.destinationSpaceID != nil { items.append((l("pdf.legend.shelter"), "shield.lefthalf.filled", PlanColors.exit)) }
+        let statuses = home.portals.filter { $0.floorID == floorID }.map {
+            HomeScenePresentation.openingStatus($0, in: home, state: spatialState, request: selectedRoute?.request)
         }
-        if selectedRoute != nil { items.append((l("pdf.legend.start"), "person.circle.fill", Color(.label))) }
+        var items: [(String, String, Color)] = []
+        if statuses.contains(.availableExit) { items.append((s("Verified exit"), "door.left.hand.open", PlanColors.exit)) }
+        if statuses.contains(.unconfirmed) { items.append((s("Unconfirmed"), "questionmark.diamond", PlanColors.unverified)) }
+        if statuses.contains(.unavailable) { items.append((l("pdf.legend.blocked"), "xmark", PlanColors.alarm)) }
+        if routeFloors.contains(floorID ?? "") { items.append((l("pdf.legend.primary"), "arrow.right", PlanColors.route)) }
+        if routes.dropFirst().contains(where: { $0.legs.contains { $0.floorID == floorID } }) { items.append((l("pdf.legend.alternative"), "arrow.right.circle.dotted", PlanColors.route)) }
+        if let state = spatialState {
+            if state.originSpaceID.flatMap({ home.space($0)?.floorID }) == floorID && state.originSpaceID != nil && state.hazard != .flashFlood { items.append((l("ui.scene.origin"), "flame.fill", PlanColors.alarm)) }
+            if state.affectedSpaceIDs.contains(where: { home.space($0)?.floorID == floorID }) { items.append((l("pdf.legend.affected"), state.hazard == .flashFlood ? "water.waves" : "smoke.fill", state.hazard == .flashFlood ? .blue : .secondary)) }
+            if state.exposedSpaceIDs?.contains(where: { home.space($0)?.floorID == floorID }) == true || (state.hazard == .tornado && home.portals.contains { $0.floorID == floorID && $0.kind == .window }) { items.append((l("pdf.legend.exposed"), "exclamationmark.triangle.fill", .purple)) }
+            if state.destinationSpaceID.flatMap({ home.space($0)?.floorID }) == floorID && state.destinationSpaceID != nil { items.append((l("pdf.legend.shelter"), "shield.lefthalf.filled", PlanColors.exit)) }
+        }
+        if HomeScenePresentation.startingRoom(in: home, route: selectedRoute)?.floorID == floorID && selectedRoute != nil { items.append((l("pdf.legend.start"), "person.circle.fill", Color(.label))) }
         return ViewThatFits(in: .horizontal) {
             HStack(spacing: 12) { ForEach(items, id: \.0) { Label($0.0, systemImage: $0.1).foregroundStyle($0.2) } }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 130), alignment: .leading)], alignment: .leading, spacing: 4) {
@@ -89,7 +101,23 @@ struct FloorPlanView: View {
         guard let fid = floorID, let floor = home.floors.first(where: { $0.id == fid }) else { return model.localizer("spatial.floor-plan") }
         let rooms = home.spaces.filter { $0.floorID == fid }.map(\.label).joined(separator: ", ")
         let exits = home.portals.filter { $0.floorID == fid && HomeScenePresentation.openingStatus($0, in: home, state: spatialState, request: selectedRoute?.request) == .availableExit }.count
-        let summary = model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
+        var summary = model.localizer("spatial.floor-summary", ["floor": floor.label, "rooms": rooms, "count": String(exits)])
+        if let id = highlightedElementID {
+            let selected = home.space(id)?.label ?? home.portal(id).map { DisplayNames.name($0.kind.rawValue, localizer: model.localizer) }
+                ?? home.annotations.first(where: { $0.id == id })?.localizedLabel(model.localizer)
+            if let selected { summary += " " + model.localizer("spatial.selected-home-item") + ": " + selected }
+            if let opening = home.portal(id) {
+                let sides = [opening.sideA, opening.sideB].map { side -> String in
+                    switch side {
+                    case .space(let room): HomeScenePresentation.roomLabel(room, in: home)
+                    case .exterior: model.localizer("spatial.card.outside")
+                    case .commonArea: s("building corridor")
+                    case .unknown: model.localizer("spatial.card.notSure")
+                    }
+                }
+                summary += " (" + sides.joined(separator: " ↔ ") + ")"
+            }
+        }
         if let room = HomeScenePresentation.startingRoom(in: home, route: selectedRoute), room.floorID == fid {
             return summary + " " + model.localizer("spatial.recorded-start-room", ["room": room.label])
         }
@@ -215,12 +243,28 @@ struct FloorPlanView: View {
         for connector in home.connectors {
             let room = home.space(connector.fromSpaceID)
             let other = home.space(connector.toSpaceID)
-            if room?.floorID == fid { ctx.draw(Text(Image(systemName: "stairs")).font(.caption), at: f.pt(connector.fromPoint)) }
-            if other?.floorID == fid { ctx.draw(Text(Image(systemName: "stairs")).font(.caption), at: f.pt(connector.toPoint)) }
+            let symbol: String = switch connector.kind {
+            case .stairs: "stairs"
+            case .ramp: "figure.roll"
+            case .elevator: "arrow.up.arrow.down.square"
+            }
+            let excluded = selectedRoute?.exclusions.contains { $0.elementID == connector.id } == true
+                || (connector.kind == .elevator && spatialState?.hazard == .homeFire)
+            for (floor, point) in [(room?.floorID, connector.fromPoint), (other?.floorID, connector.toPoint)] where floor == fid {
+                ctx.draw(Text(Image(systemName: symbol)).font(.caption).foregroundStyle(excluded ? PlanColors.alarm : PlanColors.label), at: f.pt(point))
+                if excluded { badges.append((f.pt(point), "xmark")) }
+            }
         }
         if let id = highlightedElementID {
             if let room = home.space(id), room.floorID == fid { ctx.stroke(path(room.polygon, f, closed: true), with: .color(.purple), lineWidth: 5) }
             if let opening = home.portal(id), opening.floorID == fid {
+                // Both sides of the selected opening are tinted, so a "Leads to" answer is visible on the plan at once.
+                for roomID in ScanCorrections.sideRoomIDs(opening) {
+                    guard let side = home.space(roomID), side.floorID == fid else { continue }
+                    let outline = path(side.polygon, f, closed: true)
+                    ctx.fill(outline, with: .color(.purple.opacity(0.14)))
+                    ctx.stroke(outline, with: .color(.purple.opacity(0.7)), style: StrokeStyle(lineWidth: 2, dash: [5, 3]))
+                }
                 ctx.stroke(path([opening.a, opening.b], f, closed: false), with: .color(.purple), lineWidth: 9)
             }
             if let connector = home.connectors.first(where: { $0.id == id }) {
@@ -241,6 +285,11 @@ struct FloorPlanView: View {
             }
             markers.append(pinned)
             ctx.draw(Text(Image(systemName: Self.symbol(a.kind))).font(.system(size: 13)).foregroundStyle(Self.color(a.kind)), at: pinned, anchor: .center)
+        }
+        if let placementPoint {
+            let point = f.pt(placementPoint)
+            ctx.stroke(Path(ellipseIn: CGRect(origin: point, size: .zero).insetBy(dx: -10, dy: -10)), with: .color(.purple), lineWidth: 4)
+            ctx.draw(Text(Image(systemName: "plus")).foregroundStyle(.purple), at: point)
         }
         for (point, symbol) in badges {
             let disc = CGRect(origin: point, size: .zero).insetBy(dx: -11, dy: -11).offsetBy(dx: 0, dy: -14)
@@ -287,20 +336,53 @@ struct FloorPlanView: View {
             // A label that does not fit its room is shrunk, then dropped rather than drawn across a neighbour; the
             // room list and the VoiceOver summary name every room.
             let xs = s.polygon.map { f.pt($0).x }, ys = s.polygon.map { f.pt($0).y }
-            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 4, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 2)
-            for font in [Font.caption2, .system(size: 8)] {
+            let room = CGSize(width: (xs.max() ?? 0) - (xs.min() ?? 0) - 8, height: (ys.max() ?? 0) - (ys.min() ?? 0) - 6)
+            guard room.width > 0, room.height > 0 else { continue }
+            // Wrapping happens between words only: a word wider than the room would otherwise break mid-word.
+            func widestWord(_ font: Font) -> CGFloat {
+                s.label.split(separator: " ").map { word -> CGFloat in
+                    let resolved: GraphicsContext.ResolvedText = ctx.resolve(Text(verbatim: String(word)).font(font))
+                    return resolved.measure(in: CGSize(width: CGFloat.infinity, height: CGFloat.infinity)).width
+                }.max() ?? 0
+            }
+            var drawn = false
+            // Diagram labels use one bounded geometry scale. Full Dynamic Type
+            // remains available in the accompanying room list and VoiceOver.
+            for font in [Font.system(size: 11), .system(size: 9)] {
                 let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
                 let need = text.measure(in: CGSize(width: room.width, height: .infinity))
-                if need.width <= room.width && need.height <= room.height {
+                if need.width <= room.width && need.height <= room.height && widestWord(font) <= room.width {
+                    drawn = true
                     // Safety markers often sit at the room centre: move the name above one rather than cover it.
                     var c = f.pt(Geometry.centroid(s.polygon))
                     if markers.contains(where: { abs($0.x - c.x) < need.width / 2 + 8 && abs($0.y - c.y) < 12 }) {
                         c.y = max(c.y - need.height / 2 - 9, (ys.min() ?? c.y) + need.height / 2 + 1)
                     }
+                    c.x = min(max(c.x, (xs.min() ?? c.x) + need.width / 2 + 4), (xs.max() ?? c.x) - need.width / 2 - 4)
+                    c.y = min(max(c.y, (ys.min() ?? c.y) + need.height / 2 + 3), (ys.max() ?? c.y) - need.height / 2 - 3)
                     let rect = CGRect(x: c.x - need.width / 2, y: c.y - need.height / 2, width: need.width, height: need.height)
-                    ctx.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                    var labelContext = ctx
+                    labelContext.clip(to: path(s.polygon, f, closed: true))
+                    labelContext.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
                              with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
-                    ctx.draw(text, in: rect)
+                    labelContext.draw(text, in: rect)
+                    break
+                }
+            }
+            // A tall, narrow room (a corridor or stair landing) reads its name vertically instead of losing it.
+            if !drawn, room.height > room.width {
+                for font in [Font.system(size: 11), .system(size: 9)] {
+                    let text = ctx.resolve(Text(s.label).font(font).foregroundStyle(PlanColors.label))
+                    let need = text.measure(in: CGSize(width: room.height, height: .infinity))
+                    guard need.width <= room.height, need.height <= room.width, widestWord(font) <= room.height else { continue }
+                    let c = f.pt(Geometry.centroid(s.polygon))
+                    var rotated = ctx
+                    rotated.translateBy(x: c.x, y: c.y)
+                    rotated.rotate(by: .degrees(-90))
+                    let rect = CGRect(x: -need.width / 2, y: -need.height / 2, width: need.width, height: need.height)
+                    rotated.fill(Path(roundedRect: rect.insetBy(dx: -2, dy: 0), cornerRadius: 3),
+                                 with: .color((s.kind == .hallway ? PlanColors.hall : PlanColors.room).opacity(0.85)))
+                    rotated.draw(text, in: rect)
                     break
                 }
             }

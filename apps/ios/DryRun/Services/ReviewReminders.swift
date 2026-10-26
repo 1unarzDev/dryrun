@@ -5,7 +5,7 @@ import Observation
 @MainActor
 protocol ReviewReminderScheduling {
     func pendingDate() async -> Date?
-    func schedule(at date: Date, title: String, body: String) async throws
+    func schedule(at date: Date, title: String, body: String, isCurrent: @escaping @MainActor () -> Bool) async throws
     func cancel()
 }
 
@@ -72,20 +72,20 @@ final class LocalReviewReminderScheduler: ReviewReminderScheduling {
 
     init(access: any ReviewNotificationAccess = SystemReviewNotificationAccess()) { self.access = access }
     func pendingDate() async -> Date? { await access.pendingDate() }
-    func schedule(at date: Date, title: String, body: String) async throws {
-        guard !isScheduling else { throw CancellationError() }
+    func schedule(at date: Date, title: String, body: String, isCurrent: @escaping @MainActor () -> Bool = { true }) async throws {
+        guard !isScheduling, isCurrent(), !Task.isCancelled else { throw CancellationError() }
         guard date > Date(), date.timeIntervalSince1970.isFinite else { throw ReviewReminderError.invalidDate }
         isScheduling = true; defer { isScheduling = false }
         generation += 1
         let ticket = generation
         try await access.authorize()
-        guard ticket == generation else { throw CancellationError() }
+        guard ticket == generation, !Task.isCancelled, isCurrent() else { throw CancellationError() }
         do { try await access.add(at: date, title: title, body: body) }
         catch {
-            if ticket != generation { access.cancel() }
+            if ticket != generation || Task.isCancelled { access.cancel() }
             throw error
         }
-        guard ticket == generation else { access.cancel(); throw CancellationError() }
+        guard ticket == generation, !Task.isCancelled, isCurrent() else { access.cancel(); throw CancellationError() }
     }
     func cancel() { generation += 1; access.cancel() }
 }
@@ -107,17 +107,20 @@ final class ReviewReminderModel {
         if ticket == generation { scheduledDate = pending }
     }
 
-    func schedule(at date: Date, title: String, body: String) async {
-        guard !isWorking else { return }
+    func schedule(at date: Date, title: String, body: String, isCurrent: @escaping @MainActor () -> Bool = { true }) async {
+        guard !isWorking, isCurrent(), !Task.isCancelled else { return }
         generation += 1
         isWorking = true; defer { isWorking = false }
         do {
-            try await scheduler.schedule(at: date, title: title, body: body)
+            try await scheduler.schedule(at: date, title: title, body: body, isCurrent: isCurrent)
+            guard !Task.isCancelled, isCurrent() else { return }
             scheduledDate = await scheduler.pendingDate()
+            guard !Task.isCancelled, isCurrent() else { return }
             messageKey = "reminder.saved"
         } catch ReviewReminderError.permissionDenied { messageKey = "reminder.denied" }
         catch ReviewReminderError.invalidDate { messageKey = "reminder.invalidDate" }
         catch { messageKey = "reminder.failed" }
+        guard !Task.isCancelled, isCurrent() else { return }
         if messageKey != "reminder.saved" { scheduledDate = await scheduler.pendingDate() }
     }
 

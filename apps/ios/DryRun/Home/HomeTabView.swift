@@ -7,16 +7,19 @@ struct HomeTabView: View {
     @Environment(AppModel.self) private var model
     // Not a `switch` expression inline: Xcode 27's @State macro does not accept one as the initial value.
     @State private var mode: Mode = Mode.initial(DemoLaunch.current.homeMode)
-    @State private var floorID: String?
-    @State private var editing = false
+    @State private var floorID: String? = DemoLaunch.current.homeFloor.flatMap { index in
+        DemoLaunch.current.isActive ? DemoLaunch.current.homeID.flatMap { id in SampleHomes.all.first { $0.id == id } }
+            .flatMap { $0.floors.indices.contains(index) ? $0.floors[index].id : nil } : nil
+    }
+    /// The editor opens on the element that was tapped. An item-driven sheet hands that ID to the editor directly;
+    /// an isPresented sheet could read a stale selection and open the general list instead (seen on device).
+    struct EditorRequest: Identifiable { let id = UUID(); let elementID: String? }
+    @State private var editorRequest: EditorRequest?
     @State private var manualDraft: HomeModel?
-    @State private var selectedElementID: String?
     @State private var scanning = false
     @State private var editingHousehold = false
-    @State private var confirming: HomeModel?
     @State private var showingMeetingPlaceMap = false
-    /// A finished scan waiting for the scan cover to finish dismissing before the confirmation sheet is presented.
-    @State private var pendingProposal: HomeModel?
+    @State private var showingExitRoutes = true
 
     enum Mode: String, CaseIterable, Identifiable {
         case plan2D = "2D plan", dollhouse = "3D", rooms = "Room list"
@@ -47,33 +50,99 @@ struct HomeTabView: View {
                         ForEach(Mode.allCases) { Text(s($0.rawValue)).tag($0) }
                     }
                     .pickerStyle(.segmented)
+                    .accessibilityIdentifier("home.viewMode")
                     if home.floors.count > 1 {
                         Picker(s("Floor"), selection: Binding(get: { floorID ?? home.floors.first?.id ?? "" }, set: { floorID = $0 })) {
-                            ForEach(home.floors) { Text($0.label).tag($0.id) }
+                            ForEach(home.floors.sorted { ($0.level, $0.id) < ($1.level, $1.id) }) { Text($0.label).tag($0.id) }
                         }
+                        .accessibilityIdentifier("home.floor")
                     }
                     switch mode {
                     case .plan2D:
-                        FloorPlanView(home: home, routes: [], highlightedFloorID: floorID ?? home.floors.first?.id, onSelect: { selectedElementID = $0; editing = true })
+                        // The saved home only: the line recomputes after each Save, Undo or Revert, never from a draft.
+                        let people = model.household?.people ?? []
+                        let exitRoutes = showingExitRoutes ? HomeCommittedRoutes.outdoorEgress(people: people, home: home) : []
+                        FloorPlanView(home: home, routes: HomeCommittedRoutes.paths(exitRoutes), highlightedFloorID: floorID ?? home.floors.first?.id, onSelect: { editorRequest = EditorRequest(elementID: $0) })
                             .frame(height: 320)
                             .listRowInsets(EdgeInsets())
                             .accessibilityIdentifier("home.scene")
+                        if !people.isEmpty {
+                            Toggle(s("Show the way out from each starting room"), isOn: $showingExitRoutes)
+                                .font(.callout)
+                                .accessibilityIdentifier("home.exitRoutes")
+                            ForEach(exitRoutes.filter { $0.path == nil }) { entry in
+                                if let person = people.first(where: { $0.id == entry.personID }), let reason = entry.noRouteReason {
+                                    Label(person.localizedLabel(model.localizer) + ": " + model.localizer("plan.route.reason.\(reason.rawValue)"),
+                                          systemImage: "exclamationmark.triangle")
+                                        .font(.footnote)
+                                        .accessibilityIdentifier("home.exitRoutes.missing.\(entry.personID)")
+                                }
+                            }
+                        }
                     case .dollhouse:
                         DollhouseView(home: home, routes: [], floorID: floorID ?? home.floors.first?.id)
                             .frame(height: 320)
                             .listRowInsets(EdgeInsets())
                             .accessibilityIdentifier("home.scene")
-                        DollhouseKey(home: home)
+                        DollhouseKey(home: home, floorID: floorID ?? home.floors.first?.id)
                     case .rooms:
                         HomeRoomListView(home: home)
                     }
                 }
-                Section(s("Change the home")) {
-                    let pending = HomeConfirmation.steps(for: home).count
-                    if pending > 0 {
-                        Button(model.localizer("spatial.confirm-count", ["count": String(pending)]), systemImage: "checklist") { confirming = home }
+                if mode != .rooms {
+                    Section {
+                        DisclosureGroup(s("Safety markers")) {
+                            let markers = home.annotations.filter { $0.floorID == (floorID ?? home.floors.first?.id) }
+                            if markers.isEmpty { Text(model.localizer("spatial.no-markers-floor")).font(.footnote).foregroundStyle(.secondary) }
+                            ForEach(markers) { marker in
+                                Button {
+                                    editorRequest = EditorRequest(elementID: marker.id)
+                                } label: {
+                                    Label {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(marker.localizedLabel(model.localizer)).foregroundStyle(.primary)
+                                            if let roomID = marker.spaceID {
+                                                Text(HomeScenePresentation.roomLabel(roomID, in: home)).font(.footnote).foregroundStyle(.secondary)
+                                            }
+                                            Text(model.localizer(marker.verification == .verified ? "spatial.marker-recorded" : "spatial.marker-review"))
+                                                .font(.caption).foregroundStyle(.secondary)
+                                        }
+                                    } icon: {
+                                        Image(systemName: FloorPlanView.symbol(marker.kind)).foregroundStyle(Theme.accent)
+                                    }
+                                }
+                                .accessibilityIdentifier("home.marker.\(marker.id)")
+                            }
+                        }
+                        // A container keeps each marker row's own identifier.
+                        .accessibilityElement(children: .contain)
+                        .accessibilityIdentifier("home.markerKey")
                     }
-                    Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { selectedElementID = nil; editing = true }
+                }
+                Section {
+                    NavigationLink { SiteEvidenceView() } label: {
+                        Label(model.localizer("site.title"), systemImage: "map")
+                    }.accessibilityIdentifier("home.siteEvidence")
+                    NavigationLink { PhotoReviewView() } label: {
+                        Label(model.localizer("photo.title"), systemImage: "camera.viewfinder")
+                    }.accessibilityIdentifier("home.photoReview")
+                }
+                Section(s("Change the home")) {
+                    Button(s("Edit rooms, doors, and markers"), systemImage: "square.and.pencil") { editorRequest = EditorRequest(elementID: nil) }
+                        .accessibilityIdentifier("home.edit")
+                    // Saved versions (last 20 per home): each step is a new revision-checked save, never a silent rewrite.
+                    if model.canUndoHomeSave || model.canRedoHomeSave {
+                        HStack {
+                            Button(model.localizer("spatial.card.undoSave"), systemImage: "arrow.uturn.backward") { Task { await model.undoHomeSave() } }
+                                .disabled(!model.canUndoHomeSave)
+                                .accessibilityIdentifier("home.undoSave")
+                            Spacer()
+                            Button(model.localizer("spatial.card.redoSave"), systemImage: "arrow.uturn.forward") { Task { await model.redoHomeSave() } }
+                                .disabled(!model.canRedoHomeSave)
+                                .accessibilityIdentifier("home.redoSave")
+                        }
+                        .buttonStyle(.borderless)
+                    }
                     scanControls
                 }
                 if let household = model.household, !household.people.isEmpty {
@@ -94,7 +163,7 @@ struct HomeTabView: View {
                                     })) {
                                 Text(s("Not assigned")).tag(String?.none)
                                 ForEach(home.spaces) { space in
-                                    Text(space.label).tag(String?.some(space.id))
+                                    Text(HomeScenePresentation.roomLabel(space.id, in: home)).tag(String?.some(space.id))
                                 }
                             }
                         }
@@ -122,7 +191,7 @@ struct HomeTabView: View {
                     }
                     Button(s("Choose on map"), systemImage: "map") { showingMeetingPlaceMap = true }
                 }
-                let issues = HomeValidator.validate(home)
+                let issues = HomeValidator.validate(home).filter { $0.kind != .spaceNeedsMeasurement && $0.kind != .spaceLabelUnconfirmed }
                 Section(model.localizer("spatial.issues-count", ["count": String(issues.count)])) {
                     if issues.isEmpty { Text(s("Nothing outstanding in the home model.")) }
                     ForEach(issues) { issue in
@@ -136,11 +205,10 @@ struct HomeTabView: View {
                     Text(s("Your card and preparations work without a layout. Add your own rooms when you are ready to rehearse routes."))
                         .font(.callout).foregroundStyle(.secondary)
                     Button(s("Add layout manually"), systemImage: "square.and.pencil") {
-                        selectedElementID = nil
                         if manualDraft == nil {
                             manualDraft = ManualLayout.emptyHome(id: model.household?.stableHomeID ?? "home-\(UUID().uuidString.lowercased())")
                         }
-                        editing = true
+                        editorRequest = EditorRequest(elementID: nil)
                     }
                     .accessibilityIdentifier("home.addManual")
                     scanControls
@@ -163,50 +231,33 @@ struct HomeTabView: View {
             }
         }
         .navigationTitle(model.localizer("common.tab.home"))
-        .sheet(isPresented: $editing, onDismiss: { selectedElementID = nil }) {
-            if let home = model.home ?? manualDraft {
+        .sheet(item: $editorRequest, onDismiss: { manualDraft = nil }) { request in
+            if let home = manualDraft ?? model.home {
                 NavigationStack {
-                    ManualHomeEditorView(home: home, selectedElementID: selectedElementID) { updated in
-                        Task {
-                            manualDraft = updated
-                            if await model.updateHome(updated) { editing = false; manualDraft = nil }
-                        }
+                    ManualHomeEditorView(home: home, selectedElementID: request.elementID, savedBaseRevision: model.home?.revision, scopeSessionID: model.scopeSessionID) { updated, baseRevision, scope in
+                        manualDraft = updated
+                        let saved = await model.updateHome(updated, baseRevision: baseRevision, scopeSessionID: scope)
+                        if saved { editorRequest = nil; manualDraft = nil }
+                        return saved
                     }
                 }
                 .interactiveDismissDisabled()
             }
         }
-        .fullScreenCover(isPresented: $scanning, onDismiss: {
-            // A scan is only a proposal: go straight into the confirmation pass before it is saved. Presented from
-            // onDismiss because SwiftUI can drop a sheet requested while the cover is still dismissing.
-            if let proposed = pendingProposal {
-                pendingProposal = nil
-                confirming = proposed
-            }
-        }) {
-            RoomScanFlowView { proposed in
-                pendingProposal = proposed
-                scanning = false
-            }
-            .interactiveDismissDisabled()
+        .roomScanToHome(isPresented: $scanning)
+        .onChange(of: model.scopeSessionID) { _, _ in
+            scanning = false; editorRequest = nil; manualDraft = nil
         }
         .navigationDestination(isPresented: $editingHousehold) { FocusedHouseholdEditor(focus: .family) }
         .sheet(isPresented: $showingMeetingPlaceMap) {
             MeetingPlaceChooser(purpose: .outsideMeetingPoint)
         }
-        .sheet(item: $confirming) { draft in
-            NavigationStack {
-                HomeConfirmationView(home: draft) { confirmed in
-                    Task {
-                        if await model.updateHome(confirmed) { confirming = nil }
-                    }
-                }
-            }
-            .interactiveDismissDisabled()
-        }
     }
 
     @ViewBuilder private var scanControls: some View {
+        NavigationLink { ScannerHomeView() } label: {
+            Label(model.localizer("spatial.scanner.title"), systemImage: "sensor.tag.radiowaves.forward")
+        }.accessibilityIdentifier("home.scanner")
         switch model.capabilities.plan.scan {
         case .available:
             Button(s("Scan with RoomPlan"), systemImage: "camera.viewfinder") { scanning = true }

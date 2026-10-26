@@ -7,13 +7,27 @@ struct PrivateSnapshot: Sendable, Equatable {
     var home: HomeModel?
     var savedPlan: PlanDocument?
     var savedPlaces: [SavedPlace]
+    /// Existing Core sidecar, kept opaque here so ordinary native saves cannot erase
+    /// inventory, practice or assessment evidence owned by the integrated features.
+    var integratedAIState: Data?
+
+    /// Typed feature view over the same vault field; opaque bytes remain authoritative
+    /// for unrelated saves and equality. Vault loading validates before publication.
+    var aiState: IntegratedAIState? {
+        integratedAIState.flatMap { try? DryRunJSON.decoder().decode(IntegratedAIState.self, from: $0) }
+    }
+
+    static func encoded(_ state: IntegratedAIState?) -> Data? {
+        state.flatMap { try? DryRunJSON.encoder().encode($0) }
+    }
 
     init(household: HouseholdProfile, home: HomeModel? = nil, savedPlan: PlanDocument? = nil,
-         savedPlaces: [SavedPlace] = []) {
+         savedPlaces: [SavedPlace] = [], integratedAIState: Data? = nil, aiState: IntegratedAIState? = nil) {
         self.household = household
         self.home = home
         self.savedPlan = savedPlan
         self.savedPlaces = savedPlaces
+        self.integratedAIState = integratedAIState ?? Self.encoded(aiState)
     }
 }
 

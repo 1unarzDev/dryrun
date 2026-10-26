@@ -1,0 +1,34 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "diagnosticSummaryOnly": true,
+  "rawFullReplyRetained": false,
+  "reason": "First live attempt reversed target/value roles; host rejected the preparation and the old harness stopped. The later attempt overwrote the initial diagnostic file before unique failure names were added. This summary preserves the observed command arguments and reported usage only.",
+  "model": "gemini-3.1-flash-lite",
+  "sdk": "2.30.0",
+  "promptVersion": "director/4",
+  "providerCalls": 1,
+  "estimatedUSD": 0.001843,
+  "commands": [
+    {
+      "kind": "takeSupply",
+      "target": "sp-kitchen",
+      "value": "res.water.stored"
+    },
+    {
+      "kind": "moveTo",
+      "target": "sp-living",
+      "value": "p-oak-1"
+    },
+    {
+      "kind": "transferSupply",
+      "target": "sp-living",
+      "value": "res.water.stored"
+    }
+  ],
+  "usage": {
+    "total_input_tokens": 6592,
+    "total_output_tokens": 130,
+    "total_thought_tokens": 0
+  }
+}

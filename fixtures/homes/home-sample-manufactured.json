@@ -1,0 +1,791 @@
+{
+  "annotations" : [
+    {
+      "floorID" : "fl-trailer",
+      "id" : "an-tornado",
+      "kind" : "tornadoShelterCandidate",
+      "label" : "Supply closet; NOT tornado shelter",
+      "position" : {
+        "x" : 15,
+        "y" : 2
+      },
+      "spaceID" : "sp-closet",
+      "verification" : "verified"
+    },
+    {
+      "floorID" : "fl-trailer",
+      "id" : "an-supplies",
+      "kind" : "supplies",
+      "label" : "Emergency supplies",
+      "position" : {
+        "x" : 15,
+        "y" : 1
+      },
+      "spaceID" : "sp-closet",
+      "verification" : "verified"
+    },
+    {
+      "floorID" : "fl-trailer",
+      "id" : "an-breaker",
+      "kind" : "utilityShutoffElectric",
+      "label" : "Breaker panel",
+      "position" : {
+        "x" : 9.7,
+        "y" : 3
+      },
+      "spaceID" : "sp-living",
+      "verification" : "verified"
+    },
+    {
+      "floorID" : "fl-trailer",
+      "id" : "an-extinguisher",
+      "kind" : "fireExtinguisher",
+      "label" : "Extinguisher",
+      "position" : {
+        "x" : 10.3,
+        "y" : 3
+      },
+      "spaceID" : "sp-kitchen",
+      "verification" : "verified"
+    }
+  ],
+  "completeness" : "complete",
+  "connectors" : [
+
+  ],
+  "dwellingType" : "manufacturedHome",
+  "floors" : [
+    {
+      "elevationMeters" : 0,
+      "exteriorGrade" : "ground",
+      "id" : "fl-trailer",
+      "label" : "Home floor",
+      "level" : 0,
+      "toCommon" : {
+        "rotationRadians" : 0,
+        "translation" : {
+          "x" : 0,
+          "y" : 0
+        }
+      }
+    }
+  ],
+  "frame" : {
+    "handedness" : "right",
+    "sourceUpAxis" : "y",
+    "units" : "meters"
+  },
+  "id" : "home-sample-manufactured",
+  "isFictional" : true,
+  "label" : "Sample manufactured home (fictional)",
+  "obstacles" : [
+
+  ],
+  "portals" : [
+    {
+      "a" : {
+        "x" : 4,
+        "y" : 1
+      },
+      "b" : {
+        "x" : 4,
+        "y" : 1.9
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-trailer",
+      "id" : "pt-bed-living",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-bed1"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-living"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 1
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 2.2
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 1.2
+      },
+      "floorID" : "fl-trailer",
+      "id" : "pt-living-kitchen",
+      "kind" : "opening",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-living"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-kitchen"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 14,
+        "y" : 1
+      },
+      "b" : {
+        "x" : 14,
+        "y" : 1.9
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-trailer",
+      "id" : "pt-kitchen-closet",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-kitchen"
+        }
+      },
+      "sideB" : {
+        "space" : {
+          "_0" : "sp-closet"
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 5,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 5.9,
+        "y" : 0
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-trailer",
+      "id" : "pt-front",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-living"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : false
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 12,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 12.9,
+        "y" : 4
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "unit" : "m",
+        "value" : 0.9
+      },
+      "floorID" : "fl-trailer",
+      "id" : "pt-back",
+      "kind" : "door",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-kitchen"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : false
+      },
+      "verification" : "verified"
+    },
+    {
+      "a" : {
+        "x" : 1,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 2,
+        "y" : 4
+      },
+      "clearWidthMeters" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "floorID" : "fl-trailer",
+      "id" : "pt-win-bed",
+      "kind" : "window",
+      "operable" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "sideA" : {
+        "space" : {
+          "_0" : "sp-bed1"
+        }
+      },
+      "sideB" : {
+        "exterior" : {
+
+        }
+      },
+      "stepFree" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : false
+      },
+      "verification" : "proposed"
+    }
+  ],
+  "revision" : 1,
+  "schemaVersion" : 1,
+  "source" : "sample",
+  "spaces" : [
+    {
+      "floorID" : "fl-trailer",
+      "id" : "sp-bed1",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "bedroom",
+      "label" : "Bedroom",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 0,
+          "y" : 0
+        },
+        {
+          "x" : 4,
+          "y" : 0
+        },
+        {
+          "x" : 4,
+          "y" : 4
+        },
+        {
+          "x" : 0,
+          "y" : 4
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-trailer",
+      "id" : "sp-living",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "livingRoom",
+      "label" : "Living room",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 4,
+          "y" : 0
+        },
+        {
+          "x" : 10,
+          "y" : 0
+        },
+        {
+          "x" : 10,
+          "y" : 4
+        },
+        {
+          "x" : 4,
+          "y" : 4
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-trailer",
+      "id" : "sp-kitchen",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "unknown",
+        "sourceIDs" : [
+
+        ],
+        "status" : "unknown"
+      },
+      "kind" : "kitchen",
+      "label" : "Kitchen",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 10,
+          "y" : 0
+        },
+        {
+          "x" : 14,
+          "y" : 0
+        },
+        {
+          "x" : 14,
+          "y" : 4
+        },
+        {
+          "x" : 10,
+          "y" : 4
+        }
+      ]
+    },
+    {
+      "floorID" : "fl-trailer",
+      "id" : "sp-closet",
+      "interiorNoWindowsConfirmed" : {
+        "inputIDs" : [
+
+        ],
+        "origin" : "userConfirmed",
+        "sourceIDs" : [
+
+        ],
+        "status" : "confirmed",
+        "value" : true
+      },
+      "kind" : "closet",
+      "label" : "Supply closet",
+      "labelConfirmed" : true,
+      "needsMeasurement" : false,
+      "polygon" : [
+        {
+          "x" : 14,
+          "y" : 0
+        },
+        {
+          "x" : 16,
+          "y" : 0
+        },
+        {
+          "x" : 16,
+          "y" : 4
+        },
+        {
+          "x" : 14,
+          "y" : 4
+        }
+      ]
+    }
+  ],
+  "walls" : [
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 4,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-bed1-0",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 4,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 4,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-bed1-1",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 4,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 0,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-bed1-2",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 0,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 0,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-bed1-3",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 4,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-living-0",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-living-1",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 4,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-living-2",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 4,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 4,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-living-3",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 14,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-kitchen-0",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 14,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 14,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-kitchen-1",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 14,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-kitchen-2",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 10,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 10,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-kitchen-3",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 14,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 16,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-closet-0",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 16,
+        "y" : 0
+      },
+      "b" : {
+        "x" : 16,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-closet-1",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 16,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 14,
+        "y" : 4
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-closet-2",
+      "thicknessMeters" : 0.12
+    },
+    {
+      "a" : {
+        "x" : 14,
+        "y" : 4
+      },
+      "b" : {
+        "x" : 14,
+        "y" : 0
+      },
+      "floorID" : "fl-trailer",
+      "id" : "w-sp-closet-3",
+      "thicknessMeters" : 0.12
+    }
+  ]
+}

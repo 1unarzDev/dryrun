@@ -1,0 +1,2102 @@
+[
+  {
+    "relocation" : "blocked",
+    "relocationEventIDs" : [
+      "evt.freeze-power-loss.relocation.blocked",
+      "evt.freeze-power-loss.relocation.blocked.2"
+    ],
+    "resourceReadings" : [
+      {
+        "baseline" : {
+          "amount" : 1000,
+          "unit" : "Wh"
+        },
+        "current" : {
+          "amount" : 1000,
+          "unit" : "Wh"
+        },
+        "id" : "res.backup.bk-station"
+      },
+      {
+        "baseline" : {
+          "unit" : "h"
+        },
+        "current" : {
+          "unit" : "h"
+        },
+        "id" : "res.device.eq-oxygen.runtime"
+      },
+      {
+        "baseline" : {
+          "amount" : 18,
+          "unit" : "h"
+        },
+        "current" : {
+          "amount" : 18,
+          "unit" : "h"
+        },
+        "id" : "res.handset.hours"
+      }
+    ],
+    "routes" : [
+
+    ],
+    "scene" : {
+      "design" : {
+        "debriefKey" : "experience.freeze-power-loss.debrief",
+        "hazard" : "freezePowerLoss",
+        "objectiveKey" : "experience.freeze-power-loss.objective",
+        "primaryServiceIDs" : [
+          "svc.heat",
+          "svc.power.home"
+        ],
+        "questions" : [
+          {
+            "explanationKey" : "experience.freeze-power-loss.setup.duration.why",
+            "id" : "freeze-power-loss.duration",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.freeze-power-loss.setup.duration.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "extended-outage",
+                "labelKey" : "experience.freeze-power-loss.setup.duration.extended-outage",
+                "variantIDs" : [
+                  "extended-outage"
+                ]
+              }
+            ],
+            "promptKey" : "experience.freeze-power-loss.setup.duration"
+          },
+          {
+            "explanationKey" : "experience.freeze-power-loss.setup.focus.why",
+            "id" : "freeze-power-loss.focus",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+                  "svc.heat"
+                ],
+                "id" : "warmth",
+                "labelKey" : "experience.freeze-power-loss.setup.focus.warmth",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+                  "svc.power.home"
+                ],
+                "id" : "power",
+                "labelKey" : "experience.freeze-power-loss.setup.focus.power",
+                "variantIDs" : [
+
+                ]
+              }
+            ],
+            "promptKey" : "experience.freeze-power-loss.setup.focus"
+          }
+        ],
+        "scenarioID" : "freeze-power-loss",
+        "sceneKey" : "experience.freeze-power-loss.scene",
+        "symbol" : "snowflake"
+      },
+      "resources" : [
+        {
+          "baseline" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "current" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "id" : "res.backup.bk-station"
+        },
+        {
+          "baseline" : {
+            "unit" : "h"
+          },
+          "current" : {
+            "unit" : "h"
+          },
+          "id" : "res.device.eq-oxygen.runtime"
+        },
+        {
+          "baseline" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "current" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "id" : "res.handset.hours"
+        },
+        {
+          "baseline" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "charges"
+          },
+          "id" : "res.handset.powerBankCharges"
+        },
+        {
+          "baseline" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "gal"
+          },
+          "id" : "res.water.stored"
+        }
+      ],
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "operational",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 4320
+    },
+    "serviceIDs" : [
+      "svc.heat",
+      "svc.power.home"
+    ],
+    "unresolvedRequirementIDs" : [
+      "req.relocation"
+    ]
+  },
+  {
+    "relocation" : "blocked",
+    "relocationEventIDs" : [
+      "evt.heat-grid-strain.relocation.blocked",
+      "evt.heat-grid-strain.relocation.blocked.2"
+    ],
+    "resourceReadings" : [
+      {
+        "baseline" : {
+          "amount" : 1000,
+          "unit" : "Wh"
+        },
+        "current" : {
+          "amount" : 1000,
+          "unit" : "Wh"
+        },
+        "id" : "res.backup.bk-station"
+      },
+      {
+        "baseline" : {
+          "amount" : 5,
+          "unit" : "gal"
+        },
+        "current" : {
+          "amount" : 4.33,
+          "unit" : "gal"
+        },
+        "id" : "res.water.stored"
+      }
+    ],
+    "routes" : [
+
+    ],
+    "scene" : {
+      "design" : {
+        "debriefKey" : "experience.heat-grid-strain.debrief",
+        "hazard" : "heatGridStrain",
+        "objectiveKey" : "experience.heat-grid-strain.objective",
+        "primaryServiceIDs" : [
+          "svc.cooling",
+          "svc.power.home"
+        ],
+        "questions" : [
+          {
+            "explanationKey" : "experience.heat-grid-strain.setup.grid.why",
+            "id" : "heat-grid-strain.grid",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.heat-grid-strain.setup.grid.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "no-rotating-outage",
+                "labelKey" : "experience.heat-grid-strain.setup.grid.no-rotating-outage",
+                "variantIDs" : [
+                  "no-rotating-outage",
+                  "cooling-followup"
+                ]
+              }
+            ],
+            "promptKey" : "experience.heat-grid-strain.setup.grid"
+          },
+          {
+            "explanationKey" : "experience.heat-grid-strain.setup.focus.why",
+            "id" : "heat-grid-strain.focus",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+                  "svc.cooling"
+                ],
+                "id" : "cooling",
+                "labelKey" : "experience.heat-grid-strain.setup.focus.cooling",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+                  "svc.water.supply"
+                ],
+                "id" : "water",
+                "labelKey" : "experience.heat-grid-strain.setup.focus.water",
+                "variantIDs" : [
+
+                ]
+              }
+            ],
+            "promptKey" : "experience.heat-grid-strain.setup.focus"
+          }
+        ],
+        "scenarioID" : "heat-grid-strain",
+        "sceneKey" : "experience.heat-grid-strain.scene",
+        "symbol" : "thermometer.sun"
+      },
+      "resources" : [
+        {
+          "baseline" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "current" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "id" : "res.backup.bk-station"
+        },
+        {
+          "baseline" : {
+            "unit" : "h"
+          },
+          "current" : {
+            "unit" : "h"
+          },
+          "id" : "res.device.eq-oxygen.runtime"
+        },
+        {
+          "baseline" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "current" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "id" : "res.handset.hours"
+        },
+        {
+          "baseline" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "current" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "id" : "res.handset.powerBankCharges"
+        },
+        {
+          "baseline" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "current" : {
+            "amount" : 4.33,
+            "unit" : "gal"
+          },
+          "id" : "res.water.stored"
+        }
+      ],
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "operational",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 4320
+    },
+    "serviceIDs" : [
+      "svc.cooling",
+      "svc.power.home"
+    ],
+    "unresolvedRequirementIDs" : [
+      "req.relocation"
+    ]
+  },
+  {
+    "relocationEventIDs" : [
+
+    ],
+    "resourceReadings" : [
+
+    ],
+    "routes" : [
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 6.041313210583903,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 6.041313210583903,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 9.499999999999998,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 7.381688671857704,
+          "portalSequence" : [
+            "pt-bed2-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-bed2",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "space:sp-closet",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 3.5,
+                  "y" : 2.5
+                },
+                {
+                  "x" : 4.646532742524277,
+                  "y" : 3.2060401772427167
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 5.550000000000001,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 5.749999999999998,
+                  "y" : 6.799999999999998
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 5.278534333793319,
+          "portalSequence" : [
+            "pt-living-hall",
+            "pt-closet-hall"
+          ],
+          "spaceSequence" : [
+            "sp-living",
+            "sp-hall",
+            "sp-closet"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "destinationSpaceID" : "sp-closet",
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "interiorShelter",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      }
+    ],
+    "scene" : {
+      "design" : {
+        "debriefKey" : "experience.tornado.debrief",
+        "hazard" : "tornado",
+        "objectiveKey" : "experience.tornado.objective",
+        "primaryServiceIDs" : [
+          "svc.handset",
+          "svc.cellular"
+        ],
+        "questions" : [
+          {
+            "explanationKey" : "experience.tornado.setup.timing.why",
+            "id" : "tornado.timing",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.tornado.setup.timing.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "night",
+                "labelKey" : "experience.tornado.setup.timing.night",
+                "variantIDs" : [
+                  "night"
+                ]
+              }
+            ],
+            "promptKey" : "experience.tornado.setup.timing"
+          },
+          {
+            "explanationKey" : "experience.tornado.setup.impact.why",
+            "id" : "tornado.impact",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.tornado.setup.impact.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "home-damaged",
+                "labelKey" : "experience.tornado.setup.impact.home-damaged",
+                "variantIDs" : [
+                  "home-damaged"
+                ]
+              }
+            ],
+            "promptKey" : "experience.tornado.setup.impact"
+          }
+        ],
+        "scenarioID" : "tornado",
+        "sceneKey" : "experience.tornado.scene",
+        "symbol" : "tornado"
+      },
+      "resources" : [
+        {
+          "baseline" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "current" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "id" : "res.backup.bk-station"
+        },
+        {
+          "baseline" : {
+            "unit" : "h"
+          },
+          "current" : {
+            "unit" : "h"
+          },
+          "id" : "res.device.eq-oxygen.runtime"
+        },
+        {
+          "baseline" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "current" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "id" : "res.handset.hours"
+        },
+        {
+          "baseline" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "charges"
+          },
+          "id" : "res.handset.powerBankCharges"
+        },
+        {
+          "baseline" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "gal"
+          },
+          "id" : "res.water.stored"
+        }
+      ],
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "operational",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 2880
+    },
+    "serviceIDs" : [
+      "svc.alerts"
+    ],
+    "unresolvedRequirementIDs" : [
+
+    ]
+  },
+  {
+    "relocation" : "blocked",
+    "relocationEventIDs" : [
+      "evt.flash-flood.relocation.blocked"
+    ],
+    "resourceReadings" : [
+
+    ],
+    "routes" : [
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "noRouteReason" : "incompleteConnectivity",
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "higherRefuge",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      }
+    ],
+    "scene" : {
+      "design" : {
+        "debriefKey" : "experience.flash-flood.debrief",
+        "hazard" : "flashFlood",
+        "objectiveKey" : "experience.flash-flood.objective",
+        "primaryServiceIDs" : [
+          "svc.roads",
+          "svc.transport"
+        ],
+        "questions" : [
+          {
+            "explanationKey" : "experience.flash-flood.setup.event.why",
+            "id" : "flash-flood.event",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.flash-flood.setup.event.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "householdLeak",
+                "labelKey" : "experience.flash-flood.setup.event.householdLeak",
+                "variantIDs" : [
+                  "householdLeak"
+                ]
+              }
+            ],
+            "promptKey" : "experience.flash-flood.setup.event"
+          },
+          {
+            "explanationKey" : "experience.flash-flood.setup.extent.why",
+            "id" : "flash-flood.extent",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.flash-flood.setup.extent.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "home-flooded",
+                "labelKey" : "experience.flash-flood.setup.extent.home-flooded",
+                "variantIDs" : [
+                  "home-flooded"
+                ]
+              }
+            ],
+            "promptKey" : "experience.flash-flood.setup.extent"
+          },
+          {
+            "explanationKey" : "experience.flash-flood.setup.focus.why",
+            "id" : "flash-flood.focus",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+                  "svc.roads",
+                  "svc.transport"
+                ],
+                "id" : "access",
+                "labelKey" : "experience.flash-flood.setup.focus.access",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+                  "svc.water.supply"
+                ],
+                "id" : "supplies",
+                "labelKey" : "experience.flash-flood.setup.focus.supplies",
+                "variantIDs" : [
+
+                ]
+              }
+            ],
+            "promptKey" : "experience.flash-flood.setup.focus"
+          }
+        ],
+        "scenarioID" : "flash-flood",
+        "sceneKey" : "experience.flash-flood.scene",
+        "symbol" : "water.waves"
+      },
+      "resources" : [
+        {
+          "baseline" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "current" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "id" : "res.backup.bk-station"
+        },
+        {
+          "baseline" : {
+            "unit" : "h"
+          },
+          "current" : {
+            "unit" : "h"
+          },
+          "id" : "res.device.eq-oxygen.runtime"
+        },
+        {
+          "baseline" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "current" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "id" : "res.handset.hours"
+        },
+        {
+          "baseline" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "charges"
+          },
+          "id" : "res.handset.powerBankCharges"
+        },
+        {
+          "baseline" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "gal"
+          },
+          "id" : "res.water.stored"
+        }
+      ],
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "unknown",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 2880
+    },
+    "serviceIDs" : [
+      "svc.roads",
+      "svc.transport"
+    ],
+    "unresolvedRequirementIDs" : [
+      "req.relocation",
+      "req.water"
+    ]
+  },
+  {
+    "relocationEventIDs" : [
+
+    ],
+    "resourceReadings" : [
+
+    ],
+    "routes" : [
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 11.275212711360151,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-1",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 2.25,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 3.425,
+                  "y" : 5.749999999999999
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 11.275212711360151,
+          "portalSequence" : [
+            "pt-bed1-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed1",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+            "pt-bed1-hall.clearWidth"
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-2",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed1"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 9.499999999999998,
+                  "y" : 8.1
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.65
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 6.2
+                },
+                {
+                  "x" : 9.43,
+                  "y" : 5.75
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5.450000000000001
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 5
+                },
+                {
+                  "x" : 5.45,
+                  "y" : 4.55
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 12.80477708115619,
+          "portalSequence" : [
+            "pt-bed2-hall",
+            "pt-living-hall",
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-bed2",
+            "sp-hall",
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-3",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-bed2"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      },
+      {
+        "algorithmVersion" : "egress-portal-graph/2",
+        "alternativeStatus" : "none",
+        "exclusions" : [
+          {
+            "elementID" : "sp-kitchen",
+            "reason" : "blockedByScenario"
+          },
+          {
+            "elementID" : "pt-win-bed1",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-bed2",
+            "reason" : "portalNotVerified"
+          },
+          {
+            "elementID" : "pt-win-living",
+            "reason" : "portalNotVerified"
+          }
+        ],
+        "homeFingerprint" : "44a2fa7137a9eed07ecf8c3f37e765ba",
+        "homeID" : "home-sample-ranch",
+        "homeRevision" : 1,
+        "primary" : {
+          "connectorSequence" : [
+
+          ],
+          "exitPortalID" : "pt-front",
+          "legs" : [
+            {
+              "floorID" : "fl-ground",
+              "points" : [
+                {
+                  "x" : 3.5,
+                  "y" : 2.5
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0.45
+                },
+                {
+                  "x" : 3.45,
+                  "y" : 0
+                },
+                {
+                  "x" : 3.45,
+                  "y" : -0.55
+                }
+              ]
+            }
+          ],
+          "lengthMeters" : 3.050609665440988,
+          "portalSequence" : [
+            "pt-front"
+          ],
+          "spaceSequence" : [
+            "sp-living"
+          ],
+          "verificationNeeded" : [
+
+          ]
+        },
+        "request" : {
+          "exclusions" : {
+            "blockedConnectorIDs" : [
+
+            ],
+            "blockedPortalIDs" : [
+
+            ],
+            "blockedSpaceIDs" : [
+              "sp-kitchen"
+            ]
+          },
+          "mobility" : {
+            "minimumClearWidthMeters" : 0.7,
+            "requiresStepFree" : false
+          },
+          "personID" : "p-oak-4",
+          "purpose" : "outdoorEgress",
+          "startSpaceID" : "sp-living"
+        },
+        "sharedChokepoints" : [
+
+        ]
+      }
+    ],
+    "scene" : {
+      "design" : {
+        "debriefKey" : "experience.home-fire.debrief",
+        "hazard" : "homeFire",
+        "objectiveKey" : "experience.home-fire.objective",
+        "primaryServiceIDs" : [
+          "svc.handset",
+          "svc.cellular"
+        ],
+        "questions" : [
+          {
+            "explanationKey" : "experience.home-fire.setup.smoke.why",
+            "id" : "home-fire.smoke",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.home-fire.setup.smoke.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "hallway-smoke",
+                "labelKey" : "experience.home-fire.setup.smoke.hallway-smoke",
+                "variantIDs" : [
+                  "hallway-smoke"
+                ]
+              }
+            ],
+            "promptKey" : "experience.home-fire.setup.smoke"
+          },
+          {
+            "explanationKey" : "experience.home-fire.setup.exit.why",
+            "id" : "home-fire.exit",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.home-fire.setup.exit.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "second-exit-blocked",
+                "labelKey" : "experience.home-fire.setup.exit.second-exit-blocked",
+                "variantIDs" : [
+                  "second-exit-blocked"
+                ]
+              }
+            ],
+            "promptKey" : "experience.home-fire.setup.exit"
+          }
+        ],
+        "scenarioID" : "home-fire",
+        "sceneKey" : "experience.home-fire.scene",
+        "symbol" : "flame"
+      },
+      "resources" : [
+        {
+          "baseline" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "current" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "id" : "res.backup.bk-station"
+        },
+        {
+          "baseline" : {
+            "unit" : "h"
+          },
+          "current" : {
+            "unit" : "h"
+          },
+          "id" : "res.device.eq-oxygen.runtime"
+        },
+        {
+          "baseline" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "current" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "id" : "res.handset.hours"
+        },
+        {
+          "baseline" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "current" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "id" : "res.handset.powerBankCharges"
+        },
+        {
+          "baseline" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "current" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "id" : "res.water.stored"
+        }
+      ],
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "operational",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 60
+    },
+    "serviceIDs" : [
+
+    ],
+    "unresolvedRequirementIDs" : [
+      "req.relocation"
+    ]
+  },
+  {
+    "relocationEventIDs" : [
+
+    ],
+    "resourceReadings" : [
+      {
+        "baseline" : {
+          "amount" : 5,
+          "unit" : "gal"
+        },
+        "current" : {
+          "amount" : 0,
+          "unit" : "gal"
+        },
+        "id" : "res.water.stored"
+      }
+    ],
+    "routes" : [
+
+    ],
+    "scene" : {
+      "design" : {
+        "debriefKey" : "experience.water-outage.debrief",
+        "hazard" : "waterOutage",
+        "objectiveKey" : "experience.water-outage.objective",
+        "primaryServiceIDs" : [
+          "svc.water.supply",
+          "svc.power.home"
+        ],
+        "questions" : [
+          {
+            "explanationKey" : "experience.water-outage.setup.advisory.why",
+            "id" : "water-outage.advisory",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.water-outage.setup.advisory.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "do-not-drink",
+                "labelKey" : "experience.water-outage.setup.advisory.do-not-drink",
+                "variantIDs" : [
+                  "do-not-drink"
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "do-not-use",
+                "labelKey" : "experience.water-outage.setup.advisory.do-not-use",
+                "variantIDs" : [
+                  "do-not-use"
+                ]
+              }
+            ],
+            "promptKey" : "experience.water-outage.setup.advisory"
+          },
+          {
+            "explanationKey" : "experience.water-outage.setup.power.why",
+            "id" : "water-outage.power",
+            "options" : [
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "recorded",
+                "labelKey" : "experience.water-outage.setup.power.recorded",
+                "variantIDs" : [
+
+                ]
+              },
+              {
+                "focusServiceIDs" : [
+
+                ],
+                "id" : "with-power-loss",
+                "labelKey" : "experience.water-outage.setup.power.with-power-loss",
+                "variantIDs" : [
+                  "with-power-loss"
+                ]
+              }
+            ],
+            "promptKey" : "experience.water-outage.setup.power"
+          }
+        ],
+        "scenarioID" : "water-outage",
+        "sceneKey" : "experience.water-outage.scene",
+        "symbol" : "drop.triangle"
+      },
+      "resources" : [
+        {
+          "baseline" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "current" : {
+            "amount" : 1000,
+            "unit" : "Wh"
+          },
+          "id" : "res.backup.bk-station"
+        },
+        {
+          "baseline" : {
+            "unit" : "h"
+          },
+          "current" : {
+            "unit" : "h"
+          },
+          "id" : "res.device.eq-oxygen.runtime"
+        },
+        {
+          "baseline" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "current" : {
+            "amount" : 18,
+            "unit" : "h"
+          },
+          "id" : "res.handset.hours"
+        },
+        {
+          "baseline" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "current" : {
+            "amount" : 2,
+            "unit" : "charges"
+          },
+          "id" : "res.handset.powerBankCharges"
+        },
+        {
+          "baseline" : {
+            "amount" : 5,
+            "unit" : "gal"
+          },
+          "current" : {
+            "amount" : 0,
+            "unit" : "gal"
+          },
+          "id" : "res.water.stored"
+        }
+      ],
+      "services" : {
+        "svc.alerts" : "operational",
+        "svc.cellular" : "operational",
+        "svc.cooling" : "operational",
+        "svc.destination" : "unavailable",
+        "svc.device.eq-oxygen" : "operational",
+        "svc.grid" : "operational",
+        "svc.handset" : "operational",
+        "svc.heat" : "operational",
+        "svc.power.home" : "operational",
+        "svc.refrigeration" : "operational",
+        "svc.roads" : "operational",
+        "svc.transport" : "operational",
+        "svc.water.safety" : "unknown",
+        "svc.water.supply" : "operational",
+        "svc.wellPump" : "operational",
+        "svc.wifi" : "operational"
+      },
+      "simMinute" : 4320
+    },
+    "serviceIDs" : [
+      "svc.water.supply"
+    ],
+    "unresolvedRequirementIDs" : [
+      "req.water"
+    ]
+  }
+]

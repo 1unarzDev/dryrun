@@ -185,16 +185,19 @@ extension RunState {
             if !household.pets.isEmpty { flags.insert("fire.pets") }
             return
         }
-        // Usual (practised) routes with no exercise exclusions.
+        // Usual (practised) routes with no exercise exclusions. Version 6 adaptive sessions: an explicit
+        // incident origin is already known at the alarm, so no route may pass through that room.
+        let explicitOrigin = hazardProgress?.supportsOriginExclusion == true ? input.effectiveSpatialOptions.originSpaceID.flatMap { home.space($0)?.id } : nil
+        let alarmExclusions = explicitOrigin.map { ScenarioExclusions(blockedSpaceIDs: [$0]) } ?? .none
         for p in household.people.sorted(by: { $0.id < $1.id }) {
-            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p)), in: home)
+            let r = planner.plan(RouteRequest(personID: p.id, startSpaceID: startSpace(for: p), mobility: mobility(for: p), exclusions: alarmExclusions), in: home)
             currentRoutes[p.id] = r
             routes.append(r)
             if r.primary == nil {
                 emit("evt.home-fire.route.no-usual.\(p.id)", title: "scenario.home-fire.route.no-usual",
                      values: ["person": p.alias, "reason": r.noRouteReason?.rawValue ?? "unknown"], severity: .critical,
                      rule: "rule.fire.route", facts: ["person.\(p.id)", "home.portals"], causedBy: cause, sources: ["S19"])
-                requireSticky("req.egress.\(p.id)", cause: cause)
+                if !isOutside(p.id) { requireSticky("req.egress.\(p.id)", cause: cause) }
                 flags.insert("fire.noRoute")
             }
         }
@@ -208,6 +211,11 @@ extension RunState {
             requireSticky("req.meetingPoint", cause: cause)
         }
         if !household.pets.isEmpty { flags.insert("fire.pets") }
+        if let explicitOrigin {
+            updateSpatialScene(stage: cause, affected: [explicitOrigin], assumption: "Exercise: the selected fire origin room is excluded from every route from the alarm onward. An occupied origin room remains exposed; no supported departure is assumed.")
+            spatialState?.originSpaceID = explicitOrigin
+            return
+        }
         updateSpatialScene(stage: cause, affected: [], assumption: "Exercise: routes before the authored smoke blockage. Starting rooms are recorded household assignments.")
     }
 
@@ -232,7 +240,10 @@ extension RunState {
                 }
             }
             let candidates = home.spaces.filter { $0.kind == kind && (blockedSpaces.isEmpty || neighbors.contains($0.id)) }.sorted { $0.id < $1.id }
-            let selected = blockedSpaces.isEmpty ? input.effectiveSpatialOptions.originSpaceID.flatMap(home.space) : nil
+            let explicit = input.effectiveSpatialOptions.originSpaceID.flatMap(home.space)
+            // Version 6 already excluded that explicit origin at the alarm; it is still the origin here.
+            let alreadyExcluded = hazardProgress?.supportsOriginExclusion == true && explicit.map { blockedSpaces == [$0.id] } == true
+            let selected = blockedSpaces.isEmpty || alreadyExcluded ? explicit : nil
             let origin = selected ?? (candidates.isEmpty ? nil : candidates[Int(input.seed % UInt64(candidates.count))])
             if let origin {
                 blockedSpaces.insert(origin.id)
@@ -265,7 +276,7 @@ extension RunState {
                 emit("evt.home-fire.route.none.\(p.id)", title: "scenario.home-fire.route.none",
                      values: ["person": p.alias, "reason": r.noRouteReason?.rawValue ?? "unknown"], severity: .critical,
                      rule: "rule.fire.route", facts: ["person.\(p.id)", "home.portals"], causedBy: cause, sources: ["S19"])
-                requireSticky("req.egress.\(p.id)", cause: cause)
+                if !isOutside(p.id) { requireSticky("req.egress.\(p.id)", cause: cause) }
                 flags.insert("fire.noRoute")
             }
             if r.primary != nil, r.alternativeStatus != .independent { flags.insert("fire.noIndependentSecondExit") }
@@ -281,9 +292,10 @@ extension RunState {
     mutating func helperReachCheck(blockedSpaces: Set<String>, blockedPortals: Set<String>, cause: String) {
         guard let home else { return }
         for p in household.people.sorted(by: { $0.id < $1.id }) {
+            if isOutside(p.id) { continue }
             guard let hid = p.helperPersonID, let helper = household.people.first(where: { $0.id == hid }),
                   !flags.contains("fire.helperBlocked.\(p.id)") else { continue }
-            let from = startSpace(for: helper), to = startSpace(for: p)
+            let from = isOutside(helper.id) ? "unknown" : startSpace(for: helper), to = startSpace(for: p)
             let reach = planner.plan(RouteRequest(personID: helper.id, startSpaceID: from,
                 mobility: mobility(for: helper),
                 exclusions: ScenarioExclusions(blockedSpaceIDs: blockedSpaces.sorted(), blockedPortalIDs: blockedPortals.sorted()),
@@ -404,6 +416,13 @@ extension RunState {
         guard let home, var scene = spatialState, !scene.affectedSpaceIDs.isEmpty,
               !input.effectiveSpatialOptions.floodIsHouseholdLeak else { return }
         let affected = Set(scene.affectedSpaceIDs)
+        // Adaptive timing evidence: who had a supported refuge approach or was already there
+        // before this stage, computed from committed positions (authored playback unaffected).
+        let refugeBefore = hazardProgress == nil ? [] : household.people.filter { person in
+            guard let route = currentRoutes[person.id], route.request.purpose == .higherRefuge,
+                  let destination = route.request.destinationSpaceID else { return false }
+            return route.primary != nil || startSpace(for: person) == destination
+        }
         var expanded = affected
         for portal in home.portals where portal.verification == .verified {
             guard case .space(let a) = portal.sideA, case .space(let b) = portal.sideB else { continue }
@@ -425,6 +444,17 @@ extension RunState {
                guard let room = home.space(id), let floor = home.floors.first(where: { $0.id == room.floorID }) else { return false }
                return floor.elevationMeters < targetFloor.elevationMeters
            }) { routeToInterior(destination, purpose: .higherRefuge, exclusions: exclusions) }
+        if var progress = hazardProgress {
+            for person in refugeBefore {
+                let destination = scene.destinationSpaceID
+                if startSpace(for: person) == destination, let destination, !expanded.contains(destination) {
+                    progress.refugeHeldAtAccessLoss.insert(person.id)
+                } else if currentRoutes[person.id]?.primary == nil {
+                    progress.refugeLostAtAccessLoss.insert(person.id)
+                }
+            }
+            hazardProgress = progress
+        }
         scene.stageID = cause; scene.affectedSpaceIDs = expanded.sorted()
         scene.routes = currentRoutes.keys.sorted().compactMap { currentRoutes[$0] }
         scene.assumption = "Exercise: a later authored stage excludes connected lower spaces. This topology illustration is not a flood depth or arrival-time prediction."
@@ -476,7 +506,17 @@ extension RunState {
             // Boiling only addresses a boil-water advisory, and needs a working heat source.
             return advisory == .boilWater && homePowerUp
         case "goToShelter":
-            return household.housing.homeType != .manufacturedHome && shelterSpace != nil
+            guard household.housing.homeType != .manufacturedHome, let home, let shelter = shelterSpace,
+                  !household.people.isEmpty else { return false }
+            // A suitable room is not an accessible plan. Use the same authoritative graph,
+            // mobility constraints and exercise exclusions as movement, for every occupant.
+            let exclusions = ScenarioExclusions(blockedSpaceIDs: spatialState?.affectedSpaceIDs ?? [],
+                                               blockedPortalIDs: spatialState?.affectedPortalIDs ?? [])
+            return household.people.allSatisfy { person in
+                planner.plan(RouteRequest(personID: person.id, startSpaceID: startSpace(for: person),
+                    mobility: mobility(for: person), exclusions: exclusions, purpose: .interiorShelter,
+                    destinationSpaceID: shelter.id), in: home).primary != nil
+            }
         case "useStoredWater":
             return (storedWater ?? 0) > 0
         case "tapForHygiene":
@@ -495,7 +535,9 @@ extension RunState {
             throw RehearsalError.invalidChoice(choiceID: c.id, optionID: chosenID)
         }
         decisions.append(DecisionPoint(id: c.id, simMinute: minute, promptKey: c.promptKey, options: c.options.map {
-            DecisionPoint.Option(id: $0.id, labelKey: $0.labelKey, feedbackKey: $0.feedbackKey, isRecommended: !$0.unsafe && feasible($0.effect))
+            let outsideAction = c.id == "choice.home-fire.outside" && $0.effect == "takeExit"
+            return DecisionPoint.Option(id: $0.id, labelKey: $0.labelKey, feedbackKey: $0.feedbackKey,
+                isRecommended: !$0.unsafe && feasible($0.effect) && (!outsideAction || household.people.contains { isOutside($0.id) }))
         }))
         let id = emit("evt.\(c.id)", title: opt.labelKey, detail: opt.feedbackKey, values: ["option": opt.id],
                       severity: opt.unsafe ? .critical : .info, rule: "rule.choice.\(opt.effect)", facts: [], causedBy: nil,
@@ -506,6 +548,7 @@ extension RunState {
             try reevaluate(trigger: id, emit: true)
             return
         }
+        applySpatialChoice(opt, choice: c, cause: id)
         switch opt.effect {
         case "relocate", "leaveEarly":
             if feasible(opt.effect) {
@@ -532,6 +575,10 @@ extension RunState {
             }
         case "goToShelter":
             if !feasible("goToShelter") { flags.insert("tornado.shelterNotAdequate") }
+        case "shelterInPlace":
+            // Adaptive sessions only (authored playback has no HazardProgress): record what the stay
+            // committed to. Choosing to stay never manufactures warmth, cooling or device power.
+            recordThermalStay(choiceID: c.id, eventID: id)
         case "prioritizeStored":
             waterDrawMultiplier = 1
         case "useStoredForAll":

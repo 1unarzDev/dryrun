@@ -16,7 +16,12 @@ public enum AIPlanDiagram {
         for portal in home.portals where portal.floorID==floorID {
             body += "<line x1=\"\(portal.a.x)\" y1=\"\(portal.a.y)\" x2=\"\(portal.b.x)\" y2=\"\(portal.b.y)\" stroke=\"white\" stroke-width=\"0.12\"/>"
             body += "<line x1=\"\(portal.a.x)\" y1=\"\(portal.a.y)\" x2=\"\(portal.b.x)\" y2=\"\(portal.b.y)\" stroke=\"\(portal.verification == .verified ? "#147d65":"#b17d12")\" stroke-width=\"0.05\"/>"
-            body += "<text x=\"\(portal.center.x)\" y=\"\(portal.center.y)\" font-size=\"0.17\">\(escape(portal.id))</text>"
+            body += "<text x=\"\(portal.center.x)\" y=\"\(portal.center.y)\" font-size=\"0.17\">\(escape(portal.id+" "+portal.kind.rawValue))</text>"
+        }
+        for marker in home.annotations where marker.floorID==floorID {
+            guard let point=marker.position else {continue}
+            body += "<circle cx=\"\(point.x)\" cy=\"\(point.y)\" r=\"0.09\" fill=\"#a63832\"/>"
+            body += "<text x=\"\(point.x+0.12)\" y=\"\(point.y)\" font-size=\"0.17\">\(escape(marker.id+" "+marker.kind.rawValue+" "+marker.verification.rawValue))</text>"
         }
         return "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"\(minX-0.5) \(minY-0.5) \(maxX-minX+1) \(maxY-minY+1)\">\(body)</svg>"
     }

@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "liveModel": true,
+  "sourceHashes": {
+    "scripts/elevator-fire-eval.ts": "e311f20032704966caee2331730bb917859b4f75cec22092b06e9215409df8be",
+    "src/output-quality.ts": "868cc84d92af963990e1105963ca36c1a313c268535578d8fb43ddcb07636134",
+    "../../packages/DryRunCore/Sources/DryRunCore/Spatial/EgressPlanner.swift": "f7ccb828ed257a0f9f378e91c28a3670e89bc213cdf24f6884f26cbf0be8718e",
+    "../../packages/DryRunCore/Sources/DryRunCore/Spatial/HousingPlanning.swift": "89e5b57804e341265b16fc1a7dd48c828ec180aa2b6cc820e29d87a894ce5780",
+    "../../fixtures/homes/home-sample-apartment-complex.json": "f7a5f0912af6669369311bbfabe62e6909da14ae64700af580c00a822f01fba5"
+  },
+  "cases": [],
+  "replies": [],
+  "calls": 0,
+  "failure": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    choices: {},\n    contentVersion: '2026.10.6',\n    home: {\n      annotations: [\n...\n          alias: 'Parent A',\n-         helperPersonID: undefined,\n          id: 'p-oak-1',\n          needs: [],\n          sleepingSpaceID: 'sp-bed1'\n        }\n      ],\n"
+}
